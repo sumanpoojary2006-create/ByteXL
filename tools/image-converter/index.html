@@ -1270,23 +1270,55 @@
     });
   }
 
+  function parseBlockInfo(info) {
+    // "python with=attendees.txt" or "text file=reports/day1.txt" -> {language, attrs}
+    const attrs = {};
+    for (const token of String(info||"").trim().split(/\s+/)) {
+      const m = token.match(/^(file|with)=(.+)$/);
+      if (m) attrs[m[1]] = m[2];
+    }
+    return { language: normalizeLanguage(info), attrs };
+  }
+
   async function convertMarkdownCode(markdown, filePath, settings) {
     const blocks = iterFencedBlocks(markdown);
-    const replacements = [], skippedBlocks = [], onecompilerLinks = [], languageCounts = {};
+    const replacements = [], skippedBlocks = [], onecompilerLinks = [], languageCounts = {}, fileWarnings = [];
     let convertedBlocks = 0, fileBlockIndex = 0;
+    // Pass 1: collect every `file=<name>` block into a per-document registry so
+    // later `with=` blocks in the same lesson can pull the fixture into the editor.
+    const fileRegistry = new Map();
     for (const block of blocks) {
-      const rawLang = normalizeLanguage(block.info);
+      const { attrs } = parseBlockInfo(block.info);
+      if (attrs.file) fileRegistry.set(attrs.file, block.code.replace(/\n+$/,""));
+    }
+    for (const block of blocks) {
+      const { language: rawLang, attrs } = parseBlockInfo(block.info);
+      // A `file=` block is a fixture definition, never its own editor. Re-render it
+      // as a plain fenced block (dropping the file= attribute) so the reader still
+      // sees the file contents inline, and skip conversion.
+      if (attrs.file) {
+        replacements.push([block.start, block.end, "```"+(rawLang||"")+"\n"+block.code.replace(/\n+$/,"")+"\n```\n"]);
+        continue;
+      }
       const decision = shouldConvert(rawLang, block.code, settings);
       if (!decision.convert) { skippedBlocks.push({file:filePath,lines:`${block.startLine}-${block.endLine}`,language:decision.language||"(none)",reason:decision.reason}); continue; }
       fileBlockIndex++;convertedBlocks++;
       const lang = decision.language;
+      const extraFiles = [];
+      if (attrs.with) {
+        for (const name of attrs.with.split(",").map(s=>s.trim()).filter(Boolean)) {
+          if (fileRegistry.has(name)) extraFiles.push({name, content:fileRegistry.get(name)});
+          else fileWarnings.push({file:filePath,lines:`${block.startLine}-${block.endLine}`,name});
+        }
+      }
       const snippet = {
         snippetId: snippetIdFor(filePath,fileBlockIndex),
         title:`${baseNameWithoutExtension(filePath)} code ${fileBlockIndex}`,
         language:lang,
         filename:filenameFor(lang,fileBlockIndex),
         code:block.code.replace(/\n+$/,""),
-        sourceFile:filePath
+        sourceFile:filePath,
+        extraFiles
       };
       setProgress(`Creating OneCompiler editor ${fileBlockIndex} in ${baseName(filePath)}...`);
       const workspace = await createOneCompilerWorkspace(snippet);
@@ -1306,7 +1338,7 @@
     }
     let converted = markdown;
     for (const [start,end,rep] of replacements.reverse()) converted = converted.slice(0,start)+rep+converted.slice(end);
-    return {markdown:converted,convertedBlocks,skippedBlocks,languageCounts,onecompilerLinks};
+    return {markdown:converted,convertedBlocks,skippedBlocks,languageCounts,onecompilerLinks,fileWarnings};
   }
 
   function iterFencedBlocks(markdown) {

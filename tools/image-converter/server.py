@@ -639,6 +639,7 @@ async def create_onecompiler_workspace(payload: dict[str, Any] = Body(...)):
     code = str(payload.get("code") or "")
     source_file = normalize_zip_path(str(payload.get("sourceFile") or ""))
     snippet_id = str(payload.get("snippetId") or "").strip()
+    extra_files = payload.get("extraFiles") or []
 
     if not language:
         raise HTTPException(400, "Language is required")
@@ -651,9 +652,26 @@ async def create_onecompiler_workspace(payload: dict[str, Any] = Body(...)):
     tags = ["bytexl", "reading-material"]
     if snippet_id:
         tags.append(snippet_id[:40])
+
+    # The main runnable file is always file 0 (the active tab). Any `with=`
+    # fixtures the block declared arrive as extraFiles and are added beside it,
+    # so a snippet that reads/globs/parses a file has that file present in the
+    # saved OneCompiler project instead of raising FileNotFoundError at runtime.
+    files: list[dict[str, str]] = [{"name": filename, "content": code}]
+    seen_names = {filename}
+    if isinstance(extra_files, list):
+        for extra in extra_files:
+            if not isinstance(extra, dict):
+                continue
+            extra_name = normalize_zip_path(str(extra.get("name") or "")).lstrip("/")
+            if not extra_name or extra_name.endswith("/") or extra_name in seen_names:
+                continue
+            files.append({"name": extra_name, "content": str(extra.get("content") or "")})
+            seen_names.add(extra_name)
+
     properties: dict[str, Any] = {
         "language": editor_language,
-        "files": [{"name": filename, "content": code}],
+        "files": files,
         "stdin": "",
         "source": "bytexl-reading-material",
     }
