@@ -6,27 +6,21 @@ This lesson covers reading: `open()` to access a file, and `read()`, `readlines(
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-11-file-handling/02_three_ways_to_read_a_file.png)
 
-## Saving the File This Lesson Reads
+## The File This Lesson Reads
 
-Before any of this works, `attendees.txt` has to actually exist. Tara saves last year's three wristband IDs into it first, exactly the way the next lesson covers properly; for now, treat this as simply recreating the file the coordinator left behind, so every example below has something real to open.
+Before any of this works, `attendees.txt` has to actually exist. Last year's coordinator left it behind, one wristband ID per line, and it sits alongside the script in the editor's file explorer for every example below to open.
 
-```python
-file = open("attendees.txt", "w")
-file.write("A101\nA102\nA103\n")
-file.close()
-print("attendees.txt saved with 3 wristband IDs.")
+```text file=attendees.txt
+A101
+A102
+A103
 ```
 
 ## Opening a File
 
 `open()` takes a filename and a mode, and returns a file object you can then read from.
 
-```python
-# Create the file first so this block runs standalone
-f = open("attendees.txt", "w")
-f.write("A101\nA102\nA103\n")
-f.close()
-
+```python with=attendees.txt
 file = open("attendees.txt", "r")
 print(file)    # a file object, ready to read from
 file.close()
@@ -38,12 +32,7 @@ The `"r"` means **read mode**, and it is actually the default if you leave the m
 
 `.read()` pulls the entire contents of the file into a single string, exactly as it is stored, including the line breaks.
 
-```python
-# Create the file first so this block runs standalone
-f = open("attendees.txt", "w")
-f.write("A101\nA102\nA103\n")
-f.close()
-
+```python with=attendees.txt
 file = open("attendees.txt", "r")
 contents = file.read()
 file.close()
@@ -61,11 +50,7 @@ Notice the `file.close()` line above. Every file you open with `open()` should e
 
 `.readlines()` returns the file's contents as a list, one string per line, with each line's `\n` still attached at the end.
 
-```python
-f = open("attendees.txt", "w")
-f.write("A101\nA102\nA103\n")
-f.close()
-
+```python with=attendees.txt
 file = open("attendees.txt", "r")
 lines = file.readlines()
 file.close()
@@ -82,11 +67,7 @@ This is exactly the list you met throughout the lists and tuples unit, simply bu
 
 You rarely need `.readlines()` just to loop over every line; Python lets you loop straight over an open file object, one line at a time, which is both simpler to write and far more memory-efficient on large files.
 
-```python
-f = open("attendees.txt", "w")
-f.write("A101\nA102\nA103\n")
-f.close()
-
+```python with=attendees.txt
 file = open("attendees.txt", "r")
 for line in file:
     print(line.strip())
@@ -107,11 +88,7 @@ Notice `.strip()` on each line, removing that trailing `\n` before printing, the
 
 Assume `attendees.txt` exists in the same folder as your script, holding the three lines shown earlier.
 
-```python
-f = open("attendees.txt", "w")
-f.write("A101\nA102\nA103\n")
-f.close()
-
+```python with=attendees.txt
 file = open("attendees.txt", "r")
 ids = [line.strip() for line in file]
 file.close()

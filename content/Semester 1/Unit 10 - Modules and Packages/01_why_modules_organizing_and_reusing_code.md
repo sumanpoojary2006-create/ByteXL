@@ -37,12 +37,12 @@ This is precisely the same reuse-and-decomposition argument from the start of th
 
 The exact syntax for bringing a module's contents into another file is the subject of the very next lesson, but here is the shape of what is coming, so you can see where this is headed.
 
-```python
-# First we create billing.py right here, so this example can actually run.
-# In a real project you would simply have billing.py saved in the same folder.
-with open("billing.py", "w") as f:
-    f.write("def split_cost(total, people):\n    return total / people\n")
+```python file=billing.py
+def split_cost(total, people):
+    return total / people
+```
 
+```python with=billing.py
 # main.py, in the same folder as billing.py
 import billing
 

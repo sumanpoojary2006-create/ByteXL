@@ -9,6 +9,13 @@
 > final-standard lessons and assessment sets; your job is to match that bar
 > exactly, not to invent a new voice.
 >
+> **Revision note (2026-07-08).** Replaces the §3.4 "create the file in the
+> same block first" rule with the `file=`/`with=` multi-file editor
+> convention (see §5.9). Snippets that read, glob, or parse a file must now
+> get that file from the OneCompiler EXPLORER panel via a real `file=` block,
+> never by fabricating it with throwaway `open(...,"w")`/`Path.write_text()`
+> setup code baked into the runnable block.
+>
 > **Revision note (2026-07-07).** This version incorporates the assessment
 > standards agreed in the Suman/Smaran 1-1: MCQ scenario-first descriptions,
 > MCQ set structure and `Python - MCQ - U.S.Q` naming, `Python - ` title
@@ -131,6 +138,7 @@ ByteXL/
 | `content/Question Bank/MCQ/Unit K - .../*.xlsx` | Shipped MCQ sets | Multi-sheet workbook: one sheet per set of 10 (`Python - MCQ - U.S`). The **current standard**. |
 | `content/Question Bank/**/*.xlsx.bak` | Pre-revision backups | The state before the 2026-07-07 naming/scenario revision. Never use as a reference; never edit; never regenerate from. |
 | `content/Question Bank/Template/questions-mcq-template.xlsx` | Column layout | Canonical MCQ column order. |
+| `content/Question Bank/Review/` (`mcq_review_data.json`, `MCQ Review - ... .docx`, `build_mcq_review_doc.js`) | Pre-revision editorial snapshot | **Old standard.** The JSON holds Unit 1-3 MCQs from before the 2026-07-07 revision: bare titles ("Definition of programming"), no scenario-first descriptions, placeholder taxonomy (`sample-subtopic`). Useful only to understand what the review changed. Never use as a content or format reference. |
 | `content/Question Bank/Coding Questions/backup-before-taxonomy-fix/` | Historical backup | Do not use as a reference; taxonomy has moved on. |
 | `tools/scripts/scaffold_reading.py` | Bootstrap | Regenerates Semester and Unit `README.md` skeletons from the curriculum xlsx. Rerun if unit order changes. Never manually resync. |
 | `tools/scripts/add_image_prompts.py` | Image-prompt injector | Canonical **style prompt** + per-unit **character prompt** + per-lesson **scene**. Read this file to learn the image-prompt formula (see §5.5). |
@@ -233,9 +241,14 @@ snippet).
 ### 3.4 Code style inside lessons
 
 - Python 3.10+. Use `match/case` where natural (see Sem 1 Unit 3).
-- Snippets should be **runnable as-is**. If a snippet reads a file, create the
-  file in the same block first (see `07_reading_and_writing_csv_files.md`
-  lines 46-56 for the canonical pattern).
+- Snippets should be **runnable as-is**. If a snippet reads, globs, or parses
+  a file, that file must exist as a real file in the OneCompiler EXPLORER
+  panel, never be fabricated with throwaway `open(...,"w")`/
+  `Path.write_text()` setup code inside the runnable block itself. Use the
+  `file=`/`with=` fence-info convention (see §5.9) to give a runnable block a
+  real file. The only exception is when writing/creating the file *is* the
+  concept the block is teaching (e.g. a `csv.writer` or `json.dump` lesson) —
+  in that case the write call stays, because it is the point.
 - Every non-trivial snippet is followed by an explanatory paragraph that
   names *what* line does *what* using the identifier ("`newline=""` prevents
   the `csv` module from writing extra blank lines...").
@@ -372,7 +385,10 @@ jump straight to writing prose.
      illustrative cases first.
    - Never author expected outputs by hand. `cqlib.run_solution` executes
      the reference solution against each input; broken solutions raise, and
-     you fix the solution, not the expected output.
+     you fix the solution, not the expected output. Output normalization is
+     built in (trailing whitespace stripped per line, trailing blank lines
+     dropped) to match ByteXL's trailing-newline-insensitive compare, so do
+     not add your own padding or strip logic.
 4. **Apply the `Python - ` title prefix.** As of this revision, `cqlib.py`
    does not add it automatically and the `unitNN_*.py` scripts still carry
    bare titles, while every shipped workbook has prefixed titles. Until the
@@ -517,7 +533,10 @@ four fixed slots plus one per-lesson slot:
 
 From `cqlib.py` and the shipped workbooks:
 
-- Fixed schema of ~24 columns; do not add or remove.
+- Fixed schema of 34 columns (17 metadata columns, 14 testcase
+  input/output columns, then `preloadCode_python`, `solution_python`,
+  `hints`); do not add or remove. The exact order is the `HEADERS` list in
+  `cqlib.py`.
 - `NUM_TESTCASES = 7`: **2 open + 5 hidden** (the confirmed platform
   standard; the split is applied by the uploader's "public testcases"
   setting, so the two most illustrative inputs go first).
@@ -566,6 +585,53 @@ From `cqlib.py` and the shipped workbooks:
   is wrong), and `difficulty`/`bloomTaxonomy`/`topics`/`subTopics` filled in.
 - Blank `bloomTaxonomy` is treated as `apply` by the uploader and flagged as
   a warning; fill it explicitly.
+
+### 5.9 Multi-file editor embeddings (`file=`/`with=`)
+
+When a lesson's runnable snippet needs to read, glob, or parse a file that
+was not just written earlier in the same block, give the OneCompiler embed a
+real second file instead of fabricating one with `open(...,"w")` or
+`Path.write_text()` inline. Two fence-info attributes drive this, parsed by
+`tools/vercel-onecompiler-builder/app.js`:
+
+- **`file=<name>`** on a fenced code block marks it as a *file definition*,
+  not a runnable snippet. `<name>` may include a subfolder
+  (`reports/day1_sales.txt`). The converter never turns this block into its
+  own iframe; it renders as a plain fenced code block in the output markdown
+  so the reader still sees the file's contents inline, and its content is
+  registered for `with=` blocks to pull in.
+- **`with=<name1>,<name2>`** on a normal runnable fence pulls one or more
+  previously-defined `file=` blocks into that embed's EXPLORER as extra
+  files, alongside the main runnable script. The main script always stays
+  file 0 (the active tab); the `with=` files load beside it.
+
+A `file=` definition can be referenced by any `with=` block anywhere later
+in the same lesson file, so a fixture used by five different examples (e.g.
+`attendees.txt` across several blocks in one lesson) is defined once and
+reused, not re-fabricated per block. A `with=` name with no matching `file=`
+definition earlier in the file is dropped from that embed and reported as a
+build-time warning in `onecompiler-report.md`, so a typo fails loudly instead
+of shipping a half-populated editor.
+
+Example, replacing the old fabricate-then-import pattern:
+
+````
+```python file=billing.py
+def split_cost(total, people, service_charge=0):
+    return (total + service_charge) / people
+```
+
+```python with=billing.py
+import billing
+
+mess_share = billing.split_cost(1200, 4)
+print("Each person owes:", mess_share)
+```
+````
+
+Use this any time a snippet's whole point is consuming a file (reading,
+`glob`-ing, `csv.reader`/`DictReader`, `json.load`) rather than creating one.
+Leave file-creation code alone when writing *is* the lesson.
 
 ---
 
@@ -792,8 +858,11 @@ Use these files as canonical patterns. Read them, do not copy them.
   - Generator scripts (`unitNN_*.py`) carry bare titles; shipped workbooks
     carry `Python - ` prefixes. The prefix wins.
   - `Semester 2/` contains both `Unit 14 - Packaging and Distribution` and
-    `Unit 14 - Packaging, Project Structure, and Distribution`; check which
-    the semester README and workbook point to before authoring there.
+    `Unit 14 - Packaging, Project Structure, and Distribution`. The semester
+    README's unit table points to `Unit 14 - Packaging and Distribution`
+    (6 topics), so that folder is the live one; treat the
+    `Packaging, Project Structure, and Distribution` folder (4 lessons, no
+    images) as a superseded draft until it is explicitly reconciled.
 - **When something disagrees with this file.** If a shipped artefact in
   `content/` clearly contradicts this document but is otherwise final and
   polished, treat the artefact as the newer truth, update this SKILL.md to

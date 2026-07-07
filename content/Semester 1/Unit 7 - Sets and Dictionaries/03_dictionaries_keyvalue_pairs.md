@@ -30,10 +30,11 @@ This is the instant lookup Tara wanted: no searching, no scanning, just naming t
 
 ```python
 prices = {"T-shirt": 350, "Mug": 150, "Badge": 50}
-try:
-    print(prices["Cap"])    # raises KeyError
-except KeyError as e:
-    print(f"KeyError: {e} — key not found in dictionary")
+print(prices["Cap"])    # raises KeyError
+```
+
+```
+KeyError: 'Cap'
 ```
 
 The error names the missing key directly, which is your signal that the key simply was never added, not that something is broken.

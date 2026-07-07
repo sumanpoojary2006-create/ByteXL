@@ -17,11 +17,12 @@ def calculate_total(prices):
     return total
 
 calculate_total([300, 150, 450])
-try:
-    print(total)    # error! total does not exist out here
-except NameError as e:
-    print(f"NameError: {e}")
-    print("total was local to the function and is gone now.")
+print(total)    # NameError: name 'total' is not defined
+```
+
+```text
+Inside the function: 900
+NameError: name 'total' is not defined
 ```
 
 The function's own `print` works fine, because `total` exists while the function is running. The line after the call fails with a `NameError`, because that same `total` was local, and it was gone the instant `calculate_total` returned.
@@ -49,13 +50,13 @@ Assigning to a name inside a function, even one that shares its name with a glob
 counter = 0
 
 def increment():
-    counter = counter + 1    # error!
+    counter = counter + 1    # UnboundLocalError: nothing to read on the right-hand side yet
 
-try:
-    increment()
-except UnboundLocalError as e:
-    print(f"UnboundLocalError: {e}")
-    print("Assigning to counter made it local, so counter + 1 had nothing to read.")
+increment()
+```
+
+```text
+UnboundLocalError: cannot access local variable 'counter' where it is not associated with a value
 ```
 
 This actually raises an error, because Python sees the assignment to `counter` anywhere in the function and decides, before the function even runs, that `counter` is local to that function. That makes the right-hand side, `counter + 1`, try to read a local `counter` that has not been given a value yet.

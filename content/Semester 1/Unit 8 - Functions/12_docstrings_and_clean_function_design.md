@@ -1,8 +1,8 @@
 ## Introduction
 
-Naveen is finally handing his collection of scripts over to next year's committee, and he opens `split_cost` for the first time in months to check it still does what he remembers. The parameters are named `a`, `b`, and `c`. There is no note anywhere explaining what they mean, whether `c` is a percentage or a flat amount, or what the function actually hands back. He wrote this code, and even he has to guess.
+Naveen is finally handing his collection of scripts over to next year's committee, and he opens `split_cost` for the first time in months to check it still does what he remembers. The parameters are named `a`, `b`, and `c`. There is no note anywhere explaining what they mean, whether `c` is a percentage or a flat amount, whether it even expects a whole number or a decimal, or what the function actually hands back. He wrote this code, and even he has to guess.
 
-This final lesson of the unit is not about a new piece of syntax. It is about the habits that turn a function from something that merely works into something a stranger, or you in six months, can trust and use without re-reading every line.
+This final lesson of the unit is not about a new piece of syntax alone. It is about the habits, **docstrings** that explain what a function does and **type hints** that state what kind of values it expects and returns, that turn a function from something that merely works into something a stranger, or you in six months, can trust and use without re-reading every line.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-8-functions/12_docstring_explains_the_function.png)
 
@@ -52,6 +52,40 @@ print(f"ticket_price(5, 5) ->", result)
 ```
 
 The goal is always the same question, answered without making the reader trace through the function's body: what does this need, and what do I get back?
+
+## Type Hints: Stating What Kind of Value, Not Just What It Means
+
+A docstring can say "total: the amount to be split," but it cannot say, in a way Python or an editor actually checks, whether that amount has to be an `int`, a `float`, or something else entirely. **Type hints** fill exactly that gap: written directly in the function's signature, they name the expected type of each parameter and, after an arrow, the type of whatever the function returns.
+
+```python
+def split_cost(total: float, people: int, service_charge: float = 0) -> float:
+    """Split a total cost evenly among people, with an optional service charge."""
+    return (total + service_charge) / people
+
+result = split_cost(1200, 4, service_charge=100)
+print(f"split_cost(1200, 4, service_charge=100) -> {result}")    # 325.0
+```
+
+`total: float` means "this parameter is meant to hold a float," and the `-> float` after the closing parenthesis means "this function is meant to return a float." Read the whole signature left to right and it almost speaks for itself: give `split_cost` a float, an int, and optionally another float, and it hands back a float.
+
+## Type Hints Are a Promise, Not a Lock
+
+Unlike some languages, Python does not actually stop you from breaking a type hint; it runs the function anyway and only complains, if at all, through a separate checking tool.
+
+```python
+def split_cost(total: float, people: int, service_charge: float = 0) -> float:
+    return (total + service_charge) / people
+
+print(split_cost(1200, 4))              # 300.0, matches the hints
+print(split_cost("1200", 4))            # runs anyway, hints are not enforced at runtime
+```
+
+```text
+300.0
+TypeError: can only concatenate str (not "int") to str
+```
+
+The second call passes a string where `total: float` asked for a float, and Python still runs it, hint or no hint. It gets as far as `total + service_charge`, `"1200" + 0`, before it actually fails, because Python's `+` refuses to combine a string with an integer, and only then does the `TypeError` surface. Type hints document intent clearly enough that tools like `mypy`, and most modern editors, can flag a mismatch like this one before you ever run the code at all; Python itself simply trusts you to keep the promise, and only fails, if it fails, wherever the mismatched value first collides with an operation it cannot support.
 
 ## Naming: The Cheapest Documentation There Is
 
@@ -106,6 +140,7 @@ def report_due(name, amount):
 | Habit | Why It Matters |
 |---|---|
 | A clear docstring as the first line | Lets `help()` and editors explain the function instantly |
+| Type hints in the signature | States what type each parameter and the return value are meant to be |
 | Descriptive parameter and function names | Documents intent before anyone reads the body |
 | One function, one clearly nameable job | Easier to test, trust, reuse, and explain in one sentence |
 | Defaults for the genuinely optional details | Keeps the common call simple, the rare call still possible |
@@ -113,7 +148,7 @@ def report_due(name, amount):
 ## Your Turn: Document Your Own Function
 
 ```python
-def calculate_share(total, people, service_charge=0):
+def calculate_share(total: float, people: int, service_charge: float = 0) -> float:
     """Calculate each person's share of a total cost.
 
     total: the amount to be split.
@@ -127,8 +162,8 @@ print(calculate_share(1200, 4))
 help(calculate_share)
 ```
 
-Run both lines and compare what `help()` shows you against the docstring you wrote, confirming they say exactly the same thing, because they are, in fact, the same text.
+Run both lines and compare what `help()` shows you against the docstring and the type-hinted signature you wrote, confirming `help()` surfaces both the parameter types and the explanation together, exactly as a stranger opening this function for the first time would want to see them.
 
 ## Conclusion
 
-A docstring, written as the first line inside a function's body, documents what a function does in a way `help()` and editors can surface automatically, and clear names for the function and its parameters document intent before anyone even reads that docstring. A function that does one clearly nameable job is easier to trust, reuse, and explain than one that quietly does several things at once. Across this entire unit, you have learned to define, call, parameterise, default, gather, shorten, transform, scope, and recurse with functions; writing them clearly, the way this final lesson asked, is what makes every one of those tools actually pay off in code other people, including future you, can rely on.
+A docstring, written as the first line inside a function's body, documents what a function does in a way `help()` and editors can surface automatically, and a type hint, written directly in the signature, states what kind of value each parameter and the return are meant to be, checked by external tools even though Python itself does not enforce it. Clear names for the function and its parameters document intent before anyone even reads that docstring or those hints. A function that does one clearly nameable job is easier to trust, reuse, and explain than one that quietly does several things at once. Across this entire unit, you have learned to define, call, parameterise, default, gather, shorten, transform, scope, and recurse with functions; writing them clearly, documented and type-hinted, the way this final lesson asked, is what makes every one of those tools actually pay off in code other people, including future you, can rely on.

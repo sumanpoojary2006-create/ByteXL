@@ -32,11 +32,11 @@ Try to reach into a set with a position, the way you would a list, and Python re
 
 ```python
 attendees = {"A101", "A102", "A103"}
-try:
-    attendees[0]
-except TypeError as e:
-    print(f"TypeError: {e}")
-    print("Sets have no index -- check membership with 'in' instead.")
+print(attendees[0])    # error!
+```
+
+```
+TypeError: 'set' object is not subscriptable
 ```
 
 This raises a `TypeError`, because a set has no first item, no last item, no position 0. It only has membership: a value is either in the set, or it is not. That single idea, membership rather than position, is the whole point of a set.

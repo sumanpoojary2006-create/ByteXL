@@ -32,7 +32,9 @@ This is perfect for a quick total: summing every price without caring which item
 
 ```python
 prices = {"T-shirt": 350, "Mug": 150, "Badge": 50}
-total_value = sum(prices.values())
+total_value = 0
+for price in prices.values():
+    total_value += price
 print("Total catalogue value:", total_value)
 ```
 
@@ -79,13 +81,15 @@ for item, price in sorted(prices.items()):
 stock = {"T-shirt": 12, "Mug": 8, "Badge": 25}
 
 print("--- End of Day Report ---")
+total_sold = 0
 for item, count in sorted(stock.items()):
     print(f"{item}: {count} sold")
+    total_sold += count
 
-print("Total items sold:", sum(stock.values()))
+print("Total items sold:", total_sold)
 ```
 
-This single small script reads every entry, sorts it for readability, and totals the values, three different jobs from the same three loop tools.
+This single small script reads every entry, sorts it for readability, and totals the values with a running count, three different jobs built from the same loop tools.
 
 ## Conclusion
 

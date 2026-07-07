@@ -68,28 +68,24 @@ pip uninstall requests
 
 Not every problem needs a third-party package. Before reaching for `pip install`, it is worth checking whether the standard library already covers the job, since a standard library module needs no install step, no version to manage, and no risk of going unmaintained. Reach for PyPI once you have confirmed the standard library genuinely does not cover what you need.
 
-## Your Turn: Plan an Install
+## Your Turn: Check Whether a Package Is Actually Installed
+
+`pip show` from the terminal is one way to confirm a package is available, but a script can ask the exact same question of its own environment, using `importlib.util.find_spec`, which looks for a package without actually importing it.
 
 ```python
-# pip workflow (no install needed to understand the steps):
-workflow = [
-    "pip install requests          # run once in your terminal",
-    "import requests               # in your script each time",
-    'requests.get("https://example.com")  # use it like any stdlib module',
-]
-print("Three-step pip workflow:")
-for i, step in enumerate(workflow, 1):
-    print(f"  {i}. {step}")
+import importlib.util
 
-# stdlib alternative -- urllib.request needs NO pip install:
-import urllib.request
-print("\nStdlib alternative (no pip install):")
-print("  import urllib.request")
-print("  urllib.request.urlopen('https://example.com')")
-print("  -- already in Python, nothing to install")
+for package_name in ("json", "receipt_colorizer"):
+    found = importlib.util.find_spec(package_name) is not None
+    print(f"{package_name}: {'installed' if found else 'not installed'}")
 ```
 
-If you have a real Python environment available, actually run `pip install requests` in your terminal, then write and run a tiny script that imports it and prints `requests.__version__` to confirm the install worked.
+```text
+json: installed
+receipt_colorizer: not installed
+```
+
+`json` reports as installed because it ships with the standard library, present in every Python environment with no `pip install` ever required. `receipt_colorizer` is a made-up package name, standing in for any third-party package nobody has installed yet, so it reports as not installed. Running `pip install some_real_package_name` in a real terminal, then rerunning this exact check there, is what flips a package from `not installed` to `installed`, which is the whole job `pip` does.
 
 ## Conclusion
 

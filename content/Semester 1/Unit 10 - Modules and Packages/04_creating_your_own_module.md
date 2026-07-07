@@ -33,18 +33,15 @@ This file does nothing on its own when it is run directly; it simply defines two
 
 In a second file, `main.py`, saved in that very same folder, Naveen imports `billing` exactly the way he would import `math` or `random`.
 
-```python
-# First we save billing.py (Step One) so this main.py example can run.
-billing_code = '''
+```python file=billing.py
 def split_cost(total, people, service_charge=0):
     return (total + service_charge) / people
 
 def add_late_fee(amount, rate=0.05):
     return amount * (1 + rate)
-'''
-with open("billing.py", "w") as f:
-    f.write(billing_code)
+```
 
+```python with=billing.py
 # main.py, in the same folder as billing.py
 import billing
 
@@ -99,26 +96,23 @@ A module's name follows the exact same snake_case convention as a variable or fu
 
 ## Your Turn: Picture Your Own Module
 
-```python
-# Save this as greetings.py, so the import below can find it:
-greetings_code = '''
+```python file=greetings.py
 def welcome(name):
     return f"Welcome, {name}!"
 
 def farewell(name):
     return f"Goodbye, {name}, see you soon!"
-'''
-with open("greetings.py", "w") as f:
-    f.write(greetings_code)
+```
 
-# And this is main.py, in the same folder:
+```python with=greetings.py
+# main.py, in the same folder as greetings.py
 import greetings
 
 print(greetings.welcome("Asha"))
 print(greetings.farewell("Asha"))
 ```
 
-If you have a real project folder to try this in, save the two halves as two actual files exactly as commented above, and run `main.py` to see the import work for real.
+If you have a real project folder to try this in, save the two files exactly as shown above, side by side, and run `main.py` to see the import work for real.
 
 ## Conclusion
 

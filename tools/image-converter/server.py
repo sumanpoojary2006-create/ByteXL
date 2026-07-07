@@ -25,6 +25,7 @@ app.add_middleware(
 BYTEXL_UPLOAD_URL = os.getenv("BYTEXL_UPLOAD_URL", "https://bytexl.app/api/upload/s3")
 BYTEXL_API_BASE = os.getenv("BYTEXL_API_BASE", "https://bytexl.app").rstrip("/")
 DEFAULT_READING_ID = os.getenv("BYTEXL_READING_ID", "44sqshkgw")
+ONECOMPILER_WEB_BASE = os.getenv("ONECOMPILER_WEB_BASE", "https://onecompiler.com").rstrip("/")
 SUPPORTED = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg"}
 SKIP_ZIP_PARTS = {"__macosx", ".git", ".onecompiler_build", "node_modules", "sem2-image"}
 
@@ -35,6 +36,73 @@ MIME = {
     ".gif": "image/gif",
     ".webp": "image/webp",
     ".svg": "image/svg+xml",
+}
+
+ONECOMPILER_EDITOR_LANGUAGES = {
+    "ada": "ada",
+    "assembly": "assembly",
+    "awk": "awk",
+    "bash": "bash",
+    "basic": "basic",
+    "c": "c",
+    "clojure": "clojure",
+    "cobol": "cobol",
+    "coffeescript": "coffeescript",
+    "commonlisp": "commonlisp",
+    "cpp": "cpp",
+    "crystal": "crystal",
+    "csharp": "csharp",
+    "d": "d",
+    "dart": "dart",
+    "deno": "deno",
+    "elixir": "elixir",
+    "erlang": "erlang",
+    "forth": "forth",
+    "fortran": "fortran",
+    "fsharp": "fsharp",
+    "go": "golang",
+    "groovy": "groovy",
+    "haskell": "haskell",
+    "haxe": "haxe",
+    "html": "html",
+    "java": "java",
+    "javascript": "nodejs",
+    "jshell": "jshell",
+    "julia": "julia",
+    "kotlin": "kotlin",
+    "lua": "lua",
+    "matplotlib": "matplotlib",
+    "mongodb": "mongodb",
+    "mysql": "mysql",
+    "nim": "nim",
+    "nodejs": "nodejs",
+    "objectivec": "objectivec",
+    "ocaml": "ocaml",
+    "octave": "octave",
+    "pascal": "pascal",
+    "perl": "perl",
+    "php": "php",
+    "postgresql": "postgresql",
+    "prolog": "prolog",
+    "pygame": "pygame",
+    "python": "python",
+    "python2": "python",
+    "r": "r",
+    "racket": "racket",
+    "ruby": "ruby",
+    "rust": "rust",
+    "scala": "scala",
+    "scheme": "scheme",
+    "seaborn": "seaborn",
+    "sh": "sh",
+    "sqlite": "sqlite",
+    "swift": "swift",
+    "tcl": "tcl",
+    "tkinter": "tkinter",
+    "typescript": "typescript",
+    "v": "v",
+    "vb": "vb",
+    "zig": "zig",
 }
 
 
@@ -79,6 +147,29 @@ def auth_headers() -> dict[str, str]:
     if not token:
         raise HTTPException(500, "ByteXL token is not configured on the server")
     return {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+
+
+def onecompiler_editor_language_for(language: str) -> str:
+    editor_language = ONECOMPILER_EDITOR_LANGUAGES.get(str(language or "").lower())
+    if not editor_language:
+        raise HTTPException(400, f"No OneCompiler editor is configured for language: {language}")
+    return editor_language
+
+
+def onecompiler_save(payload: dict[str, Any]) -> Any:
+    try:
+        resp = requests.post(
+            f"{ONECOMPILER_WEB_BASE}/api/editorx/save",
+            json=payload,
+            headers={"Content-Type": "application/json", "User-Agent": "ByteXL Content Converter"},
+            timeout=90,
+        )
+        resp.raise_for_status()
+        return resp.json()
+    except requests.RequestException as exc:
+        raise HTTPException(502, f"OneCompiler API request failed: {exc}") from exc
+    except ValueError as exc:
+        raise HTTPException(502, "OneCompiler returned an invalid response") from exc
 
 
 def bytexl_get(path: str) -> Any:
@@ -537,6 +628,64 @@ async def content_tree(reading_id: str = DEFAULT_READING_ID):
                 for section in content.get("contentSections", []) or []
             ],
         },
+    }
+
+
+@app.post("/onecompiler/workspace")
+async def create_onecompiler_workspace(payload: dict[str, Any] = Body(...)):
+    language = str(payload.get("language") or "").strip().lower()
+    title = str(payload.get("title") or "ByteXL code editor").strip()[:120]
+    filename = normalize_zip_path(str(payload.get("filename") or "main.py")).lstrip("/")
+    code = str(payload.get("code") or "")
+    source_file = normalize_zip_path(str(payload.get("sourceFile") or ""))
+    snippet_id = str(payload.get("snippetId") or "").strip()
+
+    if not language:
+        raise HTTPException(400, "Language is required")
+    if not filename or filename.endswith("/"):
+        raise HTTPException(400, "A valid filename is required")
+    if not code.strip():
+        raise HTTPException(400, "Code is required")
+
+    editor_language = onecompiler_editor_language_for(language)
+    tags = ["bytexl", "reading-material"]
+    if snippet_id:
+        tags.append(snippet_id[:40])
+    properties: dict[str, Any] = {
+        "language": editor_language,
+        "files": [{"name": filename, "content": code}],
+        "stdin": "",
+        "source": "bytexl-reading-material",
+    }
+    if source_file:
+        properties["sourceFile"] = source_file
+    if snippet_id:
+        properties["snippetId"] = snippet_id
+
+    save_payload: dict[str, Any] = {
+        "title": title,
+        "description": f"Generated from ByteXL reading material: {source_file}" if source_file else "Generated from ByteXL reading material",
+        "tags": tags,
+        "visibility": "public",
+        "properties": properties,
+    }
+
+    saved = onecompiler_save(save_payload)
+    code_id = saved.get("_id") or saved.get("codeId") or saved.get("id")
+    if not code_id:
+        raise HTTPException(502, "OneCompiler did not return a code id")
+
+    code_url = f"{ONECOMPILER_WEB_BASE}/{editor_language}/{code_id}"
+    embed_url = f"{ONECOMPILER_WEB_BASE}/embed/{editor_language}/{code_id}"
+
+    return {
+        "status": "success",
+        "codeId": code_id,
+        "workspaceId": code_id,
+        "language": editor_language,
+        "templateId": editor_language,
+        "url": code_url,
+        "embedUrl": embed_url,
     }
 
 

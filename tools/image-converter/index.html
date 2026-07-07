@@ -772,12 +772,11 @@
 
   const $ = id => document.getElementById(id);
   const apiBase = location.protocol === "file:" ? "http://127.0.0.1:8000" : "";
-  const publicBase = location.protocol === "file:" ? "http://127.0.0.1:8000" : location.origin;
   const uploadImageUrl = apiBase + "/upload-image";
+  const oneCompilerWorkspaceUrl = apiBase + "/onecompiler/workspace";
   const readingMaterialsUrl = apiBase + "/reading-materials";
   const previewProductUploadUrl = apiBase + "/preview-product-upload";
   const uploadToProductUrl = apiBase + "/upload-to-product";
-  const wrapperUrl = publicBase + "/embed.html";
 
   let zipBlob = null, sourceName = "", preparedZipBlob = null, preparedZipName = "";
   let preparedUploadPayload = null, lastPreviewPlan = null, readingsLoaded = false;
@@ -916,8 +915,8 @@
     const imgFiles = names.filter(n => supportedExts.has(extName(n)));
     if (!mdFiles.length) throw new Error("No markdown files found in the ZIP.");
 
-    const stats = { uploaded:0,failed:0,missing:0,editors:0,skipped:0,changed:0,markdownFiles:mdFiles.length,filesLoaded:names.length,longUrls:[],missingDetails:[] };
-    const changedFiles = [], skippedBlocks = [], languageCounts = {};
+    const stats = { uploaded:0,failed:0,missing:0,editors:0,skipped:0,changed:0,markdownFiles:mdFiles.length,filesLoaded:names.length,missingDetails:[] };
+    const changedFiles = [], skippedBlocks = [], onecompilerLinks = [], languageCounts = {};
     const urlMap = new Map();
 
     if (shouldConvertImages) {
@@ -939,13 +938,13 @@
       const original = await zip.files[mp].async("string");
       let md = original;
       if (shouldConvertCode) {
-        const r = convertMarkdownCode(md, mp, compilerSettings);
+        const r = await convertMarkdownCode(md, mp, compilerSettings);
         md = r.markdown;
         if (r.convertedBlocks > 0) { changedFiles.push({path:mp,editors:r.convertedBlocks}); stats.changed++; }
         stats.editors += r.convertedBlocks; stats.skipped += r.skippedBlocks.length;
         for (const it of r.skippedBlocks) skippedBlocks.push(it);
+        for (const it of r.onecompilerLinks) onecompilerLinks.push(it);
         for (const [lang,cnt] of Object.entries(r.languageCounts)) languageCounts[lang] = (languageCounts[lang]||0)+cnt;
-        for (const it of r.longUrls) stats.longUrls.push(it);
       }
       if (shouldConvertImages) md = rewriteMarkdownImages(md, mp, urlMap, filenameMap, stats);
       zip.file(mp, md);
@@ -953,9 +952,9 @@
     }
 
     if (shouldConvertCode) {
-      const summary = {filesLoaded:stats.filesLoaded,markdownFiles:stats.markdownFiles,filesChanged:stats.changed,editorsGenerated:stats.editors,skippedBlocks:stats.skipped,wrapperUrl:compilerSettings.wrapperUrl,languages:languageCounts,longUrls:stats.longUrls};
+      const summary = {filesLoaded:stats.filesLoaded,markdownFiles:stats.markdownFiles,filesChanged:stats.changed,editorsGenerated:stats.editors,skippedBlocks:stats.skipped,linkStrategy:compilerSettings.linkStrategy,languages:languageCounts};
       zip.file("onecompiler-report.md", buildOneCompilerReport(summary, changedFiles, skippedBlocks));
-      zip.file("onecompiler-manifest.json", JSON.stringify({summary,changedFiles,skippedBlocks},null,2));
+      zip.file("onecompiler-manifest.json", JSON.stringify({summary,changedFiles,skippedBlocks,onecompilerLinks},null,2));
     }
 
     setProgress("Building ZIP…");
@@ -1271,9 +1270,9 @@
     });
   }
 
-  function convertMarkdownCode(markdown, filePath, settings) {
+  async function convertMarkdownCode(markdown, filePath, settings) {
     const blocks = iterFencedBlocks(markdown);
-    const replacements = [], skippedBlocks = [], longUrls = [], languageCounts = {};
+    const replacements = [], skippedBlocks = [], onecompilerLinks = [], languageCounts = {};
     let convertedBlocks = 0, fileBlockIndex = 0;
     for (const block of blocks) {
       const rawLang = normalizeLanguage(block.info);
@@ -1281,15 +1280,33 @@
       if (!decision.convert) { skippedBlocks.push({file:filePath,lines:`${block.startLine}-${block.endLine}`,language:decision.language||"(none)",reason:decision.reason}); continue; }
       fileBlockIndex++;convertedBlocks++;
       const lang = decision.language;
-      const snippet = {title:`${baseNameWithoutExtension(filePath)} code ${fileBlockIndex}`,language:lang,filename:filenameFor(lang,fileBlockIndex),code:block.code.replace(/\n+$/,"")};
-      const src = encodedWrapperSrc(snippet, settings.wrapperUrl);
-      if (src.length>8000) longUrls.push({file:filePath,lines:`${block.startLine}-${block.endLine}`,length:src.length});
-      replacements.push([block.start,block.end,iframeHtml(src,settings.height)]);
+      const snippet = {
+        snippetId: snippetIdFor(filePath,fileBlockIndex),
+        title:`${baseNameWithoutExtension(filePath)} code ${fileBlockIndex}`,
+        language:lang,
+        filename:filenameFor(lang,fileBlockIndex),
+        code:block.code.replace(/\n+$/,""),
+        sourceFile:filePath
+      };
+      setProgress(`Creating OneCompiler editor ${fileBlockIndex} in ${baseName(filePath)}...`);
+      const workspace = await createOneCompilerWorkspace(snippet);
+      replacements.push([block.start,block.end,iframeHtml(workspace.embedUrl,settings.height)]);
+      onecompilerLinks.push({
+        file:filePath,
+        lines:`${block.startLine}-${block.endLine}`,
+        snippetId:snippet.snippetId,
+        language:lang,
+        codeId:workspace.codeId,
+        workspaceId:workspace.workspaceId,
+        templateId:workspace.templateId,
+        url:workspace.url,
+        embedUrl:workspace.embedUrl
+      });
       languageCounts[lang]=(languageCounts[lang]||0)+1;
     }
     let converted = markdown;
     for (const [start,end,rep] of replacements.reverse()) converted = converted.slice(0,start)+rep+converted.slice(end);
-    return {markdown:converted,convertedBlocks,skippedBlocks,languageCounts,longUrls};
+    return {markdown:converted,convertedBlocks,skippedBlocks,languageCounts,onecompilerLinks};
   }
 
   function iterFencedBlocks(markdown) {
@@ -1322,11 +1339,21 @@
     return {convert:true,language:lang,reason:"converted"};
   }
 
-  function readCompilerSettings() { return {wrapperUrl,height:"350px",includeLanguages:null,convertUnlabeled:false}; }
+  function readCompilerSettings() { return {linkStrategy:"onecompiler-editor",height:"350px",includeLanguages:null,convertUnlabeled:false}; }
   function normalizeLanguage(info) { const t=(info||"").trim().split(/\s+/,1)[0]; if(!t)return null; const c=t.replace(/^[{.]+|[}.]+$/g,"").toLowerCase().replace(/^language-/,""); return LANGUAGE_ALIASES[c]||c; }
-  function encodedWrapperSrc(snippet,url) { return `${url.split("#",1)[0]}#${base64UrlEncode(JSON.stringify(snippet))}`; }
-  function base64UrlEncode(v) { const b=new TextEncoder().encode(v); let s=""; const cs=0x8000; for(let i=0;i<b.length;i+=cs) s+=String.fromCharCode(...b.subarray(i,i+cs)); return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); }
-  function iframeHtml(src,h) { return `<iframe\n frameBorder="0"\n height="${escapeAttr(h)}"\n src="${escapeAttr(src)}"\n width="100%"\n></iframe>\n`; }
+  function iframeHtml(src,h) { return `<iframe\n frameBorder="0"\n height="${escapeAttr(h)}"  \n src="${escapeAttr(src)}" \n width="100%"\n></iframe>\n`; }
+  async function createOneCompilerWorkspace(snippet) {
+    const r = await fetch(oneCompilerWorkspaceUrl,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(snippet)
+    });
+    const payload = await r.json().catch(()=>({}));
+    if (!r.ok) throw new Error(payload.detail||`Could not create OneCompiler editor for ${snippet.title}.`);
+    if (!payload.embedUrl) throw new Error(`OneCompiler did not return an embed URL for ${snippet.title}.`);
+    return payload;
+  }
+  function snippetIdFor(path,index){return `${slugify(path.replace(/\.[^.]+$/,""))}-${String(index).padStart(3,"0")}`;}
   function filenameFor(lang,i) { if(lang==="java")return "Main.java"; return `main_${String(i).padStart(3,"0")}.${FILE_EXTENSIONS[lang]||lang}`; }
   function makeFilenameMap(urlMap) { const m=new Map(); for(const[p,url]of urlMap.entries()){const fn=baseName(p);m.set(fn,m.has(fn)?null:url);} return m; }
   function splitMarkdownTarget(target) { const t=target.trim(); if(t.startsWith("<")&&t.includes(">")){const e=t.indexOf(">");return{localPath:t.slice(1,e),title:t.slice(e+1).trim()};} const m=t.match(/^(.*?)(\s+(?:"[^"]*"|'[^']*'|\([^)]*\)))$/); return m?{localPath:m[1].trim(),title:m[2].trim()}:{localPath:t,title:""}; }
@@ -1354,10 +1381,9 @@
   function setProgress(msg){$("progressLabel").textContent=msg;}
 
   function buildOneCompilerReport(summary,changedFiles,skippedBlocks){
-    const lines=["# OneCompiler Browser Conversion Report","","## Summary","",`- Wrapper URL: ${summary.wrapperUrl}`,`- Files loaded: ${summary.filesLoaded}`,`- Markdown files: ${summary.markdownFiles}`,`- Markdown files changed: ${summary.filesChanged}`,`- Code editors generated: ${summary.editorsGenerated}`,`- Blocks skipped: ${summary.skippedBlocks}`,"","## Languages Converted",""];
+    const lines=["# OneCompiler Browser Conversion Report","","## Summary","",`- Link strategy: ${summary.linkStrategy}`,`- Files loaded: ${summary.filesLoaded}`,`- Markdown files: ${summary.markdownFiles}`,`- Markdown files changed: ${summary.filesChanged}`,`- Code editors generated: ${summary.editorsGenerated}`,`- Blocks skipped: ${summary.skippedBlocks}`,"","## Languages Converted",""];
     const le=Object.entries(summary.languages).sort((a,b)=>a[0].localeCompare(b[0]));
     if(le.length)for(const[l,c]of le)lines.push(`- ${l}: ${c}`);else lines.push("- None");
-    if(summary.longUrls.length){lines.push("","## URL Length Warnings","");for(const it of summary.longUrls.slice(0,100))lines.push(`- ${it.file}, lines ${it.lines}: ${it.length} characters`);}
     lines.push("","## Changed Files","");
     if(changedFiles.length){lines.push("| File | Editors |","|----|---:|");for(const it of changedFiles.slice(0,500))lines.push(`| \`${it.path}\` | ${it.editors} |`);if(changedFiles.length>500)lines.push(`| ... | ${changedFiles.length-500} more |`);}else lines.push("No files changed.");
     lines.push("","## Skipped Blocks","");

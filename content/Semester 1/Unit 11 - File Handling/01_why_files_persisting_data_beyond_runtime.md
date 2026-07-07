@@ -36,12 +36,13 @@ After this script finishes and the program closes completely, a real file named 
 
 ## Reading It Back, Even After Restarting
 
-```python
-# Recreating the file the earlier run saved, so this block runs standalone
-file = open("attendees.txt", "w")
-file.write("A101\nA102\nA103\n")
-file.close()
+```text file=attendees.txt
+A101
+A102
+A103
+```
 
+```python with=attendees.txt
 file = open("attendees.txt", "r")
 saved_ids = file.read()
 file.close()

@@ -43,12 +43,15 @@ The `newline=""` argument prevents the `csv` module from writing extra blank lin
 
 `csv.reader` reads a file back, handing you each row as a list of strings.
 
-```python
-import csv
+```csv file=sales.csv
+item,quantity,price
+T-shirt,2,350
+Mug,1,150
+Badge,5,50
+```
 
-# Create the CSV file first so this block runs standalone
-with open("sales.csv", "w", newline="") as file:
-    file.write("item,quantity,price\nT-shirt,2,350\nMug,1,150\nBadge,5,50\n")
+```python with=sales.csv
+import csv
 
 with open("sales.csv", "r") as file:
     reader = csv.reader(file)
@@ -71,11 +74,8 @@ Notice every value comes back as a string, even `quantity` and `price`, which lo
 
 `csv.DictReader` reads each row directly into a dictionary, using the header row as the keys automatically, which is often far more readable than tracking column positions by number.
 
-```python
+```python with=sales.csv
 import csv
-
-with open("sales.csv", "w", newline="") as file:
-    file.write("item,quantity,price\nT-shirt,2,350\nMug,1,150\nBadge,5,50\n")
 
 with open("sales.csv", "r") as file:
     reader = csv.DictReader(file)
@@ -130,11 +130,8 @@ with open("sales.csv", "r") as file:
 
 ## Your Turn: Total the Sales From a CSV
 
-```python
+```python with=sales.csv
 import csv
-
-with open("sales.csv", "w", newline="") as file:
-    file.write("item,quantity,price\nT-shirt,2,350\nMug,1,150\nBadge,5,50\n")
 
 with open("sales.csv", "r") as file:
     reader = csv.DictReader(file)

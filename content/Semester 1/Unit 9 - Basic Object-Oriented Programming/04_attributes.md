@@ -58,10 +58,11 @@ class Student:
     pass
 
 meera = Student()
-try:
-    print(meera.name)    # raises AttributeError
-except AttributeError as e:
-    print(f"AttributeError: {e}")
+print(meera.name)    # raises AttributeError
+```
+
+```
+AttributeError: 'Student' object has no attribute 'name'
 ```
 
 This raises an `AttributeError`, because `meera` was never given a `name` attribute at all; unlike a dictionary's `.get()`, there is no safe fallback here by default. This fragility, that an object's shape depends entirely on remembering to set every attribute by hand, is exactly the gap the next-but-one lesson's constructor closes.

@@ -54,36 +54,18 @@ Knowing which situation you are in tells you which loop to reach for, a choice y
 ## Your Turn: Spot the Right Tool
 
 ```python
-import random
-random.seed(42)
+situations = [
+    "A: send a birthday message to each of 25 classmates -> known count",
+    "B: keep rolling a dice until it lands on 6           -> unknown count",
+    "C: print every number from 1 to 50                   -> known count",
+    "D: keep asking for a password until it is correct    -> unknown count",
+]
 
-# Situation A: for loop -- known count (25 classmates, demo with 3)
-for i in range(1, 4):
-    print(f"Happy Birthday, classmate {i}!")
-print("... (continues for all 25 -- just change range(1, 26))")
-
-# Situation B: while loop -- repeat until dice lands on 6
-rolls = 0
-while True:
-    roll = random.randint(1, 6)
-    rolls += 1
-    if roll == 6:
-        print(f"\nSituation B: rolled 6 after {rolls} roll(s)")
-        break
-
-# Situation C: for loop -- print 1 to 50 (show sum as proof)
-print(f"\nSituation C: sum of 1..50 = {sum(range(1, 51))}")
-
-# Situation D: while loop -- validated input (simulated)
-options = ["A", "B", "C"]
-for attempt in ["X", "Y", "B"]:    # simulate 3 user attempts
-    if attempt in options:
-        print(f"\nSituation D: valid option chosen: {attempt!r}")
-        break
-    print(f"Situation D: {attempt!r} is invalid -- try again")
+for situation in situations:
+    print(situation)
 ```
 
-For each situation, decide out loud whether it is a `for` loop or a `while` loop, using the table above as your guide, before any of these are actually written in code over the next few lessons. (A) and (C) know their count in advance, so both are `for` loops; (B) and (D) repeat until something changes with no fixed count, so both are `while` loops.
+Run this to see the four situations laid out, then decide out loud, for each one, whether it calls for a `for` loop or a `while` loop, using the table above as your guide. The actual loop code for these comes over the next few lessons; for now the skill is only the classification. Situations (A) and (C) know their count in advance, so both are `for` loops; (B) and (D) repeat until something changes with no fixed count, so both are `while` loops.
 
 ## Conclusion
 

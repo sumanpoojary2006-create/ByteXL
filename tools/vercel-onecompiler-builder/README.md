@@ -52,4 +52,13 @@ The sidebar links to the separate coding-question uploader at `https://vercel-co
 
 ## Important
 
-If the Vercel domain changes, regenerate the Markdown so the iframes point to the new `/embed.html` URL.
+The generated `/embed.html#...` links are temporary wrapper links. They render a
+OneCompiler editor, but they are not saved OneCompiler projects. Final published
+reading material should use saved OneCompiler URLs such as:
+
+```text
+https://onecompiler.com/embed/python/PROJECT_ID
+```
+
+See `../../docs/ONECOMPILER_LINK_STRATEGY.md` for the migration path and audit
+command.

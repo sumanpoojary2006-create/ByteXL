@@ -26,14 +26,16 @@ Here is the single most common surprise for beginners. The `input()` function al
 
 ```python
 age = input("Your age: ")
-try:
-    print(age + 1)
-except TypeError as e:
-    print(f"TypeError: {e}")
-    print("input() returned text, and Python will not add the number 1 to text.")
+print(age + 1)
 ```
 
-If you typed 20, you might expect 21. Instead Python stops with an error, because it refuses to add the number 1 to the text "20". The value looks like a number to your eyes, but to Python it is text, no different from the word "hello" as far as the type system is concerned. This is exactly why so many first programs crash on what looks like a perfectly reasonable line of code, and it is almost always the very first error a beginner meets when they start reading user input. Now you know the reason, and more importantly, you know it is not a flaw in your logic. It is a missing conversion.
+If you typed 20, Python does not print 21. It stops with an error instead:
+
+```
+TypeError: can only concatenate str (not "int") to str
+```
+
+You might have expected 21. Instead Python stops, because it refuses to add the number 1 to the text "20". The value looks like a number to your eyes, but to Python it is text, no different from the word "hello" as far as the type system is concerned. This is exactly why so many first programs crash on what looks like a perfectly reasonable line of code, and it is almost always the very first error a beginner meets when they start reading user input. Now you know the reason, and more importantly, you know it is not a flaw in your logic. It is a missing conversion.
 
 ## Converting Between Types
 
@@ -71,11 +73,11 @@ One detail to remember: converting a float to an int does not round, it simply c
 Conversion only works when the value genuinely fits the target type. Asking Python to read "hello" as a number is impossible, and it will say so:
 
 ```python
-try:
-    int("hello")
-except ValueError as e:
-    print(f"ValueError: {e}")
-    print("Python refuses to guess a number from the word 'hello'.")
+int("hello")
+```
+
+```
+ValueError: invalid literal for int() with base 10: 'hello'
 ```
 
 That is reasonable behaviour, not a flaw. Python would rather stop loudly and immediately than guess at a number that was never really there, and a silent wrong guess would be far more dangerous than an honest error message. Later, in the exception-handling unit, you will learn to catch these situations gracefully so a single bad entry does not crash your whole program.

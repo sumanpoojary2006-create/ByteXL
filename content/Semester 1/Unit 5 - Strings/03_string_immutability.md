@@ -10,12 +10,11 @@ It feels natural to think you could fix a typo by replacing a single character d
 
 ```python
 word = "Python"
-try:
-    word[0] = "J"     # error!
-    print(word)
-except TypeError as e:
-    print(f"TypeError: {e}")
-    print("Strings are immutable -- you cannot change a character in place.")
+word[0] = "J"     # error!
+```
+
+```
+TypeError: 'str' object does not support item assignment
 ```
 
 Python refuses with a `TypeError`, saying that strings do not support item assignment. The string "Python" is fixed; there is no way to poke a new letter into position 0. So if strings cannot be changed, how do we ever transform text? The answer reframes the whole idea.

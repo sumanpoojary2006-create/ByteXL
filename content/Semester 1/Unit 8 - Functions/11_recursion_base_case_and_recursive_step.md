@@ -53,7 +53,25 @@ The base case here is an empty list, whose sum is obviously 0. The recursive ste
 
 ## Why Not Just Use a Loop?
 
-Every recursive function in this lesson could be rewritten with a loop, and often the loop version is the more efficient choice in real Python code. Recursion earns its place when a problem is naturally defined in terms of smaller copies of itself, especially problems involving nested structures, like folders inside folders or the family tree of a function calling other functions, which you will meet properly in later courses. For now, the goal is simply to recognise the shape and trust it, not to abandon loops altogether.
+Every recursive function in this lesson could be rewritten with a loop, and often the loop version is the more efficient choice in real Python code. Placed side by side on the same job, factorial, the difference is really just which idea drives the repetition: a running total updated step by step, or a function narrowing the problem down through calls to itself.
+
+```python
+def factorial_iterative(n):
+    result = 1
+    for i in range(2, n + 1):
+        result *= i
+    return result
+
+def factorial_recursive(n):
+    if n == 1:                          # base case
+        return 1
+    return n * factorial_recursive(n - 1)  # recursive step
+
+print("Iterative:", factorial_iterative(5))    # 120
+print("Recursive:", factorial_recursive(5))    # 120
+```
+
+Both reach the exact same answer, 120, for the exact same input. The iterative version keeps one variable, `result`, and updates it once per loop turn, using no extra memory beyond that single running total. The recursive version instead builds a chain of five waiting function calls, `factorial(5)` waiting on `factorial(4)`, waiting on `factorial(3)`, and so on, each one paused until the call below it returns, which is real memory the loop version never spends. Recursion earns its place when a problem is naturally defined in terms of smaller copies of itself, especially problems involving nested structures, like folders inside folders or the family tree of a function calling other functions, which you will meet properly in later courses. For now, the goal is simply to recognise the shape and trust it, not to abandon loops altogether.
 
 ## What Happens Without a Base Case
 
@@ -63,11 +81,11 @@ Forgetting the base case is the recursive equivalent of an infinite loop, and Py
 def broken_factorial(n):
     return n * broken_factorial(n - 1)    # no base case!
 
-try:
-    broken_factorial(5)    # error eventually!
-except RecursionError as e:
-    print(f"RecursionError: {e}")
-    print("With no base case, the function called itself until Python's limit stopped it.")
+broken_factorial(5)    # RecursionError, eventually, once Python's call-depth limit is hit
+```
+
+```text
+RecursionError: maximum recursion depth exceeded
 ```
 
 This raises a `RecursionError` once Python's limit on how deep calls can nest is reached, which is Python's safety net catching a recursive function that can never stop calling itself.

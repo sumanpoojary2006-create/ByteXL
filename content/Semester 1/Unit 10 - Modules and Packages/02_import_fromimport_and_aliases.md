@@ -54,13 +54,17 @@ This is purely a local convenience inside your own script; it does not change an
 
 ## Why Real Code Often Prefers the Plain Form
 
-```python
-# Create the two modules first so this runs; each defines its own format().
-with open("billing.py", "w") as f:
-    f.write("def format(amount):\n    return f'Rs {amount}.00'\n")
-with open("receipts.py", "w") as f:
-    f.write("def format(item):\n    return f'Receipt for: {item}'\n")
+```python file=billing.py
+def format(amount):
+    return f'Rs {amount}.00'
+```
 
+```python file=receipts.py
+def format(item):
+    return f'Receipt for: {item}'
+```
+
+```python with=billing.py,receipts.py
 import billing
 import receipts
 

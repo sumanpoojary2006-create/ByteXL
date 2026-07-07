@@ -10,15 +10,22 @@ This is exactly what pattern matching against filenames is for, using wildcard c
 
 The asterisk, `*`, in a glob pattern matches any sequence of characters, standing in for "anything at all" in that part of the filename.
 
-```python
+```text file=reports/day1_sales.txt
+Total: 4500
+```
+
+```text file=reports/day2_sales.txt
+Total: 5200
+```
+
+```text file=reports/day3_sales.txt
+Total: 3900
+```
+
+```python with=reports/day1_sales.txt,reports/day2_sales.txt,reports/day3_sales.txt
 from pathlib import Path
 
 reports_folder = Path("reports")
-reports_folder.mkdir(exist_ok=True)
-(reports_folder / "day1_sales.txt").write_text("Total: 4500\n")
-(reports_folder / "day2_sales.txt").write_text("Total: 5200\n")
-(reports_folder / "day3_sales.txt").write_text("Total: 3900\n")
-
 sales_files = list(reports_folder.glob("day*_sales.txt"))
 print(sales_files)    # the three day*_sales.txt files, in some order
 ```
@@ -29,14 +36,22 @@ print(sales_files)    # the three day*_sales.txt files, in some order
 
 A very common pattern matches every file with a particular extension, regardless of its name.
 
-```python
-from pathlib import Path
+```csv file=reports/day1_sales.csv
+item,total
+T-shirt,4500
+```
 
-reports_folder = Path("reports")
-reports_folder.mkdir(exist_ok=True)
-(reports_folder / "day1_sales.csv").write_text("item,total\nT-shirt,4500\n")
-(reports_folder / "day2_sales.csv").write_text("item,total\nMug,3200\n")
-(reports_folder / "notes.txt").write_text("Not a CSV\n")
+```csv file=reports/day2_sales.csv
+item,total
+Mug,3200
+```
+
+```text file=reports/notes.txt
+Not a CSV
+```
+
+```python with=reports/day1_sales.csv,reports/day2_sales.csv,reports/notes.txt
+from pathlib import Path
 
 all_csv_files = list(Path("reports").glob("*.csv"))
 print(all_csv_files)    # only the two .csv files, not notes.txt
@@ -48,15 +63,8 @@ print(all_csv_files)    # only the two .csv files, not notes.txt
 
 The standalone `glob` module offers the same matching as a plain function, returning filenames as strings rather than `Path` objects, useful when you are not otherwise using `pathlib`.
 
-```python
+```python with=reports/day1_sales.txt,reports/day2_sales.txt,reports/day3_sales.txt
 import glob
-from pathlib import Path
-
-reports_folder = Path("reports")
-reports_folder.mkdir(exist_ok=True)
-(reports_folder / "day1_sales.txt").write_text("Total: 4500\n")
-(reports_folder / "day2_sales.txt").write_text("Total: 5200\n")
-(reports_folder / "day3_sales.txt").write_text("Total: 3900\n")
 
 sales_files = sorted(glob.glob("reports/day*_sales.txt"))
 print(sales_files)    # ['reports/day1_sales.txt', 'reports/day2_sales.txt', 'reports/day3_sales.txt']
@@ -68,15 +76,20 @@ Both forms answer the same question; `Path.glob()` fits naturally once you are a
 
 A double asterisk, `**`, matches across any number of nested subfolders, not just the files directly inside one folder.
 
-```python
-from pathlib import Path
+```text file=data/notes.txt
+Top-level note
+```
 
-# Create a small tree to search through
-Path("data").mkdir(exist_ok=True)
-Path("data/logs").mkdir(exist_ok=True)
-Path("data/notes.txt").write_text("Top-level note\n")
-Path("data/logs/day1.txt").write_text("Log entry 1\n")
-Path("data/logs/day2.txt").write_text("Log entry 2\n")
+```text file=data/logs/day1.txt
+Log entry 1
+```
+
+```text file=data/logs/day2.txt
+Log entry 2
+```
+
+```python with=data/notes.txt,data/logs/day1.txt,data/logs/day2.txt
+from pathlib import Path
 
 all_txt_anywhere = sorted(Path("data").glob("**/*.txt"))
 print(all_txt_anywhere)    # notes.txt and both log files, across all levels
@@ -101,15 +114,10 @@ Hard-coding a list of exact filenames works exactly until the data changes shape
 
 ## Your Turn: Gather Every Sales Report
 
-```python
+```python with=reports/day1_sales.txt,reports/day2_sales.txt,reports/notes.txt
 from pathlib import Path
 
 reports_folder = Path("reports")
-reports_folder.mkdir(exist_ok=True)
-(reports_folder / "day1_sales.txt").write_text("Total: 4500\n")
-(reports_folder / "day2_sales.txt").write_text("Total: 5200\n")
-(reports_folder / "notes.txt").write_text("Remember to thank the volunteers\n")
-
 sales_files = sorted(reports_folder.glob("day*_sales.txt"))
 for file in sales_files:
     print(file.name, "->", file.read_text().strip())

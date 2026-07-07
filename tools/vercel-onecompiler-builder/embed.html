@@ -78,13 +78,17 @@
 
       function populateCode() {
         if (!editor.contentWindow) return;
+        const files = [{
+          name: snippet.filename || "main.py",
+          content: snippet.code || ""
+        }];
+        for (const extra of snippet.extraFiles || []) {
+          files.push({ name: extra.name, content: extra.content || "" });
+        }
         editor.contentWindow.postMessage({
           eventType: "populateCode",
           language,
-          files: [{
-            name: snippet.filename || "main.py",
-            content: snippet.code || ""
-          }]
+          files
         }, "https://onecompiler.com");
       }
 

@@ -51,11 +51,11 @@ class Student:
         self.roll_number = roll_number
         self.marks = marks
 
-try:
-    ravi = Student("Ravi", 102)    # error! marks is missing
-except TypeError as e:
-    print(f"TypeError: {e}")
-    print("Python refused to build the object because a required argument was missing.")
+ravi = Student("Ravi", 102)    # error! marks is missing
+```
+
+```
+TypeError: Student.__init__() missing 1 required positional argument: 'marks'
 ```
 
 This raises a `TypeError` complaining that `__init__` is missing the required `marks` argument, caught immediately at creation time rather than silently producing a broken object that fails later, possibly far away from where the mistake actually happened.

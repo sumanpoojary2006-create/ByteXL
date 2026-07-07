@@ -12,14 +12,17 @@ A parameter written with a single star gathers every extra positional argument i
 
 ```python
 def total_contributions(*amounts):
-    return sum(amounts)
+    total = 0
+    for amount in amounts:
+        total += amount
+    return total
 
 print(total_contributions(300, 300, 300, 300))         # 1200
 print(total_contributions(500, 400, 600))                # 1500
 print(total_contributions(1000))                          # 1000
 ```
 
-The name `amounts` is ordinary; the single star in front of it is what tells Python "collect everything here, however many there are." Inside the function, `amounts` behaves exactly like the tuples you already know from the lists and tuples unit, so `sum(amounts)` works immediately, and so would looping over it with a `for`.
+The name `amounts` is ordinary; the single star in front of it is what tells Python "collect everything here, however many there are." Inside the function, `amounts` behaves exactly like the tuples you already know from the lists and tuples unit, so a plain `for` loop over it, adding each value to a running `total`, works immediately, no matter how many amounts a particular call happened to send in.
 
 ## You Can Still Mix in Ordinary Parameters
 
@@ -92,8 +95,11 @@ Every plain positional argument after `event` falls into `attendees`, and every 
 
 ```python
 def trip_summary(destination, *contributions, **extra_info):
+    collected = 0
+    for amount in contributions:
+        collected += amount
     print(f"Destination: {destination}")
-    print(f"Total collected: {sum(contributions)}")
+    print(f"Total collected: {collected}")
     for key, value in extra_info.items():
         print(f"{key}: {value}")
 

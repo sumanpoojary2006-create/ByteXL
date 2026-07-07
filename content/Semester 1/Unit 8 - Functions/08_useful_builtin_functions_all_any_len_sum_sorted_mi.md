@@ -8,33 +8,38 @@ This lesson is a tour of the built-ins worth knowing cold: `all`, `any`, `len`, 
 
 ## all(): Is Everything True?
 
-`all` takes a sequence and returns `True` only if every single item in it is truthy.
+`all` takes a sequence and returns `True` only if every single item in it is truthy. The sequence rarely arrives as ready-made booleans; more often, you derive them from real records on the spot.
 
 ```python
-paid = [True, True, True, False]
-print(all(paid))    # False, because one member has not paid
+members = [("Asha", 300, 300), ("Ravi", 150, 150), ("Meera", 450, 200), ("Naveen", 200, 200)]
+# each tuple is (name, amount_due, amount_paid)
+
+fully_cleared = all(paid >= due for name, due, paid in members)
+print("Has everyone cleared their dues in full?", fully_cleared)    # False, Meera is short
 ```
 
-This replaces the exact loop Naveen used to write by hand: set a flag to `True`, loop through everyone, and flip the flag to `False` the moment one person has not paid. `all()` does that in a single call.
+This replaces the exact loop Naveen used to write by hand: set a flag to `True`, loop through every member's record, compare what they paid against what they owed, and flip the flag to `False` the moment one person falls short. `all()`, fed a generator expression built straight from the records, does that comparison and the looping in a single call.
 
 ## any(): Is At Least One True?
 
 `any` takes a sequence and returns `True` if at least one item in it is truthy.
 
 ```python
-overdue = [False, False, True, False]
-print(any(overdue))    # True, at least one member is overdue
+members = [("Asha", 300, 300), ("Ravi", 150, 150), ("Meera", 450, 200), ("Naveen", 200, 200)]
+
+someone_short = any(paid < due for name, due, paid in members)
+print("Is anyone still short on their dues?", someone_short)    # True, Meera is short
 ```
 
-`all` asks "does everyone qualify?" while `any` asks "does anyone qualify at all?" Keeping the two straight is mostly about remembering which word matches which question in plain English: "all of them" versus "any of them."
+`all` asks "does everyone qualify?" while `any` asks "does anyone qualify at all?" Keeping the two straight is mostly about remembering which word matches which question in plain English: "all of them" versus "any of them." Both read the exact same list of records; only the question, and the comparison inside it, changes.
 
 ## len(): How Many Items?
 
 You have used `len()` since the strings unit, and it works identically on lists, tuples, sets, and dictionaries, always counting how many items the collection holds.
 
 ```python
-members = ["Asha", "Ravi", "Meera", "Naveen"]
-print(len(members))    # 4
+members = [("Asha", 300, 300), ("Ravi", 150, 150), ("Meera", 450, 200), ("Naveen", 200, 200)]
+print("Number of members with recorded dues:", len(members))    # 4
 ```
 
 ## sum(): Add Everything Up

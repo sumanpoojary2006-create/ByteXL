@@ -32,11 +32,11 @@ Try to change a tuple's contents and Python refuses immediately, just as it does
 
 ```python
 resort = (15.2993, 74.1240)
-try:
-    resort[0] = 16.0
-except TypeError as e:
-    print(f"TypeError: {e}")
-    print("Tuples are immutable -- you cannot change their contents.")
+resort[0] = 16.0    # TypeError: 'tuple' object does not support item assignment
+```
+
+```text
+TypeError: 'tuple' object does not support item assignment
 ```
 
 This raises a `TypeError`, because tuples do not support item assignment. There is no `append`, `insert`, `remove`, or `pop` on a tuple either, because every one of those methods exists to change a list in place, and a tuple makes no such promise. Once a tuple is built, it is built for good.

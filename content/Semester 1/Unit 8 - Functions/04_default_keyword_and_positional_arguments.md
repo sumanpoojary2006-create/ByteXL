@@ -25,15 +25,10 @@ The first call never mentions `service_charge` at all, so Python quietly uses 0.
 Python requires every parameter with a default value to come after every parameter without one, in the definition.
 
 ```python
-import ast
-
-# Wrong: optional parameter placed before a required one -- Python rejects this
-wrong = "def split_cost(total, service_charge=0, people): return (total + service_charge) / people"
-try:
-    ast.parse(wrong)
-except SyntaxError as e:
-    print(f"SyntaxError: {e}")
-    print("Required parameters must always come before optional (defaulted) ones.")
+# Wrong order -- Python rejects this before the script even runs:
+#   def split_cost(total, service_charge=0, people):
+#       return (total + service_charge) / people
+# SyntaxError: non-default argument follows default argument
 
 # Correct order: required first, optional last
 def split_cost(total, people, service_charge=0):
@@ -42,40 +37,57 @@ def split_cost(total, people, service_charge=0):
 print(f"split_cost(1200, 4, service_charge=100) -> {split_cost(1200, 4, service_charge=100)}")
 ```
 
-This raises a `SyntaxError`, because Python cannot tell, partway through reading the parentheses, which arguments a future call is allowed to skip. Required parameters always come first; optional, defaulted ones always come last.
+The commented-out definition above is left unrun on purpose, because it is a `SyntaxError`, the kind of error Python catches while reading your file, before a single line of it executes. Python cannot tell, partway through reading the parentheses, which arguments a future call is allowed to skip once an optional one appears before a required one. Required parameters always come first; optional, defaulted ones always come last.
 
 ## Positional Arguments: Order Decides the Match
 
 Every call you have written so far has used positional arguments, where Python matches each argument to a parameter purely by its position, left to right.
 
 ```python
-def describe_member(name, role):
-    print(f"{name} is the {role}")
+def compute_late_fee(member_name, days_overdue):
+    fee = days_overdue + 10    # flat Rs.10 surcharge on top of the overdue days
+    return f"{member_name} owes a late fee of {fee}"
 
-describe_member("Naveen", "treasurer")
+print(compute_late_fee("Naveen", 5))
 ```
 
-This works, but it depends entirely on getting the order right. Swap the arguments by mistake, and Python will not catch it, because both are valid strings; it will simply produce a wrong, confusing result.
+```text
+Naveen owes a late fee of 15
+```
+
+This works, but it depends entirely on getting the order right. Swap the arguments by mistake, and this time Python does not stay quiet about it, because the two values are different types, a string and an integer, and the function's very first line tries to add 10 to whichever value landed in `days_overdue`.
 
 ```python
-def describe_member(name, role):
-    print(f"{name} is the {role}")
+def compute_late_fee(member_name, days_overdue):
+    fee = days_overdue + 10
+    return f"{member_name} owes a late fee of {fee}"
 
-describe_member("treasurer", "Naveen")    # arguments swapped -- wrong output!
+print(compute_late_fee(5, "Naveen"))    # arguments swapped
 ```
+
+```text
+TypeError: can only concatenate str (not "int") to str
+```
+
+Swapping the arguments put the string `"Naveen"` where `days_overdue` was expected, and `"Naveen" + 10` is not a valid operation, so the function crashes the moment it tries. Not every argument mix-up is this loud; when both values happen to be the same type, as in the mess-splitting examples earlier, a swap produces a wrong answer that runs without complaint. Either way, the fix is the same: get the order right, or stop depending on order at all.
 
 ## Keyword Arguments: Naming Removes the Risk
 
 A keyword argument names the parameter it is filling, directly in the call, removing any dependence on order.
 
 ```python
-def describe_member(name, role):
-    print(f"{name} is the {role}")
+def compute_late_fee(member_name, days_overdue):
+    fee = days_overdue + 10
+    return f"{member_name} owes a late fee of {fee}"
 
-describe_member(role="treasurer", name="Naveen")    # keyword args -- order doesn't matter
+print(compute_late_fee(days_overdue=5, member_name="Naveen"))    # keyword args -- order doesn't matter
 ```
 
-Because each argument names its own parameter, the order no longer matters at all, and the call is arguably easier to read besides, since "role=treasurer" leaves nothing to guess.
+```text
+Naveen owes a late fee of 15
+```
+
+Because each argument names its own parameter, the order no longer matters at all, and the call is arguably easier to read besides, since `days_overdue=5` leaves nothing to guess, and there is no way left to accidentally hand a name where a day count belongs.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-8-functions/04_positional_keyword_matching.png)
 

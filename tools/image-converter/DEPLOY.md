@@ -15,6 +15,7 @@ BYTEXL_CONTENT_TOKEN=<separate ByteXL bearer token for content updates>
 BYTEXL_API_BASE=https://bytexl.app
 BYTEXL_READING_ID=44sqshkgw
 BYTEXL_UPLOAD_URL=https://bytexl.app/api/upload/s3
+ONECOMPILER_WEB_BASE=https://onecompiler.com
 PORT=8000
 ```
 
@@ -24,7 +25,7 @@ If `BYTEXL_CONTENT_TOKEN` is not set, the app uses `BYTEXL_UPLOAD_TOKEN` for bot
 
 Vercel can deploy this FastAPI app from `server.py`.
 
-Important: Vercel Functions have a request/response payload limit. The hosted page uses a team workflow: choose Images, Code, Upload, or a combination with the top checkboxes; upload one ZIP; then download the updated ZIP or preview and push the updated markdown into ByteXL. It avoids sending the whole ZIP through Vercel by sending images one at a time to `/upload-image`. Direct ByteXL upload sends only markdown text and paths to `/preview-product-upload` first, then `/upload-to-product` after the user confirms in the UI. OneCompiler editor conversion uses the public wrapper page at `/embed.html`. A single oversized image can still fail and should be compressed or handled by a non-Vercel backend.
+Important: Vercel Functions have a request/response payload limit. The hosted page uses a team workflow: choose Images, Code, Upload, or a combination with the top checkboxes; upload one ZIP; then download the updated ZIP or preview and push the updated markdown into ByteXL. It avoids sending the whole ZIP through Vercel by sending images one at a time to `/upload-image`. Direct ByteXL upload sends only markdown text and paths to `/preview-product-upload` first, then `/upload-to-product` after the user confirms in the UI. OneCompiler editor conversion saves code through `/onecompiler/workspace` and writes direct `https://onecompiler.com/embed/<language>/<codeId>` links into the markdown. A single oversized image can still fail and should be compressed or handled by a non-Vercel backend.
 
 Current production deployment:
 
@@ -43,7 +44,8 @@ https://image-converter-pi-rouge.vercel.app
    - `BYTEXL_UPLOAD_URL` = `https://bytexl.app/api/upload/s3`
 6. Deploy.
 7. Open `/convert` on the Vercel deployment URL.
-8. Keep `/embed.html` available on the same deployment; generated OneCompiler iframe links point there.
+8. Convert a small ZIP with Code Editors checked and confirm the output Markdown
+   contains `https://onecompiler.com/embed/python/` links for Python blocks.
 
 Vercel uses `server.py` as the FastAPI entrypoint. `run.py` is only for local development.
 

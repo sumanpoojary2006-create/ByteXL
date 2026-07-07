@@ -54,11 +54,11 @@ class Student:
         print("Hello!")
 
 asha = Student()
-try:
-    asha.greet()    # error!
-except TypeError as e:
-    print(f"TypeError: {e}")
-    print("Python passed asha as the first argument, but greet() had no self to receive it.")
+asha.greet()    # error!
+```
+
+```
+TypeError: Student.greet() takes 0 positional arguments but 1 was given
 ```
 
 This raises a `TypeError` complaining that `greet()` takes 0 positional arguments but 1 was given, because Python quietly passed `asha` itself as an argument, and `greet` had no parameter ready to receive it. Every method you write needs `self` as its first parameter, with no exceptions, even if that particular method never ends up using it.

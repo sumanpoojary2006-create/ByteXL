@@ -1,6 +1,8 @@
 ## Introduction
 
-Naveen has gotten used to the small wait every time he creates a fresh `venv` and installs a handful of packages into it: not painfully slow, but slow enough that he notices, especially when he is setting up a new laptop or starting a brand new project from scratch and has to repeat the whole ritual. A newer tool in the Python ecosystem, called **uv**, does exactly the same jobs as `venv` and `pip`, virtual environments and package installation, but built from the ground up to be dramatically faster, while staying compatible with the same project files you already understand.
+Naveen has gotten used to the small wait every time he creates a fresh `venv` and installs a handful of packages into it: not painfully slow, but slow enough that he notices, especially when he is setting up a new laptop or starting a brand new project from scratch and has to repeat the whole ritual.
+
+**uv** is a single, newer command-line tool for Python that replaces `venv`, `pip`, and even the job of installing Python itself, all in one program, built by a company called Astral and written in Rust for speed. It is not a different idea from the tools in the last two lessons; it is the same three jobs, creating an isolated environment, installing packages, and managing a project's dependencies, done by one faster tool instead of several separate ones.
 
 This lesson covers `uv` as a modern, faster alternative to the tools from the last two lessons, not a different idea, the same idea, executed quicker.
 
@@ -47,15 +49,67 @@ uv run my_script.py
 
 This runs `my_script.py` using the project's isolated environment, automatically, in one command.
 
-## Managing Project Dependencies With uv
+## Managing Python Versions With uv
 
-Beyond replacing individual `venv` and `pip` commands, `uv` can manage a project's entire list of dependencies for you, adding a new package and recording it in one step.
+So far, `uv` has been standing in for `venv` and `pip`, both of which assume Python itself is already installed. `uv` goes one step further and can install and manage Python versions too, so a machine with no Python at all, or the wrong version of it, is no longer a blocker.
+
+```console
+uv python install 3.12    # download and install a specific Python version
+uv python list            # see every Python version uv knows about, installed or not
+uv python find            # report which installed Python version uv would currently use
+uv python pin 3.12        # lock this project to Python 3.12 specifically
+uv python uninstall 3.10  # remove a Python version uv installed
+```
+
+`uv python pin` writes the chosen version into a small project file so that everyone working on the project, and `uv` itself, agrees on exactly which Python version this project runs against, the same way `requirements.txt` pins package versions rather than leaving them to chance.
+
+A pinned or explicitly requested version also works per script run, without needing to repin the whole project first.
+
+```console
+uv run --python 3.12 my_script.py
+```
+
+This runs `my_script.py` under Python 3.12 specifically for that one command, useful for quickly checking whether code behaves the same on a version other than the one currently pinned.
+
+## Managing Projects With uv
+
+Beyond individual environment and Python-version commands, `uv` can manage an entire project, its dependencies, and their exact versions, starting from nothing.
+
+```console
+uv init hostel_tracker
+```
+
+`uv init` creates a new project folder, `hostel_tracker`, already containing a small starter `main.py` and a `pyproject.toml`, the standard Python file that records a project's name, its dependencies, and its metadata in one place.
 
 ```console
 uv add requests
 ```
 
-This both installs `requests` and records it as a dependency of your project, keeping that record automatically up to date as you add more packages, a job that previously needed a separate, manual step, covered properly in the next, final lesson of this unit.
+Run from inside the project, `uv add` installs `requests` into the project's environment and records it as a dependency directly inside `pyproject.toml`, keeping that record automatically up to date every time you add another package.
+
+```console
+uv remove requests
+```
+
+`uv remove` does the reverse: it uninstalls the package from the environment and deletes its entry from `pyproject.toml`, so the recorded dependency list never drifts from what is actually installed.
+
+```console
+uv lock
+```
+
+`uv lock` writes a separate file, `uv.lock`, pinning the exact resolved version of every dependency, and every dependency of those dependencies, down to the last detail. Where `pyproject.toml` says "this project needs `requests`," `uv.lock` says "and that resolved to exactly `requests==2.31.0`, with these exact supporting packages," so a teammate installing from the lock file gets a byte-for-byte identical set of packages, not just a compatible one.
+
+```text pyproject.toml
+[project]
+name = "hostel-tracker"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "requests>=2.31.0",
+]
+```
+
+This is roughly what `pyproject.toml` looks like after `uv init` followed by `uv add requests`: a plain, readable text file, the same one a teammate opens to see at a glance what the project is called, which Python version it expects, and what it depends on, all without running a single command.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-10-modules-and-packages/08_uv_sync_lockfile.png)
 
@@ -68,6 +122,9 @@ This both installs `requests` and records it as a dependency of your project, ke
 | Install a package | `pip install requests` (after activating) | `uv pip install requests` |
 | Run a script in the environment | Activate first, then `python script.py` | `uv run script.py` |
 | Add and record a dependency | A separate manual step | `uv add requests` |
+| Remove a recorded dependency | A separate manual step | `uv remove requests` |
+| Pin exact resolved versions | Not built in | `uv lock` |
+| Manage Python versions themselves | Not built in | `uv python install / list / pin` |
 | Speed | Reliable, but noticeably slower | Built specifically for speed |
 
 ## Why Learn Both
@@ -77,14 +134,17 @@ This both installs `requests` and records it as a dependency of your project, ke
 ## Your Turn: Plan a uv-Based Setup
 
 ```console
-# In your project folder, with uv installed:
-uv venv
+# Starting a brand new project, with uv installed:
+uv init hostel_tracker
+cd hostel_tracker
+uv python pin 3.12
 uv add requests
-uv run my_script.py
+uv lock
+uv run main.py
 ```
 
-Compare this three-line flow against the five-line `venv` and `pip` flow from the previous lesson; both reach the exact same destination, an isolated environment with `requests` available, just by a different, faster road.
+Compare this against the multi-step `venv` and `pip` flow from the previous lesson, where creating the folder, pinning a Python version, installing a package, and recording it were all separate, manual pieces; here, `uv` handles the project scaffold, the pinned Python version, the installed package, and its locked-down version, in five short commands.
 
 ## Conclusion
 
-`uv` is a modern package and environment manager that performs the same core jobs as `venv` and `pip`, isolating a project's packages and installing what it needs, but executes them noticeably faster, and additionally offers `uv run` to execute scripts directly inside the managed environment and `uv add` to install and record a dependency in one step. Both the older standard-library approach and `uv` are worth recognising, since real projects you encounter will use either one. The final lesson of this unit covers what `uv add` was quietly already doing for you: keeping a clear, shareable record of exactly which packages a project depends on.
+`uv` is a modern package and environment manager that performs the same core jobs as `venv` and `pip`, isolating a project's packages and installing what it needs, but executes them noticeably faster, and goes further still with `uv run` to execute scripts directly inside the managed environment, `uv python` to install and pin Python versions themselves, and `uv init`, `uv add`, `uv remove`, and `uv lock` to scaffold a project and keep its `pyproject.toml` and `uv.lock` files an exact, trustworthy record of what it depends on. Both the older standard-library approach and `uv` are worth recognising, since real projects you encounter will use either one. The final lesson of this unit builds directly on `pyproject.toml` and `uv.lock`, covering how a project, whichever tool built it, hands its exact dependency list to the next person who needs to run it.

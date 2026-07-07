@@ -40,11 +40,12 @@ def print_receipt(item, price):
 
 print_receipt("Mug", 150)
 
-try:
-    format_currency(150)    # error! not visible outside
-except NameError as e:
-    print(f"NameError: {e}")
-    print("Nested functions are invisible outside their enclosing function.")
+format_currency(150)    # NameError: not visible outside print_receipt
+```
+
+```text
+Mug: Rs 150.00
+NameError: name 'format_currency' is not defined
 ```
 
 This raises a `NameError`, because `format_currency` only exists while `print_receipt` is running, and only inside `print_receipt`'s own scope. The moment `print_receipt` finishes, its nested function disappears with it, exactly as if it had never been named at all outside that one context.

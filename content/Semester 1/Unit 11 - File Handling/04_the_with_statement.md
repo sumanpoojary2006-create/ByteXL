@@ -11,18 +11,16 @@ The problem is not that Tara forgot to write `close()`. It is that `close()` onl
 ```python
 file = open("sales_report.txt", "w")
 file.write("Day 1 Sales Report\n")
-try:
-    total = 100 / 0          # an unrelated bug, crashes right here
-    file.write("Total: " + str(total) + "\n")
-    file.close()              # never reached!
-except ZeroDivisionError as e:
-    print(f"ZeroDivisionError: {e}")
-    print("file.close() was never reached.")
-    print("Is the file closed?", file.closed)    # False -- still open!
-    file.close()    # cleaning up manually, just for this demo
+total = 100 / 0          # an unrelated bug, crashes right here
+file.write("Total: " + str(total) + "\n")
+file.close()              # never reached!
 ```
 
-The division by zero raises a `ZeroDivisionError` and stops the script immediately. `file.close()`, sitting right there on the next line, never gets a chance to run, because Python never reaches it. The file is left open, and the report is incomplete.
+```
+ZeroDivisionError: division by zero
+```
+
+The division by zero raises a `ZeroDivisionError` and stops the script immediately. `file.close()`, sitting two lines below, never gets a chance to run, because Python never reaches it. The file is left open, and the report is incomplete. Handling an error like this cleanly is the subject of a later unit; the point here is only that a crash between `open()` and `close()` leaves the file dangling.
 
 ## The with Statement: A Guaranteed Close
 
@@ -33,28 +31,32 @@ with open("sales_report.txt", "w") as file:
     file.write("Day 1 Sales Report\n")
     file.write("Total: 4500\n")
 
-# Read it back to confirm -- and notice no close() was ever needed
+# The block has ended, so with has already closed the file for us:
+print("Is the file closed now?", file.closed)    # True
+
+# Read it back to confirm the content was saved -- no close() was ever needed
 with open("sales_report.txt", "r") as file:
     print(file.read())
 ```
 
-There is no explicit `.close()` anywhere in this code, and none is needed. The instant the indented block under `with` finishes, for any reason at all, Python closes the file automatically.
+There is no explicit `.close()` anywhere in this code, and none is needed. The instant the indented block under `with` finishes, Python closes the file automatically, which is why `file.closed` already reports `True` on the very next line.
 
-## Confirming the Guarantee, Even With a Crash
+## The Guarantee Holds Even When a Line Crashes
+
+The real value of `with` shows up when something goes wrong inside the block. Here the same unrelated bug from the opening example crashes partway through, but this time the file is opened with `with`.
 
 ```python
-try:
-    with open("sales_report.txt", "w") as file:
-        file.write("Day 1 Sales Report\n")
-        total = 100 / 0          # crashes here
-        file.write("Total: " + str(total) + "\n")
-except ZeroDivisionError as e:
-    print(f"Error caught: {e}")
-    print("Is the file closed anyway?", file.closed)    # True -- with guaranteed it
-    print("Content saved before the crash:", repr(open("sales_report.txt").read()))
+with open("sales_report.txt", "w") as file:
+    file.write("Day 1 Sales Report\n")
+    total = 100 / 0          # crashes here, inside the with block
+    file.write("Total: " + str(total) + "\n")
 ```
 
-This still raises the exact same `ZeroDivisionError`, and the script still stops, but the file itself is correctly closed regardless, because `with` closes it as the block exits, even when it exits abnormally because of an error. The data already written before the crash is safely saved; only what came after the crash is missing, exactly as it should be.
+```
+ZeroDivisionError: division by zero
+```
+
+This raises the exact same `ZeroDivisionError` as before, and the script still stops. The crucial difference is invisible in the output: as the block was interrupted on its way out, `with` still closed the file automatically, exactly as it did on the normal path above, because `with` releases the file however the block exits, cleanly or through an error. Everything written before the crash was flushed and saved; only the line after the crash is missing, which is precisely the behaviour you want.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-11-file-handling/04_with_context_manager_flow.png)
 
@@ -63,10 +65,13 @@ This still raises the exact same `ZeroDivisionError`, and the script still stops
 
 Every `open()` and `close()` pair from the last two lessons can be rewritten this way, and from this point in the course onward, it is the way you should always open a file.
 
-```python
-with open("attendees.txt", "w") as file:    # recreating the file from earlier lessons
-    file.writelines(["A101\n", "A102\n", "A103\n"])
+```text file=attendees.txt
+A101
+A102
+A103
+```
 
+```python with=attendees.txt
 with open("attendees.txt", "r") as file:
     for line in file:
         print(line.strip())

@@ -347,6 +347,7 @@ async function generateZip() {
     const skippedBlocks = [];
     const languageCounts = {};
     const longUrls = [];
+    const fileWarnings = [];
     let editorsGenerated = 0;
 
     for (let index = 0; index < state.entries.length; index += 1) {
@@ -360,6 +361,7 @@ async function generateZip() {
         }
         for (const item of result.skippedBlocks) skippedBlocks.push(item);
         for (const item of result.longUrls) longUrls.push(item);
+        for (const item of result.fileWarnings) fileWarnings.push(item);
         editorsGenerated += result.convertedBlocks;
         for (const [language, count] of Object.entries(result.languageCounts)) {
           languageCounts[language] = (languageCounts[language] || 0) + count;
@@ -376,17 +378,18 @@ async function generateZip() {
       filesChanged: changedFiles.length,
       editorsGenerated,
       skippedBlocks: skippedBlocks.length,
+      fileWarnings: fileWarnings.length,
       wrapperUrl: settings.wrapperUrl,
       languages: languageCounts,
       longUrls
     };
 
-    const report = buildReport(summary, changedFiles, skippedBlocks);
+    const report = buildReport(summary, changedFiles, skippedBlocks, fileWarnings);
     state.lastReport = report;
     outputZip.file("onecompiler-report.md", report);
     outputZip.file(
       "onecompiler-manifest.json",
-      JSON.stringify({ summary, changedFiles, skippedBlocks }, null, 2)
+      JSON.stringify({ summary, changedFiles, skippedBlocks, fileWarnings }, null, 2)
     );
 
     setStatus("Creating ZIP...", "warn");
@@ -416,12 +419,31 @@ function convertMarkdown(markdown, filePath, settings) {
   const replacements = [];
   const skippedBlocks = [];
   const longUrls = [];
+  const fileWarnings = [];
   const languageCounts = {};
   let convertedBlocks = 0;
   let fileBlockIndex = 0;
 
+  // Pass 1: collect every `file=<name>` block into a per-document registry.
+  // These blocks are never converted into their own iframe, regardless of
+  // language, so a `python file=billing.py` block is not mistaken for a
+  // runnable snippet.
+  const fileRegistry = new Map();
   for (const block of blocks) {
-    const rawLanguage = normalizeLanguage(block.info);
+    const { attrs } = parseBlockInfo(block.info);
+    if (attrs.file) {
+      fileRegistry.set(attrs.file, block.code.replace(/\n+$/, ""));
+    }
+  }
+
+  // Pass 2: convert runnable blocks, resolving `with=` references against
+  // the registry built above.
+  for (const block of blocks) {
+    const { language: rawLanguage, attrs } = parseBlockInfo(block.info);
+    if (attrs.file) {
+      continue;
+    }
+
     const decision = shouldConvert(rawLanguage, block.code, settings);
     if (!decision.convert) {
       skippedBlocks.push({
@@ -433,6 +455,21 @@ function convertMarkdown(markdown, filePath, settings) {
       continue;
     }
 
+    const extraFiles = [];
+    if (attrs.with) {
+      for (const name of attrs.with.split(",").map((item) => item.trim()).filter(Boolean)) {
+        if (fileRegistry.has(name)) {
+          extraFiles.push({ name, content: fileRegistry.get(name) });
+        } else {
+          fileWarnings.push({
+            file: filePath,
+            lines: `${block.startLine}-${block.endLine}`,
+            name
+          });
+        }
+      }
+    }
+
     fileBlockIndex += 1;
     convertedBlocks += 1;
     const language = decision.language;
@@ -440,7 +477,8 @@ function convertMarkdown(markdown, filePath, settings) {
       title: `${baseNameWithoutExtension(filePath)} code ${fileBlockIndex}`,
       language,
       filename: filenameFor(language, fileBlockIndex),
-      code: block.code.replace(/\n+$/, "")
+      code: block.code.replace(/\n+$/, ""),
+      extraFiles
     };
     const src = encodedWrapperSrc(snippet, settings.wrapperUrl);
     if (src.length > 8000) {
@@ -460,8 +498,26 @@ function convertMarkdown(markdown, filePath, settings) {
     convertedBlocks,
     skippedBlocks,
     languageCounts,
-    longUrls
+    longUrls,
+    fileWarnings
   };
+}
+
+function parseBlockInfo(info) {
+  const tokens = (info || "").trim().split(/\s+/).filter(Boolean);
+  const languageToken = tokens[0] || "";
+  const cleaned = languageToken.replace(/^[{.]+|[}.]+$/g, "").toLowerCase().replace(/^language-/, "");
+  const language = cleaned ? (LANGUAGE_ALIASES[cleaned] || cleaned) : null;
+
+  const attrs = {};
+  for (const token of tokens.slice(1)) {
+    const match = token.match(/^([a-zA-Z][\w-]*)=(.+)$/);
+    if (match) {
+      attrs[match[1]] = match[2];
+    }
+  }
+
+  return { language, attrs };
 }
 
 function iterFencedBlocks(markdown) {
@@ -607,7 +663,7 @@ function filenameFor(language, index) {
   return `main_${String(index).padStart(3, "0")}.${extension}`;
 }
 
-function buildReport(summary, changedFiles, skippedBlocks) {
+function buildReport(summary, changedFiles, skippedBlocks, fileWarnings) {
   const lines = [
     "# OneCompiler Browser Conversion Report",
     "",
@@ -619,6 +675,7 @@ function buildReport(summary, changedFiles, skippedBlocks) {
     `- Markdown files changed: ${summary.filesChanged}`,
     `- Code editors generated: ${summary.editorsGenerated}`,
     `- Blocks skipped: ${summary.skippedBlocks}`,
+    `- File reference warnings: ${summary.fileWarnings}`,
     "",
     "## Languages Converted",
     ""
@@ -666,6 +723,22 @@ function buildReport(summary, changedFiles, skippedBlocks) {
     }
   } else {
     lines.push("No skipped blocks.");
+  }
+
+  lines.push("", "## File Reference Warnings", "");
+  if (fileWarnings && fileWarnings.length) {
+    lines.push("A `with=` block referenced a filename with no matching `file=` definition anywhere in that document. Check for typos or missing fixture blocks.");
+    lines.push("");
+    lines.push("| File | Lines | Missing name |");
+    lines.push("|---|---:|---|");
+    for (const item of fileWarnings.slice(0, 500)) {
+      lines.push(`| \`${item.file}\` | ${item.lines} | \`${item.name}\` |`);
+    }
+    if (fileWarnings.length > 500) {
+      lines.push(`| ... | ... | ${fileWarnings.length - 500} more omitted |`);
+    }
+  } else {
+    lines.push("No file reference warnings.");
   }
 
   lines.push("");

@@ -81,17 +81,19 @@ print(result)                    # 7
 
 ## A Function Without return Still Returns None
 
-Every Python function returns something, even if you never write the word `return`. With no explicit `return`, a function quietly hands back `None` when it finishes.
+Every Python function returns something, even if you never write the word `return`, and even if it never prints anything either. With no explicit `return`, a function quietly hands back `None` when it finishes, regardless of what work it did along the way.
 
 ```python
-def log_message(text):
-    print("LOG:", text)
+def mark_attendance(member_name, is_present):
+    status = "present" if is_present else "absent"
+    summary = f"{member_name} marked {status}"
+    # summary is fully computed here, but never handed back with return
 
-outcome = log_message("Bill calculated")
+outcome = mark_attendance("Asha", True)
 print(outcome)    # None
 ```
 
-This is fine when you only ever wanted the side effect, the printed log line, and never planned to use a result. It becomes a bug only when you forget that a function without `return` cannot hand anything useful back.
+`mark_attendance` genuinely does its job. It builds `summary` correctly, `"Asha marked present"`, sitting right there in memory when the function finishes. But since nothing ever hands `summary` back with `return`, that value is thrown away the instant the function ends, and `outcome` is left holding `None`, Python's default answer for "this function never said what to return." This is fine when a function's whole point is a side effect, changing something, printing something, saving something, and no caller ever needs a result back. It becomes a bug only when you forget that a function without `return` cannot hand anything useful back, computed or not.
 
 ## Parameters, Arguments, and Return at a Glance
 

@@ -78,17 +78,28 @@ Three calls, three identical greetings, and the body itself was only ever writte
 Python reads your file from top to bottom, so a function must be defined before the line that calls it, or Python will not yet know the name.
 
 ```python
-try:
-    say_hello()        # error! say_hello is not defined yet
-except NameError as e:
-    print(f"NameError: {e}")
-    print("Python had not reached the def yet when it hit the call.")
+say_hello()        # NameError: name 'say_hello' is not defined
 
 def say_hello():
     print("Hello!")
 ```
 
+```text
+NameError: name 'say_hello' is not defined
+```
+
 This raises a `NameError`, complaining that `say_hello` does not exist, because Python had not reached its definition yet when it hit the call. Swapping the two blocks, definition first, then call, fixes it immediately.
+
+```python
+def say_hello():
+    print("Hello!")
+
+say_hello()
+```
+
+```text
+Hello!
+```
 
 ## Defining vs Calling at a Glance
 

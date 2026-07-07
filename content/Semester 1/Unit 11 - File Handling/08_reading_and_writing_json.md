@@ -45,18 +45,16 @@ with open("fest_data.json", "r") as file:
 
 `json.load` reads an open file's JSON text and reconstructs the original Python structure, nesting and all.
 
-```python
+```json file=fest_data.json
+{
+    "Merch": {"T-shirt": 350, "Mug": 150},
+    "Food": {"Samosa": 30, "Cold Drink": 40}
+}
+```
+
+```python with=fest_data.json
 import json
 
-# Write the file first so this block is self-contained
-fest_stalls = {
-    "Merch": {"T-shirt": 350, "Mug": 150},
-    "Food": {"Samosa": 30, "Cold Drink": 40},
-}
-with open("fest_data.json", "w") as file:
-    json.dump(fest_stalls, file, indent=4)
-
-# Now load it back
 with open("fest_data.json", "r") as file:
     loaded_stalls = json.load(file)
 

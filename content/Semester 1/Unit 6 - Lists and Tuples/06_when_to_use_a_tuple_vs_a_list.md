@@ -20,20 +20,17 @@ The snack list is genuinely a moving target throughout planning. The resort's co
 
 ## Tuples Document Intent
 
-Choosing a tuple is not just about preventing accidental edits, although that matters. It also tells anyone reading your code, including future you, "this set of values belongs together and is not meant to change." A function that returns `(name, lat, long)` is making a small promise about the shape of its result, in a way a list of the same three values would not.
+Choosing a tuple is not just about preventing accidental edits, although that matters. It also tells anyone reading your code, including future you, "this set of values belongs together and is not meant to change." A stop written as `(name, lat, long)` is making a small promise about the shape of that record, in a way a list of the same three values would not.
 
 ```python
-def get_stop():
-    return "Dudhsagar Falls", 15.3144, 74.3144
+stop = ("Dudhsagar Falls", 15.3144, 74.3144)
+name, lat, long = stop
 
-name, lat, long = get_stop()
-
-# Demo:
-result = get_stop()
-print(f"get_stop() ->", result)
+print(stop)              # ('Dudhsagar Falls', 15.3144, 74.3144)
+print(name, "is at", lat, long)
 ```
 
-Returning a tuple here reads as "these three values are a fixed, related group", which is exactly true, and exactly what a list would obscure.
+Writing `stop` as a tuple reads as "these three values are a fixed, related group", which is exactly true, and exactly what a list would obscure. Unpacking it into `name`, `lat`, and `long`, the packing and unpacking from the last lesson, then pulls the record apart into readable pieces without ever suggesting the record itself could be edited.
 
 ## A Performance Side Note
 
@@ -66,7 +63,7 @@ The outer list can grow as Dev adds new stops to the itinerary, while every indi
 |---|---|
 | Will items be added or removed later? | List |
 | Are these values a fixed, related group? | Tuple |
-| Will I return several values together from a function? | Tuple |
+| Do I want to group several values into one record? | Tuple |
 | Do I need `sort()`, `append()`, or similar? | List |
 | Am I building a collection of fixed records? | List of tuples |
 
@@ -86,4 +83,4 @@ Notice the shape: a list, because the itinerary may still grow a day, holding tu
 
 ## Conclusion
 
-Choose a list when the collection itself needs to grow, shrink, or reorder, and choose a tuple when you are grouping a fixed, related set of values that should never change, including whenever a function hands back more than one result at once. The two are not rivals; a list of tuples is one of the most common and useful shapes in real Python code. So far every list and tuple has held one flat row of values; the next lesson asks what happens when an item inside a list is itself another list.
+Choose a list when the collection itself needs to grow, shrink, or reorder, and choose a tuple when you are grouping a fixed, related set of values that should never change, such as a single record of values that belong together. The two are not rivals; a list of tuples is one of the most common and useful shapes in real Python code. So far every list and tuple has held one flat row of values; the next lesson asks what happens when an item inside a list is itself another list.

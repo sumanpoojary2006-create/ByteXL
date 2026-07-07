@@ -11,12 +11,12 @@ These are two of the most common real-world file problems: a **missing file**, a
 Opening a file that does not exist, in read mode, raises a `FileNotFoundError` immediately.
 
 ```python
-try:
-    with open("attendees_day4.txt", "r") as file:
-        print(file.read())
-except FileNotFoundError as e:
-    print(f"FileNotFoundError: {e}")
-    print("The file was never created -- Python refuses to pretend otherwise.")
+with open("attendees_day4.txt", "r") as file:
+    print(file.read())
+```
+
+```text
+FileNotFoundError: [Errno 2] No such file or directory: 'attendees_day4.txt'
 ```
 
 This is correct, expected behaviour, Python refusing to pretend a file exists when it does not, but a script that does not anticipate this possibility simply stops, with no graceful explanation offered to whoever is running it.
@@ -77,10 +77,12 @@ Make `encoding="utf-8"` part of how you open files by default, the same way you 
 
 ## Your Turn: Defend a Read
 
-```python
-from pathlib import Path
+```text file=fest_log.txt
+Gate opened at 9 AM
+```
 
-Path("fest_log.txt").write_text("Gate opened at 9 AM\n", encoding="utf-8")
+```python with=fest_log.txt
+from pathlib import Path
 
 def read_log_safely(filename):
     path = Path(filename)

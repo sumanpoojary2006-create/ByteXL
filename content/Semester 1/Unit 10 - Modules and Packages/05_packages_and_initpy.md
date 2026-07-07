@@ -25,14 +25,15 @@ my_project/
 
 Reaching a function inside a package's module chains the names together with dots, following the folder structure exactly.
 
-```python
-# Build the tools/ package first so this example runs.
-import os
-os.makedirs("tools", exist_ok=True)
-open("tools/__init__.py", "w").close()                       # empty: marks tools as a package
-with open("tools/billing.py", "w") as f:
-    f.write("def split_cost(total, people):\n    return total / people\n")
+```python file=tools/__init__.py
+```
 
+```python file=tools/billing.py
+def split_cost(total, people):
+    return total / people
+```
+
+```python with=tools/__init__.py,tools/billing.py
 # main.py
 from tools import billing
 
@@ -41,13 +42,7 @@ print(billing.split_cost(1200, 4))    # 300.0
 
 Or reach all the way to a specific function in one line, exactly the `from ... import` form from two lessons ago, simply with a longer path in front of it.
 
-```python
-import os
-os.makedirs("tools", exist_ok=True)
-open("tools/__init__.py", "w").close()
-with open("tools/billing.py", "w") as f:
-    f.write("def split_cost(total, people):\n    return total / people\n")
-
+```python with=tools/__init__.py,tools/billing.py
 from tools.billing import split_cost
 
 print(split_cost(1200, 4))    # 300.0
@@ -74,15 +69,16 @@ print("This makes split_cost importable directly from the 'tools' package.")
 
 With this written into `__init__.py`, Naveen's `main.py` can now reach `split_cost` directly from `tools`, without separately naming `billing` at all.
 
-```python
-# Build tools/ with an __init__.py that re-exports split_cost.
-import os
-os.makedirs("tools", exist_ok=True)
-with open("tools/billing.py", "w") as f:
-    f.write("def split_cost(total, people):\n    return total / people\n")
-with open("tools/__init__.py", "w") as f:
-    f.write("from .billing import split_cost\n")     # the re-export line
+```python file=tools/billing.py
+def split_cost(total, people):
+    return total / people
+```
 
+```python file=tools/__init__.py
+from .billing import split_cost
+```
+
+```python with=tools/billing.py,tools/__init__.py
 # main.py
 from tools import split_cost
 
@@ -124,14 +120,15 @@ fest_project/
         merch.py
 ```
 
-```python
-# Build the package: tools/__init__.py + tools/registration.py
-import os
-os.makedirs("tools", exist_ok=True)
-open("tools/__init__.py", "w").close()
-with open("tools/registration.py", "w") as f:
-    f.write("def is_unique(attendee_id, seen):\n    return attendee_id not in seen\n")
+```python file=tools/__init__.py
+```
 
+```python file=tools/registration.py
+def is_unique(attendee_id, seen):
+    return attendee_id not in seen
+```
+
+```python with=tools/__init__.py,tools/registration.py
 # main.py
 from tools import registration
 
