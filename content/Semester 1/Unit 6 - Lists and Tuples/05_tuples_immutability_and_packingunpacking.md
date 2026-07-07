@@ -12,7 +12,7 @@ A tuple looks almost like a list, but with round brackets instead of square ones
 
 ```python
 resort = (15.2993, 74.1240)
-print(resort)          # (15.2993, 74.1240)
+print(resort)          # (15.2993, 74.124)
 print(type(resort))    # <class 'tuple'>
 ```
 
@@ -21,7 +21,7 @@ Indexing and slicing work exactly as they do for lists and strings, because a tu
 ```python
 resort = (15.2993, 74.1240)
 print(resort[0])    # 15.2993
-print(resort[1])    # 74.1240
+print(resort[1])    # 74.124
 ```
 
 A tuple of a single item needs a trailing comma to be recognised as a tuple at all, since parentheses alone are just grouping: `(5,)` is a one-item tuple, while `(5)` is simply the number 5.

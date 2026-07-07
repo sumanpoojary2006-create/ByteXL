@@ -52,35 +52,24 @@ Either style works; the choice between them follows the same trade-off from the 
 
 ## __init__.py Can Do More Than Sit Empty
 
-An empty `__init__.py` is enough to make a folder a package, but it can also contain code that runs the moment the package itself is first imported, often used to make a package's most commonly used functions available directly from the package name itself, without the inner module name.
+An empty `__init__.py` is enough to make a folder a package, but it can also contain code that runs the moment the package itself is first imported, often used to make a package's most commonly used functions available directly from the package name itself, without the inner module name. Suppose Naveen bundles his cost-splitting logic into a second package, `shop`, with the function itself living in `shop/billing.py`.
 
-```python
-# tools/__init__.py -- contents of the package init file
-# This line re-exports split_cost so callers can do:
-#   from tools import split_cost
-# instead of:
-#   from tools.billing import split_cost
-
-init_content = "from .billing import split_cost"
-print("tools/__init__.py contains:")
-print(init_content)
-print("This makes split_cost importable directly from the 'tools' package.")
-```
-
-With this written into `__init__.py`, Naveen's `main.py` can now reach `split_cost` directly from `tools`, without separately naming `billing` at all.
-
-```python file=tools/billing.py
+```python file=shop/billing.py
 def split_cost(total, people):
     return total / people
 ```
 
-```python file=tools/__init__.py
+Instead of sitting empty, `shop/__init__.py` re-exports `split_cost` with a single line, so callers never have to name the inner `billing` module at all.
+
+```python file=shop/__init__.py
 from .billing import split_cost
 ```
 
-```python with=tools/billing.py,tools/__init__.py
+With that one line in place, `main.py` can reach `split_cost` directly from `shop`, without separately naming `billing`.
+
+```python with=shop/billing.py,shop/__init__.py
 # main.py
-from tools import split_cost
+from shop import split_cost
 
 print(split_cost(1200, 4))    # 300.0
 ```
