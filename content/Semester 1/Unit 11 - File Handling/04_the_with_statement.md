@@ -101,7 +101,7 @@ The mode argument, `"r"`, `"w"`, or `"a"`, works exactly as before; `with` chang
 
 ## Your Turn: Convert to a with Block
 
-```python
+```python with=attendees.txt
 with open("attendees.txt", "a") as file:
     file.write("A108\n")
 
