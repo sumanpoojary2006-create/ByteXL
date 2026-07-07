@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>05_arithmetic_operators code 1</title>
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #ffffff;
+    }
+    iframe {
+      display: block;
+      width: 100%;
+      height: 100vh;
+      border: 0;
+    }
+  </style>
+</head>
+<body>
+  <iframe id="oc-editor" title="OneCompiler python editor" allow="clipboard-read; clipboard-write"></iframe>
+  <script id="snippet-data" type="application/json">{"id": "semester-1-unit-2-data-types-and-operators-05-arithmetic-operators-001-d0a0739a00", "title": "05_arithmetic_operators code 1", "language": "python", "filename": "main_001.py", "code": "print(10 + 3)    # 13   addition\nprint(10 - 3)    # 7    subtraction\nprint(10 * 3)    # 30   multiplication\nprint(10 / 3)    # 3.333...  division\nprint(10 ** 3)   # 1000  power (10 to the power 3)", "source_file": "Semester 1/Unit 2 - Data Types and Operators/05_arithmetic_operators.md", "start_line": 13, "end_line": 19, "embed_file": "onecompiler-embeds/semester-1-unit-2-data-types-and-operators-05-arithmetic-operators-001-d0a0739a00.html"}</script>
+  <script>
+    const snippet = JSON.parse(document.getElementById("snippet-data").textContent);
+    const editor = document.getElementById("oc-editor");
+    const params = new URLSearchParams({
+      hideNew: "true",
+      hideTitle: "true",
+      hideLanguageSelection: "true",
+      listenToEvents: "true"
+    });
+
+    editor.src = `https://onecompiler.com/embed/${encodeURIComponent(snippet.language)}?${params.toString()}`;
+
+    function populateCode() {
+      if (!editor.contentWindow) return;
+      editor.contentWindow.postMessage({
+        eventType: "populateCode",
+        language: snippet.language,
+        files: [{
+          name: snippet.filename,
+          content: snippet.code
+        }]
+      }, "https://onecompiler.com");
+    }
+
+    editor.addEventListener("load", () => {
+      populateCode();
+      setTimeout(populateCode, 600);
+      setTimeout(populateCode, 1500);
+    });
+  </script>
+</body>
+</html>

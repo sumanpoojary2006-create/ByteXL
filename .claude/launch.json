@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "image-converter",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["/tmp/image-converter/run.py"],
+      "port": 8000
+    },
+    {
+      "name": "image-converter-static",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "-l", "4790", "tools/image-converter"],
+      "port": 4790
+    }
+  ]
+}

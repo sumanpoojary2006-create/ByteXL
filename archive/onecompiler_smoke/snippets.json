@@ -1,0 +1,17 @@
+{
+  "embed_dir": "onecompiler-embeds",
+  "reading_dir": "reading-material",
+  "snippets": [
+    {
+      "id": "semester-1-unit-2-data-types-and-operators-05-arithmetic-operators-001-d0a0739a00",
+      "title": "05_arithmetic_operators code 1",
+      "language": "python",
+      "filename": "main_001.py",
+      "source_file": "Semester 1/Unit 2 - Data Types and Operators/05_arithmetic_operators.md",
+      "start_line": 13,
+      "end_line": 19,
+      "embed_file": "onecompiler-embeds/semester-1-unit-2-data-types-and-operators-05-arithmetic-operators-001-d0a0739a00.html",
+      "sha1": "d0a0739a00"
+    }
+  ]
+}

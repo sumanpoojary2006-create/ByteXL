@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ByteXL Coding Question Uploader</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <div class="page">
+      <nav class="topnav">
+        <a class="nav-brand" id="readingUploaderLink" href="https://image-converter-pi-rouge.vercel.app/" data-default-href="https://image-converter-pi-rouge.vercel.app/">
+          <div class="logo-mark">b</div>
+          <span class="nav-title">byte<span>XL</span> Uploader</span>
+        </a>
+        <span class="nav-badge">Question Bank</span>
+      </nav>
+
+      <main class="main">
+        <div class="shell">
+          <section class="hero">
+            <h1>Upload coding questions to ByteXL</h1>
+            <p>Drop an Excel question bank, validate every row, then publish coding questions in one controlled flow.</p>
+          </section>
+
+          <section class="card">
+            <div class="card-header">
+              <div class="card-title">Coding Question Upload</div>
+              <div class="card-sub">Upload the workbook, paste your ByteXL token, validate, and publish.</div>
+            </div>
+
+            <div class="steps" aria-label="Workflow">
+              <div class="step active"><div class="step-num">1</div> Upload Excel</div>
+              <div class="step"><div class="step-num">2</div> Configure</div>
+              <div class="step"><div class="step-num">3</div> Validate</div>
+              <div class="step"><div class="step-num">4</div> Upload</div>
+            </div>
+
+            <div class="card-body">
+              <div class="upload-grid">
+                <div class="drop-zone" id="dropZone" tabindex="0" role="button">
+                  <input id="fileInput" type="file" accept=".xlsx,.xls,.csv" hidden>
+                  <div class="drop-icon"><i data-lucide="file-up"></i></div>
+                  <div class="drop-label">Drop your Excel file here</div>
+                  <div class="drop-sub" id="fileName">No file selected</div>
+                </div>
+
+                <div class="config-panel">
+                  <label class="field">
+                    <span class="field-label">ByteXL token</span>
+                    <input id="tokenInput" type="password" autocomplete="off" placeholder="Paste token for this upload">
+                  </label>
+
+                  <div class="toggles">
+                    <label class="field">
+                      <span class="field-label">Public testcases (first N)</span>
+                      <input id="publicCount" type="number" min="0" value="2" style="width:5em">
+                    </label>
+                    <label class="toggle-item">
+                      <input id="respectAllLanguages" type="checkbox" checked>
+                      <span>Use supportAllLanguages column</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="btn-row">
+                <button id="validateBtn" class="btn btn-primary" type="button" disabled>
+                  <i data-lucide="shield-check"></i>
+                  Validate
+                </button>
+                <button id="uploadBtn" class="btn btn-success" type="button" disabled>
+                  <i data-lucide="cloud-upload"></i>
+                  Upload to ByteXL
+                </button>
+                <button id="downloadBtn" class="btn btn-ghost" type="button" disabled>
+                  <i data-lucide="download"></i>
+                  Download JSON
+                </button>
+                <button id="clearBtn" class="btn btn-ghost" type="button">
+                  <i data-lucide="rotate-ccw"></i>
+                  Reset
+                </button>
+              </div>
+
+              <div id="message" class="message" hidden></div>
+
+              <div class="stats-row">
+                <div class="stat-cell">
+                  <div class="stat-val" id="questionCount">0</div>
+                  <div class="stat-key">Questions</div>
+                </div>
+                <div class="stat-cell">
+                  <div class="stat-val" id="readyCount">0</div>
+                  <div class="stat-key">Ready</div>
+                </div>
+                <div class="stat-cell">
+                  <div class="stat-val" id="warningCount">0</div>
+                  <div class="stat-key">Warnings</div>
+                </div>
+                <div class="stat-cell">
+                  <div class="stat-val" id="errorCount">0</div>
+                  <div class="stat-key">Errors</div>
+                </div>
+              </div>
+
+              <div class="result-panel">
+                <div class="panel-header">
+                  <div>
+                    <div class="panel-title">Parsed Questions</div>
+                    <div class="panel-sub">Review row status before uploading.</div>
+                  </div>
+                  <span id="validationState" class="mini-pill">Not validated</span>
+                </div>
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Row</th>
+                        <th>Title</th>
+                        <th>Language</th>
+                        <th>Tests</th>
+                        <th>Status</th>
+                        <th>Notes</th>
+                      </tr>
+                    </thead>
+                    <tbody id="questionRows">
+                      <tr>
+                        <td colspan="6" class="empty">Upload a coding-question workbook to begin.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="log-panel">
+                <div class="panel-header compact">
+                  <div>
+                    <div class="panel-title">Activity Log</div>
+                    <div class="panel-sub">Upload and validation events appear here.</div>
+                  </div>
+                  <span id="statusPill" class="mini-pill">Ready</span>
+                </div>
+                <pre id="logOutput">Waiting for file.</pre>
+              </div>
+            </div>
+          </section>
+
+          <p class="foot-note">Runs in your browser · token is used only for this upload request</p>
+        </div>
+      </main>
+    </div>
+
+    <script src="./vendor/xlsx.full.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script src="./assets/app.js"></script>
+  </body>
+</html>

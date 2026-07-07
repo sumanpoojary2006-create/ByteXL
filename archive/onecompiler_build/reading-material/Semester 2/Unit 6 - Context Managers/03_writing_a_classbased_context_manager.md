@@ -1,0 +1,65 @@
+## Introduction
+
+Tara is ready to fix the leaking database connection. She knows `__enter__` opens the connection and `__exit__` closes it. She needs to make sure the connection is closed even if a query raises an exception. And since she is working with a real database, she also needs `__exit__` to roll back any in-progress transaction when an exception occurs, rather than leaving it in a half-committed state.
+
+This lesson builds the full class-based context manager she needs, handling both the success path and the exception path correctly.
+
+![A DBConnection context manager with __enter__ opening the connection and __exit__ closing it with a rollback path for exceptions and a commit path for success](images/03_class_based_context_manager.png)
+
+## A Database Connection Context Manager
+
+<iframe
+ frameBorder="0"
+ height="350px"
+ src="http://127.0.0.1:8765/embed.html#eyJ0aXRsZSI6IjAzX3dyaXRpbmdfYV9jbGFzc2Jhc2VkX2NvbnRleHRfbWFuYWdlciBjb2RlIDEiLCJsYW5ndWFnZSI6InB5dGhvbiIsImZpbGVuYW1lIjoibWFpbl8wMDEucHkiLCJjb2RlIjoiaW1wb3J0IHNxbGl0ZTNcblxuY2xhc3MgTWFuYWdlZENvbm5lY3Rpb246XG4gICAgZGVmIF9faW5pdF9fKHNlbGYsIGRiX3BhdGgpOlxuICAgICAgICBzZWxmLmRiX3BhdGggPSBkYl9wYXRoXG4gICAgICAgIHNlbGYuY29ubmVjdGlvbiA9IE5vbmVcblxuICAgIGRlZiBfX2VudGVyX18oc2VsZik6XG4gICAgICAgIHNlbGYuY29ubmVjdGlvbiA9IHNxbGl0ZTMuY29ubmVjdChzZWxmLmRiX3BhdGgpXG4gICAgICAgIHJldHVybiBzZWxmLmNvbm5lY3Rpb24gICAjIHJldHVybiB0aGUgY29ubmVjdGlvbiBmb3IgdXNlIGluIHRoZSBib2R5XG5cbiAgICBkZWYgX19leGl0X18oc2VsZiwgZXhjX3R5cGUsIGV4Y192YWwsIGV4Y190Yik6XG4gICAgICAgIGlmIGV4Y190eXBlIGlzIG5vdCBOb25lOlxuICAgICAgICAgICAgIyBhbiBleGNlcHRpb24gb2NjdXJyZWQ6IHJvbGwgYmFjayB0byBhdm9pZCBwYXJ0aWFsIHdyaXRlc1xuICAgICAgICAgICAgc2VsZi5jb25uZWN0aW9uLnJvbGxiYWNrKClcbiAgICAgICAgICAgIHByaW50KGZcIlJvbGxlZCBiYWNrIGR1ZSB0bzoge2V4Y192YWx9XCIpXG4gICAgICAgIGVsc2U6XG4gICAgICAgICAgICAjIHN1Y2Nlc3M6IGNvbW1pdCB0aGUgdHJhbnNhY3Rpb25cbiAgICAgICAgICAgIHNlbGYuY29ubmVjdGlvbi5jb21taXQoKVxuICAgICAgICBzZWxmLmNvbm5lY3Rpb24uY2xvc2UoKVxuICAgICAgICByZXR1cm4gRmFsc2UgICAjIGFsd2F5cyBsZXQgdGhlIGV4Y2VwdGlvbiBwcm9wYWdhdGVcblxud2l0aCBNYW5hZ2VkQ29ubmVjdGlvbihcIjptZW1vcnk6XCIpIGFzIGNvbm46XG4gICAgY29ubi5leGVjdXRlKFwiQ1JFQVRFIFRBQkxFIGJvb2tzIChpc2JuIFRFWFQsIHRpdGxlIFRFWFQpXCIpXG4gICAgY29ubi5leGVjdXRlKFwiSU5TRVJUIElOVE8gYm9va3MgVkFMVUVTICgnOTc4LTAwMScsICdEdW5lJylcIilcbiMgY29tbWl0dGVkIGFuZCBjbG9zZWQgLS0gbm9ybWFsIGV4aXRcblxudHJ5OlxuICAgIHdpdGggTWFuYWdlZENvbm5lY3Rpb24oXCI6bWVtb3J5OlwiKSBhcyBjb25uOlxuICAgICAgICBjb25uLmV4ZWN1dGUoXCJDUkVBVEUgVEFCTEUgYm9va3MgKGlzYm4gVEVYVCwgdGl0bGUgVEVYVClcIilcbiAgICAgICAgY29ubi5leGVjdXRlKFwiSU5TRVJUIElOVE8gYm9va3MgVkFMVUVTICgnOTc4LTAwMScsICdEdW5lJylcIilcbiAgICAgICAgcmFpc2UgUnVudGltZUVycm9yKFwiU29tZXRoaW5nIHdlbnQgd3JvbmcgbWlkLXRyYW5zYWN0aW9uXCIpXG5leGNlcHQgUnVudGltZUVycm9yOlxuICAgIHBhc3MgICAjIHJvbGxlZCBiYWNrIGFuZCBjbG9zZWQifQ"
+ width="100%"
+></iframe>
+
+The second block rolls back automatically. Without `ManagedConnection`, the connection would be left open and the half-completed transaction would need to be manually rolled back, or worse, left in an inconsistent state.
+
+## Making the Connection Reusable With a Pattern
+
+If the same connection is used across many operations, a context manager that closes the connection every time is too aggressive. A better pattern is a transaction manager that shares a long-lived connection but commits or rolls back individual transactions:
+
+<iframe
+ frameBorder="0"
+ height="350px"
+ src="http://127.0.0.1:8765/embed.html#eyJ0aXRsZSI6IjAzX3dyaXRpbmdfYV9jbGFzc2Jhc2VkX2NvbnRleHRfbWFuYWdlciBjb2RlIDIiLCJsYW5ndWFnZSI6InB5dGhvbiIsImZpbGVuYW1lIjoibWFpbl8wMDIucHkiLCJjb2RlIjoiY2xhc3MgVHJhbnNhY3Rpb246XG4gICAgZGVmIF9faW5pdF9fKHNlbGYsIGNvbm5lY3Rpb24pOlxuICAgICAgICBzZWxmLmNvbm5lY3Rpb24gPSBjb25uZWN0aW9uXG5cbiAgICBkZWYgX19lbnRlcl9fKHNlbGYpOlxuICAgICAgICByZXR1cm4gc2VsZi5jb25uZWN0aW9uLmN1cnNvcigpXG5cbiAgICBkZWYgX19leGl0X18oc2VsZiwgZXhjX3R5cGUsIGV4Y192YWwsIGV4Y190Yik6XG4gICAgICAgIGlmIGV4Y190eXBlIGlzIG5vdCBOb25lOlxuICAgICAgICAgICAgc2VsZi5jb25uZWN0aW9uLnJvbGxiYWNrKClcbiAgICAgICAgZWxzZTpcbiAgICAgICAgICAgIHNlbGYuY29ubmVjdGlvbi5jb21taXQoKVxuICAgICAgICByZXR1cm4gRmFsc2VcblxuY29ubiA9IHNxbGl0ZTMuY29ubmVjdChcIjptZW1vcnk6XCIpXG5jb25uLmV4ZWN1dGUoXCJDUkVBVEUgVEFCTEUgYm9va3MgKGlzYm4gVEVYVCwgdGl0bGUgVEVYVClcIilcblxud2l0aCBUcmFuc2FjdGlvbihjb25uKSBhcyBjdXJzb3I6XG4gICAgY3Vyc29yLmV4ZWN1dGUoXCJJTlNFUlQgSU5UTyBib29rcyBWQUxVRVMgKCc5NzgtMDAxJywgJ0R1bmUnKVwiKVxuXG53aXRoIFRyYW5zYWN0aW9uKGNvbm4pIGFzIGN1cnNvcjpcbiAgICBjdXJzb3IuZXhlY3V0ZShcIklOU0VSVCBJTlRPIGJvb2tzIFZBTFVFUyAoJzk3OC0wMDInLCAnRm91bmRhdGlvbicpXCIpXG5cbnJlc3VsdCA9IGNvbm4uZXhlY3V0ZShcIlNFTEVDVCAqIEZST00gYm9va3NcIikuZmV0Y2hhbGwoKVxucHJpbnQocmVzdWx0KVxuIyBbKCc5NzgtMDAxJywgJ0R1bmUnKSwgKCc5NzgtMDAyJywgJ0ZvdW5kYXRpb24nKV1cbmNvbm4uY2xvc2UoKSJ9"
+ width="100%"
+></iframe>
+
+## Tracking State Across Enter and Exit
+
+`__enter__` and `__exit__` share state through `self`. Any data stored on the instance in `__enter__` is accessible in `__exit__`. This is the clean solution to the problem that `try`/`finally` often forces: declaring variables outside the `try` block and using them inside `finally`.
+
+<iframe
+ frameBorder="0"
+ height="350px"
+ src="http://127.0.0.1:8765/embed.html#eyJ0aXRsZSI6IjAzX3dyaXRpbmdfYV9jbGFzc2Jhc2VkX2NvbnRleHRfbWFuYWdlciBjb2RlIDMiLCJsYW5ndWFnZSI6InB5dGhvbiIsImZpbGVuYW1lIjoibWFpbl8wMDMucHkiLCJjb2RlIjoiY2xhc3MgT3BlcmF0aW9uVGltZXI6XG4gICAgZGVmIF9fZW50ZXJfXyhzZWxmKTpcbiAgICAgICAgaW1wb3J0IHRpbWVcbiAgICAgICAgc2VsZi5fc3RhcnQgPSB0aW1lLnBlcmZfY291bnRlcigpXG4gICAgICAgIHJldHVybiBzZWxmXG5cbiAgICBkZWYgX19leGl0X18oc2VsZiwgZXhjX3R5cGUsIGV4Y192YWwsIGV4Y190Yik6XG4gICAgICAgIGltcG9ydCB0aW1lXG4gICAgICAgIHNlbGYuZWxhcHNlZCA9IHRpbWUucGVyZl9jb3VudGVyKCkgLSBzZWxmLl9zdGFydFxuICAgICAgICBpZiBleGNfdHlwZSBpcyBub3QgTm9uZTpcbiAgICAgICAgICAgIHByaW50KGZcIkZhaWxlZCBhZnRlciB7c2VsZi5lbGFwc2VkOi40Zn1zOiB7ZXhjX3ZhbH1cIilcbiAgICAgICAgZWxzZTpcbiAgICAgICAgICAgIHByaW50KGZcIkNvbXBsZXRlZCBpbiB7c2VsZi5lbGFwc2VkOi40Zn1zXCIpXG4gICAgICAgIHJldHVybiBGYWxzZVxuXG53aXRoIE9wZXJhdGlvblRpbWVyKCkgYXMgdGltZXI6XG4gICAgZGF0YSA9IFt4ICoqIDIgZm9yIHggaW4gcmFuZ2UoMTAwXzAwMCldXG5cbnByaW50KGZcIldlIGhhdmUgYWNjZXNzIHRvIGVsYXBzZWQgYWZ0ZXIgdGhlIGJsb2NrOiB7dGltZXIuZWxhcHNlZDouNGZ9c1wiKSJ9"
+ width="100%"
+></iframe>
+
+## Class-Based Context Manager at a Glance
+
+| Step | Method | Typical actions |
+|---|---|---|
+| Setup | `__enter__` | Open file, acquire lock, start transaction, record time |
+| Success path | `__exit__` with `exc_type is None` | Commit, flush, release cleanly |
+| Failure path | `__exit__` with `exc_type` set | Rollback, log error, release anyway |
+| Suppress exception | Return `True` from `__exit__` | Use deliberately and rarely |
+| Propagate exception | Return `False` from `__exit__` | The usual behavior |
+
+## Your Turn
+
+Write a `TempDirectory` context manager that creates a temporary directory in `__enter__` (using the `tempfile` module: `tempfile.mkdtemp()`) and removes it with all its contents in `__exit__` (using `shutil.rmtree()`). Test it by creating a file inside the temporary directory during the `with` block, then confirming the directory and the file are both gone after the block exits.
+
+<iframe
+ frameBorder="0"
+ height="350px"
+ src="http://127.0.0.1:8765/embed.html#eyJ0aXRsZSI6IjAzX3dyaXRpbmdfYV9jbGFzc2Jhc2VkX2NvbnRleHRfbWFuYWdlciBjb2RlIDQiLCJsYW5ndWFnZSI6InB5dGhvbiIsImZpbGVuYW1lIjoibWFpbl8wMDQucHkiLCJjb2RlIjoiaW1wb3J0IHRlbXBmaWxlXG5pbXBvcnQgc2h1dGlsXG5pbXBvcnQgb3NcblxuY2xhc3MgVGVtcERpcmVjdG9yeTpcbiAgICBkZWYgX19lbnRlcl9fKHNlbGYpOlxuICAgICAgICBzZWxmLnBhdGggPSB0ZW1wZmlsZS5ta2R0ZW1wKClcbiAgICAgICAgcHJpbnQoZlwiQ3JlYXRlZDoge3NlbGYucGF0aH1cIilcbiAgICAgICAgcmV0dXJuIHNlbGYucGF0aFxuXG4gICAgZGVmIF9fZXhpdF9fKHNlbGYsIGV4Y190eXBlLCBleGNfdmFsLCBleGNfdGIpOlxuICAgICAgICBzaHV0aWwucm10cmVlKHNlbGYucGF0aClcbiAgICAgICAgcHJpbnQoZlwiUmVtb3ZlZDoge3NlbGYucGF0aH1cIilcbiAgICAgICAgcmV0dXJuIEZhbHNlXG5cbndpdGggVGVtcERpcmVjdG9yeSgpIGFzIHRtcGRpcjpcbiAgICBmaWxlcGF0aCA9IG9zLnBhdGguam9pbih0bXBkaXIsIFwidGVzdC50eHRcIilcbiAgICB3aXRoIG9wZW4oZmlsZXBhdGgsIFwid1wiKSBhcyBmOlxuICAgICAgICBmLndyaXRlKFwidGVtcG9yYXJ5IGRhdGFcIilcbiAgICBwcmludChmXCJGaWxlIGV4aXN0czoge29zLnBhdGguZXhpc3RzKGZpbGVwYXRoKX1cIikgICAjIFRydWVcblxucHJpbnQoZlwiRGlyIGV4aXN0cyBhZnRlciBibG9jazoge29zLnBhdGguZXhpc3RzKHRtcGRpcil9XCIpICAgIyBGYWxzZSJ9"
+ width="100%"
+></iframe>
+
+## Conclusion
+
+A class-based context manager implements `__enter__` for setup and `__exit__` for teardown, with the exception arguments in `__exit__` allowing different behavior on success versus failure. State is shared between the two methods via `self`. This pattern is ideal when the setup involves multiple steps, the teardown is complex, or the manager needs to expose attributes (like `timer.elapsed`) after the block completes. The next lesson shows a shorter way to write simple context managers using `contextlib.contextmanager` and `yield`.

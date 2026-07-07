@@ -1,0 +1,13 @@
+.DS_Store
+node_modules
+dist/
+build/
+.next/
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.log
+*.tmp
+*.temp
+*.zip

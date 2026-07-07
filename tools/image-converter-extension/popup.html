@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ByteXL Image Converter</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <h1>ByteXL Converter</h1>
+      <p>Upload a ZIP and download the converted version with ByteXL image links.</p>
+    </header>
+
+    <section class="field">
+      <label for="zipInput">ZIP file</label>
+      <input id="zipInput" type="file" accept=".zip,application/zip">
+      <p id="fileName" class="hint">No file selected</p>
+    </section>
+
+    <button id="convertBtn" class="primary" type="button" disabled>Convert & Download</button>
+
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+
+    <dl id="stats" class="stats" hidden>
+      <div>
+        <dt>Uploaded</dt>
+        <dd id="uploadedCount">0</dd>
+      </div>
+      <div>
+        <dt>Failed</dt>
+        <dd id="failedCount">0</dd>
+      </div>
+      <div>
+        <dt>Missing</dt>
+        <dd id="missingCount">0</dd>
+      </div>
+    </dl>
+  </main>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "functions": {
+    "app.js": {
+      "maxDuration": 60,
+      "includeFiles": "{index.html,styles.css,assets/**,vendor/**}"
+    },
+    "api/bytexl.js": {
+      "maxDuration": 60
+    }
+  }
+}

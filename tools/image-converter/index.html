@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ByteXL Content Uploader</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-0: #070912;
+      --bg-1: #0c0f1d;
+      --glass: rgba(22, 26, 44, 0.55);
+      --glass-2: rgba(30, 35, 58, 0.5);
+      --glass-brd: rgba(255, 255, 255, 0.08);
+      --glass-brd-hi: rgba(255, 255, 255, 0.16);
+      --ink: #f1f4ff;
+      --ink2: #c3cae0;
+      --muted: #8790ad;
+      --faint: #5c6480;
+
+      --violet: #8b5cf6;
+      --indigo: #6366f1;
+      --blue: #3b82f6;
+      --cyan: #22d3ee;
+      --pink: #ec4899;
+
+      --grad-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+      --grad-success: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+      --grad-text: linear-gradient(135deg, #a5b4fc, #e879f9);
+
+      --green: #34d399;
+      --green-soft: rgba(16, 185, 129, 0.12);
+      --green-brd: rgba(52, 211, 153, 0.35);
+      --amber: #fbbf24;
+      --amber-soft: rgba(251, 191, 36, 0.12);
+      --amber-brd: rgba(251, 191, 36, 0.35);
+      --red: #f87171;
+      --red-soft: rgba(248, 113, 113, 0.12);
+      --red-brd: rgba(248, 113, 113, 0.35);
+
+      --radius: 20px;
+      --radius-sm: 12px;
+      --radius-xs: 9px;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg-0);
+      color: var(--ink);
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Animated aurora background */
+    body::before, body::after {
+      content: "";
+      position: fixed;
+      z-index: 0;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    body::before {
+      width: 620px; height: 620px;
+      top: -220px; left: -140px;
+      background: radial-gradient(circle, #6366f1, transparent 70%);
+      animation: float1 18s ease-in-out infinite;
+    }
+
+    body::after {
+      width: 560px; height: 560px;
+      bottom: -240px; right: -120px;
+      background: radial-gradient(circle, #d946ef, transparent 70%);
+      animation: float2 22s ease-in-out infinite;
+    }
+
+    .aurora-3 {
+      position: fixed;
+      z-index: 0;
+      width: 480px; height: 480px;
+      top: 40%; left: 55%;
+      border-radius: 50%;
+      background: radial-gradient(circle, #06b6d4, transparent 70%);
+      filter: blur(130px);
+      opacity: 0.28;
+      pointer-events: none;
+      animation: float3 26s ease-in-out infinite;
+    }
+
+    @keyframes float1 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(80px, 60px); } }
+    @keyframes float2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-70px, -50px); } }
+    @keyframes float3 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-60px, 40px) scale(1.15); } }
+
+    .page { position: relative; z-index: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+    /* ── Top nav ── */
+    .topnav {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(9, 11, 20, 0.6);
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      border-bottom: 1px solid var(--glass-brd);
+      padding: 0 32px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 66px;
+    }
+
+    .nav-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+
+    .logo-mark {
+      width: 38px; height: 38px;
+      background: var(--grad-primary);
+      border-radius: 11px;
+      display: grid; place-items: center;
+      color: #fff; font-weight: 800; font-size: 18px;
+      font-family: "Space Grotesk", sans-serif;
+      box-shadow: 0 4px 20px rgba(139, 92, 246, 0.5), inset 0 1px 0 rgba(255,255,255,0.25);
+    }
+
+    .nav-title {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 17px; font-weight: 700; letter-spacing: -0.3px;
+    }
+    .nav-title span {
+      background: var(--grad-text);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 13px;
+      background: rgba(139, 92, 246, 0.14);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      color: #c4b5fd;
+      border-radius: 99px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.4px;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: border-color .2s, background .2s, color .2s, transform .12s;
+    }
+    .nav-badge:hover { border-color: rgba(34,211,238,0.45); background: rgba(34,211,238,0.12); color: #cffafe; transform: translateY(-1px); }
+
+    .main { flex: 1; padding: 48px 32px 64px; }
+    .shell { width: min(880px, 100%); margin: 0 auto; display: grid; gap: 22px; }
+
+    /* Hero heading */
+    .hero { text-align: center; margin-bottom: 4px; }
+    .hero h1 {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 34px; font-weight: 700; letter-spacing: -1px; line-height: 1.1;
+      background: linear-gradient(135deg, #ffffff 20%, #a5b4fc 60%, #e879f9 100%);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p { margin-top: 10px; color: var(--muted); font-size: 14.5px; }
+
+    /* ── Glass card ── */
+    .card {
+      background: var(--glass);
+      backdrop-filter: blur(30px) saturate(150%);
+      -webkit-backdrop-filter: blur(30px) saturate(150%);
+      border: 1px solid var(--glass-brd);
+      border-radius: var(--radius);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute; inset: 0;
+      border-radius: var(--radius);
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.14), transparent 40%, transparent 60%, rgba(139,92,246,0.14));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    .card-header { padding: 24px 28px 0; }
+    .card-title { font-family: "Space Grotesk", sans-serif; font-size: 16px; font-weight: 700; color: var(--ink); letter-spacing: -0.2px; }
+    .card-sub { margin-top: 3px; font-size: 13px; color: var(--muted); }
+    .card-body { padding: 22px 28px 28px; }
+
+    /* ── Steps ── */
+    .steps {
+      display: flex; gap: 0;
+      padding: 0 28px; margin-top: 16px;
+      border-bottom: 1px solid var(--glass-brd);
+      overflow-x: auto;
+    }
+    .steps::-webkit-scrollbar { display: none; }
+
+    .step {
+      display: flex; align-items: center; gap: 9px;
+      padding: 15px 4px; margin-right: 26px;
+      border-bottom: 2px solid transparent;
+      color: var(--faint); font-size: 13px; font-weight: 600;
+      white-space: nowrap; cursor: default;
+      transition: color .25s, border-color .25s;
+    }
+    .step.active { color: #c4b5fd; border-color: var(--violet); }
+    .step.done { color: var(--green); }
+
+    .step-num {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--glass-brd);
+      color: var(--muted);
+      font-size: 11px; font-weight: 800;
+      display: grid; place-items: center; flex-shrink: 0;
+      transition: all .25s;
+    }
+    .step.active .step-num { background: var(--grad-primary); border-color: transparent; color: #fff; box-shadow: 0 0 16px rgba(139,92,246,0.6); }
+    .step.done .step-num { background: var(--grad-success); border-color: transparent; color: #041b12; }
+
+    /* ── Option tiles ── */
+    .option-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+
+    .option-tile {
+      position: relative;
+      display: flex; flex-direction: column; gap: 7px;
+      padding: 16px 16px 16px 46px;
+      border: 1px solid var(--glass-brd);
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.03);
+      cursor: pointer; user-select: none;
+      transition: border-color .2s, background .2s, box-shadow .2s, transform .12s;
+    }
+    .option-tile:hover { border-color: var(--glass-brd-hi); background: rgba(255,255,255,0.05); transform: translateY(-2px); }
+
+    .option-tile input[type="checkbox"] {
+      position: absolute; left: 15px; top: 17px;
+      width: 18px; height: 18px; accent-color: var(--violet); cursor: pointer;
+    }
+
+    .option-tile:has(input:checked) {
+      border-color: rgba(139,92,246,0.5);
+      background: linear-gradient(135deg, rgba(99,102,241,0.14), rgba(217,70,239,0.08));
+      box-shadow: 0 0 0 1px rgba(139,92,246,0.3), 0 8px 24px rgba(99,102,241,0.18);
+    }
+
+    .option-name { font-size: 14px; font-weight: 700; color: var(--ink); }
+    .option-desc { font-size: 11.5px; color: var(--muted); line-height: 1.4; }
+
+    /* ── Config panel ── */
+    .config-panel {
+      display: none;
+      margin-top: 18px; padding: 18px;
+      background: rgba(99,102,241,0.06);
+      border: 1px solid rgba(139,92,246,0.22);
+      border-radius: var(--radius-sm);
+      gap: 16px;
+    }
+    .config-panel.show { display: flex; flex-direction: column; }
+    .config-divider { height: 1px; background: var(--glass-brd); margin: 2px 0; }
+
+    .field-label {
+      display: block; margin-bottom: 7px;
+      font-size: 11px; font-weight: 700; color: var(--ink2);
+      text-transform: uppercase; letter-spacing: 0.6px;
+    }
+
+    .select-wrap { display: flex; gap: 9px; align-items: center; }
+
+    .field-select {
+      flex: 1; height: 42px; padding: 0 12px;
+      border: 1px solid var(--glass-brd-hi);
+      border-radius: var(--radius-xs);
+      background: rgba(10,12,22,0.7);
+      color: var(--ink); font: inherit; font-size: 13px;
+      transition: border-color .18s, box-shadow .18s;
+    }
+    .field-select:focus { outline: none; border-color: var(--violet); box-shadow: 0 0 0 3px rgba(139,92,246,0.2); }
+    .field-select option { background: #0c0f1d; color: var(--ink); }
+
+    .icon-btn {
+      width: 42px; height: 42px;
+      border: 1px solid var(--glass-brd-hi);
+      border-radius: var(--radius-xs);
+      background: rgba(255,255,255,0.04);
+      color: var(--muted);
+      display: grid; place-items: center; cursor: pointer; flex-shrink: 0;
+      transition: all .18s;
+    }
+    .icon-btn:hover { border-color: var(--violet); color: #c4b5fd; background: rgba(139,92,246,0.14); }
+    .icon-btn:disabled { opacity: .4; cursor: not-allowed; }
+    .icon-btn svg { width: 17px; height: 17px; }
+
+    .toggles { display: flex; flex-wrap: wrap; gap: 10px 24px; }
+    .toggle-item {
+      display: flex; align-items: flex-start; gap: 9px;
+      font-size: 12.5px; font-weight: 600; color: var(--ink2);
+      cursor: pointer; user-select: none; line-height: 1.35;
+    }
+    .toggle-item input { width: 17px; height: 17px; margin-top: 1px; accent-color: var(--violet); cursor: pointer; flex-shrink: 0; }
+
+    /* ── Drop zone ── */
+    .drop-zone {
+      margin-top: 18px; min-height: 200px;
+      border: 2px dashed var(--glass-brd-hi);
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.02);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 10px; text-align: center; cursor: pointer; padding: 30px;
+      transition: border-color .25s, background .25s, box-shadow .25s;
+    }
+    .drop-zone:hover, .drop-zone.over {
+      border-color: var(--violet);
+      background: rgba(139,92,246,0.08);
+      box-shadow: inset 0 0 40px rgba(139,92,246,0.12);
+    }
+    .drop-zone.has-file { border-color: var(--green); border-style: solid; background: rgba(16,185,129,0.07); }
+
+    .drop-icon {
+      width: 52px; height: 52px; border-radius: 15px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--glass-brd);
+      display: grid; place-items: center; color: var(--muted);
+      transition: all .25s;
+    }
+    .drop-zone:hover .drop-icon, .drop-zone.over .drop-icon {
+      background: var(--grad-primary); color: #fff; border-color: transparent;
+      box-shadow: 0 8px 24px rgba(139,92,246,0.5);
+    }
+    .drop-zone.has-file .drop-icon { background: var(--grad-success); color: #041b12; border-color: transparent; }
+    .drop-icon svg { width: 24px; height: 24px; }
+
+    .drop-label { font-size: 15px; font-weight: 700; color: var(--ink); }
+    .drop-sub { font-size: 12.5px; color: var(--muted); }
+
+    .file-chip {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 14px;
+      background: var(--green-soft);
+      border: 1px solid var(--green-brd);
+      border-radius: 99px; color: var(--green);
+      font-size: 12.5px; font-weight: 700;
+    }
+
+    input[type="file"] { display: none; }
+
+    /* ── Buttons ── */
+    .btn-row { display: flex; gap: 12px; margin-top: 20px; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      height: 48px; padding: 0 22px;
+      border: none; border-radius: var(--radius-xs);
+      font: inherit; font-size: 14px; font-weight: 700;
+      cursor: pointer; position: relative; overflow: hidden;
+      transition: box-shadow .2s, opacity .2s, transform .1s, background .2s;
+    }
+    .btn:active { transform: translateY(1px) scale(0.995); }
+    .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+    .btn svg { width: 18px; height: 18px; }
+
+    .btn-primary {
+      flex: 1; color: #fff;
+      background: var(--grad-primary);
+      background-size: 180% 180%;
+      box-shadow: 0 4px 20px rgba(99,102,241,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+      animation: shimmer 6s ease infinite;
+    }
+    .btn-primary:hover:not(:disabled) { box-shadow: 0 6px 30px rgba(139,92,246,0.6), inset 0 1px 0 rgba(255,255,255,0.25); }
+    @keyframes shimmer { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+
+    .btn-success {
+      flex: 1; color: #041b12;
+      background: var(--grad-success); background-size: 180% 180%;
+      box-shadow: 0 4px 20px rgba(6,182,212,0.4), inset 0 1px 0 rgba(255,255,255,0.3);
+      animation: shimmer 6s ease infinite;
+    }
+    .btn-success:hover:not(:disabled) { box-shadow: 0 6px 30px rgba(16,185,129,0.6); }
+
+    .btn-ghost {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--glass-brd-hi);
+      color: var(--ink2);
+    }
+    .btn-ghost:hover:not(:disabled) { background: rgba(255,255,255,0.1); border-color: var(--glass-brd-hi); }
+
+    /* ── Progress ── */
+    .progress-bar {
+      display: none; margin-top: 18px; padding: 16px 18px;
+      background: rgba(251,191,36,0.08);
+      border: 1px solid var(--amber-brd);
+      border-radius: var(--radius-sm);
+    }
+    .progress-track { height: 6px; background: rgba(251,191,36,0.2); border-radius: 99px; overflow: hidden; }
+    .progress-fill {
+      width: 40%; height: 100%; border-radius: 99px;
+      background: linear-gradient(90deg, #fbbf24, #f59e0b);
+      box-shadow: 0 0 12px rgba(251,191,36,0.6);
+      animation: slide 1.3s infinite linear;
+    }
+    @keyframes slide { 0% { transform: translateX(-160%); } 100% { transform: translateX(360%); } }
+    .progress-label { margin-top: 10px; text-align: center; font-size: 12.5px; font-weight: 600; color: var(--amber); }
+
+    /* ── Result panel ── */
+    .result-panel {
+      display: none; margin-top: 18px;
+      border-radius: var(--radius-sm); overflow: hidden;
+      border: 1px solid var(--glass-brd);
+      background: rgba(255,255,255,0.02);
+    }
+    .result-head { padding: 16px 18px; display: flex; align-items: flex-start; gap: 13px; }
+    .result-head-icon { width: 40px; height: 40px; flex-shrink: 0; border-radius: 11px; display: grid; place-items: center; }
+    .result-head-icon svg { width: 21px; height: 21px; }
+    .result-title { font-family: "Space Grotesk", sans-serif; font-size: 15px; font-weight: 700; }
+    .result-msg { margin-top: 3px; font-size: 12.5px; }
+
+    .result-panel.success .result-head { background: var(--green-soft); }
+    .result-panel.success .result-head-icon { background: rgba(52,211,153,0.2); color: var(--green); }
+    .result-panel.success .result-title { color: #6ee7b7; }
+    .result-panel.success .result-msg { color: var(--green); }
+
+    .result-panel.error .result-head { background: var(--red-soft); }
+    .result-panel.error .result-head-icon { background: rgba(248,113,113,0.2); color: var(--red); }
+    .result-panel.error .result-title { color: #fca5a5; }
+    .result-panel.error .result-msg { color: var(--red); }
+
+    /* ── Stats ── */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+      background: var(--glass-brd); border-top: 1px solid var(--glass-brd);
+    }
+    .stat-cell { padding: 16px; background: rgba(12,15,29,0.6); text-align: center; }
+    .stat-val {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 26px; font-weight: 700; line-height: 1; letter-spacing: -0.5px;
+      background: var(--grad-text);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .stat-key { margin-top: 5px; font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.7px; }
+
+    /* ── Preview ── */
+    .preview-wrap { display: none; border-top: 1px solid var(--glass-brd); }
+    .preview-header {
+      padding: 12px 18px 10px;
+      font-size: 11px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.6px;
+      background: rgba(12,15,29,0.5); border-bottom: 1px solid var(--glass-brd);
+      display: grid; grid-template-columns: minmax(0,1.4fr) minmax(0,1fr) 80px; gap: 12px;
+    }
+    .preview-list { max-height: 320px; overflow-y: auto; }
+    .preview-list::-webkit-scrollbar { width: 8px; }
+    .preview-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
+
+    .preview-row {
+      display: grid; grid-template-columns: minmax(0,1.4fr) minmax(0,1fr) 80px; gap: 12px;
+      align-items: center; padding: 10px 18px;
+      border-bottom: 1px solid var(--glass-brd); font-size: 12.5px;
+      transition: background .15s;
+    }
+    .preview-row:last-child { border-bottom: none; }
+    .preview-row:hover { background: rgba(139,92,246,0.06); }
+
+    .preview-path, .preview-target { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink2); }
+    .preview-path { color: var(--muted); font-size: 12px; font-family: "Space Grotesk", monospace; }
+
+    .preview-header.two-col, .preview-row.two-col { grid-template-columns: minmax(0,1.4fr) minmax(0,1fr); }
+
+    .badge { justify-self: end; padding: 4px 9px; border-radius: 99px; font-size: 11px; font-weight: 800; letter-spacing: 0.2px; }
+    .badge-update { background: var(--green-soft); color: var(--green); border: 1px solid var(--green-brd); }
+    .badge-create { background: var(--amber-soft); color: var(--amber); border: 1px solid var(--amber-brd); }
+    .badge-blocked { background: var(--red-soft); color: var(--red); border: 1px solid var(--red-brd); }
+
+    /* ── Content preview ── */
+    .content-preview-wrap { display: none; border-top: 1px solid var(--glass-brd); }
+    .content-preview-header {
+      padding: 12px 18px 10px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+      font-size: 11px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.6px;
+      background: rgba(12,15,29,0.5); border-bottom: 1px solid var(--glass-brd);
+    }
+    .cp-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; text-transform: none; }
+    .cp-select {
+      min-height: 32px; max-width: 260px; padding: 4px 8px;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--glass-brd-hi);
+      border-radius: var(--radius-xs); color: var(--ink2); font-size: 12px;
+    }
+    .cp-tabs { display: inline-flex; border: 1px solid var(--glass-brd-hi); border-radius: var(--radius-xs); overflow: hidden; }
+    .cp-tab {
+      min-height: 32px; padding: 0 12px; background: rgba(255,255,255,0.03); color: var(--muted);
+      font-size: 11.5px; font-weight: 700; cursor: pointer; border: 0;
+    }
+    .cp-tab.active { background: var(--grad-primary); color: #fff; }
+    .cp-frame { display: block; width: 100%; height: 420px; border: 0; background: #fff; }
+    .cp-raw {
+      margin: 0; max-height: 420px; overflow: auto; padding: 16px 18px;
+      font-size: 12px; line-height: 1.5; background: rgba(7,9,18,0.6); color: var(--ink2);
+      white-space: pre-wrap; overflow-wrap: anywhere;
+    }
+    .cp-diff {
+      max-height: 420px; overflow: auto; padding: 8px 0;
+      font-family: "Space Grotesk", monospace; font-size: 12px; line-height: 1.55;
+      background: rgba(7,9,18,0.6);
+    }
+    .diff-line { padding: 1px 18px; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .diff-add { background: rgba(52,211,153,0.14); color: #6ee7b7; }
+    .diff-remove { background: rgba(248,113,113,0.14); color: #fca5a5; }
+    .diff-same { color: var(--ink2); }
+    .diff-empty { color: var(--muted); font-style: italic; padding: 16px 18px; }
+
+    /* ── Result actions ── */
+    .result-actions { display: none; gap: 12px; padding: 16px 18px; background: rgba(12,15,29,0.5); border-top: 1px solid var(--glass-brd); }
+    .result-actions.show { display: flex; }
+
+    .reset-foot { padding: 14px 18px; border-top: 1px solid var(--glass-brd); background: rgba(12,15,29,0.5); }
+    .reset-link { display: inline-flex; align-items: center; gap: 6px; color: #c4b5fd; font-size: 12.5px; font-weight: 700; cursor: pointer; text-decoration: none; }
+    .reset-link:hover { color: #e879f9; }
+    .reset-link svg { width: 14px; height: 14px; }
+
+    /* ── Footer note ── */
+    .foot-note { text-align: center; color: var(--faint); font-size: 12px; }
+    .foot-note a { color: var(--muted); text-decoration: none; }
+    .foot-note a:hover { color: #c4b5fd; }
+
+    /* ── Responsive ── */
+    @media (max-width: 680px) {
+      .topnav { padding: 0 18px; }
+      .main { padding: 32px 18px 48px; }
+      .hero h1 { font-size: 26px; }
+      .card-header, .card-body { padding-left: 18px; padding-right: 18px; }
+      .option-grid { grid-template-columns: 1fr; }
+      .btn-row { flex-direction: column; }
+      .btn-primary, .btn-success { flex: none; width: 100%; }
+      .stats-row { grid-template-columns: repeat(2,1fr); }
+      .preview-header, .preview-row { grid-template-columns: minmax(0,1fr) 72px; }
+      .preview-header span:nth-child(2), .preview-target { display: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="aurora-3"></div>
+<div class="page">
+
+  <!-- Top nav -->
+  <nav class="topnav">
+    <a class="nav-brand" href="/">
+      <div class="logo-mark">b</div>
+      <span class="nav-title">byte<span>XL</span> Uploader</span>
+    </a>
+    <a class="nav-badge" href="/assessment">Assessment Upload</a>
+  </nav>
+
+  <main class="main">
+    <div class="shell">
+
+      <!-- Hero -->
+      <div class="hero">
+        <h1>Ship content to ByteXL</h1>
+        <p>Upload images, wire up code editors, and push topics — all from one drop.</p>
+      </div>
+
+      <!-- Main card -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Upload Content</div>
+          <div class="card-sub">ZIP your content folder, choose what to process, and push directly to your product.</div>
+        </div>
+
+        <!-- Steps -->
+        <div class="steps">
+          <div class="step active" id="step1"><div class="step-num">1</div> Configure</div>
+          <div class="step" id="step2"><div class="step-num">2</div> Drop ZIP</div>
+          <div class="step" id="step3"><div class="step-num">3</div> Preview</div>
+          <div class="step" id="step4"><div class="step-num">4</div> Upload</div>
+        </div>
+
+        <div class="card-body">
+
+          <!-- Options -->
+          <div class="option-grid">
+            <label class="option-tile">
+              <input id="imageChoice" type="checkbox" checked>
+              <div class="option-name">Images</div>
+              <div class="option-desc">Upload local images to S3 and rewrite all links.</div>
+            </label>
+            <label class="option-tile">
+              <input id="codeChoice" type="checkbox" checked>
+              <div class="option-name">Code Editors</div>
+              <div class="option-desc">Convert code blocks to interactive OneCompiler editors.</div>
+            </label>
+            <label class="option-tile">
+              <input id="uploadChoice" type="checkbox">
+              <div class="option-name">Push to ByteXL</div>
+              <div class="option-desc">Send updated markdown directly into your product topics.</div>
+            </label>
+          </div>
+
+          <!-- Upload config -->
+          <div class="config-panel" id="destinationPanel">
+            <div>
+              <span class="field-label">Product</span>
+              <div class="select-wrap">
+                <select id="readingSelect" class="field-select">
+                  <option value="">Loading products…</option>
+                </select>
+                <button class="icon-btn" id="refreshReadingsBtn" type="button" title="Refresh">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="config-divider"></div>
+            <div class="toggles">
+              <label class="toggle-item">
+                <input id="createMissingChoice" type="checkbox" checked>
+                <span>Create missing units &amp; topics</span>
+              </label>
+              <label class="toggle-item">
+                <input id="replaceAllChoice" type="checkbox">
+                <span>Replace entire product structure</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Drop zone -->
+          <div class="drop-zone" id="dropZone" tabindex="0">
+            <div class="drop-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            </div>
+            <div class="drop-label" id="dropLabel">Drop your ZIP here</div>
+            <div class="drop-sub" id="dropSub">or click to browse</div>
+            <div class="file-chip" id="fileChip" style="display:none">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span id="fileName"></span>
+            </div>
+          </div>
+          <input id="fileInput" type="file" accept=".zip">
+
+          <!-- Actions -->
+          <div class="btn-row">
+            <button class="btn btn-primary" id="convertBtn" type="button" disabled>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span id="convertBtnText">Update ZIP &amp; Download</span>
+            </button>
+            <button class="btn btn-ghost" id="clearBtn" type="button">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+              Reset
+            </button>
+          </div>
+
+          <!-- Progress -->
+          <div class="progress-bar" id="progress">
+            <div class="progress-track"><div class="progress-fill"></div></div>
+            <div class="progress-label" id="progressLabel">Preparing…</div>
+          </div>
+
+          <!-- Result -->
+          <div class="result-panel" id="result">
+            <div class="result-head">
+              <div class="result-head-icon" id="resultIcon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div>
+                <div class="result-title" id="resultTitle"></div>
+                <div class="result-msg" id="resultMsg"></div>
+              </div>
+            </div>
+            <div class="stats-row" id="statsRow"></div>
+            <div class="preview-wrap" id="previewWrap">
+              <div class="preview-header">
+                <span>File</span>
+                <span>ByteXL topic</span>
+                <span style="text-align:right">Action</span>
+              </div>
+              <div class="preview-list" id="previewList"></div>
+            </div>
+            <div class="preview-wrap" id="missingImagesWrap" style="display:none">
+              <div class="preview-header two-col">
+                <span>File</span>
+                <span>Unresolved image reference</span>
+              </div>
+              <div class="preview-list" id="missingImagesList"></div>
+            </div>
+            <div class="content-preview-wrap" id="contentPreviewWrap">
+              <div class="content-preview-header">
+                <span>Content preview</span>
+                <div class="cp-controls">
+                  <select id="cpFileSelect" class="cp-select" aria-label="File to preview"></select>
+                  <div class="cp-tabs" role="tablist">
+                    <button type="button" class="cp-tab active" id="cpTabRendered" role="tab" aria-selected="true">Rendered</button>
+                    <button type="button" class="cp-tab" id="cpTabRaw" role="tab" aria-selected="false">Raw</button>
+                    <button type="button" class="cp-tab" id="cpTabDiff" role="tab" aria-selected="false">Diff</button>
+                  </div>
+                </div>
+              </div>
+              <iframe id="cpFrame" class="cp-frame" title="Markdown content preview" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
+              <pre id="cpRaw" class="cp-raw" style="display:none"></pre>
+              <div id="cpDiff" class="cp-diff" style="display:none"></div>
+            </div>
+            <div class="result-actions" id="resultActions">
+              <button class="btn btn-success" id="commitUploadBtn" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                Upload to ByteXL now
+              </button>
+              <button class="btn btn-ghost" id="downloadPreparedBtn" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download ZIP
+              </button>
+            </div>
+            <div class="reset-foot">
+              <a class="reset-link" id="resetBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                Start over
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <p class="foot-note">Runs locally · content pushed securely to <a href="https://bytexl.app" target="_blank" rel="noopener">bytexl.app</a></p>
+
+    </div>
+  </main>
+</div>
+
+<script>
+  const LANGUAGE_ALIASES = {
+    py:"python",python3:"python",python2:"python2",js:"javascript",node:"nodejs","node.js":"nodejs",
+    ts:"typescript",java:"java",c:"c","c++":"cpp",cpp:"cpp",cc:"cpp",cxx:"cpp","c#":"csharp",
+    cs:"csharp",csharp:"csharp",html:"html",html5:"html",php:"php",rb:"ruby",ruby:"ruby",
+    go:"go",golang:"go",rs:"rust",rust:"rust",kt:"kotlin",kotlin:"kotlin",scala:"scala",
+    swift:"swift",r:"r",perl:"perl",pl:"perl",bash:"bash",shell:"bash",sh:"sh",sql:"mysql",
+    mysql:"mysql",postgres:"postgresql",postgresql:"postgresql",sqlite:"sqlite",mongodb:"mongodb",
+    mongo:"mongodb",lua:"lua",dart:"dart",julia:"julia",groovy:"groovy",haskell:"haskell",
+    hs:"haskell",clojure:"clojure",ex:"elixir",elixir:"elixir",erl:"erlang",erlang:"erlang",
+    fsharp:"fsharp",fs:"fsharp",vb:"vb",v:"v",zig:"zig",nim:"nim",pascal:"pascal",
+    fortran:"fortran",cobol:"cobol",racket:"racket",scheme:"scheme",tcl:"tcl",awk:"awk",
+    matplotlib:"matplotlib",seaborn:"seaborn",tkinter:"tkinter",pygame:"pygame"
+  };
+
+  const ONECOMPILER_LANGUAGES = new Set([
+    "ada","assembly","awk","bash","basic","c","clojure","cobol","coffeescript","commonlisp","cpp",
+    "crystal","csharp","d","dart","deno","elixir","erlang","forth","fortran","fsharp","go","groovy",
+    "haskell","haxe","html","java","javascript","jshell","julia","kotlin","lua","matplotlib",
+    "mongodb","mysql","nim","nodejs","objectivec","ocaml","octave","pascal","perl","php",
+    "postgresql","prolog","pygame","python","python2","r","racket","ruby","rust","scala","scheme",
+    "seaborn","sh","sqlite","swift","tcl","tkinter","typescript","v","vb","zig"
+  ]);
+
+  const DEFAULT_SKIP_LANGUAGES = new Set([
+    "csv","diff","ini","json","markdown","md","mermaid","output","plain","plaintext","console",
+    "text","toml","traceback","xml","yaml","yml"
+  ]);
+
+  const FILE_EXTENSIONS = {
+    bash:"sh",c:"c",cpp:"cpp",csharp:"cs",go:"go",html:"html",java:"java",javascript:"js",
+    kotlin:"kt",mysql:"sql",nodejs:"js",php:"php",postgresql:"sql",python:"py",python2:"py",
+    r:"r",ruby:"rb",rust:"rs",scala:"scala",sh:"sh",sqlite:"sql",swift:"swift",typescript:"ts"
+  };
+
+  const supportedExts = new Set([".png",".jpg",".jpeg",".gif",".webp",".svg"]);
+  const mimeTypes = {".png":"image/png",".jpg":"image/jpeg",".jpeg":"image/jpeg",".gif":"image/gif",".webp":"image/webp",".svg":"image/svg+xml"};
+
+  const $ = id => document.getElementById(id);
+  const apiBase = location.protocol === "file:" ? "http://127.0.0.1:8000" : "";
+  const publicBase = location.protocol === "file:" ? "http://127.0.0.1:8000" : location.origin;
+  const uploadImageUrl = apiBase + "/upload-image";
+  const readingMaterialsUrl = apiBase + "/reading-materials";
+  const previewProductUploadUrl = apiBase + "/preview-product-upload";
+  const uploadToProductUrl = apiBase + "/upload-to-product";
+  const wrapperUrl = publicBase + "/embed.html";
+
+  let zipBlob = null, sourceName = "", preparedZipBlob = null, preparedZipName = "";
+  let preparedUploadPayload = null, lastPreviewPlan = null, readingsLoaded = false;
+  let previewFiles = [], contentPreviewMode = "rendered", currentContentPreviewPath = "";
+
+  const CONFIG_STORAGE_KEY = "bytexlUploaderConfig";
+  const savedConfig = loadSavedConfig();
+
+  function loadSavedConfig() {
+    try {
+      const raw = localStorage.getItem(CONFIG_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch { return null; }
+  }
+
+  function saveConfig() {
+    try {
+      localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify({
+        reading: $("readingSelect").value,
+        createMissing: $("createMissingChoice").checked,
+        replaceAll: $("replaceAllChoice").checked,
+        images: $("imageChoice").checked,
+        code: $("codeChoice").checked,
+        upload: $("uploadChoice").checked
+      }));
+    } catch { /* localStorage unavailable — skip persistence */ }
+  }
+
+  function init() {
+    if (savedConfig) {
+      if (typeof savedConfig.images === "boolean") $("imageChoice").checked = savedConfig.images;
+      if (typeof savedConfig.code === "boolean") $("codeChoice").checked = savedConfig.code;
+      if (typeof savedConfig.upload === "boolean") $("uploadChoice").checked = savedConfig.upload;
+      if (typeof savedConfig.createMissing === "boolean") $("createMissingChoice").checked = savedConfig.createMissing;
+      if (typeof savedConfig.replaceAll === "boolean") $("replaceAllChoice").checked = savedConfig.replaceAll;
+    }
+
+    $("dropZone").addEventListener("click", () => $("fileInput").click());
+    $("dropZone").addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("fileInput").click(); } });
+    $("fileInput").addEventListener("change", e => handleZipFile(e.target.files[0]));
+    $("convertBtn").addEventListener("click", convertSelectedZip);
+    $("clearBtn").addEventListener("click", resetForm);
+    $("resetBtn").addEventListener("click", resetForm);
+    $("imageChoice").addEventListener("change", () => { updateControls(); saveConfig(); });
+    $("codeChoice").addEventListener("change", () => { updateControls(); saveConfig(); });
+    $("readingSelect").addEventListener("change", () => { updateControls(); saveConfig(); });
+    $("createMissingChoice").addEventListener("change", saveConfig);
+    $("replaceAllChoice").addEventListener("change", saveConfig);
+    $("uploadChoice").addEventListener("change", () => { updateControls(); saveConfig(); if ($("uploadChoice").checked) loadReadingMaterials(); });
+    $("refreshReadingsBtn").addEventListener("click", () => loadReadingMaterials());
+    $("commitUploadBtn").addEventListener("click", commitProductUpload);
+    $("downloadPreparedBtn").addEventListener("click", () => { if (preparedZipBlob && preparedZipName) downloadBlob(preparedZipBlob, preparedZipName); });
+    $("cpFileSelect").addEventListener("change", e => showContentPreviewFor(e.target.value));
+    $("cpTabRendered").addEventListener("click", () => setContentPreviewMode("rendered"));
+    $("cpTabRaw").addEventListener("click", () => setContentPreviewMode("raw"));
+    $("cpTabDiff").addEventListener("click", () => setContentPreviewMode("diff"));
+    $("dropZone").addEventListener("dragover", e => { e.preventDefault(); $("dropZone").classList.add("over"); });
+    $("dropZone").addEventListener("dragleave", () => $("dropZone").classList.remove("over"));
+    $("dropZone").addEventListener("drop", async e => { e.preventDefault(); $("dropZone").classList.remove("over"); const f = e.dataTransfer.files[0]; if (f) handleZipFile(f); });
+    updateControls();
+    loadReadingMaterials();
+  }
+
+  function setStep(n) {
+    ["step1","step2","step3","step4"].forEach((id, i) => {
+      const el = $(id);
+      el.classList.remove("active","done");
+      if (i + 1 < n) el.classList.add("done");
+      else if (i + 1 === n) el.classList.add("active");
+    });
+  }
+
+  function updateControls() {
+    const up = $("uploadChoice").checked;
+    $("destinationPanel").classList.toggle("show", up);
+    $("convertBtnText").textContent = up ? "Prepare & Preview Upload" : "Update ZIP & Download";
+    $("convertBtn").disabled = !zipBlob || !hasConversion() || (up && !$("readingSelect").value);
+    setStep(zipBlob ? 2 : 1);
+  }
+
+  function hasConversion() {
+    return $("imageChoice").checked || $("codeChoice").checked || $("uploadChoice").checked;
+  }
+
+  function handleZipFile(file) {
+    if (!file || !looksLikeZip(file)) { showError("Please choose a .zip file."); return; }
+    zipBlob = file;
+    sourceName = stripExtension(file.name);
+    $("dropLabel").textContent = "File ready";
+    $("dropSub").style.display = "none";
+    $("fileChip").style.display = "inline-flex";
+    $("fileName").textContent = file.name;
+    $("dropZone").classList.add("has-file");
+    $("result").style.display = "none";
+    updateControls();
+  }
+
+  async function convertSelectedZip() {
+    if (!zipBlob) return;
+    $("convertBtn").disabled = true;
+    $("progress").style.display = "block";
+    $("result").style.display = "none";
+    resetPreparedUpload();
+    setStep(3);
+    try {
+      const result = await convertInBrowser();
+      preparedZipBlob = result.zipBlob;
+      preparedZipName = result.outputName;
+      setupContentPreview(result.uploadFiles);
+      if ($("uploadChoice").checked) {
+        await previewProductUpload(result);
+        $("progress").style.display = "none";
+      } else {
+        $("progress").style.display = "none";
+        showDownloadPreview(result.stats, result.shouldConvertImages, result.shouldConvertCode);
+      }
+    } catch (err) {
+      $("progress").style.display = "none";
+      showError(err.message || "Conversion failed.");
+      updateControls();
+    }
+  }
+
+  async function convertInBrowser() {
+    if (!window.JSZip) throw new Error("ZIP library did not load. Refresh and try again.");
+    const shouldConvertImages = $("imageChoice").checked;
+    const shouldConvertCode = $("codeChoice").checked;
+    const shouldUpload = $("uploadChoice").checked;
+    if (!shouldConvertImages && !shouldConvertCode && !shouldUpload) throw new Error("Choose at least one option.");
+
+    const compilerSettings = shouldConvertCode ? readCompilerSettings() : null;
+    setProgress("Reading ZIP…");
+    const zip = await JSZip.loadAsync(zipBlob);
+    const names = Object.keys(zip.files).filter(n => !zip.files[n].dir && !shouldIgnorePath(n));
+    const mdFiles = names.filter(isMarkdownPath);
+    const imgFiles = names.filter(n => supportedExts.has(extName(n)));
+    if (!mdFiles.length) throw new Error("No markdown files found in the ZIP.");
+
+    const stats = { uploaded:0,failed:0,missing:0,editors:0,skipped:0,changed:0,markdownFiles:mdFiles.length,filesLoaded:names.length,longUrls:[],missingDetails:[] };
+    const changedFiles = [], skippedBlocks = [], languageCounts = {};
+    const urlMap = new Map();
+
+    if (shouldConvertImages) {
+      for (let i = 0; i < imgFiles.length; i++) {
+        const ip = imgFiles[i];
+        const bytes = await zip.files[ip].async("uint8array");
+        setProgress(`Uploading image ${i+1} of ${imgFiles.length}: ${baseName(ip)}`);
+        const url = await uploadImage(ip, bytes);
+        if (url) { urlMap.set(normalizePath(ip), url); stats.uploaded++; } else { stats.failed++; }
+      }
+    }
+
+    const filenameMap = makeFilenameMap(urlMap);
+    const uploadFiles = [];
+
+    for (let i = 0; i < mdFiles.length; i++) {
+      const mp = mdFiles[i];
+      setProgress(`Processing ${i+1} of ${mdFiles.length}: ${baseName(mp)}`);
+      const original = await zip.files[mp].async("string");
+      let md = original;
+      if (shouldConvertCode) {
+        const r = convertMarkdownCode(md, mp, compilerSettings);
+        md = r.markdown;
+        if (r.convertedBlocks > 0) { changedFiles.push({path:mp,editors:r.convertedBlocks}); stats.changed++; }
+        stats.editors += r.convertedBlocks; stats.skipped += r.skippedBlocks.length;
+        for (const it of r.skippedBlocks) skippedBlocks.push(it);
+        for (const [lang,cnt] of Object.entries(r.languageCounts)) languageCounts[lang] = (languageCounts[lang]||0)+cnt;
+        for (const it of r.longUrls) stats.longUrls.push(it);
+      }
+      if (shouldConvertImages) md = rewriteMarkdownImages(md, mp, urlMap, filenameMap, stats);
+      zip.file(mp, md);
+      uploadFiles.push({path:mp, markdown:md, original});
+    }
+
+    if (shouldConvertCode) {
+      const summary = {filesLoaded:stats.filesLoaded,markdownFiles:stats.markdownFiles,filesChanged:stats.changed,editorsGenerated:stats.editors,skippedBlocks:stats.skipped,wrapperUrl:compilerSettings.wrapperUrl,languages:languageCounts,longUrls:stats.longUrls};
+      zip.file("onecompiler-report.md", buildOneCompilerReport(summary, changedFiles, skippedBlocks));
+      zip.file("onecompiler-manifest.json", JSON.stringify({summary,changedFiles,skippedBlocks},null,2));
+    }
+
+    setProgress("Building ZIP…");
+    const converted = await zip.generateAsync({type:"blob",compression:"DEFLATE"}, m => setProgress(`Building ZIP… ${Math.round(m.percent)}%`));
+    return { zipBlob:converted, outputName:outputFileName(shouldConvertImages,shouldConvertCode), stats, shouldConvertImages, shouldConvertCode, uploadFiles };
+  }
+
+  async function uploadImage(imgPath, bytes) {
+    const ext = extName(imgPath);
+    const fd = new FormData();
+    fd.append("subtype", slugify(parentName(imgPath)||"content"));
+    fd.append("file", new Blob([bytes],{type:mimeTypes[ext]||"application/octet-stream"}), baseName(imgPath));
+    const r = await fetch(uploadImageUrl,{method:"POST",body:fd});
+    if (r.status===413) throw new Error(`${baseName(imgPath)} is too large.`);
+    if (!r.ok) { const d = await r.json().catch(()=>({})); throw new Error(d.detail||`Upload failed for ${baseName(imgPath)}.`); }
+    return (await r.json()).url||null;
+  }
+
+  async function loadReadingMaterials() {
+    const sel = $("readingSelect"), btn = $("refreshReadingsBtn");
+    const prev = sel.value || (savedConfig && savedConfig.reading) || "";
+    sel.innerHTML = `<option value="">Loading products…</option>`;
+    if (btn) btn.disabled = true;
+    try {
+      const r = await fetch(readingMaterialsUrl);
+      if (!r.ok) throw new Error();
+      const data = await r.json();
+      const items = (data.items||[]).sort((a,b)=>(a.title||"").localeCompare(b.title||""));
+      sel.innerHTML = "";
+      for (const it of items) {
+        const o = document.createElement("option");
+        o.value = it._id;
+        o.textContent = `${it.title} (${it.chapterCount||0} units, ${it.topicCount||0} topics)`;
+        sel.appendChild(o);
+      }
+      if (prev && sel.querySelector(`option[value="${prev}"]`)) sel.value = prev;
+      else { const def = sel.querySelector(`option[value="${data.defaultReadingId}"]`); if (def) def.selected = true; }
+      readingsLoaded = true;
+    } catch { sel.innerHTML = `<option value="">Products unavailable — check token</option>`; }
+    if (btn) btn.disabled = false;
+    updateControls();
+  }
+
+  function resetPreparedUpload() {
+    preparedZipBlob = preparedZipName = preparedUploadPayload = lastPreviewPlan = null;
+    previewFiles = []; currentContentPreviewPath = ""; contentPreviewMode = "rendered";
+    $("previewWrap").style.display = "none";
+    $("previewList").innerHTML = "";
+    $("missingImagesWrap").style.display = "none";
+    $("missingImagesList").innerHTML = "";
+    $("contentPreviewWrap").style.display = "none";
+    $("cpFileSelect").innerHTML = "";
+    $("commitUploadBtn").style.display = "";
+    $("resultActions").classList.remove("show");
+    $("commitUploadBtn").disabled = false;
+  }
+
+  function renderMissingImages(stats) {
+    const details = (stats && stats.missingDetails) || [];
+    if (!details.length) { $("missingImagesWrap").style.display = "none"; $("missingImagesList").innerHTML = ""; return; }
+    const rows = details.slice(0, 100).map(it => `
+      <div class="preview-row two-col">
+        <span class="preview-path" title="${escapeAttr(it.file)}">${escapeHtml(it.file)}</span>
+        <span class="preview-target" title="${escapeAttr(it.path)}">${escapeHtml(it.path)}</span>
+      </div>`);
+    $("missingImagesList").innerHTML = rows.join("") + (details.length > 100 ? `<div class="preview-row two-col"><span class="preview-path" style="font-style:italic">Showing first 100 of ${details.length}…</span></div>` : "");
+    $("missingImagesWrap").style.display = "block";
+  }
+
+  function setupContentPreview(files) {
+    previewFiles = files || [];
+    contentPreviewMode = "rendered";
+    $("cpTabRendered").classList.add("active"); $("cpTabRendered").setAttribute("aria-selected","true");
+    $("cpTabRaw").classList.remove("active"); $("cpTabRaw").setAttribute("aria-selected","false");
+    $("cpTabDiff").classList.remove("active"); $("cpTabDiff").setAttribute("aria-selected","false");
+    const select = $("cpFileSelect");
+    select.innerHTML = "";
+    if (!previewFiles.length) { $("contentPreviewWrap").style.display = "none"; return; }
+    for (const f of previewFiles) {
+      const opt = document.createElement("option");
+      opt.value = f.path; opt.textContent = f.path;
+      select.appendChild(opt);
+    }
+    $("contentPreviewWrap").style.display = "block";
+    showContentPreviewFor(previewFiles[0].path);
+  }
+
+  function showContentPreviewFor(path) {
+    const item = previewFiles.find(f => f.path === path);
+    if (!item) return;
+    currentContentPreviewPath = path;
+    $("cpFileSelect").value = path;
+    renderContentPreview();
+  }
+
+  function setContentPreviewMode(mode) {
+    contentPreviewMode = mode;
+    $("cpTabRendered").classList.toggle("active", mode === "rendered");
+    $("cpTabRendered").setAttribute("aria-selected", String(mode === "rendered"));
+    $("cpTabRaw").classList.toggle("active", mode === "raw");
+    $("cpTabRaw").setAttribute("aria-selected", String(mode === "raw"));
+    $("cpTabDiff").classList.toggle("active", mode === "diff");
+    $("cpTabDiff").setAttribute("aria-selected", String(mode === "diff"));
+    renderContentPreview();
+  }
+
+  function renderContentPreview() {
+    const item = previewFiles.find(f => f.path === currentContentPreviewPath);
+    if (!item) return;
+    $("cpFrame").style.display = "none";
+    $("cpRaw").style.display = "none";
+    $("cpDiff").style.display = "none";
+    if (contentPreviewMode === "raw") {
+      $("cpRaw").style.display = "block";
+      $("cpRaw").textContent = item.markdown;
+    } else if (contentPreviewMode === "diff") {
+      $("cpDiff").style.display = "block";
+      $("cpDiff").innerHTML = renderDiffView(item.original != null ? item.original : item.markdown, item.markdown);
+    } else {
+      $("cpFrame").style.display = "block";
+      $("cpFrame").srcdoc = buildContentPreviewDoc(renderMarkdownPreview(item.markdown));
+    }
+  }
+
+  function computeLineDiff(oldText, newText) {
+    const a = oldText.split("\n"), b = newText.split("\n");
+    if (a.length * b.length > 4000000) return null;
+    const n = a.length, m = b.length;
+    const dp = Array.from({length: n + 1}, () => new Uint32Array(m + 1));
+    for (let i = n - 1; i >= 0; i--) {
+      for (let j = m - 1; j >= 0; j--) {
+        dp[i][j] = a[i] === b[j] ? dp[i+1][j+1] + 1 : Math.max(dp[i+1][j], dp[i][j+1]);
+      }
+    }
+    const ops = [];
+    let i = 0, j = 0;
+    while (i < n && j < m) {
+      if (a[i] === b[j]) { ops.push({type:"same", text:a[i]}); i++; j++; }
+      else if (dp[i+1][j] >= dp[i][j+1]) { ops.push({type:"remove", text:a[i]}); i++; }
+      else { ops.push({type:"add", text:b[j]}); j++; }
+    }
+    while (i < n) { ops.push({type:"remove", text:a[i]}); i++; }
+    while (j < m) { ops.push({type:"add", text:b[j]}); j++; }
+    return ops;
+  }
+
+  function renderDiffView(oldText, newText) {
+    if (oldText === newText) return `<div class="diff-empty">No changes in this file.</div>`;
+    const ops = computeLineDiff(oldText, newText);
+    if (!ops) return `<div class="diff-empty">File is too large to diff — use Rendered or Raw view instead.</div>`;
+    return ops.map(o => {
+      const cls = o.type === "add" ? "diff-add" : o.type === "remove" ? "diff-remove" : "diff-same";
+      const prefix = o.type === "add" ? "+ " : o.type === "remove" ? "- " : "  ";
+      return `<div class="diff-line ${cls}">${escapeHtml(prefix + o.text)}</div>`;
+    }).join("");
+  }
+
+  function buildContentPreviewDoc(bodyHtml) {
+    return `<!doctype html><html><head><meta charset="utf-8"><style>
+      body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif; max-width: 860px; margin: 0 auto; padding: 24px; line-height: 1.6; color: #182230; }
+      h1,h2,h3,h4,h5,h6 { line-height: 1.25; }
+      pre.preview-code-block { background: #111827; color: #edf2f7; padding: 12px 16px; border-radius: 8px; overflow: auto; font-size: 13px; }
+      code { background: #eef1f6; padding: 2px 5px; border-radius: 4px; font-size: 0.9em; }
+      pre.preview-code-block code { background: none; padding: 0; }
+      table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+      th, td { border: 1px solid #d6dde8; padding: 8px 10px; text-align: left; }
+      iframe { border: 1px solid #d6dde8; border-radius: 8px; }
+      blockquote { border-left: 4px solid #c7d2e0; margin: 0; padding: 4px 16px; color: #4b5566; }
+      img { max-width: 100%; }
+      a { color: #235c9f; }
+    </style></head><body>${bodyHtml}</body></html>`;
+  }
+
+  function renderMarkdownPreview(markdown) {
+    const lines = markdown.replace(/\r\n?/g, "\n").split("\n");
+    const n = lines.length;
+    let html = "", i = 0, paragraphBuf = [];
+    const flush = () => { if (paragraphBuf.length) { html += `<p>${inlinePreviewMarkdown(paragraphBuf.join(" "))}</p>\n`; paragraphBuf = []; } };
+    while (i < n) {
+      const line = lines[i];
+      if (/^\s*$/.test(line)) { flush(); i++; continue; }
+      if (/^\s*<(iframe|div|table|p|h[1-6])\b/i.test(line)) {
+        flush();
+        const block = [];
+        while (i < n && !/^\s*$/.test(lines[i])) { block.push(lines[i]); i++; }
+        html += `${block.join("\n")}\n`;
+        continue;
+      }
+      const heading = line.match(/^(#{1,6})\s+(.*)$/);
+      if (heading) { flush(); const lvl = heading[1].length; html += `<h${lvl}>${inlinePreviewMarkdown(heading[2].trim())}</h${lvl}>\n`; i++; continue; }
+      if (/^\s*([-*_])\s*(\1\s*){2,}$/.test(line)) { flush(); html += "<hr>\n"; i++; continue; }
+      const fence = line.match(/^(\s{0,3})(`{3,}|~{3,})(.*)$/);
+      if (fence) {
+        flush();
+        const fc = fence[2][0], fl = fence[2].length, info = fence[3].trim();
+        const closeRe = new RegExp(`^\\s{0,3}${escapeRegExp(fc)}{${fl},}\\s*$`);
+        i++;
+        const codeLines = [];
+        while (i < n && !closeRe.test(lines[i])) { codeLines.push(lines[i]); i++; }
+        i++;
+        const lang = (info.split(/\s+/)[0] || "").trim();
+        html += `<pre class="preview-code-block"><code data-lang="${escapeHtml(lang)}">${escapeHtml(codeLines.join("\n"))}</code></pre>\n`;
+        continue;
+      }
+      if (/^\s*>\s?/.test(line)) {
+        flush();
+        const quoteLines = [];
+        while (i < n && /^\s*>\s?/.test(lines[i])) { quoteLines.push(lines[i].replace(/^\s*>\s?/, "")); i++; }
+        html += `<blockquote>${renderMarkdownPreview(quoteLines.join("\n"))}</blockquote>\n`;
+        continue;
+      }
+      if (/\|/.test(line) && i + 1 < n && /^\s*\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)*\|?\s*$/.test(lines[i + 1])) {
+        flush();
+        const headerCells = splitPreviewTableRow(line);
+        i += 2;
+        const rows = [];
+        while (i < n && /\|/.test(lines[i]) && !/^\s*$/.test(lines[i])) { rows.push(splitPreviewTableRow(lines[i])); i++; }
+        html += "<table><thead><tr>";
+        for (const cell of headerCells) html += `<th>${inlinePreviewMarkdown(cell)}</th>`;
+        html += "</tr></thead><tbody>";
+        for (const row of rows) { html += "<tr>"; for (const cell of row) html += `<td>${inlinePreviewMarkdown(cell)}</td>`; html += "</tr>"; }
+        html += "</tbody></table>\n";
+        continue;
+      }
+      const ul = line.match(/^(\s*)([-*+])\s+(.*)$/);
+      const ol = line.match(/^(\s*)(\d+)[.)]\s+(.*)$/);
+      if (ul || ol) {
+        flush();
+        const ordered = !!ol, tag = ordered ? "ol" : "ul";
+        html += `<${tag}>\n`;
+        while (i < n) {
+          const m = ordered ? lines[i].match(/^(\s*)(\d+)[.)]\s+(.*)$/) : lines[i].match(/^(\s*)([-*+])\s+(.*)$/);
+          if (!m) break;
+          html += `<li>${inlinePreviewMarkdown(m[3])}</li>\n`;
+          i++;
+        }
+        html += `</${tag}>\n`;
+        continue;
+      }
+      paragraphBuf.push(line.trim());
+      i++;
+    }
+    flush();
+    return html;
+  }
+
+  function splitPreviewTableRow(line) {
+    return line.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map(c => c.trim());
+  }
+
+  function inlinePreviewMarkdown(text) {
+    let out = escapeHtml(text);
+    out = out.replace(/`([^`]+)`/g, (m, code) => `<code>${code}</code>`);
+    out = out.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (m, alt, src) => `<img alt="${alt}" src="${src}">`);
+    out = out.replace(/\[([^\]]*)\]\(([^)]+)\)/g, (m, label, href) => `<a href="${href}" target="_blank" rel="noopener">${label}</a>`);
+    out = out.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+    out = out.replace(/__([^_]+)__/g, "<strong>$1</strong>");
+    out = out.replace(/\*([^*]+)\*/g, "<em>$1</em>");
+    out = out.replace(/(^|\W)_([^_]+)_(?=\W|$)/g, "$1<em>$2</em>");
+    return out;
+  }
+
+  async function previewProductUpload(result) {
+    if (!$("readingSelect").value) throw new Error("Choose a ByteXL product first.");
+    preparedZipBlob = result.zipBlob;
+    preparedZipName = result.outputName;
+    preparedUploadPayload = {
+      readingId: $("readingSelect").value,
+      createMissing: $("createMissingChoice").checked,
+      replaceAll: $("replaceAllChoice").checked,
+      files: result.uploadFiles
+    };
+    setProgress("Matching topics in ByteXL…");
+    const r = await fetch(previewProductUploadUrl,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(preparedUploadPayload)});
+    const payload = await r.json().catch(()=>({}));
+    if (!r.ok) throw new Error(payload.detail||"Could not preview the upload.");
+    lastPreviewPlan = payload.plan;
+    showUploadPreview(result.stats, payload.plan, result.shouldConvertImages, result.shouldConvertCode);
+    updateControls();
+  }
+
+  async function commitProductUpload() {
+    if (!preparedUploadPayload||!lastPreviewPlan) return;
+    if (!lastPreviewPlan.canUpload) { showError("Upload blocked — some files are unmatched."); return; }
+    if ($("replaceAllChoice").checked && preparedZipBlob && preparedZipName) {
+      downloadBlob(preparedZipBlob, backupZipName(preparedZipName));
+    }
+    $("commitUploadBtn").disabled = true;
+    $("progress").style.display = "block";
+    setProgress("Uploading topics to ByteXL…");
+    setStep(4);
+    try {
+      const r = await fetch(uploadToProductUrl,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...preparedUploadPayload,confirm:true})});
+      const payload = await r.json().catch(()=>({}));
+      if (!r.ok) throw new Error(payload.detail||"Upload failed.");
+      $("progress").style.display = "none";
+      showProductUploadSuccess(payload);
+    } catch (err) {
+      $("progress").style.display = "none";
+      showError(err.message||"Upload failed.");
+      $("commitUploadBtn").disabled = false;
+    }
+  }
+
+  function rewriteMarkdownImages(markdown, mdPath, urlMap, filenameMap, stats) {
+    return markdown.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match,alt,target) => {
+      const {localPath,title} = splitMarkdownTarget(target);
+      if (!localPath||hasUrlScheme(localPath)) return match;
+      const resolved = resolveMarkdownImagePath(mdPath,localPath);
+      const s3 = urlMap.get(resolved)||filenameMap.get(baseName(safeDecode(localPath)));
+      if (!s3) { stats.missing++; stats.missingDetails.push({file:mdPath, path:localPath}); return match; }
+      return `![${alt}](${s3}${title?` ${title}`:""})`;
+    });
+  }
+
+  function convertMarkdownCode(markdown, filePath, settings) {
+    const blocks = iterFencedBlocks(markdown);
+    const replacements = [], skippedBlocks = [], longUrls = [], languageCounts = {};
+    let convertedBlocks = 0, fileBlockIndex = 0;
+    for (const block of blocks) {
+      const rawLang = normalizeLanguage(block.info);
+      const decision = shouldConvert(rawLang, block.code, settings);
+      if (!decision.convert) { skippedBlocks.push({file:filePath,lines:`${block.startLine}-${block.endLine}`,language:decision.language||"(none)",reason:decision.reason}); continue; }
+      fileBlockIndex++;convertedBlocks++;
+      const lang = decision.language;
+      const snippet = {title:`${baseNameWithoutExtension(filePath)} code ${fileBlockIndex}`,language:lang,filename:filenameFor(lang,fileBlockIndex),code:block.code.replace(/\n+$/,"")};
+      const src = encodedWrapperSrc(snippet, settings.wrapperUrl);
+      if (src.length>8000) longUrls.push({file:filePath,lines:`${block.startLine}-${block.endLine}`,length:src.length});
+      replacements.push([block.start,block.end,iframeHtml(src,settings.height)]);
+      languageCounts[lang]=(languageCounts[lang]||0)+1;
+    }
+    let converted = markdown;
+    for (const [start,end,rep] of replacements.reverse()) converted = converted.slice(0,start)+rep+converted.slice(end);
+    return {markdown:converted,convertedBlocks,skippedBlocks,languageCounts,longUrls};
+  }
+
+  function iterFencedBlocks(markdown) {
+    const lines = markdown.match(/[^\n]*\n|[^\n]+$/g)||[];
+    const offsets = []; let pos = 0;
+    for (const l of lines) { offsets.push(pos); pos+=l.length; }
+    const blocks = []; let i = 0;
+    while (i<lines.length) {
+      const sm = lines[i].match(/^[ \t]{0,3}(`{3,}|~{3,})([^\r\n]*)/);
+      if (!sm) { i++;continue; }
+      const fence=sm[1],fc=fence[0],fl=fence.length,info=(sm[2]||"").trim();
+      const cr=new RegExp(`^[ \\t]{0,3}${escapeRegExp(fc)}{${fl},}[ \\t]*\\r?\\n?$`);
+      let ci=i+1;
+      while (ci<lines.length&&!cr.test(lines[ci])) ci++;
+      if (ci>=lines.length){i++;continue;}
+      const codeStart=offsets[i]+lines[i].length,codeEnd=offsets[ci],blockEnd=offsets[ci]+lines[ci].length;
+      blocks.push({start:offsets[i],end:blockEnd,startLine:i+1,endLine:ci+1,info,code:markdown.slice(codeStart,codeEnd)});
+      i=ci+1;
+    }
+    return blocks;
+  }
+
+  function shouldConvert(language,code,settings) {
+    if (!code.trim()) return {convert:false,language,reason:"empty"};
+    let lang=language;
+    if (!lang) { if (!settings.convertUnlabeled) return {convert:false,language,reason:"unlabeled"}; lang="python"; }
+    if (DEFAULT_SKIP_LANGUAGES.has(lang)) return {convert:false,language:lang,reason:"skipped-language"};
+    if (settings.includeLanguages&&!settings.includeLanguages.has(lang)) return {convert:false,language:lang,reason:"not-in-include-list"};
+    if (!ONECOMPILER_LANGUAGES.has(lang)) return {convert:false,language:lang,reason:"unsupported-language"};
+    return {convert:true,language:lang,reason:"converted"};
+  }
+
+  function readCompilerSettings() { return {wrapperUrl,height:"350px",includeLanguages:null,convertUnlabeled:false}; }
+  function normalizeLanguage(info) { const t=(info||"").trim().split(/\s+/,1)[0]; if(!t)return null; const c=t.replace(/^[{.]+|[}.]+$/g,"").toLowerCase().replace(/^language-/,""); return LANGUAGE_ALIASES[c]||c; }
+  function encodedWrapperSrc(snippet,url) { return `${url.split("#",1)[0]}#${base64UrlEncode(JSON.stringify(snippet))}`; }
+  function base64UrlEncode(v) { const b=new TextEncoder().encode(v); let s=""; const cs=0x8000; for(let i=0;i<b.length;i+=cs) s+=String.fromCharCode(...b.subarray(i,i+cs)); return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); }
+  function iframeHtml(src,h) { return `<iframe\n frameBorder="0"\n height="${escapeAttr(h)}"\n src="${escapeAttr(src)}"\n width="100%"\n></iframe>\n`; }
+  function filenameFor(lang,i) { if(lang==="java")return "Main.java"; return `main_${String(i).padStart(3,"0")}.${FILE_EXTENSIONS[lang]||lang}`; }
+  function makeFilenameMap(urlMap) { const m=new Map(); for(const[p,url]of urlMap.entries()){const fn=baseName(p);m.set(fn,m.has(fn)?null:url);} return m; }
+  function splitMarkdownTarget(target) { const t=target.trim(); if(t.startsWith("<")&&t.includes(">")){const e=t.indexOf(">");return{localPath:t.slice(1,e),title:t.slice(e+1).trim()};} const m=t.match(/^(.*?)(\s+(?:"[^"]*"|'[^']*'|\([^)]*\)))$/); return m?{localPath:m[1].trim(),title:m[2].trim()}:{localPath:t,title:""}; }
+  function hasUrlScheme(p){return /^[a-z][a-z0-9+.-]*:/i.test(p);}
+  function resolveMarkdownImagePath(mp,ip){return normalizePath(posixJoin(dirName(mp),safeDecode(ip)));}
+  function posixJoin(...parts){return normalizePath(parts.join("/"));}
+  function normalizePath(p){const pts=[];for(const pt of String(p||"").replace(/\\/g,"/").split("/")){if(!pt||pt===".")continue;if(pt==="..")pts.pop();else pts.push(pt);}return pts.join("/");}
+  function shouldIgnorePath(p){const pts=normalizePath(p).split("/"),lp=pts.map(x=>x.toLowerCase());if(!pts.length)return true;if(lp.includes("__macosx")||lp.includes(".git")||lp.includes(".onecompiler_build")||lp.includes("node_modules")||lp.includes("sem2-image"))return true;return pts[pts.length-1]===".DS_Store";}
+  function safeDecode(v){try{return decodeURIComponent(v);}catch{return v;}}
+  function extName(p){const c=String(p||"").split(/[?#]/)[0],i=c.lastIndexOf(".");return i>=0?c.slice(i).toLowerCase():"";}
+  function baseName(p){return normalizePath(p).split("/").pop()||p;}
+  function dirName(p){const n=normalizePath(p),i=n.lastIndexOf("/");return i>=0?n.slice(0,i):"";}
+  function parentName(p){const d=dirName(p);return d?baseName(d):"";}
+  function slugify(t){return String(t||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,40)||"content";}
+  function stripExtension(p){return baseName(p).replace(/\.[^.]+$/,"")||"archive";}
+  function baseNameWithoutExtension(p){return stripExtension(p).replace(/[_-]+/g," ").trim()||"code";}
+  function isMarkdownPath(p){return /\.(md|markdown)$/i.test(p);}
+  function looksLikeZip(f){return /\.zip$/i.test(f?.name||"")||f?.type==="application/zip";}
+  function escapeRegExp(v){return v.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");}
+  function escapeAttr(v){return String(v).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+  function escapeHtml(v){return String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+  function downloadBlob(blob,filename){const u=URL.createObjectURL(blob),a=document.createElement("a");a.download=filename;a.href=u;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(u);}
+  function outputFileName(img,code){const b=sourceName||"reading-material";if(img&&code)return`${b}_updated.zip`;if(img)return`${b}_images_updated.zip`;if(code)return`${b}_code_updated.zip`;return`${b}_ready.zip`;}
+  function backupZipName(name){return `${name.replace(/\.zip$/i,"")}_backup_before_replace_${Date.now()}.zip`;}
+  function setProgress(msg){$("progressLabel").textContent=msg;}
+
+  function buildOneCompilerReport(summary,changedFiles,skippedBlocks){
+    const lines=["# OneCompiler Browser Conversion Report","","## Summary","",`- Wrapper URL: ${summary.wrapperUrl}`,`- Files loaded: ${summary.filesLoaded}`,`- Markdown files: ${summary.markdownFiles}`,`- Markdown files changed: ${summary.filesChanged}`,`- Code editors generated: ${summary.editorsGenerated}`,`- Blocks skipped: ${summary.skippedBlocks}`,"","## Languages Converted",""];
+    const le=Object.entries(summary.languages).sort((a,b)=>a[0].localeCompare(b[0]));
+    if(le.length)for(const[l,c]of le)lines.push(`- ${l}: ${c}`);else lines.push("- None");
+    if(summary.longUrls.length){lines.push("","## URL Length Warnings","");for(const it of summary.longUrls.slice(0,100))lines.push(`- ${it.file}, lines ${it.lines}: ${it.length} characters`);}
+    lines.push("","## Changed Files","");
+    if(changedFiles.length){lines.push("| File | Editors |","|----|---:|");for(const it of changedFiles.slice(0,500))lines.push(`| \`${it.path}\` | ${it.editors} |`);if(changedFiles.length>500)lines.push(`| ... | ${changedFiles.length-500} more |`);}else lines.push("No files changed.");
+    lines.push("","## Skipped Blocks","");
+    if(skippedBlocks.length){lines.push("| File | Lines | Language | Reason |","|----|---:|---|---|");for(const it of skippedBlocks.slice(0,500))lines.push(`| \`${it.file}\` | ${it.lines} | \`${it.language}\` | ${it.reason} |`);if(skippedBlocks.length>500)lines.push(`| ... | ... | ... | ${skippedBlocks.length-500} more |`);}else lines.push("No skipped blocks.");
+    lines.push("");return lines.join("\n");
+  }
+
+  function showUploadPreview(stats, plan, imagesEnabled, codeEnabled) {
+    const ok = plan.canUpload;
+    $("result").className = `result-panel ${ok ? "success" : "error"}`;
+    $("resultIcon").innerHTML = ok
+      ? `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`
+      : `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+    $("resultTitle").textContent = ok ? "Preview ready — review before uploading." : "Some files couldn't be matched.";
+    $("resultMsg").textContent = `${plan.readingTitle||"Selected product"}: ${plan.matched} mapped, ${plan.unmatched.length} unmatched.`;
+
+    const metrics = [["Mapped",plan.matched||0],["Updates",plan.updates||0],["Creates",plan.creates||0],["Unmatched",plan.unmatched.length||0]];
+    if (imagesEnabled) metrics.push(["Images",stats.uploaded||0]);
+    if (codeEnabled) metrics.push(["Editors",stats.editors||0]);
+    $("statsRow").innerHTML = metrics.map(([k,v])=>`<div class="stat-cell"><div class="stat-val">${v}</div><div class="stat-key">${k}</div></div>`).join("");
+
+    const rows = [
+      ...plan.items.slice(0,80).map(it=>`
+        <div class="preview-row">
+          <span class="preview-path" title="${escapeAttr(it.path)}">${escapeHtml(it.path)}</span>
+          <span class="preview-target" title="${escapeAttr(it.unitTitle+' / '+it.topicTitle)}">${escapeHtml(it.unitTitle)} / ${escapeHtml(it.topicTitle)}</span>
+          <span class="badge badge-${it.pageAction==="update"?"update":"create"}">${it.pageAction==="update"?"Update":"Create"}</span>
+        </div>`),
+      ...plan.unmatched.slice(0,40).map(it=>`
+        <div class="preview-row">
+          <span class="preview-path" title="${escapeAttr(it.path)}">${escapeHtml(it.path)}</span>
+          <span class="preview-target">${escapeHtml(it.reason||"Unmatched")}</span>
+          <span class="badge badge-blocked">Blocked</span>
+        </div>`)
+    ];
+    $("previewList").innerHTML = rows.join("") + (plan.items.length>80||plan.unmatched.length>40 ? `<div class="preview-row"><span class="preview-path" style="font-style:italic">Showing first results only…</span></div>` : "");
+    $("previewWrap").style.display = "block";
+    renderMissingImages(stats);
+    $("resultActions").classList.add("show");
+    $("commitUploadBtn").disabled = !ok;
+    $("result").style.display = "block";
+    setStep(3);
+  }
+
+  function showProductUploadSuccess(payload) {
+    $("result").className = "result-panel success";
+    $("resultIcon").innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+    $("resultTitle").textContent = "Uploaded successfully to ByteXL.";
+    $("resultMsg").textContent = `${payload.readingTitle||"Product"} has been updated.`;
+    $("statsRow").innerHTML = [["Updated",payload.updatedTopics||0],["Created",payload.createdTopics||0],["New Units",payload.createdUnits||0]].map(([k,v])=>`<div class="stat-cell"><div class="stat-val">${v}</div><div class="stat-key">${k}</div></div>`).join("");
+    $("previewWrap").style.display = "none";
+    $("missingImagesWrap").style.display = "none";
+    $("resultActions").classList.add("show");
+    $("commitUploadBtn").disabled = true;
+    $("result").style.display = "block";
+    setStep(4);
+  }
+
+  function showDownloadPreview(stats, imagesEnabled, codeEnabled) {
+    $("result").className = "result-panel success";
+    $("resultIcon").innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+    $("resultTitle").textContent = "Preview ready — review before you download.";
+    $("resultMsg").textContent = [imagesEnabled?"Image links updated.":"",codeEnabled?"Code blocks converted.":""].filter(Boolean).join(" ");
+    const m=[];
+    if(imagesEnabled){m.push(["Uploaded",stats.uploaded||0],["Not Found",stats.missing||0]);}
+    if(codeEnabled){m.push(["Editors",stats.editors||0],["Skipped",stats.skipped||0]);}
+    $("statsRow").innerHTML = m.map(([k,v])=>`<div class="stat-cell"><div class="stat-val">${v}</div><div class="stat-key">${k}</div></div>`).join("");
+    $("previewWrap").style.display = "none";
+    renderMissingImages(stats);
+    $("commitUploadBtn").style.display = "none";
+    $("resultActions").classList.add("show");
+    $("result").style.display = "block";
+    setStep(3);
+  }
+
+  function showError(msg) {
+    $("result").className = "result-panel error";
+    $("resultIcon").innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+    $("resultTitle").textContent = "Something went wrong";
+    $("resultMsg").textContent = msg;
+    $("statsRow").innerHTML = "";
+    $("previewWrap").style.display = "none";
+    $("resultActions").classList.remove("show");
+    $("result").style.display = "block";
+  }
+
+  function resetForm() {
+    zipBlob = null; sourceName = "";
+    resetPreparedUpload();
+    $("fileInput").value = "";
+    $("dropLabel").textContent = "Drop your ZIP here";
+    $("dropSub").style.display = "";
+    $("fileChip").style.display = "none";
+    $("fileName").textContent = "";
+    $("dropZone").classList.remove("has-file","over");
+    $("progress").style.display = "none";
+    $("result").style.display = "none";
+    $("resultIcon").innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+    updateControls();
+    setStep(1);
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>

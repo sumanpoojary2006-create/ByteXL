@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Variable stores a value</title>
+  <desc id="desc">A simple visual showing an assignment statement storing the value 85 in a memory box named score, then reading score later gives 85.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8fafc"/>
+      <stop offset="0.55" stop-color="#f2f7fb"/>
+      <stop offset="1" stop-color="#fff7ed"/>
+    </linearGradient>
+    <linearGradient id="codeCard" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#e8f3f7"/>
+    </linearGradient>
+    <linearGradient id="boxFace" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#dff9ff" stop-opacity="0.92"/>
+      <stop offset="1" stop-color="#80d8e8" stop-opacity="0.7"/>
+    </linearGradient>
+    <linearGradient id="boxTop" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8feff" stop-opacity="0.98"/>
+      <stop offset="1" stop-color="#a6edf7" stop-opacity="0.78"/>
+    </linearGradient>
+    <linearGradient id="valueCube" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffd166"/>
+      <stop offset="1" stop-color="#f59e0b"/>
+    </linearGradient>
+    <linearGradient id="tag" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#14b8a6"/>
+      <stop offset="1" stop-color="#0f766e"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="24" stdDeviation="22" flood-color="#0f172a" flood-opacity="0.16"/>
+    </filter>
+    <filter id="softShadow" x="-30%" y="-30%" width="160%" height="170%">
+      <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#0f172a" flood-opacity="0.13"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 14 14" refX="12" refY="7" markerWidth="12" markerHeight="12" orient="auto-start-reverse">
+      <path d="M1 1 L13 7 L1 13 Z" fill="#2563eb"/>
+    </marker>
+    <style>
+      .label { font-family: Inter, Arial, sans-serif; fill: #334155; font-size: 32px; font-weight: 700; letter-spacing: 0; }
+      .small { font-family: Inter, Arial, sans-serif; fill: #475569; font-size: 25px; font-weight: 700; letter-spacing: 0; }
+      .tiny { font-family: Inter, Arial, sans-serif; fill: #64748b; font-size: 21px; font-weight: 700; letter-spacing: 0; }
+      .code { font-family: "SF Mono", Menlo, Consolas, monospace; fill: #0f172a; font-size: 54px; font-weight: 800; letter-spacing: 0; }
+      .codeAccent { fill: #2563eb; }
+      .valueText { font-family: Inter, Arial, sans-serif; fill: #7c2d12; font-size: 78px; font-weight: 900; letter-spacing: 0; }
+      .tagText { font-family: Inter, Arial, sans-serif; fill: #ffffff; font-size: 45px; font-weight: 900; letter-spacing: 0; }
+      .step { font-family: Inter, Arial, sans-serif; fill: #ffffff; font-size: 24px; font-weight: 900; letter-spacing: 0; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <circle cx="1010" cy="220" r="155" fill="#99f6e4" opacity="0.18"/>
+  <circle cx="420" cy="650" r="180" fill="#bfdbfe" opacity="0.14"/>
+
+  <text x="800" y="90" text-anchor="middle" class="label">A variable stores a value under a name</text>
+
+  <!-- Step 1: assignment statement -->
+  <g filter="url(#softShadow)">
+    <rect x="110" y="300" width="395" height="185" rx="30" fill="url(#codeCard)" stroke="#cbd5e1" stroke-width="3"/>
+    <circle cx="165" cy="325" r="25" fill="#2563eb"/>
+    <text x="165" y="334" text-anchor="middle" class="step">1</text>
+    <text x="305" y="280" text-anchor="middle" class="small">assign</text>
+    <text x="305" y="400" text-anchor="middle" class="code">
+      <tspan class="codeAccent">score</tspan><tspan> = </tspan><tspan fill="#f59e0b">85</tspan>
+    </text>
+  </g>
+
+  <!-- Arrow into the container -->
+  <path d="M520 390 C610 350, 670 350, 760 390" fill="none" stroke="#2563eb" stroke-width="12" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <text x="640" y="335" text-anchor="middle" class="tiny">stores</text>
+
+  <!-- Step 2: variable as named storage -->
+  <g filter="url(#shadow)">
+    <circle cx="805" cy="290" r="25" fill="#2563eb"/>
+    <text x="805" y="299" text-anchor="middle" class="step">2</text>
+    <text x="930" y="280" text-anchor="middle" class="small">memory box</text>
+
+    <!-- 3D transparent box -->
+    <polygon points="770,365 1040,300 1190,385 915,455" fill="url(#boxTop)" stroke="#0891b2" stroke-width="4"/>
+    <polygon points="770,365 915,455 915,675 770,585" fill="#b9f3fb" fill-opacity="0.62" stroke="#0891b2" stroke-width="4"/>
+    <polygon points="915,455 1190,385 1190,605 915,675" fill="url(#boxFace)" stroke="#0891b2" stroke-width="4"/>
+    <polygon points="770,585 915,675 1190,605 1045,515" fill="#67e8f9" fill-opacity="0.22" stroke="#0891b2" stroke-width="3"/>
+
+    <!-- attached name tag -->
+    <path d="M805 315 h250 a22 22 0 0 1 22 22 v78 a22 22 0 0 1 -22 22 h-250 a22 22 0 0 1 -22 -22 v-78 a22 22 0 0 1 22 -22 z" fill="url(#tag)"/>
+    <circle cx="835" cy="376" r="10" fill="#ccfbf1"/>
+    <text x="930" y="391" text-anchor="middle" class="tagText">score</text>
+    <text x="930" y="474" text-anchor="middle" class="tiny">name</text>
+
+    <!-- value cube inside -->
+    <g>
+      <polygon points="920,500 1035,472 1115,520 997,550" fill="#fde68a"/>
+      <polygon points="920,500 997,550 997,642 920,592" fill="#fbbf24"/>
+      <polygon points="997,550 1115,520 1115,610 997,642" fill="url(#valueCube)"/>
+      <text x="1022" y="592" text-anchor="middle" class="valueText">85</text>
+      <text x="1020" y="680" text-anchor="middle" class="tiny">stored value</text>
+    </g>
+  </g>
+
+  <!-- Arrow out of the container -->
+  <path d="M1215 500 C1300 500, 1340 455, 1400 420" fill="none" stroke="#2563eb" stroke-width="12" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <text x="1305" y="470" text-anchor="middle" class="tiny">read later</text>
+
+  <!-- Step 3: reading the variable -->
+  <g filter="url(#softShadow)">
+    <rect x="1195" y="270" width="295" height="150" rx="28" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+    <circle cx="1245" cy="295" r="25" fill="#2563eb"/>
+    <text x="1245" y="304" text-anchor="middle" class="step">3</text>
+    <text x="1344" y="335" text-anchor="middle" class="small">use score</text>
+    <text x="1344" y="390" text-anchor="middle" class="code"><tspan class="codeAccent">score</tspan><tspan> -> </tspan><tspan fill="#f59e0b">85</tspan></text>
+  </g>
+
+  <text x="800" y="825" text-anchor="middle" class="small">The name stays in your code. The value is what Python remembers.</text>
+</svg>

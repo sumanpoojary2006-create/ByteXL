@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ByteXL Uploader - Reading Material</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script defer src="./vendor/jszip.min.js"></script>
+  <script defer src="https://unpkg.com/lucide@latest"></script>
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">b</div>
+        <div>
+          <h1>ByteXL Uploader</h1>
+          <p>Reading material tool</p>
+        </div>
+      </div>
+
+      <nav class="tool-switcher" aria-label="Uploader tools">
+        <a href="./" class="tool-link is-active">
+          <i data-lucide="book-open-check"></i>
+          <span>Reading Material</span>
+        </a>
+        <a
+          id="codingUploaderLink"
+          href="https://vercel-coding-question-uploader.vercel.app/"
+          class="tool-link"
+          target="_blank"
+          rel="noopener"
+          data-default-href="https://vercel-coding-question-uploader.vercel.app/"
+        >
+          <i data-lucide="file-code-2"></i>
+          <span>Coding Questions</span>
+        </a>
+      </nav>
+
+      <nav class="steps" aria-label="Workflow">
+        <a href="#upload" class="step is-active">
+          <i data-lucide="upload-cloud"></i>
+          <span>Upload</span>
+        </a>
+        <a href="#settings" class="step">
+          <i data-lucide="sliders-horizontal"></i>
+          <span>Settings</span>
+        </a>
+        <a href="#result" class="step">
+          <i data-lucide="download"></i>
+          <span>Download</span>
+        </a>
+      </nav>
+
+      <div class="privacy-note">
+        <i data-lucide="shield-check"></i>
+        <span>Files are processed in this browser session.</span>
+      </div>
+    </aside>
+
+    <main class="workspace">
+      <section class="toolbar">
+        <div>
+          <h2>Reading Material Converter</h2>
+          <p>Upload Markdown files, a folder, or a ZIP.</p>
+        </div>
+        <button id="clearBtn" class="icon-button" type="button" title="Clear">
+          <i data-lucide="rotate-ccw"></i>
+        </button>
+      </section>
+
+      <section id="upload" class="panel upload-panel">
+        <div id="dropZone" class="drop-zone" tabindex="0">
+          <i data-lucide="folder-up"></i>
+          <strong>Drop files here</strong>
+          <span>Folder, ZIP, or Markdown files</span>
+        </div>
+        <div class="button-row">
+          <button id="folderBtn" class="primary-button" type="button">
+            <i data-lucide="folder-open"></i>
+            <span>Select Folder</span>
+          </button>
+          <button id="filesBtn" class="secondary-button" type="button">
+            <i data-lucide="file-up"></i>
+            <span>Select Files or ZIP</span>
+          </button>
+        </div>
+        <input id="folderInput" type="file" webkitdirectory directory multiple>
+        <input id="filesInput" type="file" accept=".md,.markdown,.zip,text/markdown,application/zip" multiple>
+      </section>
+
+      <section id="settings" class="panel settings-grid">
+        <label>
+          <span>Wrapper URL</span>
+          <input id="wrapperUrl" type="url">
+        </label>
+        <label>
+          <span>Editor Height</span>
+          <input id="height" type="text" value="350px">
+        </label>
+        <label>
+          <span>Languages</span>
+          <input id="languages" type="text" placeholder="Blank = all supported">
+        </label>
+        <label class="checkbox-row">
+          <input id="convertUnlabeled" type="checkbox">
+          <span>Convert unlabeled code as Python</span>
+        </label>
+      </section>
+
+      <section class="stats-grid" aria-label="Current status">
+        <div class="metric">
+          <strong id="fileCount">0</strong>
+          <span>Files loaded</span>
+        </div>
+        <div class="metric">
+          <strong id="markdownCount">0</strong>
+          <span>Markdown files</span>
+        </div>
+        <div class="metric">
+          <strong id="editorCount">0</strong>
+          <span>Editors</span>
+        </div>
+        <div class="metric">
+          <strong id="skippedCount">0</strong>
+          <span>Skipped</span>
+        </div>
+      </section>
+
+      <section id="result" class="panel action-panel">
+        <div>
+          <h3>Output ZIP</h3>
+          <p id="statusText">No files loaded yet.</p>
+        </div>
+        <div class="button-row compact">
+          <button id="generateBtn" class="primary-button" type="button" disabled>
+            <i data-lucide="wand-sparkles"></i>
+            <span>Generate ZIP</span>
+          </button>
+          <button id="downloadBtn" class="secondary-button" type="button" disabled>
+            <i data-lucide="download"></i>
+            <span>Download</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="panel report-panel">
+        <div class="report-head">
+          <h3>Report</h3>
+          <span id="reportState">Waiting</span>
+        </div>
+        <pre id="report">Upload reading material to begin.</pre>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

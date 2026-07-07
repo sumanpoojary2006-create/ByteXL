@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "ByteXL Image Converter",
+  "description": "Upload ZIP images to ByteXL and rewrite markdown image links.",
+  "version": "1.1.0",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "ByteXL Image Converter"
+  },
+  "permissions": ["downloads"],
+  "host_permissions": ["https://image-converter-pi-rouge.vercel.app/*"]
+}

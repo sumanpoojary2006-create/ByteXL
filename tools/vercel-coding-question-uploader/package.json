@@ -1,0 +1,12 @@
+{
+  "name": "bytexl-coding-question-uploader",
+  "version": "1.0.0",
+  "private": true,
+  "main": "app.js",
+  "scripts": {
+    "dev": "node local-server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

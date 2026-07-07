@@ -1,0 +1,99 @@
+## Introduction
+
+Priya's `import_books.py` script needs three things `sys.argv` makes difficult: optional arguments with defaults, a `--help` flag that explains how to use the tool, and automatic type conversion (the `--limit` option should be an integer, not a string). `argparse` provides all of these in about ten lines.
+
+![An argparse-powered command shown with --help output: usage line, positional arguments, optional arguments with types and defaults, all automatically generated from the parser definition](images/03_argparse.png)
+
+## Basic argparse Structure
+
+<iframe
+ frameBorder="0"
+ height="350px"
+ src="http://127.0.0.1:8765/embed.html#eyJ0aXRsZSI6IjAzX2FyZ3BhcnNlIGNvZGUgMSIsImxhbmd1YWdlIjoicHl0aG9uIiwiZmlsZW5hbWUiOiJtYWluXzAwMS5weSIsImNvZGUiOiJpbXBvcnQgYXJncGFyc2VcblxuZGVmIG1haW4oKTpcbiAgICBwYXJzZXIgPSBhcmdwYXJzZS5Bcmd1bWVudFBhcnNlcihcbiAgICAgICAgZGVzY3JpcHRpb249XCJJbXBvcnQgYm9va3MgaW50byB0aGUgbGlicmFyeSBjYXRhbG9nXCJcbiAgICApXG4gICAgcGFyc2VyLmFkZF9hcmd1bWVudChcImZpbGVcIiwgaGVscD1cIkNTViBmaWxlIHRvIGltcG9ydFwiKVxuICAgIHBhcnNlci5hZGRfYXJndW1lbnQoXCItLWJyYW5jaFwiLCBkZWZhdWx0PVwibWFpblwiLCBoZWxwPVwiVGFyZ2V0IGJyYW5jaCAoZGVmYXVsdDogbWFpbilcIilcbiAgICBwYXJzZXIuYWRkX2FyZ3VtZW50KFwiLS1saW1pdFwiLCB0eXBlPWludCwgZGVmYXVsdD1Ob25lLCBoZWxwPVwiTWF4aW11bSByZWNvcmRzIHRvIGltcG9ydFwiKVxuICAgIHBhcnNlci5hZGRfYXJndW1lbnQoXCItLWRyeS1ydW5cIiwgYWN0aW9uPVwic3RvcmVfdHJ1ZVwiLCBoZWxwPVwiVmFsaWRhdGUgb25seSwgZG8gbm90IGltcG9ydFwiKVxuXG4gICAgYXJncyA9IHBhcnNlci5wYXJzZV9hcmdzKClcbiAgICBwcmludChmXCJGaWxlOiAgICAge2FyZ3MuZmlsZX1cIilcbiAgICBwcmludChmXCJCcmFuY2g6ICAge2FyZ3MuYnJhbmNofVwiKVxuICAgIHByaW50KGZcIkxpbWl0OiAgICB7YXJncy5saW1pdH1cIilcbiAgICBwcmludChmXCJEcnkgcnVuOiAge2FyZ3MuZHJ5X3J1bn1cIilcblxuaWYgX19uYW1lX18gPT0gXCJfX21haW5fX1wiOlxuICAgIG1haW4oKSJ9"
+ width="100%"
+></iframe>
+
+Running:
+<iframe
+ frameBorder="0"
+ height="350px"
+ src="http://127.0.0.1:8765/embed.html#eyJ0aXRsZSI6IjAzX2FyZ3BhcnNlIGNvZGUgMiIsImxhbmd1YWdlIjoiYmFzaCIsImZpbGVuYW1lIjoibWFpbl8wMDIuc2giLCJjb2RlIjoicHl0aG9uIGltcG9ydF9ib29rcy5weSBjYXRhbG9nLmNzdiAtLWJyYW5jaCBlYXN0IC0tbGltaXQgMTAwIC0tZHJ5LXJ1blxuIyBGaWxlOiAgICAgY2F0YWxvZy5jc3ZcbiMgQnJhbmNoOiAgIGVhc3RcbiMgTGltaXQ6ICAgIDEwMFxuIyBEcnkgcnVuOiAgVHJ1ZVxuXG5weXRob24gaW1wb3J0X2Jvb2tzLnB5IC0taGVscFxuIyB1c2FnZTogaW1wb3J0X2Jvb2tzLnB5IFstaF0gWy0tYnJhbmNoIEJSQU5DSF0gWy0tbGltaXQgTElNSVRdIFstLWRyeS1ydW5dIGZpbGVcbiMgSW1wb3J0IGJvb2tzIGludG8gdGhlIGxpYnJhcnkgY2F0YWxvZ1xuIyBwb3NpdGlvbmFsIGFyZ3VtZW50czpcbiMgICBmaWxlICAgICAgICAgICBDU1YgZmlsZSB0byBpbXBvcnRcbiMgb3B0aW9uczpcbiMgICAuLi4ifQ"
+ width="100%"
+></iframe>
+
+## Argument Types
+
+`argparse` converts arguments to the specified type, raising a clean error if conversion fails:
+
+<iframe
+ frameBorder="0"
+ height="350px"
+ src="http://127.0.0.1:8765/embed.html#eyJ0aXRsZSI6IjAzX2FyZ3BhcnNlIGNvZGUgMyIsImxhbmd1YWdlIjoicHl0aG9uIiwiZmlsZW5hbWUiOiJtYWluXzAwMy5weSIsImNvZGUiOiJwYXJzZXIuYWRkX2FyZ3VtZW50KFwiLS1saW1pdFwiLCB0eXBlPWludCkgICAgICAgICAgIyBpbnRlZ2VyXG5wYXJzZXIuYWRkX2FyZ3VtZW50KFwiLS1yYXRlXCIsIHR5cGU9ZmxvYXQpICAgICAgICAgIyBmbG9hdFxucGFyc2VyLmFkZF9hcmd1bWVudChcIi0tZGF0ZVwiLCB0eXBlPXN0cikgICAgICAgICAgICMgZGVmYXVsdDogc3RyaW5nXG5wYXJzZXIuYWRkX2FyZ3VtZW50KFwiLS12ZXJib3NlXCIsIFwiLXZcIiwgICAgICAgICAgICAjIHNob3J0IGZvcm0gLXZcbiAgICAgICAgICAgICAgICAgICAgYWN0aW9uPVwic3RvcmVfdHJ1ZVwiKVxucGFyc2VyLmFkZF9hcmd1bWVudChcIi0tZm9ybWF0XCIsXG4gICAgICAgICAgICAgICAgICAgIGNob2ljZXM9W1wiY3N2XCIsIFwianNvblwiLCBcInRleHRcIl0sICAgIyByZXN0cmljdCBjaG9pY2VzXG4gICAgICAgICAgICAgICAgICAgIGRlZmF1bHQ9XCJ0ZXh0XCIpIn0"
+ width="100%"
+></iframe>
+
+<iframe
+ frameBorder="0"
+ height="350px"
+ src="http://127.0.0.1:8765/embed.html#eyJ0aXRsZSI6IjAzX2FyZ3BhcnNlIGNvZGUgNCIsImxhbmd1YWdlIjoiYmFzaCIsImZpbGVuYW1lIjoibWFpbl8wMDQuc2giLCJjb2RlIjoicHl0aG9uIGltcG9ydF9ib29rcy5weSBjYXRhbG9nLmNzdiAtLWxpbWl0IGFiY1xuIyBlcnJvcjogYXJndW1lbnQgLS1saW1pdDogaW52YWxpZCBpbnQgdmFsdWU6ICdhYmMnIn0"
+ width="100%"
+></iframe>
+
+Argparse shows the error message and exits with code 2 automatically.
+
+## Subcommands
+
+Many CLIs have subcommands (`git commit`, `git push`). `argparse` supports this with subparsers:
+
+<iframe
+ frameBorder="0"
+ height="350px"
+ src="http://127.0.0.1:8765/embed.html#eyJ0aXRsZSI6IjAzX2FyZ3BhcnNlIGNvZGUgNSIsImxhbmd1YWdlIjoicHl0aG9uIiwiZmlsZW5hbWUiOiJtYWluXzAwNS5weSIsImNvZGUiOiJpbXBvcnQgYXJncGFyc2VcblxuZGVmIGNtZF9pbXBvcnQoYXJncyk6XG4gICAgcHJpbnQoZlwiSW1wb3J0aW5nIHthcmdzLmZpbGV9IGludG8ge2FyZ3MuYnJhbmNofVwiKVxuXG5kZWYgY21kX2V4cG9ydChhcmdzKTpcbiAgICBwcmludChmXCJFeHBvcnRpbmcgdG8ge2FyZ3Mub3V0cHV0fVwiKVxuXG5wYXJzZXIgPSBhcmdwYXJzZS5Bcmd1bWVudFBhcnNlcihwcm9nPVwibGlicmFyeS1jbGlcIilcbnN1YnBhcnNlcnMgPSBwYXJzZXIuYWRkX3N1YnBhcnNlcnMoZGVzdD1cImNvbW1hbmRcIiwgcmVxdWlyZWQ9VHJ1ZSlcblxuIyBTdWItY29tbWFuZDogaW1wb3J0XG5wX2ltcG9ydCA9IHN1YnBhcnNlcnMuYWRkX3BhcnNlcihcImltcG9ydFwiLCBoZWxwPVwiSW1wb3J0IGJvb2tzIGZyb20gQ1NWXCIpXG5wX2ltcG9ydC5hZGRfYXJndW1lbnQoXCJmaWxlXCIpXG5wX2ltcG9ydC5hZGRfYXJndW1lbnQoXCItLWJyYW5jaFwiLCBkZWZhdWx0PVwibWFpblwiKVxucF9pbXBvcnQuc2V0X2RlZmF1bHRzKGZ1bmM9Y21kX2ltcG9ydClcblxuIyBTdWItY29tbWFuZDogZXhwb3J0XG5wX2V4cG9ydCA9IHN1YnBhcnNlcnMuYWRkX3BhcnNlcihcImV4cG9ydFwiLCBoZWxwPVwiRXhwb3J0IGNhdGFsb2cgdG8gZmlsZVwiKVxucF9leHBvcnQuYWRkX2FyZ3VtZW50KFwiLS1vdXRwdXRcIiwgcmVxdWlyZWQ9VHJ1ZSlcbnBfZXhwb3J0LnNldF9kZWZhdWx0cyhmdW5jPWNtZF9leHBvcnQpXG5cbmFyZ3MgPSBwYXJzZXIucGFyc2VfYXJncygpXG5hcmdzLmZ1bmMoYXJncykgICAjIGNhbGwgdGhlIGZ1bmN0aW9uIHNldCBieSBzZXRfZGVmYXVsdHMifQ"
+ width="100%"
+></iframe>
+
+Running:
+<iframe
+ frameBorder="0"
+ height="350px"
+ src="http://127.0.0.1:8765/embed.html#eyJ0aXRsZSI6IjAzX2FyZ3BhcnNlIGNvZGUgNiIsImxhbmd1YWdlIjoiYmFzaCIsImZpbGVuYW1lIjoibWFpbl8wMDYuc2giLCJjb2RlIjoicHl0aG9uIGxpYnJhcnlfY2xpLnB5IGltcG9ydCBjYXRhbG9nLmNzdiAtLWJyYW5jaCBlYXN0XG4jIEltcG9ydGluZyBjYXRhbG9nLmNzdiBpbnRvIGVhc3RcblxucHl0aG9uIGxpYnJhcnlfY2xpLnB5IC0taGVscFxuIyB1c2FnZTogbGlicmFyeS1jbGkgWy1oXSB7aW1wb3J0LGV4cG9ydH0gLi4uIn0"
+ width="100%"
+></iframe>
+
+## Mutually Exclusive Arguments
+
+<iframe
+ frameBorder="0"
+ height="350px"
+ src="http://127.0.0.1:8765/embed.html#eyJ0aXRsZSI6IjAzX2FyZ3BhcnNlIGNvZGUgNyIsImxhbmd1YWdlIjoicHl0aG9uIiwiZmlsZW5hbWUiOiJtYWluXzAwNy5weSIsImNvZGUiOiJncm91cCA9IHBhcnNlci5hZGRfbXV0dWFsbHlfZXhjbHVzaXZlX2dyb3VwKClcbmdyb3VwLmFkZF9hcmd1bWVudChcIi0tdmVyYm9zZVwiLCBhY3Rpb249XCJzdG9yZV90cnVlXCIpXG5ncm91cC5hZGRfYXJndW1lbnQoXCItLXF1aWV0XCIsIGFjdGlvbj1cInN0b3JlX3RydWVcIilcbiMgdXNlciBjYW4gcGFzcyAtLXZlcmJvc2Ugb3IgLS1xdWlldCBidXQgbm90IGJvdGgifQ"
+ width="100%"
+></iframe>
+
+## argparse at a Glance
+
+| Feature | How to use |
+|---|---|
+| Positional arg | `add_argument("name")` |
+| Optional arg | `add_argument("--name")` |
+| Type conversion | `add_argument("--n", type=int)` |
+| Default value | `add_argument("--n", default=10)` |
+| Flag (boolean) | `add_argument("--flag", action="store_true")` |
+| Restricted choices | `add_argument("--fmt", choices=["csv","json"])` |
+| Subcommands | `subparsers = parser.add_subparsers(...)` |
+
+## Your Turn
+
+Build a `report.py` CLI with two subcommands: `daily` (requires `--date`) and `monthly` (requires `--month`, `--year`). Each prints a summary of what it would generate:
+
+<iframe
+ frameBorder="0"
+ height="350px"
+ src="http://127.0.0.1:8765/embed.html#eyJ0aXRsZSI6IjAzX2FyZ3BhcnNlIGNvZGUgOCIsImxhbmd1YWdlIjoicHl0aG9uIiwiZmlsZW5hbWUiOiJtYWluXzAwOC5weSIsImNvZGUiOiJpbXBvcnQgYXJncGFyc2VcblxuZGVmIGRhaWx5X3JlcG9ydChhcmdzKTpcbiAgICBwcmludChmXCJEYWlseSByZXBvcnQgZm9yOiB7YXJncy5kYXRlfVwiKVxuXG5kZWYgbW9udGhseV9yZXBvcnQoYXJncyk6XG4gICAgcHJpbnQoZlwiTW9udGhseSByZXBvcnQgZm9yOiB7YXJncy55ZWFyfS17YXJncy5tb250aDowMmR9XCIpXG5cbnBhcnNlciA9IGFyZ3BhcnNlLkFyZ3VtZW50UGFyc2VyKHByb2c9XCJyZXBvcnRcIilcbnN1YnMgPSBwYXJzZXIuYWRkX3N1YnBhcnNlcnMoZGVzdD1cImNvbW1hbmRcIiwgcmVxdWlyZWQ9VHJ1ZSlcblxucF9kYWlseSA9IHN1YnMuYWRkX3BhcnNlcihcImRhaWx5XCIpXG5wX2RhaWx5LmFkZF9hcmd1bWVudChcIi0tZGF0ZVwiLCByZXF1aXJlZD1UcnVlLCBoZWxwPVwiRGF0ZSAoWVlZWS1NTS1ERClcIilcbnBfZGFpbHkuc2V0X2RlZmF1bHRzKGZ1bmM9ZGFpbHlfcmVwb3J0KVxuXG5wX21vbnRobHkgPSBzdWJzLmFkZF9wYXJzZXIoXCJtb250aGx5XCIpXG5wX21vbnRobHkuYWRkX2FyZ3VtZW50KFwiLS1tb250aFwiLCB0eXBlPWludCwgcmVxdWlyZWQ9VHJ1ZSlcbnBfbW9udGhseS5hZGRfYXJndW1lbnQoXCItLXllYXJcIiwgdHlwZT1pbnQsIHJlcXVpcmVkPVRydWUpXG5wX21vbnRobHkuc2V0X2RlZmF1bHRzKGZ1bmM9bW9udGhseV9yZXBvcnQpXG5cbmFyZ3MgPSBwYXJzZXIucGFyc2VfYXJncygpXG5hcmdzLmZ1bmMoYXJncykifQ"
+ width="100%"
+></iframe>
+
+Test: `python report.py daily --date 2026-07-01` and `python report.py monthly --month 7 --year 2026`.
+
+## Conclusion
+
+`argparse` provides structured argument parsing: types, defaults, help text, choices, and subcommands, all with automatic `--help` and error messages. It is the standard library choice for most CLI tools. The next lesson introduces `typer`, a third-party library that achieves the same thing with even less code by using Python type annotations.
