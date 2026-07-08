@@ -70,6 +70,8 @@ print(prices)    # {'T-shirt': 350, 'Mug': 150, 'Badge': 50}
 
 ## Your Turn: Build a Sale Price List
 
+This example rounds each sale price to 2 decimal places with the built-in `round(value, digits)` function, so a price like 280.444 becomes a clean 280.44 instead of trailing off with extra decimals.
+
 ```python
 prices = {"T-shirt": 350, "Mug": 150, "Badge": 50, "Cap": 200}
 discount = float(input("Discount fraction, e.g. 0.2 for 20 percent: "))

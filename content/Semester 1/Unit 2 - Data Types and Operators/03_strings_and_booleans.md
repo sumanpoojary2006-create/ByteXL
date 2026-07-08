@@ -37,12 +37,12 @@ Notice the small `" "` in the middle. Without that deliberate space, the names w
 
 ## True or False: the Boolean
 
-A boolean, written `bool`, can hold only two values: `True` or `False`. They must be capitalised, and they are not strings, so they take no quotes. Booleans usually appear as the answer to a comparison.
+A boolean, written `bool`, can hold only two values: `True` or `False`. They must be capitalised, and they are not strings, so they take no quotes.
 
 ```python
-age = 20
-is_adult = age >= 18
-print(is_adult)
+is_raining = True
+is_weekend = False
+print(is_raining)
 ```
 
 Output:
@@ -51,7 +51,7 @@ Output:
 True
 ```
 
-The program compared 20 with 18, found the statement true, and stored that truth in `is_adult`. Notice that `is_adult` is not holding the number 20, and it is not holding the text "yes". It is holding a verdict, a single bit of judgment that the rest of the program can act on without redoing the comparison. Booleans are the foundation of every decision a program makes, which you will use heavily when you reach control flow.
+Notice that `is_raining` is not holding a number, and it is not holding the text "yes". It is holding a verdict, a single bit of judgment that the rest of the program can act on. Booleans usually appear as the answer to a comparison, such as asking whether someone's age meets a minimum, but comparisons get a full lesson of their own soon. For now, just know that `True` and `False` are the two values a boolean can hold. Booleans are the foundation of every decision a program makes, which you will use heavily when you reach control flow.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44t82w7y6/03_boolean_scorecard.png)
 
@@ -76,7 +76,7 @@ You will use this constantly once you reach control flow, where a line like `if 
 
 ## Your Turn: Adult or Not
 
-This program reads an age and reports a boolean decision.
+This program reads an age and reports a boolean decision, using `>=` the same way you already do in school maths, to ask "is age at least 18". You will meet the full family of comparison operators soon.
 
 ```python
 age = int(input("Enter your age: "))

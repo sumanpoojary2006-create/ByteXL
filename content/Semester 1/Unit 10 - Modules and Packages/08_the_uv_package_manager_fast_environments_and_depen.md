@@ -1,8 +1,12 @@
 ## Introduction
 
-Naveen has gotten used to the small wait every time he creates a fresh `venv` and installs a handful of packages into it: not painfully slow, but slow enough that he notices, especially when he is setting up a new laptop or starting a brand new project from scratch and has to repeat the whole ritual.
+The last two lessons covered two separate tools doing three separate jobs: `pip` installs packages, and `venv` creates the isolated environment that keeps one project's installed packages from colliding with another's. Both work, both ship with Python, and both are worth knowing. But using them means running several individual commands, each with its own small startup cost, every single time you set up a project.
 
-**uv** is a single, newer command-line tool for Python that replaces `venv`, `pip`, and even the job of installing Python itself, all in one program, built by a company called Astral and written in Rust for speed. It is not a different idea from the tools in the last two lessons; it is the same three jobs, creating an isolated environment, installing packages, and managing a project's dependencies, done by one faster tool instead of several separate ones.
+**What uv is**: a single command-line tool, built by a company called Astral and written in Rust, that does everything `venv` and `pip` do, and also installs Python itself when needed, all from one program.
+
+**Why uv exists**: Naveen has gotten used to the small wait every time he creates a fresh `venv` and installs a handful of packages into it, not painfully slow, but slow enough that he notices, especially when he is setting up a new laptop or starting a brand new project from scratch and has to repeat the whole ritual. `uv` exists to remove that friction. It is not a different idea from the tools in the last two lessons; it is the same three jobs, creating an isolated environment, installing packages, and managing a project's dependencies, done by one noticeably faster tool instead of several separate ones.
+
+**Where uv is used**: anywhere you would otherwise reach for `venv` and `pip` together, from a quick throwaway script to a full multi-package project you intend to share with teammates. It has become popular on projects that install many packages, or where a team wants every developer's environment to install identically, since the speed and the exact-version locking described later in this lesson matter most at that scale.
 
 This lesson covers `uv` as a modern, faster alternative to the tools from the last two lessons, not a different idea, the same idea, executed quicker.
 

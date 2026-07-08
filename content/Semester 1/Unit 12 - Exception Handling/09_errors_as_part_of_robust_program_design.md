@@ -129,6 +129,8 @@ except ValueError as e:
     print(f"B (loud):    ValueError raised -- {e}")
 
 # Situation C: graceful -- user-typed dates need validation and a clear fallback
+# datetime.strptime(text, pattern) parses text into a date using the given pattern;
+# it raises ValueError the moment the text does not actually match that shape.
 def parse_date(text):
     try:
         return datetime.strptime(text, "%Y-%m-%d").date()

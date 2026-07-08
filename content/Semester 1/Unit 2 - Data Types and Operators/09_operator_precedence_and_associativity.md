@@ -22,6 +22,8 @@ If Python worked strictly left to right, the answer would be 20. Instead it prin
 | 4 | `==`, `!=`, `<`, `>`, `<=`, `>=` | `5 > 3` |
 | 5 (lowest) | `not`, `and`, `or` | `True and False` |
 
+Within that lowest level, `not` binds tighter than `and`, which in turn binds tighter than `or`, so `not True and False` groups as `(not True) and False`. It rarely matters in practice, since mixing all three without parentheses is exactly the kind of line worth rewriting for clarity anyway.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44t8356mw/09_recipe_card_step_order.png)
 
 

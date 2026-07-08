@@ -10,7 +10,7 @@ Python is more flexible than that. It is willing to treat almost any value as if
 
 When you put a value where Python expects a condition, it asks a quiet question: "is this value meaningfully present, or is it empty or zero?" Values that count as false in this test are called falsy, and everything else is truthy.
 
-The falsy values are easy to remember because they all represent "nothing".
+The falsy values are easy to remember because they all represent "nothing". You have not officially met lists and dictionaries yet, those arrive in later units, but it is worth previewing here that Python judges them by the same rule: empty means falsy, and holding even one item means truthy.
 
 ## Falsy vs Truthy at a Glance
 

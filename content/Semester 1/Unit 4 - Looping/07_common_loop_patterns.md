@@ -33,7 +33,7 @@ print("Sum:", total)
 print("Average:", total / len(numbers))
 ```
 
-The `total` accumulates to 100, and dividing by the count gives the average of 25. Notice `len()` tells you how many items the list holds, saving you from counting them yourself.
+The `total` accumulates to 100, and dividing by the count gives the average of 25. Notice `len()` tells you how many items the list holds, saving you from counting them yourself. You will meet `len()` properly in the next unit; for now, just know it counts items.
 
 ## The Min and Max Pattern
 
