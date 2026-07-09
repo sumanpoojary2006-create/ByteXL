@@ -8,8 +8,8 @@ import os, sys
 sys.path.insert(0, os.path.dirname(__file__))
 from cqlib import main
 
-TOPIC = "loops"
-FOR, WHILE, NEST = "for-loops", "while-loops", "nested-loops"
+TOPIC = "loops-and-iteration"
+FOR, WHILE, NEST = "for-loops-and-range", "while-loops", "nested-loops"
 
 Q = []
 

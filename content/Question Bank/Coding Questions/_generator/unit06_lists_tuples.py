@@ -7,8 +7,8 @@ import os, sys
 sys.path.insert(0, os.path.dirname(__file__))
 from cqlib import main
 
-TOPIC = "lists"
-OPS, COMP, TUP, NEST = "list-operations", "list-comprehensions", "tuples", "nested-lists"
+TOPIC = "lists-and-tuples"
+OPS, COMP, TUP, NEST = "list-methods", "list-comprehensions", "tuples", "nested-lists"
 
 Q = []
 

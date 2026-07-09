@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from cqlib import main
 
 TOPIC = "debugging"
-EDGE, ASSERT, VAL = "edge-cases", "assertions", "validation"
+EDGE, ASSERT, VAL = "debugging-techniques", "assertions", "debugging-workflow"
 
 Q = []
 

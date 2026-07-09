@@ -42,10 +42,20 @@ const CODING_HEADERS = [
   "testcase2_output",
   "testcase3_input",
   "testcase3_output",
+  "testcase4_input",
+  "testcase4_output",
+  "testcase5_input",
+  "testcase5_output",
+  "testcase6_input",
+  "testcase6_output",
+  "testcase7_input",
+  "testcase7_output",
   "preloadCode_python",
   "solution_python",
   "hints"
 ];
+
+const PUBLIC_CODING_TEST_CASE_COUNT = 2;
 
 const LANGUAGE_ALIASES = {
   py: "python",
@@ -138,6 +148,14 @@ const SAMPLE_ROWS = {
     testcase2_output: "Hello Kabir your token number will be called shortly",
     testcase3_input: "Meera",
     testcase3_output: "Hello Meera your token number will be called shortly",
+    testcase4_input: "Ravi",
+    testcase4_output: "Hello Ravi your token number will be called shortly",
+    testcase5_input: "Nila",
+    testcase5_output: "Hello Nila your token number will be called shortly",
+    testcase6_input: "Dev",
+    testcase6_output: "Hello Dev your token number will be called shortly",
+    testcase7_input: "Ira",
+    testcase7_output: "Hello Ira your token number will be called shortly",
     preloadCode_python: "",
     solution_python: "name = input()\n\nprint(\"Hello\", name, \"your token number will be called shortly\")",
     hints: ""
@@ -429,7 +447,7 @@ function extractTestCases(row, rowNumber) {
         input,
         output,
         difficulty: normalizeToken(row.difficulty, "easy"),
-        visibility: index === 0 ? "public" : "private"
+        visibility: index < PUBLIC_CODING_TEST_CASE_COUNT ? "public" : "private"
       };
       if (explanation) testCase.explanation = explanation;
       if (timeLimit !== null) testCase.timeLimit = timeLimit;

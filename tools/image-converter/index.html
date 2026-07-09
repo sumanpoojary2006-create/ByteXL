@@ -769,6 +769,7 @@
 
   const supportedExts = new Set([".png",".jpg",".jpeg",".gif",".webp",".svg"]);
   const mimeTypes = {".png":"image/png",".jpg":"image/jpeg",".jpeg":"image/jpeg",".gif":"image/gif",".webp":"image/webp",".svg":"image/svg+xml"};
+  const IMAGE_UPLOAD_CONCURRENCY = 6;
 
   const $ = id => document.getElementById(id);
   const apiBase = location.protocol === "file:" ? "http://127.0.0.1:8000" : "";
@@ -920,13 +921,7 @@
     const urlMap = new Map();
 
     if (shouldConvertImages) {
-      for (let i = 0; i < imgFiles.length; i++) {
-        const ip = imgFiles[i];
-        const bytes = await zip.files[ip].async("uint8array");
-        setProgress(`Uploading image ${i+1} of ${imgFiles.length}: ${baseName(ip)}`);
-        const url = await uploadImage(ip, bytes);
-        if (url) { urlMap.set(normalizePath(ip), url); stats.uploaded++; } else { stats.failed++; }
-      }
+      await uploadImagesConcurrently(imgFiles, zip, urlMap, stats);
     }
 
     const filenameMap = makeFilenameMap(urlMap);
@@ -971,6 +966,28 @@
     if (r.status===413) throw new Error(`${baseName(imgPath)} is too large.`);
     if (!r.ok) { const d = await r.json().catch(()=>({})); throw new Error(d.detail||`Upload failed for ${baseName(imgPath)}.`); }
     return (await r.json()).url||null;
+  }
+
+  async function uploadImagesConcurrently(imgFiles, zip, urlMap, stats) {
+    let nextIndex = 0, completed = 0;
+    const total = imgFiles.length;
+    const workerCount = Math.min(IMAGE_UPLOAD_CONCURRENCY, total);
+    if (!total) return;
+
+    async function worker() {
+      while (nextIndex < total) {
+        const current = nextIndex++;
+        const imgPath = imgFiles[current];
+        setProgress(`Uploading images ${completed + 1}-${Math.min(completed + workerCount, total)} of ${total}: ${baseName(imgPath)}`);
+        const bytes = await zip.files[imgPath].async("uint8array");
+        const url = await uploadImage(imgPath, bytes);
+        if (url) { urlMap.set(normalizePath(imgPath), url); stats.uploaded++; } else { stats.failed++; }
+        completed++;
+        setProgress(`Uploaded ${completed} of ${total} images`);
+      }
+    }
+
+    await Promise.all(Array.from({length: workerCount}, () => worker()));
   }
 
   async function loadReadingMaterials() {
@@ -1395,7 +1412,7 @@
   function normalizePath(p){const pts=[];for(const pt of String(p||"").replace(/\\/g,"/").split("/")){if(!pt||pt===".")continue;if(pt==="..")pts.pop();else pts.push(pt);}return pts.join("/");}
   function shouldIgnorePath(p){const pts=normalizePath(p).split("/"),lp=pts.map(x=>x.toLowerCase());if(!pts.length)return true;if(lp.includes("__macosx")||lp.includes(".git")||lp.includes(".onecompiler_build")||lp.includes("node_modules")||lp.includes("sem2-image"))return true;return pts[pts.length-1]===".DS_Store";}
   function safeDecode(v){try{return decodeURIComponent(v);}catch{return v;}}
-  function extName(p){const c=String(p||"").split(/[?#]/)[0],i=c.lastIndexOf(".");return i>=0?c.slice(i).toLowerCase():"";}
+  function extName(p){const leaf=baseName(String(p||"")),c=leaf.split(/[?#]/)[0],i=c.lastIndexOf(".");return i>=0?c.slice(i).toLowerCase():"";}
   function baseName(p){return normalizePath(p).split("/").pop()||p;}
   function dirName(p){const n=normalizePath(p),i=n.lastIndexOf("/");return i>=0?n.slice(0,i):"";}
   function parentName(p){const d=dirName(p);return d?baseName(d):"";}

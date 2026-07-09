@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from cqlib import main
 
 TOPIC = "file-handling"
-TEXT, CSVT, JSONT = "text-processing", "csv", "json"
+TEXT, CSVT, JSONT = "file-operations", "csv-processing", "json-processing"
 
 Q = []
 

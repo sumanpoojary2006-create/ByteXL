@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from cqlib import main
 
 TOPIC = "exception-handling"
-TRY, RAISE, VAL = "try-except", "raise-custom", "validation"
+TRY, RAISE, VAL = "try-except", "raising-exceptions", "defensive-programming"
 
 Q = []
 

@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from cqlib import main
 
 TOPIC = "strings"
-IDX, METH, FMT = "indexing-slicing", "string-methods", "formatting"
+IDX, METH, FMT = "indexing-and-slicing", "string-methods", "string-formatting"
 
 Q = []
 

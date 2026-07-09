@@ -7,14 +7,14 @@ import os, sys
 sys.path.insert(0, os.path.dirname(__file__))
 from cqlib import main
 
-TOPIC = "dictionaries"
+TOPIC = "sets-and-dictionaries"
 SET, DICT, COMP = "set-operations", "dictionary-operations", "dictionary-comprehensions"
 
 Q = []
 
 # ----------------------------- EASY (10) -----------------------------
 Q.append(dict(
-    title="Distinct Count", difficulty="Easy", topics="sets", subTopics=SET,
+    title="Distinct Count", difficulty="Easy", topics=TOPIC, subTopics=SET,
     prose="Read a line of space-separated numbers and print how many distinct "
           "values there are.",
     input_lines=["Line 1: Space-separated numbers"],
@@ -25,7 +25,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Sorted Unique", difficulty="Easy", topics="sets", subTopics=SET,
+    title="Sorted Unique", difficulty="Easy", topics=TOPIC, subTopics=SET,
     prose="Read a line of space-separated numbers and print each distinct value "
           "once, sorted from smallest to largest, separated by spaces.",
     input_lines=["Line 1: Space-separated numbers"],
@@ -36,7 +36,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="In Both Lists", difficulty="Easy", topics="sets", subTopics=SET,
+    title="In Both Lists", difficulty="Easy", topics=TOPIC, subTopics=SET,
     prose="Read two lines of space-separated numbers and print the values that "
           "appear in both, sorted, separated by spaces.",
     input_lines=["Line 1: First list", "Line 2: Second list"],
@@ -48,7 +48,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="In Either List", difficulty="Easy", topics="sets", subTopics=SET,
+    title="In Either List", difficulty="Easy", topics=TOPIC, subTopics=SET,
     prose="Read two lines of space-separated numbers and print all values that "
           "appear in either list, each once, sorted, separated by spaces.",
     input_lines=["Line 1: First list", "Line 2: Second list"],
@@ -60,7 +60,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Only in the First", difficulty="Easy", topics="sets", subTopics=SET,
+    title="Only in the First", difficulty="Easy", topics=TOPIC, subTopics=SET,
     prose="Read two lines of space-separated numbers and print the values that are "
           "in the first list but not the second, sorted, separated by spaces.",
     input_lines=["Line 1: First list", "Line 2: Second list"],
@@ -122,7 +122,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Unique Words", difficulty="Easy", topics="sets", subTopics=SET,
+    title="Unique Words", difficulty="Easy", topics=TOPIC, subTopics=SET,
     prose="Read a sentence and print how many distinct words it contains.",
     input_lines=["Line 1: A sentence"],
     inputs=["the cat the dog", "hello", "a a a a", "x", "one two three four five", "cat cat dog dog bird", "a b a b a b a b"],
@@ -132,7 +132,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Set Membership", difficulty="Easy", topics="sets", subTopics=SET,
+    title="Set Membership", difficulty="Easy", topics=TOPIC, subTopics=SET,
     prose="Read a line of space-separated values, then a value. Print 'Yes' if the "
           "value is in the set of values, otherwise print 'No'.",
     input_lines=["Line 1: Space-separated values", "Line 2: The value to check"],
@@ -145,7 +145,7 @@ Q.append(dict(
 
 # ----------------------------- MEDIUM (10) -----------------------------
 Q.append(dict(
-    title="Symmetric Difference", difficulty="Medium", topics="sets", subTopics=SET,
+    title="Symmetric Difference", difficulty="Medium", topics=TOPIC, subTopics=SET,
     prose="Read two lines of space-separated numbers and print the values that are "
           "in exactly one of the two lists (not both), sorted, separated by spaces.",
     input_lines=["Line 1: First list", "Line 2: Second list"],
@@ -364,7 +364,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Set Report", difficulty="Hard", topics="sets", subTopics=SET,
+    title="Set Report", difficulty="Hard", topics=TOPIC, subTopics=SET,
     prose="Read two lines of space-separated numbers. Print three lines: 'Union: X' "
           "(count of values in either set), 'Intersection: Y' (count in both), and "
           "'Only first: Z' (count in the first but not the second).",

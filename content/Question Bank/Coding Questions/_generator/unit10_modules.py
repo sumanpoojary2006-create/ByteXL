@@ -9,14 +9,16 @@ import os, sys
 sys.path.insert(0, os.path.dirname(__file__))
 from cqlib import main
 
-TOPIC = "modules"
-IMP, STD = "import", "standard-library"
+MODULES_TOPIC = "modules-and-packages"
+STDLIB_TOPIC = "standard-library"
+IMPORTING = "importing-modules"
+MATH, RANDOM, DATETIME = "math-module", "random-module", "datetime-module"
 
 Q = []
 
 # ----------------------------- EASY (10) -----------------------------
 Q.append(dict(
-    title="Square Root", difficulty="Easy", topics=TOPIC, subTopics=STD,
+    title="Square Root", difficulty="Easy", topics=STDLIB_TOPIC, subTopics=MATH,
     prose="Import the math module and use math.sqrt to print the square root of a "
           "number, rounded to 4 decimal places.",
     input_lines=["Line 1: A number"],
@@ -28,7 +30,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Factorial from Math", difficulty="Easy", topics=TOPIC, subTopics=STD,
+    title="Factorial from Math", difficulty="Easy", topics=STDLIB_TOPIC, subTopics=MATH,
     prose="Use math.factorial to print the factorial of a number read from input.",
     input_lines=["Line 1: A number"],
     inputs=["5", "0", "10", "1", "2", "7", "12"],
@@ -38,7 +40,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="GCD from Math", difficulty="Easy", topics=TOPIC, subTopics=IMP,
+    title="GCD from Math", difficulty="Easy", topics=STDLIB_TOPIC, subTopics=MATH,
     prose="Use 'from math import gcd' to print the greatest common divisor of two "
           "numbers.",
     input_lines=["Line 1: First number", "Line 2: Second number"],
@@ -51,7 +53,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Floor and Ceiling", difficulty="Easy", topics=TOPIC, subTopics=STD,
+    title="Floor and Ceiling", difficulty="Easy", topics=STDLIB_TOPIC, subTopics=MATH,
     prose="Read a decimal number and use math.floor and math.ceil to print its "
           "floor and ceiling, separated by a space.",
     input_lines=["Line 1: A decimal number"],
@@ -63,7 +65,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Average with Statistics", difficulty="Easy", topics=TOPIC, subTopics=STD,
+    title="Average with Statistics", difficulty="Easy", topics=MODULES_TOPIC, subTopics=IMPORTING,
     prose="Use statistics.mean to print the average of a line of numbers, rounded "
           "to 2 decimal places.",
     input_lines=["Line 1: Space-separated numbers"],
@@ -75,7 +77,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Median with Statistics", difficulty="Easy", topics=TOPIC, subTopics=STD,
+    title="Median with Statistics", difficulty="Easy", topics=MODULES_TOPIC, subTopics=IMPORTING,
     prose="Use statistics.median to print the median of a line of numbers.",
     input_lines=["Line 1: Space-separated numbers"],
     inputs=["1 2 3", "1 2 3 4", "5 5 5", "0", "-3 -1 -2", "1 2 3 4 5 6", "10 20"],
@@ -86,7 +88,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Power from Math", difficulty="Easy", topics=TOPIC, subTopics=STD,
+    title="Power from Math", difficulty="Easy", topics=STDLIB_TOPIC, subTopics=MATH,
     prose="Use math.pow to print a raised to the power b as a whole number.",
     input_lines=["Line 1: base", "Line 2: exponent"],
     inputs=["2\n10", "3\n0", "5\n2", "0\n5", "1\n100", "10\n1", "-2\n3"],
@@ -98,7 +100,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Circle Area with Pi", difficulty="Easy", topics=TOPIC, subTopics=STD,
+    title="Circle Area with Pi", difficulty="Easy", topics=STDLIB_TOPIC, subTopics=MATH,
     prose="Use math.pi to print the area of a circle (pi * r * r) rounded to 2 "
           "decimal places.",
     input_lines=["Line 1: Radius"],
@@ -110,7 +112,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Hypotenuse", difficulty="Easy", topics=TOPIC, subTopics=STD,
+    title="Hypotenuse", difficulty="Easy", topics=STDLIB_TOPIC, subTopics=MATH,
     prose="Use math.hypot to print the length of the hypotenuse of a right triangle "
           "given its two shorter sides, rounded to 2 decimal places.",
     input_lines=["Line 1: First side", "Line 2: Second side"],
@@ -123,7 +125,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Base-10 Logarithm", difficulty="Easy", topics=TOPIC, subTopics=STD,
+    title="Base-10 Logarithm", difficulty="Easy", topics=STDLIB_TOPIC, subTopics=MATH,
     prose="Use math.log10 to print the base-10 logarithm of a number, rounded to 4 "
           "decimal places.",
     input_lines=["Line 1: A positive number"],
@@ -136,7 +138,7 @@ Q.append(dict(
 
 # ----------------------------- MEDIUM (10) -----------------------------
 Q.append(dict(
-    title="Most Common Word", difficulty="Medium", topics=TOPIC, subTopics=STD,
+    title="Most Common Word", difficulty="Medium", topics=MODULES_TOPIC, subTopics=IMPORTING,
     prose="Use collections.Counter to find the most common word in a sentence. Print "
           "the word and its count separated by a space.",
     input_lines=["Line 1: A sentence"],
@@ -149,7 +151,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Standard Deviation", difficulty="Medium", topics=TOPIC, subTopics=STD,
+    title="Standard Deviation", difficulty="Medium", topics=MODULES_TOPIC, subTopics=IMPORTING,
     prose="Use statistics.pstdev to print the population standard deviation of a "
           "line of numbers, rounded to 2 decimal places.",
     input_lines=["Line 1: Space-separated numbers"],
@@ -161,7 +163,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="GCD of a List", difficulty="Medium", topics=TOPIC, subTopics=IMP,
+    title="GCD of a List", difficulty="Medium", topics=STDLIB_TOPIC, subTopics=MATH,
     prose="Use functools.reduce together with math.gcd to print the greatest common "
           "divisor of a whole line of numbers.",
     input_lines=["Line 1: Space-separated numbers"],
@@ -174,7 +176,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Count Combinations", difficulty="Medium", topics=TOPIC, subTopics=STD,
+    title="Count Combinations", difficulty="Medium", topics=STDLIB_TOPIC, subTopics=MATH,
     prose="Use math.comb to print how many ways there are to choose r items from n "
           "items.",
     input_lines=["Line 1: n", "Line 2: r"],
@@ -187,7 +189,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Count Permutations", difficulty="Medium", topics=TOPIC, subTopics=STD,
+    title="Count Permutations", difficulty="Medium", topics=STDLIB_TOPIC, subTopics=MATH,
     prose="Use math.perm to print how many ordered arrangements there are of r items "
           "chosen from n items.",
     input_lines=["Line 1: n", "Line 2: r"],
@@ -200,7 +202,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Group by Parity", difficulty="Medium", topics=TOPIC, subTopics=STD,
+    title="Group by Parity", difficulty="Medium", topics=MODULES_TOPIC, subTopics=IMPORTING,
     prose="Use collections.defaultdict to split a line of numbers into evens and "
           "odds. Print 'even:' followed by the even numbers, then 'odd:' followed "
           "by the odd numbers, keeping their original order.",
@@ -216,7 +218,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Day of the Week", difficulty="Medium", topics=TOPIC, subTopics=STD,
+    title="Day of the Week", difficulty="Medium", topics=STDLIB_TOPIC, subTopics=DATETIME,
     prose="Use the datetime module to print the day of the week for a given date "
           "(for example 'Monday'). Read a date written as YYYY-MM-DD.",
     input_lines=["Line 1: A date as YYYY-MM-DD"],
@@ -230,7 +232,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Seeded Random", difficulty="Medium", topics=TOPIC, subTopics=STD,
+    title="Seeded Random", difficulty="Medium", topics=STDLIB_TOPIC, subTopics=RANDOM,
     prose="Use the random module. Read a seed, seed the generator with it, and print "
           "a single random integer from 1 to 100. Seeding makes the result "
           "repeatable.",
@@ -244,7 +246,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Letters and Digits", difficulty="Medium", topics=TOPIC, subTopics=STD,
+    title="Letters and Digits", difficulty="Medium", topics=MODULES_TOPIC, subTopics=IMPORTING,
     prose="Use the string module's ascii_letters and digits to count how many "
           "letters and how many digits are in a line of text. Print the two counts "
           "separated by a space.",
@@ -259,7 +261,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Find the Mode", difficulty="Medium", topics=TOPIC, subTopics=STD,
+    title="Find the Mode", difficulty="Medium", topics=MODULES_TOPIC, subTopics=IMPORTING,
     prose="Use statistics.mode to print the value that appears most often in a line "
           "of numbers.",
     input_lines=["Line 1: Space-separated numbers"],
@@ -272,7 +274,7 @@ Q.append(dict(
 
 # ----------------------------- HARD (10) -----------------------------
 Q.append(dict(
-    title="Top K Words", difficulty="Hard", topics=TOPIC, subTopics=STD,
+    title="Top K Words", difficulty="Hard", topics=MODULES_TOPIC, subTopics=IMPORTING,
     prose="Use collections.Counter to print the K most common words in a sentence, "
           "one 'word count' per line, from most to least common.",
     input_lines=["Line 1: K", "Line 2: A sentence"],
@@ -287,7 +289,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Pairs from Combinations", difficulty="Hard", topics=TOPIC, subTopics=STD,
+    title="Pairs from Combinations", difficulty="Hard", topics=MODULES_TOPIC, subTopics=IMPORTING,
     prose="Use itertools.combinations to count how many pairs of numbers add up to a "
           "target. Read a line of numbers and a target and print the count.",
     input_lines=["Line 1: Space-separated numbers", "Line 2: Target"],
@@ -301,7 +303,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Days Between Dates", difficulty="Hard", topics=TOPIC, subTopics=STD,
+    title="Days Between Dates", difficulty="Hard", topics=STDLIB_TOPIC, subTopics=DATETIME,
     prose="Use the datetime module to print how many days apart two dates are (a "
           "non-negative number). Read two dates written as YYYY-MM-DD.",
     input_lines=["Line 1: First date", "Line 2: Second date"],
@@ -319,7 +321,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Rotate with Deque", difficulty="Hard", topics=TOPIC, subTopics=STD,
+    title="Rotate with Deque", difficulty="Hard", topics=MODULES_TOPIC, subTopics=IMPORTING,
     prose="Use collections.deque and its rotate method to rotate a list of numbers "
           "to the right by K places. Print the rotated list separated by spaces.",
     input_lines=["Line 1: Space-separated numbers", "Line 2: K"],
@@ -334,7 +336,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Common Words with Counts", difficulty="Hard", topics=TOPIC, subTopics=STD,
+    title="Common Words with Counts", difficulty="Hard", topics=MODULES_TOPIC, subTopics=IMPORTING,
     prose="Use Counter intersection (the & operator) to find words appearing in both "
           "of two lines. For each shared word in sorted order, print 'word:count' "
           "where count is the smaller of the two counts.",
@@ -351,7 +353,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Leap Year Check", difficulty="Hard", topics=TOPIC, subTopics=STD,
+    title="Leap Year Check", difficulty="Hard", topics=MODULES_TOPIC, subTopics=IMPORTING,
     prose="Use calendar.isleap to print 'Yes' if a year is a leap year and 'No' "
           "otherwise.",
     input_lines=["Line 1: A year"],
@@ -363,7 +365,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Sum of Fractions", difficulty="Hard", topics=TOPIC, subTopics=STD,
+    title="Sum of Fractions", difficulty="Hard", topics=MODULES_TOPIC, subTopics=IMPORTING,
     prose="Use fractions.Fraction to add N fractions and print the exact result in "
           "lowest terms as 'p/q'. Read N, then N fractions written as 'a/b'.",
     input_lines=["Line 1: N", "Next N lines: a fraction 'a/b'"],
@@ -379,7 +381,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Exact Decimal Sum", difficulty="Hard", topics=TOPIC, subTopics=STD,
+    title="Exact Decimal Sum", difficulty="Hard", topics=MODULES_TOPIC, subTopics=IMPORTING,
     prose="Use decimal.Decimal to add two decimal numbers without floating-point "
           "rounding error, and print the exact sum. Read the two numbers as text.",
     input_lines=["Line 1: First decimal", "Line 2: Second decimal"],
@@ -393,7 +395,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="K Largest with Heapq", difficulty="Hard", topics=TOPIC, subTopics=STD,
+    title="K Largest with Heapq", difficulty="Hard", topics=MODULES_TOPIC, subTopics=IMPORTING,
     prose="Use heapq.nlargest to print the K largest numbers from a list, in "
           "descending order, separated by spaces.",
     input_lines=["Line 1: K", "Line 2: Space-separated numbers"],
@@ -407,7 +409,7 @@ Q.append(dict(
     """))
 
 Q.append(dict(
-    title="Prime Factors", difficulty="Hard", topics=TOPIC, subTopics=STD,
+    title="Prime Factors", difficulty="Hard", topics=STDLIB_TOPIC, subTopics=MATH,
     prose="Use math.isqrt to help print the prime factors of a number in increasing "
           "order, separated by spaces (a factor is listed once for each time it "
           "divides the number).",

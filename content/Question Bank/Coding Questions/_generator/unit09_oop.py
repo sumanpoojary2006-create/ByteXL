@@ -7,8 +7,8 @@ import os, sys
 sys.path.insert(0, os.path.dirname(__file__))
 from cqlib import main
 
-TOPIC = "oop"
-CLS, ATTR, INIT = "classes-objects", "attributes-methods", "constructors"
+TOPIC = "object-oriented-programming-intro"
+CLS, ATTR, INIT = "classes-and-objects", "attributes-and-methods", "constructors"
 
 Q = []
 

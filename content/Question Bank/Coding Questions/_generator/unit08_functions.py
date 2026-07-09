@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from cqlib import main
 
 TOPIC = "functions"
-DEF, PARAM, REC = "function-definition", "parameters-return", "recursion"
+DEF, PARAM, REC = "defining-and-calling-functions", "function-parameters-and-arguments", "recursion"
 
 Q = []
 
