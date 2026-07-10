@@ -20,7 +20,7 @@ INSERT INTO shipments (shipment_id, driver_id, status, destination) VALUES
 (3, 1, 'in_transit', 'Nagpur');
 ```
 
-```postgresql with=shipments.sql
+```postgresql with=orm_demo.sql
 -- ORM-style code, in pseudocode, might read like:
 -- shipments = Shipment.objects.filter(status='in_transit')
 -- Behind the scenes, this generates and runs SQL equivalent to:
@@ -38,7 +38,7 @@ The generated SQL here is clean and matches exactly what a developer would have 
 
 The `N+1 query` problem, covered in the performance unit, is the single most common way ORM-generated code goes wrong, precisely because the object-oriented style makes looping over related objects look completely innocent.
 
-```postgresql with=shipments.sql
+```postgresql with=orm_demo.sql
 -- ORM-style code that looks perfectly reasonable:
 -- shipments = Shipment.objects.all()
 -- for shipment in shipments:
@@ -59,7 +59,7 @@ Nothing about the object-oriented loop above looks like a database performance h
 
 For a genuinely complex report, involving several `join`s, `window functions`, and careful aggregation, exactly the kind of query built up across earlier chapters of this course, writing raw SQL directly is often more straightforward than coaxing an ORM's object-oriented interface into generating that same precise query.
 
-```postgresql with=shipments.sql
+```postgresql with=orm_demo.sql
 SELECT driver_id, COUNT(*) AS active_shipments
 FROM shipments
 WHERE status = 'in_transit'
@@ -87,7 +87,7 @@ An ORM trades some control and some query-level performance transparency for fas
 
 Using the `shipments` table above, write the raw SQL a developer might reach for directly instead of relying on an ORM's default behavior, to fetch every shipment along with a count of how many other shipments share the same `driver_id`, in one single query rather than one query per shipment.
 
-```postgresql with=shipments.sql
+```postgresql with=orm_demo.sql
 -- Write your query below
 ```
 
