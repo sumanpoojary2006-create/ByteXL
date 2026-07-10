@@ -37,7 +37,18 @@ Naina's Courses table gains an Instructor ID column, holding the Instructor's id
 
 Reading this table confirms the one-to-many shape directly: INS-14 appears twice, meaning that one instructor teaches two courses, while each individual course row points to only one instructor. The rule is always the same regardless of the domain: the entity on the "many" side of a one-to-many relationship carries a `foreign key` column pointing at the entity on the "one" side, never the other way round. Placing the `foreign key` on the "one" side instead would be unable to represent an instructor teaching more than a single course, since a single column can only ever hold one value per row.
 
-## Rule Three: Many-to-Many Needs a Table of Its Own
+## Rule Three: One-to-One Puts a Unique Foreign Key on Either Side
+
+A one-to-one relationship, the kind already seen with an employee and their assigned desk, is the one shape Naina's own registration diagram does not happen to use, but it comes up often enough elsewhere to deserve its own rule. Unlike a one-to-many relationship, there is no automatic "many" side to host the `foreign key`, either entity's table could reasonably hold a reference to the other. The usual choice is to place the `foreign key` on whichever side has total participation, the side guaranteed to always have a matching row, and to mark that column unique, so the database itself refuses to let the same desk end up assigned to two different employees.
+
+| Employee ID | Name | Desk ID |
+|---|---|---|
+| EMP-01 | Rohan Mehta | DSK-14A |
+| EMP-02 | Sanjay Iyer | DSK-14B |
+
+Desk ID here is doing double duty, a `foreign key` pointing at the Desks table and a uniquely constrained column at the same time, and that uniqueness is exactly what stops one desk from quietly being handed to two employees. When both sides of a one-to-one relationship have total participation, some designs skip a `foreign key` altogether and merge the two entities into a single table instead, since neither one can ever exist without the other anyway.
+
+## Rule Four: Many-to-Many Needs a Table of Its Own
 
 The Student-enrols-in-Course relationship is where the mechanical simplicity of rule two breaks down. This relationship is many-to-many: one student takes several courses, and one course has several students. Neither the Students table nor the Courses table can hold a single `foreign key` column for this relationship, because a single column in a single row cannot represent "several" values at once.
 
@@ -65,6 +76,7 @@ Look closely at what this table allows. Roll Number 20456 appears twice, once fo
 | Composite attribute | Several separate columns, one per component part |
 | Derived attribute | Usually no column at all; recalculated when needed |
 | One-to-many relationship | A foreign key column on the table for the "many" side |
+| One-to-one relationship | A unique foreign key on one side (often the side with total participation), or a merged table |
 | Many-to-many relationship | A brand new junction table holding a foreign key to each side |
 
 ## Walking the Full Diagram, Table by Table
@@ -75,6 +87,6 @@ This is the moment Naina's earlier objection, that a diagram is only a picture a
 
 ## Conclusion
 
-Converting an ER diagram into relational tables follows a small, dependable set of rules: every entity becomes a table with its simple attributes as columns and its identifying attribute as the primary key, every one-to-many relationship is implemented by placing a `foreign key` on the table representing the "many" side, and every many-to-many relationship requires a new junction table holding a `foreign key` pointing to each of the two entities it connects. What began as rectangles, ovals, and diamonds ends as a concrete set of tables, ready to hold real rows of real data. Naina can now answer her manager's original question directly: her Student, Course, and Instructor rectangles become three tables, the Instructor-teaches-Course diamond becomes an Instructor ID column on Courses, and the Student-enrols-in-Course diamond becomes a brand new Enrolments table.
+Converting an ER diagram into relational tables follows a small, dependable set of rules: every entity becomes a table with its simple attributes as columns and its identifying attribute as the primary key, every one-to-many relationship is implemented by placing a `foreign key` on the table representing the "many" side, every one-to-one relationship places a unique `foreign key` on one side or merges the two tables outright, and every many-to-many relationship requires a new junction table holding a `foreign key` pointing to each of the two entities it connects. What began as rectangles, ovals, and diamonds ends as a concrete set of tables, ready to hold real rows of real data. Naina can now answer her manager's original question directly: her Student, Course, and Instructor rectangles become three tables, the Instructor-teaches-Course diamond becomes an Instructor ID column on Courses, and the Student-enrols-in-Course diamond becomes a brand new Enrolments table.
 
 This conversion is only the first pass, though, and a freshly mapped set of tables is not automatically free of the kinds of redundancy and inconsistency that make a database hard to trust. Checking whether a table's columns truly belong together, and tightening the design where they do not, is the natural next concern once the raw translation from diagram to tables is complete.

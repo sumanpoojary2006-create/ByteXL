@@ -1,6 +1,6 @@
 ## Introduction
 
-Ravi gets his answer about professors and searches happily ever after, never once thinking about storage layers or query processors again. That same afternoon, Kiran spends an hour writing the exact instruction that decides what counts as a professor's name "matching" a search, whether a partial spelling should count, for instance. That evening, the college's database administrator, a woman named Aisha, spends twenty minutes confirming that the previous night's backup of the entire portal actually completed without errors. Same database, same single day, three completely different relationships to it.
+Ravi, a first-year student, types a professor's name into his college portal's search box and gets office hours and a contact email back in under a second. He never wonders how that search actually works, and he never needs to, he has already moved on to checking his timetable. That same afternoon, Kiran, the developer who built the portal, spends an hour writing the exact instruction that decides what counts as a professor's name "matching" a search, whether a partial spelling should count, for instance. That evening, the college's database administrator, a woman named Aisha, spends twenty minutes confirming that the previous night's backup of the entire portal actually completed without errors. Same database, same single day, three completely different relationships to it.
 
 ## End Users: People Who Never See the Data Directly
 

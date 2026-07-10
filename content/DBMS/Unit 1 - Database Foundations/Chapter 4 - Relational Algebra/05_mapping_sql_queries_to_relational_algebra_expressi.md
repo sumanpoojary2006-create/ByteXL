@@ -53,6 +53,15 @@ Arjun's report also needs zone_name, a column that does not live in Restaurants 
 
 Notice the order these operations happened in Arjun's head: selection narrowed Restaurants down first, and only then did the `join` bring in the matching zone information. This mirrors exactly how `relational algebra` expressions are built, one operation's result becoming the next operation's input, a short chain rather than one giant leap from question to answer.
 
+One operation is still owed: the report his manager asked for wanted only restaurant name and zone name, not category. That final trim is projection doing its job one more time, dropping category now that it has finished its work of narrowing the rows earlier:
+
+| name | zone_name |
+|---|---|
+| Spice Junction | Central |
+| Burger Point | Central |
+
+This is the exact report Arjun was asked for, reached in three small, ordinary steps rather than one leap: selection, then join, then a closing projection.
+
 ![A fast-food restaurant report flowing through WHERE selection, zone join, and SELECT projection](images/09_sql_query_as_algebra_chain.png)
 
 ## UNION and the Set Operations

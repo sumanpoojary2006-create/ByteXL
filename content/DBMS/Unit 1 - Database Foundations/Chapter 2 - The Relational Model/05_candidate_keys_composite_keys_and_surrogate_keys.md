@@ -32,7 +32,7 @@ Now look at Aisha's Book Loans table, where no single column is unique by itself
 | 20456 | 978-93-5118-611-0 | 2026-06-01 | 2026-06-15 |
 | 20789 | 978-93-5118-500-2 | 2026-06-02 | 2026-06-16 |
 
-Roll No 20456 repeats across two rows, because the same student borrowed two different books on the same day. ISBN 978-93-5118-500-2 also repeats, because that same title was borrowed by two different students. Neither column, alone, can uniquely identify a loan record. But the pairing of Roll No and ISBN together, for that particular loan transaction, never repeats within the table, since a student is not expected to borrow the exact same book twice on the exact same day. A `primary key` formed by combining two or more columns, where the combination is unique even though none of the individual columns is, is called a **composite key**.
+Roll No 20456 repeats across two rows, because the same student borrowed two different books on the same day. ISBN 978-93-5118-500-2 also repeats, because that same title was borrowed by two different students. Neither column, alone, can uniquely identify a loan record, and even Roll No and ISBN together are not quite safe: nothing stops the same student from borrowing the same book again on a later date, once it has been returned, which would repeat that same pair. Add Loan Date into the mix, though, and the combination becomes genuinely unique, since a student is not expected to borrow the exact same book twice on the exact same day. A `primary key` formed by combining two or more columns, where the full combination is unique even though no individual column, or smaller subset of them, is, is called a **composite key**.
 
 ## Surrogate Keys: An Identity Invented on Purpose
 
