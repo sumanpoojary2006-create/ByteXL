@@ -40,6 +40,8 @@ Selection conditions can be as simple as a single comparison, or combined for so
 
 Whether the condition is a single check or several joined together, the operation is still sigma, still working row by row, still leaving every column exactly as it was.
 
+![Selection keeps matching rows while projection keeps chosen columns](images/03_selection_vs_projection.png)
+
 ## Projection: Keeping the Columns That Matter
 
 Projection, written pi, works the opposite way. Instead of trimming rows, it trims columns, keeping every row but discarding any column not explicitly asked for. The volunteer's handout, wanting only titles and authors, is a projection of the Books relation onto just those two columns. Applying it produces:
@@ -66,6 +68,8 @@ Real requests rarely stop at only one operation. Suppose Rohan is asked for "the
 | The Long Wait |
 
 This chaining is exactly the "closure" idea put to work: because sigma's output is a relation and pi's input is a relation, the two snap together cleanly, one operation feeding directly into the next, with no special glue code required in between.
+
+![A selection for mystery books feeding into a projection of only the title column](images/04_selection_then_projection_chain.png)
 
 ## Selection and Projection at a Glance
 

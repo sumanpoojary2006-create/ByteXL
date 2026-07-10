@@ -19,6 +19,8 @@ Start with what a "relation" actually is in this context: it is simply the forma
 
 That single rule is what makes `relational algebra` a genuine algebra rather than just a loose collection of tricks. In ordinary arithmetic, adding two numbers gives back a number, which is why you can chain additions together, feeding the result of one into the next. `Relational algebra` works the same way. Because every operation's output is again a relation, the output of one operation can always become the input to another, and a whole chain of small, simple steps can be strung together to answer a genuinely complicated question, one step at a time.
 
+![Relational algebra as a toolkit where each operation takes a relation in and returns a relation out](images/01_relational_algebra_operation_toolkit.png)
+
 ## Why a Formal Language Matters at All
 
 It would be reasonable to ask why any of this needs a formal name and a precise definition. Devika's manager puts it plainly: a database has to answer thousands of differently worded questions every day, and it cannot afford to treat each one as a brand new puzzle. `Relational algebra` gives the database, and the people who build it, a fixed, well-understood vocabulary of operations that any request can be broken down into.
@@ -35,6 +37,8 @@ Without a formal foundation like this, there would be no shared language in whic
 `Relational algebra` is built from a small number of core operations, each one worth learning in turn. Two of them narrow a single relation down: one keeps only the rows that match a condition, and the other keeps only certain columns. A few more compare or combine two relations that share the same shape, treating rows almost like the members of a mathematical set. And one especially important operation stitches two different relations together based on a shared value, which is how a database connects, say, a table of books to a table of orders.
 
 None of these operations is complicated in isolation. What makes `relational algebra` worth learning is that these few simple pieces, used together in sequence, are enough to express essentially any question a relational database can be asked. A dashboard listing "mystery books under 400 rupees, sorted by title" and a report listing "every customer who ordered a travel book this month" both reduce, underneath the wording, to short chains of the very same handful of operations.
+
+![Relational algebra operations chaining together because every output remains a relation](images/02_closure_chaining_relations.png)
 
 ## Relational Algebra at a Glance
 

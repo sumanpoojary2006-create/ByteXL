@@ -15,6 +15,8 @@ Every split Priya's team performed traded one thing for another. The old combine
 
 Neither design is simply "correct" in isolation. Normalization is the right default because most everyday work against a database, placing an order, updating a customer's address, adding a new product, is a write, and writes are exactly where anomalies do their damage. But Vivek's monthly report is overwhelmingly a read, run against months of accumulated history, and reads are where the cost of combining many small tables becomes most visible.
 
+![Normalization and denormalization compared as a tradeoff between safe writes and fast reads](images/13_denormalization_tradeoff_scale.png)
+
 ## Denormalization: Paying With Redundancy to Buy Back Speed
 
 Denormalization means deliberately storing a piece of data in more than one place, the very thing normalization spent six separate corrections eliminating, because the speed gained on reads is worth more, for a specific, measured use case, than the small risk of the copies drifting apart. Vivek's fix is not to undo the normalized `schema` Sunrise Traders now depends on for everyday order-taking. Instead, he builds a separate summary structure specifically for reporting, one that stores CustomerCity and ProductCategory directly alongside the sales totals they get grouped by, refreshed on a schedule rather than recalculated from scratch on every request.
@@ -30,6 +32,8 @@ The order-taking side of Sunrise Traders, where Priya enters new orders and Tara
 ## A Discipline, Not a Free Pass
 
 The danger in all of this is treating denormalization as an excuse to skip the careful work Sunrise Traders' team just finished. Redundant data is still redundant data, it still carries the same risk of two copies disagreeing that caused every anomaly in the original combined table. The difference is that Vivek is choosing that risk deliberately, for one specific, measured bottleneck, rather than backing into it by accident the way the original combined Orders table did. A few habits keep the trade-off honest:
+
+![Disciplined denormalization using normalized source-of-truth tables and a refreshed reporting summary copy](images/14_disciplined_denormalization_refresh_copy.png)
 
 - **Normalize first, always**, as the default shape of a `schema`, because most of what a system does day to day is write data, and writes are exactly where redundancy causes real damage.
 - **Denormalize only after a genuine, measured slowdown shows up**, not because combining tables sounds slow in theory. Vivek only built his reporting summary after finance's monthly report was demonstrably too slow against the properly normalized tables, not before.

@@ -39,6 +39,8 @@ Set operations only make sense when the two relations involved are what `relatio
 
 It helps to see why this requirement exists by imagining what would go wrong without it. Suppose Meera tried to compare her Coding Club relation, a single column of student IDs, against a relation of book titles from the library catalogue. Asking "which rows appear in both" would be meaningless, a student ID and a book title are not comparable values, and there would be no sensible way to line up the columns to check for a match. Union-compatibility is what guarantees that comparing two relations row by row is actually a coherent thing to do. Two relations can have entirely different column names and still be union-compatible, what matters is the number of columns and the domain each one draws from, not the labels typed above them.
 
+![Union-compatible club rosters passing the shape and domain check while book titles are rejected](images/06_union_compatibility_shape_domain.png)
+
 ## Union: Everyone in Either Relation
 
 The union of two union-compatible relations keeps every row that appears in at least one of them, with duplicates collapsed down to a single copy, exactly the way "or" works in ordinary set theory. Applied to Meera's two club relations, the union answers "who belongs to the Coding Club, the Robotics Club, or both":
@@ -74,6 +76,8 @@ The difference between two union-compatible relations keeps the rows that appear
 | S110 |
 
 S104 and S107 are removed because they also appear in the Robotics Club relation, leaving only the coding-only members. Notice that reversing the operation, Robotics Club minus Coding Club, would give a different answer entirely, just S112, the one robotics member who never joined coding. Difference is the one set operation in this trio where the order the relations are written in changes the result.
+
+![Union, intersection, and coding-minus-robotics difference applied to two club rosters](images/05_union_intersection_difference.png)
 
 ## Set Operations at a Glance
 

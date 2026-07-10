@@ -6,6 +6,8 @@ He starts walking the library floor instead, watching how it actually works. A s
 
 Kabir's next question is what the library actually knows about each of those things. A student has a name, a roll number, a membership date. A book has a title, an author, an ISBN, a shelf location. Those properties are **attributes**, the individual facts that describe an entity. And when Kabir watches the student borrow a book, he notices something that belongs to neither the student alone nor the book alone: the act of borrowing itself, tying one particular student to one particular book on one particular date. That connection between two entities is a **relationship**. Long before any table gets created, this three-part exercise, naming the things, naming their properties, and naming how the things connect, is the real work of designing a database.
 
+![Kabir identifying library entities, their attributes, and the relationships between them](images/01_entities_attributes_relationships_library.png)
+
 ## Finding the Entities Hiding in a Domain
 
 The hardest part of this exercise is rarely drawing a diagram; it is deciding what counts as a "thing" worth tracking in the first place. Kabir's rule of thumb, which his manager confirms over coffee later that afternoon, is simple: an entity is any noun in the domain that the system needs to remember details about over time, independently of anything else, and that can be told apart from every other instance of the same kind.
@@ -53,6 +55,8 @@ Kabir sketches the borrowing relationship in words before touching any notation:
 ## Turning Observation into a Plan
 
 By the end of the afternoon, Kabir has not written a single line of a table definition, and that is entirely the point. What he has instead is a short list of entities, a set of attributes hanging off each one, and a handful of relationships describing how those entities interact in the real workflow he watched at the counter. When his manager asks to see progress, Kabir walks her through the list verbally, describing the library the way a librarian would describe it, not the way a spreadsheet would. She nods and tells him that is exactly the right starting point: get the real-world picture right first, because every table, column, and `constraint` that comes later is only a faithful translation of that picture into a form a database can store.
+
+![Real library observations sorted into entities, attributes, relationships, and irrelevant details](images/02_observation_to_er_model_funnel.png)
 
 This same three-question habit, what are the things, what do we know about each thing, and how do the things connect, applies just as cleanly to other domains:
 

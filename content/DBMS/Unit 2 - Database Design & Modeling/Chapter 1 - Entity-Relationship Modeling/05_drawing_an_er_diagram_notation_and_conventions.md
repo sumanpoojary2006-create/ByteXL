@@ -23,6 +23,8 @@ Three shapes carry three different meanings:
 
 Every shape in the diagram is connected to something by a plain line, and the lines themselves carry no separate meaning beyond "this thing belongs to, or takes part in, that thing." An oval floating with no line to any rectangle would be meaningless, because an attribute detached from its entity is not describing anything.
 
+![ER diagram notation using rectangles for entities, ovals for attributes, and diamonds for relationships](images/09_er_diagram_core_notation.png)
+
 ## Marking the Finer Details Within Each Shape
 
 Plain rectangles and ovals capture the basic shapes, but Vivek's diagram also needs to show details covered already: which attribute is the identifying one, which attribute is composite, derived, or multivalued, and which entity has total participation in a relationship.
@@ -48,6 +50,8 @@ The line between an entity and a relationship diamond is also where cardinality 
 | Many-to-many | "N" at both ends (or "M" and "N") | A crow's foot at both ends |
 
 Total participation is layered onto the same line using a double line instead of a single line between the entity and the diamond, while partial participation stays a plain single line. In Vivek's hospital diagram, the line between Patient and the Admits diamond is doubled, because every admitted patient must have an admitting doctor, while the line between Doctor and the same diamond stays single, because a doctor can currently have zero admitted patients.
+
+![ER notation details for identifying, composite, derived, multivalued, cardinality, and total participation](images/10_er_diagram_detail_notation.png)
 
 ## Notation Legend
 

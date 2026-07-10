@@ -23,6 +23,8 @@ Look closely and three separate stories are tangled into one table:
 
 Every time a customer places another order, their name, address, and phone number get retyped into a new row. Every time a product is ordered again, its name and price get retyped too. This is exactly the kind of redundancy that causes trouble the moment anyone tries to change, add, or remove anything, and those three kinds of trouble each have a name.
 
+![One wide orders table mixing customer, product, and order facts, creating update, insert, and delete anomalies](images/01_mixed_orders_table_anomalies.png)
+
 ## Update Anomaly: One Fact, Many Places to Fix
 
 Notice that Ilyas's address appears three times in the table, once for each of his three orders. When his shop moved and Priya updated one row, the other two still said "14 MG Road" for a few days until she caught them, because nothing in the table forced all three copies to change together. This is an **`update anomaly`**: changing a single real-world fact requires updating it in every row where it happens to be repeated, and if even one row gets missed, the table ends up telling two different stories about the same customer at the same time. A table with an `update anomaly` is not lying on purpose, it simply has no way of knowing that three separate rows are secretly describing the same shop.
@@ -46,6 +48,8 @@ The sharpest problem showed up when Meenal Stationers, a small shop that had pla
 ## Why This Points Toward Splitting the Table
 
 All three anomalies share one root cause: the Orders table is asking a single row to answer three unrelated questions at once, who is this customer, what is this product, and what happened in this particular order. Whenever one row is forced to carry facts about more than one real-world thing, some of those facts inevitably get repeated across other rows, and repetition is where every one of these anomalies breeds. The fix Priya eventually reaches for is not a clever trick or a stricter data-entry policy, it is a disciplined way of reorganizing the table so that each fact is stored exactly once, attached to the one thing it actually describes.
+
+![Normalization splitting the messy orders table into customers, products, orders, and order items](images/02_normalization_splits_facts_by_topic.png)
 
 ## Conclusion
 

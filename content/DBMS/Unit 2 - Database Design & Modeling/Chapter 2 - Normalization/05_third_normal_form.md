@@ -24,6 +24,8 @@ OrderID -> CustomerID -> CustomerCity
 
 This two-step chain is a **transitive dependency**, a non-key column depending on the `primary key` only indirectly, through another non-key column, rather than depending on the key directly. CustomerCity is not really a fact about the order at all, it is a fact about the customer that happens to be riding along on every order row that customer touches. That is precisely why it keeps repeating, every new order for C12 drags another copy of "Bengaluru" along with it, and if Ilyas Bakery Supplies ever relocates, every one of those repeated copies needs to be tracked down and corrected, the exact update anomaly Priya first ran into, resurfacing here in a table that already passed the 2NF check cleanly.
 
+![Third Normal Form showing the transitive dependency OrderID to CustomerID to CustomerCity](images/09_third_normal_form_transitive_dependency.png)
+
 ## Third Normal Form Builds on Second Normal Form
 
 Just as 2NF assumes 1NF is already satisfied, 3NF assumes 2NF is already satisfied, and adds one further requirement on top of it: no non-key column may depend transitively on the `primary key` through another non-key column. A table can pass the 2NF check perfectly, as Naina's Orders table does, having no composite key for anything to be partial against, and still fail 3NF because of a transitive chain like the one running through CustomerID. The two rules are catching two different shapes of the same underlying disease, redundant data, one shape rooted in composite keys, the other rooted in chains of non-key columns leaning on each other.
@@ -49,6 +51,8 @@ Customers, keyed by CustomerID, holding the city fact where it truly belongs:
 | C07 | Mysuru |
 
 CustomerCity now exists exactly once per customer, no matter how many orders that customer places over the years. Naina can update Ilyas Bakery Supplies' city in a single row of Customers, and every order that references CustomerID C12 stays correctly, automatically associated with the right city, because the city is looked up through the relationship rather than copied onto every order.
+
+![Fixing 3NF by moving CustomerCity into Customers while Orders keeps only OrderID, CustomerID, and OrderDate](images/10_third_normal_form_split_customers.png)
 
 ## Telling Partial and Transitive Dependency Apart
 

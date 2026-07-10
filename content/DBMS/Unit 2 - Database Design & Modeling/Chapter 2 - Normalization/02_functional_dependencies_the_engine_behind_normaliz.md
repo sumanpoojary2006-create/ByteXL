@@ -6,6 +6,8 @@ The tool she reaches for is called a **`functional dependency`**, and it says so
 
 If CustomerID C12 always means the shop is Ilyas Bakery Supplies, and it can never mean anything else, then CustomerID determines CustomerName. `Functional dependencies` are the precise, rule-based foundation that every later decision about splitting or keeping a table rests on, and Meera spends her first afternoon simply writing them down.
 
+![Functional dependency shown as X determining Y with CustomerID and RollNumber examples](images/03_functional_dependency_x_determines_y.png)
+
 ## What "X Determines Y" Actually Means
 
 A `functional dependency` is usually written as X determines Y, meaning that for any two rows that share the same value of X, they must also share the same value of Y. It is not enough for X and Y to usually match up, the rule has to hold with certainty, for every row, always. Meera tests this against Sunrise Traders' data using CustomerID and CustomerName. Every row with CustomerID C12 says "Ilyas Bakery Supplies," with no exceptions anywhere in the table. So CustomerID determines CustomerName.
@@ -47,6 +49,8 @@ Some of Sunrise Traders' data is identified not by a single column but by a comb
 ## Transitive Dependency: A Chain of Two Hops
 
 Meera spots a second, subtler pattern while looking at a simplified Orders table that stores OrderID, CustomerID, and CustomerCity together. OrderID determines CustomerID, since each order belongs to one customer, and CustomerID determines CustomerCity, since each customer has one registered city. But notice what that means for OrderID and CustomerCity: OrderID does not describe CustomerCity directly, it only gets there by first passing through CustomerID. This two-hop chain, where a column depends on the key only indirectly, through another non-key column, is called a **transitive dependency**. Meera flags it for later, sensing that a fact reached only by a detour through another fact is probably not sitting in the right table.
+
+![Dependency checker comparing full dependency, partial dependency, and transitive dependency](images/04_dependency_checker_partial_transitive.png)
 
 ## Functional Dependencies at a Glance
 

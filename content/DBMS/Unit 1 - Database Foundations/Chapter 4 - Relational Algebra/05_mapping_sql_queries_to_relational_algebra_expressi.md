@@ -53,6 +53,8 @@ Arjun's report also needs zone_name, a column that does not live in Restaurants 
 
 Notice the order these operations happened in Arjun's head: selection narrowed Restaurants down first, and only then did the `join` bring in the matching zone information. This mirrors exactly how `relational algebra` expressions are built, one operation's result becoming the next operation's input, a short chain rather than one giant leap from question to answer.
 
+![A fast-food restaurant report flowing through WHERE selection, zone join, and SELECT projection](images/09_sql_query_as_algebra_chain.png)
+
 ## UNION and the Set Operations
 
 Not every request Arjun will face involves narrowing one relation or `joining` two. Sometimes a manager asks for something closer to "every restaurant in either the Fast Food or the Healthy category" as one combined list, or "restaurants that are in this month's promotion list and also currently active," or "restaurants that were active last month but have since closed." Each of these corresponds to one of the set operations already covered, combining relations, keeping only their overlap, or keeping what belongs to one but not the other, provided the relations being compared are shaped alike. Recognising a request as one of these patterns, rather than reinventing an approach from scratch, is exactly the instinct worth building.
@@ -69,6 +71,8 @@ What Arjun has really learned is a way of reading any structured query before he
 A single query can use several of these at once, exactly the way Arjun's fast food report used both a selection and a `join`, one after another.
 
 This is precisely why `relational algebra` was worth learning before touching a real query language at all. The formal operations are not a separate, academic detour from the practical skill of writing queries, they are the practical skill, described in its most precise and stripped-down form. Once the underlying moves are familiar, learning the exact wording and punctuation of a structured query becomes a matter of vocabulary, not a matter of relearning how to think about data.
+
+![SQL clauses mapped to the relational algebra operations they express](images/10_sql_clauses_to_algebra_operations.png)
 
 ## Query Clauses and Their Algebra Counterparts
 

@@ -14,6 +14,8 @@ Every row here is already in 1NF, each cell holds one atomic value, no comma-sep
 - Quantity genuinely depends on both OrderID and ProductID together, since the same product ordered in two different orders can have two completely different quantities.
 - ProductName and ProductPrice, though, do not care about OrderID at all, they are fully settled by ProductID alone. This mismatch, where some columns lean on only part of a composite key rather than the whole thing, is exactly what **Second `Normal Form`**, or 2NF, exists to catch and correct.
 
+![Second Normal Form showing ProductName and ProductPrice depending only on ProductID, not the full composite key](images/07_second_normal_form_partial_dependency.png)
+
 ## Second Normal Form Builds Directly on First Normal Form
 
 2NF has a prerequisite: a table must already be in 1NF before 2NF is even a meaningful question to ask, since 2NF is entirely about how non-key columns relate to the key, and that relationship is only worth examining once every column is confirmed to hold a single atomic value. Arjun's OrderItems table clears that bar already. The new requirement 2NF adds is this: every non-key column must depend on the whole `primary key`, not on just a piece of it. A table with a single-column `primary key` automatically satisfies this, since there is no "part" of a single column to partially depend on. The question only becomes interesting, and only becomes a risk, once a table's key is composite, built from two or more columns working together.
@@ -52,6 +54,8 @@ Products, keyed by ProductID alone, holding everything that only ever needed Pro
 | P03 | Gel Pen Box | 120 |
 
 Now A4 Notebook's name and price exist exactly once, in one row of Products, no matter how many order lines across Sunrise Traders' entire history have ever included it. Changing its price is a single edit in a single row. OrderItems still records exactly what each order actually needs, which product, in what quantity, tied to which order, without dragging along facts that were never really about the order line in the first place.
+
+![Fixing 2NF by moving ProductName and ProductPrice into a Products table keyed by ProductID](images/08_second_normal_form_split_products.png)
 
 ## Why This Matters Only When the Key Is Composite
 

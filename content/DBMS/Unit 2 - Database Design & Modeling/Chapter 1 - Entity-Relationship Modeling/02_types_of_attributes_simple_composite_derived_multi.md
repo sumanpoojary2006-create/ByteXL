@@ -10,6 +10,8 @@ Three columns on the form each hide a different problem:
 
 Meera's manager, watching her frown at the form, explains that this is a well-known problem with a name: not every **attribute** behaves the same way. Attributes come in a small number of recognisable types, and knowing which type an attribute is, before it ever reaches a table, determines how it needs to be stored.
 
+![Simple, composite, derived, and multivalued attributes on a gym member form](images/03_attribute_types_gym_form.png)
+
 ## Simple Attributes: One Fact, One Value
 
 The easiest kind of attribute to reason about is a **simple attribute**, sometimes called atomic, which holds exactly one indivisible value that cannot be meaningfully broken into smaller parts. A member's date of birth is simple: it is a single value, and splitting it further into "day" and "month" and "year" separately would not help the gym answer any question it actually has. A member's gender, a book's ISBN, an employee's blood group, all of these are simple attributes because each one is already as granular as the domain needs it to be.
@@ -68,6 +70,8 @@ A person can have several phone numbers. A book can have several authors. A car 
 ## Why This Sorting Exercise Matters
 
 Meera's redesigned form now separates date of birth from age, breaks address into street, city, and pincode, drops age entirely as a stored field since it can always be computed, and leaves proper room for a member to list more than one phone number. None of this required a single table or column definition yet; it required only a careful look at what each attribute actually is. That distinction carries forward directly into how a database eventually gets built, because a composite attribute usually becomes several columns, a derived attribute usually becomes no column at all, and a multivalued attribute usually needs a structure of its own rather than a single cramped field.
+
+![Attribute types flowing into different storage decisions](images/04_attribute_storage_decision_flow.png)
 
 ## Conclusion
 

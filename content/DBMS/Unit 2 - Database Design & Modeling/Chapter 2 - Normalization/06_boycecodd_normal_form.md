@@ -35,6 +35,8 @@ BCNF removes that loophole with one clean, stricter requirement: for every funct
 
 Dev checks Inspector -> ProductCategory against that requirement. Is Inspector, alone, a `candidate key` of this table? No. Inspector alone cannot uniquely identify a row, since the same inspector appears in multiple rows tied to different orders, OrderID is still needed to pin a row down. Inspector determines ProductCategory perfectly well, but Inspector is not a `candidate key`, and that single mismatch is a BCNF violation, even though the table already satisfied every earlier rule.
 
+![BCNF violation where Inspector determines ProductCategory but Inspector is not a candidate key](images/11_bcnf_determinant_candidate_key_rule.png)
+
 ## Splitting Along the True Determinant
 
 The fix follows the same instinct every earlier split has used, move the dependency into a table where its determinant genuinely is the key.
@@ -57,6 +59,8 @@ InspectorSpecialty, recording each inspector's one product category:
 | Farah | Writing Instruments |
 
 In InspectorSpecialty, Inspector is now the whole `primary key`, so Inspector -> ProductCategory no longer breaks any rule, the determinant is finally a candidate key. Dev can look up which category any order-and-inspector pair covers by `joining` the two tables, and "Rakesh specializes in Paper Goods" now lives in exactly one row, however many orders Rakesh ever inspects.
+
+![Fixing BCNF by splitting InspectorSpecialty so Inspector becomes the key for ProductCategory](images/12_bcnf_split_inspector_specialty.png)
 
 ## Boyce-Codd Normal Form at a Glance
 

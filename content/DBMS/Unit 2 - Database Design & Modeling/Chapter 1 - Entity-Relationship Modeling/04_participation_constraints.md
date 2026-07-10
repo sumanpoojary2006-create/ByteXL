@@ -9,6 +9,8 @@ Aisha thinks about it and realises the two answers are completely different:
 
 Both of these are true at once, and the relationship's cardinality alone never told Aisha that. What she has just worked out is called **participation constraint**, the question of whether every instance of an entity is required to take part in a relationship, or whether some instances are allowed to sit outside it.
 
+![Orders requiring customers while customers may validly have zero orders](images/07_total_vs_partial_participation.png)
+
 ## Total Participation: Every Instance Must Take Part
 
 When every single instance of an entity is required to participate in a relationship, that entity has **total participation** in the relationship. Orders is the clean example here: an order that exists in the store's system, by definition, was placed by a customer. There is no such thing as an orphaned order sitting in the database with no customer behind it. Every row in the Orders table, without exception, must be tied to a row in the Customers table.
@@ -49,6 +51,8 @@ A second example makes the asymmetry even sharper. Consider a hospital's relatio
 ## Why This Distinction Changes What Gets Enforced
 
 Aisha's manager explains why this distinction earns its own name rather than being folded into cardinality. Cardinality answers "how many," participation answers "is it required at all." A relationship can be one-to-many with total participation on the many side and partial on the one side, exactly like Customers and Orders, or it could just as easily demand total participation on both sides, as with a Marriage relationship between two Person entities in a system that only ever records people who are currently married. Knowing both facts about a relationship, its cardinality and its participation, is what lets a design faithfully capture every rule the real business actually follows, rather than only the easy half of it.
+
+![Cardinality answering how many while participation answers whether the relationship is required](images/08_cardinality_vs_participation_checker.png)
 
 ## Participation Constraints at a Glance
 

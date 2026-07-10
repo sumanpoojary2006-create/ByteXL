@@ -21,6 +21,8 @@ Naina's Student entity, with attributes Roll Number (underlined), Name, and Date
 
 Roll Number, the underlined attribute in the diagram, sits as the `primary key` here, exactly the same guarantee already familiar from working with primary keys directly: no two rows will ever share the same value in that column. A composite attribute, like an address split into Street, City, and Pincode, simply becomes three separate columns rather than one, and a derived attribute like age is typically left out of the table entirely, since it can always be recalculated from date of birth whenever it is actually needed.
 
+![Student entity and attributes mapped into a Students table with a primary key](images/11_entities_to_tables_mapping.png)
+
 ## Rule Two: One-to-Many Becomes a Foreign Key on the "Many" Side
 
 The Instructor-teaches-Course relationship in Naina's diagram is one-to-many: one instructor can teach several courses, but each course, in this college, is taught by exactly one instructor. For a relationship shaped like this, no new table is needed at all. Instead, the "many" side simply gains a new column that points back to the "one" side, a column holding the primary key value of the related row. That pointing column is a **`foreign key`**.
@@ -50,6 +52,8 @@ The fix is to introduce an entirely new table, often called a junction table or 
 | 21103 | CS303 |
 
 Look closely at what this table allows. Roll Number 20456 appears twice, once for each course that student is enrolled in, and Course Code CS301 appears twice, once for each student enrolled in it. Both sides can repeat freely, which is exactly the flexibility a many-to-many relationship requires and a single `foreign key` column never could have provided. If the relationship itself carried its own attribute, say an enrolment date recording exactly when the student joined that course, that attribute would live directly inside this same junction table, since the date describes the enrolment, not the student or the course individually.
+
+![One-to-many relationships becoming foreign keys and many-to-many relationships becoming junction tables](images/12_relationships_to_foreign_keys_and_junctions.png)
 
 ## Mapping Rules at a Glance
 

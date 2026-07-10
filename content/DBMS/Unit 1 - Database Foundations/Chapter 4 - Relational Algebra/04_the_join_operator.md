@@ -61,9 +61,13 @@ This is exactly the answer Farah needed. Kabir Singh's row now carries his cours
 
 Conceptually, then, a `join` is nothing more exotic than "pair everything with everything, then keep only the pairings where the condition I care about is true." The cartesian product supplies every possibility, and the `join`'s matching condition, most often equality between a shared column like student_id, decides which of those possibilities are worth keeping.
 
+![A join pairing every student with every enrollment, then keeping only matching student IDs](images/07_join_filters_cartesian_product.png)
+
 ## Why This Matters Beyond Farah's Bootcamp
 
 Farah's situation, two relations that each hold half of a story, is not unusual, it is the normal shape of a well-designed relational database. Splitting Students and Enrollments into separate relations, rather than repeating a student's name on every single enrollment row, is exactly the kind of design choice that keeps data organised and avoids the same information being copied and rewritten in dozens of places. The tradeoff is that any question spanning both ideas, "which course is this named student taking," cannot be answered by looking at one relation alone. `Join` is the operation that pays back that tradeoff, letting the database recombine cleanly separated relations on demand, exactly when a question genuinely needs both.
+
+![A join recombining cleanly separated Students and Enrollments tables only when a cross-table answer is needed](images/08_join_recombines_clean_tables.png)
 
 ## The Join Operator at a Glance
 
