@@ -10,6 +10,8 @@ So she asks the question plainly: if a PostgreSQL server can hold many things at
 
 Server, then database, then `schema`, then table, each level nested inside the one before it. Today Pooja builds the bottom two levels of that nesting for real, for the first time.
 
+![Server, database, schema, and table shown as nested containers where rows finally live](images/07_server_database_schema_table_nesting.png)
+
 ## Why a Fresh Database Is Usually a Manual, Local Step
 
 Creating a brand-new database is normally the very first move in any real project, done once, before anything else. It looks like this on a machine you control directly:
@@ -63,11 +65,13 @@ SELECT * FROM campus.courses;
 
 Reading through what each part does: `CREATE SCHEMA IF NOT EXISTS campus` sets up the named grouping first, since both tables need somewhere to live, and the `IF NOT EXISTS` guard means rerunning this statement will not fail with an error if the `schema` is already there. Each `CREATE TABLE` statement then lists its columns, one per line, together with a type, `integer` for whole-number identifiers and credit counts, `text` for names and free-form strings, `date` for the enrollment date, and `PRIMARY KEY` marking the column that uniquely identifies each row. Writing `campus.students` rather than just `students` everywhere is what actually places the table inside the `campus` `schema` instead of PostgreSQL's default, unlabelled location. The two `INSERT INTO` statements add a handful of realistic rows, and notice that Arjun's phone number is left as `NULL`, since that column was defined without a `NOT NULL` requirement and not every student has necessarily shared one. The final two `SELECT * FROM` statements ask PostgreSQL to hand back every column of every row in each table, which is exactly how Pooja confirms the tables were not just created but genuinely hold the data she just inserted.
 
+![The first SQL workflow: create schema, create table, insert rows, and select results](images/08_create_insert_select_workflow.png)
+
 ## Reading What Came Back
 
 Running that block, Pooja sees three rows appear under `students`, matching what she inserted, with Arjun's phone column showing as empty rather than an error, exactly as expected for a nullable column with no value supplied. The `courses` table likewise shows all three rows she added, each with its department and credit count intact. Nothing here required a leap of faith; the same statements that built the structure and inserted the rows are answered right back by a plain `SELECT`, which is the simplest possible proof that a table exists and is not empty.
 
-This `campus` `schema`, and the `students` and `courses` tables sitting inside it, are not a one-off exercise. They form the running example this entire stretch of learning returns to again and again, alongside two more tables, one for instructors and one for enrollments linking a specific student to a specific course, that will be built out as the need for them arises. Every SQL idea from here forward gets demonstrated against this same small, familiar institute rather than a new invented scenario each time.
+This `campus` `schema`, and the `students` and `courses` tables sitting inside it, are Pooja's first working proof that the whole nesting, server, database, `schema`, table, row, holds together end to end, not just in theory. The shape of this example, students and courses, soon joined by instructors and by enrollments linking a specific student to a specific course, is exactly the shape the rest of this course keeps returning to. Each later lesson builds its own fresh, self-contained version of that same small institute to practice against, runnable on its own without depending on this exact `campus_training` database still being connected, but the underlying idea, and the four-level nesting it lives inside, is the one Pooja just built here for the very first time.
 
 ## Creating a Database, Schema, and Table at a Glance
 
