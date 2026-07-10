@@ -107,7 +107,7 @@ The founders want one more cut: total revenue and order count per category, but 
 -- Write your query below
 ```
 
-If your query `joins` `orders` to `customers`, filters with `WHERE c.region IN ('West', 'South')`, groups by `o.category`, filters with `HAVING COUNT(*) > 1`, and orders by the summed revenue descending, Fiction should come out on top, built from Ishita's and Vivek's combined Fiction orders.
+If your query `joins` `orders` to `customers`, filters with `WHERE c.region IN ('West', 'South')`, groups by `o.category`, filters with `HAVING COUNT(*) > 1`, and orders by the summed revenue descending, Non-Fiction should come out on top at 3339.00, ahead of Fiction's 1380.00, once Aman Gupta's North-region Children orders are filtered out and Vivek's, Sonal's, and Ishita's Non-Fiction orders are summed together.
 
 ## Conclusion
 
