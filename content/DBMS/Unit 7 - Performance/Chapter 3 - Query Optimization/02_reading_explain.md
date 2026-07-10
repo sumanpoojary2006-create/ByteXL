@@ -76,13 +76,13 @@ This plan may report a `Bitmap Index Scan` feeding into a `Bitmap Heap Scan`, a 
 
 ## Your Turn
 
-Run `EXPLAIN` on a query that filters `orders` for `amount > 100000.00`, a condition matching very few rows given the data generated above, and identify the estimated row count and total cost reported for the plan.
+Run `EXPLAIN` on a query that filters `orders` for `amount > 205000.00`, a condition matching very few rows given the data generated above (`amount` tops out at 210000.00 for `order_id = 20000`), and identify the estimated row count and total cost reported for the plan.
 
 ```postgresql with=explain_demo.sql
 -- Write your query below
 ```
 
-`EXPLAIN SELECT * FROM orders WHERE amount > 100000.00;` reports a low estimated row count, reflecting how few of the generated rows actually exceed that amount, and a correspondingly low total cost, since the optimizer expects this condition to be highly selective.
+`EXPLAIN SELECT * FROM orders WHERE amount > 205000.00;` reports a low estimated row count, reflecting how few of the generated rows actually exceed that amount, and a correspondingly low total cost, since the optimizer expects this condition to be highly selective.
 
 ## Conclusion
 
