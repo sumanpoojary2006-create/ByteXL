@@ -82,7 +82,7 @@ Reach for `EXISTS` or `NOT EXISTS` when the existence check involves a condition
 
 ## Your Turn
 
-Using the `online_customers` and `store_customers` tables above, write two different queries that both return every customer name that appears in exactly one of the two tables, not both: one using `UNION` combined with `EXCEPT` logic is overly complex for this, so instead write it once using `EXCEPT` twice, combined with `UNION ALL`.
+Using the `online_customers` and `store_customers` tables above, find every customer name that appears in exactly one of the two tables, not both, the customers who shop through only one channel. This needs `EXCEPT` run once in each direction, then stitched together with `UNION ALL`.
 
 ```postgresql with=customers_channels.sql
 -- Write your query below
