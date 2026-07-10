@@ -95,7 +95,7 @@ One more piece of text lives outside the page body entirely: the browser tab its
 ```text
 import streamlit as st
 
-st.set_page_config(page_title="Placement Shortlist", page_icon="clipboard")
+st.set_page_config(page_title="Placement Shortlist", page_icon=":clipboard:")
 
 st.title("Placement Shortlist Tool")
 ```

@@ -11,7 +11,7 @@ import csv
 import io
 import streamlit as st
 
-st.set_page_config(page_title="Placement Shortlist", page_icon="clipboard")
+st.set_page_config(page_title="Placement Shortlist", page_icon=":clipboard:")
 
 def parse_students_csv(file_like):
     reader = csv.DictReader(file_like)
