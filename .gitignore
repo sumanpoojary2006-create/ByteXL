@@ -12,3 +12,13 @@ __pycache__/
 *.temp
 *.zip
 .aider*
+
+# Only content/ is tracked in this repo
+/.claude
+/README.md
+/SKILL.md
+/archive
+/docs
+/outputs
+/tools
+/Proxima-main
