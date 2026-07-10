@@ -40,7 +40,7 @@ CLUSTER orders USING idx_orders_id;
 SELECT ctid, order_id, customer_name FROM orders;
 ```
 
-After `CLUSTER`, the `ctid` values now increase in the same order as `order_id`, confirming the rows have been physically rewritten on disk to sit in sorted order. This is a genuinely different physical layout from the heap version above, and it is why a range query like "every order between id 1 and 4" becomes dramatically cheaper afterward: the matching rows are now physically adjacent, reachable by reading a small, contiguous run of pages instead of scattering across the whole table. The cost is that `CLUSTER` is a one-time, explicit reorganization; new rows inserted afterward go back to landing whereever there is free space, gradually drifting the table back toward an unsorted heap unless `CLUSTER` is run again periodically.
+After `CLUSTER`, the `ctid` values now increase in the same order as `order_id`, confirming the rows have been physically rewritten on disk to sit in sorted order. This is a genuinely different physical layout from the heap version above, and it is why a range query like "every order between id 1 and 4" becomes dramatically cheaper afterward: the matching rows are now physically adjacent, reachable by reading a small, contiguous run of pages instead of scattering across the whole table. The cost is that `CLUSTER` is a one-time, explicit reorganization; new rows inserted afterward go back to landing wherever there is free space, gradually drifting the table back toward an unsorted heap unless `CLUSTER` is run again periodically.
 
 ## Hashed Organization: Rows Placed by a Computed Bucket
 
@@ -49,13 +49,28 @@ A third strategy, hashing, places each row into one of a fixed number of "bucket
 - Rows with the same key always hash to the same bucket.
 - Looking up a specific value means computing its hash once and going straight to that bucket, rather than scanning a range.
 
-PostgreSQL does not organize whole tables this way, but it offers `hash indexes`, which apply exactly this idea to speed up equality lookups specifically, at the cost of being unable to help at all with range queries like "greater than" or "between," since a hash deliberately scrambles any sense of order between values.
+The mechanism is directly visible using `hashtext`, one of PostgreSQL's built-in hash functions, mapping each name into one of eight buckets:
+
+```postgresql with=file_org_demo.sql
+SELECT customer_name,
+       abs(hashtext(customer_name)) % 8 AS bucket
+FROM orders
+ORDER BY customer_name;
+```
+
+With the names listed alphabetically, the bucket numbers jump around with no pattern at all: names that sit next to each other in alphabetical order land in completely unrelated buckets, and that is not a flaw but the entire design. A hash function deliberately scatters values evenly so that no bucket gets overloaded, and the unavoidable price is that any notion of "nearby" or "in between" is destroyed on the way in.
+
+PostgreSQL does not organize whole tables this way, but it offers `hash indexes`, which apply exactly this idea to speed up equality lookups specifically, at the cost of being unable to help at all with range queries like "greater than" or "between."
 
 ```postgresql with=file_org_demo.sql
 CREATE INDEX idx_orders_hash ON orders USING hash (customer_name);
+
+SELECT order_id, customer_name, amount
+FROM orders
+WHERE customer_name = 'Kavya Nair';
 ```
 
-This creates a hash-organized structure specifically for looking up an exact `customer_name` quickly, useful for "find this one customer" but not for "find every customer whose name comes after Kavya alphabetically," a limitation directly explained by how hashing scrambles order on purpose.
+This creates a hash-organized structure specifically for looking up an exact `customer_name` quickly, and the equality lookup that follows is precisely the kind of query it exists to serve: one specific value, found by computing its bucket. What it cannot help with is "find every customer whose name comes after Kavya alphabetically," a limitation directly explained by how hashing scrambles order on purpose.
 
 ## Choosing Between the Three, at a Glance
 
@@ -67,7 +82,7 @@ This creates a hash-organized structure specifically for looking up an exact `cu
 
 ## Your Turn
 
-Insert three more orders into the `orders` table above with `order_id` values 3, 6, and 9, then check their `ctid` values, and note in a comment whether they land near the already-clustered rows or wherever free space happens to be.
+Using the `idx_orders_id` index and clustered layout already set up earlier in this lesson, insert three more orders with `order_id` values 3, 6, and 9, check every row's `ctid`, and note in a comment whether the new rows were interleaved into sorted position or simply placed wherever free space happened to be.
 
 ```postgresql with=file_org_demo.sql
 -- Write your queries and comment below

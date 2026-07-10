@@ -19,21 +19,27 @@ FROM generate_series(1, 5000) AS i;
 ```
 
 ```postgresql with=scan_demo.sql
+EXPLAIN SELECT * FROM orders WHERE customer_name = 'Customer 3000';
+```
+
+`EXPLAIN`, covered in full detail later in this unit, previews how the database plans to execute a query without actually running it. The plan here reports a "Seq Scan," short for `sequential scan`, meaning the database intends to read the table page by page, from the beginning, checking every row's `customer_name` against 'Customer 3000' until it reaches the end. Even though this query is only interested in exactly one row out of 5000, the heap organization from the previous lesson gives the database no shortcut, no way to know in advance which page holds that customer without checking.
+
+```postgresql with=scan_demo.sql
+SELECT COUNT(DISTINCT (ctid::text::point)[0]) AS pages_a_full_scan_must_read
+FROM orders;
+```
+
+Using the same page-number extraction from the first lesson, this counts how many distinct pages the table occupies; a `sequential scan` has to read every single one of them, even for this single-row lookup, because a `sequential scan`'s cost scales with the size of the whole table, not with how many rows the query actually needs, whether that need is 1 row or 1000.
+
+## Why the Primary Key Search Behaves Differently
+
+Running the same shape of query, but filtering on `order_id`, the table's `primary key`, produces a completely different plan.
+
+```postgresql with=scan_demo.sql
 EXPLAIN SELECT * FROM orders WHERE order_id = 3000;
 ```
 
-`EXPLAIN`, covered in full detail later in this unit, previews how the database plans to execute a query without actually running it. The plan here reports a "Seq Scan," short for `sequential scan`, meaning the database intends to read the table page by page, from the beginning, checking every row's `order_id` against 3000 until it either finds a match or reaches the end. Even though this query is only interested in exactly one row out of 5000, the heap organization from the previous lesson gives the database no shortcut, no way to know in advance which page holds `order_id = 3000` without checking.
-
-## Why the Primary Key Alone Does Not Prevent This
-
-It might seem surprising that searching by `order_id`, the table's own `primary key`, still results in a full scan. The physical reality is that a `primary key` `constraint` guarantees uniqueness and enforces `NOT NULL`, but it does not, by itself, change how rows are physically organized on disk into a heap. What actually prevents a full scan is a separate structure entirely, an `index`, which the very next chapter in this unit covers in depth. Without one, even a search on the `primary key` column has to fall back to checking every page.
-
-```postgresql with=scan_demo.sql
-SELECT COUNT(*) AS pages_touched_in_worst_case
-FROM (SELECT DISTINCT ctid::text FROM orders) AS distinct_pages;
-```
-
-This is an approximation for illustration, counting distinct physical row locations, but the underlying point holds regardless of the exact number: a `sequential scan`'s cost scales with the size of the whole table, not with how many rows the query actually needs, whether that need is 1 row or 1000.
+The plan now reports an "Index Scan using orders_pkey" instead of a `sequential scan`. The physical reality is that a `primary key` `constraint` does not change how rows are organized on disk, the table is still the same unordered heap, but PostgreSQL automatically builds a separate structure, an `index`, for every `primary key` in order to enforce uniqueness, and the planner uses that structure to jump straight to the right page instead of checking all of them. Nothing about the table's layout changed between these two queries; the only difference is that one column has a supporting structure and the other does not. That structure, the `index`, is exactly what the next chapter covers in depth.
 
 ## How Table Size Directly Predicts Scan Cost
 
@@ -60,22 +66,22 @@ A full scan is not always the wrong choice:
 
 ## Storage Layout and Query Speed at a Glance
 
-| Situation | What happens without an `index` | Cost scales with |
+| Situation | What happens | Cost scales with |
 |---|---|---|
 | Query needs most/all rows | Full table scan, often the right plan anyway | Table size, but unavoidable regardless |
-| Query needs a few rows out of many | Full table scan, checking every page for a rare match | Table size, wastefully, since only a few rows were needed |
-| Heap has no ordering guarantee | Even a primary key search cannot skip pages without an `index` | Table size, until an `index` changes this |
+| Query needs a few rows, column has no supporting structure | Full table scan, checking every page for a rare match | Table size, wastefully, since only a few rows were needed |
+| Query filters on the `primary key` | `Index scan`, because PostgreSQL automatically builds an `index` for every `primary key` | Only the handful of pages actually holding the answer |
 
 ## Your Turn
 
-Run `EXPLAIN` on a query filtering the `orders` table above for `amount > 50000`, a condition that only a small fraction of rows will satisfy, and note in a comment whether the plan shows a `sequential scan` and why that is expected given everything covered in this lesson.
+Run `EXPLAIN` on a query filtering the `orders` table above for `amount > 120000`, a condition only a small fraction of rows will satisfy (`amount` tops out at 125000.00 for `order_id = 10000`), and note in a comment whether the plan shows a `sequential scan` and why that is expected given everything covered in this lesson.
 
 ```postgresql with=scan_demo.sql
 -- Write your query and comment below
 ```
 
-`EXPLAIN SELECT * FROM orders WHERE amount > 50000;` reports a `sequential scan`, exactly as expected, since `amount` has no supporting structure to help the database skip pages, meaning it must check every row's `amount` value against the condition regardless of how few rows actually qualify.
+`EXPLAIN SELECT * FROM orders WHERE amount > 120000;` reports a `sequential scan`, exactly as expected, since `amount` has no supporting structure to help the database skip pages, meaning it must check every row's `amount` value against the condition regardless of how few rows actually qualify.
 
 ## Conclusion
 
-Without any supporting structure, a heap-organized table forces every query, even one filtering on the `primary key`, to fall back to a full table scan, reading every single page and checking every single row, with cost that scales directly with table size regardless of how few rows the query actually needs. Priya finally has a concrete, physical explanation for why her reports slow down as the company's order history grows. The next chapter introduces the structure specifically designed to fix exactly this problem: the `index`.
+Without a supporting structure on the column being filtered, a heap-organized table forces a query into a full table scan, reading every single page and checking every single row, with cost that scales directly with table size regardless of how few rows the query actually needs; the `primary key` search escaped this fate only because PostgreSQL quietly built an `index` for it. Priya finally has a concrete, physical explanation for why her reports slow down as the company's order history grows. The next chapter introduces that rescuing structure properly, and shows how to build one for any column a query filters on: the `index`.
