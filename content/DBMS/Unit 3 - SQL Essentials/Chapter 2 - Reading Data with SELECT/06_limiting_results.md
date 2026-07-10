@@ -116,7 +116,7 @@ The department office wants a "highest workload" preview: the three courses with
 -- Write your query below
 ```
 
-`SELECT title, credits FROM courses ORDER BY credits DESC, title LIMIT 3;` sorts by credits from highest to lowest, breaks any tie by title alphabetically, and keeps only the top three rows, giving Data Structures, Database Systems, and one of the 3-credit courses depending on alphabetical order among the remaining ties.
+`SELECT title, credits FROM courses ORDER BY credits DESC, title LIMIT 3;` sorts by credits from highest to lowest, breaks any tie by title alphabetically, and keeps only the top three rows: Data Structures and Database Systems, both 4 credits and ordered alphabetically between themselves, followed by Discrete Mathematics, the alphabetically first of the three 3-credit courses.
 
 ## Conclusion
 
