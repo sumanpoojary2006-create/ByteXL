@@ -34,6 +34,8 @@ FROM members;
 
 `CASE` checks each `WHEN` condition in order, top to bottom, and returns the value after the first `THEN` whose condition is true. If none of the `WHEN` conditions match, it falls back to whatever follows `ELSE`. Karan's 18 visits satisfy the first condition and get "Highly Active," while Ritu's 0 visits fail both `WHEN` checks and land on "At Risk" through the `ELSE` branch.
 
+![CASE assigning activity labels by checking conditions in order](images/09_case_first_matching_condition.png)
+
 Walking through every member against the rule shows exactly which branch each one lands on:
 
 | Member | Visits | First true condition | Label |
@@ -94,6 +96,8 @@ FROM members;
 ```
 
 The `CASE` expression resolves to a plain number for each row, either 10, 5, or 2 depending on membership type, and that number is then multiplied directly by `visits_this_month`, producing a single loyalty-points column without a second query or a temporary table.
+
+![CASE choosing a membership multiplier before calculating loyalty points](images/10_case_multiplier_loyalty_points.png)
 
 ## Your Turn
 

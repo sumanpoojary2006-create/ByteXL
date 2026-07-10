@@ -35,6 +35,8 @@ FROM employees;
 
 `COALESCE` scans its arguments left to right and returns the first one that is not `NULL`. For Rahul, `secondary_phone` is `NULL`, so it falls through to `primary_phone`. For Ayesha, both phone columns are `NULL`, so it falls all the way through to the literal text `'Not on file'`. This is the standard pattern for showing a sensible default instead of a blank space.
 
+![COALESCE choosing the first available phone value as a contact number](images/07_coalesce_first_available_fallback.png)
+
 Tracing a few employees through the fallback chain makes the left-to-right scan concrete:
 
 | Employee | `secondary_phone` | `primary_phone` | `contact_number` result |
@@ -54,6 +56,8 @@ FROM employees;
 ```
 
 `NULLIF(a, b)` compares its two arguments, and if they are equal, it returns `NULL`; otherwise it returns `a` unchanged. For Manoj, `secondary_phone` equals `primary_phone`, so the result is `NULL` instead of a duplicate number. For every other employee, the two phone values differ, so `real_secondary_phone` just passes through whatever `secondary_phone` already held.
+
+![NULLIF turning a duplicated secondary phone into NULL](images/08_nullif_duplicate_to_null.png)
 
 ## Combining Both to Handle Messy Real Data
 

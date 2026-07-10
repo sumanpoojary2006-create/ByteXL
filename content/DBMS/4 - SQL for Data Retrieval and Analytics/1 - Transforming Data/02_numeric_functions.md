@@ -36,6 +36,8 @@ FROM products;
 
 `ROUND(value, 0)` rounds `selling_price` to the nearest whole number, which is what a price tag needs. The second argument controls how many decimal places survive the rounding, so `ROUND(selling_price, 2)` would keep two decimal places instead of zero, useful when a currency still needs cents shown.
 
+![ROUND turning an over-precise selling price into a customer-ready price](images/03_round_price_display_precision.png)
+
 ## Rounding Up and Rounding Down on Purpose
 
 Sometimes a plain round is the wrong choice. If Arjun is calculating how many boxes are needed to ship a fractional number of kilograms, rounding down would leave stock behind, so he needs to always round up.
@@ -65,6 +67,8 @@ FROM products;
 ```
 
 `ABS` strips the sign off a number, turning -1249.0000 into 1249.0000, which is what flagged the webcam row as suspicious in the first place: a price should never be negative. The `%` operator, also written as `MOD(a, b)` in some databases, returns the remainder of a division, and here it shows which product IDs would divide evenly into groups of 6 (a remainder of 0) versus which would not.
+
+![CEIL, FLOOR, ABS, and remainder reshaping numeric values for reports](images/04_numeric_functions_rounding_abs_mod.png)
 
 ## A Few Values Worked Out by Hand
 

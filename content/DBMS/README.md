@@ -6,13 +6,13 @@
 
 | # | Unit | Chapters | Topics | Folder |
 |---|------|----------|--------|--------|
-| 1 | Database Foundations | 4 | 25 | [Database Foundations](Database%20Foundations/) |
-| 2 | Database Design & Modeling | 3 | 19 | [Database Design & Modeling](Database%20Design%20&%20Modeling/) |
-| 3 | SQL Essentials | 4 | 21 | [SQL Essentials](SQL%20Essentials/) |
-| 4 | SQL for Data Retrieval and Analytics | 4 | 19 | [SQL for Data Retrieval and Analytics](SQL%20for%20Data%20Retrieval%20and%20Analytics/) |
-| 5 | Advanced Querying with SQL | 2 | 12 | [Advanced Querying with SQL](Advanced%20Querying%20with%20SQL/) |
-| 6 | Transactions & Reliability | 3 | 16 | [Transactions & Reliability](Transactions%20&%20Reliability/) |
-| 7 | Performance | 3 | 14 | [Performance](Performance/) |
-| 8 | Going to Production | 4 | 23 | [Going to Production](Going%20to%20Production/) |
+| 1 | Database Foundations | 4 | 25 | [Database Foundations](1%20-%20Database%20Foundations/) |
+| 2 | Database Design & Modeling | 3 | 19 | [Database Design & Modeling](2%20-%20Database%20Design%20&%20Modeling/) |
+| 3 | SQL Essentials | 4 | 21 | [SQL Essentials](3%20-%20SQL%20Essentials/) |
+| 4 | SQL for Data Retrieval and Analytics | 4 | 19 | [SQL for Data Retrieval and Analytics](4%20-%20SQL%20for%20Data%20Retrieval%20and%20Analytics/) |
+| 5 | Advanced Querying with SQL | 2 | 12 | [Advanced Querying with SQL](5%20-%20Advanced%20Querying%20with%20SQL/) |
+| 6 | Transactions & Reliability | 3 | 16 | [Transactions & Reliability](6%20-%20Transactions%20&%20Reliability/) |
+| 7 | Performance | 3 | 14 | [Performance](7%20-%20Performance/) |
+| 8 | Going to Production | 4 | 23 | [Going to Production](8%20-%20Going%20to%20Production/) |
 
 **Style:** professional, beginner-friendly, no emojis, no em dashes; standardized Introduction heading, narrative flow, no cross-unit/cross-chapter references.

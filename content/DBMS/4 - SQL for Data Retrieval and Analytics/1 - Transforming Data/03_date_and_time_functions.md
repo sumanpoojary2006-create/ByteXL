@@ -33,6 +33,8 @@ SELECT NOW() AS current_timestamp_value, CURRENT_DATE AS current_date_value;
 
 `NOW()` returns the exact current timestamp the database sees at query time, down to the second, while `CURRENT_DATE` returns just today's date with no time component. Divya will use `NOW()` as the anchor point for every "how long ago" question the clinic asks.
 
+![NOW, CURRENT_DATE, and INTERVAL using the current moment to suggest a follow-up date](images/05_now_current_date_interval_followup.png)
+
 ## Doing Arithmetic on Dates
 
 With a reference point available, Divya can measure how far in the past each appointment falls, or shift a date forward to schedule a follow-up.
@@ -58,6 +60,8 @@ FROM appointments;
 ```
 
 `EXTRACT(field FROM timestamp)` pulls a single component out of a date or timestamp. `DOW` (day of week) returns 0 for Sunday through 6 for Saturday, and `HOUR` returns the hour in 24-hour format. Grouping later by `EXTRACT(HOUR FROM visit_time)` is how Divya would eventually find the clinic's busiest hour, one topic ahead once grouping is introduced.
+
+![EXTRACT pulling hour and day-of-week parts from a visit timestamp](images/06_extract_timestamp_parts.png)
 
 ## Comparing Two Dates Directly
 

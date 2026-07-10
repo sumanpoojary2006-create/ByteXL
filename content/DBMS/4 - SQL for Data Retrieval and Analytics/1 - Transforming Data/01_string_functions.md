@@ -35,6 +35,8 @@ FROM restaurants;
 
 `CONCAT` glues its arguments together into one string, and the literal `' - '` in the middle inserts a separator between the two column values. Meera now has exactly the label the app's restaurant list needs, without touching the underlying columns.
 
+![CONCAT joining branch name and locality into one restaurant display name](images/01_concat_branch_locality_display_name.png)
+
 ## Fixing Inconsistent Case
 
 The `branch_name` column has the same restaurant stored two different ways: "Spice Route" and "SPICE ROUTE" are meant to be the same branch, but a case-sensitive grouping or comparison would treat them as different values. `UPPER` and `LOWER` force text into one case so comparisons and grouping stop caring about how someone originally typed it.
@@ -57,6 +59,8 @@ WHERE restaurant_id IN (1, 4, 5);
 ```
 
 `TRIM` removes whitespace from both ends of a string, and `LENGTH` counts characters, which is how Meera confirmed the raw column had extra characters an eyeball check could not catch. Comparing `raw_length` against `clean_length` for each row makes the hidden whitespace visible instead of invisible.
+
+![LOWER and TRIM cleaning a messy email into a normalized contact address](images/02_lower_trim_clean_email.png)
 
 ## Pulling Out Part of a String
 
