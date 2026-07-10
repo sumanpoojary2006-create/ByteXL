@@ -112,7 +112,7 @@ Rewrite the `correlated subquery` from the previous lesson, finding employees wh
 -- Write your query below
 ```
 
-One valid answer defines `WITH dept_averages AS (SELECT department, AVG(salary) AS department_avg FROM employees GROUP BY department)` and then `joins` `employees` to `dept_averages` on `department`, filtering with `WHERE employees.salary > dept_averages.department_avg`, returning Ananya Sharma and Meghna Iyer.
+One valid answer defines `WITH dept_averages AS (SELECT department, AVG(salary) AS department_avg FROM employees GROUP BY department)` and then `joins` `employees` to `dept_averages` on `department`, filtering with `WHERE employees.salary > dept_averages.department_avg`, returning Ananya Sharma, whose 95000.00 clears Engineering's 85000.00 average, and Sameer Khan, whose 65000.00 clears Sales's 61500.00 average.
 
 ## Conclusion
 

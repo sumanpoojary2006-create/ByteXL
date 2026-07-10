@@ -84,8 +84,8 @@ JOIN (
 
 Here, `dept_averages` is `joined` to `employees` on the shared `department` column, letting every individual employee row see their own department's average sitting right next to their own salary, and a computed column shows exactly how far above or below that average each person falls:
 
-- Meghna Iyer earns above her department's average.
-- Rajat Bhatia earns below it.
+- Ananya Sharma earns above her department's average.
+- Rajat Bhatia and Meghna Iyer both earn below it.
 
 ## Subqueries in FROM at a Glance
 
