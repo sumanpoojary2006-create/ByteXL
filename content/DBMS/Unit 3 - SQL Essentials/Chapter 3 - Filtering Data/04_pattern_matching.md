@@ -93,7 +93,7 @@ FROM students
 WHERE full_name LIKE 'S%';
 ```
 
-This returns Siddharth Rao and Sanya Iyer, the two students whose name begins with the letter S. There is no `%` at the end of the pattern, but `LIKE` still allows any amount of text to follow implicitly once the rest of the pattern matches, since a pattern without a trailing `%` still only anchors the start unless the pattern is the same length as the value; here `'S%'` explicitly leaves the rest open with its own `%`.
+This returns Siddharth Rao and Sanya Iyer, the two students whose name begins with the letter S. The trailing `%` in `'S%'` is doing the real work here: it is what allows any amount of text to follow the S, matching a name of any length as long as it starts with that letter. `LIKE` never adds a wildcard on its own, so dropping that `%` and writing `full_name LIKE 'S'` would demand an exact, single-character match and return nothing at all, since no student's full name is just the letter S by itself.
 
 ## Matching Exactly One Character with _
 
