@@ -52,7 +52,7 @@ WHERE region_rank <= 2
 ORDER BY region, region_rank;
 ```
 
-The CTE `ranked_sales` computes the ranking exactly as before, and the outer query then treats `region_rank` as an ordinary column, filterable with a plain `WHERE`. South region shows three rows here, not two, because Sana Fatima and Tarun Bakshi are tied for rank 1, and `RANK`'s skip-ahead behavior means Reema Ghosh, in third place by value, actually holds rank 3, correctly excluded. Choosing `DENSE_RANK` instead of `RANK` in the CTE would change this outcome, since a tie at rank 1 under `DENSE_RANK` would push the next distinct value to rank 2, not rank 3.
+The CTE `ranked_sales` computes the ranking exactly as before, and the outer query then treats `region_rank` as an ordinary column, filterable with a plain `WHERE`. This returns 5 rows in total, not 6: North and South each contribute their expected 2 rows, but East has only one salesperson to begin with, Kunal Verma, so its entire top 2 is just that single row. South's tie is handled cleanly too, Sana Fatima and Tarun Bakshi both hold rank 1 and both survive the `region_rank <= 2` filter, while Reema Ghosh, in third place by value, lands on rank 3 thanks to `RANK`'s skip-ahead behavior and is correctly excluded. Had South instead had a three-way tie for first place, all three tied rows would have survived the same filter, since every one of them would hold rank 1, which is worth knowing before assuming a top-N query always returns exactly N rows per group.
 
 ## Choosing ROW_NUMBER Instead When Ties Should Not Multiply Results
 
@@ -70,7 +70,7 @@ WHERE row_num <= 2
 ORDER BY region, row_num;
 ```
 
-This returns exactly 2 rows per region every time, six total, since `ROW_NUMBER` never produces a tie in its numbering, even when the underlying values tie. Whether `RANK`, `DENSE_RANK`, or `ROW_NUMBER` is the right choice for a top-N report depends entirely on how the business wants ties handled, a decision worth confirming explicitly rather than guessing.
+This returns at most 2 rows per region, 5 total here, since `ROW_NUMBER` never produces a tie in its numbering even when the underlying values tie, so North and South each contribute their full 2, while East, with only one salesperson on record, can only ever contribute the 1 row it actually has. Whether `RANK`, `DENSE_RANK`, or `ROW_NUMBER` is the right choice for a top-N report depends entirely on how the business wants ties handled, a decision worth confirming explicitly rather than guessing.
 
 ## Top-N Per Group as a General Pattern
 
