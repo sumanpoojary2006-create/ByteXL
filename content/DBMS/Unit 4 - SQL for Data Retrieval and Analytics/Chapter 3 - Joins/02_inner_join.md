@@ -98,7 +98,7 @@ WHERE orders.amount > 400;
 This query runs in two clear stages:
 
 1. The two `INNER JOIN` clauses first assemble the full combined view across all three tables.
-2. Only then does `WHERE orders.amount > 400` remove the smaller orders, leaving just the two highest-value ones with both the customer's and the restaurant's real names attached.
+2. Only then does `WHERE orders.amount > 400` remove the smaller orders, leaving just the three highest-value ones, orders 1, 2, and 4, with both the customer's and the restaurant's real names attached.
 
 ## When an Inner Join Is the Right Choice
 
