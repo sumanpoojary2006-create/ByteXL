@@ -43,7 +43,7 @@ SELECT * FROM shipments WHERE shipment_id = $1;
 EXECUTE get_shipment(1);
 ```
 
-Because `$1` is a genuine parameter, not text pasted into a string, there is no possible value that could be supplied for it that would change the query's structure; a value like `1; DROP TABLE shipments; --` passed as this parameter would simply fail to match any `shipment_id`, since it would be compared, as a single piece of data, against an integer column, never interpreted as additional SQL syntax at all. This is why `prepared statements` are described as preventing injection "by construction," rather than by filtering or detecting dangerous input: the vulnerability has no path to exist in the first place.
+Because `$1` is a genuine parameter, not text pasted into a string, there is no possible value that could be supplied for it that would change the query's structure. Since `get_shipment` declares `$1` as `INTEGER`, a value like `1; DROP TABLE shipments; --` would actually be rejected outright with a type error before the query ever ran, PostgreSQL refusing to treat that text as a valid integer in the first place; for a `TEXT`-typed parameter instead, the same malicious string would be accepted as data and compared literally, simply matching no row, but either way it is never interpreted as additional SQL syntax. This is why `prepared statements` are described as preventing injection "by construction," rather than by filtering or detecting dangerous input: the vulnerability has no path to exist in the first place.
 
 ## Input Validation Is a Second Layer, Not a Replacement
 
