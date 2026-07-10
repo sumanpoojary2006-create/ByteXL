@@ -86,7 +86,7 @@ Write a transaction that `locks` product 1's row with `FOR UPDATE`, deducts 8 un
 -- Write your transaction below
 ```
 
-If your transaction runs `BEGIN; SELECT stock_count FROM inventory WHERE product_id = 1 FOR UPDATE; UPDATE inventory SET stock_count = stock_count - 8 WHERE product_id = 1; COMMIT;`, the closing `SELECT` shows 42, and any concurrent transaction attempting the same `lock` on product 1 would have had to wait until this one finished.
+If your transaction runs `BEGIN; SELECT stock_count FROM inventory WHERE product_id = 1 FOR UPDATE; UPDATE inventory SET stock_count = stock_count - 8 WHERE product_id = 1; COMMIT;`, the closing `SELECT` shows 37, eight less than the 45 already left over from the earlier `FOR UPDATE` example in this lesson, and any concurrent transaction attempting the same `lock` on product 1 would have had to wait until this one finished.
 
 ## Conclusion
 

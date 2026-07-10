@@ -35,7 +35,7 @@ Within this single transaction, the `SELECT` after the `UPDATE` correctly shows 
 
 ## What a Concurrent Transaction Should Not See
 
-Picture a second banking session, running at the exact same moment, checking Meera's balance while the transfer above is still in progress, sitting between its `UPDATE` and its `COMMIT`. Without isolation, that second session could read 45000.00, a balance that might still get rolled back and never actually become real. With isolation guaranteed, the second session instead sees the original 50000.00 for as long as the first transaction remains uncommitted, and only sees 45000.00 once `COMMIT` actually runs. The following illustrates the two sessions side by side, as comments, since a single script can only run one session's statements in real sequence.
+Picture a second banking session, running at the exact same moment, checking Meera's balance while the transfer above is still in progress, sitting between its `UPDATE` and its `COMMIT`. Without isolation, that second session could read 40000.00, a balance that might still get rolled back and never actually become real. With isolation guaranteed, the second session instead sees 45000.00, Meera's balance left over from the already-committed transfer earlier in this lesson, for as long as this transaction remains uncommitted, and only sees 40000.00 once `COMMIT` actually runs. The following illustrates the two sessions side by side, as comments, since a single script can only run one session's statements in real sequence.
 
 ```postgresql with=accounts_isolation.sql
 -- Session A (the transfer in progress)
@@ -45,17 +45,17 @@ UPDATE accounts SET balance = balance - 5000.00 WHERE account_id = 1;
 
 -- Session B (a concurrent balance check, running at this exact moment)
 -- SELECT balance FROM accounts WHERE account_id = 1;
--- With isolation, Session B sees 50000.00 here, not 45000.00,
+-- With isolation, Session B sees 45000.00 here, not 40000.00,
 -- because Session A's change is not committed yet and stays invisible to others.
 
 -- Session A finishes:
 COMMIT;
--- Only now would Session B's next SELECT see 45000.00.
+-- Only now would Session B's next SELECT see 40000.00.
 
 SELECT balance FROM accounts WHERE account_id = 1;
 ```
 
-The final `SELECT` in this script, running after `COMMIT`, correctly shows 45000.00, confirming the change is now permanent and visible to any session, including a completely fresh one that started with no knowledge of the transaction at all.
+The final `SELECT` in this script, running after `COMMIT`, correctly shows 40000.00, confirming the change is now permanent and visible to any session, including a completely fresh one that started with no knowledge of the transaction at all.
 
 ## Checking the Current Isolation Level
 
