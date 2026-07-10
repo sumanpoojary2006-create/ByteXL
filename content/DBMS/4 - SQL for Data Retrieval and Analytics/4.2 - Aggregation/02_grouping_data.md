@@ -42,6 +42,8 @@ GROUP BY category;
 
 Fiction, Non-Fiction, and Children's books each get their own row in the result, and the founders' question is answered directly: Non-Fiction earns the most.
 
+![GROUP BY category sorting order rows into separate category revenue buckets](images/03_group_by_category_buckets.png)
+
 ## Why Every Selected Column Must Be Grouped or Aggregated
 
 A common mistake when starting with `GROUP BY` is trying to select a column that is neither grouped on nor wrapped in an `aggregate function`.
@@ -60,6 +62,8 @@ The rule that follows from this: every column in the `SELECT` list must do one o
 2. Be wrapped in an `aggregate function` like `SUM`, `COUNT`, `MIN`, or `MAX`.
 
 Either way, the database always knows exactly one value to produce per group.
+
+![GROUP BY selected column rule showing grouped columns and aggregate functions as allowed](images/04_group_by_selected_column_rule.png)
 
 ## Grouping by More Than One Column
 

@@ -50,6 +50,8 @@ This groups every order by `customer_name`, computes each customer's total, and 
 
 Ishita Rao, Vivek Menon, and Sonal Deshpande survive the filter; Aman Gupta, whose total falls under 1000, is dropped from the result entirely, group and all.
 
+![HAVING filtering summarized customer total groups after aggregation](images/05_having_filters_group_totals.png)
+
 ## Combining WHERE and HAVING in the Same Query
 
 `WHERE` and `HAVING` are not interchangeable, but they work well together, since each one filters at a different stage. `WHERE` can narrow down the rows before grouping even happens, which is often cheaper than grouping everything first and discarding groups afterward.
@@ -69,6 +71,8 @@ This query runs in three clean stages:
 3. `HAVING SUM(amount) > 500` discards any customer whose remaining total does not clear 500.
 
 The two clauses divide the work cleanly: `WHERE` picks which rows count, `HAVING` picks which resulting groups are worth keeping.
+
+![WHERE filtering individual rows before GROUP BY and HAVING filtering groups after aggregation](images/06_where_vs_having_timing.png)
 
 ## Filtering on Count Instead of Sum
 

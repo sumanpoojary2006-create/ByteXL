@@ -54,6 +54,8 @@ GROUP BY c.region;
 
 The `JOIN` attaches each order to its customer's region before grouping ever happens, so `GROUP BY c.region` can collapse rows by a column that was never on the `orders` table to begin with. Aggregation and `joins` combine naturally this way: the `join` widens each row with extra columns, and grouping then works with whichever of those columns it needs.
 
+![JOIN adding customer region to order rows before GROUP BY summarizes revenue by region](images/07_join_before_group_by_region.png)
+
 ## Layering in a Row-Level Filter
 
 The founders' request also wants only orders placed after April 7. That is a row-level condition, so it belongs in `WHERE`, applied before grouping, exactly as covered when `WHERE` and `HAVING` were first compared.
@@ -98,6 +100,8 @@ Every clause used above is written in a fixed syntax order (`SELECT`, `FROM`, `W
 | 6 | `ORDER BY` | The finished result set is sorted |
 
 This ordering is exactly why `WHERE` cannot reference `SUM(amount)`, that aggregate does not exist yet at step 2, and why `ORDER BY` can reference a column alias defined in `SELECT`, since sorting happens last, after the alias already exists.
+
+![Logical execution order of an aggregate SQL query from FROM JOIN through ORDER BY](images/08_logical_query_execution_order.png)
 
 ## Your Turn
 

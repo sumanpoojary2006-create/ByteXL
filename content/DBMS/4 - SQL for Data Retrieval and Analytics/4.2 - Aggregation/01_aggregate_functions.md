@@ -40,6 +40,8 @@ FROM orders;
 
 `COUNT(*)` counts every row in the result set, regardless of what any column contains, and here it answers Priya's first question directly: the bookstore received 8 orders. `COUNT(column_name)` behaves slightly differently, counting only the rows where that specific column is not `NULL`, which matters once a table has optional fields.
 
+![COUNT star counting every order row into one total order count](images/01_count_rows_total_orders.png)
+
 ## Totaling and Averaging a Column
 
 Revenue and average order value both come from the same `amount` column, just combined differently.
@@ -50,6 +52,8 @@ FROM orders;
 ```
 
 `SUM` adds up every value in the specified column across all matching rows, giving Priya total revenue in one number. `AVG` divides that same sum by the count of rows automatically, giving the average order value without Priya having to calculate it by hand from the other two numbers. Both functions ignore `NULL` values in the column they are summarizing, rather than treating a `NULL` as zero.
+
+![SUM and AVG collapsing order amounts into total revenue and average order value](images/02_sum_avg_order_amounts.png)
 
 ## Finding the Smallest and Largest Values
 
