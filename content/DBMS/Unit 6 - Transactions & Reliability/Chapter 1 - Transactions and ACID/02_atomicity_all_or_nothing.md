@@ -84,13 +84,13 @@ This transaction opens a new account for Farah Ali and funds it from Meera's acc
 
 ## Your Turn
 
-Add the `balance_not_negative` `constraint` to the `accounts` table, then attempt a transaction that tries to move 100000.00 from Sanjay's account (which only has 12000.00) to Meera's account. Confirm afterward that Sanjay's balance is unaffected.
+Using the `balance_not_negative` `constraint` already added earlier in this lesson, attempt a transaction that tries to move 100000.00 from Sanjay's account (which only has 12000.00) to Meera's account. Confirm afterward that Sanjay's balance is unaffected.
 
 ```postgresql with=accounts.sql
 -- Write your transaction below
 ```
 
-If your transaction attempts `UPDATE accounts SET balance = balance - 100000.00 WHERE account_id = 2;` inside a `BEGIN`/`COMMIT` block after the `constraint` is added, the statement is rejected for violating `balance_not_negative`, the transaction fails as a whole, and a closing `SELECT` confirms Sanjay's balance is still 12000.00.
+If your transaction attempts `UPDATE accounts SET balance = balance - 100000.00 WHERE account_id = 2;` inside a `BEGIN`/`COMMIT` block, the statement is rejected for violating `balance_not_negative`, the transaction fails as a whole, and a closing `SELECT` confirms Sanjay's balance is still 12000.00.
 
 ## Conclusion
 
