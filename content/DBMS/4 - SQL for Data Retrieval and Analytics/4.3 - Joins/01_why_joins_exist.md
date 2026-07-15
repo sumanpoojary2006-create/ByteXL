@@ -165,7 +165,7 @@ JOIN customers ON orders.customer_id = customers.customer_id;
 
 2. It produces one combined `row` carrying `columns` from both `tables`, which is how `customer_name`, a `column` that does not exist on `orders` at all, ends up in this result.
 
-![A join using matching ids to bring customer and restaurant names into an order report](images/01_join_lookup_ids_to_names.png)
+![A join using matching customer_id values to bring the customer name into an order report](images/01_join_lookup_ids_to_names.png)
 
 ## What a Join Actually Produces
 
