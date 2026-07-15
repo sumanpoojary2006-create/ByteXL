@@ -44,12 +44,20 @@ Lists are better when:
 **The dataset is small.** For a list of twenty items, the overhead of thinking about laziness is not justified. Clarity and simplicity matter more.
 
 ```python
+records = [
+    {"title": "Dune", "copies": 3, "approved": True},
+    {"title": "Foundation", "copies": 1, "approved": True},
+    {"title": "Rough Draft", "copies": 0, "approved": False},
+]
+
 # Use a list when you need to sort the results
 approved = list(r for r in records if r["approved"])   # materialized
 approved.sort(key=lambda r: r["title"])                # sorting requires a list
+print([r["title"] for r in approved])
 
 # Use a list when you need the count
 total = len([r for r in records if r["approved"]])
+print(total)
 
 # Use a generator when you only need one pass
 print(sum(r["copies"] for r in records if r["approved"]))

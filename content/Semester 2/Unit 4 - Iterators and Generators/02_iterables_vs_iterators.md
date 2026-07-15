@@ -72,6 +72,12 @@ This is useful when you want to compare two positions in the same sequence, or w
 Strings are iterable (they have `__iter__`) but not iterators. Each character is a unit of iteration, and each `iter(string_obj)` returns a fresh iterator object.
 
 ```python
+def is_iterable(obj):
+    return hasattr(obj, "__iter__")
+
+def is_iterator(obj):
+    return hasattr(obj, "__iter__") and hasattr(obj, "__next__")
+
 text = "abc"
 print(is_iterable(text))   # True
 print(is_iterator(text))   # False
@@ -87,6 +93,9 @@ print(next(it))   # c
 Generators, covered in lesson 4, are iterators that compute their values on demand rather than storing them. They implement `__iter__` and `__next__`, making them both iterables and iterators, with the special property that their values are produced lazily as needed rather than pre-computed and stored.
 
 ```python
+def is_iterator(obj):
+    return hasattr(obj, "__iter__") and hasattr(obj, "__next__")
+
 # A generator expression (preview -- full lesson later)
 gen = (x ** 2 for x in range(5))
 print(is_iterator(gen))   # True -- generators are iterators

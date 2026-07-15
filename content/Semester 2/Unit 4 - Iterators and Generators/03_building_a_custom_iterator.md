@@ -79,6 +79,30 @@ The `while` loop in `__next__` skips unapproved records and returns the next app
 Because `CatalogReader` returns `self` from `__iter__`, it is its own iterator and is exhausted after one pass. Calling the `for` loop a second time produces nothing:
 
 ```python
+class CatalogReader:
+    def __init__(self, records):
+        self._records = records
+        self._index = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        while self._index < len(self._records):
+            record = self._records[self._index]
+            self._index += 1
+            if record.get("approved"):
+                return record
+        raise StopIteration
+
+raw_records = [
+    {"title": "Dune", "approved": True},
+    {"title": "Rough Draft", "approved": False},
+    {"title": "Foundation", "approved": True},
+    {"title": "Incomplete", "approved": False},
+    {"title": "Shogun", "approved": True},
+]
+
 reader = CatalogReader(raw_records)
 
 for book in reader:
@@ -93,6 +117,30 @@ for book in reader:
 If you want multiple passes, you have two options: reset `_index` to zero in a method, or make `CatalogReader` an *iterable* rather than an iterator by returning a *new* iterator object from `__iter__`.
 
 ```python
+class CatalogReader:
+    def __init__(self, records):
+        self._records = records
+        self._index = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        while self._index < len(self._records):
+            record = self._records[self._index]
+            self._index += 1
+            if record.get("approved"):
+                return record
+        raise StopIteration
+
+raw_records = [
+    {"title": "Dune", "approved": True},
+    {"title": "Rough Draft", "approved": False},
+    {"title": "Foundation", "approved": True},
+    {"title": "Incomplete", "approved": False},
+    {"title": "Shogun", "approved": True},
+]
+
 class CatalogIterable:
     def __init__(self, records):
         self._records = records

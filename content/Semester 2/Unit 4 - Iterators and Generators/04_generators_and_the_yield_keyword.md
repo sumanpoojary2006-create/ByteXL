@@ -55,6 +55,11 @@ The function body ran in three pieces: up to the first `yield`, from there to th
 Because generators implement the iterator protocol (`__iter__` and `__next__`), they work seamlessly in `for` loops:
 
 ```python
+def approved_records(records):
+    for record in records:
+        if record["approved"]:
+            yield record   # pause here, return this value, resume later
+
 records = [
     {"title": "Dune", "approved": True},
     {"title": "Rough Draft", "approved": False},
@@ -76,12 +81,23 @@ The `for` loop calls `iter()` on the generator (which returns the generator itse
 Like the custom iterator class from the previous lesson, a generator object is exhausted after one pass. Calling the generator *function* again produces a fresh generator.
 
 ```python
+def approved_records(records):
+    for record in records:
+        if record["approved"]:
+            yield record
+
+records = [
+    {"title": "Dune", "approved": True},
+    {"title": "Rough Draft", "approved": False},
+    {"title": "Foundation", "approved": True},
+]
+
 gen1 = approved_records(records)
 gen2 = approved_records(records)   # fresh generator, independent state
 
-print(next(gen1))   # Dune
-print(next(gen2))   # Dune
-print(next(gen1))   # Foundation -- gen1 advances independently
+print(next(gen1)["title"])   # Dune
+print(next(gen2)["title"])   # Dune
+print(next(gen1)["title"])   # Foundation -- gen1 advances independently
 ```
 
 ## yield vs return in the Same Function

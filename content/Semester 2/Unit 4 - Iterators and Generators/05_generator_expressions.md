@@ -29,6 +29,12 @@ The generator expression does not compute anything when it is created. It is a p
 Any place that accepts an iterator accepts a generator expression:
 
 ```python
+records = [
+    {"title": "Dune", "approved": True},
+    {"title": "Rough Draft", "approved": False},
+    {"title": "Foundation", "approved": True},
+]
+
 # In a for loop:
 for sq in (x ** 2 for x in range(5)):
     print(sq)   # 0, 1, 4, 9, 16
@@ -93,6 +99,12 @@ Each generator in the chain produces items only when the next one requests them.
 Use a **list comprehension** when you need to iterate over the result more than once, need to know the length, or need to index into specific positions. Use a **generator expression** when you process results once in a pipeline, the sequence could be very large, or you pass it directly to a function like `sum()`, `max()`, or `any()`.
 
 ```python
+records = [
+    {"title": "Dune", "copies": 3, "approved": True},
+    {"title": "Rough Draft", "copies": 0, "approved": False},
+    {"title": "Foundation", "copies": 1, "approved": True},
+]
+
 # Use a list if you need to reuse the result:
 approved = [r for r in records if r["approved"]]
 print(len(approved))          # needs a list
