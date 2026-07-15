@@ -11,7 +11,12 @@ Sam needs to test `calculate_fine` for many different inputs: 0 days, 1 day, 7 d
 ```python
 import math
 import pytest
-from library.fines import calculate_fine
+
+# In a real project this would be: from library.fines import calculate_fine
+def calculate_fine(days_overdue, daily_rate=0.50):
+    if days_overdue < 0:
+        raise ValueError("days_overdue cannot be negative")
+    return days_overdue * daily_rate
 
 @pytest.mark.parametrize("days_overdue,expected_fine", [
     (0,   0.00),
@@ -25,12 +30,9 @@ def test_fine_calculation(days_overdue, expected_fine):
     result = calculate_fine(days_overdue)
     assert math.isclose(result, expected_fine)
 
-# Run the tests:
-try:
-    test_fine_calculation()
-    print("PASS: test_fine_calculation")
-except AssertionError as e:
-    print("FAIL:", e)
+# Run the tests: pytest generates and runs one test case per tuple
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])
 ```
 
 The decorator receives:
@@ -51,6 +53,14 @@ test_fine_calculation[7-3.5]
 For clearer output, use `pytest.param` with an `id`:
 
 ```python
+import math
+import pytest
+
+def calculate_fine(days_overdue, daily_rate=0.50):
+    if days_overdue < 0:
+        raise ValueError("days_overdue cannot be negative")
+    return days_overdue * daily_rate
+
 @pytest.mark.parametrize("days_overdue,expected_fine", [
     pytest.param(0,   0.00,   id="zero-days"),
     pytest.param(1,   0.50,   id="one-day"),
@@ -60,12 +70,9 @@ For clearer output, use `pytest.param` with an `id`:
 def test_fine_calculation(days_overdue, expected_fine):
     assert math.isclose(calculate_fine(days_overdue), expected_fine)
 
-# Run the tests:
-try:
-    test_fine_calculation()
-    print("PASS: test_fine_calculation")
-except AssertionError as e:
-    print("FAIL:", e)
+# Run the tests: pytest generates and runs one test case per tuple
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])
 ```
 
 Output names become: `test_fine_calculation[zero-days]`, `test_fine_calculation[one-day]`, etc. Much easier to identify in a failure report.
@@ -75,6 +82,14 @@ Output names become: `test_fine_calculation[zero-days]`, `test_fine_calculation[
 When testing a function that takes multiple arguments:
 
 ```python
+import math
+import pytest
+
+def calculate_fine(days_overdue, daily_rate=0.50):
+    if days_overdue < 0:
+        raise ValueError("days_overdue cannot be negative")
+    return days_overdue * daily_rate
+
 @pytest.mark.parametrize("days,rate,expected", [
     (10, 0.50, 5.00),
     (10, 1.00, 10.00),
@@ -84,12 +99,9 @@ When testing a function that takes multiple arguments:
 def test_fine_custom_rate(days, rate, expected):
     assert math.isclose(calculate_fine(days, daily_rate=rate), expected)
 
-# Run the tests:
-try:
-    test_fine_custom_rate()
-    print("PASS: test_fine_custom_rate")
-except AssertionError as e:
-    print("FAIL:", e)
+# Run the tests: pytest generates and runs one test case per tuple
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])
 ```
 
 ## Parametrizing Expected Exceptions
@@ -97,6 +109,13 @@ except AssertionError as e:
 Combine `parametrize` with `pytest.raises` to test multiple error cases:
 
 ```python
+import pytest
+
+def calculate_fine(days_overdue, daily_rate=0.50):
+    if days_overdue < 0:
+        raise ValueError("days_overdue cannot be negative")
+    return days_overdue * daily_rate
+
 @pytest.mark.parametrize("bad_input", [
     pytest.param(-1,   id="minus-one"),
     pytest.param(-100, id="large-negative"),
@@ -105,12 +124,9 @@ def test_fine_negative_raises(bad_input):
     with pytest.raises(ValueError, match="cannot be negative"):
         calculate_fine(bad_input)
 
-# Run the tests:
-try:
-    test_fine_negative_raises()
-    print("PASS: test_fine_negative_raises")
-except AssertionError as e:
-    print("FAIL:", e)
+# Run the tests: pytest generates and runs one test case per tuple
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])
 ```
 
 ## Combining Parametrize with Fixtures
@@ -118,6 +134,29 @@ except AssertionError as e:
 Parametrized tests can also use fixtures:
 
 ```python
+import pytest
+
+class Book:
+    def __init__(self, isbn, title, genre, copies):
+        self.isbn = isbn
+        self.title = title
+        self.genre = genre
+        self.copies = copies
+
+class Catalog:
+    def __init__(self):
+        self._books = {}
+    def add(self, book):
+        self._books[book.isbn] = book
+    def find(self, isbn):
+        return self._books.get(isbn)
+    def __len__(self):
+        return len(self._books)
+
+@pytest.fixture
+def sample_book():
+    return Book(isbn="978-001", title="Dune", genre="Sci-Fi", copies=3)
+
 @pytest.fixture
 def catalog(sample_book):
     c = Catalog()
@@ -135,12 +174,9 @@ def test_catalog_find(catalog, isbn, should_find):
     else:
         assert result is None
 
-# Run the tests:
-try:
-    test_catalog_find()
-    print("PASS: test_catalog_find")
-except AssertionError as e:
-    print("FAIL:", e)
+# Run the tests: pytest generates and runs one test case per tuple
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])
 ```
 
 `pytest` passes both the fixture and the parametrize values to the test function.
@@ -167,9 +203,19 @@ Write a parametrized test for `overdue_report` that covers these cases:
 | multiple-overdue | 2026-06-01 | 7  | 2026-07-01 | 1 |
 
 ```python
-from datetime import date
+from datetime import date, timedelta
 import pytest
-from library.reports import overdue_report
+
+# In a real project this would be: from library.reports import overdue_report
+def overdue_report(records, today=None):
+    today = today or date.today()
+    overdue = []
+    for record in records:
+        borrow = date.fromisoformat(record["borrow_date"])
+        due = borrow + timedelta(days=record["loan_days"])
+        if today > due:
+            overdue.append({**record, "days_overdue": (today - due).days})
+    return overdue
 
 @pytest.mark.parametrize("borrow_date,loan_days,today_str,expected_count", [
     pytest.param("2026-06-20", 21, "2026-07-10", 0, id="not-overdue"),
@@ -183,12 +229,9 @@ def test_overdue_report(borrow_date, loan_days, today_str, expected_count):
     result = overdue_report(records, today=date.fromisoformat(today_str))
     assert len(result) == expected_count
 
-# Run the tests:
-try:
-    test_overdue_report()
-    print("PASS: test_overdue_report")
-except AssertionError as e:
-    print("FAIL:", e)
+# Run the tests: pytest generates and runs one test case per tuple
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])
 ```
 
 ## Conclusion

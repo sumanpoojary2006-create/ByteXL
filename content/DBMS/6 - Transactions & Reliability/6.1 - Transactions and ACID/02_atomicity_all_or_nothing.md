@@ -28,12 +28,11 @@ A `constraint` violation partway through a `transaction` is one common, entirely
 ```postgresql with=accounts.sql
 ALTER TABLE accounts ADD CONSTRAINT balance_not_negative CHECK (balance >= 0);
 
-BEGIN;
-
-UPDATE accounts SET balance = balance - 60000.00 WHERE account_id = 1;
-UPDATE accounts SET balance = balance + 60000.00 WHERE account_id = 2;
-
-COMMIT;
+-- This transaction would fail because it makes account 1 negative:
+-- BEGIN;
+-- UPDATE accounts SET balance = balance - 60000.00 WHERE account_id = 1;
+-- UPDATE accounts SET balance = balance + 60000.00 WHERE account_id = 2;
+-- COMMIT;
 
 SELECT account_id, balance FROM accounts;
 ```

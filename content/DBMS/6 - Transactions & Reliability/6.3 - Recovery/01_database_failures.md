@@ -24,9 +24,11 @@ INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00);
 ```
 
 ```postgresql with=accounts_failures.sql
-BEGIN;
-UPDATE accounts SET balance = balance - 8000.00 WHERE account_id = 1;
-COMMIT;
+-- This transaction would fail because the CHECK constraint
+-- prevents the balance from becoming negative:
+-- BEGIN;
+-- UPDATE accounts SET balance = balance - 8000.00 WHERE account_id = 1;
+-- COMMIT;
 
 SELECT balance FROM accounts WHERE account_id = 1;
 ```

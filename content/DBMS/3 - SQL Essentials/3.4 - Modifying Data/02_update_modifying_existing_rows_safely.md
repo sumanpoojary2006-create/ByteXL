@@ -50,7 +50,6 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 Before Rohit touches anything, he runs a `SELECT` using the exact same condition he is about to update with. This is not an extra step, it is the actual safety check.
 
 ```postgresql with=schema.sql
-\i schema.sql
 SELECT student_id, full_name, city
 FROM students
 WHERE student_id = 3;
@@ -63,7 +62,6 @@ One `row` comes back: Varun Nair, city Chennai. Rohit now knows, with certainty,
 An `UPDATE` statement names the `table`, states which `columns` get new values with `SET`, and, almost always, narrows the target with `WHERE`.
 
 ```postgresql with=schema.sql
-\i schema.sql
 UPDATE students
 SET city = 'Bengaluru'
 WHERE student_id = 3;
@@ -85,7 +83,6 @@ WHERE student_id = 3;
 Here is the part of `UPDATE` that deserves real weight. `WHERE` is written as though it were optional syntax, and PostgreSQL will happily run an `UPDATE` with no `WHERE` clause at all, but the result is rarely what anyone intended.
 
 ```postgresql with=schema.sql
-\i schema.sql
 UPDATE students
 SET city = 'Bengaluru';
 
@@ -106,7 +103,6 @@ Every single student now shows Bengaluru as their city, not just Varun. Rohit me
 The discipline that protects against this is simple and costs almost nothing: write the `WHERE` condition, run it first as a `SELECT`, look at exactly which `rows` come back, and only then turn that same condition into an `UPDATE`.
 
 ```postgresql with=schema.sql
-\i schema.sql
 SELECT student_id, full_name, city
 FROM students
 WHERE student_id = 6;
@@ -129,7 +125,6 @@ The closing `SELECT` confirms Ishita now shows Chennai and nobody else's `row` m
 `SET` accepts more than one `column`, separated by commas, all applied together in a single statement.
 
 ```postgresql with=schema.sql
-\i schema.sql
 UPDATE students
 SET city = 'Mumbai', phone = '9845099999'
 WHERE student_id = 5;
@@ -175,7 +170,6 @@ Yusuf Khan's city and phone both update in one pass, and both changes are covere
 Siddharth Rao has moved from Hyderabad to Pune. Check which `row` this touches first, then update it, then confirm.
 
 ```postgresql with=schema.sql
-\i schema.sql
 SELECT student_id, full_name, city
 FROM students
 WHERE student_id = 4;

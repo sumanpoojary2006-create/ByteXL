@@ -21,9 +21,11 @@ INSERT INTO accounts (account_id, owner_name, balance) VALUES
 ```
 
 ```postgresql with=accounts_consistency.sql
-BEGIN;
-UPDATE accounts SET balance = balance - 60000.00 WHERE account_id = 1;
-COMMIT;
+-- This transaction would fail because the CHECK constraint
+-- prevents account 1 from becoming negative:
+-- BEGIN;
+-- UPDATE accounts SET balance = balance - 60000.00 WHERE account_id = 1;
+-- COMMIT;
 
 SELECT account_id, balance FROM accounts;
 ```
@@ -59,9 +61,10 @@ INSERT INTO customers (customer_id, customer_name) VALUES (1, 'Aditi Kulkarni');
 ```
 
 ```postgresql with=orders_consistency.sql
-BEGIN;
-INSERT INTO orders (order_id, customer_id, amount) VALUES (1, 99, 500.00);
-COMMIT;
+-- This transaction would fail because customer_id 99 does not exist:
+-- BEGIN;
+-- INSERT INTO orders (order_id, customer_id, amount) VALUES (1, 99, 500.00);
+-- COMMIT;
 
 SELECT * FROM orders;
 ```

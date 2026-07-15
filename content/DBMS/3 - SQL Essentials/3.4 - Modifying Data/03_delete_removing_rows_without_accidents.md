@@ -64,7 +64,6 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 Priyanka starts the same way Rohit learned to: a `SELECT` using the exact condition she is about to delete with, so she knows precisely what is about to disappear.
 
 ```postgresql with=schema.sql
-\i schema.sql
 SELECT enrollment_id, student_id, course_id, enrolled_on
 FROM enrollments
 WHERE enrollment_id = 9;
@@ -77,7 +76,6 @@ One `row` comes back: enrollment 9, Rahul Verma's registration in course 103, Li
 `DELETE` `FROM` names the `table`, and `WHERE` narrows which `rows` are removed.
 
 ```postgresql with=schema.sql
-\i schema.sql
 DELETE FROM enrollments
 WHERE enrollment_id = 9;
 
@@ -97,7 +95,6 @@ ORDER BY enrollment_id;
 A `DELETE` with no `WHERE` clause at all is valid SQL, and PostgreSQL will run it without complaint, which makes it one of the most dangerous single lines a person can type into a `database`.
 
 ```postgresql with=schema.sql
-\i schema.sql
 DELETE FROM enrollments;
 
 SELECT enrollment_id, student_id, course_id
@@ -116,7 +113,6 @@ The second `SELECT` returns nothing at all, because every single enrollment `row
 The habit that protects `UPDATE` protects `DELETE` just as well: write the condition, run it first as a `SELECT`, look at exactly which `rows` would be affected, and only turn that same condition into a `DELETE` once the `SELECT` shows precisely the `rows` meant to go.
 
 ```postgresql with=schema.sql
-\i schema.sql
 SELECT enrollment_id, student_id, course_id
 FROM enrollments
 WHERE student_id = 5 AND course_id = 101;
@@ -167,7 +163,6 @@ Combining two conditions with `AND`, exactly as covered with logical operators, 
 Neha Sharma has dropped Database Systems (course_id 101). Confirm which enrollment `row` that is first, then remove it, then confirm the `table`'s remaining state.
 
 ```postgresql with=schema.sql
-\i schema.sql
 SELECT enrollment_id, student_id, course_id
 FROM enrollments
 WHERE student_id = 2 AND course_id = 101;

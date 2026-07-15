@@ -87,7 +87,10 @@ BEFORE INSERT OR UPDATE ON shipments
 FOR EACH ROW
 EXECUTE FUNCTION prevent_invalid_status();
 
-UPDATE shipments SET status = 'lost_in_space' WHERE shipment_id = 2;
+-- This update would fail with "Invalid status: lost_in_space":
+-- UPDATE shipments SET status = 'lost_in_space' WHERE shipment_id = 2;
+
+SELECT shipment_id, status FROM shipments WHERE shipment_id = 2;
 ```
 
 This `UPDATE` is rejected outright, with the `trigger`'s own `RAISE EXCEPTION` message, before the invalid status ever reaches the `table`, since `BEFORE UPDATE` runs ahead of the actual write and can refuse it entirely by raising an error. This is a form of validation logic that goes beyond what a plain `CHECK` `constraint` can express, since it can reference custom error messages and arbitrary procedural logic, not just a fixed boolean condition.

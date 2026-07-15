@@ -25,22 +25,21 @@ INSERT INTO shipments_backup_source (shipment_id, status) VALUES (1, 'in_transit
 -- psql -U postgres -d shipments_restored -f backup_2025_06_15.sql
 -- This runs the CREATE TABLE and data-loading statements from the dump
 -- file directly against a fresh, empty target database. The SQL-level
--- equivalent, restoring one table's data specifically via COPY, looks
--- like this pair of commands:
+-- equivalent, restoring one table's data in this online editor, looks
+-- like this pair of statements:
 CREATE TABLE shipments_restored (
     shipment_id INTEGER PRIMARY KEY,
     status TEXT
 );
 
-COPY shipments_restored FROM STDIN WITH (FORMAT csv);
-1,in_transit
-2,delivered
-\.
+INSERT INTO shipments_restored (shipment_id, status) VALUES
+(1, 'in_transit'),
+(2, 'delivered');
 
 SELECT * FROM shipments_restored;
 ```
 
-- `COPY shipments_restored FROM STDIN` loads data directly into the freshly created `table`, mirroring what a full `pg_dump`-produced `restore` script does at scale, across every `table` in a `database`, in one automated pass.
+- The `INSERT INTO shipments_restored` statement reloads data into the freshly created `table`, standing in for the data-loading statements a full `pg_dump`-produced `restore` script runs at scale, across every `table` in a `database`, in one automated pass.
 - The restored `table`'s contents exactly match the original, confirming the `restore` succeeded.
 
 ![A logical restore rebuilds tables and reloads rows into a fresh database](images/05_logical_restore_rebuilds_database.png)
@@ -71,6 +70,15 @@ This is precisely why the `write-ahead logging` covered earlier in this course m
 A `backup` file that exists is not proof that a `restore` will actually work; corruption, an incomplete transfer, or a subtly incompatible `database` version can all silently break a `backup`'s usefulness without ever showing an obvious error at `backup` time.
 
 ```postgresql with=restore_demo.sql
+CREATE TABLE shipments_restored (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments_restored (shipment_id, status) VALUES
+(1, 'in_transit'),
+(2, 'delivered');
+
 SELECT COUNT(*) AS row_count_after_restore FROM shipments_restored;
 ```
 
@@ -115,13 +123,13 @@ This is exactly the kind of check the single `query` above represents in miniatu
 
 ## Your Turn
 
-Simulate a `restore` by creating a new `table` `shipments_restored_v2`, loading it with the same two `rows` from `shipments_backup_source` using `COPY`, and then writing a verification `query` confirming the `row` count and contents match the original exactly.
+Simulate a `restore` by creating a new `table` `shipments_restored_v2`, loading it with the same two `rows` from `shipments_backup_source`, and then writing a verification `query` confirming the `row` count and contents match the original exactly.
 
 ```postgresql with=restore_demo.sql
 -- Write your restore and verification below
 ```
 
-Creating `shipments_restored_v2` with the same structure, loading it via `COPY shipments_restored_v2 FROM STDIN WITH (FORMAT csv);` followed by the same two data `rows` and `\.`, and then running `SELECT COUNT(*) FROM shipments_restored_v2;` alongside a direct comparison against `shipments_backup_source` is exactly the verification discipline this lesson has been building toward: never trust a `restore` without checking it.
+Creating `shipments_restored_v2` with the same structure, loading it with `INSERT INTO shipments_restored_v2 (shipment_id, status) VALUES (1, 'in_transit'), (2, 'delivered');`, and then running `SELECT COUNT(*) FROM shipments_restored_v2;` alongside a direct comparison against `shipments_backup_source` is exactly the verification discipline this lesson has been building toward: never trust a `restore` without checking it.
 
 ## Conclusion
 

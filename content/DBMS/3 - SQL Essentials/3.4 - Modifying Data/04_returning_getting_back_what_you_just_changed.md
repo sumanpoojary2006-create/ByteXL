@@ -56,7 +56,6 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 Adding `RETURNING` to the end of an `INSERT` statement hands back the `row` exactly as it was written, in the same result set the statement produces.
 
 ```postgresql with=schema.sql
-\i schema.sql
 INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade)
 VALUES (6, 5, 101, '2025-02-09', NULL)
 RETURNING enrollment_id, student_id, course_id, enrolled_on;
@@ -74,7 +73,6 @@ The output shows enrollment_id 6, student_id 5, course_id 101, and the enrolled_
 The same clause works on `UPDATE`, and it hands back the `row` as it looks after the change has been applied.
 
 ```postgresql with=schema.sql
-\i schema.sql
 UPDATE students
 SET city = 'Chennai'
 WHERE student_id = 2
@@ -90,7 +88,6 @@ If the `WHERE` condition had matched no `rows` at all, `RETURNING` would come ba
 `RETURNING` attached to a `DELETE` hands back the `row` exactly as it looked the instant before it was removed.
 
 ```postgresql with=schema.sql
-\i schema.sql
 DELETE FROM enrollments
 WHERE enrollment_id = 5
 RETURNING enrollment_id, student_id, course_id, grade;
@@ -139,7 +136,6 @@ The output shows enrollment_id 5, student_id 4, course_id 104, grade B, the last
 Insert a new student, Kabir Sethi, and use `RETURNING` to confirm the `row` in the same statement, with no separate `SELECT` afterward.
 
 ```postgresql with=schema.sql
-\i schema.sql
 INSERT INTO students (student_id, full_name, email, city, phone, joined_on)
 VALUES (6, 'Kabir Sethi', 'kabir.sethi@campusmail.edu', 'Chennai', '9845077777', '2025-02-16')
 RETURNING student_id, full_name, city;

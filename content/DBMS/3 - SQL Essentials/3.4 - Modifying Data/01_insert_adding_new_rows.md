@@ -64,7 +64,6 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 ```
 
 ```postgresql with=schema.sql
-\i schema.sql
 INSERT INTO students (student_id, full_name, email, city, phone, joined_on)
 VALUES (9, 'Diya Kulkarni', 'diya.kulkarni@campusmail.edu', 'Pune', '9845066666', '2025-02-14');
 
@@ -84,7 +83,6 @@ The final `SELECT` is not part of the `INSERT` itself; it is Alia simply confirm
 Registration week rarely brings in one student at a time. `INSERT` accepts more than one `row` inside a single statement, each one a parenthesized group separated by a comma.
 
 ```postgresql with=schema.sql
-\i schema.sql
 INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
 (10, 'Kabir Sethi', 'kabir.sethi@campusmail.edu', 'Chennai', '9845077777', '2025-02-15'),
 (11, 'Meera Das', 'meera.das@gmail.com', NULL, '9845088888', '2025-02-15');
@@ -103,7 +101,6 @@ Batching `rows` like this is not just shorter to type; the `database` also treat
 `INSERT` does not require a `column` list at all. Leaving it out tells the `database` to match your values to the `table`'s `columns` purely by position, in the exact order the `table` was created.
 
 ```postgresql with=schema.sql
-\i schema.sql
 INSERT INTO courses VALUES (106, 'Operating Systems', 'Computer Science', 4);
 
 SELECT course_id, title, department, credits
@@ -152,7 +149,6 @@ This works, and the new course lands correctly, but only because Alia happened t
 A new student, Farhan Ali, has just registered from Hyderabad with no phone number on file yet. Add him to the roster with `student_id` 12, and confirm the `row` landed correctly.
 
 ```postgresql with=schema.sql
-\i schema.sql
 INSERT INTO students (student_id, full_name, email, city, phone, joined_on)
 VALUES (12, 'Farhan Ali', 'farhan.ali@campusmail.edu', 'Hyderabad', NULL, '2025-02-16');
 

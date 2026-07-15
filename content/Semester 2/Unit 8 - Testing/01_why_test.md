@@ -142,6 +142,7 @@ result = overdue_report(records, today=date(2024, 6, 26))
 print(f"Overdue records: {len(result)}")
 for r in result:
     print(f"  borrow_date={r['borrow_date']}, days_overdue={r['days_overdue']}")
+```
 
 Without running the code, write down four test cases you would write for this function: one normal case, one edge case where no books are overdue, one edge case where a book is exactly on its due date, and one edge case where the records list is empty.
 

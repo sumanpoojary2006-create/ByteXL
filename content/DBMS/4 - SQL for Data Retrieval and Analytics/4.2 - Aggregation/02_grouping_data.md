@@ -68,7 +68,13 @@ Fiction, Non-Fiction, and Children's books each get their own `row` in the resul
 A common mistake when starting with `GROUP BY` is trying to select a `column` that is neither grouped on nor wrapped in an `aggregate function`.
 
 ```postgresql with=orders.sql
-SELECT category, customer_name, SUM(amount) AS category_revenue
+-- This is the mistake. Uncomment it in a local PostgreSQL session
+-- if you want to see the GROUP BY error directly:
+-- SELECT category, customer_name, SUM(amount) AS category_revenue
+-- FROM orders
+-- GROUP BY category;
+
+SELECT category, SUM(amount) AS category_revenue
 FROM orders
 GROUP BY category;
 ```

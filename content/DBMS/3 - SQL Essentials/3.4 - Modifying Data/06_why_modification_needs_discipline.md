@@ -60,7 +60,6 @@ This asymmetry, that reading forgives mistakes and writing does not, is the enti
 Every genuinely safe modification Naveen has seen so far starts the same way: know exactly which `rows` a `WHERE` clause will match, before running anything that changes them.
 
 ```postgresql with=schema.sql
-\i schema.sql
 SELECT enrollment_id, student_id, course_id, grade
 FROM enrollments
 WHERE student_id = 2 AND course_id = 101;
@@ -92,7 +91,6 @@ The habit worth carrying forward is a short pause built into the process itself:
 `RETURNING` is not just a convenience for skipping a second `query`, it is a built-in confirmation step that happens whether or not anyone remembers to ask for it separately.
 
 ```postgresql with=schema.sql
-\i schema.sql
 DELETE FROM enrollments
 WHERE student_id = 4 AND course_id = 102
 RETURNING enrollment_id, student_id, course_id;
@@ -140,7 +138,6 @@ The result shows exactly one `row` leaving the `table`, Siddharth Rao's Data Str
 Confirm exactly which enrollment belongs to Varun Nair in Linear Algebra, then correct his grade to A, using `RETURNING` to see the result immediately.
 
 ```postgresql with=schema.sql
-\i schema.sql
 SELECT enrollment_id, student_id, course_id, grade
 FROM enrollments
 WHERE student_id = 3 AND course_id = 103;

@@ -58,7 +58,10 @@ SELECT s.shipment_id, d.driver_name, s.destination
 FROM shipments s
 JOIN drivers d ON s.driver_id = d.driver_id;
 
-UPDATE shipments_with_driver SET destination = 'Thane' WHERE shipment_id = 1;
+-- This update would fail because the joined view is not directly updatable:
+-- UPDATE shipments_with_driver SET destination = 'Thane' WHERE shipment_id = 1;
+
+SELECT * FROM shipments_with_driver;
 ```
 
 This `UPDATE` fails, since PostgreSQL refuses to guess how to translate a write against a `join`ed `view` back into the correct underlying `table` and `row`. The rule is not about the `view` being "too complicated" in a vague sense; it is specifically about whether the mapping from a `view` `row` back to exactly one underlying `table` `row` is unambiguous, and a `join` between two `tables` inherently breaks that guarantee.
@@ -73,7 +76,10 @@ SELECT driver_id, COUNT(*) AS shipment_count
 FROM shipments
 GROUP BY driver_id;
 
-UPDATE driver_shipment_counts SET shipment_count = 5 WHERE driver_id = 1;
+-- This update would fail because shipment_count is computed:
+-- UPDATE driver_shipment_counts SET shipment_count = 5 WHERE driver_id = 1;
+
+SELECT * FROM driver_shipment_counts;
 ```
 
 This fails for a more fundamental reason than the `join` case: `shipment_count` is not a stored value at all, it is calculated fresh from however many `rows` currently match, so "setting" it to 5 is not a meaningful operation the `database` could even attempt to translate into a real change.

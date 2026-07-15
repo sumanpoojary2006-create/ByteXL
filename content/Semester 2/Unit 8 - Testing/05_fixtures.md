@@ -13,7 +13,24 @@ A fixture is a function decorated with `@pytest.fixture`. Any test function that
 ```python
 # tests/test_catalog.py
 import pytest
-from library.catalog import Catalog, Book
+
+# In a real project this would be: from library.catalog import Catalog, Book
+class Book:
+    def __init__(self, isbn, title, genre, copies):
+        self.isbn = isbn
+        self.title = title
+        self.genre = genre
+        self.copies = copies
+
+class Catalog:
+    def __init__(self):
+        self._books = {}
+    def add(self, book):
+        self._books[book.isbn] = book
+    def find(self, isbn):
+        return self._books.get(isbn)
+    def __len__(self):
+        return len(self._books)
 
 @pytest.fixture
 def sample_book():
@@ -37,22 +54,11 @@ def test_empty_catalog():
     c = Catalog()   # no fixture needed here
     assert len(c) == 0
 
-# Run the tests:
-try:
-    test_catalog_length()
-    print("PASS: test_catalog_length")
-except AssertionError as e:
-    print("FAIL:", e)
-try:
-    test_find_book()
-    print("PASS: test_find_book")
-except AssertionError as e:
-    print("FAIL:", e)
-try:
-    test_empty_catalog()
-    print("PASS: test_empty_catalog")
-except AssertionError as e:
-    print("FAIL:", e)
+# Run the tests: pytest resolves and injects the fixtures automatically,
+# so run it on this file rather than calling the test functions directly
+# (calling test_catalog_length() with no arguments would raise TypeError)
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])
 ```
 
 `pytest` sees that `test_catalog_length` has a parameter named `catalog_with_book`, finds the matching fixture, calls it, and passes its return value as the argument. This happens automatically.
@@ -62,6 +68,31 @@ except AssertionError as e:
 Fixtures can depend on other fixtures, as shown above with `catalog_with_book` depending on `sample_book`. `pytest` resolves the dependency graph and calls fixtures in the right order.
 
 ```python
+import pytest
+from datetime import date, timedelta
+
+class Book:
+    def __init__(self, isbn, title, genre, copies):
+        self.isbn = isbn
+        self.title = title
+        self.genre = genre
+        self.copies = copies
+
+# In a real project this would be: from library.reports import overdue_report
+def overdue_report(records, today=None):
+    today = today or date.today()
+    overdue = []
+    for record in records:
+        borrow = date.fromisoformat(record["borrow_date"])
+        due = borrow + timedelta(days=record["loan_days"])
+        if today > due:
+            overdue.append({**record, "days_overdue": (today - due).days})
+    return overdue
+
+@pytest.fixture
+def sample_book():
+    return Book(isbn="978-001", title="Dune", genre="Sci-Fi", copies=3)
+
 @pytest.fixture
 def patron():
     return {"id": "P001", "name": "Alice", "active": True}
@@ -76,18 +107,13 @@ def borrow_record(sample_book, patron):
     }
 
 def test_overdue_report(borrow_record):
-    from datetime import date
-    from library.reports import overdue_report
     result = overdue_report([borrow_record], today=date(2026, 7, 15))
     assert len(result) == 1
     assert result[0]["days_overdue"] == 23
 
-# Run the tests:
-try:
-    test_overdue_report()
-    print("PASS: test_overdue_report")
-except AssertionError as e:
-    print("FAIL:", e)
+# Run the tests: pytest resolves and injects the fixtures automatically
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])
 ```
 
 ## Fixture Scope
@@ -95,6 +121,15 @@ except AssertionError as e:
 By default, a fixture runs once per test function. For expensive setups (like database connections), `scope` controls how often the fixture is created:
 
 ```python
+import pytest
+import sqlite3
+
+def connect_to_test_db():
+    return sqlite3.connect(":memory:")
+
+def load_config(path):
+    return {"env": "test", "debug": True}
+
 @pytest.fixture(scope="module")   # created once per test file
 def db_connection():
     conn = connect_to_test_db()
@@ -105,11 +140,18 @@ def db_connection():
 def app_config():
     return load_config("test_config.json")
 
-# Demo:
-result = db_connection()
-print(f"db_connection() ->", result)
-result = app_config()
-print(f"app_config() ->", result)
+# Demo: fixtures can only be resolved by pytest, via a test function parameter
+# -- calling db_connection() directly raises an error in modern pytest
+def test_db_connection_is_usable(db_connection):
+    db_connection.execute("CREATE TABLE t (x)")
+    print(f"db_connection() -> {db_connection}")
+
+def test_app_config_has_env(app_config):
+    print(f"app_config() -> {app_config}")
+    assert app_config["env"] == "test"
+
+if __name__ == "__main__":
+    pytest.main([__file__, "-v", "-s"])
 ```
 
 | Scope | Created once per |
@@ -139,12 +181,9 @@ def test_insert_book(in_memory_db):
     result = in_memory_db.execute("SELECT COUNT(*) FROM books").fetchone()
     assert result[0] == 1
 
-# Run the tests:
-try:
-    test_insert_book()
-    print("PASS: test_insert_book")
-except AssertionError as e:
-    print("FAIL:", e)
+# Run the tests: pytest resolves and injects the fixture automatically
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])
 ```
 
 ## conftest.py: Shared Fixtures
@@ -161,7 +200,24 @@ tests/
 ```python
 # tests/conftest.py
 import pytest
-from library.catalog import Catalog, Book
+
+# In a real project this would be: from library.catalog import Catalog, Book
+class Book:
+    def __init__(self, isbn, title, genre, copies):
+        self.isbn = isbn
+        self.title = title
+        self.genre = genre
+        self.copies = copies
+
+class Catalog:
+    def __init__(self):
+        self._books = {}
+    def add(self, book):
+        self._books[book.isbn] = book
+    def find(self, isbn):
+        return self._books.get(isbn)
+    def __len__(self):
+        return len(self._books)
 
 @pytest.fixture
 def empty_catalog():
@@ -171,11 +227,17 @@ def empty_catalog():
 def sample_book():
     return Book(isbn="978-001", title="Dune", genre="Sci-Fi", copies=3)
 
-# Demo:
-result = empty_catalog()
-print(f"empty_catalog() ->", result)
-result = sample_book()
-print(f"sample_book() ->", result)
+# Demo: both fixtures resolved through a test function, as pytest requires
+def test_empty_catalog_starts_at_zero(empty_catalog):
+    print(f"empty_catalog() -> {empty_catalog}")
+    assert len(empty_catalog) == 0
+
+def test_sample_book_has_known_isbn(sample_book):
+    print(f"sample_book() -> {sample_book.isbn}")
+    assert sample_book.isbn == "978-001"
+
+if __name__ == "__main__":
+    pytest.main([__file__, "-v", "-s"])
 ```
 
 `test_fines.py` and `test_catalog.py` can both use `empty_catalog` and `sample_book` without importing them.

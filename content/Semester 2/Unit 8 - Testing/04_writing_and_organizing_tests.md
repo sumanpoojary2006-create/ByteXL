@@ -10,7 +10,23 @@ Well-written tests follow four phases: Arrange (set up the data), Act (call the 
 
 ```python
 # test_catalog.py
-from library.catalog import Catalog, Book
+# In a real project this would be: from library.catalog import Catalog, Book
+class Book:
+    def __init__(self, isbn, title, genre, copies):
+        self.isbn = isbn
+        self.title = title
+        self.genre = genre
+        self.copies = copies
+
+class Catalog:
+    def __init__(self):
+        self._books = {}
+    def add(self, book):
+        self._books[book.isbn] = book
+    def find(self, isbn):
+        return self._books.get(isbn)
+    def __len__(self):
+        return len(self._books)
 
 def test_add_book_increases_count():
     # Arrange
@@ -55,6 +71,13 @@ Notice that both tests independently set up their own `catalog` and `book`. This
 Tests that check many things at once are harder to diagnose. When a multi-assertion test fails, you know *something* went wrong, but not what. Prefer focused tests:
 
 ```python
+class Book:
+    def __init__(self, isbn, title, genre, copies):
+        self.isbn = isbn
+        self.title = title
+        self.genre = genre
+        self.copies = copies
+
 # Hard to diagnose when it fails:
 def test_book_properties():
     book = Book(isbn="978-001", title="Dune", genre="Sci-Fi", copies=3)
@@ -150,6 +173,23 @@ tests/
 Within a file, test functions in the same "group" can be collected into a class. This is not required, but it provides a namespace and allows shared fixtures at the class level:
 
 ```python
+class Book:
+    def __init__(self, isbn, title, genre, copies):
+        self.isbn = isbn
+        self.title = title
+        self.genre = genre
+        self.copies = copies
+
+class Catalog:
+    def __init__(self):
+        self._books = {}
+    def add(self, book):
+        self._books[book.isbn] = book
+    def find(self, isbn):
+        return self._books.get(isbn)
+    def __len__(self):
+        return len(self._books)
+
 class TestCatalog:
     def test_empty_at_start(self):
         catalog = Catalog()
@@ -162,7 +202,9 @@ class TestCatalog:
 
 # Demo:
 obj = TestCatalog()
-print(obj)
+obj.test_empty_at_start()
+obj.test_add_increases_count()
+print("PASS: both TestCatalog methods")
 ```
 
 ## Avoiding Inter-Test Dependencies
@@ -170,6 +212,23 @@ print(obj)
 Tests must be independent. A test that only works if a previous test ran first is fragile and hard to debug.
 
 ```python
+class Book:
+    def __init__(self, isbn, title, genre, copies):
+        self.isbn = isbn
+        self.title = title
+        self.genre = genre
+        self.copies = copies
+
+class Catalog:
+    def __init__(self):
+        self._books = {}
+    def add(self, book):
+        self._books[book.isbn] = book
+    def find(self, isbn):
+        return self._books.get(isbn)
+    def __len__(self):
+        return len(self._books)
+
 # WRONG: test_find depends on test_add having run first
 catalog = Catalog()   # shared state at module level
 

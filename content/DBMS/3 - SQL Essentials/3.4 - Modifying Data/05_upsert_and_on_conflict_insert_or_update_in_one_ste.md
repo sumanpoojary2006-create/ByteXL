@@ -58,7 +58,6 @@ That `UNIQUE (student_id, course_id)` line is what gives `ON CONFLICT` something
 Aditya's first case: Neha Sharma's Database Systems enrollment already exists with no grade recorded, and the new submission carries her final grade, B+. He writes this as a single statement.
 
 ```postgresql with=schema.sql
-\i schema.sql
 INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade)
 VALUES (4, 2, 101, '2025-02-02', 'B+')
 ON CONFLICT (student_id, course_id)
@@ -82,7 +81,6 @@ PostgreSQL processed this in three steps:
 Aditya's second case: Varun Nair has newly registered for Data Structures, course_id 102, a pairing that has never been submitted before.
 
 ```postgresql with=schema.sql
-\i schema.sql
 INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade)
 VALUES (5, 3, 102, '2025-02-10', NULL)
 ON CONFLICT (student_id, course_id)
@@ -101,7 +99,6 @@ The exact same statement Aditya used a moment ago to update an existing `row` he
 Sometimes there is no update to make at all, only a wish to insert a `row` if it is not already there and quietly skip it otherwise. `DO NOTHING` covers exactly that.
 
 ```postgresql with=schema.sql
-\i schema.sql
 INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade)
 VALUES (6, 1, 101, '2025-02-01', 'A')
 ON CONFLICT (student_id, course_id)
@@ -151,7 +148,6 @@ Nothing comes back from `RETURNING` at all, because student_id 1 and course_id 1
 Omkar Rane's Linear Algebra grade needs to be recorded for the first time as A-, using an upsert in case it was already partially submitted.
 
 ```postgresql with=schema.sql
-\i schema.sql
 INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade)
 VALUES (7, 1, 103, '2025-02-11', 'A-')
 ON CONFLICT (student_id, course_id)
