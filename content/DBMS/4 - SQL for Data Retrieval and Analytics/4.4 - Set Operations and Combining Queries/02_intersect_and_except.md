@@ -56,8 +56,7 @@ EXCEPT
 SELECT customer_name, email FROM store_customers;
 ```
 
-- This returns Aditi Kulkarni and Rohan Das, the two online customers who do not appear anywhere in `store_customers`, exactly the list the "visit us in person" campaign needs.
-- Order matters with `EXCEPT`: this `query` starts from `online_customers` and subtracts `store_customers`, which is a different question from starting with `store_customers` and subtracting `online_customers`.
+This returns Aditi Kulkarni and Rohan Das, the two online customers who do not appear anywhere in `store_customers`, exactly the list the "visit us in person" campaign needs. Order matters with `EXCEPT`: this `query` starts from `online_customers` and subtracts `store_customers`, which is a different question from starting with `store_customers` and subtracting `online_customers`.
 
 ![EXCEPT returning rows from the first customer list after subtracting the second list](images/04_except_first_minus_second.png)
 
@@ -71,8 +70,7 @@ EXCEPT
 SELECT customer_name, email FROM online_customers;
 ```
 
-- This returns Imran Sheikh and Neha Bhatt instead, the store customers who have never shopped online.
-- Unlike `UNION` and `INTERSECT`, where the order of the two `queries` does not change the final set of `rows` returned, `EXCEPT` is directional, much like regular subtraction: 5 minus 2 is not the same as 2 minus 5.
+This returns Imran Sheikh and Neha Bhatt instead, the store customers who have never shopped online. Unlike `UNION` and `INTERSECT`, where the order of the two `queries` does not change the final set of `rows` returned, `EXCEPT` is directional, much like regular subtraction: 5 minus 2 is not the same as 2 minus 5.
 
 ## The Same Column Rules Apply
 

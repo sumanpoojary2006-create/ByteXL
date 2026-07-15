@@ -1,9 +1,8 @@
 ## Introduction
 
-- Varun wants a shortlist of courses worth registering for: something that is either Computer Science or Economics, but only if it carries more than three credits.
-- He writes a single `WHERE` clause with both an `AND` and an `OR` in it, runs it, and gets a course back that clearly does not belong on the list.
-- Nothing is wrong with his data.
-- The problem is that SQL read his conditions in an order he did not intend, and fixing it means learning how the **logical operators**, `AND`, `OR`, and `NOT`, actually combine.
+Varun wants a shortlist of courses worth registering for: something that is either Computer Science or Economics, but only if it carries more than three credits. He writes a single `WHERE` clause with both an `AND` and an `OR` in it, runs it, and gets a course back that clearly does not belong on the list. Nothing is wrong with his data.
+
+The problem is that SQL read his conditions in an order he did not intend, and fixing it means learning how the **logical operators**, `AND`, `OR`, and `NOT`, actually combine.
 
 ## Combining Conditions with AND and OR
 
@@ -134,8 +133,7 @@ FROM courses
 WHERE NOT credits > 3;
 ```
 
-- This returns `Linear Algebra`, `Discrete Mathematics`, and `Microeconomics`, the three courses whose credit value is not greater than three.
-- It reads naturally alongside `AND` and `OR`, and like both of them, it can be wrapped in parentheses to control exactly which condition it applies to when the clause grows more complex.
+This returns `Linear Algebra`, `Discrete Mathematics`, and `Microeconomics`, the three courses whose credit value is not greater than three. It reads naturally alongside `AND` and `OR`, and like both of them, it can be wrapped in parentheses to control exactly which condition it applies to when the clause grows more complex.
 
 ## Logical Operators at a Glance
 

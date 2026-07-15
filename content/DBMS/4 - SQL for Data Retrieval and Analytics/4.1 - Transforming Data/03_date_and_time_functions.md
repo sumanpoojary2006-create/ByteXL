@@ -172,7 +172,6 @@ If your `query` filters with `WHERE CURRENT_DATE - visit_time::DATE > 60` and or
 
 ## Conclusion
 
-- Date and time `functions` turn a single stored timestamp into whatever shape a question needs: `NOW()` and `CURRENT_DATE` for a reference point, interval arithmetic for shifting dates forward or measuring spans, and `EXTRACT` for pulling out just a weekday or an hour.
-- Divya answered four different scheduling questions from one `column` of raw timestamps.
-- Not every gap in a `table` is a wrong value, though.
-- Some of it is genuinely missing data, and that needs its own handling.
+Date and time `functions` turn a single stored timestamp into whatever shape a question needs: `NOW()` and `CURRENT_DATE` for a reference point, interval arithmetic for shifting dates forward or measuring spans, and `EXTRACT` for pulling out just a weekday or an hour. Divya answered four different scheduling questions from one `column` of raw timestamps. Not every gap in a `table` is a wrong value, though.
+
+Some of it is genuinely missing data, and that needs its own handling.

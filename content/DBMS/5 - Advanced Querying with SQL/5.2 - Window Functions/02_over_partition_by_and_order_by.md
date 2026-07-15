@@ -33,10 +33,9 @@ FROM sales
 ORDER BY salesperson, sale_date;
 ```
 
-- Adding `ORDER BY sale_date` inside the `OVER (...)` clause changes the window's meaning entirely: instead of summing across all of a salesperson's `rows` equally, it now sums across only the `rows` up to and including the current one, in date order.
-- Nikhil's first sale, June 1, shows a running total of 12000.00, exactly its own amount, since nothing came before it.
-- His June 5 sale shows 20500.00, the first two sales combined, and his June 10 sale shows 29700.00, all three combined.
-- This ordered, cumulative behavior is the default whenever `ORDER BY` appears inside `OVER`.
+Adding `ORDER BY sale_date` inside the `OVER (...)` clause changes the window's meaning entirely: instead of summing across all of a salesperson's `rows` equally, it now sums across only the `rows` up to and including the current one, in date order. Nikhil's first sale, June 1, shows a running total of 12000.00, exactly its own amount, since nothing came before it.
+
+His June 5 sale shows 20500.00, the first two sales combined, and his June 10 sale shows 29700.00, all three combined. This ordered, cumulative behavior is the default whenever `ORDER BY` appears inside `OVER`.
 
 ## Why the Outer ORDER BY Is Still Needed
 
@@ -61,8 +60,7 @@ FROM sales
 ORDER BY salesperson, sale_date;
 ```
 
-- Showing both `window functions` side by side makes the difference concrete: `running_total` grows `row` by `row` within each salesperson's partition, while `salesperson_total`, with no `ORDER BY`, stays fixed at that salesperson's grand total on every one of their `rows`.
-- Both are legitimate `window functions` computed over the same partition; only the presence of `ORDER BY` changes what each `row`'s window actually includes.
+Showing both `window functions` side by side makes the difference concrete: `running_total` grows `row` by `row` within each salesperson's partition, while `salesperson_total`, with no `ORDER BY`, stays fixed at that salesperson's grand total on every one of their `rows`. Both are legitimate `window functions` computed over the same partition; only the presence of `ORDER BY` changes what each `row`'s window actually includes.
 
 ![A running total growing row by row in the order defined inside the window](images/04_running_total_ordered_window.png)
 

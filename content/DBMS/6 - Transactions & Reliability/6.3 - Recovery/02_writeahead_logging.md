@@ -1,8 +1,8 @@
 ## Introduction
 
-- Durability, covered earlier in this unit, promised that a committed `transaction` survives a crash, and briefly mentioned the mechanism behind that promise without explaining it in depth: `write-ahead logging`.
-- The name describes the rule precisely: before any change is applied to the actual data files on disk, a record of that change is written ahead of it, to a separate, append-only log.
-- This ordering, log first, data files second, is the entire foundation of how a `database` recovers correctly after a crash, and it is worth understanding exactly why the order matters.
+Durability, covered earlier in this unit, promised that a committed `transaction` survives a crash, and briefly mentioned the mechanism behind that promise without explaining it in depth: `write-ahead logging`. The name describes the rule precisely: before any change is applied to the actual data files on disk, a record of that change is written ahead of it, to a separate, append-only log.
+
+This ordering, log first, data files second, is the entire foundation of how a `database` recovers correctly after a crash, and it is worth understanding exactly why the order matters.
 
 ## Why Writing Directly to Data Files Is Not Enough
 
@@ -41,8 +41,7 @@ COMMIT;
 SELECT pg_current_wal_lsn();
 ```
 
-- By the time this `COMMIT` returns success to the caller, PostgreSQL guarantees the log record describing "subtract 500.00 from account 1's balance" has already been durably written, even if the actual data file holding the `accounts` `table`'s page has not been updated on disk yet.
-- The second `SELECT` shows the `WAL` position has advanced past where it was before, confirming a new record was appended.
+By the time this `COMMIT` returns success to the caller, PostgreSQL guarantees the log record describing "subtract 500.00 from account 1's balance" has already been durably written, even if the actual data file holding the `accounts` `table`'s page has not been updated on disk yet. The second `SELECT` shows the `WAL` position has advanced past where it was before, confirming a new record was appended.
 
 This is why `COMMIT` can safely report success immediately: the log, not the data file, is what `recovery` actually depends on.
 
@@ -50,10 +49,10 @@ This is why `COMMIT` can safely report success immediately: the log, not the dat
 
 ## Why Logging First Makes Recovery Possible
 
-- If the server crashes at any point after `COMMIT` returns, the data file on disk might genuinely not yet reflect the balance change, since writing the log is fast and writing the full data file can be deferred and batched for efficiency.
-- But because the log record was guaranteed to be durable before `COMMIT` ever returned, the `database`'s `recovery` process can:
+If the server crashes at any point after `COMMIT` returns, the data file on disk might genuinely not yet reflect the balance change, since writing the log is fast and writing the full data file can be deferred and batched for efficiency. But because the log record was guaranteed to be durable before `COMMIT` ever returned, the `database`'s `recovery` process can:
 
 1. Read that log on restart.
+
 2. Reapply, or "replay," any change whose log record exists but whose effect had not yet made it into the data files.
 
 This is exactly how durability is delivered in practice: not by guaranteeing every data file write happens instantly, but by guaranteeing the log record exists first and can always be replayed if needed.

@@ -1,8 +1,8 @@
 ## Introduction
 
-- Devraj maintains reporting for a logistics company, and one particular `query`, `join`ing shipments to drivers and filtering for anything still in transit, gets copy-pasted into nearly every dashboard, script, and ad-hoc report his team writes.
-- Every copy is a chance for someone to introduce a small inconsistency, one analyst filters on `status = 'in_transit'`, another accidentally types `'In Transit'`, and now two reports disagree about the same underlying data.
-- A **`view`** solves this by giving a `query` a permanent name in the `database` itself, so that everyone references the same saved definition instead of retyping it.
+Devraj maintains reporting for a logistics company, and one particular `query`, `join`ing shipments to drivers and filtering for anything still in transit, gets copy-pasted into nearly every dashboard, script, and ad-hoc report his team writes. Every copy is a chance for someone to introduce a small inconsistency, one analyst filters on `status = 'in_transit'`, another accidentally types `'In Transit'`, and now two reports disagree about the same underlying data.
+
+A **`view`** solves this by giving a `query` a permanent name in the `database` itself, so that everyone references the same saved definition instead of retyping it.
 
 ## Creating a View from an Existing Query
 
@@ -58,8 +58,7 @@ UPDATE shipments SET status = 'delivered' WHERE shipment_id = 1;
 SELECT * FROM active_shipments;
 ```
 
-- After Manoj's Mumbai shipment is marked delivered, querying `active_shipments` again immediately reflects that change, showing only the one remaining in-transit shipment, even though nothing about the `view` itself was touched.
-- This is the core behavior that distinguishes a plain `view` from the `materialized view` covered later in this chapter: a plain `view` has no storage of its own and is always exactly as current as the underlying `tables`.
+After Manoj's Mumbai shipment is marked delivered, querying `active_shipments` again immediately reflects that change, showing only the one remaining in-transit shipment, even though nothing about the `view` itself was touched. This is the core behavior that distinguishes a plain `view` from the `materialized view` covered later in this chapter: a plain `view` has no storage of its own and is always exactly as current as the underlying `tables`.
 
 ![An ordinary view stores no data and always reflects the current base tables](images/02_ordinary_view_no_storage_always_current.png)
 
@@ -136,6 +135,6 @@ If your `view` is `CREATE VIEW driver_shipment_summary AS SELECT d.driver_name, 
 
 ## Conclusion
 
-- A `view` saves a `query` under a reusable name, always re-running against current data rather than storing a snapshot, which turns a frequently repeated, error-prone `query` into a single, consistently defined building block every downstream report can rely on.
-- Devraj's team can now agree on what "active" means for a shipment in exactly one place.
-- Not every `view` can be written to directly the same way it can be read from, and the next lesson looks closely at where that boundary sits.
+A `view` saves a `query` under a reusable name, always re-running against current data rather than storing a snapshot, which turns a frequently repeated, error-prone `query` into a single, consistently defined building block every downstream report can rely on. Devraj's team can now agree on what "active" means for a shipment in exactly one place.
+
+Not every `view` can be written to directly the same way it can be read from, and the next lesson looks closely at where that boundary sits.

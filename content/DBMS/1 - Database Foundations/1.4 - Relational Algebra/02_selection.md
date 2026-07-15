@@ -1,8 +1,8 @@
 ## Introduction
 
-- Rohan manages the campus library's digitised catalogue, and this week two very different requests land on his desk within an hour of each other.
-- The first is from a librarian who wants to see every book that costs less than 300 rupees, so she can plan a budget clearance shelf.
-- The second is from a student volunteer building a printed handout, who wants nothing but a plain list of book titles and authors, with no prices, no stock counts, and no genre codes cluttering the page.
+Rohan manages the campus library's digitised catalogue, and this week two very different requests land on his desk within an hour of each other. The first is from a librarian who wants to see every book that costs less than 300 rupees, so she can plan a budget clearance shelf.
+
+The second is from a student volunteer building a printed handout, who wants nothing but a plain list of book titles and authors, with no prices, no stock counts, and no genre codes cluttering the page.
 
 Both requests sound like they want "a version of the catalogue," but they want completely different slices of it:
 
@@ -103,9 +103,9 @@ Five `rows`, five `columns`. Selection and projection are really just two differ
 - What changed is the `row` count: five `rows` narrowed down to two, because only two `rows` satisfy the condition.
 - This is the defining habit of selection, it filters `rows` without ever touching `columns`.
 
-- Selection conditions can be as simple as a single comparison, or combined for something more specific.
-- If Rohan instead needed "every mystery novel priced above 400," that is still a selection, just with a compound condition: genre equals Mystery and price is greater than 400.
-- Applied to the same Books relation, only one `row` survives:
+Selection conditions can be as simple as a single comparison, or combined for something more specific. If Rohan instead needed "every mystery novel priced above 400," that is still a selection, just with a compound condition: genre equals Mystery and price is greater than 400.
+
+Applied to the same Books relation, only one `row` survives:
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
   <thead>
@@ -170,22 +170,19 @@ Whether the condition is a single check or several joined together, the operatio
   </tbody>
 </table>
 
-- All five `rows` are still present, since projection does not filter anything out based on a condition.
-- What disappeared is the shape of the `columns`, book_id, genre, and price are simply gone from the result, because nobody asked for them.
-- This is projection's defining habit, it filters `columns` without ever touching which `rows` survive.
+All five `rows` are still present, since projection does not filter anything out based on a condition. What disappeared is the shape of the `columns`, book_id, genre, and price are simply gone from the result, because nobody asked for them. This is projection's defining habit, it filters `columns` without ever touching which `rows` survive.
 
-- There is one subtlety worth noticing.
-- If Rohan projected the Books relation down to just the genre `column`, the raw result would list Mystery, Poetry, Mystery, Travel, Poetry, five values with a repeat.
-- Because a relation is meant to represent a set, `relational algebra`'s projection removes duplicate `rows` from its result, leaving just Mystery, Poetry, and Travel.
-- Projection is not simply "delete some `columns` and keep everything else identical," it is "keep some `columns`, and keep the result as a proper set of distinct `rows`."
+There is one subtlety worth noticing. If Rohan projected the Books relation down to just the genre `column`, the raw result would list Mystery, Poetry, Mystery, Travel, Poetry, five values with a repeat. Because a relation is meant to represent a set, `relational algebra`'s projection removes duplicate `rows` from its result, leaving just Mystery, Poetry, and Travel.
+
+Projection is not simply "delete some `columns` and keep everything else identical," it is "keep some `columns`, and keep the result as a proper set of distinct `rows`."
 
 ## Combining Selection and Projection
 
-- Real requests rarely stop at only one operation.
-- Suppose Rohan is asked for "the titles of every mystery novel," which combines both needs at once, filter to mystery `rows`, then keep only the title `column`.
-- Because `relational algebra` operations always produce a relation as output, the result of the selection can be fed straight into the projection as its input.
-- First selection narrows Books down to the two mystery `rows`, Silent Hills and The Long Wait.
-- Then projection strips that narrowed relation down to just the title `column`:
+Real requests rarely stop at only one operation. Suppose Rohan is asked for "the titles of every mystery novel," which combines both needs at once, filter to mystery `rows`, then keep only the title `column`.
+
+Because `relational algebra` operations always produce a relation as output, the result of the selection can be fed straight into the projection as its input. First selection narrows Books down to the two mystery `rows`, Silent Hills and The Long Wait.
+
+Then projection strips that narrowed relation down to just the title `column`:
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
   <thead>
@@ -248,10 +245,8 @@ This chaining is exactly the "closure" idea put to work: because sigma's output 
 
 ## Conclusion
 
-- Selection and projection are the two simplest, most frequently used tools in `relational algebra`, and they solve two genuinely different problems.
-- Selection, sigma, narrows a relation down to the `rows` that satisfy a condition.
-- Projection, pi, narrows it down to the `columns` that were actually asked for, folding away any duplicate `rows` that survive.
-- Once a request needs both, the two chain together naturally, because each one hands back a proper relation the other can work on.
-- Rohan can now answer both requests on his desk without confusion, a selection on price gives the librarian her budget shelf, and a projection onto title and author gives the volunteer a clean handout with nothing else cluttering the page.
+Selection and projection are the two simplest, most frequently used tools in `relational algebra`, and they solve two genuinely different problems. Selection, sigma, narrows a relation down to the `rows` that satisfy a condition. Projection, pi, narrows it down to the `columns` that were actually asked for, folding away any duplicate `rows` that survive.
+
+Once a request needs both, the two chain together naturally, because each one hands back a proper relation the other can work on. Rohan can now answer both requests on his desk without confusion, a selection on price gives the librarian her budget shelf, and a projection onto title and author gives the volunteer a clean handout with nothing else cluttering the page.
 
 These two operations answer questions about a single `table`. The next natural question is what happens when a request involves comparing two relations against each other rather than trimming just one, which is exactly where set operations come in.

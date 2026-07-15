@@ -1,7 +1,8 @@
 ## Introduction
 
-- Column-level privileges, previewed briefly in the `GRANT` lesson, restrict access to entire `columns`, but some security requirements are finer than that: a warehouse manager should see every shipment, but a branch coordinator should only ever see shipments belonging to their own branch, the same `table`, the same `columns`, with access restricted by which `rows` a `role` is allowed to see at all.
-- PostgreSQL's **`row-level security`**, or RLS, makes exactly this possible, enforced automatically by the `database` itself, rather than trusted to every application `query` remembering to add the right filter.
+Column-level privileges, previewed briefly in the `GRANT` lesson, restrict access to entire `columns`, but some security requirements are finer than that: a warehouse manager should see every shipment, but a branch coordinator should only ever see shipments belonging to their own branch, the same `table`, the same `columns`, with access restricted by which `rows` a `role` is allowed to see at all.
+
+PostgreSQL's **`row-level security`**, or RLS, makes exactly this possible, enforced automatically by the `database` itself, rather than trusted to every application `query` remembering to add the right filter.
 
 ## The Problem Without Row-Level Security
 
@@ -24,8 +25,7 @@ CREATE ROLE mumbai_coordinator WITH LOGIN PASSWORD 'change_this_in_real_use';
 GRANT SELECT ON shipments TO mumbai_coordinator;
 ```
 
-- Without `row-level security`, `mumbai_coordinator`'s `GRANT SELECT` gives access to every `row` in `shipments`, Mumbai's and Pune's alike, relying entirely on every single application `query` remembering to add `WHERE branch = 'Mumbai'` by hand.
-- Forgetting that filter even once, in one report, one script, one ad-hoc `query`, would leak Pune's shipment data to a `role` that should never see it.
+Without `row-level security`, `mumbai_coordinator`'s `GRANT SELECT` gives access to every `row` in `shipments`, Mumbai's and Pune's alike, relying entirely on every single application `query` remembering to add `WHERE branch = 'Mumbai'` by hand. Forgetting that filter even once, in one report, one script, one ad-hoc `query`, would leak Pune's shipment data to a `role` that should never see it.
 
 ## Enabling and Defining a Row-Level Security Policy
 

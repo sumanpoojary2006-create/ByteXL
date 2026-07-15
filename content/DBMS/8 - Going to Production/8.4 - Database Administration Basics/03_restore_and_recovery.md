@@ -47,8 +47,9 @@ SELECT * FROM shipments_restored;
 
 ## Point-in-Time Recovery: Restoring to an Exact Moment
 
-- A full `backup` alone only restores a `database` to the exact moment that `backup` was taken, but a real incident, an accidental `DELETE` with no `WHERE` clause, for example, often needs `recovery` to a specific moment just before the mistake happened, not all the way back to last night's full `backup`, which would also lose every legitimate change made since then.
-- Point-in-time `recovery`, or PITR, combines a full `backup` with the `write-ahead log` archive covered in the `recovery` unit, replaying logged changes forward from that `backup` up to, but not including, the moment of the mistake.
+A full `backup` alone only restores a `database` to the exact moment that `backup` was taken, but a real incident, an accidental `DELETE` with no `WHERE` clause, for example, often needs `recovery` to a specific moment just before the mistake happened, not all the way back to last night's full `backup`, which would also lose every legitimate change made since then.
+
+Point-in-time `recovery`, or PITR, combines a full `backup` with the `write-ahead log` archive covered in the `recovery` unit, replaying logged changes forward from that `backup` up to, but not including, the moment of the mistake.
 
 ```postgresql with=restore_demo.sql
 SELECT pg_current_wal_lsn() AS wal_position_now;
@@ -79,8 +80,7 @@ A disciplined operations practice periodically performs a real, full `restore`, 
 - Spot-checking specific known values
 - Confirming `constraint`s and `index`es rebuilt correctly
 
-- This is exactly the kind of check the single `query` above represents in miniature.
-- Skipping this verification step is one of the most common, and most costly, gaps in a team's `backup` strategy: the `backups` exist, but nobody actually knows whether they work until the day they are desperately needed and turn out not to.
+This is exactly the kind of check the single `query` above represents in miniature. Skipping this verification step is one of the most common, and most costly, gaps in a team's `backup` strategy: the `backups` exist, but nobody actually knows whether they work until the day they are desperately needed and turn out not to.
 
 ![A backup is only trusted after a test restore verifies the restored data](images/06_test_restore_verify_backup.png)
 
@@ -125,5 +125,6 @@ Creating `shipments_restored_v2` with the same structure, loading it via `COPY s
 
 ## Conclusion
 
-- Restoring a `backup`, whether a logical `restore` reapplying a dump script or a `point-in-time recovery` replaying archived write-ahead logs to an exact moment, is only genuinely useful if it has actually been tested and verified ahead of time, since an unverified `backup` offers only the appearance of safety rather than the real thing.
-- With maintenance, `backups`, and restores all covered, the next lesson turns to watching a live `database`'s health continuously, catching problems before a `restore` is ever needed at all.
+Restoring a `backup`, whether a logical `restore` reapplying a dump script or a `point-in-time recovery` replaying archived write-ahead logs to an exact moment, is only genuinely useful if it has actually been tested and verified ahead of time, since an unverified `backup` offers only the appearance of safety rather than the real thing.
+
+With maintenance, `backups`, and restores all covered, the next lesson turns to watching a live `database`'s health continuously, catching problems before a `restore` is ever needed at all.

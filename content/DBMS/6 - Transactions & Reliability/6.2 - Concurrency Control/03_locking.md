@@ -1,8 +1,8 @@
 ## Introduction
 
-- The `lost update` from the previous lesson happened because two `transactions` both read the same stock count and both wrote a new value based on that same stale reading, with neither `transaction` aware the other was doing the same thing at the same time.
-- The fix is not clever application logic checking timestamps after the fact; it is stopping the second `transaction` from reading and acting on that value until the first `transaction` has finished with it entirely.
-- This is what **locking** does: a `transaction` can claim a `lock` on a `row`, blocking other `transactions` from making conflicting changes to that same `row` until the `lock` is released.
+The `lost update` from the previous lesson happened because two `transactions` both read the same stock count and both wrote a new value based on that same stale reading, with neither `transaction` aware the other was doing the same thing at the same time.
+
+The fix is not clever application logic checking timestamps after the fact; it is stopping the second `transaction` from reading and acting on that value until the first `transaction` has finished with it entirely. This is what **locking** does: a `transaction` can claim a `lock` on a `row`, blocking other `transactions` from making conflicting changes to that same `row` until the `lock` is released.
 
 ## Locking a Row for Update
 
@@ -48,9 +48,9 @@ SELECT stock_count FROM inventory WHERE product_id = 1;
 
 ## Shared Locks vs. Exclusive Locks
 
-- Not every `lock` blocks every other operation equally.
-- A shared `lock`, taken automatically by an ordinary read in most `databases`, allows other `transactions` to also read the same `row` concurrently, since reading alongside reading causes no conflict.
-- An exclusive `lock`, the kind `FOR UPDATE` takes, blocks any other `transaction` from reading with intent to modify or from writing to that `row` at all, since two `transactions` both planning to change the same `row` is exactly the conflict that needs preventing.
+Not every `lock` blocks every other operation equally. A shared `lock`, taken automatically by an ordinary read in most `databases`, allows other `transactions` to also read the same `row` concurrently, since reading alongside reading causes no conflict.
+
+An exclusive `lock`, the kind `FOR UPDATE` takes, blocks any other `transaction` from reading with intent to modify or from writing to that `row` at all, since two `transactions` both planning to change the same `row` is exactly the conflict that needs preventing.
 
 ```postgresql with=inventory_locking.sql
 BEGIN;

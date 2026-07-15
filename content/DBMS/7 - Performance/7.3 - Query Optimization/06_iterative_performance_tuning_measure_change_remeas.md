@@ -1,8 +1,8 @@
 ## Introduction
 
-- Every technique covered in this unit, storage layout, `indexes`, `EXPLAIN`, `join` algorithms, and common bottlenecks, is a piece of a single repeatable process, not a checklist to apply once and forget.
-- Real performance tuning is iterative: measure how a `query` actually performs, make one deliberate change, measure again to confirm that change actually helped, and repeat, rather than guessing at several changes at once and hoping the combination works.
-- This final lesson walks through that full loop, start to finish, on one `query`.
+Every technique covered in this unit, storage layout, `indexes`, `EXPLAIN`, `join` algorithms, and common bottlenecks, is a piece of a single repeatable process, not a checklist to apply once and forget. Real performance tuning is iterative: measure how a `query` actually performs, make one deliberate change, measure again to confirm that change actually helped, and repeat, rather than guessing at several changes at once and hoping the combination works.
+
+This final lesson walks through that full loop, start to finish, on one `query`.
 
 ## Step One: Measure the Starting Point
 
@@ -34,15 +34,13 @@ GROUP BY customer_id
 ORDER BY total_refunded DESC;
 ```
 
-- This baseline plan, with no supporting `index` on either `status` or `order_date`, is expected to show a `sequential scan` across all 60000 `rows` before filtering down to the small refunded, recent subset the `query` actually cares about.
-- Recording this baseline's actual time is essential, since without it, there is no way to later confirm whether a change genuinely helped or made no real difference.
+This baseline plan, with no supporting `index` on either `status` or `order_date`, is expected to show a `sequential scan` across all 60000 `rows` before filtering down to the small refunded, recent subset the `query` actually cares about. Recording this baseline's actual time is essential, since without it, there is no way to later confirm whether a change genuinely helped or made no real difference.
 
 ![Iterative tuning starts by measuring a baseline before making changes](images/13_iterative_tuning_measure_change_remeasure.png)
 
 ## Step Two: Make One Deliberate Change
 
-- Rather than adding several `indexes` at once, the disciplined approach is one change at a time, so its individual effect can be measured cleanly.
-- A `composite index` matching both filter `columns` together, the technique covered in the `indexes` chapter, is a reasonable first attempt here.
+Rather than adding several `indexes` at once, the disciplined approach is one change at a time, so its individual effect can be measured cleanly. A `composite index` matching both filter `columns` together, the technique covered in the `indexes` chapter, is a reasonable first attempt here.
 
 ```postgresql with=tuning_demo.sql
 CREATE INDEX idx_orders_status_date ON orders (status, order_date);
@@ -86,9 +84,9 @@ If the actual business need only ever wants the top 10 customers by refund total
 
 ## Why This Discipline Matters More Than Any Single Technique
 
-- The specific techniques covered across this unit, storage awareness, `indexing`, reading plans, understanding `join` algorithms, are all just tools available during this loop.
-- A tuning session that skips measurement and jumps straight to "add `indexes` everywhere" risks the over-indexing cost covered earlier in this unit, paying for write overhead on `indexes` that never actually helped the `query` they were added for.
-- Measuring first, changing one thing, and measuring again is what turns tuning from guesswork into an evidence-based process with a clear, demonstrable outcome at every step.
+The specific techniques covered across this unit, storage awareness, `indexing`, reading plans, understanding `join` algorithms, are all just tools available during this loop. A tuning session that skips measurement and jumps straight to "add `indexes` everywhere" risks the over-indexing cost covered earlier in this unit, paying for write overhead on `indexes` that never actually helped the `query` they were added for.
+
+Measuring first, changing one thing, and measuring again is what turns tuning from guesswork into an evidence-based process with a clear, demonstrable outcome at every step.
 
 ## The Iterative Tuning Loop at a Glance
 
@@ -131,6 +129,6 @@ Running `EXPLAIN ANALYZE SELECT * FROM orders WHERE customer_id = 4000;` first e
 
 ## Conclusion
 
-- Iterative tuning, measure with `EXPLAIN ANALYZE`, make one deliberate change, re-measure to confirm it actually helped, and repeat, is the discipline that ties every technique in this unit together into a real, evidence-based process, rather than a collection of tricks applied on faith.
-- Priya now has a complete, repeatable method for taking any slow `query` from a first honest measurement to a confirmed improvement.
-- With storage, `indexing`, and `query` optimization all covered, the course moves next into the practical work of running a `database` in a real, production environment.
+Iterative tuning, measure with `EXPLAIN ANALYZE`, make one deliberate change, re-measure to confirm it actually helped, and repeat, is the discipline that ties every technique in this unit together into a real, evidence-based process, rather than a collection of tricks applied on faith. Priya now has a complete, repeatable method for taking any slow `query` from a first honest measurement to a confirmed improvement.
+
+With storage, `indexing`, and `query` optimization all covered, the course moves next into the practical work of running a `database` in a real, production environment.

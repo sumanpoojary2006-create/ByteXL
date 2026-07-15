@@ -58,9 +58,7 @@ FROM customers
 INNER JOIN orders ON customers.customer_id = orders.customer_id;
 ```
 
-- This returns six `rows`, one per order, but Neha Bhatt never appears anywhere in the output, even though she is a perfectly valid `row` in `customers`.
-- She has no matching `row` in `orders`, so the inner `join` excludes her entirely rather than showing her with blank order `columns`.
-- This is the defining trait of `INNER JOIN`: no match means no `row` in the result, on either side.
+This returns six `rows`, one per order, but Neha Bhatt never appears anywhere in the output, even though she is a perfectly valid `row` in `customers`. She has no matching `row` in `orders`, so the inner `join` excludes her entirely rather than showing her with blank order `columns`. This is the defining trait of `INNER JOIN`: no match means no `row` in the result, on either side.
 
 ![INNER JOIN keeping only rows that have a matching partner on both sides](images/03_inner_join_matched_only.png)
 
@@ -117,9 +115,9 @@ The `customers` `table` alone has 5 `rows`, but the joined `query` returns 6, no
   </tbody>
 </table>
 
-- That number is higher than 5 because Aditi Kulkarni and Rohan Das each placed more than one order, so an inner `join` produces one output `row` for every matching pair, and a customer with two orders contributes two `rows` to the result.
-- Meanwhile, Neha's `row` contributes zero, since it has no partner in `orders` at all.
-- The inner `join` `row` count depends entirely on how many matches exist, not on how many `rows` either original `table` has.
+That number is higher than 5 because Aditi Kulkarni and Rohan Das each placed more than one order, so an inner `join` produces one output `row` for every matching pair, and a customer with two orders contributes two `rows` to the result. Meanwhile, Neha's `row` contributes zero, since it has no partner in `orders` at all.
+
+The inner `join` `row` count depends entirely on how many matches exist, not on how many `rows` either original `table` has.
 
 ![INNER JOIN producing two joined rows when one customer matches two orders](images/04_inner_join_one_to_many_rows.png)
 
@@ -138,13 +136,14 @@ WHERE orders.amount > 400;
 This `query` runs in two clear stages:
 
 1. The two `INNER JOIN` clauses first assemble the full combined `view` across all three `tables`.
+
 2. Only then does `WHERE orders.amount > 400` remove the smaller orders, leaving just the three highest-value ones, orders 1, 2, and 4, with both the customer's and the restaurant's real names attached.
 
 ## When an Inner Join Is the Right Choice
 
-- An inner `join` is the right tool whenever a `row` without a match is not useful for the question being asked.
-- A report on "orders and who placed them" has no reason to include a customer who has never ordered, since there is nothing to report about them in that context.
-- The next lesson introduces a `join` type built for the opposite situation, when unmatched `rows` are exactly what needs to stay visible.
+An inner `join` is the right tool whenever a `row` without a match is not useful for the question being asked. A report on "orders and who placed them" has no reason to include a customer who has never ordered, since there is nothing to report about them in that context.
+
+The next lesson introduces a `join` type built for the opposite situation, when unmatched `rows` are exactly what needs to stay visible.
 
 ## INNER JOIN at a Glance
 

@@ -1,9 +1,8 @@
 ## Introduction
 
-- Leela's next report tracks month-over-month growth: for each salesperson's monthly total, how much did it change compared to the previous month?
-- Answering this means comparing a `row` to a different `row`, specifically, whichever `row` comes immediately before it once the data is ordered by month.
-- A plain `SELECT` has no built-in way to reach into a neighboring `row` like that.
-- SQL's **offset `functions`**, `LAG` and `LEAD`, are `window functions` purpose-built for exactly this: pulling a value from a `row` a fixed number of positions before or after the current one, within an ordered window.
+Leela's next report tracks month-over-month growth: for each salesperson's monthly total, how much did it change compared to the previous month? Answering this means comparing a `row` to a different `row`, specifically, whichever `row` comes immediately before it once the data is ordered by month. A plain `SELECT` has no built-in way to reach into a neighboring `row` like that.
+
+SQL's **offset `functions`**, `LAG` and `LEAD`, are `window functions` purpose-built for exactly this: pulling a value from a `row` a fixed number of positions before or after the current one, within an ordered window.
 
 ## Looking Back at the Previous Row with LAG
 
@@ -71,8 +70,7 @@ ORDER BY salesperson, sale_month;
   </tbody>
 </table>
 
-- Nikhil's April `row` shows 22000.00 as its `previous_month`, exactly March's total.
-- His March `row`, having nothing before it in the partition, shows `NULL`, since there is no earlier `row` for `LAG` to reach.
+Nikhil's April `row` shows 22000.00 as its `previous_month`, exactly March's total. His March `row`, having nothing before it in the partition, shows `NULL`, since there is no earlier `row` for `LAG` to reach.
 
 ![LAG reaching backward from the current row to the previous month](images/07_lag_previous_row.png)
 
@@ -87,8 +85,7 @@ FROM monthly_sales
 ORDER BY salesperson, sale_month;
 ```
 
-- Nikhil's April change is 3500.00, an increase, and his May change is -4500.00, a drop, computed directly from two values that now live on the same logical `row` thanks to `LAG`.
-- Before `window functions`, this same calculation would have needed a self `join` matching each `row` to "the `row` for the same salesperson, one month earlier," a noticeably more complex `query` for the same result.
+Nikhil's April change is 3500.00, an increase, and his May change is -4500.00, a drop, computed directly from two values that now live on the same logical `row` thanks to `LAG`. Before `window functions`, this same calculation would have needed a self `join` matching each `row` to "the `row` for the same salesperson, one month earlier," a noticeably more complex `query` for the same result.
 
 ## Looking Ahead to the Next Row with LEAD
 
@@ -169,9 +166,7 @@ Leela wants to flag any month where a salesperson's total dropped compared to th
 -- Write your query below
 ```
 
-- One valid answer wraps the `LAG` comparison in a `CASE` expression: `CASE WHEN total_amount < LAG(total_amount) OVER (PARTITION BY salesperson ORDER BY sale_month) THEN 'down' ELSE 'up' END AS trend`.
-- This correctly labels Nikhil's May `row` as "down" and every other `row` as "up."
-- The first `row` of each salesperson has nothing to compare against, so it defaults to "up" through the `ELSE` branch.
+One valid answer wraps the `LAG` comparison in a `CASE` expression: `CASE WHEN total_amount < LAG(total_amount) OVER (PARTITION BY salesperson ORDER BY sale_month) THEN 'down' ELSE 'up' END AS trend`. This correctly labels Nikhil's May `row` as "down" and every other `row` as "up." The first `row` of each salesperson has nothing to compare against, so it defaults to "up" through the `ELSE` branch.
 
 ## Conclusion
 

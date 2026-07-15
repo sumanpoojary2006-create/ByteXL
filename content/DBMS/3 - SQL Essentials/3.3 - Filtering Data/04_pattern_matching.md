@@ -1,8 +1,8 @@
 ## Introduction
 
-- Siddharth has been asked to pull together a list of everyone still using their college-issued email address, ahead of a migration to a new mail provider.
-- He does not have a fixed value to compare against; he cannot write `email = 'something'` because the local part of every address is different, it is only the ending that is shared.
-- What he needs is a way to match a partial shape of text rather than an exact value, and that is what **pattern matching** with `LIKE` is for.
+Siddharth has been asked to pull together a list of everyone still using their college-issued email address, ahead of a migration to a new mail provider. He does not have a fixed value to compare against; he cannot write `email = 'something'` because the local part of every address is different, it is only the ending that is shared.
+
+What he needs is a way to match a partial shape of text rather than an exact value, and that is what **pattern matching** with `LIKE` is for.
 
 ## Matching Part of a String with LIKE
 
@@ -182,8 +182,7 @@ FROM students
 WHERE email LIKE '%verma%';
 ```
 
-- This should return exactly one `row`, Rahul Verma, since his email address is the only one containing that fragment anywhere in it.
-- Try replacing `%verma%` with just `verma%` and notice the result becomes empty, since that pattern demands the address start with "verma" rather than merely contain it.
+This should return exactly one `row`, Rahul Verma, since his email address is the only one containing that fragment anywhere in it. Try replacing `%verma%` with just `verma%` and notice the result becomes empty, since that pattern demands the address start with "verma" rather than merely contain it.
 
 ## Conclusion
 

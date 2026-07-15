@@ -36,8 +36,9 @@ A typical line of output looks like `Index Scan using idx_orders_customer_id on 
 
 ## Cost Numbers Are Estimates, Not Measured Time
 
-- It is worth being precise about what the cost numbers mean: they are the optimizer's own relative units, used to compare candidate plans against each other, not a measurement of actual seconds or milliseconds.
-- A cost of 8.51 for one `query` and 8.51 for a completely different `query` does not mean those two `queries` take the same real time to run; it only means the optimizer estimated a similar relative amount of work for each, under its own internal cost model.
+It is worth being precise about what the cost numbers mean: they are the optimizer's own relative units, used to compare candidate plans against each other, not a measurement of actual seconds or milliseconds.
+
+A cost of 8.51 for one `query` and 8.51 for a completely different `query` does not mean those two `queries` take the same real time to run; it only means the optimizer estimated a similar relative amount of work for each, under its own internal cost model.
 
 ```postgresql with=explain_demo.sql
 EXPLAIN SELECT * FROM orders;
@@ -71,9 +72,7 @@ GROUP BY customer_id;
 EXPLAIN SELECT * FROM orders WHERE customer_id = 50 OR customer_id = 75;
 ```
 
-- This plan may report a `Bitmap Index Scan` feeding into a `Bitmap Heap Scan`, a two-step strategy the optimizer sometimes chooses when a condition matches a moderate number of `rows` scattered across the `table`, gathering matching `row` locations first through the `index`.
-- It then fetches them from the `table` in a more efficient, sorted order.
-- This is a distinct strategy from either a plain `sequential scan` or a plain `index scan`.
+This plan may report a `Bitmap Index Scan` feeding into a `Bitmap Heap Scan`, a two-step strategy the optimizer sometimes chooses when a condition matches a moderate number of `rows` scattered across the `table`, gathering matching `row` locations first through the `index`. It then fetches them from the `table` in a more efficient, sorted order. This is a distinct strategy from either a plain `sequential scan` or a plain `index scan`.
 
 ## Reading EXPLAIN at a Glance
 

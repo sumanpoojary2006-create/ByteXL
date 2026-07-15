@@ -1,8 +1,8 @@
 ## Introduction
 
-- Every `query` in this course has been written as raw SQL, typed directly.
-- Much real application code, especially in frameworks built around languages like Python, Java, or Ruby, instead uses an **object-relational mapper**, or ORM, a library that lets a developer work with `database` `rows` as ordinary objects in their programming language, generating the actual SQL behind the scenes.
-- Neither approach is universally correct; each trades away something the other offers, and knowing what that trade-off actually is matters more than picking a side.
+Every `query` in this course has been written as raw SQL, typed directly. Much real application code, especially in frameworks built around languages like Python, Java, or Ruby, instead uses an **object-relational mapper**, or ORM, a library that lets a developer work with `database` `rows` as ordinary objects in their programming language, generating the actual SQL behind the scenes.
+
+Neither approach is universally correct; each trades away something the other offers, and knowing what that trade-off actually is matters more than picking a side.
 
 ## What an ORM Actually Generates
 
@@ -75,13 +75,15 @@ HAVING COUNT(*) > 0
 ORDER BY active_shipments DESC;
 ```
 
-- A `query` shaped like this, with `GROUP BY`, `HAVING`, and `ORDER BY` working together, is something every SQL developer can write directly and reason about precisely, with full control over exactly what plan the `database` is likely to choose.
-- Most ORMs do offer an escape hatch for running raw SQL directly when their object-oriented interface becomes more awkward than helpful, which is often the pragmatic middle ground real applications settle into: ORM for routine, simple operations, raw SQL for anything genuinely complex or performance-sensitive.
+A `query` shaped like this, with `GROUP BY`, `HAVING`, and `ORDER BY` working together, is something every SQL developer can write directly and reason about precisely, with full control over exactly what plan the `database` is likely to choose.
+
+Most ORMs do offer an escape hatch for running raw SQL directly when their object-oriented interface becomes more awkward than helpful, which is often the pragmatic middle ground real applications settle into: ORM for routine, simple operations, raw SQL for anything genuinely complex or performance-sensitive.
 
 ## The Trade-off, Honestly Stated
 
-- An ORM trades some control and some `query`-level performance transparency for faster, more consistent everyday development, less boilerplate, automatic protection against SQL injection through built-in parameterization, and code that reads naturally in the application's own programming language.
-- Raw SQL trades that convenience for full visibility into exactly what `query` runs and full control over its exact shape, at the cost of more code to write and maintain by hand for routine operations.
+An ORM trades some control and some `query`-level performance transparency for faster, more consistent everyday development, less boilerplate, automatic protection against SQL injection through built-in parameterization, and code that reads naturally in the application's own programming language.
+
+Raw SQL trades that convenience for full visibility into exactly what `query` runs and full control over its exact shape, at the cost of more code to write and maintain by hand for routine operations.
 
 ## ORM vs. Raw SQL at a Glance
 
@@ -129,5 +131,6 @@ One approach uses a `window function` from earlier in this course: `SELECT shipm
 
 ## Conclusion
 
-- An ORM speeds up routine, everyday `database` operations by letting a developer work in objects rather than SQL text, at the cost of sometimes hiding real `query` costs, most notoriously the N+1 pattern, while raw SQL offers full visibility and control at the cost of more code to write directly, and most real applications end up using both, an ORM for the routine cases and raw SQL for anything complex or performance-critical enough to need precise control.
-- The final lesson in this chapter looks at a concern that touches both styles equally: how a `database`'s structure itself is changed safely over time as an application evolves.
+An ORM speeds up routine, everyday `database` operations by letting a developer work in objects rather than SQL text, at the cost of sometimes hiding real `query` costs, most notoriously the N+1 pattern, while raw SQL offers full visibility and control at the cost of more code to write directly, and most real applications end up using both, an ORM for the routine cases and raw SQL for anything complex or performance-critical enough to need precise control.
+
+The final lesson in this chapter looks at a concern that touches both styles equally: how a `database`'s structure itself is changed safely over time as an application evolves.

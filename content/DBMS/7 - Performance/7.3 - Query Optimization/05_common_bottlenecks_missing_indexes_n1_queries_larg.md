@@ -1,7 +1,6 @@
 ## Introduction
 
-- Most real-world performance problems trace back to a small handful of recurring patterns, not exotic, one-off causes.
-- With scans, `indexes`, plans, and `join` algorithms all covered individually across this unit, this lesson names the three bottlenecks Priya is most likely to actually encounter in practice:
+Most real-world performance problems trace back to a small handful of recurring patterns, not exotic, one-off causes. With scans, `indexes`, plans, and `join` algorithms all covered individually across this unit, this lesson names the three bottlenecks Priya is most likely to actually encounter in practice:
 
 - A missing `index` on a genuinely selective `column`
 - An application pattern called the `N+1 query` problem
@@ -30,8 +29,7 @@ FROM generate_series(1, 50000) AS i;
 EXPLAIN ANALYZE SELECT * FROM orders WHERE status = 'flagged';
 ```
 
-- Only about 1 in 1000 `rows` are flagged, a highly selective condition, but with no `index` on `status`, the plan is forced into a `sequential scan` of all 50000 `rows` to find the roughly 50 that match.
-- This is the most straightforward bottleneck to diagnose, `EXPLAIN` clearly shows a `sequential scan`, and the fix, an `index`, is exactly what the previous chapter covered.
+Only about 1 in 1000 `rows` are flagged, a highly selective condition, but with no `index` on `status`, the plan is forced into a `sequential scan` of all 50000 `rows` to find the roughly 50 that match. This is the most straightforward bottleneck to diagnose, `EXPLAIN` clearly shows a `sequential scan`, and the fix, an `index`, is exactly what the previous chapter covered.
 
 ```postgresql with=bottleneck_demo.sql
 CREATE INDEX idx_orders_status ON orders (status);
@@ -45,8 +43,7 @@ The plan switches to an `index scan`, and the actual measured time drops accordi
 
 ## Bottleneck Two: The N+1 Query Problem
 
-- This bottleneck lives in application code, not in any single SQL statement.
-- It happens when code first fetches a list of parent `rows` with one `query`, then loops over that list, running one additional `query` per item to fetch related data, N extra `queries` for N parent `rows`, instead of one `query` that fetches everything together.
+This bottleneck lives in application code, not in any single SQL statement. It happens when code first fetches a list of parent `rows` with one `query`, then loops over that list, running one additional `query` per item to fetch related data, N extra `queries` for N parent `rows`, instead of one `query` that fetches everything together.
 
 ```postgresql with=bottleneck_demo.sql
 -- The N+1 pattern, shown as pseudocode alongside the SQL it represents:
@@ -72,10 +69,9 @@ WHERE customer_id IN (
 );
 ```
 
-- This single `query` retrieves the exact same data the 6-`query` loop above would have gathered.
-- It does that as one round trip instead of six.
-- The gap between the two approaches only widens as the number of parent `rows` grows.
-- That is why N+1 is such a common, costly bottleneck in real applications built on top of an object-relational mapper or any code that fetches a list and then loops.
+This single `query` retrieves the exact same data the 6-`query` loop above would have gathered. It does that as one round trip instead of six. The gap between the two approaches only widens as the number of parent `rows` grows.
+
+That is why N+1 is such a common, costly bottleneck in real applications built on top of an object-relational mapper or any code that fetches a list and then loops.
 
 ![The N+1 query problem makes one query plus many repeated child queries](images/11_n_plus_one_queries_many_round_trips.png)
 
@@ -89,8 +85,7 @@ CREATE INDEX idx_orders_amount ON orders (amount);
 EXPLAIN SELECT * FROM orders WHERE amount::TEXT = '525.00';
 ```
 
-- Casting `amount` to text before comparing defeats `idx_orders_amount`, since the `index` is built on the numeric `column`'s own sorted values, not on a text-converted version of them, forcing a `sequential scan` despite an `index` technically existing on the underlying `column`.
-- This is a subtle bottleneck precisely because the `query` author may not realize the cast is even happening, especially if it was introduced indirectly through application code building the condition dynamically.
+Casting `amount` to text before comparing defeats `idx_orders_amount`, since the `index` is built on the numeric `column`'s own sorted values, not on a text-converted version of them, forcing a `sequential scan` despite an `index` technically existing on the underlying `column`. This is a subtle bottleneck precisely because the `query` author may not realize the cast is even happening, especially if it was introduced indirectly through application code building the condition dynamically.
 
 ```postgresql with=bottleneck_demo.sql
 EXPLAIN SELECT * FROM orders WHERE amount = 525.00;
@@ -141,6 +136,6 @@ Check whether filtering `orders` on `customer_id = 42` uses an `index`, given th
 
 ## Conclusion
 
-- A missing `index` on a selective `column`, the `N+1 query` pattern hiding in application code, and a `function` or cast silently defeating an otherwise-useful `index` are three of the most common ways a real system slows down, and all three are diagnosable with the same tools covered across this unit: `EXPLAIN`, `EXPLAIN ANALYZE`, and a clear understanding of what each plan node actually means.
-- Priya now has a checklist of the first places to look whenever a report starts running slower than expected.
-- The final lesson in this unit turns these individual diagnoses into a repeatable process for tuning a `query` end to end.
+A missing `index` on a selective `column`, the `N+1 query` pattern hiding in application code, and a `function` or cast silently defeating an otherwise-useful `index` are three of the most common ways a real system slows down, and all three are diagnosable with the same tools covered across this unit: `EXPLAIN`, `EXPLAIN ANALYZE`, and a clear understanding of what each plan node actually means.
+
+Priya now has a checklist of the first places to look whenever a report starts running slower than expected. The final lesson in this unit turns these individual diagnoses into a repeatable process for tuning a `query` end to end.

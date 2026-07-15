@@ -1,14 +1,12 @@
 ## Introduction
 
-- The previous chapter left Priya with a precise problem: a `full table scan` checks every `row`, and its cost grows with `table` size, even when a `query` only needs a tiny handful of matching `rows`.
-- An old-fashioned phone book solves a strikingly similar problem.
-- Finding "Rathi, Sanjay" in a phone book does not mean reading every entry from the first page onward; the book is alphabetically sorted, so a reader can jump straight to the R section and narrow in from there.
-- A `database` **`index`** does exactly this for a `table`: a separate structure, built on one or more `columns`, that lets the `database` jump directly to matching `rows` instead of checking every one.
+The previous chapter left Priya with a precise problem: a `full table scan` checks every `row`, and its cost grows with `table` size, even when a `query` only needs a tiny handful of matching `rows`. An old-fashioned phone book solves a strikingly similar problem.
+
+Finding "Rathi, Sanjay" in a phone book does not mean reading every entry from the first page onward; the book is alphabetically sorted, so a reader can jump straight to the R section and narrow in from there. A `database` **`index`** does exactly this for a `table`: a separate structure, built on one or more `columns`, that lets the `database` jump directly to matching `rows` instead of checking every one.
 
 ## Searching Without an Index
 
-- The `orders` `table` from the storage chapter, large enough for the cost difference to be visible, sets up the comparison.
-- The closing `ANALYZE` statement refreshes the statistics the `query planner` uses to estimate how many `rows` a condition will match; every setup in this chapter runs it after loading data, and it returns in full detail alongside `EXPLAIN` in the next chapter.
+The `orders` `table` from the storage chapter, large enough for the cost difference to be visible, sets up the comparison. The closing `ANALYZE` statement refreshes the statistics the `query planner` uses to estimate how many `rows` a condition will match; every setup in this chapter runs it after loading data, and it returns in full detail alongside `EXPLAIN` in the next chapter.
 
 ```postgresql file=index_demo.sql
 CREATE TABLE orders (
@@ -42,8 +40,7 @@ CREATE INDEX idx_orders_customer_name ON orders (customer_name);
 EXPLAIN SELECT * FROM orders WHERE customer_name = 'Customer 7500';
 ```
 
-- The plan changes to an "`Index Scan`," using `idx_orders_customer_name` to jump almost directly to the matching `row`, rather than checking all 10000.
-- The `index` itself is sorted by `customer_name`, the same way a phone book is sorted by last name, so the `database` can narrow down to the matching entries the same way a reader flips to the right section of a phone book instead of starting from page one.
+The plan changes to an "`Index Scan`," using `idx_orders_customer_name` to jump almost directly to the matching `row`, rather than checking all 10000. The `index` itself is sorted by `customer_name`, the same way a phone book is sorted by last name, so the `database` can narrow down to the matching entries the same way a reader flips to the right section of a phone book instead of starting from page one.
 
 ![An index stores key values with pointers back to the full table rows](images/02_index_key_plus_pointer.png)
 
@@ -63,8 +60,7 @@ SELECT pg_size_pretty(pg_relation_size('orders')) AS table_size,
        pg_size_pretty(pg_relation_size('idx_orders_customer_name')) AS index_size;
 ```
 
-- The `index` takes up its own disk space, separate from the `table`, since it is a genuinely separate structure that has to be built and stored.
-- This is the fundamental trade-off every `index` represents: extra storage and extra maintenance work, in exchange for dramatically faster lookups on the `indexed` `column`.
+The `index` takes up its own disk space, separate from the `table`, since it is a genuinely separate structure that has to be built and stored. This is the fundamental trade-off every `index` represents: extra storage and extra maintenance work, in exchange for dramatically faster lookups on the `indexed` `column`.
 
 ## An Index Speeds Up Reads, But Costs Something on Writes
 
@@ -85,6 +81,7 @@ SELECT pg_size_pretty(pg_relation_size('idx_orders_customer_name')) AS index_siz
 The `index` visibly grows after the insert, which is the proof that every one of those 10000 new `rows` did double work:
 
 1. Add the new `row` to the `table`'s heap.
+
 2. Add a corresponding entry to `idx_orders_customer_name`, keeping the two in sync.
 
 This cost is usually small for one `index` on one `row`, but it is the reason `indexes` are not simply added to every `column` without consideration, a trade-off the final lesson of this chapter examines directly.
@@ -130,6 +127,6 @@ If you run `CREATE INDEX idx_orders_amount ON orders (amount);` followed by `EXP
 
 ## Conclusion
 
-- An `index` is a separate, sorted structure built on one or more `columns` that lets the `database` jump directly to matching `rows` instead of scanning the whole `table`, trading extra storage and slightly slower writes for dramatically faster reads on the `indexed` `column`, the same trade a phone book's alphabetical sorting makes over a randomly ordered list of names.
-- Priya's slow customer-name lookups are now `index scans` instead of full scans.
-- The next lesson looks closely at the specific structure most `indexes` actually use internally: the B-tree.
+An `index` is a separate, sorted structure built on one or more `columns` that lets the `database` jump directly to matching `rows` instead of scanning the whole `table`, trading extra storage and slightly slower writes for dramatically faster reads on the `indexed` `column`, the same trade a phone book's alphabetical sorting makes over a randomly ordered list of names. Priya's slow customer-name lookups are now `index scans` instead of full scans.
+
+The next lesson looks closely at the specific structure most `indexes` actually use internally: the B-tree.

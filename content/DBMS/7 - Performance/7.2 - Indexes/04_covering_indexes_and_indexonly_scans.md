@@ -1,13 +1,12 @@
 ## Introduction
 
-- An `index scan`, covered throughout this chapter, is already far cheaper than a `sequential scan`, but it is not free: after finding a matching entry in the `index`, the `database` still has to jump over to the actual `table` to fetch the rest of that `row`'s `columns`, since a typical `index` only stores the `indexed` `column` plus a pointer, not the whole `row`.
-- That extra jump, from `index` entry to `table` page, is called a heap fetch, and for a `query` that touches many `rows`, all those extra jumps add up.
-- A **covering `index`** is an `index` built specifically to eliminate that extra step entirely, letting the `database` answer a `query` using only the `index`, never touching the `table` at all.
+An `index scan`, covered throughout this chapter, is already far cheaper than a `sequential scan`, but it is not free: after finding a matching entry in the `index`, the `database` still has to jump over to the actual `table` to fetch the rest of that `row`'s `columns`, since a typical `index` only stores the `indexed` `column` plus a pointer, not the whole `row`.
+
+That extra jump, from `index` entry to `table` page, is called a heap fetch, and for a `query` that touches many `rows`, all those extra jumps add up. A **covering `index`** is an `index` built specifically to eliminate that extra step entirely, letting the `database` answer a `query` using only the `index`, never touching the `table` at all.
 
 ## Watching a Heap Fetch Happen
 
-- The `orders` `table` sets up a `query` that needs more than just the `indexed` `column`.
-- Only 20 of its 10000 orders are still active, the selective situation an `index` is best at, and the closing `VACUUM ANALYZE` both refreshes the planner's statistics and marks the `table`'s pages as stable, something `index`-only scans, this lesson's subject, specifically depend on.
+The `orders` `table` sets up a `query` that needs more than just the `indexed` `column`. Only 20 of its 10000 orders are still active, the selective situation an `index` is best at, and the closing `VACUUM ANALYZE` both refreshes the planner's statistics and marks the `table`'s pages as stable, something `index`-only scans, this lesson's subject, specifically depend on.
 
 ```postgresql file=covering_demo.sql
 CREATE TABLE orders (
@@ -30,8 +29,7 @@ VACUUM ANALYZE orders;
 EXPLAIN SELECT order_id, amount FROM orders WHERE status = 'active';
 ```
 
-- The plan shows `idx_orders_status` finding the 20 matching `rows`, but that is not the whole story: `idx_orders_status` only stores `status` values and pointers back to matching `rows`, so for every match, the `database` still has to fetch that `row` from the actual `table`'s heap to retrieve `order_id` and `amount`, `columns` the `index` itself does not contain.
-- This heap fetch step is exactly the extra cost a `covering index` is built to remove.
+The plan shows `idx_orders_status` finding the 20 matching `rows`, but that is not the whole story: `idx_orders_status` only stores `status` values and pointers back to matching `rows`, so for every match, the `database` still has to fetch that `row` from the actual `table`'s heap to retrieve `order_id` and `amount`, `columns` the `index` itself does not contain. This heap fetch step is exactly the extra cost a `covering index` is built to remove.
 
 ![A regular index scan still performs heap fetches for missing columns](images/09_regular_index_scan_heap_fetch.png)
 
@@ -45,15 +43,15 @@ CREATE INDEX idx_orders_status_covering ON orders (status) INCLUDE (order_id, am
 EXPLAIN SELECT order_id, amount FROM orders WHERE status = 'active';
 ```
 
-- The plan now reports an "Index Only Scan" instead of a scan that visits the heap, confirming that `order_id` and `amount`, both included in the `covering index`, are read directly from the `index` itself, with no need to visit the `table`'s heap at all.
-- Every `column` the `query` asks for, both in `WHERE` and in `SELECT`, is now available directly from `idx_orders_status_covering`, which is exactly what "covering" the `query` means: the `index` alone is enough to answer it completely.
+The plan now reports an "Index Only Scan" instead of a scan that visits the heap, confirming that `order_id` and `amount`, both included in the `covering index`, are read directly from the `index` itself, with no need to visit the `table`'s heap at all.
+
+Every `column` the `query` asks for, both in `WHERE` and in `SELECT`, is now available directly from `idx_orders_status_covering`, which is exactly what "covering" the `query` means: the `index` alone is enough to answer it completely.
 
 ![A covering index can answer the query from the index alone](images/10_covering_index_index_only_scan.png)
 
 ## Why This Is Not Automatic for Every Index
 
-- An ordinary `index`, without `INCLUDE`, only ever gets an `index-only scan` if the `query` happens to need nothing beyond the `indexed` `column` itself and the `table`'s visibility information
-- the moment a `query` asks for even one `column` the `index` does not store, the `database` has no choice but to fall back to a regular `index scan` with a heap fetch for every matching `row`.
+An ordinary `index`, without `INCLUDE`, only ever gets an `index-only scan` if the `query` happens to need nothing beyond the `indexed` `column` itself and the `table`'s visibility information the moment a `query` asks for even one `column` the `index` does not store, the `database` has no choice but to fall back to a regular `index scan` with a heap fetch for every matching `row`.
 
 ```postgresql with=covering_demo.sql
 CREATE INDEX idx_orders_status_covering ON orders (status) INCLUDE (order_id, amount);
@@ -61,8 +59,7 @@ CREATE INDEX idx_orders_status_covering ON orders (status) INCLUDE (order_id, am
 EXPLAIN SELECT order_id, amount, customer_name FROM orders WHERE status = 'active';
 ```
 
-- Adding `customer_name` to the `SELECT` list, a `column` not included in `idx_orders_status_covering`, means the plan is no longer an Index Only Scan: the `database` is back to fetching every matching `row` from the heap, since the `covering index` cannot answer this broader request on its own.
-- This is a direct, practical illustration of why a `covering index` has to be designed around the specific `columns` a specific `query` actually needs.
+Adding `customer_name` to the `SELECT` list, a `column` not included in `idx_orders_status_covering`, means the plan is no longer an Index Only Scan: the `database` is back to fetching every matching `row` from the heap, since the `covering index` cannot answer this broader request on its own. This is a direct, practical illustration of why a `covering index` has to be designed around the specific `columns` a specific `query` actually needs.
 
 ## The Trade-off a Covering Index Represents
 
@@ -124,6 +121,6 @@ If you run `CREATE INDEX idx_orders_name_covering ON orders (customer_name) INCL
 
 ## Conclusion
 
-- A `covering index`, built with `INCLUDE`, stores extra `columns` alongside the `indexed` key so that a matching `query` can be answered entirely from the `index`, skipping the heap fetch a regular `index scan` still requires, at the cost of a larger `index` and more write overhead.
-- Priya's most frequently run reports can now be tuned to avoid that extra `table` visit entirely.
-- Every `index` covered in this chapter has assumed adding one is worthwhile; the final lesson looks at when that assumption breaks down.
+A `covering index`, built with `INCLUDE`, stores extra `columns` alongside the `indexed` key so that a matching `query` can be answered entirely from the `index`, skipping the heap fetch a regular `index scan` still requires, at the cost of a larger `index` and more write overhead. Priya's most frequently run reports can now be tuned to avoid that extra `table` visit entirely.
+
+Every `index` covered in this chapter has assumed adding one is worthwhile; the final lesson looks at when that assumption breaks down.

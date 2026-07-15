@@ -52,8 +52,7 @@ FROM restaurants;
 
 ## Trimming Stray Whitespace
 
-- The `manager_email` `column` has a worse problem: some values have leading or trailing spaces, likely left over from a spreadsheet import.
-- A space at the end of an email address makes `WHERE manager_email = 'ravi.kumar@spiceroute.com'` fail to match, even though the value looks identical on screen.
+The `manager_email` `column` has a worse problem: some values have leading or trailing spaces, likely left over from a spreadsheet import. A space at the end of an email address makes `WHERE manager_email = 'ravi.kumar@spiceroute.com'` fail to match, even though the value looks identical on screen.
 
 ```postgresql with=restaurants.sql
 SELECT manager_email, TRIM(manager_email) AS cleaned_email, LENGTH(manager_email) AS raw_length, LENGTH(TRIM(manager_email)) AS clean_length
@@ -152,8 +151,7 @@ Lining up a few raw values against their cleaned results makes the transformatio
 
 ## Your Turn
 
-- Head office wants a cleaned-up manager directory: one `column` with the branch name in title case is out of scope for now, but they do want the trimmed, lowercase email for every restaurant, aliased as `contact_email`.
-- Write that `query` against the `restaurants` `table` above.
+Head office wants a cleaned-up manager directory: one `column` with the branch name in title case is out of scope for now, but they do want the trimmed, lowercase email for every restaurant, aliased as `contact_email`. Write that `query` against the `restaurants` `table` above.
 
 ```postgresql with=restaurants.sql
 -- Write your query below
@@ -163,6 +161,6 @@ If your `query` is `SELECT LOWER(TRIM(manager_email)) AS contact_email FROM rest
 
 ## Conclusion
 
-- String `functions` let a `query` reshape text as it leaves the `table`, joining `columns` together, normalizing case, stripping stray whitespace, and pulling out just the substring that matters, all without ever editing the stored data.
-- Meera's restaurant list, manager directory, and domain check all came from the same five `rows` of raw data, just viewed through different `functions`.
-- Text is only one kind of data a `table` holds, and numbers need their own set of tools next.
+String `functions` let a `query` reshape text as it leaves the `table`, joining `columns` together, normalizing case, stripping stray whitespace, and pulling out just the substring that matters, all without ever editing the stored data. Meera's restaurant list, manager directory, and domain check all came from the same five `rows` of raw data, just viewed through different `functions`.
+
+Text is only one kind of data a `table` holds, and numbers need their own set of tools next.

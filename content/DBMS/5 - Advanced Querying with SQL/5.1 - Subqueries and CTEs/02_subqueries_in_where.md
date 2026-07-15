@@ -1,8 +1,10 @@
 ## Introduction
 
-- Kabir's average-salary subquery worked because it returned exactly one value, a single number that could sit on the right side of a `>` comparison.
-- His next question does not have that shape: "which employees work in the same department as Rajat Bhatia or Vikas Malhotra?" Finding the departments those two employees belong to could return more than one department, which means the subquery behind it would return more than one `row`, and a plain `=` or `>` comparison cannot compare a single value against a list.
-- SQL provides different operators, **`IN`**, **`ANY`**, and **`ALL`**, specifically for subqueries that return more than one `row`.
+Kabir's average-salary subquery worked because it returned exactly one value, a single number that could sit on the right side of a `>` comparison.
+
+His next question does not have that shape: "which employees work in the same department as Rajat Bhatia or Vikas Malhotra?" Finding the departments those two employees belong to could return more than one department, which means the subquery behind it would return more than one `row`, and a plain `=` or `>` comparison cannot compare a single value against a list.
+
+SQL provides different operators, **`IN`**, **`ANY`**, and **`ALL`**, specifically for subqueries that return more than one `row`.
 
 ## A Subquery Returning Exactly One Value
 
@@ -48,8 +50,7 @@ WHERE department IN (
 );
 ```
 
-- The inner `query` returns two departments, Engineering and Marketing, and `IN` checks whether the outer `row`'s `department` matches any value in that returned list, exactly the same way `IN` works with a hand-typed list of literal values.
-- This returns every Engineering and Marketing employee, four `rows` in total, without Kabir ever needing to know in advance which departments those two employees belonged to.
+The inner `query` returns two departments, Engineering and Marketing, and `IN` checks whether the outer `row`'s `department` matches any value in that returned list, exactly the same way `IN` works with a hand-typed list of literal values. This returns every Engineering and Marketing employee, four `rows` in total, without Kabir ever needing to know in advance which departments those two employees belonged to.
 
 ## Using ANY and ALL for Comparisons Against a List
 
@@ -146,6 +147,6 @@ If your `query` is `SELECT employee_name, salary FROM employees WHERE salary < A
 
 ## Conclusion
 
-- A subquery inside `WHERE` can compare against a single value directly, or against a whole list of values using `IN`, `NOT IN`, `ANY`, or `ALL`, each suited to a different shape of question, with `NOT IN` needing an explicit guard against `NULL` that `NOT EXISTS` does not.
-- Kabir can now compare an employee against a computed department, or against every value in an entire salary list, all in a single statement.
-- Subqueries do not have to live only inside `WHERE`; the next lesson puts one in place of an entire `table`.
+A subquery inside `WHERE` can compare against a single value directly, or against a whole list of values using `IN`, `NOT IN`, `ANY`, or `ALL`, each suited to a different shape of question, with `NOT IN` needing an explicit guard against `NULL` that `NOT EXISTS` does not. Kabir can now compare an employee against a computed department, or against every value in an entire salary list, all in a single statement.
+
+Subqueries do not have to live only inside `WHERE`; the next lesson puts one in place of an entire `table`.

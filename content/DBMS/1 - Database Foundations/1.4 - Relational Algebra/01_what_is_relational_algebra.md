@@ -1,12 +1,12 @@
 ## Introduction
 
-- Devika is three weeks into her internship at a bookstore chain's data team, and her manager has just asked her a question that catches her off guard: "The reporting tool says it can answer any question about our inventory.
-- How does it actually decide what to do with a question like 'show me every mystery novel under 400 rupees'?" Devika has used the reporting tool for weeks, typing in requests and watching tidy `tables` of results appear, but she has never once wondered what happens between her question and that answer.
+Devika is three weeks into her internship at a bookstore chain's data team, and her manager has just asked her a question that catches her off guard: "The reporting tool says it can answer any question about our inventory.
 
-- Her manager walks her through it.
-- Underneath every dashboard, every report, and every `query` a customer never sees, there is a small, precise set of operations that a `database` performs on its `tables`.
-- Each operation takes one or more `tables` as input and hands back another `table` as output, nothing more mysterious than that.
-- This formal toolkit, the mathematical foundation beneath every question a relational `database` can answer, is called **`relational algebra`**, and understanding it is what finally lets Devika see the machinery behind the dashboard instead of just trusting it blindly.
+How does it actually decide what to do with a question like 'show me every mystery novel under 400 rupees'?" Devika has used the reporting tool for weeks, typing in requests and watching tidy `tables` of results appear, but she has never once wondered what happens between her question and that answer.
+
+Her manager walks her through it. Underneath every dashboard, every report, and every `query` a customer never sees, there is a small, precise set of operations that a `database` performs on its `tables`. Each operation takes one or more `tables` as input and hands back another `table` as output, nothing more mysterious than that.
+
+This formal toolkit, the mathematical foundation beneath every question a relational `database` can answer, is called **`relational algebra`**, and understanding it is what finally lets Devika see the machinery behind the dashboard instead of just trusting it blindly.
 
 ## A Relation In, A Relation Out
 
@@ -81,9 +81,9 @@ Without a formal foundation like this, there would be no shared language in whic
 - A few more compare or combine two relations that share the same shape, treating `rows` almost like the members of a mathematical set.
 - And one especially important operation stitches two different relations together based on a shared value, which is how a `database` connects, say, a `table` of books to a `table` of orders.
 
-- None of these operations is complicated in isolation.
-- What makes `relational algebra` worth learning is that these few simple pieces, used together in sequence, are enough to express essentially any question a relational `database` can be asked.
-- A dashboard listing "mystery books under 400 rupees, sorted by title" and a report listing "every customer who ordered a travel book this month" both reduce, underneath the wording, to short chains of the very same handful of operations.
+None of these operations is complicated in isolation. What makes `relational algebra` worth learning is that these few simple pieces, used together in sequence, are enough to express essentially any question a relational `database` can be asked.
+
+A dashboard listing "mystery books under 400 rupees, sorted by title" and a report listing "every customer who ordered a travel book this month" both reduce, underneath the wording, to short chains of the very same handful of operations.
 
 ![Relational algebra operations chaining together because every output remains a relation](images/02_closure_chaining_relations.png)
 

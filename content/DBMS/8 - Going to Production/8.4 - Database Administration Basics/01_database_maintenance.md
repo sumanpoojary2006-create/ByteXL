@@ -1,8 +1,10 @@
 ## Introduction
 
-- Every `UPDATE` and `DELETE` covered across this entire course has been described as if the old `row`'s space simply disappears the moment the statement finishes.
-- In PostgreSQL specifically, that is not quite what happens: an updated or deleted `row`'s old version is marked as no longer current, but its physical space is not immediately reclaimed, since other concurrent `transactions`, under the isolation guarantees covered in an earlier unit, might still need to see that older version.
-- Left unmanaged, this leftover space accumulates, and **`database` maintenance** is the ongoing work of cleaning it up, keeping a production `database` healthy as it runs for months and years, not just correct at the moment each `query` executes.
+Every `UPDATE` and `DELETE` covered across this entire course has been described as if the old `row`'s space simply disappears the moment the statement finishes.
+
+In PostgreSQL specifically, that is not quite what happens: an updated or deleted `row`'s old version is marked as no longer current, but its physical space is not immediately reclaimed, since other concurrent `transactions`, under the isolation guarantees covered in an earlier unit, might still need to see that older version.
+
+Left unmanaged, this leftover space accumulates, and **`database` maintenance** is the ongoing work of cleaning it up, keeping a production `database` healthy as it runs for months and years, not just correct at the moment each `query` executes.
 
 ## Why Updates and Deletes Leave Behind Dead Rows
 
@@ -117,5 +119,4 @@ Running `DELETE FROM shipments WHERE shipment_id > 3000;` followed by `SELECT n_
 
 ## Conclusion
 
-- Because PostgreSQL keeps old `row` versions around to support concurrent, isolated reads, routine maintenance, reclaiming dead tuple space with `VACUUM` and keeping the optimizer's statistics current with `ANALYZE`, is essential to keeping a `database` healthy over time, and autovacuum handles this automatically for the large majority of real-world cases without manual intervention.
-- With the mechanics of keeping a `database` clean covered, the next lesson turns to protecting its data against loss entirely, through `backups`.
+Because PostgreSQL keeps old `row` versions around to support concurrent, isolated reads, routine maintenance, reclaiming dead tuple space with `VACUUM` and keeping the optimizer's statistics current with `ANALYZE`, is essential to keeping a `database` healthy over time, and autovacuum handles this automatically for the large majority of real-world cases without manual intervention. With the mechanics of keeping a `database` clean covered, the next lesson turns to protecting its data against loss entirely, through `backups`.

@@ -1,9 +1,10 @@
 ## Introduction
 
-- Kabir's `employees` `table` has a `manager_id` `column`, and a self `join` can pair each employee with their direct manager, one level up.
-- But the company's actual org chart runs deeper than one level: an intern reports to a team lead, who reports to a director, who reports to the CEO.
-- A self `join` can only ever reach exactly one level up per `join` written, so answering "list every person above this employee, all the way to the top, however many levels that takes" would need a different self `join` for every possible depth, and depth is not something Kabir can know in advance.
-- A **`recursive CTE`** solves this by repeating its own logic against its own growing result, one level at a time, until nothing new is left to add.
+Kabir's `employees` `table` has a `manager_id` `column`, and a self `join` can pair each employee with their direct manager, one level up. But the company's actual org chart runs deeper than one level: an intern reports to a team lead, who reports to a director, who reports to the CEO.
+
+A self `join` can only ever reach exactly one level up per `join` written, so answering "list every person above this employee, all the way to the top, however many levels that takes" would need a different self `join` for every possible depth, and depth is not something Kabir can know in advance.
+
+A **`recursive CTE`** solves this by repeating its own logic against its own growing result, one level at a time, until nothing new is left to add.
 
 ## The Shape of the Hierarchy
 
@@ -25,8 +26,7 @@ INSERT INTO employees (employee_id, employee_name, manager_id) VALUES
 (6, 'Farhan Sheikh', 4);
 ```
 
-- Ananya sits at the top with no manager, Rajat and Meghna report to her, Karan and Divya report to Rajat, and Farhan reports to Karan, four levels deep in one branch.
-- A single self `join` could find Farhan's direct manager, Karan, but not Karan's manager, Rajat, in the same `query` without another `join` added on top, and not Ananya above that without yet another.
+Ananya sits at the top with no manager, Rajat and Meghna report to her, Karan and Divya report to Rajat, and Farhan reports to Karan, four levels deep in one branch. A single self `join` could find Farhan's direct manager, Karan, but not Karan's manager, Rajat, in the same `query` without another `join` added on top, and not Ananya above that without yet another.
 
 ## Writing a Recursive CTE
 
@@ -49,8 +49,7 @@ FROM reporting_chain
 ORDER BY level;
 ```
 
-- The base case, `WHERE employee_id = 6`, starts with just Farhan Sheikh, at level 1.
-- The recursive case then `joins` `employees` back to `reporting_chain` itself, `e.employee_id = reporting_chain.manager_id`, finding whoever manages the person just added, and that newly found manager becomes part of `reporting_chain` for the next round:
+The base case, `WHERE employee_id = 6`, starts with just Farhan Sheikh, at level 1. The recursive case then `joins` `employees` back to `reporting_chain` itself, `e.employee_id = reporting_chain.manager_id`, finding whoever manages the person just added, and that newly found manager becomes part of `reporting_chain` for the next round:
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
   <thead>
@@ -111,8 +110,7 @@ FROM team_below
 ORDER BY level;
 ```
 
-- Starting from Ananya at level 1, the recursive case now matches `e.manager_id = team_below.employee_id`, finding everyone who reports to whoever was just added, which walks down the org chart instead of up it.
-- This returns all six employees, since every person in the `table` eventually traces back to Ananya, with `level` showing how many steps down from her each one sits.
+Starting from Ananya at level 1, the recursive case now matches `e.manager_id = team_below.employee_id`, finding everyone who reports to whoever was just added, which walks down the org chart instead of up it. This returns all six employees, since every person in the `table` eventually traces back to Ananya, with `level` showing how many steps down from her each one sits.
 
 ![A recursive CTE walking downward through the team tree from a manager](images/12_recursive_cte_walks_down_team_tree.png)
 
@@ -161,6 +159,6 @@ If your `query` bases the recursion on `WHERE employee_id = 2` and recurses with
 
 ## Conclusion
 
-- A `recursive CTE` repeats its own logic against a growing result set until no new `rows` appear, which is exactly the tool needed for hierarchies and graphs whose depth is not known in advance, whether that means walking up an org chart to find every manager above a person or walking down to find every report beneath one.
-- Kabir can now answer any reporting-chain question regardless of how many levels deep the company's structure goes.
-- With subqueries and CTEs covered from every angle, the next chapter turns to a different kind of advanced `query`: calculations that look across a set of `rows` without collapsing them into a single group.
+A `recursive CTE` repeats its own logic against a growing result set until no new `rows` appear, which is exactly the tool needed for hierarchies and graphs whose depth is not known in advance, whether that means walking up an org chart to find every manager above a person or walking down to find every report beneath one.
+
+Kabir can now answer any reporting-chain question regardless of how many levels deep the company's structure goes. With subqueries and CTEs covered from every angle, the next chapter turns to a different kind of advanced `query`: calculations that look across a set of `rows` without collapsing them into a single group.

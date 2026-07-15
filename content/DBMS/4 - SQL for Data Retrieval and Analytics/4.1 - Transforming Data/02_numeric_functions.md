@@ -55,8 +55,7 @@ FROM products;
 
 ## Working with Distance from Zero and Remainders
 
-- The webcam `row` has a `selling_price` of -1249.0000, a data-entry mistake from a refund adjustment that got applied to the wrong `column`.
-- Before fixing the source data, Arjun wants to see how far off each price is from zero, and separately, he wants to know which products can be packed into cartons of 6 with none left over.
+The webcam `row` has a `selling_price` of -1249.0000, a data-entry mistake from a refund adjustment that got applied to the wrong `column`. Before fixing the source data, Arjun wants to see how far off each price is from zero, and separately, he wants to know which products can be packed into cartons of 6 with none left over.
 
 ```postgresql with=products.sql
 SELECT product_name, selling_price, ABS(selling_price) AS positive_price
@@ -160,6 +159,6 @@ If your `query` is `SELECT product_name, ROUND(selling_price - cost_price, 2) AS
 
 ## Conclusion
 
-- Numeric `functions` turn raw, over-precise, or oddly signed numbers into values fit for a report or a receipt: `ROUND` for display precision, `CEIL` and `FLOOR` for deliberate rounding direction, `ABS` for magnitude regardless of sign, and `MOD` for remainders.
-- Arjun cleaned up prices and packing counts without changing a single stored value, only how the `query` presented them.
-- Dates and times bring their own quirks, and SQL has a matching toolkit for those too.
+Numeric `functions` turn raw, over-precise, or oddly signed numbers into values fit for a report or a receipt: `ROUND` for display precision, `CEIL` and `FLOOR` for deliberate rounding direction, `ABS` for magnitude regardless of sign, and `MOD` for remainders. Arjun cleaned up prices and packing counts without changing a single stored value, only how the `query` presented them.
+
+Dates and times bring their own quirks, and SQL has a matching toolkit for those too.

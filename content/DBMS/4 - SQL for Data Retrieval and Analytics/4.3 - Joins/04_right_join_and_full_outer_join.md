@@ -1,8 +1,8 @@
 ## Introduction
 
-- Zoya now understands `LEFT JOIN` well enough to solve it a different way: instead of writing `restaurants LEFT JOIN orders` to protect every restaurant, she could write `orders RIGHT JOIN restaurants` and protect the same `table` from the other side.
-- A **`RIGHT JOIN`** is the mirror image of a `LEFT JOIN`, guaranteeing every `row` from the `table` named after `RIGHT JOIN` survives, regardless of a match.
-- There is also a third option, a **`FULL OUTER JOIN`**, for the rarer case where unmatched `rows` on both sides need to stay visible at the same time, not just one side or the other.
+Zoya now understands `LEFT JOIN` well enough to solve it a different way: instead of writing `restaurants LEFT JOIN orders` to protect every restaurant, she could write `orders RIGHT JOIN restaurants` and protect the same `table` from the other side. A **`RIGHT JOIN`** is the mirror image of a `LEFT JOIN`, guaranteeing every `row` from the `table` named after `RIGHT JOIN` survives, regardless of a match.
+
+There is also a third option, a **`FULL OUTER JOIN`**, for the rarer case where unmatched `rows` on both sides need to stay visible at the same time, not just one side or the other.
 
 ## RIGHT JOIN as the Mirror of LEFT JOIN
 
@@ -57,9 +57,9 @@ FROM orders
 RIGHT JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id;
 ```
 
-- Every one of the 4 restaurants appears here, including Taco Town, whose `row` shows `NULL` for `order_id` since it has never received an order.
-- This is exactly the same result the previous lesson's `restaurants LEFT JOIN orders` produced, just written with the `table` order reversed and the `join` keyword swapped.
-- In practice, most SQL style guides, and most of the lessons in this course, prefer `LEFT JOIN` over `RIGHT JOIN` for readability, since it reads left to right in the same order the `tables` are typically listed, but both exist and behave as exact mirrors of each other.
+Every one of the 4 restaurants appears here, including Taco Town, whose `row` shows `NULL` for `order_id` since it has never received an order. This is exactly the same result the previous lesson's `restaurants LEFT JOIN orders` produced, just written with the `table` order reversed and the `join` keyword swapped.
+
+In practice, most SQL style guides, and most of the lessons in this course, prefer `LEFT JOIN` over `RIGHT JOIN` for readability, since it reads left to right in the same order the `tables` are typically listed, but both exist and behave as exact mirrors of each other.
 
 ![RIGHT JOIN protecting every row from the right table even when no matching order exists](images/07_right_join_keeps_right_rows.png)
 
@@ -68,6 +68,7 @@ RIGHT JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id;
 Because a `RIGHT JOIN` is only ever the mirror of a `LEFT JOIN`, any `query` using one can be rewritten using the other in two steps:
 
 1. Swap which `table` is named first, right after `FROM`.
+
 2. Swap `RIGHT JOIN` for `LEFT JOIN`.
 
 ```postgresql with=delivery.sql
@@ -76,8 +77,7 @@ FROM restaurants
 LEFT JOIN orders ON restaurants.restaurant_id = orders.restaurant_id;
 ```
 
-- This produces the identical result to the `RIGHT JOIN` version above.
-- Since `LEFT JOIN` is far more commonly used across real codebases, being able to mentally convert a `RIGHT JOIN` into an equivalent `LEFT JOIN` makes it easier to read `queries` written by other people without keeping two separate mental models.
+This produces the identical result to the `RIGHT JOIN` version above. Since `LEFT JOIN` is far more commonly used across real codebases, being able to mentally convert a `RIGHT JOIN` into an equivalent `LEFT JOIN` makes it easier to read `queries` written by other people without keeping two separate mental models.
 
 ## Protecting Both Sides at Once with FULL OUTER JOIN
 
@@ -89,8 +89,7 @@ FROM customers
 FULL OUTER JOIN orders ON customers.customer_id = orders.customer_id;
 ```
 
-- This result includes Neha Bhatt with `NULL` order `columns`, exactly as a `LEFT JOIN` would, and it would also include any order `row` with no matching customer, exactly as a `RIGHT JOIN` would, though in this particular data every order does have a valid customer.
-- A `FULL OUTER JOIN` is essentially a `LEFT JOIN` and a `RIGHT JOIN` combined into a single result, with no `row` from either side left out.
+This result includes Neha Bhatt with `NULL` order `columns`, exactly as a `LEFT JOIN` would, and it would also include any order `row` with no matching customer, exactly as a `RIGHT JOIN` would, though in this particular data every order does have a valid customer. A `FULL OUTER JOIN` is essentially a `LEFT JOIN` and a `RIGHT JOIN` combined into a single result, with no `row` from either side left out.
 
 ![FULL OUTER JOIN keeping unmatched rows from both tables in one result](images/08_full_outer_join_keeps_both_sides.png)
 
@@ -105,8 +104,7 @@ FULL OUTER JOIN orders ON customers.customer_id = orders.customer_id
 WHERE customers.customer_id IS NULL OR orders.order_id IS NULL;
 ```
 
-- This surfaces every `row` that is missing a partner on either side, in one `query`.
-- With the data used across this chapter, only Neha Bhatt qualifies, since every order in this dataset does have a matching customer, but the pattern itself is what generalizes to any dataset where mismatches could appear on both sides.
+This surfaces every `row` that is missing a partner on either side, in one `query`. With the data used across this chapter, only Neha Bhatt qualifies, since every order in this dataset does have a matching customer, but the pattern itself is what generalizes to any dataset where mismatches could appear on both sides.
 
 ## The Full Join Family at a Glance
 

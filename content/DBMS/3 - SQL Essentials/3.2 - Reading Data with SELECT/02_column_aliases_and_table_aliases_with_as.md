@@ -1,10 +1,8 @@
 ## Introduction
 
-- Divya is putting together a one-page summary for the Dean's office, and she needs the student list to look presentable, not like a raw `database` dump.
-- She writes a quick `query`, `SELECT full_name, city FROM students;`, and the result comes back correctly, but the `column` headers read `full_name` and `city`, underscore and all, exactly as they are stored internally.
-- For her own work that is fine, but this sheet is going in front of people who have never seen a `database` `table` in their life.
-- She wants the headers to read "Student Name" and "Location" instead.
-- Renaming a `column` in the output, without touching the actual `table`, is what a **`column` alias** does, and SQL gives her a clean way to write it: the `AS` keyword.
+Divya is putting together a one-page summary for the Dean's office, and she needs the student list to look presentable, not like a raw `database` dump. She writes a quick `query`, `SELECT full_name, city FROM students;`, and the result comes back correctly, but the `column` headers read `full_name` and `city`, underscore and all, exactly as they are stored internally.
+
+For her own work that is fine, but this sheet is going in front of people who have never seen a `database` `table` in their life. She wants the headers to read "Student Name" and "Location" instead. Renaming a `column` in the output, without touching the actual `table`, is what a **`column` alias** does, and SQL gives her a clean way to write it: the `AS` keyword.
 
 ## Renaming a Column With AS
 
@@ -53,24 +51,24 @@ FROM students;
 
 This produces the exact same result as the version with `AS`. PostgreSQL is happy to accept either form, so why bother typing the extra word?
 
-- Without it, a reader scanning the `query` has to pause and work out whether `student_name` is a second `column` being selected or a rename of the one before it.
-- With `AS` sitting in between, the intent is unambiguous at a glance: this word is a label, not another `column`.
+Without it, a reader scanning the `query` has to pause and work out whether `student_name` is a second `column` being selected or a rename of the one before it. With `AS` sitting in between, the intent is unambiguous at a glance: this word is a label, not another `column`.
 
 The two extra characters buy real clarity, which is why it is worth the habit even though PostgreSQL will not force it on you.
 
 ## Giving a Table a Short Alias
 
-- Aliases are not only for `columns`.
-- A `table` can be given a short alias too, and once it has one, that alias can be used anywhere else in the same `query` in place of the full `table` name.
-- It looks unnecessary on a `query` this small, but the habit pays off the moment a `query` starts pulling from more than one `table`, which is exactly where the students, courses, and enrollments `tables` are eventually headed together.
+Aliases are not only for `columns`. A `table` can be given a short alias too, and once it has one, that alias can be used anywhere else in the same `query` in place of the full `table` name.
+
+It looks unnecessary on a `query` this small, but the habit pays off the moment a `query` starts pulling from more than one `table`, which is exactly where the students, courses, and enrollments `tables` are eventually headed together.
 
 ```postgresql with=students.sql
 SELECT s.full_name AS student_name, s.city AS location
 FROM students AS s;
 ```
 
-- Here `students AS s` tells PostgreSQL that `s` now stands for the students `table` for the rest of this `query`, so `s.full_name` means "the `full_name` `column`, from the `table` aliased as `s`." The `AS` before a `table` alias is optional too, and it is common to see it dropped, `FROM students s`, which behaves identically.
-- Divya keeps it in her own `queries` because it reads more clearly to anyone who has not seen the `query` before.
+Here `students AS s` tells PostgreSQL that `s` now stands for the students `table` for the rest of this `query`, so `s.full_name` means "the `full_name` `column`, from the `table` aliased as `s`." The `AS` before a `table` alias is optional too, and it is common to see it dropped, `FROM students s`, which behaves identically.
+
+Divya keeps it in her own `queries` because it reads more clearly to anyone who has not seen the `query` before.
 
 ![A students table receiving the short table alias s for use in one query](images/04_table_alias_short_name.png)
 
@@ -116,8 +114,7 @@ Divya's next request from the Dean's office is a sheet with headers "Full Name" 
 -- Write your query below
 ```
 
-- A working answer looks like `SELECT s.full_name AS "Full Name", s.email AS "Email Address" FROM students AS s;`.
-- Notice the double quotes around aliases that contain a space, since PostgreSQL treats an unquoted alias as a single word and would otherwise misread "Full Name" as two separate tokens.
+A working answer looks like `SELECT s.full_name AS "Full Name", s.email AS "Email Address" FROM students AS s;`. Notice the double quotes around aliases that contain a space, since PostgreSQL treats an unquoted alias as a single word and would otherwise misread "Full Name" as two separate tokens.
 
 ## Conclusion
 

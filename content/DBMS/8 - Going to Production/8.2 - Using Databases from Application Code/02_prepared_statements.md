@@ -1,8 +1,8 @@
 ## Introduction
 
-- Once a `connection` is open, an application still has to decide exactly how to send a `query` that includes a value only known at runtime, such as a customer-entered order ID.
-- The tempting, simplest approach is to build the SQL text by directly pasting that value into a string.
-- This is a genuine hazard, both for correctness and for security, and the fix is a mechanism nearly every `database` and client library supports directly: a **`prepared statement`**, which sends the `query` structure and its runtime values as two separate things, rather than one combined string.
+Once a `connection` is open, an application still has to decide exactly how to send a `query` that includes a value only known at runtime, such as a customer-entered order ID. The tempting, simplest approach is to build the SQL text by directly pasting that value into a string.
+
+This is a genuine hazard, both for correctness and for security, and the fix is a mechanism nearly every `database` and client library supports directly: a **`prepared statement`**, which sends the `query` structure and its runtime values as two separate things, rather than one combined string.
 
 ## The Problem with Building SQL by Pasting in Values
 
@@ -33,8 +33,9 @@ SELECT * FROM shipments WHERE shipment_id = 1;
 SELECT * FROM shipments WHERE shipment_id = 1 OR 1=1;
 ```
 
-- The second `query` demonstrates exactly what happens once user-provided text is treated as part of the SQL itself rather than as a single, inert value: the `query`'s actual logic changes entirely, returning all three shipments instead of the one that was asked for.
-- This category of problem, letting untrusted input change a `query`'s structure, is the foundation of SQL injection, covered in full in a later chapter of this unit; this lesson focuses on the mechanism, `prepared statements`, that prevents it as a natural side effect of how it works.
+The second `query` demonstrates exactly what happens once user-provided text is treated as part of the SQL itself rather than as a single, inert value: the `query`'s actual logic changes entirely, returning all three shipments instead of the one that was asked for.
+
+This category of problem, letting untrusted input change a `query`'s structure, is the foundation of SQL injection, covered in full in a later chapter of this unit; this lesson focuses on the mechanism, `prepared statements`, that prevents it as a natural side effect of how it works.
 
 ## Separating Query Structure from Values with PREPARE
 
@@ -120,6 +121,6 @@ If your statement is `PREPARE get_by_destination (TEXT) AS SELECT * FROM shipmen
 
 ## Conclusion
 
-- A `prepared statement` separates a `query`'s fixed structure from the runtime values it operates on, letting an application safely handle untrusted input as pure data that can never alter what the `query` actually does, while also allowing the `database` to reuse a parsed and planned `query` across repeated executions.
-- Every `database` client library's "parameterized `query`" feature is this same mechanism, just expressed through that language's own syntax rather than SQL's `PREPARE` and `EXECUTE` directly.
-- The next lesson returns to a familiar topic, `transactions`, this time from the specific perspective of application code managing them across a live `connection`.
+A `prepared statement` separates a `query`'s fixed structure from the runtime values it operates on, letting an application safely handle untrusted input as pure data that can never alter what the `query` actually does, while also allowing the `database` to reuse a parsed and planned `query` across repeated executions.
+
+Every `database` client library's "parameterized `query`" feature is this same mechanism, just expressed through that language's own syntax rather than SQL's `PREPARE` and `EXECUTE` directly. The next lesson returns to a familiar topic, `transactions`, this time from the specific perspective of application code managing them across a live `connection`.

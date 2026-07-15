@@ -1,8 +1,10 @@
 ## Introduction
 
-- Every `CREATE TABLE` and `ALTER TABLE` in this course has been run once, by hand, against a single `database`.
-- A real application's `schema` changes constantly over its lifetime, new `columns`, new `tables`, new `constraint`s, and that `schema` has to change consistently across a developer's laptop, a testing environment, and a live production `database` serving real users, all without anyone manually re-typing the same `ALTER TABLE` statements in three different places and hoping they match.
-- A **`database` migration** is a versioned, ordered, tracked script that applies exactly one `schema` change, and the discipline built around running them is called `schema` versioning.
+Every `CREATE TABLE` and `ALTER TABLE` in this course has been run once, by hand, against a single `database`.
+
+A real application's `schema` changes constantly over its lifetime, new `columns`, new `tables`, new `constraint`s, and that `schema` has to change consistently across a developer's laptop, a testing environment, and a live production `database` serving real users, all without anyone manually re-typing the same `ALTER TABLE` statements in three different places and hoping they match.
+
+A **`database` migration** is a versioned, ordered, tracked script that applies exactly one `schema` change, and the discipline built around running them is called `schema` versioning.
 
 ## The Problem Migrations Solve
 
@@ -22,11 +24,11 @@ ALTER TABLE shipments ADD COLUMN priority TEXT DEFAULT 'normal';
 SELECT * FROM shipments;
 ```
 
-- This works perfectly on this one `database`.
-- The problem appears the moment there is more than one `database` involved: did this same `ALTER TABLE` get run against the testing environment.
-- Against production.
-- In what order, if there were several changes made this week.
-- Without a system tracking exactly which changes have been applied where, the honest answer is often "nobody is entirely sure," which is precisely the uncertainty migrations exist to remove.
+This works perfectly on this one `database`. The problem appears the moment there is more than one `database` involved: did this same `ALTER TABLE` get run against the testing environment.
+
+Against production. In what order, if there were several changes made this week.
+
+Without a system tracking exactly which changes have been applied where, the honest answer is often "nobody is entirely sure," which is precisely the uncertainty migrations exist to remove.
 
 ## Tracking Applied Migrations with a Version Table
 
@@ -69,8 +71,9 @@ Writing the `ALTER TABLE` and the corresponding insert into `schema_migrations` 
 
 ## Why Migrations Should Avoid Destructive Shortcuts
 
-- A tempting but dangerous migration pattern is dropping and recreating a `table` to make a structural change, which discards every `row` of existing data along with it.
-- A properly written migration changes structure while preserving data, using `ALTER TABLE ADD COLUMN`, `ALTER TABLE ALTER COLUMN`, and similar structure-preserving statements, exactly the commands covered when SQL data definition was first introduced early in this course, rather than `DROP TABLE` followed by a fresh `CREATE TABLE`.
+A tempting but dangerous migration pattern is dropping and recreating a `table` to make a structural change, which discards every `row` of existing data along with it.
+
+A properly written migration changes structure while preserving data, using `ALTER TABLE ADD COLUMN`, `ALTER TABLE ALTER COLUMN`, and similar structure-preserving statements, exactly the commands covered when SQL data definition was first introduced early in this course, rather than `DROP TABLE` followed by a fresh `CREATE TABLE`.
 
 ```postgresql with=migrations_demo.sql
 -- A dangerous shortcut, never appropriate for a production migration:
@@ -127,5 +130,6 @@ A correct migration runs `ALTER TABLE shipments ADD COLUMN carrier TEXT;` follow
 
 ## Conclusion
 
-- A `database` migration is a small, versioned, tracked script that applies exactly one `schema` change, recorded in a dedicated `table` so the same set of migrations can be safely and consistently applied across a developer's laptop, a testing environment, and production, with structure-preserving statements protecting existing data rather than destructive shortcuts that discard it.
-- With connecting, `prepared statements`, `transactions`, pooling, ORMs, and migrations all covered from the application's side, the next chapter turns to a concern that touches every one of them: keeping a `database` secure.
+A `database` migration is a small, versioned, tracked script that applies exactly one `schema` change, recorded in a dedicated `table` so the same set of migrations can be safely and consistently applied across a developer's laptop, a testing environment, and production, with structure-preserving statements protecting existing data rather than destructive shortcuts that discard it.
+
+With connecting, `prepared statements`, `transactions`, pooling, ORMs, and migrations all covered from the application's side, the next chapter turns to a concern that touches every one of them: keeping a `database` secure.

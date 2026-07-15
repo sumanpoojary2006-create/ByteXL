@@ -7,8 +7,7 @@ Priya handles finance reporting for a small online bookstore, and every question
 - "What is the average order value?"
 - "What was our biggest single sale?"
 
-- None of those questions can be answered by looking at one `row` of the `orders` `table`; each one requires looking at every `row` and boiling it down to a single number.
-- SQL calls this **aggregation**, and it provides a small set of built-in `aggregate functions`, `COUNT`, `SUM`, `AVG`, `MIN`, and `MAX`, that do exactly this kind of summarizing.
+None of those questions can be answered by looking at one `row` of the `orders` `table`; each one requires looking at every `row` and boiling it down to a single number. SQL calls this **aggregation**, and it provides a small set of built-in `aggregate functions`, `COUNT`, `SUM`, `AVG`, `MIN`, and `MAX`, that do exactly this kind of summarizing.
 
 ## Counting Rows
 
@@ -85,8 +84,7 @@ SELECT COUNT(*) AS total_orders,
 FROM orders;
 ```
 
-- This single `query` answers every question the founders originally asked, in one pass over the `table`, with `ROUND` from the previous chapter cleaning up the average to two decimal places.
-- This is the shape a founder-facing summary dashboard `query` usually takes: a handful of `aggregate functions`, no `GROUP BY` yet, producing exactly one summary `row` for the whole `table`.
+This single `query` answers every question the founders originally asked, in one pass over the `table`, with `ROUND` from the previous chapter cleaning up the average to two decimal places. This is the shape a founder-facing summary dashboard `query` usually takes: a handful of `aggregate functions`, no `GROUP BY` yet, producing exactly one summary `row` for the whole `table`.
 
 ## Aggregate Functions at a Glance
 

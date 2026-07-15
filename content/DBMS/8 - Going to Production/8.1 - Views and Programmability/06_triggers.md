@@ -1,7 +1,6 @@
 ## Introduction
 
-- The `mark_shipment_delivered` `procedure` from earlier in this chapter guarantees a log entry is created, but only if every caller remembers to use that `procedure` instead of writing a plain `UPDATE` directly against `shipments`.
-- Devraj wants a stronger guarantee: no matter how a shipment's status changes, a log entry should always be created automatically:
+The `mark_shipment_delivered` `procedure` from earlier in this chapter guarantees a log entry is created, but only if every caller remembers to use that `procedure` instead of writing a plain `UPDATE` directly against `shipments`. Devraj wants a stronger guarantee: no matter how a shipment's status changes, a log entry should always be created automatically:
 
 - Through the `procedure`
 - Through a direct `UPDATE`
@@ -62,8 +61,7 @@ UPDATE shipments SET status = 'delivered' WHERE shipment_id = 1;
 SELECT * FROM shipment_log;
 ```
 
-- A plain `UPDATE`, with no `procedure`, no special syntax, no cooperation from Devraj's colleague required, produced a log entry automatically, capturing both the old status, `in_transit`, and the new one, `delivered`.
-- This is the core advantage a `trigger` has over the `procedure` from earlier in this chapter: the logging behavior is now a property of the `table` itself, impossible to accidentally skip.
+A plain `UPDATE`, with no `procedure`, no special syntax, no cooperation from Devraj's colleague required, produced a log entry automatically, capturing both the old status, `in_transit`, and the new one, `delivered`. This is the core advantage a `trigger` has over the `procedure` from earlier in this chapter: the logging behavior is now a property of the `table` itself, impossible to accidentally skip.
 
 ![A trigger automatically creates a log entry when the table is updated](images/11_trigger_update_creates_log_automatically.png)
 
@@ -92,8 +90,7 @@ EXECUTE FUNCTION prevent_invalid_status();
 UPDATE shipments SET status = 'lost_in_space' WHERE shipment_id = 2;
 ```
 
-- This `UPDATE` is rejected outright, with the `trigger`'s own `RAISE EXCEPTION` message, before the invalid status ever reaches the `table`, since `BEFORE UPDATE` runs ahead of the actual write and can refuse it entirely by raising an error.
-- This is a form of validation logic that goes beyond what a plain `CHECK` `constraint` can express, since it can reference custom error messages and arbitrary procedural logic, not just a fixed boolean condition.
+This `UPDATE` is rejected outright, with the `trigger`'s own `RAISE EXCEPTION` message, before the invalid status ever reaches the `table`, since `BEFORE UPDATE` runs ahead of the actual write and can refuse it entirely by raising an error. This is a form of validation logic that goes beyond what a plain `CHECK` `constraint` can express, since it can reference custom error messages and arbitrary procedural logic, not just a fixed boolean condition.
 
 ## Triggers Can Make a Joined View Writable
 
@@ -164,11 +161,10 @@ Create an `AFTER INSERT` `trigger` on `shipments` that logs new shipments into `
 -- Write your trigger function, trigger, and insert below
 ```
 
-- A correct `trigger` `function` inserts into `shipment_log` using `NEW.shipment_id` and `NEW.status`, with `old_status` left as `NULL`, attached via `CREATE TRIGGER ...
-- AFTER `INSERT` ON shipments FOR EACH ROW EXECUTE FUNCTION ...`; inserting a new shipment afterward produces a matching log `row` automatically, with no explicit logging statement needed at the call site.
+A correct `trigger` `function` inserts into `shipment_log` using `NEW.shipment_id` and `NEW.status`, with `old_status` left as `NULL`, attached via `CREATE TRIGGER ... AFTER `INSERT` ON shipments FOR EACH ROW EXECUTE FUNCTION ...`; inserting a new shipment afterward produces a matching log `row` automatically, with no explicit logging statement needed at the call site.
 
 ## Conclusion
 
-- A `trigger` runs automatically in response to an insert, update, or delete, with `BEFORE` `trigger`s able to validate or reject a change before it happens, `AFTER` `trigger`s able to react once a change has completed, and `INSTEAD OF` `trigger`s able to make an otherwise non-writable `view` accept writes, all without requiring any cooperation from whoever issues the original statement.
-- Devraj's shipment status changes are now logged unconditionally, a guarantee no `procedure` alone could offer.
-- With `view`s, `materialized views`, `procedures`, `functions`, and `trigger`s all covered, the next chapter turns to how an actual application connects to and uses a `database` like this one from real code.
+A `trigger` runs automatically in response to an insert, update, or delete, with `BEFORE` `trigger`s able to validate or reject a change before it happens, `AFTER` `trigger`s able to react once a change has completed, and `INSTEAD OF` `trigger`s able to make an otherwise non-writable `view` accept writes, all without requiring any cooperation from whoever issues the original statement.
+
+Devraj's shipment status changes are now logged unconditionally, a guarantee no `procedure` alone could offer. With `view`s, `materialized views`, `procedures`, `functions`, and `trigger`s all covered, the next chapter turns to how an actual application connects to and uses a `database` like this one from real code.

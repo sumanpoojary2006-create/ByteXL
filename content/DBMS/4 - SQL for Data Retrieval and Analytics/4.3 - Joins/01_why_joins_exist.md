@@ -1,10 +1,10 @@
 ## Introduction
 
-- Zoya is building order reports for a food delivery startup, and her very first attempt at a report exposes a problem the earlier chapters never had to deal with.
-- The `orders` `table` stores a `customer_id` and a `restaurant_id` on every `row`, but not a single customer name or restaurant name.
-- That is not a mistake; it is the relational model working exactly as intended, storing customer details once in a `customers` `table` and restaurant details once in a `restaurants` `table`, so a customer's name is never duplicated across dozens of orders.
-- The catch is that a report needs those names shown together, on the same line, and a single `SELECT` against `orders` alone simply cannot produce that.
-- This is precisely the problem a **`join`** solves: combining `rows` from two or more `tables` based on a matching `column` between them.
+Zoya is building order reports for a food delivery startup, and her very first attempt at a report exposes a problem the earlier chapters never had to deal with. The `orders` `table` stores a `customer_id` and a `restaurant_id` on every `row`, but not a single customer name or restaurant name.
+
+That is not a mistake; it is the relational model working exactly as intended, storing customer details once in a `customers` `table` and restaurant details once in a `restaurants` `table`, so a customer's name is never duplicated across dozens of orders. The catch is that a report needs those names shown together, on the same line, and a single `SELECT` against `orders` alone simply cannot produce that.
+
+This is precisely the problem a **`join`** solves: combining `rows` from two or more `tables` based on a matching `column` between them.
 
 ## Seeing the Problem Without a Join
 
@@ -57,17 +57,13 @@ INSERT INTO orders (order_id, customer_id, restaurant_id, amount, order_date) VA
 SELECT * FROM orders;
 ```
 
-- Every `row` here is technically complete, an order id, who placed it, which restaurant it went to, an amount, and a date, but "who placed it" is just the number 1 or 2, not a name.
-- Anyone reading this `table` has to separately look up `customer_id` 1 in the `customers` `table` to know it means Aditi Kulkarni.
-- That lookup step, done manually, is exactly what a `join` automates.
+Every `row` here is technically complete, an order id, who placed it, which restaurant it went to, an amount, and a date, but "who placed it" is just the number 1 or 2, not a name. Anyone reading this `table` has to separately look up `customer_id` 1 in the `customers` `table` to know it means Aditi Kulkarni. That lookup step, done manually, is exactly what a `join` automates.
 
 ## Why the Data Is Split Up Like This in the First Place
 
-- It might seem simpler to just store `customer_name` directly on every order `row` and skip the separate `customers` `table` entirely.
-- That approach breaks down quickly.
-- If Aditi places ten orders, her name would be duplicated ten times, and if she ever changed her registered name, all ten `rows` would need updating instead of one.
-- Keeping customer details in exactly one place, `customers`, and referencing that customer by id from `orders`, is the same normalization principle covered earlier in the course: one fact, stored once, referenced everywhere it is needed.
-- A `join` is the tool that reassembles those separated facts back into one readable result whenever a `query` needs them together.
+It might seem simpler to just store `customer_name` directly on every order `row` and skip the separate `customers` `table` entirely. That approach breaks down quickly. If Aditi places ten orders, her name would be duplicated ten times, and if she ever changed her registered name, all ten `rows` would need updating instead of one.
+
+Keeping customer details in exactly one place, `customers`, and referencing that customer by id from `orders`, is the same normalization principle covered earlier in the course: one fact, stored once, referenced everywhere it is needed. A `join` is the tool that reassembles those separated facts back into one readable result whenever a `query` needs them together.
 
 ## A First Look at Combining Two Tables
 
@@ -82,6 +78,7 @@ JOIN customers ON orders.customer_id = customers.customer_id;
 `JOIN customers ON orders.customer_id = customers.customer_id` tells the `database` exactly how the two `tables` relate: a `row` in `orders` matches a `row` in `customers` when their `customer_id` values are equal. Two things happen for every match found:
 
 1. The `database` locates the matching `row` in `customers`.
+
 2. It produces one combined `row` carrying `columns` from both `tables`, which is how `customer_name`, a `column` that does not exist on `orders` at all, ends up in this result.
 
 ![A join using matching ids to bring customer and restaurant names into an order report](images/01_join_lookup_ids_to_names.png)

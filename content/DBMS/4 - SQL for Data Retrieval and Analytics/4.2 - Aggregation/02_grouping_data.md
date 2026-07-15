@@ -1,8 +1,8 @@
 ## Introduction
 
-- Priya's one-number summaries answered the founders' first round of questions, but the very next question was sharper: "which category earns us the most, Fiction, Non-Fiction, or Children's books?" A single `SUM(amount)` across the whole `orders` `table` cannot answer that, since it blends every category into one blurred total.
-- What Priya actually needs is the `table` split into separate buckets, one per category, with the `aggregate functions` run separately inside each bucket.
-- SQL's **`GROUP BY`** clause does exactly this: it partitions `rows` into groups before the `aggregate functions` ever run.
+Priya's one-number summaries answered the founders' first round of questions, but the very next question was sharper: "which category earns us the most, Fiction, Non-Fiction, or Children's books?" A single `SUM(amount)` across the whole `orders` `table` cannot answer that, since it blends every category into one blurred total.
+
+What Priya actually needs is the `table` split into separate buckets, one per category, with the `aggregate functions` run separately inside each bucket. SQL's **`GROUP BY`** clause does exactly this: it partitions `rows` into groups before the `aggregate functions` ever run.
 
 ## Splitting Rows Into Groups
 
@@ -73,12 +73,12 @@ FROM orders
 GROUP BY category;
 ```
 
-- This `query` fails, because once `rows` are collapsed into a `category` group, `customer_name` no longer refers to a single value within that group
-- the Fiction group alone contains orders from both Ishita Rao and Vivek Menon, so the `database` has no single `customer_name` to return for that `row`.
+This `query` fails, because once `rows` are collapsed into a `category` group, `customer_name` no longer refers to a single value within that group the Fiction group alone contains orders from both Ishita Rao and Vivek Menon, so the `database` has no single `customer_name` to return for that `row`.
 
 The rule that follows from this: every `column` in the `SELECT` list must do one of two things:
 
 1. Appear in `GROUP BY`.
+
 2. Be wrapped in an `aggregate function` like `SUM`, `COUNT`, `MIN`, or `MAX`.
 
 Either way, the `database` always knows exactly one value to produce per group.
@@ -95,8 +95,7 @@ FROM orders
 GROUP BY customer_name, category;
 ```
 
-- Each `row` in the result now represents one customer and one category together, so Ishita Rao's Fiction orders are summarized separately from her Non-Fiction order, even though both belong to the same customer.
-- This level of detail is useful for a report that needs to see spending patterns broken down two ways at once, rather than by category or by customer alone.
+Each `row` in the result now represents one customer and one category together, so Ishita Rao's Fiction orders are summarized separately from her Non-Fiction order, even though both belong to the same customer. This level of detail is useful for a report that needs to see spending patterns broken down two ways at once, rather than by category or by customer alone.
 
 ## Ordering Grouped Results
 

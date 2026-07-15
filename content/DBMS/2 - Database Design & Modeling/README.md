@@ -147,8 +147,6 @@ Goal of this unit: Model real-world systems using ER diagrams, design well-struc
   </tbody>
 </table>
 
-- Each lesson follows the house style: a standardized **Introduction** heading (no page-title H1), a story-led flow with real-world examples under natural headings, and a closing **Conclusion**.
-- This unit precedes SQL Essentials, so `schema` and normalization ideas are illustrated with prose and Markdown `tables` of sample data rather than runnable SQL.
-- No emojis, no em dashes, no forward or backward references to other units or chapters.
+Each lesson follows the house style: a standardized **Introduction** heading (no page-title H1), a story-led flow with real-world examples under natural headings, and a closing **Conclusion**. This unit precedes SQL Essentials, so `schema` and normalization ideas are illustrated with prose and Markdown `tables` of sample data rather than runnable SQL. No emojis, no em dashes, no forward or backward references to other units or chapters.
 
 _Status: all 19 lessons authored and reviewed._

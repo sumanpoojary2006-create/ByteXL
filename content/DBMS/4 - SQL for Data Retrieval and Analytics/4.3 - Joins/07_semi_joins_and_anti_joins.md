@@ -1,9 +1,8 @@
 ## Introduction
 
-- Back in the `LEFT JOIN` lesson, Zoya found customers with no orders by joining `customers` to `orders` and filtering for `WHERE orders.order_id IS NULL`.
-- That `query` works, but it is solving a check-for-existence question using a tool built for combining `columns`, and it quietly relies on picking exactly the right `column` to check for `NULL`.
-- There is a more direct way to ask "does a matching `row` exist" or "does no matching `row` exist," using `EXISTS` and `NOT EXISTS`.
-- These patterns are known as a **semi `join`**, which returns `rows` from one `table` where a match exists elsewhere without pulling in any `columns` from that other `table`, and an **anti `join`**, which returns `rows` where no match exists.
+Back in the `LEFT JOIN` lesson, Zoya found customers with no orders by joining `customers` to `orders` and filtering for `WHERE orders.order_id IS NULL`. That `query` works, but it is solving a check-for-existence question using a tool built for combining `columns`, and it quietly relies on picking exactly the right `column` to check for `NULL`.
+
+There is a more direct way to ask "does a matching `row` exist" or "does no matching `row` exist," using `EXISTS` and `NOT EXISTS`. These patterns are known as a **semi `join`**, which returns `rows` from one `table` where a match exists elsewhere without pulling in any `columns` from that other `table`, and an **anti `join`**, which returns `rows` where no match exists.
 
 ## Finding Rows That Have a Match, Without Pulling in Columns
 
@@ -106,14 +105,15 @@ FROM customers
 WHERE customer_id NOT IN (SELECT customer_id FROM orders WHERE customer_id IS NOT NULL);
 ```
 
-- The first `query` is a semi `join` written with `IN`, returning customers whose id appears anywhere in the `orders.customer_id` `column`.
-- The second is an anti `join` written with `NOT IN`, and it deliberately filters out `NULL` values from the subquery first with `WHERE customer_id IS NOT NULL`; if that filter were left out and even one `NULL` slipped into the list `NOT IN` compares against, the entire `NOT IN` condition would return no `rows` at all for every customer, a well-known trap with `NOT IN` that `NOT EXISTS` does not share.
-- For that reason, `NOT EXISTS` is generally the safer default over `NOT IN` whenever the compared `column` can contain `NULL`.
+The first `query` is a semi `join` written with `IN`, returning customers whose id appears anywhere in the `orders.customer_id` `column`.
+
+The second is an anti `join` written with `NOT IN`, and it deliberately filters out `NULL` values from the subquery first with `WHERE customer_id IS NOT NULL`; if that filter were left out and even one `NULL` slipped into the list `NOT IN` compares against, the entire `NOT IN` condition would return no `rows` at all for every customer, a well-known trap with `NOT IN` that `NOT EXISTS` does not share.
+
+For that reason, `NOT EXISTS` is generally the safer default over `NOT IN` whenever the compared `column` can contain `NULL`.
 
 ## Why Semi and Anti Joins Are Not Written with a JOIN Keyword
 
-- Despite the name, semi and anti `joins` are not written using `JOIN`, `LEFT JOIN`, or any other `join` keyword in standard SQL; they are existence checks expressed with `EXISTS`, `NOT EXISTS`, `IN`, or `NOT IN`.
-- The term describes the shape of the result, one `row` from the outer `table` per match found or not found, with no `columns` pulled in from the other `table`, rather than a specific piece of SQL syntax.
+Despite the name, semi and anti `joins` are not written using `JOIN`, `LEFT JOIN`, or any other `join` keyword in standard SQL; they are existence checks expressed with `EXISTS`, `NOT EXISTS`, `IN`, or `NOT IN`. The term describes the shape of the result, one `row` from the outer `table` per match found or not found, with no `columns` pulled in from the other `table`, rather than a specific piece of SQL syntax.
 
 ## Semi and Anti Joins at a Glance
 
@@ -161,6 +161,6 @@ If your `query` is `SELECT restaurant_name FROM restaurants r WHERE NOT EXISTS (
 
 ## Conclusion
 
-- Semi `joins` and anti `joins` answer "does a match exist" and "does no match exist" directly, using `EXISTS`, `NOT EXISTS`, `IN`, or `NOT IN`, without pulling in `columns` from the other `table` or risking duplicated `rows` the way an `INNER JOIN` or `LEFT JOIN` can.
-- Zoya now has two ways to find unmatched customers and restaurants, a `LEFT JOIN` with a `NULL` check, and a direct existence check, and can choose whichever fits a given `query`'s intent most clearly.
-- With `joins` covering how separate `tables` combine, the next chapter turns to combining entire `query` results directly, using set operations.
+Semi `joins` and anti `joins` answer "does a match exist" and "does no match exist" directly, using `EXISTS`, `NOT EXISTS`, `IN`, or `NOT IN`, without pulling in `columns` from the other `table` or risking duplicated `rows` the way an `INNER JOIN` or `LEFT JOIN` can.
+
+Zoya now has two ways to find unmatched customers and restaurants, a `LEFT JOIN` with a `NULL` check, and a direct existence check, and can choose whichever fits a given `query`'s intent most clearly. With `joins` covering how separate `tables` combine, the next chapter turns to combining entire `query` results directly, using set operations.

@@ -191,7 +191,6 @@ Goal of this unit: Build a strong conceptual understanding of `databases`, the r
   </tbody>
 </table>
 
-- Each lesson follows the house style: a standardized **Introduction** heading (no page-title H1), a story-led flow with real-world examples under natural headings, runnable SQL examples embedded via OneCompiler, and a closing **Conclusion**.
-- No emojis, no em dashes, no forward or backward references to other units or chapters.
+Each lesson follows the house style: a standardized **Introduction** heading (no page-title H1), a story-led flow with real-world examples under natural headings, runnable SQL examples embedded via OneCompiler, and a closing **Conclusion**. No emojis, no em dashes, no forward or backward references to other units or chapters.
 
 _Status: all 25 lessons authored and reviewed._

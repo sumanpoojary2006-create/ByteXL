@@ -41,7 +41,9 @@ SELECT account_id, balance FROM accounts;
 This `transaction` fails in a chain:
 
 1. The first `UPDATE` would push Meera's balance to -10000.00, violating the `constraint` just added.
+
 2. The `database` rejects that statement immediately, and because it happened inside a `transaction`, the `transaction` as a whole fails.
+
 3. The second `UPDATE` never runs, and `COMMIT` has nothing to commit.
 
 The closing `SELECT` shows both balances completely untouched, exactly as atomicity promises, even though nobody typed `ROLLBACK` by hand. The failure itself triggered the same all-or-nothing guarantee.
@@ -50,8 +52,7 @@ The closing `SELECT` shows both balances completely untouched, exactly as atomic
 
 ## What Atomicity Does Not Protect Against
 
-- It is worth being precise about what atomicity actually guarantees, since it is easy to expect too much from it.
-- Atomicity only guarantees that a `transaction`'s own set of changes are indivisible; it says nothing about whether those changes, once committed, make logical sense.
+It is worth being precise about what atomicity actually guarantees, since it is easy to expect too much from it. Atomicity only guarantees that a `transaction`'s own set of changes are indivisible; it says nothing about whether those changes, once committed, make logical sense.
 
 ```postgresql with=accounts.sql
 BEGIN;
@@ -61,10 +62,9 @@ UPDATE accounts SET balance = balance - 5000.00 WHERE account_id = 1;
 COMMIT;
 ```
 
-- This `transaction` is perfectly atomic: it either commits this single `UPDATE` or it does not.
-- But it deducts 5000.00 from Meera without crediting it anywhere, which is a logic bug, not an atomicity failure.
-- Atomicity guarantees that whatever statements are grouped inside `BEGIN` and `COMMIT` happen together; it is still the application's responsibility to group the correct statements together in the first place.
-- Rahul's earlier two-statement transfer was correct because both necessary statements were inside the same `transaction`, not because atomicity somehow inferred that a credit needed to accompany the debit.
+This `transaction` is perfectly atomic: it either commits this single `UPDATE` or it does not. But it deducts 5000.00 from Meera without crediting it anywhere, which is a logic bug, not an atomicity failure. Atomicity guarantees that whatever statements are grouped inside `BEGIN` and `COMMIT` happen together; it is still the application's responsibility to group the correct statements together in the first place.
+
+Rahul's earlier two-statement transfer was correct because both necessary statements were inside the same `transaction`, not because atomicity somehow inferred that a credit needed to accompany the debit.
 
 ## Atomicity and Multi-Statement Transactions
 
@@ -82,8 +82,7 @@ COMMIT;
 SELECT account_id, owner_name, balance FROM accounts;
 ```
 
-- This `transaction` opens a new account for Farah Ali and funds it from Meera's account, three statements acting as one atomic unit.
-- If the `INSERT` for the new account had failed, for instance because `account_id = 3` already existed, neither `UPDATE` would take effect either, keeping Meera's balance untouched rather than deducting money toward an account that was never actually created.
+This `transaction` opens a new account for Farah Ali and funds it from Meera's account, three statements acting as one atomic unit. If the `INSERT` for the new account had failed, for instance because `account_id = 3` already existed, neither `UPDATE` would take effect either, keeping Meera's balance untouched rather than deducting money toward an account that was never actually created.
 
 ![Atomicity treating many statements as one all-or-nothing unit](images/04_atomicity_all_statements_one_unit.png)
 
@@ -128,6 +127,6 @@ If your `transaction` attempts `UPDATE accounts SET balance = balance - 100000.0
 
 ## Conclusion
 
-- Atomicity guarantees that every statement inside a `transaction` commits together or fails together, whether the failure comes from an explicit `ROLLBACK` or an unplanned error like a `constraint` violation, though it is still up to the application to decide which statements belong grouped together in the first place.
-- Rahul's transfer feature is now protected against partial failures of every kind, not just the ones he anticipates.
-- Atomicity handles the `transaction` as a unit; the next property in ACID concerns whether the data stays logically valid throughout.
+Atomicity guarantees that every statement inside a `transaction` commits together or fails together, whether the failure comes from an explicit `ROLLBACK` or an unplanned error like a `constraint` violation, though it is still up to the application to decide which statements belong grouped together in the first place. Rahul's transfer feature is now protected against partial failures of every kind, not just the ones he anticipates.
+
+Atomicity handles the `transaction` as a unit; the next property in ACID concerns whether the data stays logically valid throughout.

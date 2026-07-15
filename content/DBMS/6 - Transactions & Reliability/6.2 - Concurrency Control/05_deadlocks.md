@@ -55,7 +55,9 @@ Each `transaction` is individually doing something perfectly reasonable, `lockin
 A `database` does not simply let two `transactions` wait forever. PostgreSQL, like other production `databases`, continuously watches for exactly this kind of waiting cycle, and once it detects one:
 
 1. It forcibly aborts one of the two `transactions`.
+
 2. It rolls that `transaction` back and raises a deadlock error.
+
 3. The other `transaction` is freed to continue.
 
 ```postgresql with=accounts_deadlock.sql
@@ -141,5 +143,4 @@ Rewrite a two-account transfer `transaction` against the `accounts` `table` abov
 
 ## Conclusion
 
-- A deadlock forms when two `transactions` each hold a `lock` the other needs, a cycle the `database` detects automatically and breaks by rolling back one of the two `transactions`, leaving the application to retry, and the most reliable prevention is `locking` multiple `rows` in a consistent order across every `transaction` in the system.
-- With `locking`, `isolation levels`, and deadlocks all covered, the final piece is naming the standard every one of these mechanisms is ultimately working to uphold.
+A deadlock forms when two `transactions` each hold a `lock` the other needs, a cycle the `database` detects automatically and breaks by rolling back one of the two `transactions`, leaving the application to retry, and the most reliable prevention is `locking` multiple `rows` in a consistent order across every `transaction` in the system. With `locking`, `isolation levels`, and deadlocks all covered, the final piece is naming the standard every one of these mechanisms is ultimately working to uphold.

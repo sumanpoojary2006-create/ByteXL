@@ -1,9 +1,8 @@
 ## Introduction
 
-- Priyanka is closing out add-drop week.
-- One student, Rahul Verma, registered for Linear Algebra and then decided, well within the deadline, to drop it.
-- His enrollment `row` now needs to be removed from the `table` entirely, not marked, not changed, simply gone, since a dropped course should not appear on his record at all.
-- The statement for this is **`DELETE`**, and Priyanka already knows, from watching Rohit's `UPDATE` go sideways for a moment during his own address corrections, that a statement which removes `rows` deserves exactly the same caution as one that changes them.
+Priyanka is closing out add-drop week. One student, Rahul Verma, registered for Linear Algebra and then decided, well within the deadline, to drop it. His enrollment `row` now needs to be removed from the `table` entirely, not marked, not changed, simply gone, since a dropped course should not appear on his record at all.
+
+The statement for this is **`DELETE`**, and Priyanka already knows, from watching Rohit's `UPDATE` go sideways for a moment during his own address corrections, that a statement which removes `rows` deserves exactly the same caution as one that changes them.
 
 ```postgresql file=schema.sql
 CREATE TABLE students (
@@ -130,9 +129,9 @@ FROM enrollments
 ORDER BY enrollment_id;
 ```
 
-- The first `SELECT` shows exactly one `row`, Yusuf Khan's registration in course 101.
-- The `DELETE` reuses the identical `WHERE student_id = 5 AND course_id = 101` condition, and the closing `SELECT` confirms nine `rows` remain and Yusuf's course 101 enrollment is the only one missing.
-- Combining two conditions with `AND`, exactly as covered with logical operators, is often what makes a `DELETE` condition specific enough to trust: `student_id = 5` alone might one day match more than one `row` if Yusuf ever enrolls in something else.
+The first `SELECT` shows exactly one `row`, Yusuf Khan's registration in course 101. The `DELETE` reuses the identical `WHERE student_id = 5 AND course_id = 101` condition, and the closing `SELECT` confirms nine `rows` remain and Yusuf's course 101 enrollment is the only one missing.
+
+Combining two conditions with `AND`, exactly as covered with logical operators, is often what makes a `DELETE` condition specific enough to trust: `student_id = 5` alone might one day match more than one `row` if Yusuf ever enrolls in something else.
 
 ## DELETE at a Glance
 

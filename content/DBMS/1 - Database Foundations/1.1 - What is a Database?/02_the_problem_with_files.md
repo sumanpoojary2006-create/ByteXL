@@ -1,17 +1,14 @@
 ## Introduction
 
-- Kabir joined Priya's admissions office as a scholarship coordinator three weeks ago, and his job so far has felt manageable: track every scholarship applicant across three spreadsheets, `applicants.xlsx` for personal details, `documents.xlsx` for uploaded certificates, and `interviews.xlsx` for the shortlist and interview slots.
-- It worked fine when there were forty applicants.
-- This year there are four thousand.
+Kabir joined Priya's admissions office as a scholarship coordinator three weeks ago, and his job so far has felt manageable: track every scholarship applicant across three spreadsheets, `applicants.xlsx` for personal details, `documents.xlsx` for uploaded certificates, and `interviews.xlsx` for the shortlist and interview slots. It worked fine when there were forty applicants. This year there are four thousand.
 
-- The trouble starts small.
-- A candidate named Rohan Verma submits a corrected category certificate, moving him from the SC scholarship pool to the General merit pool.
-- Kabir updates `applicants.xlsx` the moment the certificate arrives.
-- Nobody remembers to open `interviews.xlsx`, where Rohan's `row` still lists him under the SC panel three weeks later, on the day of his interview.
+The trouble starts small. A candidate named Rohan Verma submits a corrected category certificate, moving him from the SC scholarship pool to the General merit pool.
 
-- Then, on the morning the shortlist is finalized, two coordinators open `interviews.xlsx` at the same time from two different laptops, one adding a new interview slot, the other marking three candidates as confirmed.
-- Both save their copies to the shared drive within a minute of each other.
-- Whichever file lands last on the server simply overwrites the other, and one coordinator's honest, correct work disappears without so much as an error message.
+Kabir updates `applicants.xlsx` the moment the certificate arrives. Nobody remembers to open `interviews.xlsx`, where Rohan's `row` still lists him under the SC panel three weeks later, on the day of his interview.
+
+Then, on the morning the shortlist is finalized, two coordinators open `interviews.xlsx` at the same time from two different laptops, one adding a new interview slot, the other marking three candidates as confirmed. Both save their copies to the shared drive within a minute of each other.
+
+Whichever file lands last on the server simply overwrites the other, and one coordinator's honest, correct work disappears without so much as an error message.
 
 None of this happened because Kabir or his colleagues were careless. It happened because plain files were never built to hold shared, growing data safely, and the failure has three distinct, well-known faces: **redundancy, inconsistency, and `lost updates`**.
 
@@ -38,10 +35,9 @@ By itself, that repetition causes no damage. It just means one true fact about R
 
 ## Lost Updates: When Two Changes Collide
 
-- The interview-day mix-up is the sharpest version of the same underlying problem.
-- Two coordinators edit `interviews.xlsx` within the same minute, each making a genuine, correct change.
-- The shared drive has no way to merge their two edits into one file that reflects both.
-- It keeps whichever file was saved last and quietly discards the other, along with every confirmed slot the discarded coordinator had just entered.
+The interview-day mix-up is the sharpest version of the same underlying problem. Two coordinators edit `interviews.xlsx` within the same minute, each making a genuine, correct change.
+
+The shared drive has no way to merge their two edits into one file that reflects both. It keeps whichever file was saved last and quietly discards the other, along with every confirmed slot the discarded coordinator had just entered.
 
 This is a **`lost update`**: two valid, simultaneous changes to the same shared file, where only one survives and the other vanishes with no warning at all.
 
@@ -90,6 +86,6 @@ The moment shared data is written to and read from by more than one person, at a
 
 ## Conclusion
 
-- Redundancy creeps in because the same fact has to be retyped wherever it is needed, inconsistency follows because updating one copy never guarantees the others get updated too, and `lost updates` happen because a plain file cannot merge two people's honest changes into one.
-- None of this is a character flaw in Kabir's team, it is what plain files do, reliably, once real numbers and real deadlines arrive.
-- The natural next question is what kind of tool would actually solve all three problems at once, and what exactly it means to say that tool holds a single, organized body of data rather than just another file.
+Redundancy creeps in because the same fact has to be retyped wherever it is needed, inconsistency follows because updating one copy never guarantees the others get updated too, and `lost updates` happen because a plain file cannot merge two people's honest changes into one. None of this is a character flaw in Kabir's team, it is what plain files do, reliably, once real numbers and real deadlines arrive.
+
+The natural next question is what kind of tool would actually solve all three problems at once, and what exactly it means to say that tool holds a single, organized body of data rather than just another file.

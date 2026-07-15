@@ -1,10 +1,8 @@
 ## Introduction
 
-- Kabir's next report needs a two-step calculation: first, find the average salary within each department, then find which departments pay above the overall company average.
-- The first step is a grouped `query`.
-- The second step needs to treat the result of that grouped `query` as if it were itself a `table`, filtering and comparing `rows` that do not exist anywhere in the original `employees` `table`, only in the summarized output.
-- A subquery does not have to sit inside `WHERE` producing a single value or a list; it can also sit inside `FROM`, standing in for an entire `table`.
-- This kind of subquery is often called a **derived `table`**.
+Kabir's next report needs a two-step calculation: first, find the average salary within each department, then find which departments pay above the overall company average. The first step is a grouped `query`. The second step needs to treat the result of that grouped `query` as if it were itself a `table`, filtering and comparing `rows` that do not exist anywhere in the original `employees` `table`, only in the summarized output.
+
+A subquery does not have to sit inside `WHERE` producing a single value or a list; it can also sit inside `FROM`, standing in for an entire `table`. This kind of subquery is often called a **derived `table`**.
 
 ## Treating a Query's Result as a Table
 
@@ -71,8 +69,7 @@ The subquery in `FROM`, aliased here as `dept_averages`, runs first and produces
   </tbody>
 </table>
 
-- The outer `query` then treats `dept_averages` exactly like a real `table`, filtering its `rows` with a `WHERE` clause that compares `department_avg`, a `column` that only exists because the inner `query` computed it, against the company-wide average of 73000.00 from a second subquery.
-- Engineering is the only department whose average clears the company-wide bar.
+The outer `query` then treats `dept_averages` exactly like a real `table`, filtering its `rows` with a `WHERE` clause that compares `department_avg`, a `column` that only exists because the inner `query` computed it, against the company-wide average of 73000.00 from a second subquery. Engineering is the only department whose average clears the company-wide bar.
 
 ![A FROM subquery producing a derived table that the outer query can filter](images/05_from_subquery_derived_table.png)
 
@@ -89,8 +86,7 @@ FROM (
 ) AS dept_averages;
 ```
 
-- Leaving off `AS dept_averages` here would cause an error in most `databases`; a derived `table` without a name is not something the outer `query` can reference, even implicitly.
-- This is one clear difference from a `WHERE` subquery, which never needs a name since it is only ever compared against, never selected from.
+Leaving off `AS dept_averages` here would cause an error in most `databases`; a derived `table` without a name is not something the outer `query` can reference, even implicitly. This is one clear difference from a `WHERE` subquery, which never needs a name since it is only ever compared against, never selected from.
 
 ![A derived table needing an alias name before the outer query can use it](images/06_from_subquery_requires_alias.png)
 
@@ -155,6 +151,6 @@ If your `query` wraps `SELECT department, AVG(salary) AS department_avg FROM emp
 
 ## Conclusion
 
-- A subquery in `FROM`, or derived `table`, lets a `query` treat an intermediate result, especially a grouped or aggregated one, as if it were a real `table`, complete with the ability to filter, `join`, or select from it further.
-- Kabir can now compare department averages against a company average and see exactly how each employee sits relative to their department's norm.
-- So far, every subquery has run independently of the outer `query`'s current `row`; the next lesson introduces a subquery that depends on it directly.
+A subquery in `FROM`, or derived `table`, lets a `query` treat an intermediate result, especially a grouped or aggregated one, as if it were a real `table`, complete with the ability to filter, `join`, or select from it further.
+
+Kabir can now compare department averages against a company average and see exactly how each employee sits relative to their department's norm, So far, every subquery has run independently of the outer `query`'s current `row`; the next lesson introduces a subquery that depends on it directly.

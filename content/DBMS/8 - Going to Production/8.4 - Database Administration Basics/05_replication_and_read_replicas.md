@@ -1,12 +1,12 @@
 ## Introduction
 
-- Every lesson in this course has run against a single `database` server.
-- A production system serving real, sustained traffic eventually outgrows what one server can comfortably handle, and it also cannot afford for that one server to be a single point of total failure. **Replication** addresses both concerns: continuously copying a `database`'s changes to one or more additional servers, called `replicas`, which can take over if the primary fails, and can also absorb read traffic that would otherwise all fall on a single machine.
+Every lesson in this course has run against a single `database` server.
+
+A production system serving real, sustained traffic eventually outgrows what one server can comfortably handle, and it also cannot afford for that one server to be a single point of total failure. **Replication** addresses both concerns: continuously copying a `database`'s changes to one or more additional servers, called `replicas`, which can take over if the primary fails, and can also absorb read traffic that would otherwise all fall on a single machine.
 
 ## How Streaming Replication Works, Conceptually
 
-- PostgreSQL's standard replication approach relies on exactly the mechanism covered in the `recovery` unit: the `write-ahead log`.
-- A `replica` continuously receives the same `WAL` records the primary server generates, and replays them, effectively performing the same redo process `recovery` uses after a crash, except continuously, in near real time, against a running, healthy primary.
+PostgreSQL's standard replication approach relies on exactly the mechanism covered in the `recovery` unit: the `write-ahead log`. A `replica` continuously receives the same `WAL` records the primary server generates, and replays them, effectively performing the same redo process `recovery` uses after a crash, except continuously, in near real time, against a running, healthy primary.
 
 ```postgresql file=replication_demo.sql
 CREATE TABLE shipments (
@@ -24,6 +24,7 @@ SELECT pg_current_wal_lsn() AS primary_wal_position;
 Every change made on the primary, this `INSERT` included, generates `WAL` records exactly as covered in the `recovery` unit. In a replicated setup:
 
 1. Those same records are streamed to every `replica`.
+
 2. Each `replica` applies them in the same order, arriving at the identical data a moment later.
 
 This is why replication is often described as `recovery`'s mechanism, run continuously against a live server rather than only after a crash.
@@ -45,8 +46,7 @@ FROM pg_stat_replication;
 
 ## Why Replication Lag Matters
 
-- Because a `replica` applies changes slightly after the primary generates them, there is always some delay, however small, between a change committing on the primary and that same change becoming visible on a `replica`.
-- A `query` reading from a `replica` can, in principle, see slightly stale data, a deliberate trade-off in exchange for spreading read load across more than one server.
+Because a `replica` applies changes slightly after the primary generates them, there is always some delay, however small, between a change committing on the primary and that same change becoming visible on a `replica`. A `query` reading from a `replica` can, in principle, see slightly stale data, a deliberate trade-off in exchange for spreading read load across more than one server.
 
 ```postgresql with=replication_demo.sql
 -- A read-heavy reporting query, directed to a replica instead of the primary:
@@ -64,10 +64,9 @@ This is why `replicas` are typically used for read traffic that can tolerate a s
 
 ## Read Replicas for Scaling, Failover for Availability
 
-- Replication serves two distinct purposes that are worth keeping separate.
-- Using `replicas` to absorb read traffic, spreading load across several machines so no single server bears the full weight of every `query`, is a scaling strategy.
-- Using a `replica` as a standby ready to be promoted to primary if the original primary fails is an availability strategy, protecting against the single point of failure a lone `database` server represents.
-- A well-designed production deployment often uses replication for both purposes simultaneously, the same `replicas` serving read traffic day to day while also standing ready to take over if the primary ever goes down.
+Replication serves two distinct purposes that are worth keeping separate. Using `replicas` to absorb read traffic, spreading load across several machines so no single server bears the full weight of every `query`, is a scaling strategy. Using a `replica` as a standby ready to be promoted to primary if the original primary fails is an availability strategy, protecting against the single point of failure a lone `database` server represents.
+
+A well-designed production deployment often uses replication for both purposes simultaneously, the same `replicas` serving read traffic day to day while also standing ready to take over if the primary ever goes down.
 
 ## Replication and Read Replicas at a Glance
 
@@ -115,5 +114,6 @@ Write the `query` that would report `replication lag` in seconds rather than byt
 
 ## Conclusion
 
-- Replication streams a primary `database`'s `write-ahead log` to one or more `replicas`, which replay it to stay continuously in sync, enabling both read scaling, directing tolerant read traffic away from the primary, and availability, standing ready to take over if the primary fails, at the cost of a small, measurable lag that every application using a `replica` has to account for.
-- This closes out the operational picture this course has built lesson by lesson: from what data and a `database` even are, through `tables`, keys, and relationships, through SQL itself, through `join`s, aggregation, and advanced querying, through the transactional and concurrent guarantees that keep data trustworthy, through the performance techniques that keep `queries` fast, and finally through the programmability, security, and operational discipline a real, production `database` runs on every single day.
+Replication streams a primary `database`'s `write-ahead log` to one or more `replicas`, which replay it to stay continuously in sync, enabling both read scaling, directing tolerant read traffic away from the primary, and availability, standing ready to take over if the primary fails, at the cost of a small, measurable lag that every application using a `replica` has to account for.
+
+This closes out the operational picture this course has built lesson by lesson: from what data and a `database` even are, through `tables`, keys, and relationships, through SQL itself, through `join`s, aggregation, and advanced querying, through the transactional and concurrent guarantees that keep data trustworthy, through the performance techniques that keep `queries` fast, and finally through the programmability, security, and operational discipline a real, production `database` runs on every single day.

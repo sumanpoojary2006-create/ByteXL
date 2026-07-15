@@ -1,10 +1,8 @@
 ## Introduction
 
-- Naveen has just been handed write access to the college's live enrollment system, the same `tables` Alia, Rohit, Priyanka, Zara, and Aditya have all been working with, and he notices something about how each of them actually types their statements.
-- None of them writes an `UPDATE` or a `DELETE` the moment they think of it.
-- Each one pauses, checks, and only then commits to the change.
-- Naveen realizes that everything he has learned about `INSERT`, `UPDATE`, `DELETE`, `RETURNING`, and `ON CONFLICT` was never really a set of separate ideas about separate keywords.
-- It was one continuous idea, that changing data is a fundamentally different act from reading it, and it calls for **discipline**, a habit of checking before acting that a `SELECT` never demanded in the first place.
+Naveen has just been handed write access to the college's live enrollment system, the same `tables` Alia, Rohit, Priyanka, Zara, and Aditya have all been working with, and he notices something about how each of them actually types their statements. None of them writes an `UPDATE` or a `DELETE` the moment they think of it. Each one pauses, checks, and only then commits to the change.
+
+Naveen realizes that everything he has learned about `INSERT`, `UPDATE`, `DELETE`, `RETURNING`, and `ON CONFLICT` was never really a set of separate ideas about separate keywords. It was one continuous idea, that changing data is a fundamentally different act from reading it, and it calls for **discipline**, a habit of checking before acting that a `SELECT` never demanded in the first place.
 
 ```postgresql file=schema.sql
 CREATE TABLE students (
@@ -51,9 +49,9 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 
 ## Why a SELECT Mistake and a Modification Mistake Are Not the Same
 
-- A `SELECT` with a wrong `WHERE` clause returns the wrong `rows` on screen, and Naveen can simply notice, fix the condition, and run it again with nothing lost.
-- An `UPDATE` or a `DELETE` with a wrong or missing `WHERE` clause changes or removes `rows` permanently, and by the time the mistake is noticed, the correct data may no longer exist anywhere to compare against.
-- This asymmetry, that reading forgives mistakes and writing does not, is the entire reason a modification statement deserves a slower hand than a `query` typed to satisfy curiosity.
+A `SELECT` with a wrong `WHERE` clause returns the wrong `rows` on screen, and Naveen can simply notice, fix the condition, and run it again with nothing lost. An `UPDATE` or a `DELETE` with a wrong or missing `WHERE` clause changes or removes `rows` permanently, and by the time the mistake is noticed, the correct data may no longer exist anywhere to compare against.
+
+This asymmetry, that reading forgives mistakes and writing does not, is the entire reason a modification statement deserves a slower hand than a `query` typed to satisfy curiosity.
 
 ![A SELECT mistake can be retried, while an UPDATE or DELETE mistake changes real data](images/11_select_mistake_vs_modification_mistake.png)
 
@@ -73,22 +71,21 @@ WHERE student_id = 2 AND course_id = 101
 RETURNING enrollment_id, student_id, course_id, grade;
 ```
 
-- The `SELECT` confirms exactly one `row` before anything changes: Neha Sharma's ungraded Database Systems enrollment.
-- The `UPDATE` reuses that identical condition rather than a rewritten or loosened version of it, and `RETURNING` confirms, in the same statement, that grade B landed on that one `row` and nothing else.
-- Three separate habits are stacked in these two statements:
+The `SELECT` confirms exactly one `row` before anything changes: Neha Sharma's ungraded Database Systems enrollment. The `UPDATE` reuses that identical condition rather than a rewritten or loosened version of it, and `RETURNING` confirms, in the same statement, that grade B landed on that one `row` and nothing else. Three separate habits are stacked in these two statements:
 
 1. Checking first.
+
 2. Matching the condition exactly.
+
 3. Confirming immediately.
 
 None of them is difficult, they simply have to be done on purpose rather than skipped because a `SELECT` never seemed to need them.
 
 ## Treating a Modification as a Decision, Not a Reflex
 
-- A `SELECT` can be typed as fast as a thought, because getting it wrong costs nothing more than glancing at an unexpected result and trying again.
-- An `INSERT`, `UPDATE`, or `DELETE` against real data should never be typed at that same speed.
-- The habit worth carrying forward is a short pause built into the process itself: what `table`, what condition, how many `rows` should this match, and does the statement in front of me actually say that.
-- Naveen has started reading his own `WHERE` clause out loud before running anything that changes a `row`, a small ritual that catches a surprising number of mistakes before they become permanent.
+A `SELECT` can be typed as fast as a thought, because getting it wrong costs nothing more than glancing at an unexpected result and trying again. An `INSERT`, `UPDATE`, or `DELETE` against real data should never be typed at that same speed.
+
+The habit worth carrying forward is a short pause built into the process itself: what `table`, what condition, how many `rows` should this match, and does the statement in front of me actually say that. Naveen has started reading his own `WHERE` clause out loud before running anything that changes a `row`, a small ritual that catches a surprising number of mistakes before they become permanent.
 
 ## What RETURNING Adds to That Discipline
 
@@ -158,5 +155,6 @@ The `SELECT` isolates exactly one `row` before the change, the `UPDATE` reuses t
 
 ## Conclusion
 
-- Everything Naveen has walked through, from Alia's first `INSERT` to Aditya's `ON CONFLICT`, comes down to one underlying discipline: know what a statement will touch before it runs, confirm what it touched once it has, and never let the speed of typing a change outpace the care that change deserves.
-- Real systems tend to go further still, offering ways to group several changes together so that if something goes wrong partway through, every part of that group can be undone at once rather than leaving the data half-changed, an idea worth carrying forward the moment more than one modification needs to succeed or fail as a single unit.
+Everything Naveen has walked through, from Alia's first `INSERT` to Aditya's `ON CONFLICT`, comes down to one underlying discipline: know what a statement will touch before it runs, confirm what it touched once it has, and never let the speed of typing a change outpace the care that change deserves.
+
+Real systems tend to go further still, offering ways to group several changes together so that if something goes wrong partway through, every part of that group can be undone at once rather than leaving the data half-changed, an idea worth carrying forward the moment more than one modification needs to succeed or fail as a single unit.

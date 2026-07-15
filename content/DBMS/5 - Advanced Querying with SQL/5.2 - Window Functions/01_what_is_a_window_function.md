@@ -33,8 +33,7 @@ FROM sales
 GROUP BY salesperson;
 ```
 
-- This gives Leela three `rows`, one total per salesperson, but the individual sales that made up each total are gone from the result.
-- There is no way to see, in this same output, that Nikhil's 8500.00 sale on June 5 contributed to a running total of 20500.00 at that point.
+This gives Leela three `rows`, one total per salesperson, but the individual sales that made up each total are gone from the result. There is no way to see, in this same output, that Nikhil's 8500.00 sale on June 5 contributed to a running total of 20500.00 at that point.
 
 ## Getting Both the Row and an Aggregate Together
 
@@ -91,8 +90,7 @@ Every one of the 6 original sale `rows` is still present in the output, but each
   </tbody>
 </table>
 
-- Nikhil's three `rows` all show 29700.00, his total across all three sales, sitting right next to each individual sale amount.
-- The `SUM` here works exactly like the `aggregate function` it already is; the difference is entirely in `OVER (...)`, which tells the `database` to compute the aggregate across a related group of `rows` without collapsing the result down to one `row` per group.
+Nikhil's three `rows` all show 29700.00, his total across all three sales, sitting right next to each individual sale amount. The `SUM` here works exactly like the `aggregate function` it already is; the difference is entirely in `OVER (...)`, which tells the `database` to compute the aggregate across a related group of `rows` without collapsing the result down to one `row` per group.
 
 ![A window function adding a total beside each row while keeping the original sale rows](images/01_window_function_keeps_rows_with_total.png)
 
@@ -109,8 +107,7 @@ SELECT salesperson, sale_id, amount,
 FROM sales;
 ```
 
-- Leaving the parentheses after `OVER` completely empty means the window is the entire result set, with no partitioning at all, so every `row` shows the same company-wide total, 61700.00, alongside its own individual sale amount.
-- This is the simplest possible window: one big window covering everything.
+Leaving the parentheses after `OVER` completely empty means the window is the entire result set, with no partitioning at all, so every `row` shows the same company-wide total, 61700.00, alongside its own individual sale amount. This is the simplest possible window: one big window covering everything.
 
 ![GROUP BY collapsing rows while OVER keeps detail rows and adds a calculation](images/02_group_by_collapses_over_keeps_rows.png)
 
@@ -125,8 +122,7 @@ FROM sales
 WHERE region != 'East';
 ```
 
-- Tarun Bakshi's East-region `row` is filtered out by `WHERE` before the `window function` ever runs, so it never factors into anyone's partitioned total, and it does not appear in the output at all.
-- The window calculation only ever sees the `rows` that make it past filtering, same as any other part of the `SELECT` list.
+Tarun Bakshi's East-region `row` is filtered out by `WHERE` before the `window function` ever runs, so it never factors into anyone's partitioned total, and it does not appear in the output at all. The window calculation only ever sees the `rows` that make it past filtering, same as any other part of the `SELECT` list.
 
 ## Window Functions vs. GROUP BY at a Glance
 
@@ -169,5 +165,6 @@ If your `query` is `SELECT salesperson, region, amount, SUM(amount) OVER (PARTIT
 
 ## Conclusion
 
-- A `window function` computes an aggregate-style value across a related set of `rows`, defined by `OVER (...)`, without collapsing those `rows` into a single summary `row` the way `GROUP BY` does, giving Leela both individual detail and group-level context in the same result.
-- The examples so far have only partitioned a window; the next lesson looks at ordering `rows` within a window too, which unlocks running totals, rankings, and `row`-to-`row` comparisons.
+A `window function` computes an aggregate-style value across a related set of `rows`, defined by `OVER (...)`, without collapsing those `rows` into a single summary `row` the way `GROUP BY` does, giving Leela both individual detail and group-level context in the same result.
+
+The examples so far have only partitioned a window; the next lesson looks at ordering `rows` within a window too, which unlocks running totals, rankings, and `row`-to-`row` comparisons.

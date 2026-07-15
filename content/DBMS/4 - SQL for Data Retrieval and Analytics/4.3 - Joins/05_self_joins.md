@@ -1,10 +1,8 @@
 ## Introduction
 
-- The delivery startup runs a mentorship program for new riders: every experienced rider is paired with a couple of newer riders to show them the ropes, and that pairing is stored right inside the `riders` `table` itself, as a `mentor_id` `column` pointing to another rider's `rider_id`.
-- Zoya's new task is to produce a list showing each rider's name next to their mentor's name.
-- There is only one `table` involved, `riders`, but the report still needs two names sitting side by side on one line, which is exactly the shape a `join` produces.
-- The twist is that both sides of this `join` come from the same `table`.
-- That is a **self `join`**: a `table` joined to a copy of itself.
+The delivery startup runs a mentorship program for new riders: every experienced rider is paired with a couple of newer riders to show them the ropes, and that pairing is stored right inside the `riders` `table` itself, as a `mentor_id` `column` pointing to another rider's `rider_id`. Zoya's new task is to produce a list showing each rider's name next to their mentor's name.
+
+There is only one `table` involved, `riders`, but the report still needs two names sitting side by side on one line, which is exactly the shape a `join` produces. The twist is that both sides of this `join` come from the same `table`. That is a **self `join`**: a `table` joined to a copy of itself.
 
 ## Why One Table Needs to Act Like Two
 
@@ -30,8 +28,7 @@ INSERT INTO riders (rider_id, rider_name, mentor_id) VALUES
 SELECT * FROM riders;
 ```
 
-- Reading this `table` `row` by `row` is already possible, since a human can trace `mentor_id = 1` back up to Suresh Pillai's `row` by eye.
-- A `query` cannot do that kind of visual tracing; it needs the mentor's `row` and the mentee's `row` joined together as two separate `table` references, even though both `rows` live in the exact same `table`.
+Reading this `table` `row` by `row` is already possible, since a human can trace `mentor_id = 1` back up to Suresh Pillai's `row` by eye. A `query` cannot do that kind of visual tracing; it needs the mentor's `row` and the mentee's `row` joined together as two separate `table` references, even though both `rows` live in the exact same `table`.
 
 ## Joining a Table to Itself Using Aliases
 
@@ -48,15 +45,13 @@ JOIN riders mentor ON mentee.mentor_id = mentor.rider_id;
 - `mentee` stands in for "the rider currently being looked up."
 - `mentor` stands in for "whoever that rider reports to."
 
-- The `join` condition, `mentee.mentor_id = mentor.rider_id`, matches each mentee's `mentor_id` against the mentor's own `rider_id`, exactly the same logic used to `join` two genuinely different `tables` in earlier lessons.
-- The `database` has no trouble treating one physical `table` as two separate references, as long as the aliases keep them distinguishable in the `query`.
+The `join` condition, `mentee.mentor_id = mentor.rider_id`, matches each mentee's `mentor_id` against the mentor's own `rider_id`, exactly the same logic used to `join` two genuinely different `tables` in earlier lessons. The `database` has no trouble treating one physical `table` as two separate references, as long as the aliases keep them distinguishable in the `query`.
 
 ![A self join using two aliases so one riders table can act as mentee and mentor](images/09_self_join_two_alias_roles.png)
 
 ## Including Riders With No Mentor
 
-- An `INNER JOIN` self `join`, like the one above, drops Suresh and Arjun entirely, since their `mentor_id` is `NULL` and finds no match.
-- If the report needs to show every rider, mentored or not, a `LEFT JOIN` self `join` solves it the same way it solved the unmatched-`row` problem for two different `tables`.
+An `INNER JOIN` self `join`, like the one above, drops Suresh and Arjun entirely, since their `mentor_id` is `NULL` and finds no match. If the report needs to show every rider, mentored or not, a `LEFT JOIN` self `join` solves it the same way it solved the unmatched-`row` problem for two different `tables`.
 
 ![LEFT SELF JOIN keeping riders even when their mentor value is NULL](images/10_left_self_join_keeps_no_mentor.png)
 
@@ -161,6 +156,6 @@ If your `query` `joins` `riders` to itself on matching `mentor_id` values, filte
 
 ## Conclusion
 
-- A self `join` is not a different kind of `join` mechanically, it is the same `JOIN`, `LEFT JOIN`, or any other `join` type covered so far, applied to one `table` referenced twice under two different aliases, which is exactly what a hierarchy or a peer relationship stored in a single `table` needs.
-- Zoya can now report mentor pairs, list unmentored seniors, and find mentorship-siblings, all from one `riders` `table`.
-- Every `join` so far has combined exactly two `table` references at a time; the next lesson scales that up to three or more `tables` in a single `query`.
+A self `join` is not a different kind of `join` mechanically, it is the same `JOIN`, `LEFT JOIN`, or any other `join` type covered so far, applied to one `table` referenced twice under two different aliases, which is exactly what a hierarchy or a peer relationship stored in a single `table` needs. Zoya can now report mentor pairs, list unmentored seniors, and find mentorship-siblings, all from one `riders` `table`.
+
+Every `join` so far has combined exactly two `table` references at a time; the next lesson scales that up to three or more `tables` in a single `query`.

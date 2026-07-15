@@ -1,8 +1,8 @@
 ## Introduction
 
-- Marking a shipment delivered, in Devraj's system, is never just one `UPDATE`.
-- It means changing the shipment's status, and also inserting a `row` into a separate audit log recording who marked it and when, two statements that always need to run together, the exact kind of grouped operation the `transactions` unit covered in depth.
-- Rather than trusting every script and every developer to remember both statements and wrap them correctly, a **`stored procedure`** lets Devraj define this logic once, inside the `database` itself, as a named, callable unit.
+Marking a shipment delivered, in Devraj's system, is never just one `UPDATE`.
+
+It means changing the shipment's status, and also inserting a `row` into a separate audit log recording who marked it and when, two statements that always need to run together, the exact kind of grouped operation the `transactions` unit covered in depth, Rather than trusting every script and every developer to remember both statements and wrap them correctly, a **`stored procedure`** lets Devraj define this logic once, inside the `database` itself, as a named, callable unit.
 
 ## Creating a Simple Procedure
 
@@ -88,8 +88,9 @@ SELECT * FROM shipments;
 
 ## Why Wrap Logic in a Procedure at All
 
-- The alternative to a `procedure` is writing the same `UPDATE` and `INSERT` pair directly in application code, wrapped in a `BEGIN`/`COMMIT` `transaction`, exactly the pattern covered in the previous unit's lesson on `transactions` in application code.
-- A `procedure` moves that logic into the `database` itself, which means every caller, whether a Python script, a reporting tool, or a different application entirely, gets the identical, correct behavior automatically, without needing to reimplement the same two-statement sequence and its `transaction` boundaries in every single client.
+The alternative to a `procedure` is writing the same `UPDATE` and `INSERT` pair directly in application code, wrapped in a `BEGIN`/`COMMIT` `transaction`, exactly the pattern covered in the previous unit's lesson on `transactions` in application code.
+
+A `procedure` moves that logic into the `database` itself, which means every caller, whether a Python script, a reporting tool, or a different application entirely, gets the identical, correct behavior automatically, without needing to reimplement the same two-statement sequence and its `transaction` boundaries in every single client.
 
 ## Stored Procedures at a Glance
 
@@ -132,6 +133,6 @@ A correct `procedure` follows the same shape as `mark_shipment_delivered`, repla
 
 ## Conclusion
 
-- A `stored procedure`, invoked with `CALL`, wraps multiple statements into a single, named, reusable routine defined once inside the `database`, capable of managing its own `transaction` boundaries including mid-`procedure` commits, which guarantees every caller gets identical, correct behavior without reimplementing the same logic client by client.
-- Devraj's shipment-delivery logic now lives in exactly one place, called consistently from anywhere.
-- The next lesson covers a closely related but distinct kind of routine, one built specifically to compute and return a value for use inside a `query`.
+A `stored procedure`, invoked with `CALL`, wraps multiple statements into a single, named, reusable routine defined once inside the `database`, capable of managing its own `transaction` boundaries including mid-`procedure` commits, which guarantees every caller gets identical, correct behavior without reimplementing the same logic client by client. Devraj's shipment-delivery logic now lives in exactly one place, called consistently from anywhere.
+
+The next lesson covers a closely related but distinct kind of routine, one built specifically to compute and return a value for use inside a `query`.

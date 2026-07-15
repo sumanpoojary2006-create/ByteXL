@@ -27,8 +27,7 @@ Running `CHECKPOINT` explicitly forces PostgreSQL to flush every pending change 
 
 ## Why Checkpoints Bound Recovery Time
 
-- Without a checkpoint, a `database` restarting after a crash would have no way to know how far back its data files were already up to date, so it would have to replay every single log record ever written, from the very start of the log, just to be safe.
-- A checkpoint gives `recovery` a known, recent starting line.
+Without a checkpoint, a `database` restarting after a crash would have no way to know how far back its data files were already up to date, so it would have to replay every single log record ever written, from the very start of the log, just to be safe. A checkpoint gives `recovery` a known, recent starting line.
 
 ```postgresql with=checkpoint_demo.sql
 UPDATE accounts SET balance = balance - 500.00 WHERE account_id = 1;
@@ -46,8 +45,7 @@ UPDATE accounts SET balance = balance - 100.00 WHERE account_id = 1;
 SELECT balance FROM accounts WHERE account_id = 1;
 ```
 
-- The two updates before `CHECKPOINT` are guaranteed to already be reflected in the data files themselves the moment the checkpoint completes.
-- Only the change logged after the checkpoint is at risk of existing only in the log and not yet in the data files, which is exactly the portion `recovery` would need to replay if a crash happened right after it.
+The two updates before `CHECKPOINT` are guaranteed to already be reflected in the data files themselves the moment the checkpoint completes. Only the change logged after the checkpoint is at risk of existing only in the log and not yet in the data files, which is exactly the portion `recovery` would need to replay if a crash happened right after it.
 
 ![Checkpoint marking which logged changes are already safely on disk](images/05_checkpoint_bounds_recovery_timeline.png)
 
@@ -96,10 +94,10 @@ Run several updates against the `accounts` `table` above, issue a `CHECKPOINT`, 
 -- Write your queries and comment below
 ```
 
-- If three updates run, then `CHECKPOINT`, then one more update, only that last update, logged after the checkpoint, is at risk of not yet being in the data files
-- the three updates before the checkpoint are guaranteed already durable in the actual data, so `recovery` would only need to replay the single post-checkpoint change.
+If three updates run, then `CHECKPOINT`, then one more update, only that last update, logged after the checkpoint, is at risk of not yet being in the data files the three updates before the checkpoint are guaranteed already durable in the actual data, so `recovery` would only need to replay the single post-checkpoint change.
 
 ## Conclusion
 
-- A checkpoint marks a point where every previously logged change is guaranteed to already be written to the actual data files, giving `recovery` a recent, known starting point instead of forcing it to replay a `database`'s entire history after every crash, at the cost of periodic disk activity that has to be balanced against how quickly the system needs to recover.
-- With logging and checkpoints both covered, the next lesson looks at exactly what `recovery` does with the log once a crash actually happens: replaying some changes forward and undoing others.
+A checkpoint marks a point where every previously logged change is guaranteed to already be written to the actual data files, giving `recovery` a recent, known starting point instead of forcing it to replay a `database`'s entire history after every crash, at the cost of periodic disk activity that has to be balanced against how quickly the system needs to recover.
+
+With logging and checkpoints both covered, the next lesson looks at exactly what `recovery` does with the log once a crash actually happens: replaying some changes forward and undoing others.

@@ -1,9 +1,8 @@
 ## Introduction
 
-- Rohit is going through this term's address updates.
-- One student, Varun Nair, has moved from Chennai to Bengaluru for an internship and emailed the registrar's office asking for his city to be corrected on file.
-- This is not a new `row` and not a `row` to be removed, it is one existing fact about one existing student that now needs to change.
-- The tool for that job is **`UPDATE`**, the statement that modifies values already sitting in a `table`, and Rohit is about to learn that of everything he has typed so far, this is the one that deserves the most care before he presses enter.
+Rohit is going through this term's address updates. One student, Varun Nair, has moved from Chennai to Bengaluru for an internship and emailed the registrar's office asking for his city to be corrected on file. This is not a new `row` and not a `row` to be removed, it is one existing fact about one existing student that now needs to change.
+
+The tool for that job is **`UPDATE`**, the statement that modifies values already sitting in a `table`, and Rohit is about to learn that of everything he has typed so far, this is the one that deserves the most care before he presses enter.
 
 ```postgresql file=schema.sql
 CREATE TABLE students (
@@ -95,9 +94,7 @@ FROM students
 ORDER BY student_id;
 ```
 
-- Every single student now shows Bengaluru as their city, not just Varun.
-- Rohit meant to fix one `row` and, without a `WHERE` clause, fixed and broke the entire `table` in the same instant, since `UPDATE` with no `WHERE` clause treats every `row` in the `table` as the target.
-- Two things make this especially dangerous:
+Every single student now shows Bengaluru as their city, not just Varun. Rohit meant to fix one `row` and, without a `WHERE` clause, fixed and broke the entire `table` in the same instant, since `UPDATE` with no `WHERE` clause treats every `row` in the `table` as the target. Two things make this especially dangerous:
 
 - There is no confirmation prompt, no warning about how many `rows` are about to change, and no undo button once the statement finishes.
 - A `WHERE` clause that is too broad causes the exact same damage as no `WHERE` clause at all: writing `WHERE city = 'Chennai'` when the intent was `WHERE student_id = 3` would have updated every student living in Chennai, not the one student Rohit actually meant.
@@ -123,10 +120,9 @@ FROM students
 WHERE student_id = 6;
 ```
 
-- The first `SELECT` shows exactly one `row`, Ishita Menon in Bengaluru, before anything changes.
-- The `UPDATE` then reuses that identical `WHERE student_id = 6` condition, so there is no gap between what Rohit checked and what he changed.
-- The closing `SELECT` confirms Ishita now shows Chennai and nobody else's `row` moved.
-- This check-then-update habit takes seconds and it is the single most reliable guard against an `UPDATE` going further than intended.
+The first `SELECT` shows exactly one `row`, Ishita Menon in Bengaluru, before anything changes. The `UPDATE` then reuses that identical `WHERE student_id = 6` condition, so there is no gap between what Rohit checked and what he changed.
+
+The closing `SELECT` confirms Ishita now shows Chennai and nobody else's `row` moved. This check-then-update habit takes seconds and it is the single most reliable guard against an `UPDATE` going further than intended.
 
 ## Updating More Than One Column at Once
 

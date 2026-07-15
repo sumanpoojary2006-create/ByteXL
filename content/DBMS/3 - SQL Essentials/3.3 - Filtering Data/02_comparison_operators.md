@@ -1,8 +1,8 @@
 ## Introduction
 
-- Neha is checking which courses are worth the heavier workload before she registers, and equality will not answer the question she actually has.
-- She does not want courses where `credits = 4` specifically, she wants anything that costs more than the standard three-credit load, and separately she wants to see which of her enrollments were recorded before a certain date.
-- Both questions lean on the same family of tools, the **comparison operators**, which let `WHERE` ask "greater than," "less than," or "not equal to," instead of only "equal to."
+Neha is checking which courses are worth the heavier workload before she registers, and equality will not answer the question she actually has. She does not want courses where `credits = 4` specifically, she wants anything that costs more than the standard three-credit load, and separately she wants to see which of her enrollments were recorded before a certain date.
+
+Both questions lean on the same family of tools, the **comparison operators**, which let `WHERE` ask "greater than," "less than," or "not equal to," instead of only "equal to."
 
 ## Six Operators, One Idea
 
@@ -185,11 +185,10 @@ FROM courses
 WHERE credits <= 2;
 ```
 
-- This should return only `Microeconomics`, the sole course carrying two credits.
-- Try changing `<=` to `<` and notice the result stays the same here, since no course carries fewer than two credits, then try it against data where a boundary value actually exists to see the difference show up.
+This should return only `Microeconomics`, the sole course carrying two credits. Try changing `<=` to `<` and notice the result stays the same here, since no course carries fewer than two credits, then try it against data where a boundary value actually exists to see the difference show up.
 
 ## Conclusion
 
-- Comparison operators let `WHERE` reach past plain equality into ordering: greater than, less than, and their inclusive cousins, all working consistently across numbers, dates, and even text compared alphabetically.
-- Neha can now answer both of her original questions directly, filtering courses with `credits > 3` for the heavier workload and enrollments with `enrolled_on < '2025-02-04'` for the early registrations, without equality ever standing in her way.
-- Once a condition can express "more than," "before," or "after," the next natural step is combining several such conditions in a single `query`, deciding what it means for a `row` to satisfy more than one requirement at once.
+Comparison operators let `WHERE` reach past plain equality into ordering: greater than, less than, and their inclusive cousins, all working consistently across numbers, dates, and even text compared alphabetically. Neha can now answer both of her original questions directly, filtering courses with `credits > 3` for the heavier workload and enrollments with `enrolled_on < '2025-02-04'` for the early registrations, without equality ever standing in her way.
+
+Once a condition can express "more than," "before," or "after," the next natural step is combining several such conditions in a single `query`, deciding what it means for a `row` to satisfy more than one requirement at once.

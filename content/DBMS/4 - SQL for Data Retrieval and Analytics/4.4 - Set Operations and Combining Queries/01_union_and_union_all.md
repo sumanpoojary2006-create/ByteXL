@@ -1,9 +1,8 @@
 ## Introduction
 
-- Tanvi runs marketing for a retail brand that sells both through its website and through physical stores, and each channel keeps its own customer list in a separate `table`, `online_customers` and `store_customers`.
-- For an upcoming sale announcement, she needs one single mailing list combining names and emails from both `tables`, with no regard for which channel a customer originally came from.
-- This is not a `join`, since she is not trying to match `rows` between the two `tables` and widen them with extra `columns`; she wants to stack the `rows` from both `tables` on top of each other into one combined list.
-- SQL's **`UNION`** and **`UNION ALL`** are built for exactly that: combining the results of two `queries` vertically.
+Tanvi runs marketing for a retail brand that sells both through its website and through physical stores, and each channel keeps its own customer list in a separate `table`, `online_customers` and `store_customers`. For an upcoming sale announcement, she needs one single mailing list combining names and emails from both `tables`, with no regard for which channel a customer originally came from.
+
+This is not a `join`, since she is not trying to match `rows` between the two `tables` and widen them with extra `columns`; she wants to stack the `rows` from both `tables` on top of each other into one combined list. SQL's **`UNION`** and **`UNION ALL`** are built for exactly that: combining the results of two `queries` vertically.
 
 ## Stacking Two Result Sets Into One
 
@@ -77,8 +76,7 @@ SELECT customer_name, email FROM store_customers;
 
 ## Keeping Duplicates with UNION ALL
 
-- Sometimes the duplicate itself is meaningful, not a mistake to clean up.
-- If Tanvi instead wants to know exactly how many total customer records exist across both channels, including counting Kavya twice since she is genuinely a customer of both, `UNION ALL` keeps every `row` from both `queries` with no deduplication.
+Sometimes the duplicate itself is meaningful, not a mistake to clean up. If Tanvi instead wants to know exactly how many total customer records exist across both channels, including counting Kavya twice since she is genuinely a customer of both, `UNION ALL` keeps every `row` from both `queries` with no deduplication.
 
 ```postgresql with=customers_channels.sql
 SELECT customer_name, email FROM online_customers

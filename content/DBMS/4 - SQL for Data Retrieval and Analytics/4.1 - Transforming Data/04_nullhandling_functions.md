@@ -5,13 +5,11 @@ Vikram maintains the employee directory for a mid-sized company, and the `employ
 - Not every employee has a secondary phone number on file.
 - Not every employee reports to a manager, since the CEO does not report to anyone.
 
-- Both gaps are stored as `NULL`, and both cause the same problem once Vikram tries to build a printable directory: `NULL` values show up as blank cells or, worse, silently break calculations that touch them.
-- SQL provides two small but essential `functions`, **`COALESCE`** and **`NULLIF`**, built specifically to handle `NULL` gracefully instead of letting it derail a `query`.
+Both gaps are stored as `NULL`, and both cause the same problem once Vikram tries to build a printable directory: `NULL` values show up as blank cells or, worse, silently break calculations that touch them. SQL provides two small but essential `functions`, **`COALESCE`** and **`NULLIF`**, built specifically to handle `NULL` gracefully instead of letting it derail a `query`.
 
 ## Filling In a Default When a Value Is Missing
 
-- The directory needs a phone number to display for every employee, even the ones with no secondary number recorded.
-- Rather than leaving those `rows` blank, Vikram wants to fall back to the primary number, and if even that is missing, fall back to a placeholder.
+The directory needs a phone number to display for every employee, even the ones with no secondary number recorded, Rather than leaving those `rows` blank, Vikram wants to fall back to the primary number, and if even that is missing, fall back to a placeholder.
 
 ```postgresql file=employees.sql
 CREATE TABLE employees (
@@ -77,8 +75,7 @@ Tracing a few employees through the fallback chain makes the left-to-right scan 
 
 ## Treating Two Equal Values as Missing
 
-- Manoj's `row` has an odd duplication: his `primary_phone` and `secondary_phone` are identical, which happened because someone copied the primary number into the secondary field by mistake instead of leaving it blank.
-- Vikram wants the directory to treat a secondary number that exactly matches the primary as if it were not really provided at all.
+Manoj's `row` has an odd duplication: his `primary_phone` and `secondary_phone` are identical, which happened because someone copied the primary number into the secondary field by mistake instead of leaving it blank. Vikram wants the directory to treat a secondary number that exactly matches the primary as if it were not really provided at all.
 
 ```postgresql with=employees.sql
 SELECT full_name, primary_phone, secondary_phone,

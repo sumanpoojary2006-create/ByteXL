@@ -1,9 +1,8 @@
 ## Introduction
 
-- Everything in this unit so far has been demonstrated by typing `BEGIN`, some statements, and `COMMIT` or `ROLLBACK` directly into a SQL editor.
-- Real applications rarely work that way; a web server handling a checkout request does not have a human deciding, statement by statement, whether to commit or roll back.
-- That decision has to be made in application code, based on whether the surrounding logic succeeded or threw an error.
-- Closing out this unit means connecting everything learned about `transactions`, ACID, concurrency, and `recovery`, back to the actual pattern a developer writes day to day.
+Everything in this unit so far has been demonstrated by typing `BEGIN`, some statements, and `COMMIT` or `ROLLBACK` directly into a SQL editor. Real applications rarely work that way; a web server handling a checkout request does not have a human deciding, statement by statement, whether to commit or roll back. That decision has to be made in application code, based on whether the surrounding logic succeeded or threw an error.
+
+Closing out this unit means connecting everything learned about `transactions`, ACID, concurrency, and `recovery`, back to the actual pattern a developer writes day to day.
 
 ## Auto-commit: The Default Behavior Worth Knowing About
 
@@ -45,8 +44,7 @@ COMMIT;
 SELECT * FROM accounts;
 ```
 
-- In real application code, this pattern is usually expressed with a try-and-catch style structure, roughly: open a `connection`, begin a `transaction`, run the statements the business operation requires, and commit only if every one of them succeeded; if any step raises an error, catch it and roll back instead of committing.
-- Written as pseudocode alongside the SQL it wraps, the shape looks like this:
+In real application code, this pattern is usually expressed with a try-and-catch style structure, roughly: open a `connection`, begin a `transaction`, run the statements the business operation requires, and commit only if every one of them succeeded; if any step raises an error, catch it and roll back instead of committing. Written as pseudocode alongside the SQL it wraps, the shape looks like this:
 
 ```postgresql with=app_transactions.sql
 -- try:
@@ -67,8 +65,7 @@ The `COMMIT` only ever runs if both statements succeeded without error; any exce
 
 ## Keeping Transactions Short
 
-- Every `lock` a `transaction` holds, covered in the concurrency control chapter, stays held until that `transaction` commits or rolls back.
-- A `transaction` left open for a long time, whether because it is doing slow, unrelated work in between statements or because a bug forgot to commit at all, holds its `locks` the entire time, potentially blocking every other `transaction` that needs the same `rows`.
+Every `lock` a `transaction` holds, covered in the concurrency control chapter, stays held until that `transaction` commits or rolls back. A `transaction` left open for a long time, whether because it is doing slow, unrelated work in between statements or because a bug forgot to commit at all, holds its `locks` the entire time, potentially blocking every other `transaction` that needs the same `rows`.
 
 ```postgresql with=app_transactions.sql
 BEGIN;
@@ -100,8 +97,7 @@ COMMIT;
 SELECT * FROM accounts;
 ```
 
-- Because a deadlock victim's `transaction` is guaranteed to have been fully rolled back by the `database`, retrying it from scratch is always safe
-- the application simply repeats the same `BEGIN` through `COMMIT` sequence again, and it typically succeeds the second time, once whatever `transaction` it was competing with has already finished.
+Because a deadlock victim's `transaction` is guaranteed to have been fully rolled back by the `database`, retrying it from scratch is always safe the application simply repeats the same `BEGIN` through `COMMIT` sequence again, and it typically succeeds the second time, once whatever `transaction` it was competing with has already finished.
 
 ![Application retrying the entire transaction after a deadlock rollback](images/10_retry_transaction_after_deadlock_rollback.png)
 
@@ -150,5 +146,6 @@ A correct pattern opens with `-- try:` and `BEGIN;`, runs `INSERT INTO accounts 
 
 ## Conclusion
 
-- Every guarantee this unit has built, atomicity, consistency, isolation, durability, concurrency control, and crash `recovery`, ultimately exists so that application code can follow one simple, disciplined pattern: begin a `transaction` around exactly the statements that must succeed or fail together, commit only when all of them succeed, roll back on any failure, keep the `transaction` short, and retry safely when a deadlock is the cause.
-- With reliability covered from the ground up, the course now turns to making a correctly behaving `database` fast as well as correct.
+Every guarantee this unit has built, atomicity, consistency, isolation, durability, concurrency control, and crash `recovery`, ultimately exists so that application code can follow one simple, disciplined pattern: begin a `transaction` around exactly the statements that must succeed or fail together, commit only when all of them succeed, roll back on any failure, keep the `transaction` short, and retry safely when a deadlock is the cause.
+
+With reliability covered from the ground up, the course now turns to making a correctly behaving `database` fast as well as correct.

@@ -1,17 +1,14 @@
 ## Introduction
 
-- Kiran manages patient registration at a small clinic in Hyderabad, and for years the front desk kept records on a spreadsheet that let anyone type anything into any box.
-- One week, a new receptionist left the phone number field empty for an entire day's worth of patients, because the form did not insist otherwise.
-- Another week, the same patient, Farah Sheikh, got registered twice under two slightly different spellings, and the clinic ended up mailing two separate appointment reminders to one confused person.
-- A third patient's age was entered as -3, a typo nobody caught until a nurse read it aloud in disbelief.
+Kiran manages patient registration at a small clinic in Hyderabad, and for years the front desk kept records on a spreadsheet that let anyone type anything into any box. One week, a new receptionist left the phone number field empty for an entire day's worth of patients, because the form did not insist otherwise.
+
+Another week, the same patient, Farah Sheikh, got registered twice under two slightly different spellings, and the clinic ended up mailing two separate appointment reminders to one confused person. A third patient's age was entered as -3, a typo nobody caught until a nurse read it aloud in disbelief.
 
 None of these were failures of the receptionists' intelligence. They were failures of the spreadsheet, because the spreadsheet never enforced a single rule about what counted as an acceptable entry. It simply accepted whatever was typed and moved on.
 
-- When Kiran's clinic finally moved to a proper `database`, the software itself started refusing bad entries before they could ever be saved.
-- Leave the phone number blank, and the system stops you right there.
-- Try to register the same patient twice under the same ID, and the system rejects it outright.
-- Type -3 into the age field, and the system will not accept it.
-- These automatic, built-in rules that a `database` enforces on every single `row`, without needing a human to double-check by hand, are called **`constraints`**, and they are what quietly turns a `database` from "a place that stores whatever it's given" into "a place that only ever holds data you can actually trust."
+When Kiran's clinic finally moved to a proper `database`, the software itself started refusing bad entries before they could ever be saved. Leave the phone number blank, and the system stops you right there. Try to register the same patient twice under the same ID, and the system rejects it outright.
+
+Type -3 into the age field, and the system will not accept it. These automatic, built-in rules that a `database` enforces on every single `row`, without needing a human to double-check by hand, are called **`constraints`**, and they are what quietly turns a `database` from "a place that stores whatever it's given" into "a place that only ever holds data you can actually trust."
 
 ## A Constraint Is a Rule the Database Enforces For You
 
@@ -99,8 +96,8 @@ Take a moment, with any `table` you can picture, a college's Students `table`, a
 
 ## Conclusion
 
-- A `constraint` is a promise the `database` itself keeps on every single `row`, automatically and without exception, so that the trustworthiness of a `table` never depends on how careful, or how tired, the person entering the data happens to be that day.
-- Kiran's clinic did not become more reliable because its receptionists suddenly became more careful.
-- It became more reliable because the `database` stopped trusting anyone to be careful and started enforcing the rules itself.
+A `constraint` is a promise the `database` itself keeps on every single `row`, automatically and without exception, so that the trustworthiness of a `table` never depends on how careful, or how tired, the person entering the data happens to be that day. Kiran's clinic did not become more reliable because its receptionists suddenly became more careful.
+
+It became more reliable because the `database` stopped trusting anyone to be careful and started enforcing the rules itself.
 
 Rules about individual values are only part of the picture, and there is one more question every relational `database` has to answer: when a `row` that other `rows` depend on through a `foreign key` is deleted, or its identifying value changes, what should happen to all of those dependent `rows` left pointing at something that may no longer exist.

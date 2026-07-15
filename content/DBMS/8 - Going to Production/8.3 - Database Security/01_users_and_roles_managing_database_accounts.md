@@ -1,8 +1,8 @@
 ## Introduction
 
-- Every `query` in this course has run under a single, implicit `database` account, with no attention paid to who or what is actually connecting.
-- A production `database` serves many different consumers at once, a reporting dashboard, a background job, individual developers debugging an issue, and each of these deserves its own identity, not a single shared login everyone uses interchangeably.
-- PostgreSQL's answer to this is **`role`s**, the unified mechanism it uses to represent both individual users and groups of permissions, and understanding `role`s is the foundation the rest of this chapter's security material builds on.
+Every `query` in this course has run under a single, implicit `database` account, with no attention paid to who or what is actually connecting. A production `database` serves many different consumers at once, a reporting dashboard, a background job, individual developers debugging an issue, and each of these deserves its own identity, not a single shared login everyone uses interchangeably.
+
+PostgreSQL's answer to this is **`role`s**, the unified mechanism it uses to represent both individual users and groups of permissions, and understanding `role`s is the foundation the rest of this chapter's security material builds on.
 
 ## Creating a Role
 
@@ -67,8 +67,7 @@ ALTER ROLE dev_alia WITH PASSWORD 'a_new_stronger_password';
 DROP ROLE shipment_readers;
 ```
 
-- Dropping `shipment_readers` succeeds here since nothing else in this example still references it structurally beyond the membership grants already made
-- in a real system with actual permissions and dependent objects attached to a `role`, PostgreSQL would refuse to drop it until those dependencies were resolved first, a safeguard against silently breaking access for every account that depended on that `role`'s permissions.
+Dropping `shipment_readers` succeeds here since nothing else in this example still references it structurally beyond the membership grants already made in a real system with actual permissions and dependent objects attached to a `role`, PostgreSQL would refuse to drop it until those dependencies were resolved first, a safeguard against silently breaking access for every account that depended on that `role`'s permissions.
 
 ## Roles at a Glance
 
@@ -111,5 +110,4 @@ If you run `CREATE ROLE dev_farah WITH LOGIN PASSWORD 'change_this_in_real_use';
 
 ## Conclusion
 
-- A `role` in PostgreSQL can represent either an individually authenticating account or a non-login group used to bundle permissions, and structuring access around distinct `role`s per person and per service, rather than a single shared login, is what makes accountability and precise permission management possible at all.
-- With `role`s established as the foundation, the next lesson covers exactly how permissions are actually granted to, and revoked from, a `role`.
+A `role` in PostgreSQL can represent either an individually authenticating account or a non-login group used to bundle permissions, and structuring access around distinct `role`s per person and per service, rather than a single shared login, is what makes accountability and precise permission management possible at all. With `role`s established as the foundation, the next lesson covers exactly how permissions are actually granted to, and revoked from, a `role`.

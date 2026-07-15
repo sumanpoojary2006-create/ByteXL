@@ -1,9 +1,8 @@
 ## Introduction
 
-- Zoya's manager asks a question the inner `join` from the last lesson cannot answer: "which registered customers have never placed a single order?
-- I want to send them a welcome discount." An inner `join` between `customers` and `orders` only ever shows customers who already have a match, which means it is structurally incapable of surfacing the very customers this question cares about, the ones with no match at all.
-- What Zoya needs is a `join` that keeps every `row` from `customers` regardless of whether a matching order exists, filling in the order `columns` with `NULL` when nothing matches.
-- That is exactly what a **`LEFT JOIN`** does.
+Zoya's manager asks a question the inner `join` from the last lesson cannot answer: "which registered customers have never placed a single order? I want to send them a welcome discount." An inner `join` between `customers` and `orders` only ever shows customers who already have a match, which means it is structurally incapable of surfacing the very customers this question cares about, the ones with no match at all.
+
+What Zoya needs is a `join` that keeps every `row` from `customers` regardless of whether a matching order exists, filling in the order `columns` with `NULL` when nothing matches. That is exactly what a **`LEFT JOIN`** does.
 
 ## Keeping Every Row From the Left Table
 

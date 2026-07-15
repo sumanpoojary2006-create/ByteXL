@@ -1,9 +1,8 @@
 ## Introduction
 
-- Tanvi is building a small dashboard widget titled "Recent Enrollments" for the department office's home screen, and the design only has room for five `rows`.
-- The enrollments `table` behind it, though, holds every enrollment ever recorded, and that number only grows term after term.
-- Pulling the whole `table` and cutting it down to five `rows` in whatever code renders the widget would work, but it means dragging far more data across the network than the screen will ever show.
-- What Tanvi actually wants is to ask the `database` itself for just the first few `rows` of a result, and SQL has a clause built for exactly that request: **`LIMIT`**.
+Tanvi is building a small dashboard widget titled "Recent Enrollments" for the department office's home screen, and the design only has room for five `rows`. The enrollments `table` behind it, though, holds every enrollment ever recorded, and that number only grows term after term.
+
+Pulling the whole `table` and cutting it down to five `rows` in whatever code renders the widget would work, but it means dragging far more data across the network than the screen will ever show. What Tanvi actually wants is to ask the `database` itself for just the first few `rows` of a result, and SQL has a clause built for exactly that request: **`LIMIT`**.
 
 ## Cutting a Result Down to N Rows
 
@@ -106,8 +105,7 @@ ORDER BY enrolled_on DESC
 LIMIT 5 OFFSET 5;
 ```
 
-- This returns the next five most recent enrollments, the ones ranked sixth through tenth by enrollment date, since the first five were already shown on an earlier page and this `query` skips past them with `OFFSET 5`.
-- A page 3 request, if the data were large enough, would simply change `OFFSET 5` to `OFFSET 10`, skipping the first ten `rows` before collecting the next batch of five.
+This returns the next five most recent enrollments, the ones ranked sixth through tenth by enrollment date, since the first five were already shown on an earlier page and this `query` skips past them with `OFFSET 5`. A page 3 request, if the data were large enough, would simply change `OFFSET 5` to `OFFSET 10`, skipping the first ten `rows` before collecting the next batch of five.
 
 ![OFFSET 5 skipping the first five rows before LIMIT 5 collects the next page](images/12_offset_pagination.png)
 
@@ -142,8 +140,7 @@ LIMIT 5 OFFSET 5;
 
 ## Your Turn
 
-- The department office wants a "highest workload" preview: the three courses with the most credits, and among courses tied on credits, the ones whose title comes first alphabetically.
-- Write a `query` against the courses `table` above that returns `title` and `credits`, sorted appropriately, and limited to 3 `rows`.
+The department office wants a "highest workload" preview: the three courses with the most credits, and among courses tied on credits, the ones whose title comes first alphabetically. Write a `query` against the courses `table` above that returns `title` and `credits`, sorted appropriately, and limited to 3 `rows`.
 
 ```postgresql with=schema.sql
 -- Write your query below

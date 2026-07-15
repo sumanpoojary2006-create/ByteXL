@@ -1,7 +1,6 @@
 ## Introduction
 
-- The double-booking scenario from the previous lesson is one specific example of a broader family of problems that show up whenever `transactions` overlap in time.
-- Database theory gives each pattern in that family a precise name, so that a specific symptom can be diagnosed and discussed precisely, rather than everyone just calling every concurrency bug "a race condition":
+The double-booking scenario from the previous lesson is one specific example of a broader family of problems that show up whenever `transactions` overlap in time. Database theory gives each pattern in that family a precise name, so that a specific symptom can be diagnosed and discussed precisely, rather than everyone just calling every concurrency bug "a race condition":
 
 - `Dirty reads`
 - `Non-repeatable reads`
@@ -70,8 +69,7 @@ SELECT stock_count FROM inventory WHERE product_id = 1;
 COMMIT;
 ```
 
-- Unlike a `dirty read`, the second read here would reflect genuinely committed data, so nothing incorrect was ever seen
-- the issue is that a single `transaction`'s own `view` of the data changed mid-flight, which can be surprising or outright wrong for logic that assumes a value stays stable for the duration of a `transaction`.
+Unlike a `dirty read`, the second read here would reflect genuinely committed data, so nothing incorrect was ever seen the issue is that a single `transaction`'s own `view` of the data changed mid-flight, which can be surprising or outright wrong for logic that assumes a value stays stable for the duration of a `transaction`.
 
 ## Phantom Reads: A Changing Set of Rows, Not Just a Changing Value
 

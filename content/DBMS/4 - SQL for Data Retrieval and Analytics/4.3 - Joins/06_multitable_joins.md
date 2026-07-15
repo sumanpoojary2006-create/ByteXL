@@ -1,8 +1,8 @@
 ## Introduction
 
-- Every `join` so far has combined exactly two `table` references at a time, but a real order in the delivery system touches four different `tables` at once: the customer who ordered, the restaurant that cooked it, the rider who delivered it, and the order `row` that ties all three together.
-- Zoya's dispatch manager wants exactly that: one line per order showing the customer's name, the restaurant's name, and the rider's name, side by side.
-- This does not need a new kind of `join`, just more of the same `JOIN` clauses chained one after another, each one attaching another `table` to the growing result.
+Every `join` so far has combined exactly two `table` references at a time, but a real order in the delivery system touches four different `tables` at once: the customer who ordered, the restaurant that cooked it, the rider who delivered it, and the order `row` that ties all three together.
+
+Zoya's dispatch manager wants exactly that: one line per order showing the customer's name, the restaurant's name, and the rider's name, side by side. This does not need a new kind of `join`, just more of the same `JOIN` clauses chained one after another, each one attaching another `table` to the growing result.
 
 ## Setting Up Four Related Tables
 
@@ -64,7 +64,9 @@ JOIN riders ON orders.rider_id = riders.rider_id;
 Each `JOIN` clause attaches one more `table` to the result, and the `database` processes them in sequence:
 
 1. `orders` is joined to `customers`, producing a wider intermediate result.
+
 2. That intermediate result is joined to `restaurants`, widening it further.
+
 3. The result of that is joined to `riders`.
 
 By the time all three `JOIN` clauses have run, every order `row` carries a customer name, a restaurant name, and a rider name in the same line.

@@ -1,9 +1,8 @@
 ## Introduction
 
-- The running total from earlier in this chapter, built with `SUM(amount) OVER (PARTITION BY salesperson ORDER BY sale_date)`, quietly relied on a default behavior Leela never had to name explicitly: it summed every `row` from the start of the partition up through the current `row`.
-- That default is not the only option.
-- The sales director's newest request needs a genuinely different range, a 3-month moving average, where each month's value is the average of itself and the two months before it, not the average of everything since the beginning.
-- Getting this right means controlling the **window frame** directly, the exact slice of `rows` a `window function` looks at for each calculation.
+The running total from earlier in this chapter, built with `SUM(amount) OVER (PARTITION BY salesperson ORDER BY sale_date)`, quietly relied on a default behavior Leela never had to name explicitly: it summed every `row` from the start of the partition up through the current `row`. That default is not the only option.
+
+The sales director's newest request needs a genuinely different range, a 3-month moving average, where each month's value is the average of itself and the two months before it, not the average of everything since the beginning. Getting this right means controlling the **window frame** directly, the exact slice of `rows` a `window function` looks at for each calculation.
 
 ## The Default Frame Behind a Running Total
 
@@ -67,9 +66,7 @@ FROM monthly_sales
 ORDER BY sale_month;
 ```
 
-- January's moving average is just 18000.00, its own value, since only zero `rows` precede it.
-- February's is the average of January and February, two `rows`.
-- From March onward, every `row`'s moving average is built from exactly three months: itself and the two immediately before it, sliding forward one month at a time as `sale_month` increases, which is exactly the smoothing effect a moving average is meant to produce.
+January's moving average is just 18000.00, its own value, since only zero `rows` precede it. February's is the average of January and February, two `rows`. From March onward, every `row`'s moving average is built from exactly three months: itself and the two immediately before it, sliding forward one month at a time as `sale_month` increases, which is exactly the smoothing effect a moving average is meant to produce.
 
 ![A three-row moving average frame sliding across monthly rows](images/10_moving_average_three_row_frame.png)
 
@@ -130,7 +127,6 @@ If your `query` uses `SUM(total_amount) OVER (ORDER BY sale_month ROWS BETWEEN 1
 
 ## Conclusion
 
-- A window frame, written with `ROWS BETWEEN ...
-- AND ...`, controls exactly which rows a `window `function`` considers for each calculation, and changing it turns the same `SUM` or `AVG` from a full running total into a fixed-size moving calculation or a centered average.
-- Leela can now build the exact 3-month moving average the director asked for, with full control over how wide that window actually is.
-- With individual `rows` ranked, compared, and smoothed, the last piece is combining ranking with filtering to find a top few `rows` within each group.
+A window frame, written with `ROWS BETWEEN, AND ...`, controls exactly which rows a `window `function`` considers for each calculation, and changing it turns the same `SUM` or `AVG` from a full running total into a fixed-size moving calculation or a centered average. Leela can now build the exact 3-month moving average the director asked for, with full control over how wide that window actually is.
+
+With individual `rows` ranked, compared, and smoothed, the last piece is combining ranking with filtering to find a top few `rows` within each group.

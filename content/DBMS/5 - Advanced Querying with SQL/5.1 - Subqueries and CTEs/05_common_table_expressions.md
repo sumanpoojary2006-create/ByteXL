@@ -1,8 +1,8 @@
 ## Introduction
 
-- Kabir's department-average report from the `FROM` subquery lesson worked correctly, but re-reading it a week later, he found himself squinting at nested parentheses to figure out which `SELECT` belonged to which part of the `query`.
-- As soon as a `query` needs two or three layered steps, subqueries buried inside `FROM` or `WHERE` start to read inside-out, with the first thing the eye lands on being the deepest, least important detail.
-- SQL offers a cleaner way to write exactly the same logic: a **`Common Table Expression`**, written with a `WITH` clause, which names an intermediate result up front and lets the rest of the `query` read top to bottom in the order the logic actually happens.
+Kabir's department-average report from the `FROM` subquery lesson worked correctly, but re-reading it a week later, he found himself squinting at nested parentheses to figure out which `SELECT` belonged to which part of the `query`. As soon as a `query` needs two or three layered steps, subqueries buried inside `FROM` or `WHERE` start to read inside-out, with the first thing the eye lands on being the deepest, least important detail.
+
+SQL offers a cleaner way to write exactly the same logic: a **`Common Table Expression`**, written with a `WITH` clause, which names an intermediate result up front and lets the rest of the `query` read top to bottom in the order the logic actually happens.
 
 ## Rewriting a Subquery as a CTE
 
@@ -83,9 +83,9 @@ WHERE dept_averages.department_avg > company_average.company_avg;
 
 ## Why CTEs Are Often Preferred Over Nested Subqueries
 
-- Both derived `tables` and CTEs are ultimately handled by the `database` in comparable ways, and neither is inherently faster than the other in most modern `databases`.
-- The real difference is readability and maintainability: a CTE gives an intermediate result a name that documents what it represents, and it keeps deeply nested `queries` from turning into a wall of parentheses that has to be read from the inside out.
-- For any `query` with more than one layer of subquery, reaching for a CTE instead is usually the better habit to build.
+Both derived `tables` and CTEs are ultimately handled by the `database` in comparable ways, and neither is inherently faster than the other in most modern `databases`. The real difference is readability and maintainability: a CTE gives an intermediate result a name that documents what it represents, and it keeps deeply nested `queries` from turning into a wall of parentheses that has to be read from the inside out.
+
+For any `query` with more than one layer of subquery, reaching for a CTE instead is usually the better habit to build.
 
 ## A CTE Can Also Simplify a WHERE Subquery
 
@@ -145,6 +145,6 @@ One valid answer defines `WITH dept_averages AS (SELECT department, AVG(salary) 
 
 ## Conclusion
 
-- A CTE, written with `WITH`, names an intermediate `query` result up front so the rest of a statement can read top to bottom instead of inside out, and several CTEs can be chained together, each one building on the last, without losing clarity as the logic grows more layered.
-- Kabir's department-average report is now something a colleague can read and understand in one pass.
-- Every CTE so far has referenced only `tables` or earlier CTEs; the next lesson introduces a CTE that is allowed to reference itself.
+A CTE, written with `WITH`, names an intermediate `query` result up front so the rest of a statement can read top to bottom instead of inside out, and several CTEs can be chained together, each one building on the last, without losing clarity as the logic grows more layered. Kabir's department-average report is now something a colleague can read and understand in one pass.
+
+Every CTE so far has referenced only `tables` or earlier CTEs; the next lesson introduces a CTE that is allowed to reference itself.

@@ -1,10 +1,8 @@
 ## Introduction
 
-- Simran has been asked a question that sounds like it should have a short answer: "which cities do our students come from?" She writes what feels like the obvious `query`, selecting the city `column` from the students `table`, and runs it.
-- Eight `rows` come back, one for every student, and Bengaluru shows up twice, Chennai shows up twice, Pune shows up twice.
-- She scrolls through the list herself, mentally crossing off repeats, to work out that there are really only five distinct cities represented.
-- That is exactly the kind of tedious, error-prone work a `database` should be doing for her.
-- The tool for it is **`DISTINCT`**, a keyword that tells PostgreSQL to collapse repeated values in a result down to one appearance each.
+Simran has been asked a question that sounds like it should have a short answer: "which cities do our students come from?" She writes what feels like the obvious `query`, selecting the city `column` from the students `table`, and runs it. Eight `rows` come back, one for every student, and Bengaluru shows up twice, Chennai shows up twice, Pune shows up twice.
+
+She scrolls through the list herself, mentally crossing off repeats, to work out that there are really only five distinct cities represented. That is exactly the kind of tedious, error-prone work a `database` should be doing for her. The tool for it is **`DISTINCT`**, a keyword that tells PostgreSQL to collapse repeated values in a result down to one appearance each.
 
 ## The Repeated-Rows Problem
 
@@ -50,9 +48,7 @@ Adding the word `DISTINCT` right after `SELECT` changes the question from "what 
 SELECT DISTINCT city FROM students;
 ```
 
-- This time the result has exactly five `rows`: Bengaluru, Chennai, Pune, Hyderabad, and Mysuru, each listed once no matter how many students share it.
-- PostgreSQL builds the full list first and then throws away any `row` whose value is an exact repeat of one already kept.
-- Simran gets the answer to her real question directly, without counting anything by hand.
+This time the result has exactly five `rows`: Bengaluru, Chennai, Pune, Hyderabad, and Mysuru, each listed once no matter how many students share it. PostgreSQL builds the full list first and then throws away any `row` whose value is an exact repeat of one already kept. Simran gets the answer to her real question directly, without counting anything by hand.
 
 ![DISTINCT filtering duplicate city cards into unique city values](images/06_distinct_unique_values.png)
 

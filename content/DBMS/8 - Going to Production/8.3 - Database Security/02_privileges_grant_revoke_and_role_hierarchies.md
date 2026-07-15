@@ -116,8 +116,9 @@ Grant `INSERT` on `shipments` to `support_staff`, on top of the `column`-restric
 -- Write your grant and revoke below
 ```
 
-- Running `GRANT INSERT ON shipments TO support_staff; REVOKE INSERT ON shipments FROM support_staff;` leaves `support_staff` able to read only `shipment_id` and `status`, exactly the `column` restriction granted earlier in this lesson, but unable to insert new `rows`, exactly the precise, additive-then-subtractive control `GRANT` and `REVOKE` are designed to offer.
-- Granting a fresh, unrestricted `SELECT` on the whole `table` here instead would have quietly widened `support_staff`'s access to every `column`, `amount` included, overriding the earlier `column`-level grant rather than coexisting with it.
+Running `GRANT INSERT ON shipments TO support_staff; REVOKE INSERT ON shipments FROM support_staff;` leaves `support_staff` able to read only `shipment_id` and `status`, exactly the `column` restriction granted earlier in this lesson, but unable to insert new `rows`, exactly the precise, additive-then-subtractive control `GRANT` and `REVOKE` are designed to offer.
+
+Granting a fresh, unrestricted `SELECT` on the whole `table` here instead would have quietly widened `support_staff`'s access to every `column`, `amount` included, overriding the earlier `column`-level grant rather than coexisting with it.
 
 ## Conclusion
 

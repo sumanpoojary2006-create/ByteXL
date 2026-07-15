@@ -1,9 +1,8 @@
 ## Introduction
 
-- Atomicity guarantees a `transaction` commits entirely or not at all, but it says nothing about whether the resulting data actually makes sense.
-- A `transaction` could atomically commit a balance of -500.00 if nothing was stopping it, perfectly all-or-nothing, and perfectly wrong.
-- The second letter in ACID, **consistency**, is the guarantee that a `transaction` can only move a `database` from one valid state to another valid state, never into a state that breaks the rules the `database` has been told to enforce.
-- Where atomicity is about the `transaction` as a whole succeeding or failing, consistency is about what "succeeding" is even allowed to look like.
+Atomicity guarantees a `transaction` commits entirely or not at all, but it says nothing about whether the resulting data actually makes sense. A `transaction` could atomically commit a balance of -500.00 if nothing was stopping it, perfectly all-or-nothing, and perfectly wrong.
+
+The second letter in ACID, **consistency**, is the guarantee that a `transaction` can only move a `database` from one valid state to another valid state, never into a state that breaks the rules the `database` has been told to enforce. Where atomicity is about the `transaction` as a whole succeeding or failing, consistency is about what "succeeding" is even allowed to look like.
 
 ## Constraints Are What Define a Valid State
 
@@ -137,6 +136,6 @@ If you run `ALTER TABLE orders ADD CONSTRAINT positive_amount CHECK (amount > 0)
 
 ## Conclusion
 
-- Consistency guarantees that a `transaction` can only ever move a `database` from one valid state to another, with every declared `constraint`, `CHECK`, `foreign key`, `NOT NULL`, or `UNIQUE`, acting as the `database`'s own definition of what "valid" means, while business rules that were never expressed as a `constraint` remain the application's responsibility to protect.
-- Rahul's banking data can now be trusted to never violate a rule the `database` actually knows about.
-- Atomicity and consistency both concern a single `transaction`'s own correctness; the next property addresses what happens when multiple `transactions` run at the same time.
+Consistency guarantees that a `transaction` can only ever move a `database` from one valid state to another, with every declared `constraint`, `CHECK`, `foreign key`, `NOT NULL`, or `UNIQUE`, acting as the `database`'s own definition of what "valid" means, while business rules that were never expressed as a `constraint` remain the application's responsibility to protect. Rahul's banking data can now be trusted to never violate a rule the `database` actually knows about.
+
+Atomicity and consistency both concern a single `transaction`'s own correctness; the next property addresses what happens when multiple `transactions` run at the same time.

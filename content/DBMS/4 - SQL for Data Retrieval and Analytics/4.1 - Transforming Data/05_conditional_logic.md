@@ -1,9 +1,8 @@
 ## Introduction
 
-- Farah builds reports for a small gym chain, and the `members` `table` stores each member's total visits this month as a plain number.
-- The front desk does not want to stare at raw visit counts; they want members labeled "Highly Active," "Active," or "At Risk" so staff can decide who needs a check-in call.
-- That label does not exist anywhere in the `table`, it depends on a rule applied to the visit count, and different visit counts should produce different labels within the very same `query`.
-- This is exactly what SQL's **`CASE`** expression is for: choosing between several possible outputs based on a condition, `row` by `row`.
+Farah builds reports for a small gym chain, and the `members` `table` stores each member's total visits this month as a plain number. The front desk does not want to stare at raw visit counts; they want members labeled "Highly Active," "Active," or "At Risk" so staff can decide who needs a check-in call.
+
+That label does not exist anywhere in the `table`, it depends on a rule applied to the visit count, and different visit counts should produce different labels within the very same `query`. This is exactly what SQL's **`CASE`** expression is for: choosing between several possible outputs based on a condition, `row` by `row`.
 
 ## Writing a Simple CASE Expression
 
@@ -94,8 +93,7 @@ SELECT full_name, visits_this_month,
 FROM members;
 ```
 
-- Run this version and Karan, with 18 visits, gets labeled "Active" instead of "Highly Active," because `visits_this_month >= 4` is checked first and is already true at 18 visits, so the `CASE` expression stops right there and never reaches the "Highly Active" condition.
-- The rule to remember is simple: put the most specific or most restrictive condition first.
+Run this version and Karan, with 18 visits, gets labeled "Active" instead of "Highly Active," because `visits_this_month >= 4` is checked first and is already true at 18 visits, so the `CASE` expression stops right there and never reaches the "Highly Active" condition. The rule to remember is simple: put the most specific or most restrictive condition first.
 
 ## Branching on a Column Value Instead of a Range
 

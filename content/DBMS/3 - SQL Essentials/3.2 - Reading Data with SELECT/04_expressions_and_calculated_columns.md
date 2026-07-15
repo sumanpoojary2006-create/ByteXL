@@ -5,9 +5,9 @@ Nikhil is building a small course catalog page, and the design calls for two thi
 - A combined label like "Computer Science: Database Systems" for each `row`
 - A "workload score" that doubles the credit value to weight it against another metric the page tracks
 
-- Neither of these exists as a `column`.
-- Nothing needs to be added to the `table` to get them, though, because SQL can compute new values on the fly, right inside a `SELECT` list, using the `columns` that already exist.
-- A value built this way, out of `columns` and operators rather than read directly off disk, is called an **expression**, and when it is given a name in the output, it behaves exactly like a calculated `column`.
+Neither of these exists as a `column`. Nothing needs to be added to the `table` to get them, though, because SQL can compute new values on the fly, right inside a `SELECT` list, using the `columns` that already exist.
+
+A value built this way, out of `columns` and operators rather than read directly off disk, is called an **expression**, and when it is given a name in the output, it behaves exactly like a calculated `column`.
 
 ## Doing Arithmetic in a SELECT List
 
@@ -34,9 +34,9 @@ SELECT title, credits, credits * 2 AS double_credits
 FROM courses;
 ```
 
-- The result carries a third `column`, `double_credits`, holding 8, 8, 6, 6, and 6 for the five courses in that order, double whatever sat in `credits` for that `row`.
-- PostgreSQL computes `credits * 2` fresh for every `row` as it builds the result; nothing about that math is stored anywhere, and running the same `query` again next year, after credit values might have changed, would simply recompute it from whatever `credits` holds then.
-- The usual arithmetic operators all work the same way inside a `SELECT` list: `+`, `-`, `*`, `/`, and `%` for remainder.
+The result carries a third `column`, `double_credits`, holding 8, 8, 6, 6, and 6 for the five courses in that order, double whatever sat in `credits` for that `row`. PostgreSQL computes `credits * 2` fresh for every `row` as it builds the result; nothing about that math is stored anywhere, and running the same `query` again next year, after credit values might have changed, would simply recompute it from whatever `credits` holds then.
+
+The usual arithmetic operators all work the same way inside a `SELECT` list: `+`, `-`, `*`, `/`, and `%` for remainder.
 
 ![An arithmetic expression turning credits into a calculated double_credits value](images/07_expression_arithmetic_calculated_column.png)
 
@@ -80,8 +80,7 @@ SELECT course_id, title, credits, credits * 2 AS double_credits, department || '
 FROM courses;
 ```
 
-- This single `query` returns five `columns`: two untouched `columns` straight off the `table`, `course_id` and `title`, alongside `credits` shown plainly, then the doubled value, then the combined label, all computed in one pass over the same five `rows`.
-- Nothing stops a `query` from having as many expressions as it needs sitting beside as many plain `columns` as it needs.
+This single `query` returns five `columns`: two untouched `columns` straight off the `table`, `course_id` and `title`, alongside `credits` shown plainly, then the doubled value, then the combined label, all computed in one pass over the same five `rows`. Nothing stops a `query` from having as many expressions as it needs sitting beside as many plain `columns` as it needs.
 
 ## Expressions at a Glance
 
@@ -124,7 +123,6 @@ The catalog page also needs a "credit hours per week" figure, assuming each cred
 
 ## Conclusion
 
-- Expressions turn a `SELECT` list from a plain menu of stored `columns` into a small calculator that runs once per `row`: arithmetic operators combine numbers, `||` combines text, and `AS` gives the result a name worth keeping.
-- None of this changes a single value sitting in the `table`, it only shapes what comes back for that one `query`.
-- Nikhil's course catalog page can now show its combined "Computer Science: Database Systems" label and doubled workload score straight from a `SELECT`, with no new `column` ever added to the courses `table` itself.
-- With the ability to pick `columns`, rename them, deduplicate them, and compute new ones from them all in hand, the next natural need is controlling the order those `rows` arrive in, rather than accepting whatever order the `database` happens to hand them back.
+Expressions turn a `SELECT` list from a plain menu of stored `columns` into a small calculator that runs once per `row`: arithmetic operators combine numbers, `||` combines text, and `AS` gives the result a name worth keeping. None of this changes a single value sitting in the `table`, it only shapes what comes back for that one `query`.
+
+Nikhil's course catalog page can now show its combined "Computer Science: Database Systems" label and doubled workload score straight from a `SELECT`, with no new `column` ever added to the courses `table` itself. With the ability to pick `columns`, rename them, deduplicate them, and compute new ones from them all in hand, the next natural need is controlling the order those `rows` arrive in, rather than accepting whatever order the `database` happens to hand them back.

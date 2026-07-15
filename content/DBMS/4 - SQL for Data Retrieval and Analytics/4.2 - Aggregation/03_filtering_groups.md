@@ -96,7 +96,9 @@ HAVING SUM(amount) > 500;
 This `query` runs in three clean stages:
 
 1. `WHERE category != 'Children'` removes Aman Gupta's two children's-book orders before any grouping starts, so his `rows` never even reach the grouping stage.
+
 2. `GROUP BY` then forms totals from what remains.
+
 3. `HAVING SUM(amount) > 500` discards any customer whose remaining total does not clear 500.
 
 The two clauses divide the work cleanly: `WHERE` picks which `rows` count, `HAVING` picks which resulting groups are worth keeping.
@@ -142,8 +144,7 @@ This surfaces only the customers who placed 3 or more orders, which is a differe
 
 ## Your Turn
 
-- The founders want to see only the product categories that generated less than 1000 in total revenue, so the team can decide whether to keep stocking them.
-- Write a `query` against the `orders` `table` above that returns `category` and `total_revenue`, showing only categories under that threshold.
+The founders want to see only the product categories that generated less than 1000 in total revenue, so the team can decide whether to keep stocking them. Write a `query` against the `orders` `table` above that returns `category` and `total_revenue`, showing only categories under that threshold.
 
 ```postgresql with=orders.sql
 -- Write your query below

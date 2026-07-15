@@ -31,6 +31,7 @@ This single statement gives `reporting_app`, a service that only ever needs to r
 Two risks follow directly from this:
 
 1. If this reporting service ever had a bug, the actual damage possible is bounded only by what it was granted, not by what it was ever supposed to do.
+
 2. If its credentials were ever compromised, that same boundary applies, and here that boundary is "everything."
 
 ## Granting Exactly What a Role Needs
@@ -50,8 +51,7 @@ GRANT SELECT ON shipments TO reporting_app;
 
 ## Least Privilege Applies to People, Not Just Services
 
-- The same discipline applies to individual developer accounts, not only automated services.
-- A developer debugging a shipment-tracking issue does not need write access to `payroll` either, even though as a human they might reasonably need broader access than an automated reporting service in other ways.
+The same discipline applies to individual developer accounts, not only automated services. A developer debugging a shipment-tracking issue does not need write access to `payroll` either, even though as a human they might reasonably need broader access than an automated reporting service in other ways.
 
 ```postgresql with=least_privilege_demo.sql
 CREATE ROLE dev_alia WITH LOGIN PASSWORD 'change_this_in_real_use';
@@ -118,5 +118,6 @@ Audit `dev_alia`'s current privileges using `information_schema.role_table_grant
 
 ## Conclusion
 
-- The principle of `least privilege` means granting a `role` exactly the access its actual, current responsibilities require, and nothing broader, since every unnecessary privilege granted is unnecessary risk carried indefinitely, whether that `role` represents an automated service or an individual developer, and periodically reviewing existing grants is what keeps this discipline from quietly eroding over time.
-- The next lesson looks at an even finer-grained security mechanism, restricting access not just by `table` or `column`, but by which specific `rows` a `role` is allowed to see at all.
+The principle of `least privilege` means granting a `role` exactly the access its actual, current responsibilities require, and nothing broader, since every unnecessary privilege granted is unnecessary risk carried indefinitely, whether that `role` represents an automated service or an individual developer, and periodically reviewing existing grants is what keeps this discipline from quietly eroding over time.
+
+The next lesson looks at an even finer-grained security mechanism, restricting access not just by `table` or `column`, but by which specific `rows` a `role` is allowed to see at all.

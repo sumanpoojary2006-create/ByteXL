@@ -1,7 +1,8 @@
 ## Introduction
 
-- Every diagnostic tool used across this course, `EXPLAIN ANALYZE`, `pg_stat_activity`, `pg_relation_size`, has been reached for reactively, after a specific `query` was already suspected of being slow. **Database monitoring** flips that around: continuously watching key health metrics so that a genuine problem, a `connection pool` nearing its limit, a `table` bloating with dead tuples, a `query` that has quietly started running far slower than usual, is caught and addressed before it becomes an outage.
-- This helps teams respond before users are affected, instead of diagnosing the problem only after an outage has already begun.
+Every diagnostic tool used across this course, `EXPLAIN ANALYZE`, `pg_stat_activity`, `pg_relation_size`, has been reached for reactively, after a specific `query` was already suspected of being slow. **Database monitoring** flips that around: continuously watching key health metrics so that a genuine problem, a `connection pool` nearing its limit, a `table` bloating with dead tuples, a `query` that has quietly started running far slower than usual, is caught and addressed before it becomes an outage.
+
+This helps teams respond before users are affected, instead of diagnosing the problem only after an outage has already begun.
 
 ## Watching Connection Usage Over Time
 
@@ -27,6 +28,7 @@ FROM pg_stat_activity;
 A monitoring system would run a `query` shaped like this on a regular interval, minutes or even seconds apart:
 
 1. Tracking `percent_used` over time.
+
 2. Alerting once it crosses a concerning threshold.
 
 This catches a `connection leak`, covered in the pooling lesson, while there is still time to investigate, rather than discovering it only once new `connections` start being refused outright.
@@ -57,8 +59,9 @@ SELECT sum(heap_blks_hit) AS cache_hits,
 FROM pg_statio_user_tables;
 ```
 
-- A healthy, well-provisioned `database` typically sustains a cache hit ratio well above 90%, meaning the vast majority of reads are served from fast memory rather than slower disk access.
-- A ratio that drops noticeably, tracked over time rather than as a single snapshot, can signal that the `database`'s available memory is no longer large enough for its actual working data set, a capacity signal worth acting on before it manifests as widespread `query` slowdowns.
+A healthy, well-provisioned `database` typically sustains a cache hit ratio well above 90%, meaning the vast majority of reads are served from fast memory rather than slower disk access.
+
+A ratio that drops noticeably, tracked over time rather than as a single snapshot, can signal that the `database`'s available memory is no longer large enough for its actual working data set, a capacity signal worth acting on before it manifests as widespread `query` slowdowns.
 
 ![Database monitoring continuously tracks connections, dead tuples, cache hit ratio, and long queries](images/07_monitoring_database_health_metrics.png)
 
@@ -124,5 +127,6 @@ Write a monitoring `query` that reports the five `tables` in `pg_stat_user_table
 
 ## Conclusion
 
-- Continuous monitoring of `connection` usage, `table` bloat, cache hit ratio, and long-running or blocked `queries` turns the diagnostic tools used reactively throughout this course into an early-warning system, catching degrading health before it becomes a full outage, rather than only after users are already affected.
-- The final lesson in this unit, and this course, looks at a technique for both improving availability and spreading read load across more than one `database` server: replication.
+Continuous monitoring of `connection` usage, `table` bloat, cache hit ratio, and long-running or blocked `queries` turns the diagnostic tools used reactively throughout this course into an early-warning system, catching degrading health before it becomes a full outage, rather than only after users are already affected.
+
+The final lesson in this unit, and this course, looks at a technique for both improving availability and spreading read load across more than one `database` server: replication.

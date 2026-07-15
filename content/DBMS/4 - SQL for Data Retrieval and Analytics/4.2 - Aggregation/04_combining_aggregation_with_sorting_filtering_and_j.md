@@ -52,8 +52,7 @@ JOIN customers c ON o.customer_name = c.customer_name
 GROUP BY c.region;
 ```
 
-- The `JOIN` attaches each order to its customer's region before grouping ever happens, so `GROUP BY c.region` can collapse `rows` by a `column` that was never on the `orders` `table` to begin with.
-- Aggregation and `joins` combine naturally this way: the `join` widens each `row` with extra `columns`, and grouping then works with whichever of those `columns` it needs.
+The `JOIN` attaches each order to its customer's region before grouping ever happens, so `GROUP BY c.region` can collapse `rows` by a `column` that was never on the `orders` `table` to begin with. Aggregation and `joins` combine naturally this way: the `join` widens each `row` with extra `columns`, and grouping then works with whichever of those `columns` it needs.
 
 ![JOIN adding customer region to order rows before GROUP BY summarizes revenue by region](images/07_join_before_group_by_region.png)
 
@@ -90,8 +89,7 @@ ORDER BY region_revenue DESC;
 
 ## The Logical Order a Query Actually Runs In
 
-- Every clause used above is written in a fixed syntax order (`SELECT`, `FROM`, `WHERE`, `GROUP BY`, `HAVING`, `ORDER BY`), but the `database` does not execute them in that written order.
-- It is worth knowing the real sequence, because it explains every rule covered in this chapter.
+Every clause used above is written in a fixed syntax order (`SELECT`, `FROM`, `WHERE`, `GROUP BY`, `HAVING`, `ORDER BY`), but the `database` does not execute them in that written order. It is worth knowing the real sequence, because it explains every rule covered in this chapter.
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
   <thead>

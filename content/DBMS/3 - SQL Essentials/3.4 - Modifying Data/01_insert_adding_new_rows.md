@@ -1,10 +1,8 @@
 ## Introduction
 
-- Alia handles admissions for a small college, and it is the first week of term.
-- A new student has just finished paying fees and needs to appear in the system before she can be given a timetable or a login.
-- Alia has spent the last few weeks only ever looking at data on screen, running `SELECT` statements to check who is already enrolled, who has paid, who still owes a phone number on file.
-- Today is different.
-- Today she has to put a brand new `row` into the `table` herself, and the tool for that job is **`INSERT`**, the statement that adds new `rows` to a `table`.
+Alia handles admissions for a small college, and it is the first week of term. A new student has just finished paying fees and needs to appear in the system before she can be given a timetable or a login.
+
+Alia has spent the last few weeks only ever looking at data on screen, running `SELECT` statements to check who is already enrolled, who has paid, who still owes a phone number on file. Today is different. Today she has to put a brand new `row` into the `table` herself, and the tool for that job is **`INSERT`**, the statement that adds new `rows` to a `table`.
 
 ## The Anatomy of INSERT INTO
 
@@ -75,9 +73,9 @@ FROM students
 WHERE student_id = 9;
 ```
 
-- Alia's new student, Diya Kulkarni, now has a `row` of her own.
-- The `column` list right after the `table` name, `(student_id, full_name, email, city, phone, joined_on)`, tells the `database` exactly which `column` each value in `VALUES` belongs to, so the ninth value in the `row` before it never gets misread as something it isn't.
-- The final `SELECT` is not part of the `INSERT` itself; it is Alia simply confirming, in the same breath, that the `row` landed the way she expects.
+Alia's new student, Diya Kulkarni, now has a `row` of her own. The `column` list right after the `table` name, `(student_id, full_name, email, city, phone, joined_on)`, tells the `database` exactly which `column` each value in `VALUES` belongs to, so the ninth value in the `row` before it never gets misread as something it isn't.
+
+The final `SELECT` is not part of the `INSERT` itself; it is Alia simply confirming, in the same breath, that the `row` landed the way she expects.
 
 ![INSERT adding Diya as a new row in the students table](images/01_insert_adds_new_row.png)
 
@@ -96,9 +94,9 @@ FROM students
 WHERE student_id IN (10, 11);
 ```
 
-- Both Kabir and Meera arrive in the `table` with a single statement instead of two separate ones.
-- Meera's `city` is left as `NULL` here because her form did not record one yet, which is a perfectly ordinary thing to leave blank as long as the `column` itself allows it.
-- Batching `rows` like this is not just shorter to type; the `database` also treats the whole batch as one unit of work, which matters once a `table` has rules like `PRIMARY KEY` that must hold for every `row` in the statement together.
+Both Kabir and Meera arrive in the `table` with a single statement instead of two separate ones. Meera's `city` is left as `NULL` here because her form did not record one yet, which is a perfectly ordinary thing to leave blank as long as the `column` itself allows it.
+
+Batching `rows` like this is not just shorter to type; the `database` also treats the whole batch as one unit of work, which matters once a `table` has rules like `PRIMARY KEY` that must hold for every `row` in the statement together.
 
 ## Naming Columns Versus Relying on Column Order
 

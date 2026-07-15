@@ -1,8 +1,8 @@
 ## Introduction
 
-- Devraj's shipping cost calculation has grown complicated: a base rate depending on distance, a surcharge for oversized packages, and a discount for high-volume drivers, logic currently copy-pasted, slightly differently, into three different reports.
-- Unlike marking a shipment delivered, this is not a "run these statements together" problem; it is a "compute one value from some inputs" problem, meant to be used inside a `SELECT`, not called on its own as an action.
-- A **user-defined `function`** fits this shape exactly: a named routine that takes inputs and returns a single computed value, usable anywhere a `query` expects a value.
+Devraj's shipping cost calculation has grown complicated: a base rate depending on distance, a surcharge for oversized packages, and a discount for high-volume drivers, logic currently copy-pasted, slightly differently, into three different reports.
+
+Unlike marking a shipment delivered, this is not a "run these statements together" problem; it is a "compute one value from some inputs" problem, meant to be used inside a `SELECT`, not called on its own as an action. A **user-defined `function`** fits this shape exactly: a named routine that takes inputs and returns a single computed value, usable anywhere a `query` expects a value.
 
 ## Creating a Simple Function
 
@@ -68,8 +68,9 @@ A `function`, unlike a `procedure`, cannot issue its own `COMMIT` or `ROLLBACK`;
 SELECT calculate_shipping_cost(200.00, TRUE);
 ```
 
-- This restriction exists precisely because a `function` is meant to be called from within a `SELECT`, potentially many times in a single `query`, one call per `row`, and allowing it to independently commit or roll back partway through would make no sense in that context; a single `SELECT` is not something that can be partially committed `row` by `row`.
-- This is the clearest practical distinction between a `function` and the `procedure` from the previous lesson: a `function` computes a value inside a larger statement, a `procedure` performs a standalone, `transaction`-managing action.
+This restriction exists precisely because a `function` is meant to be called from within a `SELECT`, potentially many times in a single `query`, one call per `row`, and allowing it to independently commit or roll back partway through would make no sense in that context; a single `SELECT` is not something that can be partially committed `row` by `row`.
+
+This is the clearest practical distinction between a `function` and the `procedure` from the previous lesson: a `function` computes a value inside a larger statement, a `procedure` performs a standalone, `transaction`-managing action.
 
 ![Functions return values inside SELECT, while procedures perform actions through CALL](images/10_function_vs_procedure_select_vs_call.png)
 
@@ -140,6 +141,6 @@ A correct `function` computes `amount - (amount * discount_percent / 100)` and r
 
 ## Conclusion
 
-- A user-defined `function` computes and returns a value, or a set of `rows`, and is called from within a `query` rather than as a standalone action, always running as part of the caller's own `transaction` rather than managing one of its own, which is the defining difference from the `procedures` covered in the previous lesson.
-- Devraj's shipping-cost formula now lives in one `function`, called consistently everywhere it is needed.
-- The next lesson introduces a routine that runs automatically, in response to a `table` change, rather than being called explicitly at all.
+A user-defined `function` computes and returns a value, or a set of `rows`, and is called from within a `query` rather than as a standalone action, always running as part of the caller's own `transaction` rather than managing one of its own, which is the defining difference from the `procedures` covered in the previous lesson. Devraj's shipping-cost formula now lives in one `function`, called consistently everywhere it is needed.
+
+The next lesson introduces a routine that runs automatically, in response to a `table` change, rather than being called explicitly at all.

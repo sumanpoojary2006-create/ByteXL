@@ -29,8 +29,9 @@ SELECT pid, state FROM pg_stat_activity WHERE pid = pg_backend_pid();
 COMMIT;
 ```
 
-- The `state` `column` changes from `idle` to `active` (or briefly `idle in transaction` between statements) once `BEGIN` runs, and this state belongs specifically to this one `connection`'s process id, `pg_backend_pid()`.
-- If an application opened a second, separate `connection` at this exact moment, that second `connection` would have no visibility into this in-progress `transaction` at all, and could not accidentally commit or roll it back; each `connection` manages its own `transaction` independently.
+The `state` `column` changes from `idle` to `active` (or briefly `idle in transaction` between statements) once `BEGIN` runs, and this state belongs specifically to this one `connection`'s process id, `pg_backend_pid()`.
+
+If an application opened a second, separate `connection` at this exact moment, that second `connection` would have no visibility into this in-progress `transaction` at all, and could not accidentally commit or roll it back; each `connection` manages its own `transaction` independently.
 
 ![A transaction belongs to exactly one database connection](images/05_transaction_belongs_to_one_connection.png)
 
@@ -46,8 +47,9 @@ UPDATE shipments SET status = 'cancelled' WHERE shipment_id = 2;
 SELECT pid, state, query FROM pg_stat_activity WHERE state = 'idle in transaction';
 ```
 
-- A `connection` stuck like this continues holding its `lock` on shipment 2's `row` for as long as the `connection` stays open, potentially blocking every other `transaction` that needs that same `row`, exactly the kind of contention the concurrency control unit covered.
-- This is precisely why well-written application code always wraps its `transaction` logic in a structure that guarantees `COMMIT` or `ROLLBACK` runs no matter what, even when an unexpected error occurs, the same discipline covered when `transactions` in application code were first introduced.
+A `connection` stuck like this continues holding its `lock` on shipment 2's `row` for as long as the `connection` stays open, potentially blocking every other `transaction` that needs that same `row`, exactly the kind of contention the concurrency control unit covered.
+
+This is precisely why well-written application code always wraps its `transaction` logic in a structure that guarantees `COMMIT` or `ROLLBACK` runs no matter what, even when an unexpected error occurs, the same discipline covered when `transactions` in application code were first introduced.
 
 ```postgresql with=app_tx_demo.sql
 ROLLBACK;
@@ -55,8 +57,7 @@ ROLLBACK;
 
 ## Savepoints: Partial Rollback Within a Larger Transaction
 
-- Sometimes a single logical operation involves several steps, and only one of them might reasonably fail without needing to discard everything else already done in that same `transaction`.
-- A `SAVEPOINT` marks a point inside a `transaction` that can be rolled back to individually, without rolling back the entire `transaction`.
+Sometimes a single logical operation involves several steps, and only one of them might reasonably fail without needing to discard everything else already done in that same `transaction`. A `SAVEPOINT` marks a point inside a `transaction` that can be rolled back to individually, without rolling back the entire `transaction`.
 
 ```postgresql with=app_tx_demo.sql
 BEGIN;
@@ -82,8 +83,9 @@ COMMIT;
 
 ## Why Savepoints Matter for Application Code
 
-- A batch operation processing many independent items, sending 50 notifications and logging each one in the same `transaction`, for example, can use a savepoint before each item, so that one item's failure only rolls back that one item's work, while the `transaction` as a whole continues and eventually commits everything that succeeded.
-- Without savepoints, a single failure anywhere in that loop would force the entire `transaction`, all 50 items, to roll back together, an outcome that is often far more disruptive than necessary.
+A batch operation processing many independent items, sending 50 notifications and logging each one in the same `transaction`, for example, can use a savepoint before each item, so that one item's failure only rolls back that one item's work, while the `transaction` as a whole continues and eventually commits everything that succeeded.
+
+Without savepoints, a single failure anywhere in that loop would force the entire `transaction`, all 50 items, to roll back together, an outcome that is often far more disruptive than necessary.
 
 ## Managing Transactions from an Application at a Glance
 
@@ -126,5 +128,6 @@ Following the pattern demonstrated above, `BEGIN; UPDATE shipments SET status = 
 
 ## Conclusion
 
-- A `transaction` belongs to exactly one `connection` and must always reach a `COMMIT` or `ROLLBACK`, since a `connection` left "idle in `transaction`" holds its `lock`s indefinitely and can block other work, and savepoints give application code a way to discard just one problematic step inside a larger `transaction` without losing everything else already done.
-- With a clear picture of how a single `connection` manages a `transaction`, the next lesson looks at how an application efficiently manages many `connections` at once.
+A `transaction` belongs to exactly one `connection` and must always reach a `COMMIT` or `ROLLBACK`, since a `connection` left "idle in `transaction`" holds its `lock`s indefinitely and can block other work, and savepoints give application code a way to discard just one problematic step inside a larger `transaction` without losing everything else already done.
+
+With a clear picture of how a single `connection` manages a `transaction`, the next lesson looks at how an application efficiently manages many `connections` at once.

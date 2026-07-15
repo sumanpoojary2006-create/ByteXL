@@ -42,9 +42,9 @@ In this deliberately skewed dataset, three quarters of all `rows` belong to `cus
 EXPLAIN ANALYZE SELECT * FROM orders WHERE customer_id = 1;
 ```
 
-- If the estimated `rows=` figure and the actual `rows=` figure from this same run differ substantially, that gap is a direct, measurable sign that the optimizer's assumptions about this data did not match reality.
-- That mismatch can lead PostgreSQL to choose a plan that looked cheap on paper but performs worse in practice.
-- For example, it might choose an `index scan` for a condition that actually matches a huge fraction of the `table`, where a `sequential scan` would have been the better call.
+If the estimated `rows=` figure and the actual `rows=` figure from this same run differ substantially, that gap is a direct, measurable sign that the optimizer's assumptions about this data did not match reality. That mismatch can lead PostgreSQL to choose a plan that looked cheap on paper but performs worse in practice.
+
+For example, it might choose an `index scan` for a condition that actually matches a huge fraction of the `table`, where a `sequential scan` would have been the better call.
 
 ## Why loops=N Matters
 
@@ -66,15 +66,13 @@ JOIN orders o ON c.customer_id = o.customer_id
 WHERE c.customer_id BETWEEN 1 AND 5;
 ```
 
-- If this plan runs its inner scan of `orders` once per matching customer, `loops=5` would appear on that inner step, and the true total time contributed by that step is its reported `actual time` multiplied by 5, not the number shown alone.
-- Missing this detail is a common way to misread `EXPLAIN ANALYZE` output, understating how expensive a repeatedly executed inner step actually was in total.
+If this plan runs its inner scan of `orders` once per matching customer, `loops=5` would appear on that inner step, and the true total time contributed by that step is its reported `actual time` multiplied by 5, not the number shown alone. Missing this detail is a common way to misread `EXPLAIN ANALYZE` output, understating how expensive a repeatedly executed inner step actually was in total.
 
 ![loops=N means an inner plan step repeats and the total work adds up](images/06_explain_analyze_loops_repeat_inner_step.png)
 
 ## Why EXPLAIN ANALYZE Should Be Used with Care
 
-- Because `EXPLAIN ANALYZE` genuinely executes the `query`, it is not risk-free to run against a statement that modifies data; an `UPDATE` or `DELETE` wrapped in `EXPLAIN ANALYZE` really performs that update or delete.
-- PostgreSQL provides an option specifically to avoid this danger for write statements that still need analyzing.
+Because `EXPLAIN ANALYZE` genuinely executes the `query`, it is not risk-free to run against a statement that modifies data; an `UPDATE` or `DELETE` wrapped in `EXPLAIN ANALYZE` really performs that update or delete. PostgreSQL provides an option specifically to avoid this danger for write statements that still need analyzing.
 
 ```postgresql with=analyze_demo.sql
 BEGIN;

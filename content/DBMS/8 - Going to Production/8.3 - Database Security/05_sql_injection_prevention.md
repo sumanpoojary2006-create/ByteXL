@@ -1,8 +1,8 @@
 ## Introduction
 
-- The `prepared statements` lesson, back in the application-code chapter, briefly demonstrated what happens when untrusted input is pasted directly into a SQL string: a `query`'s actual logic can be hijacked entirely.
-- This attack has a name, **SQL injection**, and it remains one of the most common, most damaging vulnerabilities in real software, precisely because the mistake that causes it, building SQL by string concatenation, is so easy to write without realizing the danger.
-- This lesson revisits the mechanism in more depth and lays out the full set of defenses, `prepared statements` as the primary one, backed by everything covered earlier in this chapter.
+The `prepared statements` lesson, back in the application-code chapter, briefly demonstrated what happens when untrusted input is pasted directly into a SQL string: a `query`'s actual logic can be hijacked entirely.
+
+This attack has a name, **SQL injection**, and it remains one of the most common, most damaging vulnerabilities in real software, precisely because the mistake that causes it, building SQL by string concatenation, is so easy to write without realizing the danger. This lesson revisits the mechanism in more depth and lays out the full set of defenses, `prepared statements` as the primary one, backed by everything covered earlier in this chapter.
 
 ## A More Damaging Injection Example
 
@@ -53,8 +53,7 @@ EXECUTE get_shipment(1);
 
 ## Input Validation Is a Second Layer, Not a Replacement
 
-- It might seem like carefully checking and sanitizing user input before building a `query` would be enough on its own.
-- It is a reasonable additional layer, but it is not a reliable substitute for `prepared statements`, since it depends entirely on the validation logic anticipating every possible dangerous pattern, an approach that has repeatedly proven incomplete in real-world security history.
+It might seem like carefully checking and sanitizing user input before building a `query` would be enough on its own. It is a reasonable additional layer, but it is not a reliable substitute for `prepared statements`, since it depends entirely on the validation logic anticipating every possible dangerous pattern, an approach that has repeatedly proven incomplete in real-world security history.
 
 ```postgresql with=injection_demo.sql
 -- A validation-only approach, without prepared statements, might try to
@@ -79,8 +78,9 @@ CREATE ROLE web_app WITH LOGIN PASSWORD 'change_this_in_real_use';
 GRANT SELECT, INSERT ON shipments TO web_app;
 ```
 
-- A `web_app` `role` granted only `SELECT` and `INSERT` on `shipments`, with no `DELETE`, no `DROP` privilege, and no access to any other `table`, could not have actually executed the destructive `DROP TABLE shipments` attempted in the earlier example, even in a world where the injection itself had somehow succeeded, since that `role` was never granted the privilege to drop anything at all.
-- This is exactly why layered defenses matter: `prepared statements` should make injection impossible in the first place, and `least privilege` limits the damage in case some other, unanticipated flaw ever slips through.
+A `web_app` `role` granted only `SELECT` and `INSERT` on `shipments`, with no `DELETE`, no `DROP` privilege, and no access to any other `table`, could not have actually executed the destructive `DROP TABLE shipments` attempted in the earlier example, even in a world where the injection itself had somehow succeeded, since that `role` was never granted the privilege to drop anything at all.
+
+This is exactly why layered defenses matter: `prepared statements` should make injection impossible in the first place, and `least privilege` limits the damage in case some other, unanticipated flaw ever slips through.
 
 ![Prepared statements, input validation, and least privilege form defense in depth](images/10_sql_injection_defense_in_depth.png)
 
@@ -127,5 +127,6 @@ Rewrite the vulnerable, string-concatenation-style `query` from the beginning of
 
 ## Conclusion
 
-- SQL injection happens when untrusted input is allowed to become part of a `query`'s structure rather than staying confined to a value being compared or inserted, and `prepared statements` prevent this by construction, keeping structure and data permanently separate, with input validation and `least privilege` serving as valuable additional layers rather than substitutes for that primary defense.
-- The final lesson in this chapter looks at what happens after a `query` has already run: recording who did what, and when.
+SQL injection happens when untrusted input is allowed to become part of a `query`'s structure rather than staying confined to a value being compared or inserted, and `prepared statements` prevent this by construction, keeping structure and data permanently separate, with input validation and `least privilege` serving as valuable additional layers rather than substitutes for that primary defense.
+
+The final lesson in this chapter looks at what happens after a `query` has already run: recording who did what, and when.

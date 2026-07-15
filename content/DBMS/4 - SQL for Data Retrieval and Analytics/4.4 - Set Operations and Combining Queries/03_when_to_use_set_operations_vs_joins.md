@@ -1,8 +1,10 @@
 ## Introduction
 
-- Tanvi noticed something while building her cross-channel shopper list: the `INTERSECT` `query` from the last lesson and a `NOT EXISTS`-based anti `join` from the `joins` chapter both seem to be answering similar "does this `row` also appear elsewhere" questions, just phrased differently.
-- She now wants to know when to reach for a `join`, when to reach for `EXISTS`, and when to reach for a set operation like `INTERSECT` or `EXCEPT`, since more than one of them can sometimes produce the same answer.
-- The short version is that `joins` combine `columns` from two `tables` side by side, while set operations combine entire `rows` from two `queries` stacked vertically, and that structural difference is what decides which tool actually fits a given question.
+Tanvi noticed something while building her cross-channel shopper list: the `INTERSECT` `query` from the last lesson and a `NOT EXISTS`-based anti `join` from the `joins` chapter both seem to be answering similar "does this `row` also appear elsewhere" questions, just phrased differently.
+
+She now wants to know when to reach for a `join`, when to reach for `EXISTS`, and when to reach for a set operation like `INTERSECT` or `EXCEPT`, since more than one of them can sometimes produce the same answer.
+
+The short version is that `joins` combine `columns` from two `tables` side by side, while set operations combine entire `rows` from two `queries` stacked vertically, and that structural difference is what decides which tool actually fits a given question.
 
 ## The Core Difference: Sideways vs. Stacked
 
@@ -36,9 +38,9 @@ FROM online_customers o
 JOIN store_customers s ON o.email = s.email;
 ```
 
-- This `join` produces a `row` with `columns` from both `tables` side by side, `customer_name` and `email` from `online_customers`, plus `store_side_name` from `store_customers`, even though in this data they happen to hold the same value.
-- Compare that to the `INTERSECT` version from the previous lesson, which returns exactly the same two matching people but as a single set of `columns`, not a widened `row`.
-- Both `queries` can answer "who shops in both channels," but only the `join` naturally supports pulling in extra, non-matching `columns` from either side, such as a loyalty tier stored only on the store side.
+This `join` produces a `row` with `columns` from both `tables` side by side, `customer_name` and `email` from `online_customers`, plus `store_side_name` from `store_customers`, even though in this data they happen to hold the same value. Compare that to the `INTERSECT` version from the previous lesson, which returns exactly the same two matching people but as a single set of `columns`, not a widened `row`.
+
+Both `queries` can answer "who shops in both channels," but only the `join` naturally supports pulling in extra, non-matching `columns` from either side, such as a loyalty tier stored only on the store side.
 
 ![JOIN widening rows sideways while set operations stack or compare same-shaped rows](images/05_join_vs_set_operation_shape.png)
 
@@ -68,13 +70,13 @@ Both return Aditi Kulkarni and Rohan Das. The two read differently, and that dif
 
 ## When a Join Is the Right Choice
 
-- Reach for a `join` whenever the result needs `columns` from both `tables` sitting together in one `row`, especially when one side can legitimately match more than one `row` on the other side.
-- An order joined to its customer and its restaurant, covered throughout the `joins` chapter, is a clear `join` situation: each order needs its customer's name and its restaurant's name attached, and a customer can have many orders.
+Reach for a `join` whenever the result needs `columns` from both `tables` sitting together in one `row`, especially when one side can legitimately match more than one `row` on the other side. An order joined to its customer and its restaurant, covered throughout the `joins` chapter, is a clear `join` situation: each order needs its customer's name and its restaurant's name attached, and a customer can have many orders.
 
 ## When a Set Operation Is the Right Choice
 
-- Reach for a set operation when both `queries` already return the same shape of `row`, same `columns`, same meaning, and the question is really about which `rows` belong to one group, another group, both, or neither.
-- Tanvi's mailing list, cross-channel shopper list, and channel-exclusive lists are all this kind of question: `online_customers` and `store_customers` are shaped identically, and she cares about set membership across them, not about attaching extra `columns` from one to the other.
+Reach for a set operation when both `queries` already return the same shape of `row`, same `columns`, same meaning, and the question is really about which `rows` belong to one group, another group, both, or neither.
+
+Tanvi's mailing list, cross-channel shopper list, and channel-exclusive lists are all this kind of question: `online_customers` and `store_customers` are shaped identically, and she cares about set membership across them, not about attaching extra `columns` from one to the other.
 
 ## When EXISTS Is the Right Choice
 

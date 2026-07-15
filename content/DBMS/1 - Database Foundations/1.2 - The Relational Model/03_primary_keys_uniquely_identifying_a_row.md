@@ -1,25 +1,22 @@
 ## Introduction
 
-- Tara is a hostel warden at a college in Manipal, and her hostel register has an entry problem she only discovers the hard way.
-- Two students, both named Ravi Kumar, are staying in the hostel this year, one in Block A and one in Block C.
-- When the college office calls to say "Ravi Kumar has an urgent message from his family," Tara has no way to know which Ravi Kumar they mean.
-- Name alone cannot tell the two apart, because a name is just another attribute, and nothing stops two different people from sharing one.
+Tara is a hostel warden at a college in Manipal, and her hostel register has an entry problem she only discovers the hard way. Two students, both named Ravi Kumar, are staying in the hostel this year, one in Block A and one in Block C.
 
-- That night, Tara adds a new `column` to her register that she had never bothered with before: Roll Number.
-- Every student at the college is issued a roll number when they join, and no two students, ever, share the same one.
-- From that point on, "Ravi Kumar, Roll No.
-- 20456" and "Ravi Kumar, Roll No.
-- 21103" are two names that can never be confused for each other again, no matter how many more Ravi Kumars enrol in future years.
+When the college office calls to say "Ravi Kumar has an urgent message from his family," Tara has no way to know which Ravi Kumar they mean. Name alone cannot tell the two apart, because a name is just another attribute, and nothing stops two different people from sharing one.
 
-- What Tara stumbled into is one of the most important ideas in the relational model.
-- A `table` needs some `column`, or combination of `columns`, whose value is guaranteed to be different for every single `row`, so that any one `row` can always be picked out with total certainty.
-- That `column` is called the `table`'s **`primary key`**.
+That night, Tara adds a new `column` to her register that she had never bothered with before: Roll Number. Every student at the college is issued a roll number when they join, and no two students, ever, share the same one.
+
+From that point on, "Ravi Kumar, Roll No. 20456" and "Ravi Kumar, Roll No.
+
+21103" are two names that can never be confused for each other again, no matter how many more Ravi Kumars enrol in future years.
+
+What Tara stumbled into is one of the most important ideas in the relational model. A `table` needs some `column`, or combination of `columns`, whose value is guaranteed to be different for every single `row`, so that any one `row` can always be picked out with total certainty. That `column` is called the `table`'s **`primary key`**.
 
 ## Why "Just Search by Name" Falls Apart
 
-- It is tempting to think a `database` can always find the `row` it needs by searching on whatever attribute seems most natural, a name, a title, a city.
-- The trouble is that almost none of those attributes are actually guaranteed to be unique.
-- Look at what Tara's Students `table` would contain without a dedicated identifying `column`.
+It is tempting to think a `database` can always find the `row` it needs by searching on whatever attribute seems most natural, a name, a title, a city. The trouble is that almost none of those attributes are actually guaranteed to be unique.
+
+Look at what Tara's Students `table` would contain without a dedicated identifying `column`.
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
   <thead>
@@ -48,16 +45,15 @@
   </tbody>
 </table>
 
-- Ask this `table` "give me Ravi Kumar's details," and it cannot answer with confidence, because two `rows` both satisfy that description.
-- This is not a rare edge case invented for a lesson, it is an everyday reality the moment a `table` grows past a handful of `rows`: names repeat, cities repeat, even phone numbers occasionally get reassigned.
-- Without something that is guaranteed unique, a `table` cannot promise that any question about "this one `row`" has a single, correct answer.
+Ask this `table` "give me Ravi Kumar's details," and it cannot answer with confidence, because two `rows` both satisfy that description. This is not a rare edge case invented for a lesson, it is an everyday reality the moment a `table` grows past a handful of `rows`: names repeat, cities repeat, even phone numbers occasionally get reassigned.
+
+Without something that is guaranteed unique, a `table` cannot promise that any question about "this one `row`" has a single, correct answer.
 
 ![Duplicate Ravi Kumar names becoming unambiguous only after Tara uses roll numbers as the primary key](images/05_primary_key_resolves_duplicate_names.png)
 
 ## What a Primary Key Actually Guarantees
 
-- A **`primary key`** is a `column`, or a small combination of `columns`, whose value uniquely identifies each `row` in a `table`, so that no two `rows` ever share the same `primary key` value.
-- Add Roll No. to Tara's `table`, and the ambiguity disappears entirely.
+A **`primary key`** is a `column`, or a small combination of `columns`, whose value uniquely identifies each `row` in a `table`, so that no two `rows` ever share the same `primary key` value. Add Roll No. to Tara's `table`, and the ambiguity disappears entirely.
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
   <thead>
@@ -97,11 +93,9 @@ Now "give me the student with Roll No. 20456" has exactly one possible answer, a
 
 ## Choosing a Good Primary Key
 
-- Not every unique-looking `column` makes a wise `primary key`.
-- A student's email address happens to be unique in Tara's hostel today, but students occasionally change their email addresses, and a `primary key` that can change underneath a `table` is far more fragile than one that cannot.
-- A phone number is similarly risky, since phone numbers get reassigned to new owners over the years.
-- Roll number, by contrast, is assigned once by the college, never reused for a different student, and never changed for the life of that student's enrolment.
-- That combination, unique and stable for the `row`'s entire lifetime, is exactly what makes a strong `primary key`.
+Not every unique-looking `column` makes a wise `primary key`. A student's email address happens to be unique in Tara's hostel today, but students occasionally change their email addresses, and a `primary key` that can change underneath a `table` is far more fragile than one that cannot. A phone number is similarly risky, since phone numbers get reassigned to new owners over the years.
+
+Roll number, by contrast, is assigned once by the college, never reused for a different student, and never changed for the life of that student's enrolment. That combination, unique and stable for the `row`'s entire lifetime, is exactly what makes a strong `primary key`.
 
 Real-world `tables` reach for the same pattern constantly, because most collections of things already have some naturally unique code attached to them.
 
@@ -172,8 +166,8 @@ Real-world `tables` reach for the same pattern constantly, because most collecti
 
 ## Conclusion
 
-- A `primary key` is the `column`, or combination of `columns`, a `table` leans on to guarantee that every `row` can always be told apart from every other `row`, no matter how large the `table` grows or how many `rows` happen to share the same name, city, or course.
-- Without one, a `table` can only ever offer probable answers, and a `database` that only deals in probabilities is not one anyone can fully trust.
-- Tara's hostel register no longer has to guess which Ravi Kumar the office is calling about; Roll No. pins down 20456 in Block A or 21103 in Block C with total certainty, exactly the guarantee a `primary key` exists to provide.
+A `primary key` is the `column`, or combination of `columns`, a `table` leans on to guarantee that every `row` can always be told apart from every other `row`, no matter how large the `table` grows or how many `rows` happen to share the same name, city, or course.
+
+Without one, a `table` can only ever offer probable answers, and a `database` that only deals in probabilities is not one anyone can fully trust. Tara's hostel register no longer has to guess which Ravi Kumar the office is calling about; Roll No. pins down 20456 in Block A or 21103 in Block C with total certainty, exactly the guarantee a `primary key` exists to provide.
 
 Once a `table` can reliably identify each of its own `rows`, the next natural step is letting one `table` reach across and point at a specific `row` living inside a completely different `table`, which is exactly the problem a related kind of key exists to solve.
