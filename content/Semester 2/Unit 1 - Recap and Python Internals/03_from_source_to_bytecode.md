@@ -40,7 +40,7 @@ The output looks like:
              10 RETURN_VALUE
 ```
 
-Read each line as: *offset in bytes* | *source line number* | *opcode* | *argument*. `LOAD_FAST` pushes a local variable onto a small internal stack. `BINARY_OP` pops two values, adds them, and pushes the result. `RETURN_VALUE` pops the top of the stack and returns it to the caller.
+Read each line as: *offset in bytes* | *source line number* | *opcode* | *argument*. `LOAD_FAST` pushes a local variable onto a small internal stack. `BINARY_OP` pops two values, adds them, and pushes the result. `RETURN_VALUE` pops the top of the stack and returns it to the caller. The exact opcode names shown here are from Python 3.11 and later; run this on an older interpreter and you will see `BINARY_ADD` instead of `BINARY_OP`, with no `RESUME` line at all. `dis` output is not a stable, version-independent format, only the reading skill, tracing values through a small stack of LOADs, an operation, and a RETURN, carries over unchanged.
 
 ## A Slightly Richer Example
 
@@ -67,11 +67,11 @@ def greet(name):
     message = "Hello, " + name
     return message
 
-print(greet.__code__.co_consts)    # ('Hello, ',) -- the string literal
+print(greet.__code__.co_consts)    # (None, 'Hello, ') -- the string literal, alongside the docstring slot
 print(greet.__code__.co_varnames)  # ('name', 'message') -- local variable names
 ```
 
-These attributes live on every function's `__code__` object, which is the compiled bytecode container Python creates when it processes a `def` statement.
+The leading `None` in `co_consts` is not a mistake in the output; every function reserves its first constant slot for a docstring, and `greet` does not have one, so that slot holds `None`. These attributes live on every function's `__code__` object, which is the compiled bytecode container Python creates when it processes a `def` statement.
 
 ## Constant Folding: One Compile-Time Optimization
 

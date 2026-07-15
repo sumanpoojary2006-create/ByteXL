@@ -125,7 +125,7 @@ class Shelf:
         return f"Shelf({len(self.books)} books)"
 
 # Demo:
-obj = Shelf("example")
+obj = Shelf([])
 print(obj)
 ```
 
