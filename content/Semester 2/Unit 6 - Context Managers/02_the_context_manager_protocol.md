@@ -145,6 +145,16 @@ class SafeWriter:
         if exc_type is not None:
             print(f"An error occurred: {exc_val}")
         return False   # do not suppress
+
+with SafeWriter("test.txt") as f:
+    f.write("hello")
+
+try:
+    with SafeWriter("test2.txt") as f:
+        f.write("partial")
+        raise ValueError("simulated failure")
+except ValueError:
+    print("Caught the error after cleanup ran")
 ```
 
 Test this with a successful write (`with SafeWriter("test.txt") as f: f.write("hello")`), then test with a forced exception inside the block. Confirm the file is closed and the message is printed even when an exception occurs.

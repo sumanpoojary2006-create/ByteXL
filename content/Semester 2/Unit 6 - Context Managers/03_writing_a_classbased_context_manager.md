@@ -52,6 +52,8 @@ The second block rolls back automatically. Without `ManagedConnection`, the conn
 If the same connection is used across many operations, a context manager that closes the connection every time is too aggressive. A better pattern is a transaction manager that shares a long-lived connection but commits or rolls back individual transactions:
 
 ```python
+import sqlite3
+
 class Transaction:
     def __init__(self, connection):
         self.connection = connection

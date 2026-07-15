@@ -89,22 +89,26 @@ with src:
 ```python
 import io
 import sqlite3
-from contextlib import ExitStack
+from contextlib import ExitStack, closing
 
 def sync_catalog_to_buffer(books_data):
     """Use ExitStack to manage conn + output buffer together."""
     with ExitStack() as stack:
-        conn = stack.enter_context(sqlite3.connect(":memory:"))
+        # sqlite3.Connection.__exit__ only commits/rolls back the transaction;
+        # it does NOT close the connection. Wrap it in closing() to actually
+        # close it, or it silently leaks.
+        conn = stack.enter_context(closing(sqlite3.connect(":memory:")))
         out = stack.enter_context(io.StringIO())
 
         conn.execute("CREATE TABLE books (isbn TEXT, title TEXT)")
         conn.executemany("INSERT INTO books VALUES (?, ?)", books_data)
+        conn.commit()
 
         for isbn, title in conn.execute("SELECT isbn, title FROM books"):
             out.write(f"{isbn},{title}\n")
 
         result = out.getvalue()
-    # conn and out are both closed here, in reverse order
+    # conn.close() and out.close() both ran here, in reverse order
     return result
 
 data = [("978-001", "Dune"), ("978-002", "Foundation")]

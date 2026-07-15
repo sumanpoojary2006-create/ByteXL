@@ -108,10 +108,11 @@ import io
 def load_catalog():
     buf = io.StringIO("isbn,title\n978-001,Dune\n")
     with buf:
-        return buf.read()   # file is still closed, even with early return
+        result = buf.read()   # buf is still closed, even with this early return
+        return result, buf
 
-content = load_catalog()
-print(f"Loaded {len(content)} chars; buf closed={content is not None}")
+content, buf = load_catalog()
+print(f"Loaded {len(content)} chars; buf closed={buf.closed}")
 
 # Does __exit__ run inside a generator?
 def read_lines():

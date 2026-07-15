@@ -70,6 +70,7 @@ Both approaches implement the same protocol. The choice is stylistic:
 
 ```python
 import io
+from contextlib import contextmanager
 # Class-based: good when setup is complex, multiple methods, or state
 class ManagedFile:
     def __init__(self, path, mode):
