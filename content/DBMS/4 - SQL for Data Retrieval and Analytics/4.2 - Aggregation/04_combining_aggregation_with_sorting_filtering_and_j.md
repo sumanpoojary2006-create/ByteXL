@@ -1,18 +1,18 @@
 ## Introduction
 
-Priya's reports so far have all come from one table, but the founders' latest request pulls in more: "show me total revenue by region, for regions with at least two customers, sorted highest revenue first, but only counting orders placed after the first week of April." That single sentence needs several pieces working together:
+Priya's reports so far have all come from one `table`, but the founders' latest request pulls in more: "show me total revenue by region, for regions with at least two customers, sorted highest revenue first, but only counting orders placed after the first week of April." That single sentence needs several pieces working together:
 
-- A `join`, to bring in region data that is not stored on the `orders` table at all
-- A row-level date filter
+- A `join`, to bring in region data that is not stored on the `orders` `table` at all
+- A `row`-level date filter
 - A grouped total
 - A group-level filter on customer count
 - A final sort
 
-None of these pieces are new on their own; what is new is seeing exactly how they fit together and in what order the database actually applies them.
+None of these pieces are new on their own; what is new is seeing exactly how they fit together and in what order the `database` actually applies them.
 
 ## Setting Up a Second Table to Join
 
-Region information lives on a separate `customers` table, not on `orders` itself, which is a completely normal way for a real `schema` to be organized.
+Region information lives on a separate `customers` `table`, not on `orders` itself, which is a completely normal way for a real `schema` to be organized.
 
 ```postgresql file=orders_customers.sql
 CREATE TABLE customers (
@@ -52,13 +52,14 @@ JOIN customers c ON o.customer_name = c.customer_name
 GROUP BY c.region;
 ```
 
-The `JOIN` attaches each order to its customer's region before grouping ever happens, so `GROUP BY c.region` can collapse rows by a column that was never on the `orders` table to begin with. Aggregation and `joins` combine naturally this way: the `join` widens each row with extra columns, and grouping then works with whichever of those columns it needs.
+- The `JOIN` attaches each order to its customer's region before grouping ever happens, so `GROUP BY c.region` can collapse `rows` by a `column` that was never on the `orders` `table` to begin with.
+- Aggregation and `joins` combine naturally this way: the `join` widens each `row` with extra `columns`, and grouping then works with whichever of those `columns` it needs.
 
 ![JOIN adding customer region to order rows before GROUP BY summarizes revenue by region](images/07_join_before_group_by_region.png)
 
 ## Layering in a Row-Level Filter
 
-The founders' request also wants only orders placed after April 7. That is a row-level condition, so it belongs in `WHERE`, applied before grouping, exactly as covered when `WHERE` and `HAVING` were first compared.
+The founders' request also wants only orders placed after April 7. That is a `row`-level condition, so it belongs in `WHERE`, applied before grouping, exactly as covered when `WHERE` and `HAVING` were first compared.
 
 ```postgresql with=orders_customers.sql
 SELECT c.region, SUM(o.amount) AS region_revenue
@@ -84,35 +85,75 @@ HAVING COUNT(DISTINCT o.customer_name) >= 2
 ORDER BY region_revenue DESC;
 ```
 
-`COUNT(DISTINCT o.customer_name)` counts unique customers per region rather than unique orders, which matters because one customer with many orders should not be mistaken for many customers. `HAVING` then drops any region with fewer than two distinct customers in this filtered window, and `ORDER BY region_revenue DESC` puts the highest-earning surviving region first.
+- `COUNT(DISTINCT o.customer_name)` counts unique customers per region rather than unique orders, which matters because one customer with many orders should not be mistaken for many customers.
+- `HAVING` then drops any region with fewer than two distinct customers in this filtered window, and `ORDER BY region_revenue DESC` puts the highest-earning surviving region first.
 
 ## The Logical Order a Query Actually Runs In
 
-Every clause used above is written in a fixed syntax order (`SELECT`, `FROM`, `WHERE`, `GROUP BY`, `HAVING`, `ORDER BY`), but the database does not execute them in that written order. It is worth knowing the real sequence, because it explains every rule covered in this chapter.
+- Every clause used above is written in a fixed syntax order (`SELECT`, `FROM`, `WHERE`, `GROUP BY`, `HAVING`, `ORDER BY`), but the `database` does not execute them in that written order.
+- It is worth knowing the real sequence, because it explains every rule covered in this chapter.
 
-| Step | Clause | What happens |
-|---|---|---|
-| 1 | `FROM` / `JOIN` | Tables are combined into one wide working set |
-| 2 | `WHERE` | Individual rows are filtered, before any grouping |
-| 3 | `GROUP BY` | Surviving rows are collapsed into groups |
-| 4 | `HAVING` | Groups are filtered, using aggregate results |
-| 5 | `SELECT` | Final columns and aggregate values are computed |
-| 6 | `ORDER BY` | The finished result set is sorted |
+<table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
+  <thead>
+    <tr>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Step</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Clause</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">What happens</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">1</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>FROM</code> / <code>JOIN</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Tables are combined into one wide working set</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">2</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>WHERE</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Individual rows are filtered, before any grouping</td>
+    </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">3</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>GROUP BY</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Surviving rows are collapsed into groups</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">4</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>HAVING</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Groups are filtered, using aggregate results</td>
+    </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">5</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>SELECT</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Final columns and aggregate values are computed</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">6</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>ORDER BY</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">The finished result set is sorted</td>
+    </tr>
+  </tbody>
+</table>
 
-This ordering is exactly why `WHERE` cannot reference `SUM(amount)`, that aggregate does not exist yet at step 2, and why `ORDER BY` can reference a column alias defined in `SELECT`, since sorting happens last, after the alias already exists.
+This ordering is exactly why `WHERE` cannot reference `SUM(amount)`, that aggregate does not exist yet at step 2, and why `ORDER BY` can reference a `column` alias defined in `SELECT`, since sorting happens last, after the alias already exists.
 
 ![Logical execution order of an aggregate SQL query from FROM JOIN through ORDER BY](images/08_logical_query_execution_order.png)
 
 ## Your Turn
 
-The founders want one more cut: total revenue and order count per category, but only for orders from the West and South regions, only categories with more than one order, sorted by revenue descending. Write that query against the `orders` and `customers` tables above.
+The founders want one more cut: total revenue and order count per category, but only for orders from the West and South regions, only categories with more than one order, sorted by revenue descending. Write that `query` against the `orders` and `customers` `tables` above.
 
 ```postgresql with=orders_customers.sql
 -- Write your query below
 ```
 
-If your query `joins` `orders` to `customers`, filters with `WHERE c.region IN ('West', 'South')`, groups by `o.category`, filters with `HAVING COUNT(*) > 1`, and orders by the summed revenue descending, Non-Fiction should come out on top at 3339.00, ahead of Fiction's 1380.00, once Aman Gupta's North-region Children orders are filtered out and Vivek's, Sonal's, and Ishita's Non-Fiction orders are summed together.
+- If your `query` `joins` `orders` to `customers`, filters with `WHERE c.region IN ('West', 'South')`, groups by `o.category`, filters with `HAVING COUNT(*) > 1`.
+- It then orders by summed revenue descending.
+- `Non-Fiction` should come out on top at 3339.00, ahead of `Fiction` at 1380.00.
+- That happens after Aman Gupta's North-region Children orders are filtered out and Vivek's, Sonal's, and Ishita's Non-Fiction orders are summed together.
 
 ## Conclusion
 
-`Joins`, row filters, grouping, group filters, and sorting are not separate skills; they are stages of one pipeline that runs in a fixed order regardless of how the query is written, and understanding that order explains every rule about what each clause is and is not allowed to reference. Priya can now answer any report the founders throw at her by reasoning through the same six steps every time. `Joins` have been used here just to bring in a column to group by; the next chapter looks at `joins` in their own right, in much more depth.
+- `Joins`, `row` filters, grouping, group filters, and sorting are not separate skills; they are stages of one pipeline that runs in a fixed order regardless of how the `query` is written, and understanding that order explains every rule about what each clause is and is not allowed to reference.
+- Priya can now answer any report the founders throw at her by reasoning through the same six steps every time.
+- `Joins` have been used here just to bring in a `column` to group by; the next chapter looks at `joins` in their own right, in much more depth.

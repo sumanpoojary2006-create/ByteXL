@@ -1,10 +1,12 @@
 ## Introduction
 
-Kabir's department-average report from the `FROM` subquery lesson worked correctly, but re-reading it a week later, he found himself squinting at nested parentheses to figure out which `SELECT` belonged to which part of the query. As soon as a query needs two or three layered steps, subqueries buried inside `FROM` or `WHERE` start to read inside-out, with the first thing the eye lands on being the deepest, least important detail. SQL offers a cleaner way to write exactly the same logic: a **`Common Table Expression`**, written with a `WITH` clause, which names an intermediate result up front and lets the rest of the query read top to bottom in the order the logic actually happens.
+- Kabir's department-average report from the `FROM` subquery lesson worked correctly, but re-reading it a week later, he found himself squinting at nested parentheses to figure out which `SELECT` belonged to which part of the `query`.
+- As soon as a `query` needs two or three layered steps, subqueries buried inside `FROM` or `WHERE` start to read inside-out, with the first thing the eye lands on being the deepest, least important detail.
+- SQL offers a cleaner way to write exactly the same logic: a **`Common Table Expression`**, written with a `WITH` clause, which names an intermediate result up front and lets the rest of the `query` read top to bottom in the order the logic actually happens.
 
 ## Rewriting a Subquery as a CTE
 
-The `employees` table is the same one used throughout this chapter.
+The `employees` `table` is the same one used throughout this chapter.
 
 ```postgresql file=employees.sql
 CREATE TABLE employees (
@@ -24,7 +26,7 @@ INSERT INTO employees (employee_id, employee_name, department, salary, manager_i
 (6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
 ```
 
-Here is the derived-table version from an earlier lesson, for comparison.
+Here is the derived-`table` version from an earlier lesson, for comparison.
 
 ```postgresql with=employees.sql
 SELECT department, department_avg
@@ -49,7 +51,8 @@ FROM dept_averages
 WHERE department_avg > (SELECT AVG(salary) FROM employees);
 ```
 
-`WITH dept_averages AS (...)` names the inner query before the main query even begins, and the main query afterward simply reads `FROM dept_averages`, exactly as if it were a real table. The two versions produce an identical result, Engineering as the only department above the company average, but the CTE version reads in the order a person would naturally explain it out loud: "first compute department averages, then find the ones above the company average."
+- `WITH dept_averages AS (...)` names the inner `query` before the main `query` even begins, and the main `query` afterward simply reads `FROM dept_averages`, exactly as if it were a real `table`.
+- The two versions produce an identical result, Engineering as the only department above the company average, but the CTE version reads in the order a person would naturally explain it out loud: "first compute department averages, then find the ones above the company average."
 
 ![A CTE naming a temporary result so the main query can read from it](images/09_cte_named_temporary_result.png)
 
@@ -71,20 +74,22 @@ FROM dept_averages, company_average
 WHERE dept_averages.department_avg > company_average.company_avg;
 ```
 
-`dept_averages` and `company_average` are each defined once, given clear names, and then both referenced in the final `SELECT`, which lists them side by side and compares their columns directly. Naming each step this way pays off in two ways:
+`dept_averages` and `company_average` are each defined once, given clear names, and then both referenced in the final `SELECT`, which lists them side by side and compares their `columns` directly. Naming each step this way pays off in two ways:
 
-- It makes it far easier to check each piece in isolation, since the whole first CTE can be run on its own, just by selecting from it directly, before it is ever plugged into the larger query.
-- It documents what each intermediate result actually represents, for anyone reading the query later.
+- It makes it far easier to check each piece in isolation, since the whole first CTE can be run on its own, just by selecting from it directly, before it is ever plugged into the larger `query`.
+- It documents what each intermediate result actually represents, for anyone reading the `query` later.
 
 ![Multiple CTEs chained as named steps before the final report](images/10_cte_chain_multiple_steps.png)
 
 ## Why CTEs Are Often Preferred Over Nested Subqueries
 
-Both derived tables and CTEs are ultimately handled by the database in comparable ways, and neither is inherently faster than the other in most modern databases. The real difference is readability and maintainability: a CTE gives an intermediate result a name that documents what it represents, and it keeps deeply nested queries from turning into a wall of parentheses that has to be read from the inside out. For any query with more than one layer of subquery, reaching for a CTE instead is usually the better habit to build.
+- Both derived `tables` and CTEs are ultimately handled by the `database` in comparable ways, and neither is inherently faster than the other in most modern `databases`.
+- The real difference is readability and maintainability: a CTE gives an intermediate result a name that documents what it represents, and it keeps deeply nested `queries` from turning into a wall of parentheses that has to be read from the inside out.
+- For any `query` with more than one layer of subquery, reaching for a CTE instead is usually the better habit to build.
 
 ## A CTE Can Also Simplify a WHERE Subquery
 
-CTEs are not limited to replacing `FROM` subqueries; any subquery, including the correlated and list-based ones from earlier lessons, can be pulled out into a named CTE if doing so makes the query easier to follow.
+CTEs are not limited to replacing `FROM` subqueries; any subquery, including the correlated and list-based ones from earlier lessons, can be pulled out into a named CTE if doing so makes the `query` easier to follow.
 
 ```postgresql with=employees.sql
 WITH high_earners AS (
@@ -97,20 +102,40 @@ FROM high_earners
 ORDER BY salary DESC;
 ```
 
-This is a small example, but the pattern scales: as soon as a `WHERE` subquery's own logic becomes complex enough to deserve a name, wrapping it in a CTE keeps the final query focused on what happens with the result, not how that result was derived.
+This is a small example, but the pattern scales: as soon as a `WHERE` subquery's own logic becomes complex enough to deserve a name, wrapping it in a CTE keeps the final `query` focused on what happens with the result, not how that result was derived.
 
 ## CTEs at a Glance
 
-| Feature | Detail |
-|---|---|
-| Syntax | `WITH name AS (subquery) SELECT ... FROM name` |
-| Multiple CTEs | Comma-separated, later ones can reference earlier ones |
-| Scope | Only visible within the single statement that defines them |
-| Main benefit | Readability: names each step, avoids deeply nested parentheses |
+<table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
+  <thead>
+    <tr>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Feature</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Detail</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Syntax</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>WITH name AS (subquery) SELECT ... FROM name</code></td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Multiple CTEs</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Comma-separated, later ones can reference earlier ones</td>
+    </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Scope</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Only visible within the single statement that defines them</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Main benefit</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Readability: names each step, avoids deeply nested parentheses</td>
+    </tr>
+  </tbody>
+</table>
 
 ## Your Turn
 
-Rewrite the `correlated subquery` from the previous lesson, finding employees whose salary exceeds their own department's average, as a CTE-based query instead of a `WHERE`-embedded subquery.
+Rewrite the `correlated subquery` from the previous lesson, finding employees whose salary exceeds their own department's average, as a CTE-based `query` instead of a `WHERE`-embedded subquery.
 
 ```postgresql with=employees.sql
 -- Write your query below
@@ -120,4 +145,6 @@ One valid answer defines `WITH dept_averages AS (SELECT department, AVG(salary) 
 
 ## Conclusion
 
-A CTE, written with `WITH`, names an intermediate query result up front so the rest of a statement can read top to bottom instead of inside out, and several CTEs can be chained together, each one building on the last, without losing clarity as the logic grows more layered. Kabir's department-average report is now something a colleague can read and understand in one pass. Every CTE so far has referenced only tables or earlier CTEs; the next lesson introduces a CTE that is allowed to reference itself.
+- A CTE, written with `WITH`, names an intermediate `query` result up front so the rest of a statement can read top to bottom instead of inside out, and several CTEs can be chained together, each one building on the last, without losing clarity as the logic grows more layered.
+- Kabir's department-average report is now something a colleague can read and understand in one pass.
+- Every CTE so far has referenced only `tables` or earlier CTEs; the next lesson introduces a CTE that is allowed to reference itself.

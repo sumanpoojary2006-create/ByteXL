@@ -1,6 +1,9 @@
 ## Introduction
 
-The plain `JOIN` Zoya used to combine orders with customer and restaurant names has a formal name that the previous lesson skipped over: an **`INNER JOIN`**. `JOIN` by itself, with no other keyword in front of it, defaults to an inner `join` in every major database, so the two are the same thing, one just spelled out for clarity. What matters is understanding exactly what "inner" means: an inner `join` keeps a row in the result only when a match is found on both sides of the `join` condition. Rows with no match on either side are silently left out, and that quiet exclusion is worth understanding precisely before relying on it.
+- The plain `JOIN` Zoya used to combine orders with customer and restaurant names has a formal name that the previous lesson skipped over: an **`INNER JOIN`**.
+- `JOIN` by itself, with no other keyword in front of it, defaults to an inner `join` in every major `database`, so the two are the same thing, one just spelled out for clarity.
+- What matters is understanding exactly what "inner" means: an inner `join` keeps a `row` in the result only when a match is found on both sides of the `join` condition.
+- Rows with no match on either side are silently left out, and that quiet exclusion is worth understanding precisely before relying on it.
 
 ## Confirming the Match-Only Behavior
 
@@ -55,13 +58,15 @@ FROM customers
 INNER JOIN orders ON customers.customer_id = orders.customer_id;
 ```
 
-This returns six rows, one per order, but Neha Bhatt never appears anywhere in the output, even though she is a perfectly valid row in `customers`. She has no matching row in `orders`, so the inner `join` excludes her entirely rather than showing her with blank order columns. This is the defining trait of `INNER JOIN`: no match means no row in the result, on either side.
+- This returns six `rows`, one per order, but Neha Bhatt never appears anywhere in the output, even though she is a perfectly valid `row` in `customers`.
+- She has no matching `row` in `orders`, so the inner `join` excludes her entirely rather than showing her with blank order `columns`.
+- This is the defining trait of `INNER JOIN`: no match means no `row` in the result, on either side.
 
 ![INNER JOIN keeping only rows that have a matching partner on both sides](images/03_inner_join_matched_only.png)
 
 ## Checking the Row Count Before and After
 
-It helps to compare the row count of a table alone against the row count after joining, to see exactly how many rows an inner `join` keeps.
+It helps to compare the `row` count of a `table` alone against the `row` count after joining, to see exactly how many `rows` an inner `join` keeps.
 
 ```postgresql with=delivery.sql
 SELECT COUNT(*) AS total_customers FROM customers;
@@ -73,23 +78,54 @@ FROM customers
 INNER JOIN orders ON customers.customer_id = orders.customer_id;
 ```
 
-The `customers` table alone has 5 rows, but the joined query returns 6, not 5 and not fewer:
+The `customers` `table` alone has 5 `rows`, but the joined `query` returns 6, not 5 and not fewer:
 
-| customer_name | Orders placed | Rows contributed to the `join` |
-|---|---|---|
-| Aditi Kulkarni | 2 | 2 |
-| Rohan Das | 2 | 2 |
-| Kavya Nair | 1 | 1 |
-| Imran Sheikh | 1 | 1 |
-| Neha Bhatt | 0 | 0 |
+<table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
+  <thead>
+    <tr>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">customer_name</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Orders placed</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Rows contributed to the <code>join</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Aditi Kulkarni</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">2</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">2</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Rohan Das</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">2</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">2</td>
+    </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Kavya Nair</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">1</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">1</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Imran Sheikh</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">1</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">1</td>
+    </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Neha Bhatt</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">0</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">0</td>
+    </tr>
+  </tbody>
+</table>
 
-That number is higher than 5 because Aditi Kulkarni and Rohan Das each placed more than one order, so an inner `join` produces one output row for every matching pair, and a customer with two orders contributes two rows to the result. Meanwhile, Neha's row contributes zero, since it has no partner in `orders` at all. The inner `join` row count depends entirely on how many matches exist, not on how many rows either original table has.
+- That number is higher than 5 because Aditi Kulkarni and Rohan Das each placed more than one order, so an inner `join` produces one output `row` for every matching pair, and a customer with two orders contributes two `rows` to the result.
+- Meanwhile, Neha's `row` contributes zero, since it has no partner in `orders` at all.
+- The inner `join` `row` count depends entirely on how many matches exist, not on how many `rows` either original `table` has.
 
 ![INNER JOIN producing two joined rows when one customer matches two orders](images/04_inner_join_one_to_many_rows.png)
 
 ## Adding a WHERE Clause on Top of an Inner Join
 
-Once tables are joined, `WHERE` filters the combined rows exactly the way it filters a single table, since after the `join` runs, the database is working with one wide result set.
+Once `tables` are joined, `WHERE` filters the combined `rows` exactly the way it filters a single `table`, since after the `join` runs, the `database` is working with one wide result set.
 
 ```postgresql with=delivery.sql
 SELECT customers.customer_name, restaurants.restaurant_name, orders.amount
@@ -99,34 +135,58 @@ INNER JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id
 WHERE orders.amount > 400;
 ```
 
-This query runs in two clear stages:
+This `query` runs in two clear stages:
 
-1. The two `INNER JOIN` clauses first assemble the full combined view across all three tables.
+1. The two `INNER JOIN` clauses first assemble the full combined `view` across all three `tables`.
 2. Only then does `WHERE orders.amount > 400` remove the smaller orders, leaving just the three highest-value ones, orders 1, 2, and 4, with both the customer's and the restaurant's real names attached.
 
 ## When an Inner Join Is the Right Choice
 
-An inner `join` is the right tool whenever a row without a match is not useful for the question being asked. A report on "orders and who placed them" has no reason to include a customer who has never ordered, since there is nothing to report about them in that context. The next lesson introduces a `join` type built for the opposite situation, when unmatched rows are exactly what needs to stay visible.
+- An inner `join` is the right tool whenever a `row` without a match is not useful for the question being asked.
+- A report on "orders and who placed them" has no reason to include a customer who has never ordered, since there is nothing to report about them in that context.
+- The next lesson introduces a `join` type built for the opposite situation, when unmatched `rows` are exactly what needs to stay visible.
 
 ## INNER JOIN at a Glance
 
-| Behavior | Result |
-|---|---|
-| Match found on both sides | Row included, columns from both tables |
-| No match on the left table's side | Left row excluded entirely |
-| No match on the right table's side | Right row excluded entirely |
-| `JOIN` with no keyword | Defaults to `INNER JOIN` |
+<table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
+  <thead>
+    <tr>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Behavior</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Result</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Match found on both sides</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Row included, columns from both tables</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">No match on the left table&#x27;s side</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Left row excluded entirely</td>
+    </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">No match on the right table&#x27;s side</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Right row excluded entirely</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>JOIN</code> with no keyword</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Defaults to <code>INNER JOIN</code></td>
+    </tr>
+  </tbody>
+</table>
 
 ## Your Turn
 
-Zoya wants a list of every restaurant that has actually received at least one order, with no duplicates needed, just the restaurant names that appear in `orders`. Write a query against `orders` and `restaurants` above using `INNER JOIN` and `DISTINCT` together.
+Zoya wants a list of every restaurant that has actually received at least one order, with no duplicates needed, just the restaurant names that appear in `orders`. Write a `query` against `orders` and `restaurants` above using `INNER JOIN` and `DISTINCT` together.
 
 ```postgresql with=delivery.sql
 -- Write your query below
 ```
 
-If your query is `SELECT DISTINCT restaurants.restaurant_name FROM orders INNER JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id;`, it returns Pizza Palace, Sushi Central, and Burger Barn, and Taco Town is correctly missing, since it has never matched an order.
+If your `query` is `SELECT DISTINCT restaurants.restaurant_name FROM orders INNER JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id;`, it returns Pizza Palace, Sushi Central, and Burger Barn, and Taco Town is correctly missing, since it has never matched an order.
 
 ## Conclusion
 
-`INNER JOIN`, and its shorthand `JOIN`, keeps only the rows where both sides of the `join` condition find a partner, quietly dropping everything else, which makes it the right choice whenever unmatched rows carry no useful information for the question at hand. Zoya now knows precisely why Neha Bhatt and Taco Town never showed up in her earlier reports. Sometimes, though, an unmatched row is exactly the information a report needs to surface, and that is where outer `joins` come in.
+- `INNER JOIN`, and its shorthand `JOIN`, keeps only the `rows` where both sides of the `join` condition find a partner, quietly dropping everything else, which makes it the right choice whenever unmatched `rows` carry no useful information for the question at hand.
+- Zoya now knows precisely why Neha Bhatt and Taco Town never showed up in her earlier reports.
+- Sometimes, though, an unmatched `row` is exactly the information a report needs to surface, and that is where outer `joins` come in.

@@ -1,10 +1,13 @@
 ## Introduction
 
-Farah builds reports for a small gym chain, and the `members` table stores each member's total visits this month as a plain number. The front desk does not want to stare at raw visit counts; they want members labeled "Highly Active," "Active," or "At Risk" so staff can decide who needs a check-in call. That label does not exist anywhere in the table, it depends on a rule applied to the visit count, and different visit counts should produce different labels within the very same query. This is exactly what SQL's **`CASE`** expression is for: choosing between several possible outputs based on a condition, row by row.
+- Farah builds reports for a small gym chain, and the `members` `table` stores each member's total visits this month as a plain number.
+- The front desk does not want to stare at raw visit counts; they want members labeled "Highly Active," "Active," or "At Risk" so staff can decide who needs a check-in call.
+- That label does not exist anywhere in the `table`, it depends on a rule applied to the visit count, and different visit counts should produce different labels within the very same `query`.
+- This is exactly what SQL's **`CASE`** expression is for: choosing between several possible outputs based on a condition, `row` by `row`.
 
 ## Writing a Simple CASE Expression
 
-The `members` table tracks each member's visits for the current month.
+The `members` `table` tracks each member's visits for the current month.
 
 ```postgresql file=members.sql
 CREATE TABLE members (
@@ -32,18 +35,50 @@ SELECT full_name, visits_this_month,
 FROM members;
 ```
 
-`CASE` checks each `WHEN` condition in order, top to bottom, and returns the value after the first `THEN` whose condition is true. If none of the `WHEN` conditions match, it falls back to whatever follows `ELSE`. Karan's 18 visits satisfy the first condition and get "Highly Active," while Ritu's 0 visits fail both `WHEN` checks and land on "At Risk" through the `ELSE` branch.
+- `CASE` checks each `WHEN` condition in order, top to bottom, and returns the value after the first `THEN` whose condition is true.
+- If none of the `WHEN` conditions match, it falls back to whatever follows `ELSE`.
+- Karan's 18 visits satisfy the first condition and get "Highly Active," while Ritu's 0 visits fail both `WHEN` checks and land on "At Risk" through the `ELSE` branch.
 
 ![CASE assigning activity labels by checking conditions in order](images/09_case_first_matching_condition.png)
 
 Walking through every member against the rule shows exactly which branch each one lands on:
 
-| Member | Visits | First true condition | Label |
-|---|---|---|---|
-| Karan Malhotra | 18 | `>= 12` | Highly Active |
-| Nisha Verma | 4 | `>= 4` | Active |
-| Aakash Jain | 11 | `>= 4` | Active |
-| Ritu Sharma | 0 | none, falls to `ELSE` | At Risk |
+<table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
+  <thead>
+    <tr>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Member</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Visits</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">First true condition</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Label</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Karan Malhotra</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">18</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>&gt;= 12</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Highly Active</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Nisha Verma</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">4</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>&gt;= 4</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Active</td>
+    </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Aakash Jain</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">11</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>&gt;= 4</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Active</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Ritu Sharma</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">0</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">none, falls to <code>ELSE</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">At Risk</td>
+    </tr>
+  </tbody>
+</table>
 
 ## Why Order Inside CASE Matters
 
@@ -59,11 +94,12 @@ SELECT full_name, visits_this_month,
 FROM members;
 ```
 
-Run this version and Karan, with 18 visits, gets labeled "Active" instead of "Highly Active," because `visits_this_month >= 4` is checked first and is already true at 18 visits, so the `CASE` expression stops right there and never reaches the "Highly Active" condition. The rule to remember is simple: put the most specific or most restrictive condition first.
+- Run this version and Karan, with 18 visits, gets labeled "Active" instead of "Highly Active," because `visits_this_month >= 4` is checked first and is already true at 18 visits, so the `CASE` expression stops right there and never reaches the "Highly Active" condition.
+- The rule to remember is simple: put the most specific or most restrictive condition first.
 
 ## Branching on a Column Value Instead of a Range
 
-`CASE` does not only compare numbers against thresholds; it can also branch on an exact match, which suits the `membership_type` column here.
+`CASE` does not only compare numbers against thresholds; it can also branch on an exact match, which suits the `membership_type` `column` here.
 
 ```postgresql with=members.sql
 SELECT full_name, membership_type,
@@ -76,9 +112,9 @@ SELECT full_name, membership_type,
 FROM members;
 ```
 
-This shorter form, `CASE membership_type WHEN 'premium' THEN ...`, compares the column directly against each listed value instead of writing out a full condition each time:
+This shorter form, `CASE membership_type WHEN 'premium' THEN ...`, compares the `column` directly against each listed value instead of writing out a full condition each time:
 
-- Use it when every branch is a simple equality check against the same column.
+- Use it when every branch is a simple equality check against the same `column`.
 - Fall back to the earlier `CASE WHEN condition THEN ...` form whenever a condition is more than a plain equality.
 
 ## Combining CASE with a Calculation
@@ -95,20 +131,22 @@ SELECT full_name,
 FROM members;
 ```
 
-The `CASE` expression resolves to a plain number for each row, either 10, 5, or 2 depending on membership type, and that number is then multiplied directly by `visits_this_month`, producing a single loyalty-points column without a second query or a temporary table.
+The `CASE` expression resolves to a plain number for each `row`, either 10, 5, or 2 depending on membership type, and that number is then multiplied directly by `visits_this_month`, producing a single loyalty-points `column` without a second `query` or a temporary `table`.
 
 ![CASE choosing a membership multiplier before calculating loyalty points](images/10_case_multiplier_loyalty_points.png)
 
 ## Your Turn
 
-The gym wants a discount eligibility flag: members with fewer than 5 visits this month get the label "Send Offer," everyone else gets "No Offer Needed." Write that query against the `members` table above, aliasing the result as `offer_status`.
+The gym wants a discount eligibility flag: members with fewer than 5 visits this month get the label "Send Offer," everyone else gets "No Offer Needed." Write that `query` against the `members` `table` above, aliasing the result as `offer_status`.
 
 ```postgresql with=members.sql
 -- Write your query below
 ```
 
-If your query uses `CASE WHEN visits_this_month < 5 THEN 'Send Offer' ELSE 'No Offer Needed' END AS offer_status`, only Nisha and Ritu will be flagged for an offer, matching their visit counts of 4 and 0.
+If your `query` uses `CASE WHEN visits_this_month < 5 THEN 'Send Offer' ELSE 'No Offer Needed' END AS offer_status`, only Nisha and Ritu will be flagged for an offer, matching their visit counts of 4 and 0.
 
 ## Conclusion
 
-`CASE` turns a raw column value into whatever label, category, or calculated result a business question actually needs, checking conditions in order and returning the first match, with `ELSE` as a safety net for everything else. Farah used it to label activity levels, describe membership plans in plain language, and calculate loyalty points, all from two columns of raw data. Individual rows transformed this way are useful, but many real questions need entire groups of rows summarized into one number, which is where aggregation begins.
+- `CASE` turns a raw `column` value into whatever label, category, or calculated result a business question actually needs, checking conditions in order and returning the first match, with `ELSE` as a safety net for everything else.
+- Farah used it to label activity levels, describe membership plans in plain language, and calculate loyalty points, all from two `columns` of raw data.
+- Individual `rows` transformed this way are useful, but many real questions need entire groups of `rows` summarized into one number, which is where aggregation begins.

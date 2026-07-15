@@ -1,16 +1,16 @@
 ## Introduction
 
-Meera runs the online ordering system for a chain of five restaurants, and the `restaurants` table she inherited is a mess of typing habits:
+Meera runs the online ordering system for a chain of five restaurants, and the `restaurants` `table` she inherited is a mess of typing habits:
 
 - Some branch names are in all caps because a manager once left caps lock on.
 - Some values have trailing spaces from a copy-paste out of a spreadsheet.
-- The app needs a single clean display line like "Spice Route - Koramangala" built out of two separate columns.
+- The app needs a single clean display line like "Spice Route - Koramangala" built out of two separate `columns`.
 
-None of this needs a new column or a data-entry fix from head office. It needs SQL to reshape the text on the way out, using a set of built-in **string functions** that every relational database ships with.
+None of this needs a new `column` or a data-entry fix from head office. It needs SQL to reshape the text on the way out, using a set of built-in **string `functions`** that every relational `database` ships with.
 
 ## Joining Text Together
 
-The `restaurants` table stores a branch name and a locality in separate columns, but the delivery app wants them shown as one combined string.
+The `restaurants` `table` stores a branch name and a locality in separate `columns`, but the delivery app wants them shown as one combined string.
 
 ```postgresql file=restaurants.sql
 CREATE TABLE restaurants (
@@ -33,24 +33,27 @@ SELECT CONCAT(branch_name, ' - ', locality) AS display_name
 FROM restaurants;
 ```
 
-`CONCAT` glues its arguments together into one string, and the literal `' - '` in the middle inserts a separator between the two column values. Meera now has exactly the label the app's restaurant list needs, without touching the underlying columns.
+`CONCAT` glues its arguments together into one string, and the literal `' - '` in the middle inserts a separator between the two `column` values. Meera now has exactly the label the app's restaurant list needs, without touching the underlying `columns`.
 
 ![CONCAT joining branch name and locality into one restaurant display name](images/01_concat_branch_locality_display_name.png)
 
 ## Fixing Inconsistent Case
 
-The `branch_name` column has the same restaurant stored two different ways: "Spice Route" and "SPICE ROUTE" are meant to be the same branch, but a case-sensitive grouping or comparison would treat them as different values. `UPPER` and `LOWER` force text into one case so comparisons and grouping stop caring about how someone originally typed it.
+- The `branch_name` `column` has the same restaurant stored two different ways: "Spice Route" and "SPICE ROUTE" are meant to be the same branch, but a case-sensitive grouping or comparison would treat them as different values.
+- `UPPER` and `LOWER` force text into one case so comparisons and grouping stop caring about how someone originally typed it.
 
 ```postgresql with=restaurants.sql
 SELECT branch_name, UPPER(branch_name) AS shout_case, LOWER(branch_name) AS quiet_case
 FROM restaurants;
 ```
 
-For a report grouped by restaurant name, applying `LOWER(branch_name)` to every row before comparing means "Spice Route" and "SPICE ROUTE" collapse into a single group instead of two. Standardizing case at query time is often faster than tracking down and fixing every inconsistent row in the source table.
+- For a report grouped by restaurant name, applying `LOWER(branch_name)` to every `row` before comparing means "Spice Route" and "SPICE ROUTE" collapse into a single group instead of two.
+- Standardizing case at `query` time is often faster than tracking down and fixing every inconsistent `row` in the source `table`.
 
 ## Trimming Stray Whitespace
 
-The `manager_email` column has a worse problem: some values have leading or trailing spaces, likely left over from a spreadsheet import. A space at the end of an email address makes `WHERE manager_email = 'ravi.kumar@spiceroute.com'` fail to match, even though the value looks identical on screen.
+- The `manager_email` `column` has a worse problem: some values have leading or trailing spaces, likely left over from a spreadsheet import.
+- A space at the end of an email address makes `WHERE manager_email = 'ravi.kumar@spiceroute.com'` fail to match, even though the value looks identical on screen.
 
 ```postgresql with=restaurants.sql
 SELECT manager_email, TRIM(manager_email) AS cleaned_email, LENGTH(manager_email) AS raw_length, LENGTH(TRIM(manager_email)) AS clean_length
@@ -58,7 +61,8 @@ FROM restaurants
 WHERE restaurant_id IN (1, 4, 5);
 ```
 
-`TRIM` removes whitespace from both ends of a string, and `LENGTH` counts characters, which is how Meera confirmed the raw column had extra characters an eyeball check could not catch. Comparing `raw_length` against `clean_length` for each row makes the hidden whitespace visible instead of invisible.
+- `TRIM` removes whitespace from both ends of a string, and `LENGTH` counts characters, which is how Meera confirmed the raw `column` had extra characters an eyeball check could not catch.
+- Comparing `raw_length` against `clean_length` for each `row` makes the hidden whitespace visible instead of invisible.
 
 ![LOWER and TRIM cleaning a messy email into a normalized contact address](images/02_lower_trim_clean_email.png)
 
@@ -72,38 +76,93 @@ SELECT manager_email,
 FROM restaurants;
 ```
 
-`POSITION('@' IN ...)` finds where the `@` sits in the cleaned email, and `SUBSTRING ... FROM` starts pulling characters one position after it, giving back everything from the domain onward. Wrapping the argument in `TRIM` first matters here too, since a stray trailing space would otherwise show up glued onto the domain.
+- `POSITION('@' IN ...)` finds where the `@` sits in the cleaned email, and `SUBSTRING ...
+- FROM` starts pulling characters one position after it, giving back everything from the domain onward.
+- Wrapping the argument in `TRIM` first matters here too, since a stray trailing space would otherwise show up glued onto the domain.
 
 ## Before and After, Side by Side
 
 Lining up a few raw values against their cleaned results makes the transformation concrete:
 
-| Raw value | Function applied | Cleaned result |
-|---|---|---|
-| `'SPICE ROUTE'` | `LOWER(branch_name)` | `'spice route'` |
-| `'  RAVI.KUMAR@SPICEROUTE.COM  '` | `LOWER(TRIM(manager_email))` | `'ravi.kumar@spiceroute.com'` |
-| `'  priya.n@curryleaf.com'` | `TRIM(manager_email)` | `'priya.n@curryleaf.com'` |
+<table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
+  <thead>
+    <tr>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Raw value</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Function applied</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Cleaned result</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>&#x27;SPICE ROUTE&#x27;</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>LOWER(branch_name)</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>&#x27;spice route&#x27;</code></td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>&#x27;  RAVI.KUMAR@SPICEROUTE.COM  &#x27;</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>LOWER(TRIM(manager_email))</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>&#x27;ravi.kumar@spiceroute.com&#x27;</code></td>
+    </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>&#x27;  priya.n@curryleaf.com&#x27;</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>TRIM(manager_email)</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>&#x27;priya.n@curryleaf.com&#x27;</code></td>
+    </tr>
+  </tbody>
+</table>
 
 ## String Functions at a Glance
 
-| Function | Purpose | Example |
-|---|---|---|
-| `CONCAT(a, b, ...)` | Join strings into one | `CONCAT(branch_name, ' - ', locality)` |
-| `UPPER(text)` / `LOWER(text)` | Force a consistent case | `LOWER(branch_name)` |
-| `TRIM(text)` | Remove leading/trailing whitespace | `TRIM(manager_email)` |
-| `LENGTH(text)` | Count characters | `LENGTH(branch_name)` |
-| `SUBSTRING(text FROM start FOR length)` | Extract part of a string | `SUBSTRING(email FROM 1 FOR 5)` |
+<table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
+  <thead>
+    <tr>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Function</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Purpose</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>CONCAT(a, b, ...)</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Join strings into one</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>CONCAT(branch_name, &#x27; - &#x27;, locality)</code></td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>UPPER(text)</code> / <code>LOWER(text)</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Force a consistent case</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>LOWER(branch_name)</code></td>
+    </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>TRIM(text)</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Remove leading/trailing whitespace</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>TRIM(manager_email)</code></td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>LENGTH(text)</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Count characters</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>LENGTH(branch_name)</code></td>
+    </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>SUBSTRING(text FROM start FOR length)</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Extract part of a string</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>SUBSTRING(email FROM 1 FOR 5)</code></td>
+    </tr>
+  </tbody>
+</table>
 
 ## Your Turn
 
-Head office wants a cleaned-up manager directory: one column with the branch name in title case is out of scope for now, but they do want the trimmed, lowercase email for every restaurant, aliased as `contact_email`. Write that query against the `restaurants` table above.
+- Head office wants a cleaned-up manager directory: one `column` with the branch name in title case is out of scope for now, but they do want the trimmed, lowercase email for every restaurant, aliased as `contact_email`.
+- Write that `query` against the `restaurants` `table` above.
 
 ```postgresql with=restaurants.sql
 -- Write your query below
 ```
 
-If your query is `SELECT LOWER(TRIM(manager_email)) AS contact_email FROM restaurants;`, every address now reads the same clean way regardless of how it was originally typed.
+If your `query` is `SELECT LOWER(TRIM(manager_email)) AS contact_email FROM restaurants;`, every address now reads the same clean way regardless of how it was originally typed.
 
 ## Conclusion
 
-String functions let a query reshape text as it leaves the table, joining columns together, normalizing case, stripping stray whitespace, and pulling out just the substring that matters, all without ever editing the stored data. Meera's restaurant list, manager directory, and domain check all came from the same five rows of raw data, just viewed through different functions. Text is only one kind of data a table holds, and numbers need their own set of tools next.
+- String `functions` let a `query` reshape text as it leaves the `table`, joining `columns` together, normalizing case, stripping stray whitespace, and pulling out just the substring that matters, all without ever editing the stored data.
+- Meera's restaurant list, manager directory, and domain check all came from the same five `rows` of raw data, just viewed through different `functions`.
+- Text is only one kind of data a `table` holds, and numbers need their own set of tools next.

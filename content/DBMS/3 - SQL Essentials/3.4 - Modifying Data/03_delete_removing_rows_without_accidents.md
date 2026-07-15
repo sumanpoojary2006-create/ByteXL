@@ -1,6 +1,9 @@
 ## Introduction
 
-Priyanka is closing out add-drop week. One student, Rahul Verma, registered for Linear Algebra and then decided, well within the deadline, to drop it. His enrollment row now needs to be removed from the table entirely, not marked, not changed, simply gone, since a dropped course should not appear on his record at all. The statement for this is **`DELETE`**, and Priyanka already knows, from watching Rohit's `UPDATE` go sideways for a moment during his own address corrections, that a statement which removes rows deserves exactly the same caution as one that changes them.
+- Priyanka is closing out add-drop week.
+- One student, Rahul Verma, registered for Linear Algebra and then decided, well within the deadline, to drop it.
+- His enrollment `row` now needs to be removed from the `table` entirely, not marked, not changed, simply gone, since a dropped course should not appear on his record at all.
+- The statement for this is **`DELETE`**, and Priyanka already knows, from watching Rohit's `UPDATE` go sideways for a moment during his own address corrections, that a statement which removes `rows` deserves exactly the same caution as one that changes them.
 
 ```postgresql file=schema.sql
 CREATE TABLE students (
@@ -62,18 +65,20 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 Priyanka starts the same way Rohit learned to: a `SELECT` using the exact condition she is about to delete with, so she knows precisely what is about to disappear.
 
 ```postgresql with=schema.sql
+\i schema.sql
 SELECT enrollment_id, student_id, course_id, enrolled_on
 FROM enrollments
 WHERE enrollment_id = 9;
 ```
 
-One row comes back: enrollment 9, Rahul Verma's registration in course 103, Linear Algebra. That is the exact row and only that row that her `DELETE` is about to remove.
+One `row` comes back: enrollment 9, Rahul Verma's registration in course 103, Linear Algebra. That is the exact `row` and only that `row` that her `DELETE` is about to remove.
 
 ## The Shape of DELETE
 
-`DELETE` `FROM` names the table, and `WHERE` narrows which rows are removed.
+`DELETE` `FROM` names the `table`, and `WHERE` narrows which `rows` are removed.
 
 ```postgresql with=schema.sql
+\i schema.sql
 DELETE FROM enrollments
 WHERE enrollment_id = 9;
 
@@ -82,33 +87,37 @@ FROM enrollments
 ORDER BY enrollment_id;
 ```
 
-Enrollment 9 is gone from the results, and every other enrollment, all nine of the remaining ones, is untouched. Unlike `UPDATE`, `DELETE` has no `SET` clause, because there is nothing to set, a deleted row simply stops existing in the table. `WHERE` is doing the identical job it always does: picking out which rows the statement applies to.
+- Enrollment 9 is gone from the results, and every other enrollment, all nine of the remaining ones, is untouched.
+- Unlike `UPDATE`, `DELETE` has no `SET` clause, because there is nothing to set, a deleted `row` simply stops existing in the `table`.
+- `WHERE` is doing the identical job it always does: picking out which `rows` the statement applies to.
 
 ![Safe DELETE habit: select the target row first, then delete that exact row](images/05_delete_select_target_first.png)
 
 ## Why WHERE Matters Here Even More
 
-A `DELETE` with no `WHERE` clause at all is valid SQL, and PostgreSQL will run it without complaint, which makes it one of the most dangerous single lines a person can type into a database.
+A `DELETE` with no `WHERE` clause at all is valid SQL, and PostgreSQL will run it without complaint, which makes it one of the most dangerous single lines a person can type into a `database`.
 
 ```postgresql with=schema.sql
+\i schema.sql
 DELETE FROM enrollments;
 
 SELECT enrollment_id, student_id, course_id
 FROM enrollments;
 ```
 
-The second `SELECT` returns nothing at all, because every single enrollment row, all ten of them, has been removed, not just Rahul's. Two failure modes look nearly identical here:
+The second `SELECT` returns nothing at all, because every single enrollment `row`, all ten of them, has been removed, not just Rahul's. Two failure modes look nearly identical here:
 
-- No `WHERE` clause at all: there was no warning, no count of rows about to disappear, and once the statement finishes there is no ordinary way to bring those rows back.
-- A `WHERE` clause that is merely too broad: writing `WHERE course_id = 103` when the intent was `WHERE enrollment_id = 9` removes every enrollment in Linear Algebra across every student, not the one row Rahul actually dropped.
+- No `WHERE` clause at all: there was no warning, no count of `rows` about to disappear, and once the statement finishes there is no ordinary way to bring those `rows` back.
+- A `WHERE` clause that is merely too broad: writing `WHERE course_id = 103` when the intent was `WHERE enrollment_id = 9` removes every enrollment in Linear Algebra across every student, not the one `row` Rahul actually dropped.
 
 ![DELETE without WHERE removing all rows from the enrollments table](images/06_delete_without_where_all_rows.png)
 
 ## The Same Safety Habit, Applied to Deletion
 
-The habit that protects `UPDATE` protects `DELETE` just as well: write the condition, run it first as a `SELECT`, look at exactly which rows would be affected, and only turn that same condition into a `DELETE` once the `SELECT` shows precisely the rows meant to go.
+The habit that protects `UPDATE` protects `DELETE` just as well: write the condition, run it first as a `SELECT`, look at exactly which `rows` would be affected, and only turn that same condition into a `DELETE` once the `SELECT` shows precisely the `rows` meant to go.
 
 ```postgresql with=schema.sql
+\i schema.sql
 SELECT enrollment_id, student_id, course_id
 FROM enrollments
 WHERE student_id = 5 AND course_id = 101;
@@ -121,21 +130,45 @@ FROM enrollments
 ORDER BY enrollment_id;
 ```
 
-The first `SELECT` shows exactly one row, Yusuf Khan's registration in course 101. The `DELETE` reuses the identical `WHERE student_id = 5 AND course_id = 101` condition, and the closing `SELECT` confirms nine rows remain and Yusuf's course 101 enrollment is the only one missing. Combining two conditions with `AND`, exactly as covered with logical operators, is often what makes a `DELETE` condition specific enough to trust: `student_id = 5` alone might one day match more than one row if Yusuf ever enrolls in something else.
+- The first `SELECT` shows exactly one `row`, Yusuf Khan's registration in course 101.
+- The `DELETE` reuses the identical `WHERE student_id = 5 AND course_id = 101` condition, and the closing `SELECT` confirms nine `rows` remain and Yusuf's course 101 enrollment is the only one missing.
+- Combining two conditions with `AND`, exactly as covered with logical operators, is often what makes a `DELETE` condition specific enough to trust: `student_id = 5` alone might one day match more than one `row` if Yusuf ever enrolls in something else.
 
 ## DELETE at a Glance
 
-| Part | Purpose | What happens if skipped |
-|---|---|---|
-| `DELETE FROM table` | Names the table rows are removed from | Not optional; a table must be named |
-| `WHERE condition` | Narrows which rows are removed | Every row in the table is removed instead of one |
-| SELECT with the same WHERE, run first | Confirms exactly which rows will be affected | The only real defense against deleting too much |
+<table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
+  <thead>
+    <tr>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Part</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Purpose</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">What happens if skipped</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>DELETE FROM table</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Names the table rows are removed from</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Not optional; a table must be named</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>WHERE condition</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Narrows which rows are removed</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Every row in the table is removed instead of one</td>
+    </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">SELECT with the same WHERE, run first</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Confirms exactly which rows will be affected</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">The only real defense against deleting too much</td>
+    </tr>
+  </tbody>
+</table>
 
 ## Your Turn
 
-Neha Sharma has dropped Database Systems (course_id 101). Confirm which enrollment row that is first, then remove it, then confirm the table's remaining state.
+Neha Sharma has dropped Database Systems (course_id 101). Confirm which enrollment `row` that is first, then remove it, then confirm the `table`'s remaining state.
 
 ```postgresql with=schema.sql
+\i schema.sql
 SELECT enrollment_id, student_id, course_id
 FROM enrollments
 WHERE student_id = 2 AND course_id = 101;
@@ -148,8 +181,11 @@ FROM enrollments
 ORDER BY enrollment_id;
 ```
 
-The first `SELECT` isolates enrollment 3, Neha's row in course 101. The `DELETE` removes exactly that row, and the closing `SELECT` confirms nine rows remain with enrollment 3 no longer among them.
+The first `SELECT` isolates enrollment 3, Neha's `row` in course 101. The `DELETE` removes exactly that `row`, and the closing `SELECT` confirms nine `rows` remain with enrollment 3 no longer among them.
 
 ## Conclusion
 
-`DELETE` is the shortest of the modification statements to type and, without a `WHERE` clause, the fastest way to empty a table by accident. The exact discipline that keeps `UPDATE` safe applies here without any real change: know which rows a condition selects before running it, confirm with a `SELECT` first, and treat the absence of a `WHERE` clause as a decision that removes everything rather than a shortcut. Priyanka closed out add-drop week having removed exactly Rahul Verma's dropped Linear Algebra enrollment, and nothing else, because she checked with a `SELECT` before she ever typed `DELETE`. Sometimes, though, the safest thing is not just checking before a change but getting the database to confirm, immediately and in the same breath, exactly what a statement just did.
+- `DELETE` is the shortest of the modification statements to type and, without a `WHERE` clause, the fastest way to empty a `table` by accident.
+- The exact discipline that keeps `UPDATE` safe applies here without any real change: know which `rows` a condition selects before running it, confirm with a `SELECT` first, and treat the absence of a `WHERE` clause as a decision that removes everything rather than a shortcut.
+- Priyanka closed out add-drop week having removed exactly Rahul Verma's dropped Linear Algebra enrollment, and nothing else, because she checked with a `SELECT` before she ever typed `DELETE`.
+- Sometimes, though, the safest thing is not just checking before a change but getting the `database` to confirm, immediately and in the same breath, exactly what a statement just did.

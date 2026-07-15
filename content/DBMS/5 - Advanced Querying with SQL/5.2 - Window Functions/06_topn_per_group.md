@@ -1,10 +1,12 @@
 ## Introduction
 
-The sales director's final request ties together nearly everything in this chapter: "show me the top 2 salespeople by revenue, within each region." This is a genuinely common business question, a top-N-per-group report, and it needs partitioned ranking, since "top 2" has to reset for every region rather than apply once across the whole company, combined with a way to filter down to just those top-ranked rows. Ranking functions alone cannot filter, since `window functions` are not allowed inside `WHERE`, the same restriction noted when ranking functions were first introduced. Solving this cleanly needs a ranking function wrapped in a CTE.
+- The sales director's final request ties together nearly everything in this chapter: "show me the top 2 salespeople by revenue, within each region." This is a genuinely common business question, a top-N-per-group report, and it needs partitioned ranking, since "top 2" has to reset for every region rather than apply once across the whole company, combined with a way to filter down to just those top-ranked `rows`.
+- Ranking `functions` alone cannot filter, since `window functions` are not allowed inside `WHERE`, the same restriction noted when ranking `functions` were first introduced.
+- Solving this cleanly needs a ranking `function` wrapped in a CTE.
 
 ## Ranking Within Each Region
 
-The `sales` table now includes a `region` column so rankings can be scoped per region.
+The `sales` `table` now includes a `region` `column` so rankings can be scoped per region.
 
 ```postgresql file=regional_sales.sql
 CREATE TABLE sales (
@@ -40,7 +42,7 @@ Every region starts its own count from 1, which is exactly the "within each regi
 
 ## Filtering to the Top N Using a CTE
 
-Since `region_rank` cannot be referenced directly in `WHERE` within the same query that defines it, the ranked result needs to be named with a CTE first, then filtered from there.
+Since `region_rank` cannot be referenced directly in `WHERE` within the same `query` that defines it, the ranked result needs to be named with a CTE first, then filtered from there.
 
 ```postgresql with=regional_sales.sql
 WITH ranked_sales AS (
@@ -54,7 +56,10 @@ WHERE region_rank <= 2
 ORDER BY region, region_rank;
 ```
 
-The CTE `ranked_sales` computes the ranking exactly as before, and the outer query then treats `region_rank` as an ordinary column, filterable with a plain `WHERE`. This returns 5 rows in total, not 6: North and South each contribute their expected 2 rows, but East has only one salesperson to begin with, Kunal Verma, so its entire top 2 is just that single row. South's tie is handled cleanly too, Sana Fatima and Tarun Bakshi both hold rank 1 and both survive the `region_rank <= 2` filter, while Reema Ghosh, in third place by value, lands on rank 3 thanks to `RANK`'s skip-ahead behavior and is correctly excluded. Had South instead had a three-way tie for first place, all three tied rows would have survived the same filter, since every one of them would hold rank 1, which is worth knowing before assuming a top-N query always returns exactly N rows per group.
+- The CTE `ranked_sales` computes the ranking exactly as before, and the outer `query` then treats `region_rank` as an ordinary `column`, filterable with a plain `WHERE`.
+- This returns 5 `rows` in total, not 6: North and South each contribute their expected 2 `rows`, but East has only one salesperson to begin with, Kunal Verma, so its entire top 2 is just that single `row`.
+- South's tie is handled cleanly too, Sana Fatima and Tarun Bakshi both hold rank 1 and both survive the `region_rank <= 2` filter, while Reema Ghosh, in third place by value, lands on rank 3 thanks to `RANK`'s skip-ahead behavior and is correctly excluded.
+- Had South instead had a three-way tie for first place, all three tied `rows` would have survived the same filter, since every one of them would hold rank 1, which is worth knowing before assuming a top-N `query` always returns exactly N `rows` per group.
 
 ![A CTE computing window ranks before an outer query filters to top rows](images/12_cte_filtering_window_rank.png)
 
@@ -74,21 +79,39 @@ WHERE row_num <= 2
 ORDER BY region, row_num;
 ```
 
-This returns at most 2 rows per region, 5 total here, since `ROW_NUMBER` never produces a tie in its numbering even when the underlying values tie, so North and South each contribute their full 2, while East, with only one salesperson on record, can only ever contribute the 1 row it actually has. Whether `RANK`, `DENSE_RANK`, or `ROW_NUMBER` is the right choice for a top-N report depends entirely on how the business wants ties handled, a decision worth confirming explicitly rather than guessing.
+- This returns at most 2 `rows` per region, 5 total here, since `ROW_NUMBER` never produces a tie in its numbering even when the underlying values tie, so North and South each contribute their full 2, while East, with only one salesperson on record, can only ever contribute the 1 `row` it actually has.
+- Whether `RANK`, `DENSE_RANK`, or `ROW_NUMBER` is the right choice for a top-N report depends entirely on how the business wants ties handled, a decision worth confirming explicitly rather than guessing.
 
 ## Top-N Per Group as a General Pattern
 
 This CTE-plus-ranking-plus-filter shape generalizes far beyond sales regions: top 3 highest-paid employees per department, most recent 5 orders per customer, or highest-rated product per category all follow the exact same structure, just changing what `PARTITION BY` groups on and what `ORDER BY` ranks by.
 
-| Step | Purpose |
-|---|---|
-| Ranking function with `PARTITION BY` | Restart the rank count within each group |
-| Wrap in a CTE | Give the ranked result a name that can be filtered |
-| `WHERE rank_column <= N` on the CTE | Keep only the top N rows per group |
+<table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
+  <thead>
+    <tr>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Step</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Ranking function with <code>PARTITION BY</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Restart the rank count within each group</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Wrap in a CTE</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Give the ranked result a name that can be filtered</td>
+    </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>WHERE rank_column &lt;= N</code> on the CTE</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Keep only the top N rows per group</td>
+    </tr>
+  </tbody>
+</table>
 
 ## Your Turn
 
-Find the single lowest-selling salesperson in each region, using `RANK`. Write that query against the `sales` table above.
+Find the single lowest-selling salesperson in each region, using `RANK`. Write that `query` against the `sales` `table` above.
 
 ```postgresql with=regional_sales.sql
 -- Write your query below
@@ -98,4 +121,6 @@ One valid answer wraps `RANK() OVER (PARTITION BY region ORDER BY total_amount A
 
 ## Conclusion
 
-A top-N-per-group report combines a ranking function partitioned by the grouping column with a CTE that makes the rank filterable, and the choice between `ROW_NUMBER`, `RANK`, and `DENSE_RANK` decides exactly how ties are handled in the result. This pattern closes out the chapter by combining partitioning, ordering, ranking, and CTEs into a single, genuinely useful report shape. With subqueries, CTEs, and `window functions` all in place, the course moves next into keeping data correct and consistent as multiple changes happen at once.
+- A top-N-per-group report combines a ranking `function` partitioned by the grouping `column` with a CTE that makes the rank filterable, and the choice between `ROW_NUMBER`, `RANK`, and `DENSE_RANK` decides exactly how ties are handled in the result.
+- This pattern closes out the chapter by combining partitioning, ordering, ranking, and CTEs into a single, genuinely useful report shape.
+- With subqueries, CTEs, and `window functions` all in place, the course moves next into keeping data correct and consistent as multiple changes happen at once.

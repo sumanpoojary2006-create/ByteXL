@@ -1,6 +1,10 @@
 ## Introduction
 
-Naveen has just been handed write access to the college's live enrollment system, the same tables Alia, Rohit, Priyanka, Zara, and Aditya have all been working with, and he notices something about how each of them actually types their statements. None of them writes an `UPDATE` or a `DELETE` the moment they think of it. Each one pauses, checks, and only then commits to the change. Naveen realizes that everything he has learned about `INSERT`, `UPDATE`, `DELETE`, `RETURNING`, and `ON CONFLICT` was never really a set of separate ideas about separate keywords. It was one continuous idea, that changing data is a fundamentally different act from reading it, and it calls for **discipline**, a habit of checking before acting that a `SELECT` never demanded in the first place.
+- Naveen has just been handed write access to the college's live enrollment system, the same `tables` Alia, Rohit, Priyanka, Zara, and Aditya have all been working with, and he notices something about how each of them actually types their statements.
+- None of them writes an `UPDATE` or a `DELETE` the moment they think of it.
+- Each one pauses, checks, and only then commits to the change.
+- Naveen realizes that everything he has learned about `INSERT`, `UPDATE`, `DELETE`, `RETURNING`, and `ON CONFLICT` was never really a set of separate ideas about separate keywords.
+- It was one continuous idea, that changing data is a fundamentally different act from reading it, and it calls for **discipline**, a habit of checking before acting that a `SELECT` never demanded in the first place.
 
 ```postgresql file=schema.sql
 CREATE TABLE students (
@@ -47,15 +51,18 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 
 ## Why a SELECT Mistake and a Modification Mistake Are Not the Same
 
-A `SELECT` with a wrong `WHERE` clause returns the wrong rows on screen, and Naveen can simply notice, fix the condition, and run it again with nothing lost. An `UPDATE` or a `DELETE` with a wrong or missing `WHERE` clause changes or removes rows permanently, and by the time the mistake is noticed, the correct data may no longer exist anywhere to compare against. This asymmetry, that reading forgives mistakes and writing does not, is the entire reason a modification statement deserves a slower hand than a query typed to satisfy curiosity.
+- A `SELECT` with a wrong `WHERE` clause returns the wrong `rows` on screen, and Naveen can simply notice, fix the condition, and run it again with nothing lost.
+- An `UPDATE` or a `DELETE` with a wrong or missing `WHERE` clause changes or removes `rows` permanently, and by the time the mistake is noticed, the correct data may no longer exist anywhere to compare against.
+- This asymmetry, that reading forgives mistakes and writing does not, is the entire reason a modification statement deserves a slower hand than a `query` typed to satisfy curiosity.
 
 ![A SELECT mistake can be retried, while an UPDATE or DELETE mistake changes real data](images/11_select_mistake_vs_modification_mistake.png)
 
 ## Knowing Exactly Which Rows Before Touching Any of Them
 
-Every genuinely safe modification Naveen has seen so far starts the same way: know exactly which rows a `WHERE` clause will match, before running anything that changes them.
+Every genuinely safe modification Naveen has seen so far starts the same way: know exactly which `rows` a `WHERE` clause will match, before running anything that changes them.
 
 ```postgresql with=schema.sql
+\i schema.sql
 SELECT enrollment_id, student_id, course_id, grade
 FROM enrollments
 WHERE student_id = 2 AND course_id = 101;
@@ -66,7 +73,9 @@ WHERE student_id = 2 AND course_id = 101
 RETURNING enrollment_id, student_id, course_id, grade;
 ```
 
-The `SELECT` confirms exactly one row before anything changes: Neha Sharma's ungraded Database Systems enrollment. The `UPDATE` reuses that identical condition rather than a rewritten or loosened version of it, and `RETURNING` confirms, in the same statement, that grade B landed on that one row and nothing else. Three separate habits are stacked in these two statements:
+- The `SELECT` confirms exactly one `row` before anything changes: Neha Sharma's ungraded Database Systems enrollment.
+- The `UPDATE` reuses that identical condition rather than a rewritten or loosened version of it, and `RETURNING` confirms, in the same statement, that grade B landed on that one `row` and nothing else.
+- Three separate habits are stacked in these two statements:
 
 1. Checking first.
 2. Matching the condition exactly.
@@ -76,37 +85,65 @@ None of them is difficult, they simply have to be done on purpose rather than sk
 
 ## Treating a Modification as a Decision, Not a Reflex
 
-A `SELECT` can be typed as fast as a thought, because getting it wrong costs nothing more than glancing at an unexpected result and trying again. An `INSERT`, `UPDATE`, or `DELETE` against real data should never be typed at that same speed. The habit worth carrying forward is a short pause built into the process itself: what table, what condition, how many rows should this match, and does the statement in front of me actually say that. Naveen has started reading his own `WHERE` clause out loud before running anything that changes a row, a small ritual that catches a surprising number of mistakes before they become permanent.
+- A `SELECT` can be typed as fast as a thought, because getting it wrong costs nothing more than glancing at an unexpected result and trying again.
+- An `INSERT`, `UPDATE`, or `DELETE` against real data should never be typed at that same speed.
+- The habit worth carrying forward is a short pause built into the process itself: what `table`, what condition, how many `rows` should this match, and does the statement in front of me actually say that.
+- Naveen has started reading his own `WHERE` clause out loud before running anything that changes a `row`, a small ritual that catches a surprising number of mistakes before they become permanent.
 
 ## What RETURNING Adds to That Discipline
 
-`RETURNING` is not just a convenience for skipping a second query, it is a built-in confirmation step that happens whether or not anyone remembers to ask for it separately.
+`RETURNING` is not just a convenience for skipping a second `query`, it is a built-in confirmation step that happens whether or not anyone remembers to ask for it separately.
 
 ```postgresql with=schema.sql
+\i schema.sql
 DELETE FROM enrollments
 WHERE student_id = 4 AND course_id = 102
 RETURNING enrollment_id, student_id, course_id;
 ```
 
-The result shows exactly one row leaving the table, Siddharth Rao's Data Structures enrollment, and that visible confirmation, arriving in the same breath as the `DELETE` itself, is what turns "I think that worked" into "I can see that it worked."
+The result shows exactly one `row` leaving the `table`, Siddharth Rao's Data Structures enrollment, and that visible confirmation, arriving in the same breath as the `DELETE` itself, is what turns "I think that worked" into "I can see that it worked."
 
 ![Safe modification checklist: select the target, reuse the same WHERE, and confirm with RETURNING](images/12_safe_modification_checklist.png)
 
 ## Discipline Habits at a Glance
 
-| Habit | What it catches |
-|---|---|
-| SELECT with the same WHERE, run first | Confirms exactly which rows a modification is about to touch |
-| Matching the modification's WHERE to the checked SELECT exactly | Prevents drift between what was checked and what actually ran |
-| RETURNING on the modification itself | Confirms the result immediately, without a separate query |
-| Treating INSERT, UPDATE, DELETE as deliberate, not reflexive | Catches mistakes before they become permanent |
-| ON CONFLICT for insert-or-update situations | Removes the gap between checking and writing that two separate statements leave open |
+<table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
+  <thead>
+    <tr>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Habit</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">What it catches</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">SELECT with the same WHERE, run first</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Confirms exactly which rows a modification is about to touch</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Matching the modification&#x27;s WHERE to the checked SELECT exactly</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Prevents drift between what was checked and what actually ran</td>
+    </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">RETURNING on the modification itself</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Confirms the result immediately, without a separate query</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Treating INSERT, UPDATE, DELETE as deliberate, not reflexive</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Catches mistakes before they become permanent</td>
+    </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">ON CONFLICT for insert-or-update situations</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Removes the gap between checking and writing that two separate statements leave open</td>
+    </tr>
+  </tbody>
+</table>
 
 ## Your Turn
 
 Confirm exactly which enrollment belongs to Varun Nair in Linear Algebra, then correct his grade to A, using `RETURNING` to see the result immediately.
 
 ```postgresql with=schema.sql
+\i schema.sql
 SELECT enrollment_id, student_id, course_id, grade
 FROM enrollments
 WHERE student_id = 3 AND course_id = 103;
@@ -117,8 +154,9 @@ WHERE student_id = 3 AND course_id = 103
 RETURNING enrollment_id, student_id, course_id, grade;
 ```
 
-The `SELECT` isolates exactly one row before the change, the `UPDATE` reuses that same condition, and `RETURNING` confirms grade A landed on enrollment 3 and nowhere else.
+The `SELECT` isolates exactly one `row` before the change, the `UPDATE` reuses that same condition, and `RETURNING` confirms grade A landed on enrollment 3 and nowhere else.
 
 ## Conclusion
 
-Everything Naveen has walked through, from Alia's first `INSERT` to Aditya's `ON CONFLICT`, comes down to one underlying discipline: know what a statement will touch before it runs, confirm what it touched once it has, and never let the speed of typing a change outpace the care that change deserves. Real systems tend to go further still, offering ways to group several changes together so that if something goes wrong partway through, every part of that group can be undone at once rather than leaving the data half-changed, an idea worth carrying forward the moment more than one modification needs to succeed or fail as a single unit.
+- Everything Naveen has walked through, from Alia's first `INSERT` to Aditya's `ON CONFLICT`, comes down to one underlying discipline: know what a statement will touch before it runs, confirm what it touched once it has, and never let the speed of typing a change outpace the care that change deserves.
+- Real systems tend to go further still, offering ways to group several changes together so that if something goes wrong partway through, every part of that group can be undone at once rather than leaving the data half-changed, an idea worth carrying forward the moment more than one modification needs to succeed or fail as a single unit.

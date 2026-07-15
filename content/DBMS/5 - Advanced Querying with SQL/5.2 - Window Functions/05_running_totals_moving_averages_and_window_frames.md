@@ -1,10 +1,13 @@
 ## Introduction
 
-The running total from earlier in this chapter, built with `SUM(amount) OVER (PARTITION BY salesperson ORDER BY sale_date)`, quietly relied on a default behavior Leela never had to name explicitly: it summed every row from the start of the partition up through the current row. That default is not the only option. The sales director's newest request needs a genuinely different range, a 3-month moving average, where each month's value is the average of itself and the two months before it, not the average of everything since the beginning. Getting this right means controlling the **window frame** directly, the exact slice of rows a `window function` looks at for each calculation.
+- The running total from earlier in this chapter, built with `SUM(amount) OVER (PARTITION BY salesperson ORDER BY sale_date)`, quietly relied on a default behavior Leela never had to name explicitly: it summed every `row` from the start of the partition up through the current `row`.
+- That default is not the only option.
+- The sales director's newest request needs a genuinely different range, a 3-month moving average, where each month's value is the average of itself and the two months before it, not the average of everything since the beginning.
+- Getting this right means controlling the **window frame** directly, the exact slice of `rows` a `window function` looks at for each calculation.
 
 ## The Default Frame Behind a Running Total
 
-The `monthly_sales` table tracks one row per salesperson per month.
+The `monthly_sales` `table` tracks one `row` per salesperson per month.
 
 ```postgresql file=monthly_sales.sql
 CREATE TABLE monthly_sales (
@@ -29,7 +32,7 @@ FROM monthly_sales
 ORDER BY sale_month;
 ```
 
-This is the same running-total pattern from earlier in the chapter, and its exact frame, though never written out, is `RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW`, meaning "everything from the very first row in the window up to and including the current one." That default frame is what makes a plain `ORDER BY` inside `OVER` produce a cumulative total in the first place.
+This is the same running-total pattern from earlier in the chapter, and its exact frame, though never written out, is `RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW`, meaning "everything from the very first `row` in the window up to and including the current one." That default frame is what makes a plain `ORDER BY` inside `OVER` produce a cumulative total in the first place.
 
 ## Writing a Window Frame Explicitly
 
@@ -45,13 +48,14 @@ FROM monthly_sales
 ORDER BY sale_month;
 ```
 
-`ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW` names the frame directly: start from the first row available (`UNBOUNDED PRECEDING`) and end at the current row (`CURRENT ROW`). This produces an identical result to the shorthand version, but writing it explicitly is what makes it possible to change the frame to something other than the default.
+- `ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW` names the frame directly: start from the first `row` available (`UNBOUNDED PRECEDING`) and end at the current `row` (`CURRENT ROW`).
+- This produces an identical result to the shorthand version, but writing it explicitly is what makes it possible to change the frame to something other than the default.
 
 ![A window frame spanning from the first row to the current row](images/09_window_frame_start_to_current.png)
 
 ## Building a Moving Average with a Custom Frame
 
-A 3-month moving average needs a frame of exactly the current row plus the two rows before it, which `ROWS BETWEEN 2 PRECEDING AND CURRENT ROW` expresses directly.
+A 3-month moving average needs a frame of exactly the current `row` plus the two `rows` before it, which `ROWS BETWEEN 2 PRECEDING AND CURRENT ROW` expresses directly.
 
 ```postgresql with=monthly_sales.sql
 SELECT sale_month, total_amount,
@@ -63,15 +67,15 @@ FROM monthly_sales
 ORDER BY sale_month;
 ```
 
-- January's moving average is just 18000.00, its own value, since only zero rows precede it.
-- February's is the average of January and February, two rows.
-- From March onward, every row's moving average is built from exactly three months: itself and the two immediately before it, sliding forward one month at a time as `sale_month` increases, which is exactly the smoothing effect a moving average is meant to produce.
+- January's moving average is just 18000.00, its own value, since only zero `rows` precede it.
+- February's is the average of January and February, two `rows`.
+- From March onward, every `row`'s moving average is built from exactly three months: itself and the two immediately before it, sliding forward one month at a time as `sale_month` increases, which is exactly the smoothing effect a moving average is meant to produce.
 
 ![A three-row moving average frame sliding across monthly rows](images/10_moving_average_three_row_frame.png)
 
 ## A Frame That Looks Both Backward and Forward
 
-A frame does not have to be limited to rows before the current one; it can extend in both directions at once.
+A frame does not have to be limited to `rows` before the current one; it can extend in both directions at once.
 
 ```postgresql with=monthly_sales.sql
 SELECT sale_month, total_amount,
@@ -83,27 +87,50 @@ FROM monthly_sales
 ORDER BY sale_month;
 ```
 
-`ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING` centers the frame on the current row, including one row before and one row after, which is a common way to smooth out noisy data symmetrically rather than only looking backward.
+`ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING` centers the frame on the current `row`, including one `row` before and one `row` after, which is a common way to smooth out noisy data symmetrically rather than only looking backward.
 
 ## Window Frame Options at a Glance
 
-| Frame clause | Meaning |
-|---|---|
-| `ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW` | From the start of the window to the current row (the default with `ORDER BY`) |
-| `ROWS BETWEEN n PRECEDING AND CURRENT ROW` | Current row plus the n rows before it |
-| `ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING` | Current row, one before, one after |
-| `ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING` | The entire partition, same as no `ORDER BY` at all |
+<table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
+  <thead>
+    <tr>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Frame clause</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">From the start of the window to the current row (the default with <code>ORDER BY</code>)</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>ROWS BETWEEN n PRECEDING AND CURRENT ROW</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Current row plus the n rows before it</td>
+    </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Current row, one before, one after</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">The entire partition, same as no <code>ORDER BY</code> at all</td>
+    </tr>
+  </tbody>
+</table>
 
 ## Your Turn
 
-Leela wants a 2-month moving total, the current month plus the one before it, for Nikhil's sales. Write a query against `monthly_sales` above using an explicit window frame to compute it.
+Leela wants a 2-month moving total, the current month plus the one before it, for Nikhil's sales. Write a `query` against `monthly_sales` above using an explicit window frame to compute it.
 
 ```postgresql with=monthly_sales.sql
 -- Write your query below
 ```
 
-If your query uses `SUM(total_amount) OVER (ORDER BY sale_month ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS moving_total_2month`, February shows 38000.00, January plus February combined, and March shows 42000.00, February plus March.
+If your `query` uses `SUM(total_amount) OVER (ORDER BY sale_month ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS moving_total_2month`, February shows 38000.00, January plus February combined, and March shows 42000.00, February plus March.
 
 ## Conclusion
 
-A window frame, written with `ROWS BETWEEN ... AND ...`, controls exactly which rows a `window function` considers for each calculation, and changing it turns the same `SUM` or `AVG` from a full running total into a fixed-size moving calculation or a centered average. Leela can now build the exact 3-month moving average the director asked for, with full control over how wide that window actually is. With individual rows ranked, compared, and smoothed, the last piece is combining ranking with filtering to find a top few rows within each group.
+- A window frame, written with `ROWS BETWEEN ...
+- AND ...`, controls exactly which rows a `window `function`` considers for each calculation, and changing it turns the same `SUM` or `AVG` from a full running total into a fixed-size moving calculation or a centered average.
+- Leela can now build the exact 3-month moving average the director asked for, with full control over how wide that window actually is.
+- With individual `rows` ranked, compared, and smoothed, the last piece is combining ranking with filtering to find a top few `rows` within each group.

@@ -1,10 +1,13 @@
 ## Introduction
 
-Kabir's `employees` table has a `manager_id` column, and a self `join` can pair each employee with their direct manager, one level up. But the company's actual org chart runs deeper than one level: an intern reports to a team lead, who reports to a director, who reports to the CEO. A self `join` can only ever reach exactly one level up per `join` written, so answering "list every person above this employee, all the way to the top, however many levels that takes" would need a different self `join` for every possible depth, and depth is not something Kabir can know in advance. A **`recursive CTE`** solves this by repeating its own logic against its own growing result, one level at a time, until nothing new is left to add.
+- Kabir's `employees` `table` has a `manager_id` `column`, and a self `join` can pair each employee with their direct manager, one level up.
+- But the company's actual org chart runs deeper than one level: an intern reports to a team lead, who reports to a director, who reports to the CEO.
+- A self `join` can only ever reach exactly one level up per `join` written, so answering "list every person above this employee, all the way to the top, however many levels that takes" would need a different self `join` for every possible depth, and depth is not something Kabir can know in advance.
+- A **`recursive CTE`** solves this by repeating its own logic against its own growing result, one level at a time, until nothing new is left to add.
 
 ## The Shape of the Hierarchy
 
-The `employees` table now includes a few more reporting levels to make the hierarchy worth walking.
+The `employees` `table` now includes a few more reporting levels to make the hierarchy worth walking.
 
 ```postgresql file=employees_hierarchy.sql
 CREATE TABLE employees (
@@ -22,7 +25,8 @@ INSERT INTO employees (employee_id, employee_name, manager_id) VALUES
 (6, 'Farhan Sheikh', 4);
 ```
 
-Ananya sits at the top with no manager, Rajat and Meghna report to her, Karan and Divya report to Rajat, and Farhan reports to Karan, four levels deep in one branch. A single self `join` could find Farhan's direct manager, Karan, but not Karan's manager, Rajat, in the same query without another `join` added on top, and not Ananya above that without yet another.
+- Ananya sits at the top with no manager, Rajat and Meghna report to her, Karan and Divya report to Rajat, and Farhan reports to Karan, four levels deep in one branch.
+- A single self `join` could find Farhan's direct manager, Karan, but not Karan's manager, Rajat, in the same `query` without another `join` added on top, and not Ananya above that without yet another.
 
 ## Writing a Recursive CTE
 
@@ -45,16 +49,37 @@ FROM reporting_chain
 ORDER BY level;
 ```
 
-The base case, `WHERE employee_id = 6`, starts with just Farhan Sheikh, at level 1. The recursive case then `joins` `employees` back to `reporting_chain` itself, `e.employee_id = reporting_chain.manager_id`, finding whoever manages the person just added, and that newly found manager becomes part of `reporting_chain` for the next round:
+- The base case, `WHERE employee_id = 6`, starts with just Farhan Sheikh, at level 1.
+- The recursive case then `joins` `employees` back to `reporting_chain` itself, `e.employee_id = reporting_chain.manager_id`, finding whoever manages the person just added, and that newly found manager becomes part of `reporting_chain` for the next round:
 
-| employee_name | level |
-|---|---|
-| Farhan Sheikh | 1 |
-| Karan Oberoi | 2 |
-| Rajat Bhatia | 3 |
-| Ananya Sharma | 4 |
+<table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
+  <thead>
+    <tr>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">employee_name</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">level</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Farhan Sheikh</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">1</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Karan Oberoi</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">2</td>
+    </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Rajat Bhatia</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">3</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Ananya Sharma</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">4</td>
+    </tr>
+  </tbody>
+</table>
 
-The database repeats the recursive case automatically, each round adding one more level up the chain, and stops on its own the moment a round produces no new rows, which happens once it tries to find a manager for Ananya and finds none.
+The `database` repeats the recursive case automatically, each round adding one more level up the chain, and stops on its own the moment a round produces no new `rows`, which happens once it tries to find a manager for Ananya and finds none.
 
 ![A recursive CTE walking upward through a manager chain one level at a time](images/11_recursive_cte_walks_up_manager_chain.png)
 
@@ -62,12 +87,12 @@ The database repeats the recursive case automatically, each round adding one mor
 
 Two pieces of syntax are both required, for different reasons:
 
-- `WITH RECURSIVE` is the keyword that tells the database this CTE is allowed to reference itself; a plain `WITH` would reject a query that tries to select from its own name inside its own definition.
-- `UNION ALL` is required rather than a plain `JOIN`, because the recursive case needs to combine the base case's starting row with every additional row the recursive step produces, round after round, exactly the stacking behavior `UNION ALL` was built for.
+- `WITH RECURSIVE` is the keyword that tells the `database` this CTE is allowed to reference itself; a plain `WITH` would reject a `query` that tries to select from its own name inside its own definition.
+- `UNION ALL` is required rather than a plain `JOIN`, because the recursive case needs to combine the base case's starting `row` with every additional `row` the recursive step produces, round after round, exactly the stacking behavior `UNION ALL` was built for.
 
 ## Reversing the Direction: Finding Everyone Below a Person
 
-The same recursive structure works in the opposite direction, finding every employee under a given manager instead of every manager above a given employee, just by flipping which side of the `join` condition matches which column.
+The same recursive structure works in the opposite direction, finding every employee under a given manager instead of every manager above a given employee, just by flipping which side of the `join` condition matches which `column`.
 
 ```postgresql with=employees_hierarchy.sql
 WITH RECURSIVE team_below AS (
@@ -86,30 +111,56 @@ FROM team_below
 ORDER BY level;
 ```
 
-Starting from Ananya at level 1, the recursive case now matches `e.manager_id = team_below.employee_id`, finding everyone who reports to whoever was just added, which walks down the org chart instead of up it. This returns all six employees, since every person in the table eventually traces back to Ananya, with `level` showing how many steps down from her each one sits.
+- Starting from Ananya at level 1, the recursive case now matches `e.manager_id = team_below.employee_id`, finding everyone who reports to whoever was just added, which walks down the org chart instead of up it.
+- This returns all six employees, since every person in the `table` eventually traces back to Ananya, with `level` showing how many steps down from her each one sits.
 
 ![A recursive CTE walking downward through the team tree from a manager](images/12_recursive_cte_walks_down_team_tree.png)
 
 ## Recursive CTEs at a Glance
 
-| Part | Purpose |
-|---|---|
-| `WITH RECURSIVE name AS (...)` | Declares a CTE allowed to reference itself |
-| Base case | The starting row or rows, before `UNION ALL` |
-| Recursive case | `Joins` the table back to the CTE's own name, run repeatedly |
-| Stops when | A round produces zero new rows |
-| Typical use | Org charts, category trees, bill-of-materials, any graph of parent-child relationships |
+<table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
+  <thead>
+    <tr>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Part</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>WITH RECURSIVE name AS (...)</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Declares a CTE allowed to reference itself</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Base case</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">The starting row or rows, before <code>UNION ALL</code></td>
+    </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Recursive case</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>Joins</code> the table back to the CTE&#x27;s own name, run repeatedly</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Stops when</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">A round produces zero new rows</td>
+    </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Typical use</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Org charts, category trees, bill-of-materials, any graph of parent-child relationships</td>
+    </tr>
+  </tbody>
+</table>
 
 ## Your Turn
 
-Find every employee who reports, directly or indirectly, to Rajat Bhatia, including how many levels below him each one sits. Write a `recursive CTE` against the `employees` table above, starting from Rajat.
+Find every employee who reports, directly or indirectly, to Rajat Bhatia, including how many levels below him each one sits. Write a `recursive CTE` against the `employees` `table` above, starting from Rajat.
 
 ```postgresql with=employees_hierarchy.sql
 -- Write your query below
 ```
 
-If your query bases the recursion on `WHERE employee_id = 2` and recurses with `e.manager_id = team_below.employee_id`, it returns Rajat himself at level 1, Karan and Divya at level 2, and Farhan at level 3, correctly walking down every branch under Rajat regardless of depth.
+If your `query` bases the recursion on `WHERE employee_id = 2` and recurses with `e.manager_id = team_below.employee_id`, it returns Rajat himself at level 1, Karan and Divya at level 2, and Farhan at level 3, correctly walking down every branch under Rajat regardless of depth.
 
 ## Conclusion
 
-A `recursive CTE` repeats its own logic against a growing result set until no new rows appear, which is exactly the tool needed for hierarchies and graphs whose depth is not known in advance, whether that means walking up an org chart to find every manager above a person or walking down to find every report beneath one. Kabir can now answer any reporting-chain question regardless of how many levels deep the company's structure goes. With subqueries and CTEs covered from every angle, the next chapter turns to a different kind of advanced query: calculations that look across a set of rows without collapsing them into a single group.
+- A `recursive CTE` repeats its own logic against a growing result set until no new `rows` appear, which is exactly the tool needed for hierarchies and graphs whose depth is not known in advance, whether that means walking up an org chart to find every manager above a person or walking down to find every report beneath one.
+- Kabir can now answer any reporting-chain question regardless of how many levels deep the company's structure goes.
+- With subqueries and CTEs covered from every angle, the next chapter turns to a different kind of advanced `query`: calculations that look across a set of `rows` without collapsing them into a single group.

@@ -1,10 +1,13 @@
 ## Introduction
 
-Tanvi is building a small dashboard widget titled "Recent Enrollments" for the department office's home screen, and the design only has room for five rows. The enrollments table behind it, though, holds every enrollment ever recorded, and that number only grows term after term. Pulling the whole table and cutting it down to five rows in whatever code renders the widget would work, but it means dragging far more data across the network than the screen will ever show. What Tanvi actually wants is to ask the database itself for just the first few rows of a result, and SQL has a clause built for exactly that request: **`LIMIT`**.
+- Tanvi is building a small dashboard widget titled "Recent Enrollments" for the department office's home screen, and the design only has room for five `rows`.
+- The enrollments `table` behind it, though, holds every enrollment ever recorded, and that number only grows term after term.
+- Pulling the whole `table` and cutting it down to five `rows` in whatever code renders the widget would work, but it means dragging far more data across the network than the screen will ever show.
+- What Tanvi actually wants is to ask the `database` itself for just the first few `rows` of a result, and SQL has a clause built for exactly that request: **`LIMIT`**.
 
 ## Cutting a Result Down to N Rows
 
-The enrollments table links students to the courses they have taken, along with the date they enrolled and, once available, a grade.
+The enrollments `table` links students to the courses they have taken, along with the date they enrolled and, once available, a grade.
 
 ```postgresql file=schema.sql
 CREATE TABLE students (
@@ -68,18 +71,20 @@ ORDER BY enrolled_on DESC
 LIMIT 5;
 ```
 
-The enrollments table has ten rows in it, but this query returns exactly five: the five most recently enrolled records, newest first. Two clauses divide the work:
+The enrollments `table` has ten `rows` in it, but this `query` returns exactly five: the five most recently enrolled records, newest first. Two clauses divide the work:
 
-- `ORDER BY enrolled_on DESC` does the real work of deciding which rows count as "recent."
-- `LIMIT 5`, placed after it, simply keeps the first five rows of that already-sorted result and drops the rest.
+- `ORDER BY enrolled_on DESC` does the real work of deciding which `rows` count as "recent."
+- `LIMIT 5`, placed after it, simply keeps the first five `rows` of that already-sorted result and drops the rest.
 
-This is precisely Tanvi's dashboard widget, in one query, with the database doing the trimming instead of any application code downstream.
+This is precisely Tanvi's dashboard widget, in one `query`, with the `database` doing the trimming instead of any application code downstream.
 
 ![ORDER BY newest first followed by LIMIT 5 keeping only the first five rows](images/11_limit_first_rows_after_order.png)
 
 ## Why LIMIT Needs ORDER BY to Mean Anything Useful
 
-`LIMIT` on its own, with no `ORDER BY`, still runs and still returns some number of rows, but which rows it happens to return is not something a query should ever depend on. Without a sort, "the first five rows" is just whatever order the table happens to be stored or scanned in internally, which can change between runs, after an update, or after PostgreSQL chooses a different way to fetch the data. A "top 5" or "most recent 5" request only makes sense once the rows have been put into the order that "top" or "most recent" refers to, which is exactly why `LIMIT` is almost always paired with an `ORDER BY` that defines what that top actually means.
+- `LIMIT` on its own, with no `ORDER BY`, still runs and still returns some number of `rows`, but which `rows` it happens to return is not something a `query` should ever depend on.
+- Without a sort, "the first five `rows`" is just whatever order the `table` happens to be stored or scanned in internally, which can change between runs, after an update, or after PostgreSQL chooses a different way to fetch the data.
+- A "top 5" or "most recent 5" request only makes sense once the `rows` have been put into the order that "top" or "most recent" refers to, which is exactly why `LIMIT` is almost always paired with an `ORDER BY` that defines what that top actually means.
 
 ```postgresql with=schema.sql
 SELECT student_id, course_id, enrolled_on
@@ -87,11 +92,12 @@ FROM enrollments
 LIMIT 5;
 ```
 
-This still returns five rows, but nothing in the query says they are the five most recent, the five earliest, or anything meaningful at all. Compare that to the sorted version above, and the difference in what the result actually promises becomes clear.
+This still returns five `rows`, but nothing in the `query` says they are the five most recent, the five earliest, or anything meaningful at all. Compare that to the sorted version above, and the difference in what the result actually promises becomes clear.
 
 ## Skipping Ahead With OFFSET
 
-A dashboard widget usually only needs the very front of a result, but a paginated list, like a "page 2 of enrollments" view in an admin screen, needs to skip past rows already shown on page 1. `OFFSET`, placed after `LIMIT`, tells PostgreSQL how many rows to skip before it starts collecting the ones to return.
+- A dashboard widget usually only needs the very front of a result, but a paginated list, like a "page 2 of enrollments" `view` in an admin screen, needs to skip past `rows` already shown on page 1.
+- `OFFSET`, placed after `LIMIT`, tells PostgreSQL how many `rows` to skip before it starts collecting the ones to return.
 
 ```postgresql with=schema.sql
 SELECT student_id, course_id, enrolled_on
@@ -100,28 +106,54 @@ ORDER BY enrolled_on DESC
 LIMIT 5 OFFSET 5;
 ```
 
-This returns the next five most recent enrollments, the ones ranked sixth through tenth by enrollment date, since the first five were already shown on an earlier page and this query skips past them with `OFFSET 5`. A page 3 request, if the data were large enough, would simply change `OFFSET 5` to `OFFSET 10`, skipping the first ten rows before collecting the next batch of five.
+- This returns the next five most recent enrollments, the ones ranked sixth through tenth by enrollment date, since the first five were already shown on an earlier page and this `query` skips past them with `OFFSET 5`.
+- A page 3 request, if the data were large enough, would simply change `OFFSET 5` to `OFFSET 10`, skipping the first ten `rows` before collecting the next batch of five.
 
 ![OFFSET 5 skipping the first five rows before LIMIT 5 collects the next page](images/12_offset_pagination.png)
 
 ## LIMIT and OFFSET at a Glance
 
-| Clause | Purpose | Example |
-|---|---|---|
-| `LIMIT 5` | Keep only the first 5 rows of the (sorted) result | Dashboard preview, "top 5" widgets |
-| `ORDER BY ... LIMIT 5` | Define what "top" or "recent" means, then trim to 5 | Most reliable, meaningful way to use LIMIT |
-| `LIMIT 5 OFFSET 5` | Skip the first 5 rows, then return the next 5 | Page 2 of a paginated list |
+<table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
+  <thead>
+    <tr>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Clause</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Purpose</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>LIMIT 5</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Keep only the first 5 rows of the (sorted) result</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Dashboard preview, &quot;top 5&quot; widgets</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>ORDER BY ... LIMIT 5</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Define what &quot;top&quot; or &quot;recent&quot; means, then trim to 5</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Most reliable, meaningful way to use LIMIT</td>
+    </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>LIMIT 5 OFFSET 5</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Skip the first 5 rows, then return the next 5</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Page 2 of a paginated list</td>
+    </tr>
+  </tbody>
+</table>
 
 ## Your Turn
 
-The department office wants a "highest workload" preview: the three courses with the most credits, and among courses tied on credits, the ones whose title comes first alphabetically. Write a query against the courses table above that returns `title` and `credits`, sorted appropriately, and limited to 3 rows.
+- The department office wants a "highest workload" preview: the three courses with the most credits, and among courses tied on credits, the ones whose title comes first alphabetically.
+- Write a `query` against the courses `table` above that returns `title` and `credits`, sorted appropriately, and limited to 3 `rows`.
 
 ```postgresql with=schema.sql
 -- Write your query below
 ```
 
-`SELECT title, credits FROM courses ORDER BY credits DESC, title LIMIT 3;` sorts by credits from highest to lowest, breaks any tie by title alphabetically, and keeps only the top three rows: Data Structures and Database Systems, both 4 credits and ordered alphabetically between themselves, followed by Discrete Mathematics, the alphabetically first of the three 3-credit courses.
+`SELECT title, credits FROM courses ORDER BY credits DESC, title LIMIT 3;` sorts by credits from highest to lowest, breaks any tie by title alphabetically, and keeps only the top three `rows`: Data Structures and Database Systems, both 4 credits and ordered alphabetically between themselves, followed by Discrete Mathematics, the alphabetically first of the three 3-credit courses.
 
 ## Conclusion
 
-`LIMIT` trims a result down to a manageable number of rows, and `OFFSET` lets a query skip past rows already handled, together making dashboard previews and paginated views practical without ever pulling more data than a screen can use. Neither clause means much on its own, since "the first few rows" only becomes a meaningful promise once `ORDER BY` has decided what order those rows are actually in. Tanvi's "Recent Enrollments" widget can now ask the database directly for just its five rows, sorted newest first, instead of dragging the entire growing enrollments table across the network to trim it down in code. With the ability to choose columns, rename them, deduplicate them, compute new ones, sort them, and trim them all in place, the remaining piece of everyday querying is deciding which rows even qualify for a result in the first place, which is where a precise condition on the data itself comes in.
+- `LIMIT` trims a result down to a manageable number of `rows`, and `OFFSET` lets a `query` skip past `rows` already handled, together making dashboard previews and paginated `views` practical without ever pulling more data than a screen can use.
+- Neither clause means much on its own, since "the first few `rows`" only becomes a meaningful promise once `ORDER BY` has decided what order those `rows` are actually in.
+- Tanvi's "Recent Enrollments" widget can now ask the `database` directly for just its five `rows`, sorted newest first, instead of dragging the entire growing enrollments `table` across the network to trim it down in code.
+- With the ability to choose `columns`, rename them, deduplicate them, compute new ones, sort them, and trim them all in place, the remaining piece of everyday querying is deciding which `rows` even qualify for a result in the first place, which is where a precise condition on the data itself comes in.

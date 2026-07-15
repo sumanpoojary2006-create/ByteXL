@@ -1,10 +1,17 @@
 ## Introduction
 
-Kabir joined Priya's admissions office as a scholarship coordinator three weeks ago, and his job so far has felt manageable: track every scholarship applicant across three spreadsheets, `applicants.xlsx` for personal details, `documents.xlsx` for uploaded certificates, and `interviews.xlsx` for the shortlist and interview slots. It worked fine when there were forty applicants. This year there are four thousand.
+- Kabir joined Priya's admissions office as a scholarship coordinator three weeks ago, and his job so far has felt manageable: track every scholarship applicant across three spreadsheets, `applicants.xlsx` for personal details, `documents.xlsx` for uploaded certificates, and `interviews.xlsx` for the shortlist and interview slots.
+- It worked fine when there were forty applicants.
+- This year there are four thousand.
 
-The trouble starts small. A candidate named Rohan Verma submits a corrected category certificate, moving him from the SC scholarship pool to the General merit pool. Kabir updates `applicants.xlsx` the moment the certificate arrives. Nobody remembers to open `interviews.xlsx`, where Rohan's row still lists him under the SC panel three weeks later, on the day of his interview.
+- The trouble starts small.
+- A candidate named Rohan Verma submits a corrected category certificate, moving him from the SC scholarship pool to the General merit pool.
+- Kabir updates `applicants.xlsx` the moment the certificate arrives.
+- Nobody remembers to open `interviews.xlsx`, where Rohan's `row` still lists him under the SC panel three weeks later, on the day of his interview.
 
-Then, on the morning the shortlist is finalized, two coordinators open `interviews.xlsx` at the same time from two different laptops, one adding a new interview slot, the other marking three candidates as confirmed. Both save their copies to the shared drive within a minute of each other. Whichever file lands last on the server simply overwrites the other, and one coordinator's honest, correct work disappears without so much as an error message.
+- Then, on the morning the shortlist is finalized, two coordinators open `interviews.xlsx` at the same time from two different laptops, one adding a new interview slot, the other marking three candidates as confirmed.
+- Both save their copies to the shared drive within a minute of each other.
+- Whichever file lands last on the server simply overwrites the other, and one coordinator's honest, correct work disappears without so much as an error message.
 
 None of this happened because Kabir or his colleagues were careless. It happened because plain files were never built to hold shared, growing data safely, and the failure has three distinct, well-known faces: **redundancy, inconsistency, and `lost updates`**.
 
@@ -20,15 +27,21 @@ By itself, that repetition causes no damage. It just means one true fact about R
 
 ## Inconsistency: When the Copies Stop Agreeing
 
-That waiting ends the moment Rohan's category certificate is corrected. Kabir updates `applicants.xlsx`, the file he happened to have open, and moves on to the next candidate in the queue. Nobody touches `interviews.xlsx`, which still shows Rohan under the SC panel on interview day.
+- That waiting ends the moment Rohan's category certificate is corrected.
+- Kabir updates `applicants.xlsx`, the file he happened to have open, and moves on to the next candidate in the queue.
+- Nobody touches `interviews.xlsx`, which still shows Rohan under the SC panel on interview day.
 
-Ask a simple question now: which category is Rohan actually in? `applicants.xlsx` says General merit. `interviews.xlsx` says SC. Both files claim to hold the truth, and they disagree, which is exactly what **inconsistency** means: redundant copies of the same fact, updated in one place and left untouched in another, until nobody can say with confidence which one is correct.
+- Ask a simple question now: which category is Rohan actually in? `applicants.xlsx` says General merit. `interviews.xlsx` says SC.
+- Both files claim to hold the truth, and they disagree, which is exactly what **inconsistency** means: redundant copies of the same fact, updated in one place and left untouched in another, until nobody can say with confidence which one is correct.
 
 ![Updating one of three redundant spreadsheet copies leaves the files in conflict](images/03_redundancy_creates_inconsistency.png)
 
 ## Lost Updates: When Two Changes Collide
 
-The interview-day mix-up is the sharpest version of the same underlying problem. Two coordinators edit `interviews.xlsx` within the same minute, each making a genuine, correct change. The shared drive has no way to merge their two edits into one file that reflects both. It keeps whichever file was saved last and quietly discards the other, along with every confirmed slot the discarded coordinator had just entered.
+- The interview-day mix-up is the sharpest version of the same underlying problem.
+- Two coordinators edit `interviews.xlsx` within the same minute, each making a genuine, correct change.
+- The shared drive has no way to merge their two edits into one file that reflects both.
+- It keeps whichever file was saved last and quietly discards the other, along with every confirmed slot the discarded coordinator had just entered.
 
 This is a **`lost update`**: two valid, simultaneous changes to the same shared file, where only one survives and the other vanishes with no warning at all.
 
@@ -36,11 +49,32 @@ This is a **`lost update`**: two valid, simultaneous changes to the same shared 
 
 ## The Three Symptoms at a Glance
 
-| Symptom | What happens | Admissions office example |
-|---|---|---|
-| Redundancy | The same fact is stored in more than one file | Rohan's phone number typed into applicants, documents, and interviews files |
-| Inconsistency | Redundant copies disagree after only one is updated | Rohan's category shows General in one file, SC in another |
-| Lost updates | Two simultaneous edits to the same file, only one survives | A coordinator's confirmed interview slots vanish when a second save overwrites the first |
+<table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
+  <thead>
+    <tr>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Symptom</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">What happens</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Admissions office example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Redundancy</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">The same fact is stored in more than one file</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Rohan&#x27;s phone number typed into applicants, documents, and interviews files</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Inconsistency</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Redundant copies disagree after only one is updated</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Rohan&#x27;s category shows General in one file, SC in another</td>
+    </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Lost updates</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Two simultaneous edits to the same file, only one survives</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">A coordinator&#x27;s confirmed interview slots vanish when a second save overwrites the first</td>
+    </tr>
+  </tbody>
+</table>
 
 ## Could More Discipline Fix This?
 
@@ -56,4 +90,6 @@ The moment shared data is written to and read from by more than one person, at a
 
 ## Conclusion
 
-Redundancy creeps in because the same fact has to be retyped wherever it is needed, inconsistency follows because updating one copy never guarantees the others get updated too, and `lost updates` happen because a plain file cannot merge two people's honest changes into one. None of this is a character flaw in Kabir's team, it is what plain files do, reliably, once real numbers and real deadlines arrive. The natural next question is what kind of tool would actually solve all three problems at once, and what exactly it means to say that tool holds a single, organized body of data rather than just another file.
+- Redundancy creeps in because the same fact has to be retyped wherever it is needed, inconsistency follows because updating one copy never guarantees the others get updated too, and `lost updates` happen because a plain file cannot merge two people's honest changes into one.
+- None of this is a character flaw in Kabir's team, it is what plain files do, reliably, once real numbers and real deadlines arrive.
+- The natural next question is what kind of tool would actually solve all three problems at once, and what exactly it means to say that tool holds a single, organized body of data rather than just another file.

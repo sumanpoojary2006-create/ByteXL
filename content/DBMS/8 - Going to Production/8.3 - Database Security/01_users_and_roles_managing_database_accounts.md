@@ -1,6 +1,8 @@
 ## Introduction
 
-Every query in this course has run under a single, implicit database account, with no attention paid to who or what is actually connecting. A production database serves many different consumers at once, a reporting dashboard, a background job, individual developers debugging an issue, and each of these deserves its own identity, not a single shared login everyone uses interchangeably. PostgreSQL's answer to this is **`role`s**, the unified mechanism it uses to represent both individual users and groups of permissions, and understanding `role`s is the foundation the rest of this chapter's security material builds on.
+- Every `query` in this course has run under a single, implicit `database` account, with no attention paid to who or what is actually connecting.
+- A production `database` serves many different consumers at once, a reporting dashboard, a background job, individual developers debugging an issue, and each of these deserves its own identity, not a single shared login everyone uses interchangeably.
+- PostgreSQL's answer to this is **`role`s**, the unified mechanism it uses to represent both individual users and groups of permissions, and understanding `role`s is the foundation the rest of this chapter's security material builds on.
 
 ## Creating a Role
 
@@ -15,7 +17,7 @@ CREATE ROLE dev_alia WITH LOGIN PASSWORD 'change_this_in_real_use';
 SELECT rolname, rolcanlogin FROM pg_roles WHERE rolname IN ('reporting_app', 'dev_alia');
 ```
 
-`WITH LOGIN` marks a `role` as one that can actually authenticate and open a connection, exactly the two `role`s created here:
+`WITH LOGIN` marks a `role` as one that can actually authenticate and open a `connection`, exactly the two `role`s created here:
 
 - `reporting_app`, representing an automated reporting service
 - `dev_alia`, representing an individual developer
@@ -33,13 +35,15 @@ GRANT shipment_readers TO reporting_app;
 GRANT shipment_readers TO dev_alia;
 ```
 
-`shipment_readers` here has no `LOGIN` option, meaning nothing can connect to the database directly as `shipment_readers`; it exists purely as a named group. `GRANT shipment_readers TO reporting_app` adds `reporting_app` as a member of that group, and any permission granted to `shipment_readers` as a whole, covered in the next lesson, automatically applies to every member. This is the standard pattern for managing permissions at scale: define what a group of accounts should be allowed to do once, on the group `role`, rather than repeating the same permission grants individually on every single user `role`.
+- `shipment_readers` here has no `LOGIN` option, meaning nothing can connect to the `database` directly as `shipment_readers`; it exists purely as a named group.
+- `GRANT shipment_readers TO reporting_app` adds `reporting_app` as a member of that group, and any permission granted to `shipment_readers` as a whole, covered in the next lesson, automatically applies to every member.
+- This is the standard pattern for managing permissions at scale: define what a group of accounts should be allowed to do once, on the group `role`, rather than repeating the same permission grants individually on every single user `role`.
 
 ![Login roles can inherit a group role that bundles permissions](images/01_login_roles_and_group_role_permissions.png)
 
 ## Why Shared Logins Are a Security Anti-Pattern
 
-It might seem simpler to give every developer and every service the same single database login. This is a well-known anti-pattern, for reasons that go beyond convenience.
+It might seem simpler to give every developer and every service the same single `database` login. This is a well-known anti-pattern, for reasons that go beyond convenience.
 
 ```postgresql with=roles_demo.sql
 SELECT usename, query, query_start
@@ -47,7 +51,9 @@ FROM pg_stat_activity
 WHERE usename = 'reporting_app';
 ```
 
-`pg_stat_activity`, introduced in the previous chapter, records which `role` issued each active query, which is exactly the accountability a shared login destroys. If every developer and every application connected as one single, shared account, there would be no way to answer "who ran this slow query" or "which service made this change" after the fact, since the log would show only the one shared name for every single action, regardless of who or what actually took it. Separate `role`s per person and per service are what make that kind of accountability possible at all.
+- `pg_stat_activity`, introduced in the previous chapter, records which `role` issued each active `query`, which is exactly the accountability a shared login destroys.
+- If every developer and every application connected as one single, shared account, there would be no way to answer "who ran this slow `query`" or "which service made this change" after the fact, since the log would show only the one shared name for every single action, regardless of who or what actually took it.
+- Separate `role`s per person and per service are what make that kind of accountability possible at all.
 
 ![Shared logins hide who performed an action, while separate roles preserve accountability](images/02_shared_login_loses_accountability.png)
 
@@ -61,16 +67,37 @@ ALTER ROLE dev_alia WITH PASSWORD 'a_new_stronger_password';
 DROP ROLE shipment_readers;
 ```
 
-Dropping `shipment_readers` succeeds here since nothing else in this example still references it structurally beyond the membership grants already made; in a real system with actual permissions and dependent objects attached to a `role`, PostgreSQL would refuse to drop it until those dependencies were resolved first, a safeguard against silently breaking access for every account that depended on that `role`'s permissions.
+- Dropping `shipment_readers` succeeds here since nothing else in this example still references it structurally beyond the membership grants already made
+- in a real system with actual permissions and dependent objects attached to a `role`, PostgreSQL would refuse to drop it until those dependencies were resolved first, a safeguard against silently breaking access for every account that depended on that `role`'s permissions.
 
 ## Roles at a Glance
 
-| Concept | Detail |
-|---|---|
-| `CREATE ROLE name WITH LOGIN PASSWORD '...'` | A `role` that can authenticate and open a connection |
-| `CREATE ROLE name` (no `LOGIN`) | A group `role`, used purely to bundle permissions |
-| `GRANT group_role TO member_role` | Adds a `role` as a member of a group, inheriting its permissions |
-| Shared logins | An anti-pattern; destroys per-account accountability |
+<table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
+  <thead>
+    <tr>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Concept</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Detail</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>CREATE ROLE name WITH LOGIN PASSWORD &#x27;...&#x27;</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">A <code>role</code> that can authenticate and open a connection</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>CREATE ROLE name</code> (no <code>LOGIN</code>)</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">A group <code>role</code>, used purely to bundle permissions</td>
+    </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>GRANT group_role TO member_role</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Adds a <code>role</code> as a member of a group, inheriting its permissions</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Shared logins</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">An anti-pattern; destroys per-account accountability</td>
+    </tr>
+  </tbody>
+</table>
 
 ## Your Turn
 
@@ -84,4 +111,5 @@ If you run `CREATE ROLE dev_farah WITH LOGIN PASSWORD 'change_this_in_real_use';
 
 ## Conclusion
 
-A `role` in PostgreSQL can represent either an individually authenticating account or a non-login group used to bundle permissions, and structuring access around distinct `role`s per person and per service, rather than a single shared login, is what makes accountability and precise permission management possible at all. With `role`s established as the foundation, the next lesson covers exactly how permissions are actually granted to, and revoked from, a `role`.
+- A `role` in PostgreSQL can represent either an individually authenticating account or a non-login group used to bundle permissions, and structuring access around distinct `role`s per person and per service, rather than a single shared login, is what makes accountability and precise permission management possible at all.
+- With `role`s established as the foundation, the next lesson covers exactly how permissions are actually granted to, and revoked from, a `role`.

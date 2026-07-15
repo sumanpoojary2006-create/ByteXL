@@ -1,10 +1,14 @@
 ## Introduction
 
-Omkar is pulling together a report of Computer Science offerings for his advisor. He starts the way anyone new to SQL does: `SELECT title, department, credits FROM courses;`. The result lists every course in the catalogue, mathematics and economics included, and he has to scroll past rows that have nothing to do with what his advisor asked for. What he actually needs is a way to tell the database "only hand me back the rows where this is true," and that instruction has a name: the **`WHERE` clause**.
+- Omkar is pulling together a report of Computer Science offerings for his advisor.
+- He starts the way anyone new to SQL does: `SELECT title, department, credits FROM courses;`.
+- The result lists every course in the catalogue, mathematics and economics included, and he has to scroll past `rows` that have nothing to do with what his advisor asked for.
+- What he actually needs is a way to tell the `database` "only hand me back the `rows` where this is true," and that instruction has a name: the **`WHERE` clause**.
 
 ## Filtering Rows Instead of Reading All of Them
 
-A `SELECT` without a `WHERE` clause returns every row a table has. Add a `WHERE` clause and the database tests each row against a condition, keeping only the rows where that condition is true and discarding the rest before the result ever reaches Omkar's screen.
+- A `SELECT` without a `WHERE` clause returns every `row` a `table` has.
+- Add a `WHERE` clause and the `database` tests each `row` against a condition, keeping only the `rows` where that condition is true and discarding the rest before the result ever reaches Omkar's screen.
 
 ```postgresql file=schema.sql
 CREATE TABLE students (
@@ -72,7 +76,7 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 (10, 8, 105, '2025-02-08', 'B-');
 ```
 
-These four tables, students, courses, instructors, and enrollments, are the ones Omkar will keep coming back to. With them in place, his original problem has a one-line fix.
+These four `tables`, students, courses, instructors, and enrollments, are the ones Omkar will keep coming back to. With them in place, his original problem has a one-line fix.
 
 ```postgresql with=schema.sql
 SELECT title, department, credits
@@ -80,13 +84,16 @@ FROM courses
 WHERE department = 'Computer Science';
 ```
 
-Only `Database Systems` and `Data Structures` come back. The database evaluated the condition `department = 'Computer Science'` against every row in `courses`, kept the two rows where it held true, and dropped the mathematics and economics rows entirely. Omkar's advisor never even sees the rows that did not qualify.
+- Only `Database Systems` and `Data Structures` come back.
+- The `database` evaluated the condition `department = 'Computer Science'` against every `row` in `courses`, kept the two `rows` where it held true, and dropped the mathematics and economics `rows` entirely.
+- Omkar's advisor never even sees the `rows` that did not qualify.
 
 ![WHERE acting as a filter gate that keeps matching Computer Science rows and blocks other rows](images/01_where_filter_keeps_matching_rows.png)
 
 ## Where WHERE Sits in a Query
 
-The clause has a fixed position: it comes right after `FROM` and before `ORDER BY` or `LIMIT`. That ordering reflects the order the database actually works in: first decide which table to read, then decide which of its rows survive, and only after that decide how to sort or trim what is left.
+- The clause has a fixed position: it comes right after `FROM` and before `ORDER BY` or `LIMIT`.
+- That ordering reflects the order the `database` actually works in: first decide which `table` to read, then decide which of its `rows` survive, and only after that decide how to sort or trim what is left.
 
 ```postgresql with=schema.sql
 SELECT full_name, city
@@ -95,19 +102,50 @@ WHERE city = 'Chennai'
 ORDER BY full_name;
 ```
 
-This returns Rahul Verma and Varun Nair, the two students based in Chennai, sorted alphabetically by name. Filtering happens before sorting: the database first narrows the table down to Chennai residents, and only then arranges those survivors in order. Writing `ORDER BY` before `WHERE` in the query text is not valid; the clause order in SQL always matches the sequence in which these decisions get made.
+- This returns Rahul Verma and Varun Nair, the two students based in Chennai, sorted alphabetically by name.
+- Filtering happens before sorting: the `database` first narrows the `table` down to Chennai residents, and only then arranges those survivors in order.
+- Writing `ORDER BY` before `WHERE` in the `query` text is not valid; the clause order in SQL always matches the sequence in which these decisions get made.
 
 ![SQL clause order showing WHERE filtering rows before ORDER BY sorts and LIMIT trims](images/02_where_clause_order.png)
 
 ## Clauses at a Glance
 
-| Clause | Purpose | Runs relative to WHERE |
-|---|---|---|
-| `SELECT` | Chooses which columns appear in the result | Decided last, on the surviving rows |
-| `FROM` | Names the table to read | Before WHERE |
-| `WHERE` | Keeps only the rows matching a condition | The filtering step itself |
-| `ORDER BY` | Arranges the surviving rows | After WHERE |
-| `LIMIT` | Caps how many surviving rows are returned | After WHERE and ORDER BY |
+<table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
+  <thead>
+    <tr>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Clause</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Purpose</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Runs relative to WHERE</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>SELECT</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Chooses which columns appear in the result</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Decided last, on the surviving rows</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>FROM</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Names the table to read</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Before WHERE</td>
+    </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>WHERE</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Keeps only the rows matching a condition</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">The filtering step itself</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>ORDER BY</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Arranges the surviving rows</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">After WHERE</td>
+    </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>LIMIT</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Caps how many surviving rows are returned</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">After WHERE and ORDER BY</td>
+    </tr>
+  </tbody>
+</table>
 
 ## Every Condition Is Just a True-or-False Test
 
@@ -118,11 +156,11 @@ This returns Rahul Verma and Varun Nair, the two students based in Chennai, sort
 - Match partial text patterns
 - Handle missing values
 
-Every one of those is really the same idea underneath, a test that a row either passes or fails, and what follows is simply a tour of the different kinds of tests you can write.
+Every one of those is really the same idea underneath, a test that a `row` either passes or fails, and what follows is simply a tour of the different kinds of tests you can write.
 
 ## Your Turn
 
-Using the same four tables, write a query that returns the `full_name` and `city` of every student based in Bengaluru.
+Using the same four `tables`, write a `query` that returns the `full_name` and `city` of every student based in Bengaluru.
 
 ```postgresql with=schema.sql
 SELECT full_name, city
@@ -130,8 +168,9 @@ FROM students
 WHERE city = 'Bengaluru';
 ```
 
-Running this should return exactly two rows, Omkar Rane and Ishita Menon. If your result includes students from other cities, double check that the condition is written as `city = 'Bengaluru'` and not left out of the query entirely.
+Running this should return exactly two `rows`, Omkar Rane and Ishita Menon. If your result includes students from other cities, double check that the condition is written as `city = 'Bengaluru'` and not left out of the `query` entirely.
 
 ## Conclusion
 
-The `WHERE` clause is what turns a table dump into an actual answer: it sits between `FROM` and `ORDER BY`, and it tests every row against a condition before deciding what makes it into the result. Equality, the condition Omkar reached for first, is only the simplest member of a much larger toolkit for describing exactly which rows a query should return, from comparing numbers and dates to matching text and handling missing data, and that toolkit is what comes next.
+- The `WHERE` clause is what turns a `table` dump into an actual answer: it sits between `FROM` and `ORDER BY`, and it tests every `row` against a condition before deciding what makes it into the result.
+- Equality, the condition Omkar reached for first, is only the simplest member of a much larger toolkit for describing exactly which `rows` a `query` should return, from comparing numbers and dates to matching text and handling missing data, and that toolkit is what comes next.
