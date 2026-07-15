@@ -13,13 +13,24 @@ Before moving to new functions, a quick review of the essentials:
 ```python
 import itertools
 
+fiction_books = ["1984", "Brave New World"]
+nonfiction_books = ["Sapiens"]
+sci_fi_books = ["Dune", "Foundation"]
+
 # chain: merge multiple iterables into one
 all_books = list(itertools.chain(fiction_books, nonfiction_books, sci_fi_books))
+print(all_books)
 
 # islice: take the first N from any iterable (including generators)
 first_ten = list(itertools.islice(all_books, 10))
+print(first_ten)
 
 # groupby: group consecutive elements by key (requires sorting first)
+overdue_records = [
+    {"patron_id": "P001", "month": "June"},
+    {"patron_id": "P002", "month": "July"},
+    {"patron_id": "P003", "month": "June"},
+]
 records_sorted = sorted(overdue_records, key=lambda r: r["month"])
 for month, group in itertools.groupby(records_sorted, key=lambda r: r["month"]):
     print(f"{month}: {list(group)}")

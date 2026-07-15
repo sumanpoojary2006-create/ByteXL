@@ -52,6 +52,10 @@ def file_hash(path, algorithm="sha256"):
             h.update(chunk)   # read in chunks for large files
     return h.hexdigest()
 
+# Create a sample file to hash
+with open("catalog.csv", "w") as f:
+    f.write("isbn,title\n978-001,Dune\n")
+
 digest = file_hash("catalog.csv")
 print(f"SHA-256: {digest}")
 ```
@@ -78,6 +82,9 @@ otp = secrets.randbelow(1_000_000)
 print(f"OTP: {otp:06d}")
 
 # Constant-time comparison (prevents timing attacks)
+def grant_access():
+    print("Access granted")
+
 user_token = "..."
 stored_token = "..."
 if secrets.compare_digest(user_token, stored_token):

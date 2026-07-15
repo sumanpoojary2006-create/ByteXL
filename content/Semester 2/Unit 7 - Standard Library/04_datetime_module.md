@@ -118,7 +118,7 @@ now_ist = now_utc.astimezone(ist)
 print(now_ist)   # 2026-07-01 14:53:07.123456+05:30
 ```
 
-For full time zone database support (named zones like "America/New_York"), install the third-party `zoneinfo` module (built into Python 3.9+) or `pytz`.
+For full time zone database support (named zones like "America/New_York"), use the built-in `zoneinfo` module (Python 3.9+) or the third-party `pytz` on older versions.
 
 ## The datetime Module at a Glance
 

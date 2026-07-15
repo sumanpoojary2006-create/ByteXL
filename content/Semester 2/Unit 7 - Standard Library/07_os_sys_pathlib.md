@@ -77,22 +77,33 @@ import os
 
 # Environment variables
 home = os.environ.get("HOME", "/tmp")   # safe: returns default if missing
-api_key = os.environ["LIBRARY_API_KEY"]  # raises KeyError if missing
+try:
+    api_key = os.environ["LIBRARY_API_KEY"]  # raises KeyError if missing
+except KeyError:
+    print("LIBRARY_API_KEY not set (expected in this demo)")
 
 # Current working directory
 print(os.getcwd())
 
 # List directory contents (returns strings)
 files = os.listdir(".")
-print(files)
+print(f"{len(files)} entries in current directory")
 
 # Remove a file
+with open("old_catalog.txt", "w") as f:
+    f.write("temp")
 os.remove("old_catalog.txt")
+print("Removed old_catalog.txt")
 
 # Remove an empty directory
+os.makedirs("empty_dir", exist_ok=True)
 os.rmdir("empty_dir")
+print("Removed empty_dir")
 
 # Walk a directory tree (yields dirpath, dirnames, filenames)
+os.makedirs("exports/sub", exist_ok=True)
+with open("exports/sub/report.txt", "w") as f:
+    f.write("data")
 for dirpath, dirnames, filenames in os.walk("exports"):
     for filename in filenames:
         print(os.path.join(dirpath, filename))
@@ -104,17 +115,21 @@ for dirpath, dirnames, filenames in os.walk("exports"):
 
 ```python
 import sys
+from pathlib import Path
 
 print(sys.version)         # Python version string
 print(sys.platform)        # 'darwin', 'linux', 'win32'
 print(sys.executable)      # path to the Python binary
 print(sys.argv)            # command-line arguments
-print(sys.path)            # module search path
+print(sys.path[:3], "...") # module search path
 
-# Exit the program:
+# Exit the program if the config file is missing:
+config_file = Path("config.toml")
+config_file.write_text("[library]\nname = 'Central'\n")  # ensure it exists for this demo
 if not config_file.exists():
     print("Config file missing", file=sys.stderr)
     sys.exit(1)   # exit with error code 1
+print("Config file found, continuing")
 ```
 
 `sys.stderr` is the standard error stream. Writing error messages there, rather than to `sys.stdout`, allows shell pipelines to separate output from errors.
@@ -143,6 +158,11 @@ def process_all_catalogs():
         print(f"Processing: {f}")
         content = f.read_text()
         # ... process content
+
+# Demo: seed a sample catalog file so process_all_catalogs() has something to find
+sample_dir = get_data_dir()
+(sample_dir / "branch_1.csv").write_text("isbn,title\n978-001,Dune\n")
+process_all_catalogs()
 ```
 
 ## os / sys / pathlib at a Glance

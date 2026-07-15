@@ -72,13 +72,17 @@ Malformed JSON raises `json.JSONDecodeError`. Always handle it when parsing JSON
 
 ```python
 import json
+from typing import Optional
 
-def parse_catalog(raw: str) -> dict | None:
+def parse_catalog(raw: str) -> Optional[dict]:
     try:
         return json.loads(raw)
     except json.JSONDecodeError as exc:
         print(f"Invalid JSON: {exc}")
         return None
+
+print(parse_catalog('{"isbn": "978-001", "title": "Dune"}'))
+print(parse_catalog('{isbn: 978-001, invalid}'))
 ```
 
 ## csv: Reading and Writing CSV
