@@ -50,6 +50,8 @@ EXPLAIN SELECT * FROM orders WHERE customer_name = 'Customer 7500';
 
 The plan reports an "Index Scan" using `idx_orders_name_hash`: the database hashes 'Customer 7500' once and goes straight to the matching bucket. The same `index` would provide no help at all for `WHERE customer_name > 'Customer 7500'` or `ORDER BY customer_name`, since a `hash index` carries no ordering information whatsoever. In practice, a B-tree `index` handles equality just as well as a `hash index` while also supporting ranges, which is why `hash indexes` see limited use; they matter mainly as a reminder that "sorted" and "searchable by equality" are not the same requirement.
 
+![A hash index supports equality lookups but not range searches](images/08_hash_index_equality_only.png)
+
 ## Composite Indexes: Covering More Than One Column
 
 A `composite index` spans two or more columns together, useful when queries consistently filter on the same combination of columns.
@@ -62,6 +64,8 @@ EXPLAIN SELECT * FROM orders WHERE status = 'active' AND region = 'North';
 
 The plan shows `idx_orders_status_region` narrowing straight down to the roughly 25 active North-region orders. `idx_orders_status_region` sorts first by `status`, then by `region` within each `status` value, so a query filtering on both columns together can use the `index` efficiently. Column order in a `composite index` matters: this same `index` can still help a query that filters on `status` alone, since `status` is the leading column, but it offers little help to a query that filters on `region` alone without mentioning `status`, since the `index` is not separately sorted by `region` on its own.
 
+![A composite index is sorted by the first column, then by the next column](images/05_composite_index_column_order.png)
+
 ## Partial Indexes: Indexing Only the Rows That Matter
 
 A `partial index` includes only the rows matching a specified condition, which keeps the `index` smaller and faster to maintain when most queries only ever care about a subset of the table.
@@ -73,6 +77,8 @@ EXPLAIN SELECT * FROM orders WHERE status = 'active' AND amount > 100000.00;
 ```
 
 `idx_orders_active_amount` only ever contains the roughly 100 rows where `status = 'active'`, entirely excluding the other 9900 completed and cancelled orders, and the plan shows it being used to satisfy this query, since the query's filter matches the `index`'s condition. Inserting a completed order never touches this `index` at all, and the size saving is directly visible next to a full `index` on the same column:
+
+![A partial index stores only the rows matching the query condition](images/06_partial_index_active_rows_only.png)
 
 ```postgresql with=index_variants.sql
 CREATE INDEX idx_orders_amount_full ON orders (amount);
@@ -97,6 +103,8 @@ EXPLAIN SELECT * FROM orders WHERE LOWER(customer_name) = 'customer 7500';
 ```
 
 A plain B-tree on `customer_name` would not help a query filtering on `LOWER(customer_name)`, since that `index` is sorted by the raw column value, not the lowercased result of a function applied to it. `idx_orders_lower_name` instead stores the already-lowercased value, and the plan reports an "Index Scan" using it; the same query without an expression `index` would fall back to a sequential scan, computing `LOWER(customer_name)` fresh for every row. The extra `ANALYZE` is there because an expression `index` keeps its own statistics on the computed values, gathered the next time `ANALYZE` runs.
+
+![An expression index stores a computed value such as LOWER(customer_name)](images/07_expression_index_computed_value.png)
 
 ## Index Types at a Glance
 

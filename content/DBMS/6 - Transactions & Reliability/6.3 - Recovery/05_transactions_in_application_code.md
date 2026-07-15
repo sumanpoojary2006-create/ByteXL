@@ -59,6 +59,8 @@ SELECT * FROM accounts;
 
 The `COMMIT` only ever runs if both statements succeeded without error; any exception raised by the database, a `constraint` violation, a deadlock, a lost connection, skips straight to the `ROLLBACK` branch instead, guaranteeing the transaction never commits a partial result.
 
+![Application transaction flow committing on success and rolling back on error](images/09_app_transaction_commit_or_rollback_flow.png)
+
 ## Keeping Transactions Short
 
 Every `lock` a transaction holds, covered in the concurrency control chapter, stays held until that transaction commits or rolls back. A transaction left open for a long time, whether because it is doing slow, unrelated work in between statements or because a bug forgot to commit at all, holds its `locks` the entire time, potentially blocking every other transaction that needs the same rows.
@@ -94,6 +96,8 @@ SELECT * FROM accounts;
 ```
 
 Because a deadlock victim's transaction is guaranteed to have been fully rolled back by the database, retrying it from scratch is always safe; the application simply repeats the same `BEGIN` through `COMMIT` sequence again, and it typically succeeds the second time, once whatever transaction it was competing with has already finished.
+
+![Application retrying the entire transaction after a deadlock rollback](images/10_retry_transaction_after_deadlock_rollback.png)
 
 ## Transactions in Application Code at a Glance
 

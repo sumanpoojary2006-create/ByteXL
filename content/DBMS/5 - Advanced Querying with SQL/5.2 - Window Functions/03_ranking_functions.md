@@ -32,6 +32,8 @@ FROM sales;
 - Sana Fatima and Tarun Bakshi both have 21000.00.
 - `ROW_NUMBER` still gives them different numbers, 2 and 3, arbitrarily breaking the tie based on whatever order the database happens to process them in. This makes `ROW_NUMBER` useful for a strict, no-ties-allowed sequence, but not ideal for a leaderboard where a genuine tie should probably be reflected as one.
 
+![ROW_NUMBER assigning a strict sequence even when two values are tied](images/05_row_number_strict_sequence.png)
+
 ## Ranking with Gaps Using RANK
 
 `RANK()` gives tied rows the exact same rank number, and then skips ahead by the number of tied rows before continuing.
@@ -58,6 +60,8 @@ FROM sales;
 ```
 
 Sana and Tarun again both land on rank 2, but Priya Bose now gets rank 3, not 4, since `DENSE_RANK` treats the tie as consuming only one rank position, not two. Whether `RANK` or `DENSE_RANK` is the right choice depends entirely on what the ranking is meant to represent:
+
+![RANK leaving a gap after a tie while DENSE_RANK keeps ranks consecutive](images/06_rank_vs_dense_rank_ties.png)
 
 - **`RANK`**: use it if the count of people above someone genuinely matters.
 - **`DENSE_RANK`**: use it if only the relative tier matters.

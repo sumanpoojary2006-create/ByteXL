@@ -38,6 +38,8 @@ WHERE salary > (SELECT AVG(salary) FROM employees);
 
 The parentheses around `SELECT AVG(salary) FROM employees` mark it as a subquery, sometimes called an inner query, nested inside the outer query's `WHERE` clause. The database runs the inner query first, gets back a single number, and then substitutes that number directly into the outer query's condition, as if Kabir had typed the average in by hand:
 
+![A subquery running inside an outer query and providing one average salary value](images/01_subquery_inner_query_value.png)
+
 | employee_name | salary |
 |---|---|
 | Ananya Sharma | 95000.00 |
@@ -57,6 +59,8 @@ WHERE salary > 73000.00;
 ```
 
 This happens to return the same three rows today, but it is fragile in a way the subquery version is not. The moment a new employee is hired, or anyone's salary changes, the true average shifts, and this hardcoded 73000.00 silently becomes wrong, with nothing in the query itself signaling that. The subquery version recalculates the average fresh every time the outer query runs, so it can never drift out of sync with the data it depends on.
+
+![A live subquery recalculating while a hardcoded average becomes stale](images/02_subquery_recalculates_vs_hardcoded.png)
 
 ## Subqueries Are Not a New Kind of Syntax
 

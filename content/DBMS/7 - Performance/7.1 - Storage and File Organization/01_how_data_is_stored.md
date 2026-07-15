@@ -27,6 +27,8 @@ SELECT pg_size_pretty(pg_relation_size('orders')) AS table_size_on_disk;
 
 That size is not 500 individual files, one per row; it is a small number of 8 kilobyte pages, each holding dozens of rows packed together, which is why reading many rows that happen to sit on the same page is so much cheaper than reading the same number of rows scattered across many different pages.
 
+![Rows are packed inside database pages rather than stored loose on disk](images/01_rows_packed_inside_pages.png)
+
 ## Every Row Has a Physical Address
 
 PostgreSQL exposes the physical location of a row directly through a hidden system column called `ctid`, which identifies exactly which page and which position within that page a row currently occupies.
@@ -39,6 +41,8 @@ ORDER BY order_id;
 ```
 
 The `ctid` values here look like `(0,1)`, meaning page 0, position 1 within that page, and rows with nearby `order_id` values, having been inserted around the same time, tend to land on the same or nearby pages, while `order_id = 500`, inserted much later in the same batch, sits on a later page. This is the physical reality behind every query: reading a row means finding its page and reading that whole page off disk, not teleporting directly to one row's bytes.
+
+![A ctid points to the page number and slot position of a row](images/02_ctid_page_slot_address.png)
 
 ## Why Reading a Page Costs More Than Reading a Row
 

@@ -36,6 +36,8 @@ The `UPDATE` was issued against `in_transit_shipments`, the `view`, not `shipmen
 1. `in_transit_shipments` maps unambiguously back to exactly one row in exactly one table.
 2. There is no doubt about which row in `shipments` this update was meant for.
 
+![A simple view can pass an update through to exactly one base table row](images/03_simple_updatable_view_one_to_one_mapping.png)
+
 ## A View with a Join Is Generally Not Updatable
 
 The `active_shipments` `view` from the previous lesson `join`s `shipments` to `drivers`, and that `join` is exactly what breaks direct updatability, since a single row in the `view`'s result could conceptually correspond to changes in either underlying table, and the database has no reliable way to know which one was intended.
@@ -72,6 +74,8 @@ UPDATE driver_shipment_counts SET shipment_count = 5 WHERE driver_id = 1;
 ```
 
 This fails for a more fundamental reason than the `join` case: `shipment_count` is not a stored value at all, it is calculated fresh from however many rows currently match, so "setting" it to 5 is not a meaningful operation the database could even attempt to translate into a real change.
+
+![Joined and aggregate views are not directly updatable because the target row is ambiguous or computed](images/04_join_and_aggregate_views_not_directly_updatable.png)
 
 ## Making a Join-Based View Writable with INSTEAD OF Triggers
 

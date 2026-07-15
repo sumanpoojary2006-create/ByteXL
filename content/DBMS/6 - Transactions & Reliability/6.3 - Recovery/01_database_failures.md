@@ -8,6 +8,8 @@ Every guarantee covered so far in this unit, atomicity, consistency, isolation, 
 
 A database's recovery system exists to survive all of these, but each one demands a different response, which is why the first step in understanding recovery is naming the different kinds of **database failures** clearly.
 
+![Three database failure scopes: transaction failure, system crash, and media failure](images/01_database_failure_types_scope.png)
+
 ## Transaction Failure: The Smallest Kind of Failure
 
 The narrowest kind of failure affects a single transaction, without touching the rest of the system at all. A `CHECK` `constraint` violation, a deadlock that forces one transaction to abort, or an application explicitly calling `ROLLBACK`, all fall into this category.
@@ -56,6 +58,8 @@ If the physical disk holding this table failed entirely, this query would find n
 ## Why the Distinction Matters
 
 Each type of failure calls for a different mechanism. Transaction failure is handled by atomicity and a simple rollback, already fully covered. System crash recovery is handled by the `write-ahead log`, replaying and undoing work automatically on restart, the subject of the next two lessons in this chapter. Media failure is handled by redundancy, keeping the data somewhere else entirely, not by anything the transaction log alone can fix. Confusing these three, or assuming one mechanism covers all of them, is a common and costly mistake in real systems.
+
+![Different recovery tools for transaction failure, system crash, and media failure](images/02_failure_type_recovery_tool_mapping.png)
 
 ## Database Failures at a Glance
 

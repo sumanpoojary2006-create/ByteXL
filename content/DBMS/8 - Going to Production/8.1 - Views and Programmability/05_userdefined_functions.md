@@ -55,6 +55,8 @@ FROM shipments;
 
 `calculate_shipping_cost(distance_km, is_oversized)` runs once per row, taking that row's own column values as arguments, and its result appears as an ordinary computed column, just like any built-in function would. This is the behavior that makes functions so useful for exactly Devraj's problem: the shipping-cost logic now lives in one place, and every report that needs it simply calls the function rather than re-deriving the formula.
 
+![A user-defined function takes inputs and returns a value inside a SELECT](images/09_user_defined_function_inputs_to_value.png)
+
 ## Functions Cannot Manage Their Own Transactions
 
 A function, unlike a procedure, cannot issue its own `COMMIT` or `ROLLBACK`; it always runs as part of whatever transaction the calling statement is already inside.
@@ -64,6 +66,8 @@ SELECT calculate_shipping_cost(200.00, TRUE);
 ```
 
 This restriction exists precisely because a function is meant to be called from within a `SELECT`, potentially many times in a single query, one call per row, and allowing it to independently commit or roll back partway through would make no sense in that context; a single `SELECT` is not something that can be partially committed row by row. This is the clearest practical distinction between a function and the procedure from the previous lesson: a function computes a value inside a larger statement, a procedure performs a standalone, transaction-managing action.
+
+![Functions return values inside SELECT, while procedures perform actions through CALL](images/10_function_vs_procedure_select_vs_call.png)
 
 ## Functions Can Also Return a Set of Rows
 

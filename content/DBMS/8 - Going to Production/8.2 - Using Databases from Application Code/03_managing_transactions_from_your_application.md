@@ -31,6 +31,8 @@ COMMIT;
 
 The `state` column changes from `idle` to `active` (or briefly `idle in transaction` between statements) once `BEGIN` runs, and this state belongs specifically to this one connection's process id, `pg_backend_pid()`. If an application opened a second, separate connection at this exact moment, that second connection would have no visibility into this in-progress transaction at all, and could not accidentally commit or roll it back; each connection manages its own transaction independently.
 
+![A transaction belongs to exactly one database connection](images/05_transaction_belongs_to_one_connection.png)
+
 ## The Danger of a Connection Left "Idle in Transaction"
 
 If application code calls `BEGIN` but then, due to a bug or an unhandled error, never reaches its `COMMIT` or `ROLLBACK`, the connection is left sitting in a state called "idle in transaction," still holding whatever `lock`s it acquired, indefinitely.
@@ -70,6 +72,8 @@ COMMIT;
 ```
 
 `SAVEPOINT before_risky_step` marks a checkpoint partway through the transaction. `ROLLBACK TO SAVEPOINT before_risky_step` undoes only the changes made after that point, shipment 2's incorrect update, while keeping everything before it, shipment 1's valid update, fully intact and still part of the transaction. The final `COMMIT` then commits shipment 1's change alone, since shipment 2's change was already discarded by the savepoint rollback before the transaction ever finished.
+
+![A savepoint lets an application roll back one risky step while keeping earlier work](images/06_savepoint_partial_rollback.png)
 
 ## Why Savepoints Matter for Application Code
 

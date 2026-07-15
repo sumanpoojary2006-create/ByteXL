@@ -29,6 +29,8 @@ Even though these rows were inserted with `order_id` values 5, 2, 8, then 1, the
 - This means a query that wants "every order with `order_id` between 1 and 4" cannot assume those rows sit near each other on disk.
 - A heap offers no such guarantee, and finding them without help requires checking every page, a `full table scan`, the subject of the next lesson.
 
+![Heap organization places rows wherever there is space while clustered organization keeps nearby keys together](images/03_heap_vs_sorted_clustered_layout.png)
+
 ## Sorted (Clustered) Organization: Rows Kept in Physical Order
 
 An alternative organization keeps rows physically sorted by a chosen column, so that rows with nearby values in that column also sit near each other on disk. PostgreSQL does not maintain this automatically the way a heap works by default, but it can be requested explicitly with `CLUSTER`, which physically reorders an existing table's rows to match an `index`'s order, as a one-time operation.
@@ -61,6 +63,8 @@ ORDER BY customer_name;
 With the names listed alphabetically, the bucket numbers jump around with no pattern at all: names that sit next to each other in alphabetical order land in completely unrelated buckets, and that is not a flaw but the entire design. A hash function deliberately scatters values evenly so that no bucket gets overloaded, and the unavoidable price is that any notion of "nearby" or "in between" is destroyed on the way in.
 
 PostgreSQL does not organize whole tables this way, but it offers `hash indexes`, which apply exactly this idea to speed up equality lookups specifically, at the cost of being unable to help at all with range queries like "greater than" or "between."
+
+![Hashed organization sends an exact-match key to one bucket but cannot preserve ranges](images/04_hash_bucket_exact_match_layout.png)
 
 ```postgresql with=file_org_demo.sql
 CREATE INDEX idx_orders_hash ON orders USING hash (customer_name);

@@ -32,6 +32,8 @@ A real `connection string` built from values like these would look something lik
 
 The `app_config` table above is only illustrative, showing the pieces such a string is made of; a production application would never store a raw password in a plain table like this, and the security chapter of this unit covers exactly why, and what to do instead.
 
+![A connection string bundles host, port, database, and credentials into one connection target](images/01_connection_string_pieces.png)
+
 ## Why Every Connection Involves a Real Cost
 
 Opening a connection is not free: it typically means a network round trip to the server, an authentication handshake, and the server allocating resources on its side to track that connection. This is the reason a well-built application does not open a brand new connection for every single query it runs.
@@ -53,6 +55,8 @@ WHERE state = 'idle';
 ```
 
 A connection sitting in the `idle` state, especially one that has been idle for a long time, is exactly this kind of leak: application code that opened it, ran a query, and then never closed it, leaving the server holding onto that connection's resources for no active purpose. Well-written application code always ensures a connection is closed once it is no longer needed, typically through a pattern the connecting language provides for guaranteed cleanup, even if an error occurs partway through.
+
+![Application code should open, use, and close connections to avoid idle leaks](images/02_connection_lifecycle_open_use_close.png)
 
 ## A Connection Failure Is Not the Same as a Query Failure
 

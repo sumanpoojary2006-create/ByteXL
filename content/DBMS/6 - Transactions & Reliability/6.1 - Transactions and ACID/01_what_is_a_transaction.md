@@ -44,6 +44,8 @@ SELECT account_id, owner_name, balance FROM accounts;
 
 The two `UPDATE` statements are now bound together by `BEGIN` and `COMMIT`. If anything went wrong between them, a crash, a `constraint` violation, an explicit cancellation, the database guarantees that neither change takes effect, not just the first one, not just the second. Only once `COMMIT` runs successfully does either change become permanent and visible to anyone else looking at the table.
 
+![A transaction wrapping debit and credit updates so they move as one unit](images/01_transaction_wraps_debit_credit.png)
+
 ## Undoing a Transaction with ROLLBACK
 
 If something inside a transaction turns out to be wrong before `COMMIT` runs, `ROLLBACK` discards every change made since `BEGIN`, as if none of it had ever happened.
@@ -62,6 +64,8 @@ SELECT account_id, balance FROM accounts;
 ```
 
 The `SELECT` immediately after the two `UPDATE` statements, while still inside the transaction, shows the changed balances, 45000.00 and 17000.00, because within the same transaction, a connection can see its own uncommitted changes. But once `ROLLBACK` runs, those changes are discarded entirely, and the final `SELECT` shows both accounts back at their original values, 50000.00 and 12000.00, exactly as if the transaction had never happened.
+
+![ROLLBACK undoing provisional changes before they are committed](images/02_rollback_undoes_uncommitted_changes.png)
 
 ## Why Transactions Matter Beyond Money
 

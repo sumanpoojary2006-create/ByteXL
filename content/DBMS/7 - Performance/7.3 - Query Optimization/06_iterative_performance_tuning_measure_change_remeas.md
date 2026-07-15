@@ -34,6 +34,8 @@ ORDER BY total_refunded DESC;
 
 This baseline plan, with no supporting `index` on either `status` or `order_date`, is expected to show a `sequential scan` across all 60000 rows before filtering down to the small refunded, recent subset the query actually cares about. Recording this baseline's actual time is essential, since without it, there is no way to later confirm whether a change genuinely helped or made no real difference.
 
+![Iterative tuning starts by measuring a baseline before making changes](images/13_iterative_tuning_measure_change_remeasure.png)
+
 ## Step Two: Make One Deliberate Change
 
 Rather than adding several `indexes` at once, the disciplined approach is one change at a time, so its individual effect can be measured cleanly. A `composite index` matching both filter columns together, the technique covered in the `indexes` chapter, is a reasonable first attempt here.
@@ -59,6 +61,8 @@ Comparing this plan's actual time directly against the baseline's is the entire 
 
 - If the plan now shows an `index scan` on `idx_orders_status_date` with a meaningfully lower actual time, the change is confirmed as a real improvement, not just a plausible-sounding guess.
 - If the actual time barely moved, or if the optimizer still chose a `sequential scan` anyway, perhaps because the filtered rows are not selective enough for the `index` to be worth using, that is equally important information, and it means the next iteration should try a different change rather than assuming this one worked.
+
+![Compare baseline time with after-change time to prove whether tuning helped](images/14_baseline_vs_after_change_actual_time.png)
 
 ## Step Four: Repeat, One Change at a Time
 

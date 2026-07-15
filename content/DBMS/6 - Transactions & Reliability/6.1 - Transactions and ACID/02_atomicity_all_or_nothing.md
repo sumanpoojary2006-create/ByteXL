@@ -41,6 +41,8 @@ This transaction fails in a chain:
 
 The closing `SELECT` shows both balances completely untouched, exactly as atomicity promises, even though nobody typed `ROLLBACK` by hand. The failure itself triggered the same all-or-nothing guarantee.
 
+![Atomicity discarding the whole transaction when one statement fails](images/03_atomicity_failure_discards_transaction.png)
+
 ## What Atomicity Does Not Protect Against
 
 It is worth being precise about what atomicity actually guarantees, since it is easy to expect too much from it. Atomicity only guarantees that a transaction's own set of changes are indivisible; it says nothing about whether those changes, once committed, make logical sense.
@@ -72,6 +74,8 @@ SELECT account_id, owner_name, balance FROM accounts;
 ```
 
 This transaction opens a new account for Farah Ali and funds it from Meera's account, three statements acting as one atomic unit. If the `INSERT` for the new account had failed, for instance because `account_id = 3` already existed, neither `UPDATE` would take effect either, keeping Meera's balance untouched rather than deducting money toward an account that was never actually created.
+
+![Atomicity treating many statements as one all-or-nothing unit](images/04_atomicity_all_statements_one_unit.png)
 
 ## Atomicity at a Glance
 

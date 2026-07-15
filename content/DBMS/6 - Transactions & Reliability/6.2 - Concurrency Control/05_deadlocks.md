@@ -45,6 +45,8 @@ ROLLBACK;
 
 Each transaction is individually doing something perfectly reasonable, `locking` one row and then requesting a second row it needs, but the two together form a cycle: A waits on B, and B waits on A, with no possible way for either to naturally continue.
 
+![A deadlock cycle where Transaction A waits for B and Transaction B waits for A](images/10_deadlock_wait_cycle.png)
+
 ## How the Database Breaks a Deadlock
 
 A database does not simply let two transactions wait forever. PostgreSQL, like other production databases, continuously watches for exactly this kind of waiting cycle, and once it detects one:
@@ -83,6 +85,8 @@ COMMIT;
 ```
 
 If every transaction, regardless of which direction it transfers money, always `locks` account 1 before account 2 whenever both are involved, the circular waiting pattern from the earlier example can never form: whichever transaction gets to account 1 first simply makes the other one wait its turn, in a straight line rather than a cycle.
+
+![Preventing deadlocks by locking accounts in the same consistent order](images/11_deadlock_prevention_same_lock_order.png)
 
 ## Deadlocks at a Glance
 

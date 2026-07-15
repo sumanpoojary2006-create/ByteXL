@@ -26,6 +26,8 @@ Every change made on the primary, this `INSERT` included, generates WAL records 
 
 This is why replication is often described as recovery's mechanism, run continuously against a live server rather than only after a crash.
 
+![Streaming replication sends WAL from the primary to replicas, which replay it](images/09_streaming_replication_wal_to_replicas.png)
+
 ## Monitoring Replication from the Primary
 
 A running PostgreSQL primary tracks every connected replica directly, exposing exactly how far behind each one currently is.
@@ -53,6 +55,8 @@ SELECT status, COUNT(*) FROM shipments GROUP BY status;
 ```
 
 This is why replicas are typically used for read traffic that can tolerate a small amount of staleness, dashboards, analytics, reporting, exactly the kind of workload this course has repeatedly used as its running examples, while writes, and any read that absolutely requires the most current possible data, continue to go to the primary.
+
+![Writes go to the primary, while read-heavy dashboards can query replicas with some lag](images/10_read_replicas_reads_primary_writes_lag.png)
 
 ## Read Replicas for Scaling, Failover for Availability
 

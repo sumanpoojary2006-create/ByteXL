@@ -30,6 +30,8 @@ The output now includes both the familiar `cost=` and `rows=` estimates from pla
 - **`actual time`**: reports genuinely measured milliseconds, not internal cost units.
 - **`rows=N`** (in the actual section): reports how many rows this step genuinely returned when actually run, which can be compared directly against the earlier estimate on the same line.
 
+![EXPLAIN ANALYZE compares estimated rows with the actual rows returned](images/05_explain_analyze_estimated_vs_actual_rows.png)
+
 ## When Estimates and Reality Disagree
 
 In this deliberately skewed dataset, three quarters of all rows belong to `customer_id = 1`, a distribution the optimizer's general statistics may not always model with perfect precision, especially before `ANALYZE` has run recently.
@@ -61,6 +63,8 @@ WHERE c.customer_id BETWEEN 1 AND 5;
 ```
 
 If this plan runs its inner scan of `orders` once per matching customer, `loops=5` would appear on that inner step, and the true total time contributed by that step is its reported `actual time` multiplied by 5, not the number shown alone. Missing this detail is a common way to misread `EXPLAIN ANALYZE` output, understating how expensive a repeatedly executed inner step actually was in total.
+
+![loops=N means an inner plan step repeats and the total work adds up](images/06_explain_analyze_loops_repeat_inner_step.png)
 
 ## Why EXPLAIN ANALYZE Should Be Used with Care
 

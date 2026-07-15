@@ -29,6 +29,8 @@ Even though this `UPDATE` did not add a single new row, the table's physical siz
 - PostgreSQL writes each updated row as a new version alongside the old one, rather than overwriting it in place.
 - The old, no-longer-current versions, called dead tuples, keep occupying disk space until something explicitly reclaims it.
 
+![VACUUM cleans up dead tuples and marks their space reusable](images/01_dead_tuples_vacuum_reusable_space.png)
+
 ## Reclaiming Space with VACUUM
 
 `VACUUM` is the command that scans a table for dead tuples and marks their space as reusable for future inserts and updates.
@@ -52,6 +54,8 @@ SELECT relname, n_live_tup, n_dead_tup FROM pg_stat_user_tables WHERE relname = 
 ```
 
 `ANALYZE` refreshes PostgreSQL's internal statistics about the table's data distribution, and `n_live_tup` and `n_dead_tup` in `pg_stat_user_tables` show, respectively, the estimated count of current, valid rows and dead, reclaimable rows PostgreSQL is currently tracking. Stale statistics, left unrefreshed after significant data changes, can mislead the optimizer into choosing a worse plan than it otherwise would, exactly the risk noted when the optimizer was first introduced.
+
+![ANALYZE refreshes table statistics so the optimizer can choose better plans](images/02_analyze_fresh_stats_autovacuum.png)
 
 ## Autovacuum: Maintenance Running Automatically
 

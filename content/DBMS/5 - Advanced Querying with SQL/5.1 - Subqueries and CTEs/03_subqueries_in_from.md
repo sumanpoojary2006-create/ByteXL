@@ -52,6 +52,8 @@ The subquery in `FROM`, aliased here as `dept_averages`, runs first and produces
 
 The outer query then treats `dept_averages` exactly like a real table, filtering its rows with a `WHERE` clause that compares `department_avg`, a column that only exists because the inner query computed it, against the company-wide average of 73000.00 from a second subquery. Engineering is the only department whose average clears the company-wide bar.
 
+![A FROM subquery producing a derived table that the outer query can filter](images/05_from_subquery_derived_table.png)
+
 ## Why a FROM Subquery Needs an Alias
 
 Every subquery used in `FROM` must be given a name, since the outer query needs some way to refer to it, the same way any real table needs a name to be selected from.
@@ -66,6 +68,8 @@ FROM (
 ```
 
 Leaving off `AS dept_averages` here would cause an error in most databases; a derived table without a name is not something the outer query can reference, even implicitly. This is one clear difference from a `WHERE` subquery, which never needs a name since it is only ever compared against, never selected from.
+
+![A derived table needing an alias name before the outer query can use it](images/06_from_subquery_requires_alias.png)
 
 ## Joining a Derived Table to a Real Table
 

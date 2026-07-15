@@ -34,6 +34,8 @@ The generated SQL here is clean and matches exactly what a developer would have 
 - The developer never has to write or think about SQL text at all.
 - Work happens entirely in terms of objects and method calls in their own programming language, with the library handling the translation.
 
+![An ORM translates object-style application code into SQL behind the scenes](images/09_orm_translates_objects_to_sql.png)
+
 ## Where an ORM's Convenience Can Hide a Real Cost
 
 The `N+1 query` problem, covered in the performance unit, is the single most common way ORM-generated code goes wrong, precisely because the object-oriented style makes looping over related objects look completely innocent.
@@ -54,6 +56,8 @@ SELECT shipment_id, driver_id, status, destination FROM shipments;
 ```
 
 Nothing about the object-oriented loop above looks like a database performance hazard; `shipment.driver.driver_name` reads like ordinary property access, not a database call. This is exactly the danger: an ORM's abstraction can hide the fact that a query is happening at all, making it easy to write code that is correct but silently slow, unless the developer specifically knows to ask the ORM to fetch related data eagerly, in one combined query, rather than one at a time as each object is touched.
+
+![ORM convenience can hide N+1 queries, while raw SQL makes one-query control explicit](images/10_orm_n_plus_one_vs_raw_sql.png)
 
 ## Where Raw SQL Is the More Direct Choice
 

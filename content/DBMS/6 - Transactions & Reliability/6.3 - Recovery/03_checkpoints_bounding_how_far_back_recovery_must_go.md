@@ -46,6 +46,8 @@ SELECT balance FROM accounts WHERE account_id = 1;
 
 The two updates before `CHECKPOINT` are guaranteed to already be reflected in the data files themselves the moment the checkpoint completes. Only the change logged after the checkpoint is at risk of existing only in the log and not yet in the data files, which is exactly the portion recovery would need to replay if a crash happened right after it.
 
+![Checkpoint marking which logged changes are already safely on disk](images/05_checkpoint_bounds_recovery_timeline.png)
+
 ## Why Checkpoints Happen Automatically, Not Just on Demand
 
 Running `CHECKPOINT` by hand is useful for understanding what it does, but in practice, PostgreSQL runs checkpoints automatically on a regular schedule, controlled by settings like how much time has passed or how much log activity has accumulated since the last one.
@@ -55,6 +57,8 @@ SHOW checkpoint_timeout;
 ```
 
 `checkpoint_timeout` reports how long PostgreSQL waits, at most, between automatic checkpoints, 5 minutes by default. This is a deliberate trade-off: checkpointing more frequently keeps recovery time shorter after a crash, since less log needs replaying, but each checkpoint itself costs time and disk activity while it runs, so checkpointing too aggressively can slow down the database's normal, everyday operation.
+
+![Checkpoint frequency balancing shorter recovery against normal-operation cost](images/06_checkpoint_frequency_tradeoff.png)
 
 ## The Trade-off Checkpoints Represent
 

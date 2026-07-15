@@ -50,6 +50,8 @@ Each level adds one more guarantee on top of the last:
 - `REPEATABLE READ` additionally guarantees that if a transaction reads the same row twice, it gets the same answer both times, even if another transaction commits a change to that row in between.
 - `SERIALIZABLE`, the strictest level, guarantees the transaction behaves as if it had run completely alone, with no interleaving effects from any concurrent transaction visible at all.
 
+![Isolation levels as a protection ladder from read committed to serializable](images/08_isolation_levels_protection_ladder.png)
+
 ## Seeing REPEATABLE READ Prevent a Non-Repeatable Read
 
 ```postgresql with=isolation_demo.sql
@@ -71,6 +73,8 @@ COMMIT;
 ```
 
 Both reads inside this transaction are guaranteed to agree, because `REPEATABLE READ` takes a consistent snapshot of the data as of when the transaction began, and every read within that transaction is served from that same snapshot rather than the constantly updating live data.
+
+![Repeatable read keeping the same row value stable across two reads](images/09_repeatable_read_same_row_stays_same.png)
 
 ## Why Not Always Use SERIALIZABLE
 

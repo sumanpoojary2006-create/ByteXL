@@ -4,6 +4,10 @@
 
 Goal of this unit: Improve database performance through indexing and query optimization techniques.
 
+![An index gives the database a shortcut instead of scanning every row](images/01_index_shortcut_overview.png)
+
+![The optimizer compares candidate plans before choosing one](images/02_optimizer_plans_overview.png)
+
 ## Chapters and Topics (teach in order)
 
 ### Storage and File Organization

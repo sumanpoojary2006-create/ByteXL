@@ -40,6 +40,8 @@ Running them in the opposite order, B first then A, would instead produce `(1000
 
 If two transactions run concurrently and the database allows a result that does not correspond to any possible one-at-a-time ordering, something has gone wrong that no individual transaction's own logic could have predicted or accounted for. The `lost update` from earlier in this chapter is a clear example: neither "A then B" nor "B then A" would have caused one sale's stock reduction to vanish entirely, since a strictly sequential execution guarantees each transaction sees the previous one's completed result before making its own change. A `lost update` is not just an inconvenient bug; it is a violation of serializability, a result that no valid serial ordering could ever have produced.
 
+![Serializability requiring an interleaved execution to match some serial order](images/12_serializability_equivalent_serial_order.png)
+
 ## Serializability as the Target, Not a Setting
 
 `SERIALIZABLE`, the `isolation level` covered earlier in this chapter, is the one level that fully guarantees serializability for every transaction run under it. The other levels, `READ COMMITTED` and `REPEATABLE READ`, are deliberate, named exceptions to full serializability, each one permitting specific, well-understood anomalies, such as non-repeatable reads, in exchange for better performance. This is the precise relationship between the two ideas covered across this chapter: serializability is the theoretical gold standard for what "correct under concurrency" means, and `isolation levels` are the practical, named trade-offs a database offers between that gold standard and real-world speed.
@@ -54,6 +56,8 @@ COMMIT;
 ```
 
 Running a transaction under `SERIALIZABLE` guarantees, for every transaction that also runs under `SERIALIZABLE` concurrently with it, that the combined result will always be equivalent to some serial ordering of them, at the cost of the database sometimes forcibly aborting one of the transactions and requiring a retry, exactly the trade-off discussed when `isolation levels` were first introduced.
+
+![Serializable isolation preserving correctness by forcing a retry when needed](images/13_serializable_retry_tradeoff.png)
 
 ## Serializability at a Glance
 

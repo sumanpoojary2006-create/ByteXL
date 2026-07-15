@@ -51,6 +51,8 @@ FROM generate_series(5001, 10000) AS i;
 
 `EXPLAIN ANALYZE`, unlike plain `EXPLAIN`, actually executes the statement and reports real measured timings. The same 5000 rows, inserted into two identically shaped tables, take measurably longer against `orders_many_indexes`, visible by comparing the Execution Time reported at the bottom of each plan, since that insert has to additionally update three separate `index` structures for every single row, on top of writing the row itself. `orders_few_indexes` only has its `primary key`'s automatic `index` to maintain, and finishes with noticeably less total work.
 
+![Every extra index adds more maintenance work to each insert](images/12_overindexing_more_indexes_more_write_work.png)
+
 ## Redundant Indexes Add Cost Without Adding Benefit
 
 The `composite index` `idx_many_name_amount` in the setup above already sorts by `customer_name` first, which means it can serve most of what `idx_many_name` alone would serve, making `idx_many_name` at least partially redundant.
@@ -60,6 +62,8 @@ EXPLAIN SELECT * FROM orders_many_indexes WHERE customer_name = 'Customer 2500';
 ```
 
 The query planner is free to choose either `idx_many_name` or the leading portion of `idx_many_name_amount` to satisfy this filter, since both can serve it; the plan names just one of them, typically the smaller `idx_many_name`, which means the other overlapping structure contributed nothing to this query while still being paid for on every write. Keeping both means paying the storage and write cost of two overlapping structures for a benefit neither one provides over the other for this particular query shape. Reviewing a `schema`'s `indexes` for this kind of overlap, and removing the ones that add cost without adding a distinct capability, is a normal part of keeping a system healthy as it grows.
+
+![Redundant and low-cardinality indexes can add cost without enough benefit](images/13_redundant_and_low_cardinality_indexes.png)
 
 ## Indexing Columns That Are Rarely Filtered On Wastes the Investment
 

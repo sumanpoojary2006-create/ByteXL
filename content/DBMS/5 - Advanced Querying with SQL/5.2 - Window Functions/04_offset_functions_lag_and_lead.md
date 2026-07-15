@@ -41,6 +41,8 @@ ORDER BY salesperson, sale_month;
 - Nikhil's April row shows 22000.00 as its `previous_month`, exactly March's total.
 - His March row, having nothing before it in the partition, shows `NULL`, since there is no earlier row for `LAG` to reach.
 
+![LAG reaching backward from the current row to the previous month](images/07_lag_previous_row.png)
+
 ## Calculating Change Using LAG
 
 With the previous month's value sitting in the same row, calculating growth is now a plain subtraction.
@@ -66,6 +68,8 @@ ORDER BY salesperson, sale_month;
 ```
 
 Nikhil's March row now shows 25500.00 as `next_month`, April's total, and his last row, June, shows `NULL`, since there is no later row in his partition for `LEAD` to reach forward into. `LEAD` is useful for questions phrased the other way around, such as "what did this salesperson do right after this particular month."
+
+![LEAD reaching forward from the current row to the next month](images/08_lead_next_row.png)
 
 ## Reaching More Than One Row Away
 

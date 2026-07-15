@@ -37,6 +37,8 @@ A B-tree organizes its entries as a balanced, sorted tree:
 
 Searching a B-tree means starting at the root, comparing the target value, and following exactly one branch downward at each level, narrowing the search space enormously with each step, until reaching the leaf that holds the answer.
 
+![A B-tree is a balanced index with root, branch, and leaf levels](images/03_btree_balanced_root_branches_leaves.png)
+
 ```postgresql with=btree_demo.sql
 EXPLAIN SELECT * FROM orders WHERE amount = 5000.00;
 ```
@@ -68,6 +70,8 @@ EXPLAIN SELECT * FROM orders WHERE amount BETWEEN 1000.00 AND 2000.00 ORDER BY a
 ```
 
 This range query and its ordering both benefit from the same B-tree, since the matching values already sit consecutively, in sorted order, at the leaf level; the database can walk to the start of the range and read forward until it passes the end, with no separate sorting step required afterward.
+
+![B-tree leaf values are sorted, so range scans read a contiguous run](images/04_btree_sorted_leaves_range_scan.png)
 
 ## B-Tree Indexes at a Glance
 

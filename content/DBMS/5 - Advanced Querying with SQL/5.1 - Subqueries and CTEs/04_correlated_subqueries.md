@@ -43,6 +43,8 @@ The inner query's condition, `e2.department = e1.department`, reaches out to `e1
 
 A regular, uncorrelated subquery, like the ones from earlier lessons, runs exactly once, and its single result is reused for every row the outer query checks. A `correlated subquery` conceptually reruns once per outer row, because its result depends on a value, `e1.department` here, that changes from row to row.
 
+![A correlated subquery recalculating relative to the current outer row](images/07_correlated_subquery_per_outer_row.png)
+
 ```postgresql with=employees.sql
 SELECT e1.employee_name,
        (SELECT AVG(e2.salary) FROM employees e2 WHERE e2.department = e1.department) AS dept_avg
@@ -64,6 +66,8 @@ WHERE EXISTS (
 ```
 
 The inner query checks, for each candidate row `e1`, whether any other employee `e2` lists `e1`'s `employee_id` as their `manager_id`. This correlated `EXISTS` returns everyone who manages at least one other employee, Ananya and Sameer, without needing a self `join` or a `GROUP BY`, since it only asks a yes-or-no question per row rather than pulling in matching columns.
+
+![Correlated EXISTS checking whether the current employee manages anyone](images/08_correlated_exists_manager_check.png)
 
 ## Why Correlated Subqueries Can Be Slower
 

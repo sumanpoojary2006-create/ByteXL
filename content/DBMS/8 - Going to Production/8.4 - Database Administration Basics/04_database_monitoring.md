@@ -58,6 +58,8 @@ FROM pg_statio_user_tables;
 
 A healthy, well-provisioned database typically sustains a cache hit ratio well above 90%, meaning the vast majority of reads are served from fast memory rather than slower disk access. A ratio that drops noticeably, tracked over time rather than as a single snapshot, can signal that the database's available memory is no longer large enough for its actual working data set, a capacity signal worth acting on before it manifests as widespread query slowdowns.
 
+![Database monitoring continuously tracks connections, dead tuples, cache hit ratio, and long queries](images/07_monitoring_database_health_metrics.png)
+
 ## Watching for Long-Running and Blocked Queries
 
 `pg_stat_activity`, used throughout this unit for one-off checks, is also the foundation for continuously monitoring queries that have been running unusually long, or are stuck waiting on a `lock` held by another session.
@@ -70,6 +72,8 @@ ORDER BY running_for DESC;
 ```
 
 `wait_event_type` and `wait_event` reveal specifically what a query is stuck waiting on, if anything, such as a `lock` held by another transaction, exactly the kind of contention the concurrency control unit covered. A monitoring system alerting on queries that exceed a reasonable running-time threshold, tuned to what "reasonable" actually means for a given application, catches runaway or blocked queries early, rather than letting them silently degrade the whole system's responsiveness.
+
+![Monitoring alerts can catch blocked or long-running queries before users are affected](images/08_monitoring_blocked_query_alert.png)
 
 ## Database Monitoring at a Glance
 

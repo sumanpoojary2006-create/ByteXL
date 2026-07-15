@@ -41,6 +41,8 @@ SELECT customer_name, email FROM store_customers;
 
 `INTERSECT` compares the two result sets and keeps only the rows that appear in both, matching on every selected column at once. Here, that means a row must have the exact same `customer_name` and `email` in both `online_customers` and `store_customers` to survive. Only Kavya Nair qualifies, since she is the one customer whose full row appears identically in both tables, which is exactly the cross-channel shopper list Tanvi needs for the loyalty reward.
 
+![INTERSECT keeping only the customer row that appears in both result sets](images/03_intersect_common_rows.png)
+
 ## Finding Rows in One Query but Not the Other
 
 `EXCEPT` (called `MINUS` in some databases, though PostgreSQL and MySQL both use `EXCEPT`) takes the first query's results and removes anything that also appears in the second query's results, keeping only what is left over.
@@ -52,6 +54,8 @@ SELECT customer_name, email FROM store_customers;
 ```
 
 This returns Aditi Kulkarni and Rohan Das, the two online customers who do not appear anywhere in `store_customers`, exactly the list the "visit us in person" campaign needs. Order matters with `EXCEPT`: this query starts from `online_customers` and subtracts `store_customers`, which is a different question from starting with `store_customers` and subtracting `online_customers`.
+
+![EXCEPT returning rows from the first customer list after subtracting the second list](images/04_except_first_minus_second.png)
 
 ## Why EXCEPT Is Not Symmetric
 

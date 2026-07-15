@@ -42,6 +42,8 @@ By the time this `COMMIT` returns success to the caller, PostgreSQL guarantees t
 
 This is why `COMMIT` can safely report success immediately: the log, not the data file, is what recovery actually depends on.
 
+![Write-ahead logging records the log before the data page is written](images/03_wal_log_before_data_page.png)
+
 ## Why Logging First Makes Recovery Possible
 
 If the server crashes at any point after `COMMIT` returns, the data file on disk might genuinely not yet reflect the balance change, since writing the log is fast and writing the full data file can be deferred and batched for efficiency. But because the log record was guaranteed to be durable before `COMMIT` ever returned, the database's recovery process can:
@@ -50,6 +52,8 @@ If the server crashes at any point after `COMMIT` returns, the data file on disk
 2. Reapply, or "replay," any change whose log record exists but whose effect had not yet made it into the data files.
 
 This is exactly how durability is delivered in practice: not by guaranteeing every data file write happens instantly, but by guaranteeing the log record exists first and can always be replayed if needed.
+
+![WAL replay restoring committed changes after a crash](images/04_wal_replay_after_crash.png)
 
 ## What Gets Written to the Log
 

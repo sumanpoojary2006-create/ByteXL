@@ -43,6 +43,8 @@ Every migration gets a unique, ordered identifier, here `0001_create_shipments` 
 - If a version is already recorded, that migration is skipped, since it has already been applied.
 - If it is missing, the tool runs it and then records it. This is what makes it safe to run the exact same migration tool command against a fresh database, a testing database with some migrations already applied, and production, all at once, since each one only ever runs the migrations it is genuinely missing.
 
+![Migrations apply ordered schema changes consistently across dev, test, and production](images/11_migrations_versioned_across_environments.png)
+
 ## Writing a Migration as a Deliberate, Reviewable Step
 
 A migration is typically a small, single-purpose script, reviewed like any other code change, rather than an ad-hoc command typed directly against a live database.
@@ -74,6 +76,8 @@ ALTER TABLE shipments ADD COLUMN new_notes TEXT;
 ```
 
 This distinction, preserving data versus discarding it, is the single most important discipline in writing a safe migration, and it is exactly why migrations against a production database always deserve careful review before being applied, the same caution this course has emphasized around any `DROP` or `DELETE` since the modifying-data chapter early on.
+
+![Safe migrations preserve existing data, while drop-and-recreate shortcuts destroy it](images/12_safe_migration_preserves_data.png)
 
 ## Database Migrations at a Glance
 

@@ -51,6 +51,8 @@ WHERE department_avg > (SELECT AVG(salary) FROM employees);
 
 `WITH dept_averages AS (...)` names the inner query before the main query even begins, and the main query afterward simply reads `FROM dept_averages`, exactly as if it were a real table. The two versions produce an identical result, Engineering as the only department above the company average, but the CTE version reads in the order a person would naturally explain it out loud: "first compute department averages, then find the ones above the company average."
 
+![A CTE naming a temporary result so the main query can read from it](images/09_cte_named_temporary_result.png)
+
 ## Chaining Several CTEs Together
 
 A single `WITH` clause can define more than one CTE, separated by commas, and later CTEs are allowed to reference earlier ones, building up a multi-step calculation one readable piece at a time.
@@ -73,6 +75,8 @@ WHERE dept_averages.department_avg > company_average.company_avg;
 
 - It makes it far easier to check each piece in isolation, since the whole first CTE can be run on its own, just by selecting from it directly, before it is ever plugged into the larger query.
 - It documents what each intermediate result actually represents, for anyone reading the query later.
+
+![Multiple CTEs chained as named steps before the final report](images/10_cte_chain_multiple_steps.png)
 
 ## Why CTEs Are Often Preferred Over Nested Subqueries
 

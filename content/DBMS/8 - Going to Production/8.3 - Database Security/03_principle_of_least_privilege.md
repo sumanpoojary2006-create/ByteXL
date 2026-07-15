@@ -44,6 +44,8 @@ GRANT SELECT ON shipments TO reporting_app;
 
 `reporting_app` can now read `shipments`, exactly what a reporting dashboard needs, and nothing else; it has no access to `payroll` at all, and no ability to modify `shipments` either, since `INSERT`, `UPDATE`, and `DELETE` were never granted. If this service's credentials were ever compromised, the worst an attacker could do through this specific account is read shipment data, not touch payroll, not delete anything, a dramatically smaller blast radius than the broad grant above.
 
+![Least privilege gives a role only the access it needs, reducing the blast radius](images/05_least_privilege_smaller_blast_radius.png)
+
 ## Least Privilege Applies to People, Not Just Services
 
 The same discipline applies to individual developer accounts, not only automated services. A developer debugging a shipment-tracking issue does not need write access to `payroll` either, even though as a human they might reasonably need broader access than an automated reporting service in other ways.
@@ -66,6 +68,8 @@ WHERE grantee = 'reporting_app';
 ```
 
 `information_schema.role_table_grants` lists every privilege currently held by a given `role`, across every table, a direct way to check whether `reporting_app`'s actual granted permissions still match what it genuinely needs, or whether some stale grant from an earlier, now-irrelevant task is still sitting there, unnoticed, quietly widening that account's blast radius.
+
+![Periodic grant review compares current permissions with current need and removes stale access](images/06_review_grants_revoke_stale_access.png)
 
 ## Least Privilege at a Glance
 

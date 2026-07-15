@@ -60,6 +60,8 @@ Every one of the 5 customers appears in this result, including Neha Bhatt, whose
 - A `LEFT JOIN` guarantees every row from that left-hand table survives, matched or not.
 - The right-hand table, `orders`, only contributes columns when a match exists.
 
+![LEFT JOIN keeping every row from the left table and filling NULL for missing matches](images/05_left_join_keeps_left_rows.png)
+
 ## Finding Unmatched Rows on Purpose
 
 Combining a `LEFT JOIN` with a `WHERE` clause that checks for `NULL` on the right-hand table's key is the standard pattern for finding exactly the rows with no match, answering the manager's original question directly.
@@ -72,6 +74,8 @@ WHERE orders.order_id IS NULL;
 ```
 
 `WHERE orders.order_id IS NULL` only keeps rows where the `join` found nothing to attach, and since `order_id` is the `primary key` of `orders`, it can only be `NULL` in the result when no matching order row existed in the first place. This returns exactly one name, Neha Bhatt, the customer the discount campaign needs to reach.
+
+![LEFT JOIN followed by WHERE order_id IS NULL finding customers with no orders](images/06_left_join_find_unmatched_null.png)
 
 ## Why the Table Order Matters
 

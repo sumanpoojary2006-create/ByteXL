@@ -31,6 +31,8 @@ SELECT stock_count FROM inventory WHERE product_id = 1;
 
 `FOR UPDATE`, added to the end of a `SELECT`, tells the database that this transaction intends to modify the row it just read, and claims a `lock` on that row immediately. Any other transaction that also tries one of these is forced to wait until this transaction either commits or rolls back and releases the `lock`:
 
+![SELECT FOR UPDATE placing an exclusive row lock while another transaction waits](images/06_select_for_update_row_lock.png)
+
 - `SELECT ... FOR UPDATE` on the same row
 - An `UPDATE` directly against it If a second sale transaction had tried to `lock` and read product 1's stock count while this transaction was still open, it would simply pause, then proceed only once this one finished, at which point it would correctly see 45, not the stale 50, avoiding the `lost update` entirely.
 
@@ -67,6 +69,8 @@ COMMIT;
 ```
 
 This row-level scope is what makes `locking` practical at real-world scale: a busy inventory system can have thousands of concurrent transactions, each safely `locking` only the specific rows it touches, without the whole table grinding to a halt waiting on unrelated updates.
+
+![Row-level locking blocking product 1 while unrelated product rows continue](images/07_row_level_lock_scope.png)
 
 ## Locking at a Glance
 

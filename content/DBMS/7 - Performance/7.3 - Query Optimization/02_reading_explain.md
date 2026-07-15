@@ -31,6 +31,8 @@ A typical line of output looks like `Index Scan using idx_orders_customer_id on 
 - **`rows=100`**: the optimizer's estimate of how many rows this step will return.
 - **`width=15`**: estimates the average size, in bytes, of each returned row.
 
+![An EXPLAIN plan line contains the operation, cost, estimated rows, and width](images/03_explain_plan_line_anatomy.png)
+
 ## Cost Numbers Are Estimates, Not Measured Time
 
 It is worth being precise about what the cost numbers mean: they are the optimizer's own relative units, used to compare candidate plans against each other, not a measurement of actual seconds or milliseconds. A cost of 8.51 for one query and 8.51 for a completely different query does not mean those two queries take the same real time to run; it only means the optimizer estimated a similar relative amount of work for each, under its own internal cost model.
@@ -53,6 +55,8 @@ GROUP BY customer_id;
 ```
 
 The plan here shows an outer step, likely `HashAggregate`, wrapping an inner step, likely a `Bitmap Heap Scan` or `Index Scan` on `orders`, indented beneath it. Reading a nested plan means starting from the innermost, most indented step, which runs first and feeds its output upward, and working outward toward the final, least indented step, which represents the last operation applied before the result is returned. The aggregation cannot begin until the filtered rows beneath it have been gathered, which is exactly why it is nested underneath that scan in the output.
+
+![Indented EXPLAIN steps are read from the inner step outward](images/04_explain_nested_steps_inside_out.png)
 
 ## Distinguishing Plan Nodes from Actual Table and Index Names
 

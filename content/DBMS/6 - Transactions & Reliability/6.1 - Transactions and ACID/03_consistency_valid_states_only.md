@@ -28,6 +28,8 @@ SELECT account_id, balance FROM accounts;
 
 The `CHECK (balance >= 0)` `constraint` is the database's own definition of a valid account row. This transaction tries to push Meera's balance to -10000.00, and the database refuses to let that become the committed state, rejecting the statement and, through atomicity, rolling back the whole transaction along with it. The final `SELECT` shows Meera's balance unchanged.
 
+![A CHECK constraint blocking an invalid negative balance from becoming committed data](images/05_consistency_check_constraint_blocks_invalid.png)
+
 This is consistency and atomicity working together:
 
 - Atomicity ensures the rejected statement does not leave a half-applied transaction behind.
@@ -61,6 +63,8 @@ SELECT * FROM orders;
 ```
 
 Customer id 99 does not exist in `customers`, so this `INSERT` would create an order pointing to a customer that does not exist, a state the `foreign key` `constraint` defines as invalid. The database rejects it, the transaction fails, and `orders` remains empty. Consistency here means the database will never contain an order referencing a customer that is not really there, regardless of what any individual transaction tries to do.
+
+![A foreign key allowing valid references and blocking orders with missing customers](images/06_consistency_foreign_key_valid_link.png)
 
 ## Consistency Also Depends on the Application
 

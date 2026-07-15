@@ -67,6 +67,8 @@ Each `JOIN` clause attaches one more table to the result, and the database proce
 
 By the time all three `JOIN` clauses have run, every order row carries a customer name, a restaurant name, and a rider name in the same line.
 
+![A multi-table join chain widening one order row with customer restaurant and rider details](images/11_multitable_join_chain_widens_order.png)
+
 ## Using Table Aliases to Keep a Multi-Table Query Readable
 
 As the number of joined tables grows, writing the full table name in front of every column gets noisy. Aliases, introduced briefly with self `joins`, keep a multi-table query readable.
@@ -94,6 +96,8 @@ LEFT JOIN riders d ON o.rider_id = d.rider_id;
 ```
 
 Every order still requires a valid customer and a valid restaurant to appear, since those two `joins` stay as strict `INNER JOIN`, but an order would still show up even with a `NULL` rider name if its `rider_id` did not match anything in `riders`. Mixing `join` types like this lets a query express exactly which relationships are mandatory and which are optional, all in one statement.
+
+![Mixed join types requiring customer and restaurant matches while allowing an optional rider](images/12_mixed_join_types_optional_rider.png)
 
 ## Filtering and Grouping Across a Multi-Table Join
 

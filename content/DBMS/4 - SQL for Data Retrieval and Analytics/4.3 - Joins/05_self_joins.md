@@ -45,9 +45,13 @@ JOIN riders mentor ON mentee.mentor_id = mentor.rider_id;
 
 The `join` condition, `mentee.mentor_id = mentor.rider_id`, matches each mentee's `mentor_id` against the mentor's own `rider_id`, exactly the same logic used to `join` two genuinely different tables in earlier lessons. The database has no trouble treating one physical table as two separate references, as long as the aliases keep them distinguishable in the query.
 
+![A self join using two aliases so one riders table can act as mentee and mentor](images/09_self_join_two_alias_roles.png)
+
 ## Including Riders With No Mentor
 
 An `INNER JOIN` self `join`, like the one above, drops Suresh and Arjun entirely, since their `mentor_id` is `NULL` and finds no match. If the report needs to show every rider, mentored or not, a `LEFT JOIN` self `join` solves it the same way it solved the unmatched-row problem for two different tables.
+
+![LEFT SELF JOIN keeping riders even when their mentor value is NULL](images/10_left_self_join_keeps_no_mentor.png)
 
 ```postgresql with=riders.sql
 SELECT mentee.rider_name AS rider, mentor.rider_name AS mentor

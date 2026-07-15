@@ -4,6 +4,10 @@
 
 Goal of this unit: Build a strong conceptual understanding of databases, the relational model, and how modern DBMSs store, organize, and retrieve data.
 
+![Relational table anatomy with rows, columns, and cells](images/01_relational_table_anatomy_overview.png)
+
+![SQL query pipeline from request to result set](images/02_dbms_query_pipeline_overview.png)
+
 ## Chapters and Topics (teach in order)
 
 ### What is a Database?

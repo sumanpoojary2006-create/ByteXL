@@ -32,6 +32,8 @@ This is the severity that makes SQL injection so dangerous in practice. It is no
 - It can delete, modify, or destroy data entirely.
 - Depending on the database account's granted privileges, it can reach into tables the application was never designed to touch at all, exactly the blast radius the least-privilege lesson in this chapter warned about.
 
+![SQL injection happens when input is allowed to change the query structure](images/09_sql_injection_changes_query_structure.png)
+
 ## Prepared Statements Prevent Injection by Construction
 
 The core defense, already introduced in the application-code chapter, is worth restating precisely here: a `prepared statement` never lets user-supplied text become part of the query's structure, no matter what that text contains.
@@ -73,6 +75,8 @@ GRANT SELECT, INSERT ON shipments TO web_app;
 ```
 
 A `web_app` `role` granted only `SELECT` and `INSERT` on `shipments`, with no `DELETE`, no `DROP` privilege, and no access to any other table, could not have actually executed the destructive `DROP TABLE shipments` attempted in the earlier example, even in a world where the injection itself had somehow succeeded, since that `role` was never granted the privilege to drop anything at all. This is exactly why layered defenses matter: prepared statements should make injection impossible in the first place, and `least privilege` limits the damage in case some other, unanticipated flaw ever slips through.
+
+![Prepared statements, input validation, and least privilege form defense in depth](images/10_sql_injection_defense_in_depth.png)
 
 ## SQL Injection Prevention at a Glance
 

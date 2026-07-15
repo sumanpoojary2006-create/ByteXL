@@ -33,6 +33,8 @@ Within this single transaction, the `SELECT` after the `UPDATE` correctly shows 
 - Isolation is not about hiding a transaction's work from itself.
 - It is about what a completely different, concurrently running transaction, on a separate connection, is allowed to see before this one commits.
 
+![Isolation letting one transaction see its own change while hiding it from another session](images/07_isolation_sessions_uncommitted_private.png)
+
 ## What a Concurrent Transaction Should Not See
 
 Picture a second banking session, running at the exact same moment, checking Meera's balance while the transfer above is still in progress, sitting between its `UPDATE` and its `COMMIT`. Without isolation, that second session could read 40000.00, a balance that might still get rolled back and never actually become real. With isolation guaranteed, the second session instead sees 45000.00, Meera's balance left over from the already-committed transfer earlier in this lesson, for as long as this transaction remains uncommitted, and only sees 40000.00 once `COMMIT` actually runs. The following illustrates the two sessions side by side, as comments, since a single script can only run one session's statements in real sequence.
@@ -66,6 +68,8 @@ SHOW transaction_isolation;
 ```
 
 This reports the `isolation level` the current session is using for its transactions, `read committed` by default in PostgreSQL, which already guarantees that a transaction never sees another transaction's uncommitted changes, exactly the behavior demonstrated above.
+
+![An isolation level dial blocking uncommitted changes from other sessions](images/08_isolation_level_blocks_uncommitted.png)
 
 ## Why Isolation Matters for Correctness, Not Just Comfort
 

@@ -61,6 +61,8 @@ SELECT * FROM shipment_log;
 
 A plain `UPDATE`, with no procedure, no special syntax, no cooperation from Devraj's colleague required, produced a log entry automatically, capturing both the old status, `in_transit`, and the new one, `delivered`. This is the core advantage a `trigger` has over the procedure from earlier in this chapter: the logging behavior is now a property of the table itself, impossible to accidentally skip.
 
+![A trigger automatically creates a log entry when the table is updated](images/11_trigger_update_creates_log_automatically.png)
+
 ## BEFORE Triggers Can Validate or Modify a Row
 
 An `AFTER` `trigger`, like the one above, runs once a change has already happened, suitable for logging. A `BEFORE` `trigger` runs before the change is applied, and can inspect, reject, or even alter the incoming row.
@@ -117,6 +119,8 @@ SELECT * FROM shipments WHERE shipment_id = 1;
 ```
 
 Here `shipment_status_view` is a simple enough `view` to be updatable on its own, but the pattern generalizes directly to the `join`-based `view`s that cannot be, letting an `INSTEAD OF` `trigger` define exactly how a write against a complex `view` should be translated into changes on the real underlying tables.
+
+![Trigger timing options: BEFORE validates, AFTER audits, and INSTEAD OF redirects view writes](images/12_trigger_timing_before_after_instead_of.png)
 
 ## Triggers at a Glance
 

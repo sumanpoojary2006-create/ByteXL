@@ -31,6 +31,8 @@ FROM orders;
 
 Using the same page-number extraction from the first lesson, this counts how many distinct pages the table occupies; a `sequential scan` has to read every single one of them, even for this single-row lookup, because a `sequential scan`'s cost scales with the size of the whole table, not with how many rows the query actually needs, whether that need is 1 row or 1000.
 
+![A full table scan checks every page even when only one target row is needed](images/05_full_scan_checks_every_page.png)
+
 ## Why the Primary Key Search Behaves Differently
 
 Running the same shape of query, but filtering on `order_id`, the table's `primary key`, produces a completely different plan.
@@ -40,6 +42,8 @@ EXPLAIN SELECT * FROM orders WHERE order_id = 3000;
 ```
 
 The plan now reports an "Index Scan using orders_pkey" instead of a `sequential scan`. The physical reality is that a `primary key` `constraint` does not change how rows are organized on disk, the table is still the same unordered heap, but PostgreSQL automatically builds a separate structure, an `index`, for every `primary key` in order to enforce uniqueness, and the planner uses that structure to jump straight to the right page instead of checking all of them. Nothing about the table's layout changed between these two queries; the only difference is that one column has a supporting structure and the other does not. That structure, the `index`, is exactly what the next chapter covers in depth.
+
+![An index gives the database a shortcut to the page instead of scanning many pages](images/06_index_scan_jumps_to_page.png)
 
 ## How Table Size Directly Predicts Scan Cost
 
@@ -56,6 +60,8 @@ SELECT pg_size_pretty(pg_relation_size('orders')) AS size_after_doubling_rows;
 ```
 
 Doubling the row count roughly doubles the reported table size, and a full scan against this larger table now has roughly twice as many pages to check for the exact same single-row lookup, even though the answer being searched for has not changed in any way. This is precisely why "it worked fine on my small test table" is not evidence that a query will stay fast once real data volume arrives; a `full table scan`'s cost is a direct, predictable function of table size.
+
+![As more rows create more pages, a full scan has more pages to read](images/07_more_rows_more_pages_full_scan_cost.png)
 
 ## What a Full Table Scan Is and Is Not
 

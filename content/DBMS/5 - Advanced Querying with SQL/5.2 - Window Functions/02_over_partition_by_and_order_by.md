@@ -44,6 +44,8 @@ Adding `ORDER BY sale_date` inside the `OVER (...)` clause changes the window's 
 - `PARTITION BY` decides which rows belong together at all.
 - `ORDER BY` decides the sequence within each of those groups.
 
+![PARTITION BY splitting rows into lanes and ORDER BY arranging each lane by date](images/03_partition_by_order_by_window_lanes.png)
+
 ```postgresql with=sales.sql
 SELECT salesperson, sale_date, amount,
        SUM(amount) OVER (PARTITION BY salesperson ORDER BY sale_date) AS running_total,
@@ -53,6 +55,8 @@ ORDER BY salesperson, sale_date;
 ```
 
 Showing both `window functions` side by side makes the difference concrete: `running_total` grows row by row within each salesperson's partition, while `salesperson_total`, with no `ORDER BY`, stays fixed at that salesperson's grand total on every one of their rows. Both are legitimate `window functions` computed over the same partition; only the presence of `ORDER BY` changes what each row's window actually includes.
+
+![A running total growing row by row in the order defined inside the window](images/04_running_total_ordered_window.png)
 
 ## A Window With No PARTITION BY But With ORDER BY
 

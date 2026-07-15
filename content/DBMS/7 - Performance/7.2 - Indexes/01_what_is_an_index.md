@@ -26,6 +26,8 @@ EXPLAIN SELECT * FROM orders WHERE customer_name = 'Customer 7500';
 
 There is no structure supporting a search on `customer_name`, so the plan reports a `sequential scan`, checking all 10000 rows to find the one whose name matches, exactly the phone-book equivalent of reading every page from the beginning because nothing is organized to help.
 
+![Without an index the database scans all rows; with an index it jumps to the match](images/01_without_index_vs_with_index_shortcut.png)
+
 ## Creating an Index and Watching the Plan Change
 
 `CREATE INDEX` builds a separate structure that keeps track of where rows with each value of a column can be found, without physically reordering the table itself.
@@ -37,6 +39,8 @@ EXPLAIN SELECT * FROM orders WHERE customer_name = 'Customer 7500';
 ```
 
 The plan changes to an "`Index Scan`," using `idx_orders_customer_name` to jump almost directly to the matching row, rather than checking all 10000. The `index` itself is sorted by `customer_name`, the same way a phone book is sorted by last name, so the database can narrow down to the matching entries the same way a reader flips to the right section of a phone book instead of starting from page one.
+
+![An index stores key values with pointers back to the full table rows](images/02_index_key_plus_pointer.png)
 
 ## What an Index Actually Is
 

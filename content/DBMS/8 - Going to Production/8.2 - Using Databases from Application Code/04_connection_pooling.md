@@ -41,6 +41,8 @@ The pool typically maintains a fixed size, say 20 connections, regardless of how
 1. 20 open connections can serve far more than 20 requests over time.
 2. Each individual query has to finish quickly and return its connection promptly for that to hold.
 
+![A connection pool lets requests borrow, use, and return already-open connections](images/07_connection_pool_borrow_use_return.png)
+
 ## Why a Connection Must Be Returned in a Clean State
 
 A returned connection has to be ready for a completely different, unrelated request to borrow next, which means it must never be handed back mid-transaction or holding onto leftover session state from whatever the previous request was doing.
@@ -50,6 +52,8 @@ SELECT pid, state FROM pg_stat_activity WHERE state = 'idle in transaction';
 ```
 
 The "idle in transaction" danger covered in the previous lesson becomes especially serious in a pooled setup: a connection returned to the pool while still mid-transaction would hand the next, completely unrelated request a connection that is unexpectedly holding `lock`s and half-finished work from a previous, unrelated operation, a bug that can be extremely confusing to track down, since the request experiencing the strange behavior is not the one that caused it.
+
+![A pooled connection must be returned clean, with no open transaction or leftover locks](images/08_return_pooled_connection_clean.png)
 
 ## Pool Size Is a Deliberate Trade-off
 

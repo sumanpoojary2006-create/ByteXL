@@ -2,6 +2,10 @@
 
 8 units, each broken into chapters, each chapter into topics (lessons). Source of truth: `content/Curriculum/DBMS/Course Blueprint for RDBMS.xlsx`, sheet `Syllabus`. Coding-question scope: `content/Curriculum/DBMS/DBMS Coding-Question Scope.md`.
 
+![DBMS course roadmap from foundations through production](images/01_dbms_course_roadmap.png)
+
+![DBMS course stack connecting data modeling, SQL, transactions, indexes, security, and operations](images/02_dbms_course_stack.png)
+
 ## Units
 
 | # | Unit | Chapters | Topics | Folder |

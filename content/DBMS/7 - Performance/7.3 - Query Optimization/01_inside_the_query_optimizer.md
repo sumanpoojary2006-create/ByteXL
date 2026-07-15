@@ -35,6 +35,8 @@ WHERE c.customer_id = 5;
 
 Logically, `customers JOIN orders` and `orders JOIN customers` would produce an identical result, `joining` is not order-dependent for correctness, but they are not necessarily equally fast to execute. Filtering `customers` down to a single row first, then finding that one customer's orders, is a very different amount of work from scanning all 20000 orders first and matching each one against customers. The optimizer decides this, not the order the tables happen to appear in the written SQL.
 
+![The query optimizer compares multiple valid plans and chooses the cheapest estimate](images/01_optimizer_compares_candidate_plans.png)
+
 ## How the Optimizer Estimates Cost
 
 The optimizer does not actually run each candidate plan to see which is fastest, that would defeat the purpose of planning ahead of time. Instead, it relies on statistics about the data:
@@ -61,6 +63,8 @@ EXPLAIN SELECT * FROM orders WHERE customer_id > 0;
 ```
 
 Since every row in `orders` satisfies `customer_id > 0`, using the `index` would mean reading almost every `index` entry and then fetching almost every row from the table anyway, extra work compared to just scanning the table directly in one pass. The optimizer correctly recognizes this and chooses a `sequential scan` instead, despite a usable `index` existing, because for this particular condition, the `index` would actually be slower, not faster.
+
+![When most rows match, the optimizer may skip the index and choose a sequential scan](images/02_optimizer_skips_index_when_most_rows_match.png)
 
 ## The Optimizer's Job, Summarized
 

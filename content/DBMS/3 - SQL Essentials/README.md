@@ -4,6 +4,10 @@
 
 Goal of this unit: Create databases and confidently retrieve, filter, sort, and modify data using core SQL statements and best practices.
 
+![Create, insert, and select workflow for first SQL tables](images/01_create_insert_select_workflow_overview.png)
+
+![WHERE filtering keeps only rows that match the condition](images/02_where_filtering_overview.png)
+
 ## Chapters and Topics (teach in order)
 
 ### Setting Up Your Environment

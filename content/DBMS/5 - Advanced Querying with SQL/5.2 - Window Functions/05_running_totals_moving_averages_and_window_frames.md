@@ -47,6 +47,8 @@ ORDER BY sale_month;
 
 `ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW` names the frame directly: start from the first row available (`UNBOUNDED PRECEDING`) and end at the current row (`CURRENT ROW`). This produces an identical result to the shorthand version, but writing it explicitly is what makes it possible to change the frame to something other than the default.
 
+![A window frame spanning from the first row to the current row](images/09_window_frame_start_to_current.png)
+
 ## Building a Moving Average with a Custom Frame
 
 A 3-month moving average needs a frame of exactly the current row plus the two rows before it, which `ROWS BETWEEN 2 PRECEDING AND CURRENT ROW` expresses directly.
@@ -64,6 +66,8 @@ ORDER BY sale_month;
 - January's moving average is just 18000.00, its own value, since only zero rows precede it.
 - February's is the average of January and February, two rows.
 - From March onward, every row's moving average is built from exactly three months: itself and the two immediately before it, sliding forward one month at a time as `sale_month` increases, which is exactly the smoothing effect a moving average is meant to produce.
+
+![A three-row moving average frame sliding across monthly rows](images/10_moving_average_three_row_frame.png)
 
 ## A Frame That Looks Both Backward and Forward
 

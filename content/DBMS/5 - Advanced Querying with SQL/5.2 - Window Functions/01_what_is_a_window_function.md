@@ -54,6 +54,8 @@ Every one of the 6 original sale rows is still present in the output, but each o
 
 Nikhil's three rows all show 29700.00, his total across all three sales, sitting right next to each individual sale amount. The `SUM` here works exactly like the `aggregate function` it already is; the difference is entirely in `OVER (...)`, which tells the database to compute the aggregate across a related group of rows without collapsing the result down to one row per group.
 
+![A window function adding a total beside each row while keeping the original sale rows](images/01_window_function_keeps_rows_with_total.png)
+
 ## What OVER Actually Does
 
 `OVER (...)` defines the "window," the set of rows the calculation should look across, for each individual row's computation. `PARTITION BY salesperson` inside it says "group the window by salesperson," which is conceptually similar to `GROUP BY`, with one key difference:
@@ -68,6 +70,8 @@ FROM sales;
 ```
 
 Leaving the parentheses after `OVER` completely empty means the window is the entire result set, with no partitioning at all, so every row shows the same company-wide total, 61700.00, alongside its own individual sale amount. This is the simplest possible window: one big window covering everything.
+
+![GROUP BY collapsing rows while OVER keeps detail rows and adds a calculation](images/02_group_by_collapses_over_keeps_rows.png)
 
 ## Window Functions Run After Grouping and Filtering
 

@@ -4,6 +4,10 @@
 
 Goal of this unit: Write expressive SQL queries that transform, aggregate, and combine data to answer analytical and business questions.
 
+![GROUP BY organizes rows into category buckets for aggregation](images/01_group_by_aggregation_overview.png)
+
+![JOIN connects IDs to related names across tables](images/02_join_lookup_overview.png)
+
 ## Chapters and Topics (teach in order)
 
 ### Transforming Data

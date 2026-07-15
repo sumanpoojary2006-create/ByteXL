@@ -36,6 +36,8 @@ JOIN store_customers s ON o.email = s.email;
 
 This `join` produces a row with columns from both tables side by side, `customer_name` and `email` from `online_customers`, plus `store_side_name` from `store_customers`, even though in this data they happen to hold the same value. Compare that to the `INTERSECT` version from the previous lesson, which returns exactly the same two matching people but as a single set of columns, not a widened row. Both queries can answer "who shops in both channels," but only the `join` naturally supports pulling in extra, non-matching columns from either side, such as a loyalty tier stored only on the store side.
 
+![JOIN widening rows sideways while set operations stack or compare same-shaped rows](images/05_join_vs_set_operation_shape.png)
+
 ## Rewriting an Anti Join as an EXCEPT
 
 The `NOT EXISTS`-based anti `join` from the `joins` chapter and an `EXCEPT`-based query can produce identical results for a single-table, single-condition case like this one.
@@ -57,6 +59,8 @@ Both return Aditi Kulkarni and Rohan Das. The two read differently, and that dif
 
 - The `NOT EXISTS` version reads naturally as "keep this row if no match exists," and generalizes easily to conditions involving other tables or columns beyond a simple whole-row comparison.
 - The `EXCEPT` version reads naturally as "everything in the first list, minus everything in the second," and is often the more direct choice when the comparison genuinely is a whole-row match between two similarly shaped queries, exactly the situation Tanvi has here.
+
+![Choosing EXISTS for match checks and EXCEPT for subtracting same-shaped result sets](images/06_exists_vs_except_choose_by_question.png)
 
 ## When a Join Is the Right Choice
 

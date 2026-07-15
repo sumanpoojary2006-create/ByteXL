@@ -4,6 +4,10 @@
 
 Goal of this unit: Solve sophisticated data retrieval problems using advanced SQL features.
 
+![A CTE names a temporary result for a clearer multi-step query](images/01_cte_named_result_overview.png)
+
+![A window function keeps each row while adding an analytic total](images/02_window_function_overview.png)
+
 ## Chapters and Topics (teach in order)
 
 ### Subqueries and CTEs

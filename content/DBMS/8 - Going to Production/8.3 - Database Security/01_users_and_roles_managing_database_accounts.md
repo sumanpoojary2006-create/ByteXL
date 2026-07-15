@@ -35,6 +35,8 @@ GRANT shipment_readers TO dev_alia;
 
 `shipment_readers` here has no `LOGIN` option, meaning nothing can connect to the database directly as `shipment_readers`; it exists purely as a named group. `GRANT shipment_readers TO reporting_app` adds `reporting_app` as a member of that group, and any permission granted to `shipment_readers` as a whole, covered in the next lesson, automatically applies to every member. This is the standard pattern for managing permissions at scale: define what a group of accounts should be allowed to do once, on the group `role`, rather than repeating the same permission grants individually on every single user `role`.
 
+![Login roles can inherit a group role that bundles permissions](images/01_login_roles_and_group_role_permissions.png)
+
 ## Why Shared Logins Are a Security Anti-Pattern
 
 It might seem simpler to give every developer and every service the same single database login. This is a well-known anti-pattern, for reasons that go beyond convenience.
@@ -46,6 +48,8 @@ WHERE usename = 'reporting_app';
 ```
 
 `pg_stat_activity`, introduced in the previous chapter, records which `role` issued each active query, which is exactly the accountability a shared login destroys. If every developer and every application connected as one single, shared account, there would be no way to answer "who ran this slow query" or "which service made this change" after the fact, since the log would show only the one shared name for every single action, regardless of who or what actually took it. Separate `role`s per person and per service are what make that kind of accountability possible at all.
+
+![Shared logins hide who performed an action, while separate roles preserve accountability](images/02_shared_login_loses_accountability.png)
 
 ## Altering and Dropping Roles
 

@@ -38,6 +38,8 @@ SELECT * FROM monthly_shipment_summary ORDER BY shipped_month;
 
 Selecting from `monthly_shipment_summary` afterward reads that stored result directly, the same way reading from a real table would, without recomputing the `GROUP BY` and `COUNT` over all 5000 rows again.
 
+![A materialized view stores an expensive query result for faster reads](images/05_materialized_view_stored_result_fast_reads.png)
+
 ## A Materialized View Does Not Automatically Stay Current
 
 Unlike an ordinary `view`, new data added to the underlying table does not appear in a `materialized view` until it is explicitly refreshed.
@@ -50,6 +52,8 @@ SELECT * FROM monthly_shipment_summary WHERE shipped_month = '2025-06-01';
 ```
 
 This new delayed shipment for June does not appear in `monthly_shipment_summary`'s June row, because the `materialized view` is still showing its stored result from when it was created, before this insert ever happened. This staleness is not a bug; it is the entire point of a `materialized view`, avoiding the cost of recomputing the aggregate on every read, in exchange for accepting that reads may be out of date until a refresh runs.
+
+![A materialized view stays stale until REFRESH recomputes its stored result](images/06_materialized_view_stale_until_refresh.png)
 
 ## Refreshing a Materialized View
 

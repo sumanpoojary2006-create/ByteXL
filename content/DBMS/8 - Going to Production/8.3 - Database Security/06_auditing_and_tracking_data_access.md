@@ -63,6 +63,8 @@ SELECT table_name, action, changed_by, old_data, new_data FROM audit_log;
 
 The audit entry shows `action = 'UPDATE'`, `changed_by` recording exactly which `role` made the change, and both the row's state before, `status: in_transit`, and after, `status: delivered`, preserved in `old_data` and `new_data`. This is a complete, precise record: not just that something changed, but exactly what changed, who changed it, and when.
 
+![A trigger-based audit log records who changed a row and the old and new values](images/11_audit_trigger_records_who_old_new.png)
+
 ## Auditing Reads, Not Just Writes
 
 A `trigger` naturally captures `INSERT`, `UPDATE`, and `DELETE`, since those are the events a `trigger` fires on, but auditing "who read this sensitive data" is a genuinely different, harder problem, since a plain `SELECT` does not fire a `trigger` at all. PostgreSQL addresses this through server-level logging configuration and extensions purpose-built for statement auditing, tracking every query executed against the server, not just changes.
@@ -80,6 +82,8 @@ An audit trail does not stop an unauthorized action from happening; row-level se
 - Detecting misuse by someone who did have legitimate access
 - Investigating an incident after the fact to understand exactly what happened
 - Satisfying compliance requirements that specifically demand a record of who touched sensitive data, independent of whether that access was ultimately appropriate
+
+![Prevention blocks unwanted access, while auditing records activity for later investigation](images/12_auditing_complements_prevention.png)
 
 ## Auditing at a Glance
 

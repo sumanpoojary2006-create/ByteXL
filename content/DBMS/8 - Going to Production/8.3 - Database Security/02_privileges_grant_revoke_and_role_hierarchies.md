@@ -43,6 +43,8 @@ REVOKE UPDATE ON shipments FROM reporting_app;
 
 After these two statements, `reporting_app` can read and insert new shipment rows, but the specific `UPDATE` privilege, granted a moment earlier, has been removed again, leaving `SELECT` and `INSERT` intact. `REVOKE` is precise in exactly this way: it removes only the named privilege, never accidentally sweeping away other permissions the `role` was separately granted.
 
+![GRANT and REVOKE act like precise permission switches on a table](images/03_grant_revoke_specific_privileges.png)
+
 ## Granting Privileges Through a Role Hierarchy
 
 Rather than granting privileges to every individual login `role` directly, the standard pattern, building on the group `role`s from the previous lesson, is to grant privileges to a group `role` once, and let membership in that group carry the permission automatically.
@@ -56,6 +58,8 @@ GRANT shipment_readers TO dev_alia;
 ```
 
 `dev_alia` was never directly granted `SELECT` on `shipments`; the privilege exists only on `shipment_readers`, and `dev_alia` inherits it purely through membership. This is the payoff of the group-`role` pattern: granting a new privilege to `shipment_readers` in the future instantly applies to every current and future member, without needing to remember and repeat the grant individually for each one.
+
+![Granting a privilege once to a group role lets members inherit it](images/04_group_role_members_inherit_privileges.png)
 
 ## Column-Level and Fine-Grained Privileges
 

@@ -57,6 +57,8 @@ RIGHT JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id;
 
 Every one of the 4 restaurants appears here, including Taco Town, whose row shows `NULL` for `order_id` since it has never received an order. This is exactly the same result the previous lesson's `restaurants LEFT JOIN orders` produced, just written with the table order reversed and the `join` keyword swapped. In practice, most SQL style guides, and most of the lessons in this course, prefer `LEFT JOIN` over `RIGHT JOIN` for readability, since it reads left to right in the same order the tables are typically listed, but both exist and behave as exact mirrors of each other.
 
+![RIGHT JOIN protecting every row from the right table even when no matching order exists](images/07_right_join_keeps_right_rows.png)
+
 ## Rewriting a RIGHT JOIN as a LEFT JOIN
 
 Because a `RIGHT JOIN` is only ever the mirror of a `LEFT JOIN`, any query using one can be rewritten using the other in two steps:
@@ -83,6 +85,8 @@ FULL OUTER JOIN orders ON customers.customer_id = orders.customer_id;
 ```
 
 This result includes Neha Bhatt with `NULL` order columns, exactly as a `LEFT JOIN` would, and it would also include any order row with no matching customer, exactly as a `RIGHT JOIN` would, though in this particular data every order does have a valid customer. A `FULL OUTER JOIN` is essentially a `LEFT JOIN` and a `RIGHT JOIN` combined into a single result, with no row from either side left out.
+
+![FULL OUTER JOIN keeping unmatched rows from both tables in one result](images/08_full_outer_join_keeps_both_sides.png)
 
 ## Finding Rows Unmatched on Either Side
 

@@ -48,6 +48,8 @@ SELECT current_setting('data_directory') AS data_directory_location;
 
 `current_setting('data_directory')` reports where PostgreSQL's actual physical data files live on this server, the same files a physical backup would copy directly, in contrast to a logical backup's portable, database-independent SQL text.
 
+![Logical backups capture portable data, while physical backups copy the database files](images/03_logical_vs_physical_backups.png)
+
 ## Full Backups vs. Incremental Backups
 
 A full backup captures the entire database every time it runs, simple to reason about but potentially slow and storage-heavy for a large database backed up frequently. An incremental backup captures only what has changed since the last backup, dramatically reducing both the time and storage each individual backup requires, at the cost of needing the full chain of backups, the last full one plus every incremental since, to perform a complete restore.
@@ -57,6 +59,8 @@ SELECT pg_current_wal_lsn() AS current_wal_position;
 ```
 
 The `write-ahead log` position, covered in depth in the recovery unit, is exactly what makes incremental, point-in-time backup strategies possible: rather than repeatedly copying the entire database, an incremental approach can archive just the log records generated since the last backup, later replaying them forward from a known full-backup starting point to reconstruct any specific moment in time.
+
+![A full backup plus incremental WAL backups forms a recoverable timeline](images/04_full_backup_incremental_wal_chain.png)
 
 ## Choosing a Backup Frequency and Retention Policy
 

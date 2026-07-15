@@ -44,6 +44,8 @@ SELECT stock_count FROM inventory WHERE product_id = 1;
 
 The final `SELECT` correctly shows 50, since PostgreSQL's default isolation level prevents `dirty reads` entirely, a concurrent transaction is never allowed to see this kind of in-progress, uncommitted change, exactly the isolation guarantee covered in the previous chapter. `Dirty reads` are catalogued here because some databases, or some deliberately relaxed isolation levels, do allow them, and knowing the name of the problem is what makes a setting like "read uncommitted" understandable later in this chapter.
 
+![Dirty read showing one transaction reading an uncommitted value that later rolls back](images/03_dirty_read_uncommitted_then_rollback.png)
+
 ## Non-Repeatable Reads: The Same Query, Two Different Answers
 
 A `non-repeatable read` happens when a transaction reads the same row twice, and gets two different values, because another transaction committed a change to that row in between the two reads.
@@ -90,9 +92,13 @@ COMMIT;
 
 The new row was not a value that changed underneath Transaction A, it is an entirely new row matching a condition Transaction A was relying on, which is why this gets its own name distinct from a `non-repeatable read`.
 
+![Non-repeatable read changing one row and phantom read adding a new matching row](images/04_nonrepeatable_vs_phantom_read.png)
+
 ## Lost Updates: Two Writes, One Silently Overwritten
 
 A `lost update` happens when two transactions both read the same value, both calculate a new value based on that same original reading, and both write their result, with the second write silently overwriting the first, so one of the two changes disappears entirely, exactly the double-booking scenario from the previous lesson.
+
+![Lost update where two transactions read the same value and one write overwrites the other](images/05_lost_update_overwritten_write.png)
 
 ```postgresql with=inventory.sql
 -- Transaction A: sells 5 units, based on a stock reading of 50

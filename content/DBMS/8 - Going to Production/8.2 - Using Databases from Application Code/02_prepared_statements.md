@@ -51,6 +51,8 @@ This splits the query into two separate pieces:
 
 Even if the supplied value were a maliciously crafted string, it would be handled purely as data, a single value being compared against `shipment_id`, never as SQL syntax that could change what the query does; the injection demonstrated above becomes structurally impossible.
 
+![Prepared statements keep query structure separate from runtime values](images/03_prepared_statement_separates_structure_and_value.png)
+
 ## Running the Same Prepared Statement with Different Values
 
 The whole point of separating structure from value is that the same `prepared statement` can be executed repeatedly, with different values, without redefining the query each time.
@@ -61,6 +63,8 @@ EXECUTE get_shipment(3);
 ```
 
 Each `EXECUTE` reuses the exact same prepared query structure, only the value plugged into `$1` changes, exactly the pattern a real application follows when handling many different incoming requests for different shipment IDs, using the same underlying `prepared statement` each time.
+
+![One prepared statement can be executed many times with different values](images/04_prepared_statement_reuse_many_values.png)
 
 ## The Performance Benefit Alongside the Safety Benefit
 

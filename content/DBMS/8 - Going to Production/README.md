@@ -4,6 +4,10 @@
 
 Goal of this unit: Deploy, secure, integrate, and maintain databases in real-world environments.
 
+![A connection pool lets application requests borrow and return database connections](images/01_connection_pool_overview.png)
+
+![Streaming replication sends WAL from the primary database to replicas](images/02_replication_overview.png)
+
 ## Chapters and Topics (teach in order)
 
 ### Views and Programmability

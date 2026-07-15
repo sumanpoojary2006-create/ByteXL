@@ -44,6 +44,8 @@ SELECT * FROM active_shipments;
 - `SELECT * FROM active_shipments` runs exactly as if `active_shipments` were a real table, even though it is really just this saved query, re-executed fresh every time it is referenced.
 - Anyone on Devraj's team can write `SELECT * FROM active_shipments` instead of retyping the `join` and the exact spelling of the status filter, eliminating the inconsistency risk entirely.
 
+![A view saves one named query definition that many reports can reuse](images/01_view_named_query_reused_by_reports.png)
+
 ## A View Always Reflects Current Data
 
 A `view` does not store a snapshot of data from when it was created; it is only a saved query definition, run fresh every single time it is selected from.
@@ -55,6 +57,8 @@ SELECT * FROM active_shipments;
 ```
 
 After Manoj's Mumbai shipment is marked delivered, querying `active_shipments` again immediately reflects that change, showing only the one remaining in-transit shipment, even though nothing about the `view` itself was touched. This is the core behavior that distinguishes a plain `view` from the `materialized view` covered later in this chapter: a plain `view` has no storage of its own and is always exactly as current as the underlying tables.
+
+![An ordinary view stores no data and always reflects the current base tables](images/02_ordinary_view_no_storage_always_current.png)
 
 ## Views Can Be Queried Like Any Table
 

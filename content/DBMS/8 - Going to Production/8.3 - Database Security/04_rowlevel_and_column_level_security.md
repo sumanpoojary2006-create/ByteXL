@@ -59,6 +59,8 @@ RESET ROLE;
 
 `SET ROLE mumbai_coordinator` switches the current session to act as that `role`, and the plain `SELECT * FROM shipments`, with no `WHERE` clause written at all, still returns only the two Mumbai rows. The policy is enforced by the database itself, beneath the query, exactly the guarantee application-side filtering alone could never provide, since application-side filtering only protects against queries that remembered to include it.
 
+![Row-level security automatically filters which rows a role can see](images/07_row_level_security_policy_filter.png)
+
 ## Column-Level Security Revisited Alongside Row-Level Security
 
 Column-level and `row-level security` can be combined on the same table, restricting both which columns and which rows a `role` can see, addressing both dimensions of "this `role` should not see that data" together.
@@ -85,6 +87,8 @@ GRANT SELECT (shipment_id, branch, status) ON shipments_with_cost TO mumbai_coor
 ```
 
 `mumbai_coordinator` can now only see Mumbai's rows, through the row-level policy, and within those rows, only `shipment_id`, `branch`, and `status`, through the column-level grant, with `internal_cost` withheld entirely, both restrictions enforced together, automatically, on every query this `role` ever runs against the table.
+
+![Row-level policies and column-level grants can combine to restrict rows and columns together](images/08_row_and_column_security_two_layers.png)
 
 ## Row-Level and Column-Level Security at a Glance
 

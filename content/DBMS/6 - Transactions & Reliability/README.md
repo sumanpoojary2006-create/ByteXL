@@ -4,6 +4,10 @@
 
 Goal of this unit: Build reliable database applications that preserve consistency and correctness.
 
+![ACID properties summarize reliable transaction behavior](images/01_acid_properties_overview.png)
+
+![WAL replay restores committed changes after a crash](images/02_wal_recovery_overview.png)
+
 ## Chapters and Topics (teach in order)
 
 ### Transactions and ACID

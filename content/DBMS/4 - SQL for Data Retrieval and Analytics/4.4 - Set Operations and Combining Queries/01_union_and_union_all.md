@@ -46,6 +46,8 @@ SELECT customer_name, email FROM store_customers;
 
 Kavya Nair appears in both source tables, since she shops both online and in-store, but she only appears once in the combined output. `UNION` automatically removes exact duplicate rows across the two result sets, which is precisely the behavior Tanvi wants for a mailing list, since sending Kavya the same announcement twice would be an obvious mistake.
 
+![UNION stacking two customer lists while removing an exact duplicate row](images/01_union_removes_duplicates.png)
+
 ## Keeping Duplicates with UNION ALL
 
 Sometimes the duplicate itself is meaningful, not a mistake to clean up. If Tanvi instead wants to know exactly how many total customer records exist across both channels, including counting Kavya twice since she is genuinely a customer of both, `UNION ALL` keeps every row from both queries with no deduplication.
@@ -60,6 +62,8 @@ This returns 6 rows instead of 5, with Kavya Nair listed twice, once from each s
 
 - When duplicates genuinely do not matter for the question being asked, `UNION ALL` is the more accurate choice.
 - It is also the more efficient one, since skipping the duplicate check saves real work.
+
+![UNION ALL stacking two customer lists while keeping duplicate rows](images/02_union_all_keeps_duplicates.png)
 
 ## The Column Rules UNION Requires
 

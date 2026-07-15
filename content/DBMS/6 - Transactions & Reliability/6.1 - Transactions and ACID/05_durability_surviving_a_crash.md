@@ -29,6 +29,8 @@ SELECT account_id, balance FROM accounts;
 
 Once `COMMIT` finishes here, durability guarantees this new balance is not sitting only in server memory, waiting to disappear the moment power is lost. The database has already made sure this change is recorded somewhere that survives a crash, before it ever reported success back to Rahul's application.
 
+![COMMIT writing a transaction result to durable storage so it survives a crash](images/09_durability_commit_survives_crash.png)
+
 This is a meaningfully different promise from isolation:
 
 - Isolation was about what other transactions can see while a transaction is still in progress.
@@ -70,6 +72,8 @@ Durability only ever protects a transaction once it has fully committed. A trans
 | Consistency | A transaction can only move the database between valid states |
 | Isolation | Concurrent transactions do not see each other's uncommitted changes |
 | Durability | Once committed, a transaction's changes survive any crash |
+
+![The four ACID properties supporting a safe transaction](images/10_acid_four_properties_summary.png)
 
 ## Your Turn
 

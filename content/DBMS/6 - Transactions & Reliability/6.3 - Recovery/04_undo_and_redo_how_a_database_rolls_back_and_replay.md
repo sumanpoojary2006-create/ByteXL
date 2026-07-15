@@ -32,6 +32,8 @@ SELECT balance FROM accounts WHERE account_id = 1;
 
 The `SELECT` here shows 4000.00, because in this running session nothing actually crashed. But conceptually, if power had been lost right after that `COMMIT`, PostgreSQL's redo pass on restart would read the log, see that this transaction committed, and reapply the balance change to the data file, guaranteeing the balance reads as 4000.00 once the database comes back online, exactly the durability guarantee from earlier in this unit, now explained in terms of the actual mechanism that delivers it.
 
+![REDO replaying committed log records into the data file](images/07_redo_replays_committed_log.png)
+
 ## Undo: Reversing Work That Never Committed
 
 The opposite case is a transaction that was still open, uncommitted, at the moment of the crash. Its changes were logged as they happened, following the write-ahead rule, but since it never reached `COMMIT`, atomicity requires that none of its effects survive. Undo is the pass that walks through the log looking for transactions with no matching commit record, and reverses any of their changes that made it into the data files before the crash.
@@ -46,6 +48,8 @@ SELECT balance FROM accounts WHERE account_id = 1;
 ```
 
 The explicit `ROLLBACK` here demonstrates the same outcome undo would achieve automatically after a crash: the balance remains 4000.00, as if the 2000.00 deduction never happened. In a genuine crash scenario, no `ROLLBACK` would ever be issued by anyone, since the whole application vanished along with the server, but PostgreSQL's undo pass performs the identical reversal automatically during recovery, simply by recognizing that this transaction's log entries have no corresponding commit record.
+
+![UNDO reversing uncommitted log records back to the before state](images/08_undo_reverses_uncommitted_log.png)
 
 ## Why Redo Runs Before Undo
 

@@ -37,6 +37,8 @@ SELECT * FROM shipments_restored;
 
 `COPY shipments_restored FROM STDIN` loads data directly into the freshly created table, mirroring what a full `pg_dump`-produced restore script does at scale, across every table in a database, in one automated pass. The restored table's contents exactly match the original, confirming the restore succeeded.
 
+![A logical restore rebuilds tables and reloads rows into a fresh database](images/05_logical_restore_rebuilds_database.png)
+
 ## Point-in-Time Recovery: Restoring to an Exact Moment
 
 A full backup alone only restores a database to the exact moment that backup was taken, but a real incident, an accidental `DELETE` with no `WHERE` clause, for example, often needs recovery to a specific moment just before the mistake happened, not all the way back to last night's full backup, which would also lose every legitimate change made since then. Point-in-time recovery, or PITR, combines a full backup with the `write-ahead log` archive covered in the recovery unit, replaying logged changes forward from that backup up to, but not including, the moment of the mistake.
@@ -71,6 +73,8 @@ A disciplined operations practice periodically performs a real, full restore, in
 - Confirming `constraint`s and `index`es rebuilt correctly
 
 This is exactly the kind of check the single query above represents in miniature. Skipping this verification step is one of the most common, and most costly, gaps in a team's backup strategy: the backups exist, but nobody actually knows whether they work until the day they are desperately needed and turn out not to.
+
+![A backup is only trusted after a test restore verifies the restored data](images/06_test_restore_verify_backup.png)
 
 ## Restore and Recovery at a Glance
 

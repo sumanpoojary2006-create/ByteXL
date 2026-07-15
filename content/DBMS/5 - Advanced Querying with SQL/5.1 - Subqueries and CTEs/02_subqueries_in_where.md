@@ -32,6 +32,8 @@ WHERE salary = (SELECT MAX(salary) FROM employees);
 
 `MAX(salary)` always returns exactly one number, so this comparison with a plain `=` works without any special handling: it finds whichever employee earns the single highest salary in the table.
 
+![WHERE subqueries using one scalar value or many values with IN](images/03_where_scalar_vs_in_list_subquery.png)
+
 ## Using IN When a Subquery Returns Multiple Rows
 
 Finding "employees in the same department as Rajat or Vikas" needs a subquery that can return more than one department.
@@ -67,6 +69,8 @@ WHERE salary > ALL (SELECT salary FROM employees WHERE department = 'Sales');
 ```
 
 `salary > ALL (subquery)` is stricter: it is only true if the outer row's salary beats every single value the subquery returns. Here, that means beating both 65000.00 and 58000.00, so this returns only employees earning more than the higher Sales salary, a shorter list than the `ANY` version.
+
+![ANY checking at least one returned value while ALL checks every returned value](images/04_any_vs_all_subquery_comparison.png)
 
 ## Why NOT IN Needs Extra Care
 

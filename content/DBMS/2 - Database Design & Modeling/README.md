@@ -4,6 +4,10 @@
 
 Goal of this unit: Model real-world systems using ER diagrams, design well-structured relational schemas, and apply normalization principles to minimize redundancy and maintain data integrity.
 
+![ER model entities mapped into relational tables](images/01_er_model_to_tables_overview.png)
+
+![Normalization splits facts by topic to reduce redundancy](images/02_normalization_splits_facts_overview.png)
+
 ## Chapters and Topics (teach in order)
 
 ### Entity-Relationship Modeling

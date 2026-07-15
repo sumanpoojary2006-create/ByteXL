@@ -56,6 +56,8 @@ The base case, `WHERE employee_id = 6`, starts with just Farhan Sheikh, at level
 
 The database repeats the recursive case automatically, each round adding one more level up the chain, and stops on its own the moment a round produces no new rows, which happens once it tries to find a manager for Ananya and finds none.
 
+![A recursive CTE walking upward through a manager chain one level at a time](images/11_recursive_cte_walks_up_manager_chain.png)
+
 ## Why RECURSIVE and UNION ALL Are Both Required
 
 Two pieces of syntax are both required, for different reasons:
@@ -85,6 +87,8 @@ ORDER BY level;
 ```
 
 Starting from Ananya at level 1, the recursive case now matches `e.manager_id = team_below.employee_id`, finding everyone who reports to whoever was just added, which walks down the org chart instead of up it. This returns all six employees, since every person in the table eventually traces back to Ananya, with `level` showing how many steps down from her each one sits.
+
+![A recursive CTE walking downward through the team tree from a manager](images/12_recursive_cte_walks_down_team_tree.png)
 
 ## Recursive CTEs at a Glance
 

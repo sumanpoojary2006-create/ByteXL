@@ -29,6 +29,8 @@ EXPLAIN SELECT order_id, amount FROM orders WHERE status = 'active';
 
 The plan shows `idx_orders_status` finding the 20 matching rows, but that is not the whole story: `idx_orders_status` only stores `status` values and pointers back to matching rows, so for every match, the database still has to fetch that row from the actual table's heap to retrieve `order_id` and `amount`, columns the `index` itself does not contain. This heap fetch step is exactly the extra cost a `covering index` is built to remove.
 
+![A regular index scan still performs heap fetches for missing columns](images/09_regular_index_scan_heap_fetch.png)
+
 ## Building a Covering Index with INCLUDE
 
 PostgreSQL's `INCLUDE` clause adds extra columns to an `index` purely for storage alongside the `indexed` column, without making them part of the searchable, sorted key itself.
@@ -40,6 +42,8 @@ EXPLAIN SELECT order_id, amount FROM orders WHERE status = 'active';
 ```
 
 The plan now reports an "Index Only Scan" instead of a scan that visits the heap, confirming that `order_id` and `amount`, both included in the `covering index`, are read directly from the `index` itself, with no need to visit the table's heap at all. Every column the query asks for, both in `WHERE` and in `SELECT`, is now available directly from `idx_orders_status_covering`, which is exactly what "covering" the query means: the `index` alone is enough to answer it completely.
+
+![A covering index can answer the query from the index alone](images/10_covering_index_index_only_scan.png)
 
 ## Why This Is Not Automatic for Every Index
 
@@ -68,6 +72,8 @@ SELECT pg_size_pretty(pg_relation_size('idx_orders_status')) AS plain_index_size
 ```
 
 The `covering index` is noticeably larger than the plain one, since it duplicates `order_id` and `amount` alongside every entry, storage that exists purely to avoid heap fetches for a specific, known query pattern. `Covering indexes` are worth building for genuinely hot, frequently run queries where the read-speed benefit clearly outweighs the extra storage and write cost, not applied indiscriminately to every `index` in a `schema`.
+
+![INCLUDE columns are stored in the index for reading, but are not the main search key](images/11_include_columns_stored_for_reading.png)
 
 ## Covering Indexes at a Glance
 

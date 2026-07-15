@@ -36,6 +36,8 @@ FROM sales;
 
 Every region starts its own count from 1, which is exactly the "within each region" part of the director's request.
 
+![Ranking rows within each region and keeping the top two per group](images/11_top_two_per_group_rank_filter.png)
+
 ## Filtering to the Top N Using a CTE
 
 Since `region_rank` cannot be referenced directly in `WHERE` within the same query that defines it, the ranked result needs to be named with a CTE first, then filtered from there.
@@ -53,6 +55,8 @@ ORDER BY region, region_rank;
 ```
 
 The CTE `ranked_sales` computes the ranking exactly as before, and the outer query then treats `region_rank` as an ordinary column, filterable with a plain `WHERE`. This returns 5 rows in total, not 6: North and South each contribute their expected 2 rows, but East has only one salesperson to begin with, Kunal Verma, so its entire top 2 is just that single row. South's tie is handled cleanly too, Sana Fatima and Tarun Bakshi both hold rank 1 and both survive the `region_rank <= 2` filter, while Reema Ghosh, in third place by value, lands on rank 3 thanks to `RANK`'s skip-ahead behavior and is correctly excluded. Had South instead had a three-way tie for first place, all three tied rows would have survived the same filter, since every one of them would hold rank 1, which is worth knowing before assuming a top-N query always returns exactly N rows per group.
+
+![A CTE computing window ranks before an outer query filters to top rows](images/12_cte_filtering_window_rank.png)
 
 ## Choosing ROW_NUMBER Instead When Ties Should Not Multiply Results
 

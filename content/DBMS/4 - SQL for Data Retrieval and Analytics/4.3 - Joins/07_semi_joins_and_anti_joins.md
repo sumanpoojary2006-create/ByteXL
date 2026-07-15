@@ -66,6 +66,8 @@ This behaves differently from an `INNER JOIN` in one important way:
 
 This returns four customers, everyone except Neha Bhatt.
 
+![EXISTS acting like a semi join by returning matching customers once without order columns](images/13_exists_semi_join_no_duplicates.png)
+
 ## Finding Rows That Have No Match
 
 `NOT EXISTS` flips the same idea around, keeping only the rows where the inner query finds nothing at all.
@@ -79,6 +81,8 @@ WHERE NOT EXISTS (
 ```
 
 This returns exactly one row, Neha Bhatt, the same answer the `LEFT JOIN ... WHERE order_id IS NULL` pattern produced earlier, but arrived at without ever `joining` a single column from `orders` into the result. For a pure existence check like this one, `NOT EXISTS` states the intent more directly: "keep this customer only if no order references them," rather than "`join` every order, then throw away everything except the empty matches."
+
+![NOT EXISTS acting like an anti join by returning rows with no matching order](images/14_not_exists_anti_join_no_match.png)
 
 ## Using IN as a Simpler Alternative for Single-Column Checks
 

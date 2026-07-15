@@ -39,6 +39,8 @@ EXPLAIN ANALYZE SELECT * FROM orders WHERE status = 'flagged';
 
 The plan switches to an `index scan`, and the actual measured time drops accordingly, precisely the diagnostic workflow, run `EXPLAIN ANALYZE`, spot a `sequential scan` on a selective filter, add an `index`, confirm the plan changes.
 
+![A missing index on a selective filter forces a scan until an index shortcut is added](images/10_missing_index_selective_filter_bottleneck.png)
+
 ## Bottleneck Two: The N+1 Query Problem
 
 This bottleneck lives in application code, not in any single SQL statement. It happens when code first fetches a list of parent rows with one query, then loops over that list, running one additional query per item to fetch related data, N extra queries for N parent rows, instead of one query that fetches everything together.
@@ -69,6 +71,8 @@ WHERE customer_id IN (
 
 This single query retrieves the exact same data the 6-query loop above would have gathered, but as one round trip instead of six, and the gap between those two approaches only widens as the number of parent rows grows, which is exactly why N+1 is such a common, costly bottleneck in real applications built on top of an object-relational mapper or any code that fetches a list and then loops.
 
+![The N+1 query problem makes one query plus many repeated child queries](images/11_n_plus_one_queries_many_round_trips.png)
+
 ## Bottleneck Three: Large Scans Hiding Inside a Reasonable-Looking Query
 
 Sometimes a query looks selective at a glance but is not, because a function or a type mismatch on the filtered column silently defeats an otherwise-present `index`, forcing a full scan the same way a missing `index` would.
@@ -86,6 +90,8 @@ EXPLAIN SELECT * FROM orders WHERE amount = 525.00;
 ```
 
 Removing the cast and comparing directly against the numeric value restores the `index scan`, confirming the cast, not the `index` itself, was the actual bottleneck.
+
+![A cast or function around an indexed column can block the existing index](images/12_cast_or_function_defeats_index.png)
 
 ## Common Bottlenecks at a Glance
 

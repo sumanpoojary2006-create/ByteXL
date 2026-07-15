@@ -51,6 +51,8 @@ SELECT * FROM shipment_log;
 
 One call to `mark_shipment_delivered(1)` ran both the `UPDATE` and the `INSERT` from the procedure's body, and both tables now reflect that single logical operation, exactly the two-statements-together guarantee Devraj wanted, now enforced automatically by the procedure itself rather than relying on every caller to remember both steps.
 
+![A stored procedure CALL can run an update and an audit-log insert together](images/07_stored_procedure_call_runs_update_and_log.png)
+
 ## Procedures Can Manage Their Own Transactions
 
 Unlike a plain SQL script, a procedure written in `plpgsql` is allowed to issue its own `COMMIT` or `ROLLBACK` partway through its body, useful for long-running procedures that need to save progress incrementally rather than treating the whole procedure as one giant, indivisible transaction.
@@ -77,6 +79,8 @@ SELECT * FROM shipments;
 ```
 
 `FOREACH sid IN ARRAY shipment_ids LOOP ... END LOOP` is `plpgsql`'s looping construct, iterating over every value passed in, and the `COMMIT` inside the loop saves each shipment's update independently, rather than risking the entire batch being rolled back together if one shipment far down the list ran into a problem. This ability to commit mid-procedure is a capability plain SQL functions, covered in the next lesson, do not have.
+
+![A procedure can commit during a long-running operation to save progress](images/08_procedure_can_commit_save_progress.png)
 
 ## Why Wrap Logic in a Procedure at All
 
