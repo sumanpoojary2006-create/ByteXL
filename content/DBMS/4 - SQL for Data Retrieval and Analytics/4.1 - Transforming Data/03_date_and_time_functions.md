@@ -12,7 +12,7 @@ A timestamp is a single value, but the questions above need it pulled apart, com
 
 Every date calculation eventually needs to know what "now" is, so that is the natural starting point.
 
-```postgresql file=appointments.sql
+```text
 CREATE TABLE appointments (
     appointment_id INTEGER PRIMARY KEY,
     patient_name TEXT,
@@ -27,7 +27,21 @@ INSERT INTO appointments (appointment_id, patient_name, visit_time) VALUES
 (5, 'Devika Menon', '2025-03-18 10:00:00');
 ```
 
-```postgresql with=appointments.sql
+```postgresql
+CREATE TABLE appointments (
+    appointment_id INTEGER PRIMARY KEY,
+    patient_name TEXT,
+    visit_time TIMESTAMP
+);
+
+INSERT INTO appointments (appointment_id, patient_name, visit_time) VALUES
+(1, 'Rohit Nair', '2025-01-10 09:15:00'),
+(2, 'Sanya Kapoor', '2025-02-03 14:30:00'),
+(3, 'Faisal Ahmed', '2025-02-20 11:00:00'),
+(4, 'Lakshmi Iyer', '2025-03-05 16:45:00'),
+(5, 'Devika Menon', '2025-03-18 10:00:00');
+
+-- Query
 SELECT NOW() AS current_timestamp_value, CURRENT_DATE AS current_date_value;
 ```
 
@@ -39,7 +53,21 @@ SELECT NOW() AS current_timestamp_value, CURRENT_DATE AS current_date_value;
 
 With a reference point available, Divya can measure how far in the past each appointment falls, or shift a date forward to schedule a follow-up.
 
-```postgresql with=appointments.sql
+```postgresql
+CREATE TABLE appointments (
+    appointment_id INTEGER PRIMARY KEY,
+    patient_name TEXT,
+    visit_time TIMESTAMP
+);
+
+INSERT INTO appointments (appointment_id, patient_name, visit_time) VALUES
+(1, 'Rohit Nair', '2025-01-10 09:15:00'),
+(2, 'Sanya Kapoor', '2025-02-03 14:30:00'),
+(3, 'Faisal Ahmed', '2025-02-20 11:00:00'),
+(4, 'Lakshmi Iyer', '2025-03-05 16:45:00'),
+(5, 'Devika Menon', '2025-03-18 10:00:00');
+
+-- Query
 SELECT patient_name, visit_time,
        AGE(NOW(), visit_time) AS time_since_visit,
        visit_time + INTERVAL '7 days' AS suggested_followup
@@ -53,7 +81,21 @@ FROM appointments;
 
 Sometimes the full timestamp is more detail than the question needs. Divya wants to know which weekday and which hour patients tend to book, without caring about the specific date at all.
 
-```postgresql with=appointments.sql
+```postgresql
+CREATE TABLE appointments (
+    appointment_id INTEGER PRIMARY KEY,
+    patient_name TEXT,
+    visit_time TIMESTAMP
+);
+
+INSERT INTO appointments (appointment_id, patient_name, visit_time) VALUES
+(1, 'Rohit Nair', '2025-01-10 09:15:00'),
+(2, 'Sanya Kapoor', '2025-02-03 14:30:00'),
+(3, 'Faisal Ahmed', '2025-02-20 11:00:00'),
+(4, 'Lakshmi Iyer', '2025-03-05 16:45:00'),
+(5, 'Devika Menon', '2025-03-18 10:00:00');
+
+-- Query
 SELECT patient_name, visit_time,
        EXTRACT(DOW FROM visit_time) AS day_of_week_number,
        EXTRACT(HOUR FROM visit_time) AS hour_of_day
@@ -70,7 +112,21 @@ FROM appointments;
 
 Divya also wants a simple flag: was a given appointment booked in the last 30 days from today, or is it older than that? Subtracting two dates in most `databases` returns the number of days between them as a plain number.
 
-```postgresql with=appointments.sql
+```postgresql
+CREATE TABLE appointments (
+    appointment_id INTEGER PRIMARY KEY,
+    patient_name TEXT,
+    visit_time TIMESTAMP
+);
+
+INSERT INTO appointments (appointment_id, patient_name, visit_time) VALUES
+(1, 'Rohit Nair', '2025-01-10 09:15:00'),
+(2, 'Sanya Kapoor', '2025-02-03 14:30:00'),
+(3, 'Faisal Ahmed', '2025-02-20 11:00:00'),
+(4, 'Lakshmi Iyer', '2025-03-05 16:45:00'),
+(5, 'Devika Menon', '2025-03-18 10:00:00');
+
+-- Query
 SELECT patient_name, visit_time,
        CURRENT_DATE - visit_time::DATE AS days_since_visit
 FROM appointments
@@ -164,7 +220,21 @@ ORDER BY days_since_visit;
 
 The clinic wants a simple recall list: patient name and visit date for every appointment more than 60 days old, counting from today, ordered with the oldest visit first. Write that `query` against the `appointments` `table` above.
 
-```postgresql with=appointments.sql
+```postgresql
+CREATE TABLE appointments (
+    appointment_id INTEGER PRIMARY KEY,
+    patient_name TEXT,
+    visit_time TIMESTAMP
+);
+
+INSERT INTO appointments (appointment_id, patient_name, visit_time) VALUES
+(1, 'Rohit Nair', '2025-01-10 09:15:00'),
+(2, 'Sanya Kapoor', '2025-02-03 14:30:00'),
+(3, 'Faisal Ahmed', '2025-02-20 11:00:00'),
+(4, 'Lakshmi Iyer', '2025-03-05 16:45:00'),
+(5, 'Devika Menon', '2025-03-18 10:00:00');
+
+-- Query
 -- Write your query below
 ```
 

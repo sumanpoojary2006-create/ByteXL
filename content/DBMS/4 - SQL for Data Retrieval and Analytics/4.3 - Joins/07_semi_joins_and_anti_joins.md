@@ -8,7 +8,7 @@ There is a more direct way to ask "does a matching `row` exist" or "does no matc
 
 The same delivery `schema` applies here, with Neha Bhatt having no orders and Taco Town having no orders.
 
-```postgresql file=delivery.sql
+```text
 CREATE TABLE customers (
     customer_id INTEGER PRIMARY KEY,
     customer_name TEXT,
@@ -51,7 +51,49 @@ INSERT INTO orders (order_id, customer_id, restaurant_id, amount, order_date) VA
 (6, 2, 3, 180.00, '2025-05-06');
 ```
 
-```postgresql with=delivery.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    city TEXT
+);
+
+CREATE TABLE restaurants (
+    restaurant_id INTEGER PRIMARY KEY,
+    restaurant_name TEXT,
+    city TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(customer_id),
+    restaurant_id INTEGER REFERENCES restaurants(restaurant_id),
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO customers (customer_id, customer_name, city) VALUES
+(1, 'Aditi Kulkarni', 'Pune'),
+(2, 'Rohan Das', 'Kolkata'),
+(3, 'Kavya Nair', 'Kochi'),
+(4, 'Imran Sheikh', 'Hyderabad'),
+(5, 'Neha Bhatt', 'Ahmedabad');
+
+INSERT INTO restaurants (restaurant_id, restaurant_name, city) VALUES
+(1, 'Pizza Palace', 'Pune'),
+(2, 'Sushi Central', 'Kolkata'),
+(3, 'Burger Barn', 'Pune'),
+(4, 'Taco Town', 'Hyderabad');
+
+INSERT INTO orders (order_id, customer_id, restaurant_id, amount, order_date) VALUES
+(1, 1, 1, 450.00, '2025-05-01'),
+(2, 2, 2, 620.00, '2025-05-02'),
+(3, 1, 3, 300.00, '2025-05-03'),
+(4, 3, 1, 500.00, '2025-05-04'),
+(5, 4, 2, 275.00, '2025-05-05'),
+(6, 2, 3, 180.00, '2025-05-06');
+
+-- Query
 SELECT customer_name
 FROM customers c
 WHERE EXISTS (
@@ -75,7 +117,49 @@ This returns four customers, everyone except Neha Bhatt.
 
 `NOT EXISTS` flips the same idea around, keeping only the `rows` where the inner `query` finds nothing at all.
 
-```postgresql with=delivery.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    city TEXT
+);
+
+CREATE TABLE restaurants (
+    restaurant_id INTEGER PRIMARY KEY,
+    restaurant_name TEXT,
+    city TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(customer_id),
+    restaurant_id INTEGER REFERENCES restaurants(restaurant_id),
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO customers (customer_id, customer_name, city) VALUES
+(1, 'Aditi Kulkarni', 'Pune'),
+(2, 'Rohan Das', 'Kolkata'),
+(3, 'Kavya Nair', 'Kochi'),
+(4, 'Imran Sheikh', 'Hyderabad'),
+(5, 'Neha Bhatt', 'Ahmedabad');
+
+INSERT INTO restaurants (restaurant_id, restaurant_name, city) VALUES
+(1, 'Pizza Palace', 'Pune'),
+(2, 'Sushi Central', 'Kolkata'),
+(3, 'Burger Barn', 'Pune'),
+(4, 'Taco Town', 'Hyderabad');
+
+INSERT INTO orders (order_id, customer_id, restaurant_id, amount, order_date) VALUES
+(1, 1, 1, 450.00, '2025-05-01'),
+(2, 2, 2, 620.00, '2025-05-02'),
+(3, 1, 3, 300.00, '2025-05-03'),
+(4, 3, 1, 500.00, '2025-05-04'),
+(5, 4, 2, 275.00, '2025-05-05'),
+(6, 2, 3, 180.00, '2025-05-06');
+
+-- Query
 SELECT customer_name
 FROM customers c
 WHERE NOT EXISTS (
@@ -93,13 +177,97 @@ WHERE NOT EXISTS (
 
 When the check only involves a single `column` with no other condition tying the two `queries` together, `IN` and `NOT IN` offer a shorter alternative to `EXISTS` and `NOT EXISTS`.
 
-```postgresql with=delivery.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    city TEXT
+);
+
+CREATE TABLE restaurants (
+    restaurant_id INTEGER PRIMARY KEY,
+    restaurant_name TEXT,
+    city TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(customer_id),
+    restaurant_id INTEGER REFERENCES restaurants(restaurant_id),
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO customers (customer_id, customer_name, city) VALUES
+(1, 'Aditi Kulkarni', 'Pune'),
+(2, 'Rohan Das', 'Kolkata'),
+(3, 'Kavya Nair', 'Kochi'),
+(4, 'Imran Sheikh', 'Hyderabad'),
+(5, 'Neha Bhatt', 'Ahmedabad');
+
+INSERT INTO restaurants (restaurant_id, restaurant_name, city) VALUES
+(1, 'Pizza Palace', 'Pune'),
+(2, 'Sushi Central', 'Kolkata'),
+(3, 'Burger Barn', 'Pune'),
+(4, 'Taco Town', 'Hyderabad');
+
+INSERT INTO orders (order_id, customer_id, restaurant_id, amount, order_date) VALUES
+(1, 1, 1, 450.00, '2025-05-01'),
+(2, 2, 2, 620.00, '2025-05-02'),
+(3, 1, 3, 300.00, '2025-05-03'),
+(4, 3, 1, 500.00, '2025-05-04'),
+(5, 4, 2, 275.00, '2025-05-05'),
+(6, 2, 3, 180.00, '2025-05-06');
+
+-- Query
 SELECT customer_name
 FROM customers
 WHERE customer_id IN (SELECT customer_id FROM orders);
 ```
 
-```postgresql with=delivery.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    city TEXT
+);
+
+CREATE TABLE restaurants (
+    restaurant_id INTEGER PRIMARY KEY,
+    restaurant_name TEXT,
+    city TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(customer_id),
+    restaurant_id INTEGER REFERENCES restaurants(restaurant_id),
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO customers (customer_id, customer_name, city) VALUES
+(1, 'Aditi Kulkarni', 'Pune'),
+(2, 'Rohan Das', 'Kolkata'),
+(3, 'Kavya Nair', 'Kochi'),
+(4, 'Imran Sheikh', 'Hyderabad'),
+(5, 'Neha Bhatt', 'Ahmedabad');
+
+INSERT INTO restaurants (restaurant_id, restaurant_name, city) VALUES
+(1, 'Pizza Palace', 'Pune'),
+(2, 'Sushi Central', 'Kolkata'),
+(3, 'Burger Barn', 'Pune'),
+(4, 'Taco Town', 'Hyderabad');
+
+INSERT INTO orders (order_id, customer_id, restaurant_id, amount, order_date) VALUES
+(1, 1, 1, 450.00, '2025-05-01'),
+(2, 2, 2, 620.00, '2025-05-02'),
+(3, 1, 3, 300.00, '2025-05-03'),
+(4, 3, 1, 500.00, '2025-05-04'),
+(5, 4, 2, 275.00, '2025-05-05'),
+(6, 2, 3, 180.00, '2025-05-06');
+
+-- Query
 SELECT customer_name
 FROM customers
 WHERE customer_id NOT IN (SELECT customer_id FROM orders WHERE customer_id IS NOT NULL);
@@ -153,7 +321,49 @@ Despite the name, semi and anti `joins` are not written using `JOIN`, `LEFT JOIN
 
 Zoya wants to find every restaurant that has never received an order, using an existence check rather than a `LEFT JOIN`. Write a `query` against `restaurants` and `orders` above using `NOT EXISTS`.
 
-```postgresql with=delivery.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    city TEXT
+);
+
+CREATE TABLE restaurants (
+    restaurant_id INTEGER PRIMARY KEY,
+    restaurant_name TEXT,
+    city TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(customer_id),
+    restaurant_id INTEGER REFERENCES restaurants(restaurant_id),
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO customers (customer_id, customer_name, city) VALUES
+(1, 'Aditi Kulkarni', 'Pune'),
+(2, 'Rohan Das', 'Kolkata'),
+(3, 'Kavya Nair', 'Kochi'),
+(4, 'Imran Sheikh', 'Hyderabad'),
+(5, 'Neha Bhatt', 'Ahmedabad');
+
+INSERT INTO restaurants (restaurant_id, restaurant_name, city) VALUES
+(1, 'Pizza Palace', 'Pune'),
+(2, 'Sushi Central', 'Kolkata'),
+(3, 'Burger Barn', 'Pune'),
+(4, 'Taco Town', 'Hyderabad');
+
+INSERT INTO orders (order_id, customer_id, restaurant_id, amount, order_date) VALUES
+(1, 1, 1, 450.00, '2025-05-01'),
+(2, 2, 2, 620.00, '2025-05-02'),
+(3, 1, 3, 300.00, '2025-05-03'),
+(4, 3, 1, 500.00, '2025-05-04'),
+(5, 4, 2, 275.00, '2025-05-05'),
+(6, 2, 3, 180.00, '2025-05-06');
+
+-- Query
 -- Write your query below
 ```
 

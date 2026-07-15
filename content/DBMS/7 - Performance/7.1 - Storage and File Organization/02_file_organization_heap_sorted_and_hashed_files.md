@@ -8,7 +8,7 @@ There are a few standard strategies for how a `table`'s file can be organized, a
 
 By default, PostgreSQL stores a `table` as a heap, meaning new `rows` are simply placed wherever there happens to be free space, with no guaranteed ordering by any `column` at all.
 
-```postgresql file=file_org_demo.sql
+```text
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
     customer_name TEXT,
@@ -22,7 +22,20 @@ INSERT INTO orders (order_id, customer_name, amount) VALUES
 (1, 'Imran Sheikh', 900.00);
 ```
 
-```postgresql with=file_org_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, amount) VALUES
+(5, 'Rohan Das', 450.00),
+(2, 'Aditi Kulkarni', 620.00),
+(8, 'Kavya Nair', 300.00),
+(1, 'Imran Sheikh', 900.00);
+
+-- Query
 SELECT ctid, order_id, customer_name FROM orders;
 ```
 
@@ -36,7 +49,20 @@ This means a `query` that wants "every order with `order_id` between 1 and 4" ca
 
 An alternative organization keeps `rows` physically sorted by a chosen `column`, so that `rows` with nearby values in that `column` also sit near each other on disk. PostgreSQL does not maintain this automatically the way a heap works by default, but it can be requested explicitly with `CLUSTER`, which physically reorders an existing `table`'s `rows` to match an `index`'s order, as a one-time operation.
 
-```postgresql with=file_org_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, amount) VALUES
+(5, 'Rohan Das', 450.00),
+(2, 'Aditi Kulkarni', 620.00),
+(8, 'Kavya Nair', 300.00),
+(1, 'Imran Sheikh', 900.00);
+
+-- Query
 CREATE INDEX idx_orders_id ON orders (order_id);
 CLUSTER orders USING idx_orders_id;
 
@@ -58,7 +84,20 @@ A third strategy, hashing, places each `row` into one of a fixed number of "buck
 
 The mechanism is directly visible using `hashtext`, one of PostgreSQL's built-in hash `functions`, mapping each name into one of eight buckets:
 
-```postgresql with=file_org_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, amount) VALUES
+(5, 'Rohan Das', 450.00),
+(2, 'Aditi Kulkarni', 620.00),
+(8, 'Kavya Nair', 300.00),
+(1, 'Imran Sheikh', 900.00);
+
+-- Query
 SELECT customer_name,
        abs(hashtext(customer_name)) % 8 AS bucket
 FROM orders
@@ -71,7 +110,20 @@ PostgreSQL does not organize whole `tables` this way, but it offers `hash indexe
 
 ![Hashed organization sends an exact-match key to one bucket but cannot preserve ranges](images/04_hash_bucket_exact_match_layout.png)
 
-```postgresql with=file_org_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, amount) VALUES
+(5, 'Rohan Das', 450.00),
+(2, 'Aditi Kulkarni', 620.00),
+(8, 'Kavya Nair', 300.00),
+(1, 'Imran Sheikh', 900.00);
+
+-- Query
 CREATE INDEX idx_orders_hash ON orders USING hash (customer_name);
 
 SELECT order_id, customer_name, amount
@@ -118,7 +170,20 @@ This creates a hash-organized structure specifically for looking up an exact `cu
 
 Using the `idx_orders_id` `index` and clustered layout already set up earlier in this lesson, insert three more orders with `order_id` values 3, 6, and 9, check every `row`'s `ctid`, and note in a comment whether the new `rows` were interleaved into sorted position or simply placed wherever free space happened to be.
 
-```postgresql with=file_org_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, amount) VALUES
+(5, 'Rohan Das', 450.00),
+(2, 'Aditi Kulkarni', 620.00),
+(8, 'Kavya Nair', 300.00),
+(1, 'Imran Sheikh', 900.00);
+
+-- Query
 -- Write your queries and comment below
 ```
 

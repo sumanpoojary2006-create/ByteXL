@@ -8,7 +8,7 @@ A **`materialized view`** solves this by actually storing the `query`'s result o
 
 The setup mirrors the ordinary `view` from earlier in this chapter, but the underlying data here represents a much larger, slower-to-aggregate history.
 
-```postgresql file=matview_demo.sql
+```text
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     driver_id INTEGER,
@@ -23,7 +23,21 @@ SELECT i, (i % 20) + 1,
 FROM generate_series(1, 5000) AS i;
 ```
 
-```postgresql with=matview_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    driver_id INTEGER,
+    status TEXT,
+    shipped_month DATE
+);
+
+INSERT INTO shipments (shipment_id, driver_id, status, shipped_month)
+SELECT i, (i % 20) + 1,
+       CASE WHEN i % 15 = 0 THEN 'delayed' ELSE 'delivered' END,
+       DATE '2025-01-01' + ((i % 12) * INTERVAL '1 month')
+FROM generate_series(1, 5000) AS i;
+
+-- Query
 CREATE MATERIALIZED VIEW monthly_shipment_summary AS
 SELECT shipped_month, COUNT(*) AS total_shipments,
        COUNT(*) FILTER (WHERE status = 'delayed') AS delayed_shipments
@@ -47,7 +61,29 @@ Selecting from `monthly_shipment_summary` afterward reads that stored result dir
 
 Unlike an ordinary `view`, new data added to the underlying `table` does not appear in a `materialized view` until it is explicitly refreshed.
 
-```postgresql with=matview_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    driver_id INTEGER,
+    status TEXT,
+    shipped_month DATE
+);
+
+INSERT INTO shipments (shipment_id, driver_id, status, shipped_month)
+SELECT i, (i % 20) + 1,
+       CASE WHEN i % 15 = 0 THEN 'delayed' ELSE 'delivered' END,
+       DATE '2025-01-01' + ((i % 12) * INTERVAL '1 month')
+FROM generate_series(1, 5000) AS i;
+
+CREATE MATERIALIZED VIEW monthly_shipment_summary AS
+SELECT shipped_month, COUNT(*) AS total_shipments,
+       COUNT(*) FILTER (WHERE status = 'delayed') AS delayed_shipments
+FROM shipments
+GROUP BY shipped_month;
+
+SELECT * FROM monthly_shipment_summary ORDER BY shipped_month;
+
+-- Query
 INSERT INTO shipments (shipment_id, driver_id, status, shipped_month)
 VALUES (5001, 5, 'delayed', '2025-06-01');
 
@@ -64,7 +100,29 @@ This staleness is not a bug; it is the entire point of a `materialized view`, av
 
 `REFRESH MATERIALIZED VIEW` recomputes the stored result from scratch, bringing it back in line with the underlying `tables`' current state.
 
-```postgresql with=matview_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    driver_id INTEGER,
+    status TEXT,
+    shipped_month DATE
+);
+
+INSERT INTO shipments (shipment_id, driver_id, status, shipped_month)
+SELECT i, (i % 20) + 1,
+       CASE WHEN i % 15 = 0 THEN 'delayed' ELSE 'delivered' END,
+       DATE '2025-01-01' + ((i % 12) * INTERVAL '1 month')
+FROM generate_series(1, 5000) AS i;
+
+CREATE MATERIALIZED VIEW monthly_shipment_summary AS
+SELECT shipped_month, COUNT(*) AS total_shipments,
+       COUNT(*) FILTER (WHERE status = 'delayed') AS delayed_shipments
+FROM shipments
+GROUP BY shipped_month;
+
+SELECT * FROM monthly_shipment_summary ORDER BY shipped_month;
+
+-- Query
 REFRESH MATERIALIZED VIEW monthly_shipment_summary;
 
 SELECT * FROM monthly_shipment_summary WHERE shipped_month = '2025-06-01';
@@ -76,7 +134,29 @@ After the refresh, June's `row` correctly reflects the newly inserted delayed sh
 
 A plain `REFRESH MATERIALIZED VIEW` `lock`s the `view` against reads while it recomputes, which can be a problem for a dashboard that needs to stay available. PostgreSQL supports a concurrent refresh option for this, at the cost of requiring a unique `index` on the `materialized view` first.
 
-```postgresql with=matview_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    driver_id INTEGER,
+    status TEXT,
+    shipped_month DATE
+);
+
+INSERT INTO shipments (shipment_id, driver_id, status, shipped_month)
+SELECT i, (i % 20) + 1,
+       CASE WHEN i % 15 = 0 THEN 'delayed' ELSE 'delivered' END,
+       DATE '2025-01-01' + ((i % 12) * INTERVAL '1 month')
+FROM generate_series(1, 5000) AS i;
+
+CREATE MATERIALIZED VIEW monthly_shipment_summary AS
+SELECT shipped_month, COUNT(*) AS total_shipments,
+       COUNT(*) FILTER (WHERE status = 'delayed') AS delayed_shipments
+FROM shipments
+GROUP BY shipped_month;
+
+SELECT * FROM monthly_shipment_summary ORDER BY shipped_month;
+
+-- Query
 CREATE UNIQUE INDEX idx_monthly_summary_month ON monthly_shipment_summary (shipped_month);
 
 REFRESH MATERIALIZED VIEW CONCURRENTLY monthly_shipment_summary;
@@ -122,7 +202,29 @@ REFRESH MATERIALIZED VIEW CONCURRENTLY monthly_shipment_summary;
 
 Create a `materialized view` named `driver_shipment_totals` summarizing total shipment counts per driver, insert one more shipment, and confirm the `materialized view` is stale until refreshed.
 
-```postgresql with=matview_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    driver_id INTEGER,
+    status TEXT,
+    shipped_month DATE
+);
+
+INSERT INTO shipments (shipment_id, driver_id, status, shipped_month)
+SELECT i, (i % 20) + 1,
+       CASE WHEN i % 15 = 0 THEN 'delayed' ELSE 'delivered' END,
+       DATE '2025-01-01' + ((i % 12) * INTERVAL '1 month')
+FROM generate_series(1, 5000) AS i;
+
+CREATE MATERIALIZED VIEW monthly_shipment_summary AS
+SELECT shipped_month, COUNT(*) AS total_shipments,
+       COUNT(*) FILTER (WHERE status = 'delayed') AS delayed_shipments
+FROM shipments
+GROUP BY shipped_month;
+
+SELECT * FROM monthly_shipment_summary ORDER BY shipped_month;
+
+-- Query
 -- Write your queries below
 ```
 

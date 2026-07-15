@@ -8,7 +8,7 @@ Given a SQL `query`, there is often more than one valid way to actually execute 
 
 A `join` between two `tables` can be executed by starting with either `table` first, and the optimizer has to pick one.
 
-```postgresql file=optimizer_demo.sql
+```text
 CREATE TABLE customers (
     customer_id INTEGER PRIMARY KEY,
     customer_name TEXT
@@ -28,7 +28,26 @@ SELECT i, (i % 100) + 1, (i * 10.5)::NUMERIC(10,2)
 FROM generate_series(1, 20000) AS i;
 ```
 
-```postgresql with=optimizer_demo.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(customer_id),
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO customers (customer_id, customer_name)
+SELECT i, 'Customer ' || i FROM generate_series(1, 100) AS i;
+
+INSERT INTO orders (order_id, customer_id, amount)
+SELECT i, (i % 100) + 1, (i * 10.5)::NUMERIC(10,2)
+FROM generate_series(1, 20000) AS i;
+
+-- Query
 EXPLAIN SELECT c.customer_name, o.amount
 FROM customers c
 JOIN orders o ON c.customer_id = o.customer_id
@@ -50,7 +69,26 @@ The optimizer does not actually run each candidate plan to see which is fastest,
 
 From these statistics it estimates roughly how many `rows` each step of a candidate plan would touch, and from that, an estimated cost.
 
-```postgresql with=optimizer_demo.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(customer_id),
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO customers (customer_id, customer_name)
+SELECT i, 'Customer ' || i FROM generate_series(1, 100) AS i;
+
+INSERT INTO orders (order_id, customer_id, amount)
+SELECT i, (i % 100) + 1, (i * 10.5)::NUMERIC(10,2)
+FROM generate_series(1, 20000) AS i;
+
+-- Query
 SELECT relname, n_live_tup FROM pg_stat_user_tables WHERE relname IN ('customers', 'orders');
 ```
 
@@ -61,7 +99,26 @@ SELECT relname, n_live_tup FROM pg_stat_user_tables WHERE relname IN ('customers
 
 It is a common misconception that an `index`, once created, is always used. The optimizer weighs the estimated cost of every available option, including ignoring a perfectly good `index`.
 
-```postgresql with=optimizer_demo.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(customer_id),
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO customers (customer_id, customer_name)
+SELECT i, 'Customer ' || i FROM generate_series(1, 100) AS i;
+
+INSERT INTO orders (order_id, customer_id, amount)
+SELECT i, (i % 100) + 1, (i * 10.5)::NUMERIC(10,2)
+FROM generate_series(1, 20000) AS i;
+
+-- Query
 CREATE INDEX idx_orders_customer_id ON orders (customer_id);
 
 EXPLAIN SELECT * FROM orders WHERE customer_id > 0;
@@ -104,7 +161,26 @@ Since every `row` in `orders` satisfies `customer_id > 0`, using the `index` wou
 
 Run `EXPLAIN` on a `query` filtering `orders` for `customer_id = 5`, a highly selective condition matching a small fraction of `rows`, and compare it to the plan for `customer_id > 0` from above, noting in a comment why the optimizer makes a different choice for each.
 
-```postgresql with=optimizer_demo.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(customer_id),
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO customers (customer_id, customer_name)
+SELECT i, 'Customer ' || i FROM generate_series(1, 100) AS i;
+
+INSERT INTO orders (order_id, customer_id, amount)
+SELECT i, (i % 100) + 1, (i * 10.5)::NUMERIC(10,2)
+FROM generate_series(1, 20000) AS i;
+
+-- Query
 -- Write your query and comment below
 ```
 

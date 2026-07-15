@@ -10,7 +10,7 @@ The short version is that `joins` combine `columns` from two `tables` side by si
 
 A `join` widens a `row`, pulling in extra `columns` from a second `table` for each match. A set operation never adds `columns`; it only ever stacks, filters, or intersects whole `rows` that already have the same shape.
 
-```postgresql file=customers_channels.sql
+```text
 CREATE TABLE online_customers (
     customer_name TEXT,
     email TEXT
@@ -32,7 +32,28 @@ INSERT INTO store_customers (customer_name, email) VALUES
 ('Neha Bhatt', 'neha.bhatt@example.com');
 ```
 
-```postgresql with=customers_channels.sql
+```postgresql
+CREATE TABLE online_customers (
+    customer_name TEXT,
+    email TEXT
+);
+
+CREATE TABLE store_customers (
+    customer_name TEXT,
+    email TEXT
+);
+
+INSERT INTO online_customers (customer_name, email) VALUES
+('Aditi Kulkarni', 'aditi.k@example.com'),
+('Rohan Das', 'rohan.das@example.com'),
+('Kavya Nair', 'kavya.nair@example.com');
+
+INSERT INTO store_customers (customer_name, email) VALUES
+('Kavya Nair', 'kavya.nair@example.com'),
+('Imran Sheikh', 'imran.s@example.com'),
+('Neha Bhatt', 'neha.bhatt@example.com');
+
+-- Query
 SELECT o.customer_name, o.email, s.customer_name AS store_side_name
 FROM online_customers o
 JOIN store_customers s ON o.email = s.email;
@@ -48,14 +69,56 @@ Both `queries` can answer "who shops in both channels," but only the `join` natu
 
 The `NOT EXISTS`-based anti `join` from the `joins` chapter and an `EXCEPT`-based `query` can produce identical results for a single-`table`, single-condition case like this one.
 
-```postgresql with=customers_channels.sql
+```postgresql
+CREATE TABLE online_customers (
+    customer_name TEXT,
+    email TEXT
+);
+
+CREATE TABLE store_customers (
+    customer_name TEXT,
+    email TEXT
+);
+
+INSERT INTO online_customers (customer_name, email) VALUES
+('Aditi Kulkarni', 'aditi.k@example.com'),
+('Rohan Das', 'rohan.das@example.com'),
+('Kavya Nair', 'kavya.nair@example.com');
+
+INSERT INTO store_customers (customer_name, email) VALUES
+('Kavya Nair', 'kavya.nair@example.com'),
+('Imran Sheikh', 'imran.s@example.com'),
+('Neha Bhatt', 'neha.bhatt@example.com');
+
+-- Query
 SELECT customer_name, email FROM online_customers o
 WHERE NOT EXISTS (
     SELECT 1 FROM store_customers s WHERE s.email = o.email
 );
 ```
 
-```postgresql with=customers_channels.sql
+```postgresql
+CREATE TABLE online_customers (
+    customer_name TEXT,
+    email TEXT
+);
+
+CREATE TABLE store_customers (
+    customer_name TEXT,
+    email TEXT
+);
+
+INSERT INTO online_customers (customer_name, email) VALUES
+('Aditi Kulkarni', 'aditi.k@example.com'),
+('Rohan Das', 'rohan.das@example.com'),
+('Kavya Nair', 'kavya.nair@example.com');
+
+INSERT INTO store_customers (customer_name, email) VALUES
+('Kavya Nair', 'kavya.nair@example.com'),
+('Imran Sheikh', 'imran.s@example.com'),
+('Neha Bhatt', 'neha.bhatt@example.com');
+
+-- Query
 SELECT customer_name, email FROM online_customers
 EXCEPT
 SELECT customer_name, email FROM store_customers;
@@ -119,7 +182,28 @@ Reach for `EXISTS` or `NOT EXISTS` when the existence check involves a condition
 
 Using the `online_customers` and `store_customers` `tables` above, find every customer name that appears in exactly one of the two `tables`, not both, the customers who shop through only one channel. This needs `EXCEPT` run once in each direction, then stitched together with `UNION ALL`.
 
-```postgresql with=customers_channels.sql
+```postgresql
+CREATE TABLE online_customers (
+    customer_name TEXT,
+    email TEXT
+);
+
+CREATE TABLE store_customers (
+    customer_name TEXT,
+    email TEXT
+);
+
+INSERT INTO online_customers (customer_name, email) VALUES
+('Aditi Kulkarni', 'aditi.k@example.com'),
+('Rohan Das', 'rohan.das@example.com'),
+('Kavya Nair', 'kavya.nair@example.com');
+
+INSERT INTO store_customers (customer_name, email) VALUES
+('Kavya Nair', 'kavya.nair@example.com'),
+('Imran Sheikh', 'imran.s@example.com'),
+('Neha Bhatt', 'neha.bhatt@example.com');
+
+-- Query
 -- Write your query below
 ```
 

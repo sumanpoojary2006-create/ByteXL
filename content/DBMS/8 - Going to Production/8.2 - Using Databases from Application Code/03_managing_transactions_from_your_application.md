@@ -9,7 +9,7 @@ An earlier unit covered the discipline of wrapping related statements in `BEGIN`
 
 A `transaction` is tied entirely to the specific `connection` it was started on; it is not a general, `database`-wide state, and no other `connection` can see, join, or affect it.
 
-```postgresql file=app_tx_demo.sql
+```text
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     status TEXT
@@ -18,7 +18,15 @@ CREATE TABLE shipments (
 INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'in_transit');
 ```
 
-```postgresql with=app_tx_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'in_transit');
+
+-- Query
 SELECT pid, state FROM pg_stat_activity WHERE pid = pg_backend_pid();
 
 BEGIN;
@@ -39,7 +47,15 @@ If an application opened a second, separate `connection` at this exact moment, t
 
 If application code calls `BEGIN` but then, due to a bug or an unhandled error, never reaches its `COMMIT` or `ROLLBACK`, the `connection` is left sitting in a state called "idle in `transaction`," still holding whatever `lock`s it acquired, indefinitely.
 
-```postgresql with=app_tx_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'in_transit');
+
+-- Query
 BEGIN;
 UPDATE shipments SET status = 'cancelled' WHERE shipment_id = 2;
 -- Imagine application code crashing or hanging right here, before COMMIT or ROLLBACK.
@@ -51,7 +67,15 @@ A `connection` stuck like this continues holding its `lock` on shipment 2's `row
 
 This is precisely why well-written application code always wraps its `transaction` logic in a structure that guarantees `COMMIT` or `ROLLBACK` runs no matter what, even when an unexpected error occurs, the same discipline covered when `transactions` in application code were first introduced.
 
-```postgresql with=app_tx_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'in_transit');
+
+-- Query
 ROLLBACK;
 ```
 
@@ -59,7 +83,15 @@ ROLLBACK;
 
 Sometimes a single logical operation involves several steps, and only one of them might reasonably fail without needing to discard everything else already done in that same `transaction`. A `SAVEPOINT` marks a point inside a `transaction` that can be rolled back to individually, without rolling back the entire `transaction`.
 
-```postgresql with=app_tx_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'in_transit');
+
+-- Query
 BEGIN;
 
 UPDATE shipments SET status = 'delivered' WHERE shipment_id = 1;
@@ -120,7 +152,15 @@ Without savepoints, a single failure anywhere in that loop would force the entir
 
 Start a `transaction`, update shipment 1's status to `'delivered'`, set a savepoint, then attempt an update that should be discarded, roll back to the savepoint, and commit, confirming only the first update survives.
 
-```postgresql with=app_tx_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'in_transit');
+
+-- Query
 -- Write your transaction below
 ```
 

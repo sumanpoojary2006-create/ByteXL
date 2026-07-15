@@ -8,7 +8,7 @@ PostgreSQL's **`row-level security`**, or RLS, makes exactly this possible, enfo
 
 The `shipments` `table` now includes a `branch` `column`, and two `role`s represent two different branch coordinators.
 
-```postgresql file=rls_demo.sql
+```text
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     branch TEXT,
@@ -31,7 +31,23 @@ Without `row-level security`, `mumbai_coordinator`'s `GRANT SELECT` gives access
 
 `Row-level security` is enabled per `table`, and then one or more policies define exactly which `rows` each `role` is allowed to see.
 
-```postgresql with=rls_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    branch TEXT,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, branch, status) VALUES
+(1, 'Mumbai', 'in_transit'),
+(2, 'Pune', 'delivered'),
+(3, 'Mumbai', 'delayed'),
+(4, 'Pune', 'in_transit');
+
+CREATE ROLE mumbai_coordinator WITH LOGIN PASSWORD 'change_this_in_real_use';
+GRANT SELECT ON shipments TO mumbai_coordinator;
+
+-- Query
 ALTER TABLE shipments ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY mumbai_only ON shipments
@@ -51,7 +67,23 @@ This filtering happens automatically, inside the `database` itself, for every si
 
 The entire point of `row-level security` is that it cannot be bypassed by simply forgetting to filter, since the `database` enforces it regardless of what the `query` itself asks for.
 
-```postgresql with=rls_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    branch TEXT,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, branch, status) VALUES
+(1, 'Mumbai', 'in_transit'),
+(2, 'Pune', 'delivered'),
+(3, 'Mumbai', 'delayed'),
+(4, 'Pune', 'in_transit');
+
+CREATE ROLE mumbai_coordinator WITH LOGIN PASSWORD 'change_this_in_real_use';
+GRANT SELECT ON shipments TO mumbai_coordinator;
+
+-- Query
 SET ROLE mumbai_coordinator;
 
 SELECT * FROM shipments;
@@ -68,7 +100,23 @@ RESET ROLE;
 
 Column-level and `row-level security` can be combined on the same `table`, restricting both which `columns` and which `rows` a `role` can see, addressing both dimensions of "this `role` should not see that data" together.
 
-```postgresql with=rls_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    branch TEXT,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, branch, status) VALUES
+(1, 'Mumbai', 'in_transit'),
+(2, 'Pune', 'delivered'),
+(3, 'Mumbai', 'delayed'),
+(4, 'Pune', 'in_transit');
+
+CREATE ROLE mumbai_coordinator WITH LOGIN PASSWORD 'change_this_in_real_use';
+GRANT SELECT ON shipments TO mumbai_coordinator;
+
+-- Query
 CREATE TABLE shipments_with_cost (
     shipment_id INTEGER PRIMARY KEY,
     branch TEXT,
@@ -126,7 +174,23 @@ GRANT SELECT (shipment_id, branch, status) ON shipments_with_cost TO mumbai_coor
 
 Create a `role` `pune_coordinator`, enable a `row-level security` policy restricting it to `branch = 'Pune'` on `shipments`, and confirm with `SET ROLE` that it only ever sees Pune's `rows`.
 
-```postgresql with=rls_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    branch TEXT,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, branch, status) VALUES
+(1, 'Mumbai', 'in_transit'),
+(2, 'Pune', 'delivered'),
+(3, 'Mumbai', 'delayed'),
+(4, 'Pune', 'in_transit');
+
+CREATE ROLE mumbai_coordinator WITH LOGIN PASSWORD 'change_this_in_real_use';
+GRANT SELECT ON shipments TO mumbai_coordinator;
+
+-- Query
 -- Write your role, policy, and test below
 ```
 

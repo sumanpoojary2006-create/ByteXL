@@ -8,7 +8,7 @@ The third letter in ACID, **isolation**, is the guarantee that concurrently runn
 
 The `accounts` `table` is the familiar one from earlier in this chapter.
 
-```postgresql file=accounts_isolation.sql
+```text
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
     owner_name TEXT,
@@ -20,7 +20,18 @@ INSERT INTO accounts (account_id, owner_name, balance) VALUES
 (2, 'Sanjay Rathi', 12000.00);
 ```
 
-```postgresql with=accounts_isolation.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    owner_name TEXT,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, owner_name, balance) VALUES
+(1, 'Meera Iyer', 50000.00),
+(2, 'Sanjay Rathi', 12000.00);
+
+-- Query
 BEGIN;
 
 UPDATE accounts SET balance = balance - 5000.00 WHERE account_id = 1;
@@ -45,7 +56,18 @@ With isolation guaranteed, the second session instead sees 45000.00, Meera's bal
 
 The following illustrates the two sessions side by side, as comments, since a single script can only run one session's statements in real sequence.
 
-```postgresql with=accounts_isolation.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    owner_name TEXT,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, owner_name, balance) VALUES
+(1, 'Meera Iyer', 50000.00),
+(2, 'Sanjay Rathi', 12000.00);
+
+-- Query
 -- Session A (the transfer in progress)
 BEGIN;
 UPDATE accounts SET balance = balance - 5000.00 WHERE account_id = 1;
@@ -69,7 +91,18 @@ The final `SELECT` in this script, running after `COMMIT`, correctly shows 40000
 
 Every `database` `connection` operates under an `isolation level`, a named setting that controls exactly how much of one `transaction`'s in-progress work a concurrent `transaction` is allowed to see. The next lesson in this course covers the specific problems isolation prevents, and a later unit covers the named levels in depth, but the setting itself can be checked right now.
 
-```postgresql with=accounts_isolation.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    owner_name TEXT,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, owner_name, balance) VALUES
+(1, 'Meera Iyer', 50000.00),
+(2, 'Sanjay Rathi', 12000.00);
+
+-- Query
 SHOW transaction_isolation;
 ```
 
@@ -116,7 +149,18 @@ Isolation is what makes it safe to run many `transactions` against the same data
 
 Check the current `transaction` `isolation level` for this session, then run a `transaction` that updates Sanjay's balance by 1000.00 without committing, and confirm within the same `transaction` that the change is visible there.
 
-```postgresql with=accounts_isolation.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    owner_name TEXT,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, owner_name, balance) VALUES
+(1, 'Meera Iyer', 50000.00),
+(2, 'Sanjay Rathi', 12000.00);
+
+-- Query
 -- Write your queries below
 ```
 

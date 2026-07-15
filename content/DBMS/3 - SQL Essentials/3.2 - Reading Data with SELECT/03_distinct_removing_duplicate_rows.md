@@ -8,7 +8,7 @@ She scrolls through the list herself, mentally crossing off repeats, to work out
 
 Before reaching for `DISTINCT`, it helps to see the problem it solves in plain output.
 
-```postgresql file=students.sql
+```text
 CREATE TABLE students (
     student_id INTEGER PRIMARY KEY,
     full_name TEXT,
@@ -29,7 +29,27 @@ INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALU
 (8, 'Priya Subramaniam', 'priya.subramaniam@example.com', 'Chennai', '9884066666', '2025-01-28');
 ```
 
-```postgresql with=students.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    email TEXT,
+    city TEXT,
+    phone TEXT,
+    joined_on DATE
+);
+
+INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
+(1, 'Ishaan Verma', 'ishaan.verma@example.com', 'Bengaluru', '9845011111', '2025-01-10'),
+(2, 'Meera Pillai', 'meera.pillai@example.com', 'Chennai', '9884022222', '2025-01-12'),
+(3, 'Arjun Bhat', 'arjun.bhat@example.com', 'Bengaluru', NULL, '2025-01-15'),
+(4, 'Kavya Reddy', 'kavya.reddy@example.com', 'Pune', '9922033333', '2025-01-18'),
+(5, 'Rohan Joshi', 'rohan.joshi@example.com', 'Hyderabad', '9640044444', '2025-01-20'),
+(6, 'Sneha Gowda', 'sneha.gowda@example.com', 'Mysuru', NULL, '2025-01-22'),
+(7, 'Aditya Kulkarni', 'aditya.kulkarni@example.com', 'Pune', '9822055555', '2025-01-25'),
+(8, 'Priya Subramaniam', 'priya.subramaniam@example.com', 'Chennai', '9884066666', '2025-01-28');
+
+-- Query
 SELECT city FROM students;
 ```
 
@@ -44,7 +64,27 @@ The result has eight `rows`, matching the eight students, and Bengaluru, Chennai
 
 Adding the word `DISTINCT` right after `SELECT` changes the question from "what city does each student live in" to "what cities appear at all."
 
-```postgresql with=students.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    email TEXT,
+    city TEXT,
+    phone TEXT,
+    joined_on DATE
+);
+
+INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
+(1, 'Ishaan Verma', 'ishaan.verma@example.com', 'Bengaluru', '9845011111', '2025-01-10'),
+(2, 'Meera Pillai', 'meera.pillai@example.com', 'Chennai', '9884022222', '2025-01-12'),
+(3, 'Arjun Bhat', 'arjun.bhat@example.com', 'Bengaluru', NULL, '2025-01-15'),
+(4, 'Kavya Reddy', 'kavya.reddy@example.com', 'Pune', '9922033333', '2025-01-18'),
+(5, 'Rohan Joshi', 'rohan.joshi@example.com', 'Hyderabad', '9640044444', '2025-01-20'),
+(6, 'Sneha Gowda', 'sneha.gowda@example.com', 'Mysuru', NULL, '2025-01-22'),
+(7, 'Aditya Kulkarni', 'aditya.kulkarni@example.com', 'Pune', '9822055555', '2025-01-25'),
+(8, 'Priya Subramaniam', 'priya.subramaniam@example.com', 'Chennai', '9884066666', '2025-01-28');
+
+-- Query
 SELECT DISTINCT city FROM students;
 ```
 
@@ -58,7 +98,7 @@ This time the result has exactly five `rows`: Bengaluru, Chennai, Pune, Hyderaba
 - Given more than one `column` in the list, it keeps a `row` only if the entire combination of values, taken together, is unique, not just one `column` in isolation.
 - To see this clearly, it helps to look at a different `table` where a few `rows` genuinely repeat the same combination.
 
-```postgresql file=courses.sql
+```text
 CREATE TABLE courses (
     course_id INTEGER PRIMARY KEY,
     title TEXT,
@@ -74,7 +114,22 @@ INSERT INTO courses (course_id, title, department, credits) VALUES
 (105, 'Microeconomics', 'Economics', 3);
 ```
 
-```postgresql with=courses.sql
+```postgresql
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    title TEXT,
+    department TEXT,
+    credits INTEGER
+);
+
+INSERT INTO courses (course_id, title, department, credits) VALUES
+(101, 'Database Systems', 'Computer Science', 4),
+(102, 'Data Structures', 'Computer Science', 4),
+(103, 'Linear Algebra', 'Mathematics', 3),
+(104, 'Discrete Mathematics', 'Mathematics', 3),
+(105, 'Microeconomics', 'Economics', 3);
+
+-- Query
 SELECT DISTINCT department, credits FROM courses;
 ```
 
@@ -111,7 +166,22 @@ SELECT DISTINCT department, credits FROM courses;
 
 The registrar wants to know which departments the college currently offers courses in, listed once each, with no repeats. Write a `query` against the courses `table` above that returns just that.
 
-```postgresql with=courses.sql
+```postgresql
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    title TEXT,
+    department TEXT,
+    credits INTEGER
+);
+
+INSERT INTO courses (course_id, title, department, credits) VALUES
+(101, 'Database Systems', 'Computer Science', 4),
+(102, 'Data Structures', 'Computer Science', 4),
+(103, 'Linear Algebra', 'Mathematics', 3),
+(104, 'Discrete Mathematics', 'Mathematics', 3),
+(105, 'Microeconomics', 'Economics', 3);
+
+-- Query
 -- Write your query below
 ```
 

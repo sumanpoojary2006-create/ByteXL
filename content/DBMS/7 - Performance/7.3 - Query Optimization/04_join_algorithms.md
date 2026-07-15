@@ -12,7 +12,7 @@ Each has a different performance profile depending on `table` sizes and whether 
 
 A `nested loop` `join` works exactly the way its name suggests: for every `row` in the outer `table`, it scans, or `index`-looks-up, the inner `table` to find matches, one outer `row` at a time.
 
-```postgresql file=join_algo_demo.sql
+```text
 CREATE TABLE customers (
     customer_id INTEGER PRIMARY KEY,
     customer_name TEXT
@@ -34,7 +34,28 @@ FROM generate_series(1, 20000) AS i;
 CREATE INDEX idx_orders_customer_id ON orders (customer_id);
 ```
 
-```postgresql with=join_algo_demo.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO customers (customer_id, customer_name)
+SELECT i, 'Customer ' || i FROM generate_series(1, 5000) AS i;
+
+INSERT INTO orders (order_id, customer_id, amount)
+SELECT i, (i % 5000) + 1, (i * 10.5)::NUMERIC(10,2)
+FROM generate_series(1, 20000) AS i;
+
+CREATE INDEX idx_orders_customer_id ON orders (customer_id);
+
+-- Query
 EXPLAIN SELECT c.customer_name, o.amount
 FROM customers c
 JOIN orders o ON c.customer_id = o.customer_id
@@ -49,7 +70,28 @@ For this narrow filter, matching only 3 customers, the optimizer favors a "Neste
 
 When both sides of a `join` are large, and no useful `index` narrows either one down first, PostgreSQL often prefers a `hash join`: build an in-memory hash `table` from one side, keyed by the `join` `column`, then scan the other side once, probing the hash `table` for each `row`.
 
-```postgresql with=join_algo_demo.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO customers (customer_id, customer_name)
+SELECT i, 'Customer ' || i FROM generate_series(1, 5000) AS i;
+
+INSERT INTO orders (order_id, customer_id, amount)
+SELECT i, (i % 5000) + 1, (i * 10.5)::NUMERIC(10,2)
+FROM generate_series(1, 20000) AS i;
+
+CREATE INDEX idx_orders_customer_id ON orders (customer_id);
+
+-- Query
 EXPLAIN SELECT c.customer_name, o.amount
 FROM customers c
 JOIN orders o ON c.customer_id = o.customer_id;
@@ -65,7 +107,28 @@ This avoids the `nested loop`'s repeated lookups entirely, since scanning `order
 
 A `merge join` takes advantage of both inputs already being sorted by the `join` `column`, walking through both sorted lists together in lockstep, similar to how the earlier lesson on set operations conceptually combines two already-ordered sequences.
 
-```postgresql with=join_algo_demo.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO customers (customer_id, customer_name)
+SELECT i, 'Customer ' || i FROM generate_series(1, 5000) AS i;
+
+INSERT INTO orders (order_id, customer_id, amount)
+SELECT i, (i % 5000) + 1, (i * 10.5)::NUMERIC(10,2)
+FROM generate_series(1, 20000) AS i;
+
+CREATE INDEX idx_orders_customer_id ON orders (customer_id);
+
+-- Query
 EXPLAIN SELECT c.customer_name, o.amount
 FROM customers c
 JOIN orders o ON c.customer_id = o.customer_id
@@ -82,7 +145,28 @@ This is particularly efficient when the `query` already needs the result sorted 
 
 None of these three algorithms is universally "the best" one; the optimizer, using exactly the cost-estimation process covered earlier in this chapter, picks whichever it expects to be cheapest for the specific `tables`, filters, and available `indexes` involved in a given `query`.
 
-```postgresql with=join_algo_demo.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO customers (customer_id, customer_name)
+SELECT i, 'Customer ' || i FROM generate_series(1, 5000) AS i;
+
+INSERT INTO orders (order_id, customer_id, amount)
+SELECT i, (i % 5000) + 1, (i * 10.5)::NUMERIC(10,2)
+FROM generate_series(1, 20000) AS i;
+
+CREATE INDEX idx_orders_customer_id ON orders (customer_id);
+
+-- Query
 SET enable_hashjoin = off;
 
 EXPLAIN SELECT c.customer_name, o.amount
@@ -127,7 +211,28 @@ Temporarily disabling hash joins with `SET enable_hashjoin = off` forces the opt
 
 Filter the `join` `query` above down to a single customer, `customer_id = 42`, and check which `join` algorithm the optimizer chooses, comparing it to the unfiltered `join`'s choice.
 
-```postgresql with=join_algo_demo.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO customers (customer_id, customer_name)
+SELECT i, 'Customer ' || i FROM generate_series(1, 5000) AS i;
+
+INSERT INTO orders (order_id, customer_id, amount)
+SELECT i, (i % 5000) + 1, (i * 10.5)::NUMERIC(10,2)
+FROM generate_series(1, 20000) AS i;
+
+CREATE INDEX idx_orders_customer_id ON orders (customer_id);
+
+-- Query
 -- Write your query below
 ```
 

@@ -13,7 +13,7 @@ A value built this way, out of `columns` and operators rather than read directly
 
 The courses `table` stores a `credits` `column` as a plain integer. Nikhil wants a doubled version of it for his workload score, and he gets it by writing the arithmetic directly where a `column` name would normally go.
 
-```postgresql file=courses.sql
+```text
 CREATE TABLE courses (
     course_id INTEGER PRIMARY KEY,
     title TEXT,
@@ -29,7 +29,22 @@ INSERT INTO courses (course_id, title, department, credits) VALUES
 (105, 'Microeconomics', 'Economics', 3);
 ```
 
-```postgresql with=courses.sql
+```postgresql
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    title TEXT,
+    department TEXT,
+    credits INTEGER
+);
+
+INSERT INTO courses (course_id, title, department, credits) VALUES
+(101, 'Database Systems', 'Computer Science', 4),
+(102, 'Data Structures', 'Computer Science', 4),
+(103, 'Linear Algebra', 'Mathematics', 3),
+(104, 'Discrete Mathematics', 'Mathematics', 3),
+(105, 'Microeconomics', 'Economics', 3);
+
+-- Query
 SELECT title, credits, credits * 2 AS double_credits
 FROM courses;
 ```
@@ -53,7 +68,22 @@ The usual arithmetic operators all work the same way inside a `SELECT` list: `+`
   <tbody>
   </tbody>
 </table>
-```postgresql with=courses.sql
+```postgresql
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    title TEXT,
+    department TEXT,
+    credits INTEGER
+);
+
+INSERT INTO courses (course_id, title, department, credits) VALUES
+(101, 'Database Systems', 'Computer Science', 4),
+(102, 'Data Structures', 'Computer Science', 4),
+(103, 'Linear Algebra', 'Mathematics', 3),
+(104, 'Discrete Mathematics', 'Mathematics', 3),
+(105, 'Microeconomics', 'Economics', 3);
+
+-- Query
 SELECT department || ': ' || title AS course_label
 FROM courses;
 ```
@@ -75,7 +105,22 @@ FROM courses;
 
 An expression does not have to stand alone. It sits in the `SELECT` list exactly like any real `column`, so a single `query` can freely mix calculated values with `columns` pulled straight from the `table`.
 
-```postgresql with=courses.sql
+```postgresql
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    title TEXT,
+    department TEXT,
+    credits INTEGER
+);
+
+INSERT INTO courses (course_id, title, department, credits) VALUES
+(101, 'Database Systems', 'Computer Science', 4),
+(102, 'Data Structures', 'Computer Science', 4),
+(103, 'Linear Algebra', 'Mathematics', 3),
+(104, 'Discrete Mathematics', 'Mathematics', 3),
+(105, 'Microeconomics', 'Economics', 3);
+
+-- Query
 SELECT course_id, title, credits, credits * 2 AS double_credits, department || ': ' || title AS course_label
 FROM courses;
 ```
@@ -115,7 +160,22 @@ This single `query` returns five `columns`: two untouched `columns` straight off
 
 The catalog page also needs a "credit hours per week" figure, assuming each credit corresponds to roughly 15 contact hours across a term, shown alongside the course title. Write a `query` that returns `title` and a calculated `column` named `contact_hours`, equal to `credits * 15`.
 
-```postgresql with=courses.sql
+```postgresql
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    title TEXT,
+    department TEXT,
+    credits INTEGER
+);
+
+INSERT INTO courses (course_id, title, department, credits) VALUES
+(101, 'Database Systems', 'Computer Science', 4),
+(102, 'Data Structures', 'Computer Science', 4),
+(103, 'Linear Algebra', 'Mathematics', 3),
+(104, 'Discrete Mathematics', 'Mathematics', 3),
+(105, 'Microeconomics', 'Economics', 3);
+
+-- Query
 -- Write your query below
 ```
 

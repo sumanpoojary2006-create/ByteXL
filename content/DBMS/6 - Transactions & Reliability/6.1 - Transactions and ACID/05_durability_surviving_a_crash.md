@@ -8,7 +8,7 @@ The fourth letter in ACID, **durability**, is the guarantee that once a `transac
 
 The `accounts` `table` is the same one used throughout this chapter.
 
-```postgresql file=accounts_durability.sql
+```text
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
     owner_name TEXT,
@@ -20,7 +20,18 @@ INSERT INTO accounts (account_id, owner_name, balance) VALUES
 (2, 'Sanjay Rathi', 12000.00);
 ```
 
-```postgresql with=accounts_durability.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    owner_name TEXT,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, owner_name, balance) VALUES
+(1, 'Meera Iyer', 50000.00),
+(2, 'Sanjay Rathi', 12000.00);
+
+-- Query
 BEGIN;
 UPDATE accounts SET balance = balance - 5000.00 WHERE account_id = 1;
 UPDATE accounts SET balance = balance + 5000.00 WHERE account_id = 2;
@@ -48,7 +59,18 @@ If the server crashes immediately after, that log is what the `database` replays
 
 Durability is not free; forcing every commit to wait for a disk write takes real time, which is why some `databases` expose a setting to relax this guarantee for performance-sensitive situations. PostgreSQL's `synchronous_commit` setting is one example, and checking it shows how explicit this trade-off is.
 
-```postgresql with=accounts_durability.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    owner_name TEXT,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, owner_name, balance) VALUES
+(1, 'Meera Iyer', 50000.00),
+(2, 'Sanjay Rathi', 12000.00);
+
+-- Query
 SHOW synchronous_commit;
 ```
 
@@ -60,7 +82,18 @@ This setting is not something a banking application should ever turn off, but it
 
 It is worth being precise about the boundary here. Everything before `COMMIT` is provisional, and a crash during an uncommitted `transaction` is expected to lose that `transaction`'s work entirely, which is exactly what atomicity already promises, an incomplete `transaction` should never partially survive.
 
-```postgresql with=accounts_durability.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    owner_name TEXT,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, owner_name, balance) VALUES
+(1, 'Meera Iyer', 50000.00),
+(2, 'Sanjay Rathi', 12000.00);
+
+-- Query
 BEGIN;
 UPDATE accounts SET balance = balance - 1000.00 WHERE account_id = 1;
 -- A crash here, before COMMIT, is expected to lose this change entirely.
@@ -105,7 +138,18 @@ Durability only ever protects a `transaction` once it has fully committed. A `tr
 
 Check the current `synchronous_commit` setting, then run a committed `transaction` that adds 500.00 to Sanjay's balance, and confirm the change is reflected with a final `SELECT`, reasoning through why that result would still hold even if the server crashed the instant after `COMMIT` returned.
 
-```postgresql with=accounts_durability.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    owner_name TEXT,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, owner_name, balance) VALUES
+(1, 'Meera Iyer', 50000.00),
+(2, 'Sanjay Rathi', 12000.00);
+
+-- Query
 -- Write your queries below
 ```
 

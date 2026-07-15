@@ -8,7 +8,7 @@ A `view` built simply enough can be genuinely **updatable**, passing writes stra
 
 A `view` built from a single `table`, with a straightforward `SELECT` and no aggregation, is updatable without any special setup.
 
-```postgresql file=updatable_views_demo.sql
+```text
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     driver_id INTEGER,
@@ -27,7 +27,25 @@ FROM shipments
 WHERE status = 'in_transit';
 ```
 
-```postgresql with=updatable_views_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    driver_id INTEGER,
+    status TEXT,
+    destination TEXT
+);
+
+INSERT INTO shipments (shipment_id, driver_id, status, destination) VALUES
+(1, 1, 'in_transit', 'Mumbai'),
+(2, 2, 'delivered', 'Pune'),
+(3, 1, 'in_transit', 'Nagpur');
+
+CREATE VIEW in_transit_shipments AS
+SELECT shipment_id, driver_id, destination
+FROM shipments
+WHERE status = 'in_transit';
+
+-- Query
 UPDATE in_transit_shipments SET destination = 'Thane' WHERE shipment_id = 1;
 
 SELECT * FROM shipments WHERE shipment_id = 1;
@@ -45,7 +63,25 @@ The `UPDATE` was issued against `in_transit_shipments`, the `view`, not `shipmen
 
 The `active_shipments` `view` from the previous lesson `join`s `shipments` to `drivers`, and that `join` is exactly what breaks direct updatability, since a single `row` in the `view`'s result could conceptually correspond to changes in either underlying `table`, and the `database` has no reliable way to know which one was intended.
 
-```postgresql with=updatable_views_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    driver_id INTEGER,
+    status TEXT,
+    destination TEXT
+);
+
+INSERT INTO shipments (shipment_id, driver_id, status, destination) VALUES
+(1, 1, 'in_transit', 'Mumbai'),
+(2, 2, 'delivered', 'Pune'),
+(3, 1, 'in_transit', 'Nagpur');
+
+CREATE VIEW in_transit_shipments AS
+SELECT shipment_id, driver_id, destination
+FROM shipments
+WHERE status = 'in_transit';
+
+-- Query
 CREATE TABLE drivers (
     driver_id INTEGER PRIMARY KEY,
     driver_name TEXT
@@ -70,7 +106,42 @@ This `UPDATE` fails, since PostgreSQL refuses to guess how to translate a write 
 
 A `view` built with `GROUP BY` or an `aggregate function` faces an even more fundamental problem: a single `row` in its result may represent many underlying `rows` collapsed together, so there is no single `row` to even target with a write.
 
-```postgresql with=updatable_views_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    driver_id INTEGER,
+    status TEXT,
+    destination TEXT
+);
+
+INSERT INTO shipments (shipment_id, driver_id, status, destination) VALUES
+(1, 1, 'in_transit', 'Mumbai'),
+(2, 2, 'delivered', 'Pune'),
+(3, 1, 'in_transit', 'Nagpur');
+
+CREATE VIEW in_transit_shipments AS
+SELECT shipment_id, driver_id, destination
+FROM shipments
+WHERE status = 'in_transit';
+
+CREATE TABLE drivers (
+    driver_id INTEGER PRIMARY KEY,
+    driver_name TEXT
+);
+
+INSERT INTO drivers (driver_id, driver_name) VALUES (1, 'Manoj Yadav'), (2, 'Farah Ali');
+
+CREATE VIEW shipments_with_driver AS
+SELECT s.shipment_id, d.driver_name, s.destination
+FROM shipments s
+JOIN drivers d ON s.driver_id = d.driver_id;
+
+-- This update would fail because the joined view is not directly updatable:
+-- UPDATE shipments_with_driver SET destination = 'Thane' WHERE shipment_id = 1;
+
+SELECT * FROM shipments_with_driver;
+
+-- Query
 CREATE VIEW driver_shipment_counts AS
 SELECT driver_id, COUNT(*) AS shipment_count
 FROM shipments
@@ -125,7 +196,52 @@ This is a deliberate, hand-written escape hatch rather than something PostgreSQL
 
 Create a simple, single-`table` `view` named `delivered_shipments` filtering `shipments` for `status = 'delivered'`, then update a shipment's `destination` through that `view`, and confirm the change landed on the underlying `shipments` `table`.
 
-```postgresql with=updatable_views_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    driver_id INTEGER,
+    status TEXT,
+    destination TEXT
+);
+
+INSERT INTO shipments (shipment_id, driver_id, status, destination) VALUES
+(1, 1, 'in_transit', 'Mumbai'),
+(2, 2, 'delivered', 'Pune'),
+(3, 1, 'in_transit', 'Nagpur');
+
+CREATE VIEW in_transit_shipments AS
+SELECT shipment_id, driver_id, destination
+FROM shipments
+WHERE status = 'in_transit';
+
+CREATE TABLE drivers (
+    driver_id INTEGER PRIMARY KEY,
+    driver_name TEXT
+);
+
+INSERT INTO drivers (driver_id, driver_name) VALUES (1, 'Manoj Yadav'), (2, 'Farah Ali');
+
+CREATE VIEW shipments_with_driver AS
+SELECT s.shipment_id, d.driver_name, s.destination
+FROM shipments s
+JOIN drivers d ON s.driver_id = d.driver_id;
+
+-- This update would fail because the joined view is not directly updatable:
+-- UPDATE shipments_with_driver SET destination = 'Thane' WHERE shipment_id = 1;
+
+SELECT * FROM shipments_with_driver;
+
+CREATE VIEW driver_shipment_counts AS
+SELECT driver_id, COUNT(*) AS shipment_count
+FROM shipments
+GROUP BY driver_id;
+
+-- This update would fail because shipment_count is computed:
+-- UPDATE driver_shipment_counts SET shipment_count = 5 WHERE driver_id = 1;
+
+SELECT * FROM driver_shipment_counts;
+
+-- Query
 -- Write your view and update below
 ```
 

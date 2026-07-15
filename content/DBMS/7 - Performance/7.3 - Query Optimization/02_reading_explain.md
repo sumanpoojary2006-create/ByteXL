@@ -7,7 +7,7 @@
 
 A plan for a simple, single-`table` `query` is the easiest starting point.
 
-```postgresql file=explain_demo.sql
+```text
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
     customer_id INTEGER,
@@ -21,7 +21,20 @@ FROM generate_series(1, 20000) AS i;
 CREATE INDEX idx_orders_customer_id ON orders (customer_id);
 ```
 
-```postgresql with=explain_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_id, amount)
+SELECT i, (i % 200) + 1, (i * 10.5)::NUMERIC(10,2)
+FROM generate_series(1, 20000) AS i;
+
+CREATE INDEX idx_orders_customer_id ON orders (customer_id);
+
+-- Query
 EXPLAIN SELECT * FROM orders WHERE customer_id = 50;
 ```
 
@@ -40,7 +53,20 @@ It is worth being precise about what the cost numbers mean: they are the optimiz
 
 A cost of 8.51 for one `query` and 8.51 for a completely different `query` does not mean those two `queries` take the same real time to run; it only means the optimizer estimated a similar relative amount of work for each, under its own internal cost model.
 
-```postgresql with=explain_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_id, amount)
+SELECT i, (i % 200) + 1, (i * 10.5)::NUMERIC(10,2)
+FROM generate_series(1, 20000) AS i;
+
+CREATE INDEX idx_orders_customer_id ON orders (customer_id);
+
+-- Query
 EXPLAIN SELECT * FROM orders;
 ```
 
@@ -50,7 +76,20 @@ This plan reports a much higher total cost than the single-customer lookup above
 
 A `query` involving a `join` or a filter on top of a scan produces a plan with more than one line, nested to show which step feeds into which.
 
-```postgresql with=explain_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_id, amount)
+SELECT i, (i % 200) + 1, (i * 10.5)::NUMERIC(10,2)
+FROM generate_series(1, 20000) AS i;
+
+CREATE INDEX idx_orders_customer_id ON orders (customer_id);
+
+-- Query
 EXPLAIN SELECT customer_id, SUM(amount) AS total
 FROM orders
 WHERE customer_id < 100
@@ -68,7 +107,20 @@ GROUP BY customer_id;
 - `EXPLAIN` output mixes generic operation names, `Seq Scan`, `Index Scan`, `HashAggregate`, `Nested Loop`, with the specific `table` and `index` names involved in this particular `query`.
 - Learning to separate the two is part of reading a plan fluently: the operation name describes a strategy the `database` has, applicable across any `query`, while the `table` and `index` names describe what that strategy is being applied to in this one specific case.
 
-```postgresql with=explain_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_id, amount)
+SELECT i, (i % 200) + 1, (i * 10.5)::NUMERIC(10,2)
+FROM generate_series(1, 20000) AS i;
+
+CREATE INDEX idx_orders_customer_id ON orders (customer_id);
+
+-- Query
 EXPLAIN SELECT * FROM orders WHERE customer_id = 50 OR customer_id = 75;
 ```
 
@@ -111,7 +163,20 @@ This plan may report a `Bitmap Index Scan` feeding into a `Bitmap Heap Scan`, a 
 
 Run `EXPLAIN` on a `query` that filters `orders` for `amount > 205000.00`, a condition matching very few `rows` given the data generated above (`amount` tops out at 210000.00 for `order_id = 20000`), and identify the estimated `row` count and total cost reported for the plan.
 
-```postgresql with=explain_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_id, amount)
+SELECT i, (i % 200) + 1, (i * 10.5)::NUMERIC(10,2)
+FROM generate_series(1, 20000) AS i;
+
+CREATE INDEX idx_orders_customer_id ON orders (customer_id);
+
+-- Query
 -- Write your query below
 ```
 

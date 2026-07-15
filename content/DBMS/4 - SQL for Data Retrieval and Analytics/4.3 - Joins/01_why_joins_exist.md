@@ -10,7 +10,7 @@ This is precisely the problem a **`join`** solves: combining `rows` from two or 
 
 Three small `tables` model the food delivery system: customers who place orders, restaurants that fulfill them, and the orders that connect the two.
 
-```postgresql file=delivery.sql
+```text
 CREATE TABLE customers (
     customer_id INTEGER PRIMARY KEY,
     customer_name TEXT,
@@ -53,7 +53,49 @@ INSERT INTO orders (order_id, customer_id, restaurant_id, amount, order_date) VA
 (6, 2, 3, 180.00, '2025-05-06');
 ```
 
-```postgresql with=delivery.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    city TEXT
+);
+
+CREATE TABLE restaurants (
+    restaurant_id INTEGER PRIMARY KEY,
+    restaurant_name TEXT,
+    city TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(customer_id),
+    restaurant_id INTEGER REFERENCES restaurants(restaurant_id),
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO customers (customer_id, customer_name, city) VALUES
+(1, 'Aditi Kulkarni', 'Pune'),
+(2, 'Rohan Das', 'Kolkata'),
+(3, 'Kavya Nair', 'Kochi'),
+(4, 'Imran Sheikh', 'Hyderabad'),
+(5, 'Neha Bhatt', 'Ahmedabad');
+
+INSERT INTO restaurants (restaurant_id, restaurant_name, city) VALUES
+(1, 'Pizza Palace', 'Pune'),
+(2, 'Sushi Central', 'Kolkata'),
+(3, 'Burger Barn', 'Pune'),
+(4, 'Taco Town', 'Hyderabad');
+
+INSERT INTO orders (order_id, customer_id, restaurant_id, amount, order_date) VALUES
+(1, 1, 1, 450.00, '2025-05-01'),
+(2, 2, 2, 620.00, '2025-05-02'),
+(3, 1, 3, 300.00, '2025-05-03'),
+(4, 3, 1, 500.00, '2025-05-04'),
+(5, 4, 2, 275.00, '2025-05-05'),
+(6, 2, 3, 180.00, '2025-05-06');
+
+-- Query
 SELECT * FROM orders;
 ```
 
@@ -69,7 +111,49 @@ Keeping customer details in exactly one place, `customers`, and referencing that
 
 Without naming a specific `join` type yet, here is what combining `orders` with `customers` on their shared id looks like.
 
-```postgresql with=delivery.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    city TEXT
+);
+
+CREATE TABLE restaurants (
+    restaurant_id INTEGER PRIMARY KEY,
+    restaurant_name TEXT,
+    city TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(customer_id),
+    restaurant_id INTEGER REFERENCES restaurants(restaurant_id),
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO customers (customer_id, customer_name, city) VALUES
+(1, 'Aditi Kulkarni', 'Pune'),
+(2, 'Rohan Das', 'Kolkata'),
+(3, 'Kavya Nair', 'Kochi'),
+(4, 'Imran Sheikh', 'Hyderabad'),
+(5, 'Neha Bhatt', 'Ahmedabad');
+
+INSERT INTO restaurants (restaurant_id, restaurant_name, city) VALUES
+(1, 'Pizza Palace', 'Pune'),
+(2, 'Sushi Central', 'Kolkata'),
+(3, 'Burger Barn', 'Pune'),
+(4, 'Taco Town', 'Hyderabad');
+
+INSERT INTO orders (order_id, customer_id, restaurant_id, amount, order_date) VALUES
+(1, 1, 1, 450.00, '2025-05-01'),
+(2, 2, 2, 620.00, '2025-05-02'),
+(3, 1, 3, 300.00, '2025-05-03'),
+(4, 3, 1, 500.00, '2025-05-04'),
+(5, 4, 2, 275.00, '2025-05-05'),
+(6, 2, 3, 180.00, '2025-05-06');
+
+-- Query
 SELECT orders.order_id, customers.customer_name, orders.amount
 FROM orders
 JOIN customers ON orders.customer_id = customers.customer_id;
@@ -87,7 +171,49 @@ JOIN customers ON orders.customer_id = customers.customer_id;
 
 It helps to think of a `join` as building a temporary, wider `table` on the fly, made only for the duration of this one `query`, by pairing up matching `rows` from each side.
 
-```postgresql with=delivery.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    city TEXT
+);
+
+CREATE TABLE restaurants (
+    restaurant_id INTEGER PRIMARY KEY,
+    restaurant_name TEXT,
+    city TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(customer_id),
+    restaurant_id INTEGER REFERENCES restaurants(restaurant_id),
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO customers (customer_id, customer_name, city) VALUES
+(1, 'Aditi Kulkarni', 'Pune'),
+(2, 'Rohan Das', 'Kolkata'),
+(3, 'Kavya Nair', 'Kochi'),
+(4, 'Imran Sheikh', 'Hyderabad'),
+(5, 'Neha Bhatt', 'Ahmedabad');
+
+INSERT INTO restaurants (restaurant_id, restaurant_name, city) VALUES
+(1, 'Pizza Palace', 'Pune'),
+(2, 'Sushi Central', 'Kolkata'),
+(3, 'Burger Barn', 'Pune'),
+(4, 'Taco Town', 'Hyderabad');
+
+INSERT INTO orders (order_id, customer_id, restaurant_id, amount, order_date) VALUES
+(1, 1, 1, 450.00, '2025-05-01'),
+(2, 2, 2, 620.00, '2025-05-02'),
+(3, 1, 3, 300.00, '2025-05-03'),
+(4, 3, 1, 500.00, '2025-05-04'),
+(5, 4, 2, 275.00, '2025-05-05'),
+(6, 2, 3, 180.00, '2025-05-06');
+
+-- Query
 SELECT orders.order_id, customers.customer_name, restaurants.restaurant_name, orders.amount
 FROM orders
 JOIN customers ON orders.customer_id = customers.customer_id
@@ -160,7 +286,49 @@ Nothing was changed in `orders`, `customers`, or `restaurants` themselves; the `
 
 Zoya needs a quick check: which restaurant did order 4 go to, by name, not by id? Write a `query` against the `orders` and `restaurants` `tables` above that returns the `order_id` and the matching `restaurant_name`, for `order_id = 4`.
 
-```postgresql with=delivery.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    city TEXT
+);
+
+CREATE TABLE restaurants (
+    restaurant_id INTEGER PRIMARY KEY,
+    restaurant_name TEXT,
+    city TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(customer_id),
+    restaurant_id INTEGER REFERENCES restaurants(restaurant_id),
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO customers (customer_id, customer_name, city) VALUES
+(1, 'Aditi Kulkarni', 'Pune'),
+(2, 'Rohan Das', 'Kolkata'),
+(3, 'Kavya Nair', 'Kochi'),
+(4, 'Imran Sheikh', 'Hyderabad'),
+(5, 'Neha Bhatt', 'Ahmedabad');
+
+INSERT INTO restaurants (restaurant_id, restaurant_name, city) VALUES
+(1, 'Pizza Palace', 'Pune'),
+(2, 'Sushi Central', 'Kolkata'),
+(3, 'Burger Barn', 'Pune'),
+(4, 'Taco Town', 'Hyderabad');
+
+INSERT INTO orders (order_id, customer_id, restaurant_id, amount, order_date) VALUES
+(1, 1, 1, 450.00, '2025-05-01'),
+(2, 2, 2, 620.00, '2025-05-02'),
+(3, 1, 3, 300.00, '2025-05-03'),
+(4, 3, 1, 500.00, '2025-05-04'),
+(5, 4, 2, 275.00, '2025-05-05'),
+(6, 2, 3, 180.00, '2025-05-06');
+
+-- Query
 -- Write your query below
 ```
 

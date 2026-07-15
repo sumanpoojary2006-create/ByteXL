@@ -9,7 +9,7 @@
 
 The `trigger` mechanism from earlier in this course is the natural building block for an audit trail, extended here to capture which `role` made a change, not just what changed.
 
-```postgresql file=audit_demo.sql
+```text
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     status TEXT
@@ -28,7 +28,25 @@ CREATE TABLE audit_log (
 INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit');
 ```
 
-```postgresql with=audit_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+CREATE TABLE audit_log (
+    audit_id SERIAL PRIMARY KEY,
+    table_name TEXT,
+    action TEXT,
+    changed_by TEXT,
+    changed_at TIMESTAMP DEFAULT NOW(),
+    old_data JSONB,
+    new_data JSONB
+);
+
+INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit');
+
+-- Query
 CREATE FUNCTION audit_shipments_change()
 RETURNS TRIGGER
 LANGUAGE plpgsql
@@ -61,7 +79,47 @@ EXECUTE FUNCTION audit_shipments_change();
 
 Every change to `shipments` from this point forward is captured automatically, with no cooperation required from whatever code issues the change.
 
-```postgresql with=audit_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+CREATE TABLE audit_log (
+    audit_id SERIAL PRIMARY KEY,
+    table_name TEXT,
+    action TEXT,
+    changed_by TEXT,
+    changed_at TIMESTAMP DEFAULT NOW(),
+    old_data JSONB,
+    new_data JSONB
+);
+
+INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit');
+
+CREATE FUNCTION audit_shipments_change()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO audit_log (table_name, action, changed_by, old_data, new_data)
+    VALUES (
+        'shipments',
+        TG_OP,
+        current_user,
+        CASE WHEN TG_OP != 'INSERT' THEN to_jsonb(OLD) ELSE NULL END,
+        CASE WHEN TG_OP != 'DELETE' THEN to_jsonb(NEW) ELSE NULL END
+    );
+    RETURN COALESCE(NEW, OLD);
+END;
+$$;
+
+CREATE TRIGGER trg_audit_shipments
+AFTER INSERT OR UPDATE OR DELETE ON shipments
+FOR EACH ROW
+EXECUTE FUNCTION audit_shipments_change();
+
+-- Query
 UPDATE shipments SET status = 'delivered' WHERE shipment_id = 1;
 
 SELECT table_name, action, changed_by, old_data, new_data FROM audit_log;
@@ -75,7 +133,47 @@ The audit entry shows `action = 'UPDATE'`, `changed_by` recording exactly which 
 
 A `trigger` naturally captures `INSERT`, `UPDATE`, and `DELETE`, since those are the events a `trigger` fires on, but auditing "who read this sensitive data" is a genuinely different, harder problem, since a plain `SELECT` does not fire a `trigger` at all. PostgreSQL addresses this through server-level logging configuration and extensions purpose-built for statement auditing, tracking every `query` executed against the server, not just changes.
 
-```postgresql with=audit_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+CREATE TABLE audit_log (
+    audit_id SERIAL PRIMARY KEY,
+    table_name TEXT,
+    action TEXT,
+    changed_by TEXT,
+    changed_at TIMESTAMP DEFAULT NOW(),
+    old_data JSONB,
+    new_data JSONB
+);
+
+INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit');
+
+CREATE FUNCTION audit_shipments_change()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO audit_log (table_name, action, changed_by, old_data, new_data)
+    VALUES (
+        'shipments',
+        TG_OP,
+        current_user,
+        CASE WHEN TG_OP != 'INSERT' THEN to_jsonb(OLD) ELSE NULL END,
+        CASE WHEN TG_OP != 'DELETE' THEN to_jsonb(NEW) ELSE NULL END
+    );
+    RETURN COALESCE(NEW, OLD);
+END;
+$$;
+
+CREATE TRIGGER trg_audit_shipments
+AFTER INSERT OR UPDATE OR DELETE ON shipments
+FOR EACH ROW
+EXECUTE FUNCTION audit_shipments_change();
+
+-- Query
 SHOW log_statement;
 ```
 
@@ -129,7 +227,47 @@ An audit trail does not stop an unauthorized action from happening; `row-level s
 
 Insert a new shipment and then delete it, and confirm the audit log captures both the `INSERT` and the `DELETE` as two separate, distinct entries, each recording the correct `role` and `row` data.
 
-```postgresql with=audit_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+CREATE TABLE audit_log (
+    audit_id SERIAL PRIMARY KEY,
+    table_name TEXT,
+    action TEXT,
+    changed_by TEXT,
+    changed_at TIMESTAMP DEFAULT NOW(),
+    old_data JSONB,
+    new_data JSONB
+);
+
+INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit');
+
+CREATE FUNCTION audit_shipments_change()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO audit_log (table_name, action, changed_by, old_data, new_data)
+    VALUES (
+        'shipments',
+        TG_OP,
+        current_user,
+        CASE WHEN TG_OP != 'INSERT' THEN to_jsonb(OLD) ELSE NULL END,
+        CASE WHEN TG_OP != 'DELETE' THEN to_jsonb(NEW) ELSE NULL END
+    );
+    RETURN COALESCE(NEW, OLD);
+END;
+$$;
+
+CREATE TRIGGER trg_audit_shipments
+AFTER INSERT OR UPDATE OR DELETE ON shipments
+FOR EACH ROW
+EXECUTE FUNCTION audit_shipments_change();
+
+-- Query
 -- Write your insert, delete, and query below
 ```
 

@@ -10,7 +10,7 @@ What Aditya needs is a single statement that inserts a `row` if it is new and up
 
 An upsert only makes sense once the `database` has a rule to check a new `row` against, so Aditya's enrollments `table` needs a `UNIQUE` `constraint` on the combination of student_id and course_id, which states plainly that the same student cannot be enrolled in the same course twice.
 
-```postgresql file=schema.sql
+```text
 CREATE TABLE students (
     student_id INTEGER PRIMARY KEY,
     full_name TEXT,
@@ -57,7 +57,45 @@ That `UNIQUE (student_id, course_id)` line is what gives `ON CONFLICT` something
 
 Aditya's first case: Neha Sharma's Database Systems enrollment already exists with no grade recorded, and the new submission carries her final grade, B+. He writes this as a single statement.
 
-```postgresql with=schema.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    city TEXT
+);
+
+INSERT INTO students (student_id, full_name, city) VALUES
+(1, 'Omkar Rane', 'Bengaluru'),
+(2, 'Neha Sharma', 'Mysuru'),
+(3, 'Varun Nair', 'Chennai');
+
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    title TEXT,
+    department TEXT,
+    credits INTEGER
+);
+
+INSERT INTO courses (course_id, title, department, credits) VALUES
+(101, 'Database Systems', 'Computer Science', 4),
+(102, 'Data Structures', 'Computer Science', 4),
+(103, 'Linear Algebra', 'Mathematics', 3);
+
+CREATE TABLE enrollments (
+    enrollment_id INTEGER PRIMARY KEY,
+    student_id INTEGER REFERENCES students(student_id),
+    course_id INTEGER REFERENCES courses(course_id),
+    enrolled_on DATE,
+    grade TEXT,
+    UNIQUE (student_id, course_id)
+);
+
+INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade) VALUES
+(1, 1, 101, '2025-02-01', 'A'),
+(2, 2, 101, '2025-02-02', NULL),
+(3, 3, 103, '2025-02-03', 'B+');
+
+-- Query
 INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade)
 VALUES (4, 2, 101, '2025-02-02', 'B+')
 ON CONFLICT (student_id, course_id)
@@ -80,7 +118,45 @@ PostgreSQL processed this in three steps:
 
 Aditya's second case: Varun Nair has newly registered for Data Structures, course_id 102, a pairing that has never been submitted before.
 
-```postgresql with=schema.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    city TEXT
+);
+
+INSERT INTO students (student_id, full_name, city) VALUES
+(1, 'Omkar Rane', 'Bengaluru'),
+(2, 'Neha Sharma', 'Mysuru'),
+(3, 'Varun Nair', 'Chennai');
+
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    title TEXT,
+    department TEXT,
+    credits INTEGER
+);
+
+INSERT INTO courses (course_id, title, department, credits) VALUES
+(101, 'Database Systems', 'Computer Science', 4),
+(102, 'Data Structures', 'Computer Science', 4),
+(103, 'Linear Algebra', 'Mathematics', 3);
+
+CREATE TABLE enrollments (
+    enrollment_id INTEGER PRIMARY KEY,
+    student_id INTEGER REFERENCES students(student_id),
+    course_id INTEGER REFERENCES courses(course_id),
+    enrolled_on DATE,
+    grade TEXT,
+    UNIQUE (student_id, course_id)
+);
+
+INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade) VALUES
+(1, 1, 101, '2025-02-01', 'A'),
+(2, 2, 101, '2025-02-02', NULL),
+(3, 3, 103, '2025-02-03', 'B+');
+
+-- Query
 INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade)
 VALUES (5, 3, 102, '2025-02-10', NULL)
 ON CONFLICT (student_id, course_id)
@@ -98,7 +174,45 @@ The exact same statement Aditya used a moment ago to update an existing `row` he
 
 Sometimes there is no update to make at all, only a wish to insert a `row` if it is not already there and quietly skip it otherwise. `DO NOTHING` covers exactly that.
 
-```postgresql with=schema.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    city TEXT
+);
+
+INSERT INTO students (student_id, full_name, city) VALUES
+(1, 'Omkar Rane', 'Bengaluru'),
+(2, 'Neha Sharma', 'Mysuru'),
+(3, 'Varun Nair', 'Chennai');
+
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    title TEXT,
+    department TEXT,
+    credits INTEGER
+);
+
+INSERT INTO courses (course_id, title, department, credits) VALUES
+(101, 'Database Systems', 'Computer Science', 4),
+(102, 'Data Structures', 'Computer Science', 4),
+(103, 'Linear Algebra', 'Mathematics', 3);
+
+CREATE TABLE enrollments (
+    enrollment_id INTEGER PRIMARY KEY,
+    student_id INTEGER REFERENCES students(student_id),
+    course_id INTEGER REFERENCES courses(course_id),
+    enrolled_on DATE,
+    grade TEXT,
+    UNIQUE (student_id, course_id)
+);
+
+INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade) VALUES
+(1, 1, 101, '2025-02-01', 'A'),
+(2, 2, 101, '2025-02-02', NULL),
+(3, 3, 103, '2025-02-03', 'B+');
+
+-- Query
 INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade)
 VALUES (6, 1, 101, '2025-02-01', 'A')
 ON CONFLICT (student_id, course_id)
@@ -147,7 +261,45 @@ Nothing comes back from `RETURNING` at all, because student_id 1 and course_id 1
 
 Omkar Rane's Linear Algebra grade needs to be recorded for the first time as A-, using an upsert in case it was already partially submitted.
 
-```postgresql with=schema.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    city TEXT
+);
+
+INSERT INTO students (student_id, full_name, city) VALUES
+(1, 'Omkar Rane', 'Bengaluru'),
+(2, 'Neha Sharma', 'Mysuru'),
+(3, 'Varun Nair', 'Chennai');
+
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    title TEXT,
+    department TEXT,
+    credits INTEGER
+);
+
+INSERT INTO courses (course_id, title, department, credits) VALUES
+(101, 'Database Systems', 'Computer Science', 4),
+(102, 'Data Structures', 'Computer Science', 4),
+(103, 'Linear Algebra', 'Mathematics', 3);
+
+CREATE TABLE enrollments (
+    enrollment_id INTEGER PRIMARY KEY,
+    student_id INTEGER REFERENCES students(student_id),
+    course_id INTEGER REFERENCES courses(course_id),
+    enrolled_on DATE,
+    grade TEXT,
+    UNIQUE (student_id, course_id)
+);
+
+INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade) VALUES
+(1, 1, 101, '2025-02-01', 'A'),
+(2, 2, 101, '2025-02-02', NULL),
+(3, 3, 103, '2025-02-03', 'B+');
+
+-- Query
 INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade)
 VALUES (7, 1, 103, '2025-02-11', 'A-')
 ON CONFLICT (student_id, course_id)

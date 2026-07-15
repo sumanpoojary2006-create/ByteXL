@@ -8,7 +8,7 @@ He cannot type `WHERE salary > AVG(salary)` directly, since `aggregate functions
 
 The `employees` `table` holds one `row` per employee, with a salary and a department.
 
-```postgresql file=employees.sql
+```text
 CREATE TABLE employees (
     employee_id INTEGER PRIMARY KEY,
     employee_name TEXT,
@@ -26,13 +26,47 @@ INSERT INTO employees (employee_id, employee_name, department, salary, manager_i
 (6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
 ```
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department TEXT,
+    salary NUMERIC(10, 2),
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, employee_name, department, salary, manager_id) VALUES
+(1, 'Ananya Sharma', 'Engineering', 95000.00, NULL),
+(2, 'Rajat Bhatia', 'Engineering', 78000.00, 1),
+(3, 'Meghna Iyer', 'Engineering', 82000.00, 1),
+(4, 'Sameer Khan', 'Sales', 65000.00, NULL),
+(5, 'Pooja Reddy', 'Sales', 58000.00, 4),
+(6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
+
+-- Query
 SELECT AVG(salary) FROM employees;
 ```
 
 That single number, the company-wide average salary, is what Kabir's question actually depends on. Instead of running this `query` separately, copying the number down, and typing it into a second `query` by hand, a subquery lets him embed this exact `query` inside another one.
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department TEXT,
+    salary NUMERIC(10, 2),
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, employee_name, department, salary, manager_id) VALUES
+(1, 'Ananya Sharma', 'Engineering', 95000.00, NULL),
+(2, 'Rajat Bhatia', 'Engineering', 78000.00, 1),
+(3, 'Meghna Iyer', 'Engineering', 82000.00, 1),
+(4, 'Sameer Khan', 'Sales', 65000.00, NULL),
+(5, 'Pooja Reddy', 'Sales', 58000.00, 4),
+(6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
+
+-- Query
 SELECT employee_name, salary
 FROM employees
 WHERE salary > (SELECT AVG(salary) FROM employees);
@@ -71,7 +105,24 @@ Three employees earn above that computed average, and the `query` never had to h
 
 It might seem simpler to just run the average `query` once, read the number, and paste it into a second `query`.
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department TEXT,
+    salary NUMERIC(10, 2),
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, employee_name, department, salary, manager_id) VALUES
+(1, 'Ananya Sharma', 'Engineering', 95000.00, NULL),
+(2, 'Rajat Bhatia', 'Engineering', 78000.00, 1),
+(3, 'Meghna Iyer', 'Engineering', 82000.00, 1),
+(4, 'Sameer Khan', 'Sales', 65000.00, NULL),
+(5, 'Pooja Reddy', 'Sales', 58000.00, 4),
+(6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
+
+-- Query
 SELECT employee_name, salary
 FROM employees
 WHERE salary > 73000.00;
@@ -87,7 +138,24 @@ The subquery version recalculates the average fresh every time the outer `query`
 
 A subquery is not a special SQL feature with its own grammar; it is a completely ordinary `SELECT` statement, the same kind covered since the very first lesson of this course, just placed inside parentheses in a position where the outer `query` expects a value. Any valid `SELECT` can, in principle, act as a subquery, including one with its own `WHERE`, `GROUP BY`, or `JOIN` clauses.
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department TEXT,
+    salary NUMERIC(10, 2),
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, employee_name, department, salary, manager_id) VALUES
+(1, 'Ananya Sharma', 'Engineering', 95000.00, NULL),
+(2, 'Rajat Bhatia', 'Engineering', 78000.00, 1),
+(3, 'Meghna Iyer', 'Engineering', 82000.00, 1),
+(4, 'Sameer Khan', 'Sales', 65000.00, NULL),
+(5, 'Pooja Reddy', 'Sales', 58000.00, 4),
+(6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
+
+-- Query
 SELECT employee_name, salary
 FROM employees
 WHERE salary > (
@@ -136,7 +204,24 @@ A subquery is not limited to sitting inside `WHERE`. The rest of this chapter ex
 
 Kabir wants to find every employee earning less than Ananya Sharma, the highest-paid employee in the `table`. Write a `query` against `employees` above using a subquery that finds Ananya's salary and compares every employee against it.
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department TEXT,
+    salary NUMERIC(10, 2),
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, employee_name, department, salary, manager_id) VALUES
+(1, 'Ananya Sharma', 'Engineering', 95000.00, NULL),
+(2, 'Rajat Bhatia', 'Engineering', 78000.00, 1),
+(3, 'Meghna Iyer', 'Engineering', 82000.00, 1),
+(4, 'Sameer Khan', 'Sales', 65000.00, NULL),
+(5, 'Pooja Reddy', 'Sales', 58000.00, 4),
+(6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
+
+-- Query
 -- Write your query below
 ```
 

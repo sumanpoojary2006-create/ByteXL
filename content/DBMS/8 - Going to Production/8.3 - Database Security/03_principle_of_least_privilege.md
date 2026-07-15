@@ -7,7 +7,7 @@
 
 Granting broad, unrestricted access up front avoids the friction of figuring out exactly what a `role` needs, but it turns every `role` into a much larger liability than it needs to be.
 
-```postgresql file=least_privilege_demo.sql
+```text
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     status TEXT,
@@ -22,7 +22,21 @@ CREATE TABLE payroll (
 CREATE ROLE reporting_app WITH LOGIN PASSWORD 'change_this_in_real_use';
 ```
 
-```postgresql with=least_privilege_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT,
+    amount NUMERIC(10, 2)
+);
+
+CREATE TABLE payroll (
+    employee_id INTEGER PRIMARY KEY,
+    salary NUMERIC(10, 2)
+);
+
+CREATE ROLE reporting_app WITH LOGIN PASSWORD 'change_this_in_real_use';
+
+-- Query
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO reporting_app;
 ```
 
@@ -38,7 +52,21 @@ Two risks follow directly from this:
 
 The least-privilege alternative starts from the opposite direction: name exactly what this `role` needs, and grant only that.
 
-```postgresql with=least_privilege_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT,
+    amount NUMERIC(10, 2)
+);
+
+CREATE TABLE payroll (
+    employee_id INTEGER PRIMARY KEY,
+    salary NUMERIC(10, 2)
+);
+
+CREATE ROLE reporting_app WITH LOGIN PASSWORD 'change_this_in_real_use';
+
+-- Query
 REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA public FROM reporting_app;
 
 GRANT SELECT ON shipments TO reporting_app;
@@ -53,7 +81,21 @@ GRANT SELECT ON shipments TO reporting_app;
 
 The same discipline applies to individual developer accounts, not only automated services. A developer debugging a shipment-tracking issue does not need write access to `payroll` either, even though as a human they might reasonably need broader access than an automated reporting service in other ways.
 
-```postgresql with=least_privilege_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT,
+    amount NUMERIC(10, 2)
+);
+
+CREATE TABLE payroll (
+    employee_id INTEGER PRIMARY KEY,
+    salary NUMERIC(10, 2)
+);
+
+CREATE ROLE reporting_app WITH LOGIN PASSWORD 'change_this_in_real_use';
+
+-- Query
 CREATE ROLE dev_alia WITH LOGIN PASSWORD 'change_this_in_real_use';
 GRANT SELECT, UPDATE ON shipments TO dev_alia;
 ```
@@ -66,7 +108,24 @@ GRANT SELECT, UPDATE ON shipments TO dev_alia;
 - `Least privilege` is not a one-time setup step; permissions tend to accumulate over time as `role`s are granted access for a specific, temporary task and then never revisited.
 - Periodically auditing what a `role` can actually do, compared to what it currently needs, is part of maintaining the principle over the long run.
 
-```postgresql with=least_privilege_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT,
+    amount NUMERIC(10, 2)
+);
+
+CREATE TABLE payroll (
+    employee_id INTEGER PRIMARY KEY,
+    salary NUMERIC(10, 2)
+);
+
+CREATE ROLE reporting_app WITH LOGIN PASSWORD 'change_this_in_real_use';
+
+CREATE ROLE dev_alia WITH LOGIN PASSWORD 'change_this_in_real_use';
+GRANT SELECT, UPDATE ON shipments TO dev_alia;
+
+-- Query
 SELECT grantee, table_name, privilege_type
 FROM information_schema.role_table_grants
 WHERE grantee = 'reporting_app';
@@ -109,7 +168,24 @@ WHERE grantee = 'reporting_app';
 
 Audit `dev_alia`'s current privileges using `information_schema.role_table_grants`, then revoke her `UPDATE` privilege on `shipments`, reasoning in a comment about whether a read-only debugging task genuinely needs write access at all.
 
-```postgresql with=least_privilege_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT,
+    amount NUMERIC(10, 2)
+);
+
+CREATE TABLE payroll (
+    employee_id INTEGER PRIMARY KEY,
+    salary NUMERIC(10, 2)
+);
+
+CREATE ROLE reporting_app WITH LOGIN PASSWORD 'change_this_in_real_use';
+
+CREATE ROLE dev_alia WITH LOGIN PASSWORD 'change_this_in_real_use';
+GRANT SELECT, UPDATE ON shipments TO dev_alia;
+
+-- Query
 -- Write your query, revoke, and comment below
 ```
 

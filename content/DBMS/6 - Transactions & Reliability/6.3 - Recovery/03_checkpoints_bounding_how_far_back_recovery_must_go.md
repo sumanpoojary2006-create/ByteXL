@@ -7,7 +7,7 @@
 
 A checkpoint is a point in time where the `database` guarantees that every change logged before that point has also been fully written out to the real data files on disk, not just recorded in the log.
 
-```postgresql file=checkpoint_demo.sql
+```text
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
     balance NUMERIC(10, 2)
@@ -16,7 +16,15 @@ CREATE TABLE accounts (
 INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00);
 ```
 
-```postgresql with=checkpoint_demo.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00);
+
+-- Query
 CHECKPOINT;
 ```
 
@@ -29,7 +37,15 @@ Running `CHECKPOINT` explicitly forces PostgreSQL to flush every pending change 
 
 Without a checkpoint, a `database` restarting after a crash would have no way to know how far back its data files were already up to date, so it would have to replay every single log record ever written, from the very start of the log, just to be safe. A checkpoint gives `recovery` a known, recent starting line.
 
-```postgresql with=checkpoint_demo.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00);
+
+-- Query
 UPDATE accounts SET balance = balance - 500.00 WHERE account_id = 1;
 UPDATE accounts SET balance = balance - 200.00 WHERE account_id = 1;
 
@@ -53,7 +69,15 @@ The two updates before `CHECKPOINT` are guaranteed to already be reflected in th
 
 Running `CHECKPOINT` by hand is useful for understanding what it does, but in practice, PostgreSQL runs checkpoints automatically on a regular schedule, controlled by settings like how much time has passed or how much log activity has accumulated since the last one.
 
-```postgresql with=checkpoint_demo.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00);
+
+-- Query
 SHOW checkpoint_timeout;
 ```
 
@@ -90,7 +114,15 @@ SHOW checkpoint_timeout;
 
 Run several updates against the `accounts` `table` above, issue a `CHECKPOINT`, run one more update, and write a comment explaining exactly which of these updates `recovery` would need to replay from the log if a crash happened immediately after the final update.
 
-```postgresql with=checkpoint_demo.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00);
+
+-- Query
 -- Write your queries and comment below
 ```
 

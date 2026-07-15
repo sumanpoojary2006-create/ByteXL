@@ -10,7 +10,7 @@ Priya, the finance analyst from earlier reporting lessons, has started noticing 
 
 A `database` does not read or write one `row` at a time from disk; it reads and writes in fixed-size blocks called pages, typically 8 kilobytes each in PostgreSQL, with many `rows` packed into each page.
 
-```postgresql file=storage_demo.sql
+```text
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
     customer_name TEXT,
@@ -22,7 +22,18 @@ SELECT i, 'Customer ' || i, (i * 37.5)::NUMERIC(10,2)
 FROM generate_series(1, 500) AS i;
 ```
 
-```postgresql with=storage_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 37.5)::NUMERIC(10,2)
+FROM generate_series(1, 500) AS i;
+
+-- Query
 SELECT pg_size_pretty(pg_relation_size('orders')) AS table_size_on_disk;
 ```
 
@@ -37,7 +48,18 @@ That size is not 500 individual files, one per `row` it is a small number of 8 k
 
 PostgreSQL exposes the physical location of a `row` directly through a hidden system `column` called `ctid`, which identifies exactly which page and which position within that page a `row` currently occupies.
 
-```postgresql with=storage_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 37.5)::NUMERIC(10,2)
+FROM generate_series(1, 500) AS i;
+
+-- Query
 SELECT ctid, order_id, customer_name
 FROM orders
 WHERE order_id IN (1, 2, 250, 500)
@@ -54,7 +76,18 @@ This is the physical reality behind every `query`: reading a `row` means finding
 
 Disks, even fast solid-state ones, are dramatically better at reading one large contiguous chunk than at making many small, scattered reads. A `database` exploits this by always reading a full page at once, even if a `query` only needs one `row` from it, since the `row` cannot be read in isolation from the page it lives in.
 
-```postgresql with=storage_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 37.5)::NUMERIC(10,2)
+FROM generate_series(1, 500) AS i;
+
+-- Query
 SELECT (ctid::text::point)[0] AS page_number,
        COUNT(*) AS rows_on_page
 FROM orders
@@ -105,7 +138,18 @@ This is the foundational fact behind why the next lessons in this unit matter so
 
 Check the total disk size of the `orders` `table` above, then look up the `ctid` values for order_id 100 and order_id 101, and note in a comment whether they appear to land on the same page.
 
-```postgresql with=storage_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 37.5)::NUMERIC(10,2)
+FROM generate_series(1, 500) AS i;
+
+-- Query
 -- Write your queries and comment below
 ```
 

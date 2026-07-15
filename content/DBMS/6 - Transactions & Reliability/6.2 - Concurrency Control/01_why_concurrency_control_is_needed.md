@@ -12,7 +12,7 @@ This is the problem **concurrency control** exists to solve: coordinating multip
 
 The `seats` `table` tracks one `row` per seat, with a simple availability flag.
 
-```postgresql file=seats.sql
+```text
 CREATE TABLE seats (
     seat_id TEXT PRIMARY KEY,
     flight_number TEXT,
@@ -24,7 +24,18 @@ INSERT INTO seats (seat_id, flight_number, is_available) VALUES
 ('14D', 'AI202', TRUE);
 ```
 
-```postgresql with=seats.sql
+```postgresql
+CREATE TABLE seats (
+    seat_id TEXT PRIMARY KEY,
+    flight_number TEXT,
+    is_available BOOLEAN
+);
+
+INSERT INTO seats (seat_id, flight_number, is_available) VALUES
+('14C', 'AI202', TRUE),
+('14D', 'AI202', TRUE);
+
+-- Query
 -- Passenger A's booking transaction:
 SELECT is_available FROM seats WHERE seat_id = '14C';
 -- Reads TRUE, seat looks available, decides to proceed.
@@ -103,7 +114,18 @@ The moment a system serves more than one person at once, which describes nearly 
 
 Reason through the seats scenario above for a different flight number, imagining two passengers both trying to book seat `14D` at the same time. Write the same read-then-update sequence for one of the two passengers against the `seats` `table` above, and note in a comment what would need to be true for the second passenger's booking to be safely rejected.
 
-```postgresql with=seats.sql
+```postgresql
+CREATE TABLE seats (
+    seat_id TEXT PRIMARY KEY,
+    flight_number TEXT,
+    is_available BOOLEAN
+);
+
+INSERT INTO seats (seat_id, flight_number, is_available) VALUES
+('14C', 'AI202', TRUE),
+('14D', 'AI202', TRUE);
+
+-- Query
 -- Write your queries below, plus a comment describing what protects the second booking
 ```
 

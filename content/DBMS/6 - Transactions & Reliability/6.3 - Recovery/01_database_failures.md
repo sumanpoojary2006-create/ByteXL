@@ -14,7 +14,7 @@ A `database`'s `recovery` system exists to survive all of these, but each one de
 
 The narrowest kind of failure affects a single `transaction`, without touching the rest of the system at all. A `CHECK` `constraint` violation, a deadlock that forces one `transaction` to abort, or an application explicitly calling `ROLLBACK`, all fall into this category.
 
-```postgresql file=accounts_failures.sql
+```text
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
     balance NUMERIC(10, 2) CHECK (balance >= 0)
@@ -23,7 +23,15 @@ CREATE TABLE accounts (
 INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00);
 ```
 
-```postgresql with=accounts_failures.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    balance NUMERIC(10, 2) CHECK (balance >= 0)
+);
+
+INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00);
+
+-- Query
 -- This transaction would fail because the CHECK constraint
 -- prevents the balance from becoming negative:
 -- BEGIN;
@@ -39,7 +47,15 @@ This `transaction` fails because it would push the balance negative, violating t
 
 A system crash is more serious: the entire `database` server process, or the machine it runs on, stops unexpectedly, whether from a power outage, an operating system crash, or the `database` software itself crashing. Anything that existed only in memory at that instant, including any `transaction` that was mid-flight, is gone the moment power returns and the process restarts.
 
-```postgresql with=accounts_failures.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    balance NUMERIC(10, 2) CHECK (balance >= 0)
+);
+
+INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00);
+
+-- Query
 BEGIN;
 UPDATE accounts SET balance = balance - 1000.00 WHERE account_id = 1;
 -- Imagine a total power loss right here, before COMMIT.
@@ -53,7 +69,15 @@ The harder question a system crash raises is about the other side of the coin: `
 
 The most serious kind of failure is a media failure: the physical storage itself, a hard drive or solid-state disk, is damaged or fails, potentially destroying data that had already been safely written and committed, not just data that was in memory. Unlike a system crash, where the data files themselves are intact and just need replaying up to date, a media failure can mean the data files are genuinely gone.
 
-```postgresql with=accounts_failures.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    balance NUMERIC(10, 2) CHECK (balance >= 0)
+);
+
+INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00);
+
+-- Query
 SELECT balance FROM accounts WHERE account_id = 1;
 ```
 
@@ -104,7 +128,15 @@ Confusing these three, or assuming one mechanism covers all of them, is a common
 
 Using the `accounts` `table` above, write a `transaction` that intentionally violates the `balance >= 0` `constraint`, confirming it is a `transaction` failure that leaves the rest of the `table` untouched, and add a comment distinguishing why this is different in scope from a full system crash.
 
-```postgresql with=accounts_failures.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    balance NUMERIC(10, 2) CHECK (balance >= 0)
+);
+
+INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00);
+
+-- Query
 -- Write your transaction and comment below
 ```
 

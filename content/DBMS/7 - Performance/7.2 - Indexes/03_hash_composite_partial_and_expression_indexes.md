@@ -13,7 +13,7 @@ Each of these has a dedicated `index` type suited to it.
 
 Demonstrating these variants takes a `table` with more `columns` and enough `rows` that the planner genuinely prefers an `index` over a `sequential scan`: 10000 orders with unique customer names, four regions, and a `status` where only 1 order in 100 is still active and another 1 in 100 is cancelled.
 
-```postgresql file=index_variants.sql
+```text
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
     customer_name TEXT,
@@ -42,7 +42,31 @@ ANALYZE orders;
 
 A `hash index`, briefly introduced when file organization strategies were first covered, stores entries by their computed hash value rather than in sorted order, which makes it well suited to exact-match lookups but useless for range `queries`, since hashing intentionally destroys any sense of order between values.
 
-```postgresql with=index_variants.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    status TEXT,
+    region TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, status, region, amount)
+SELECT i,
+       'Customer ' || i,
+       CASE WHEN i % 100 = 3 THEN 'active'
+            WHEN i % 100 = 7 THEN 'cancelled'
+            ELSE 'completed' END,
+       CASE WHEN i <= 2500 THEN 'North'
+            WHEN i <= 5000 THEN 'South'
+            WHEN i <= 7500 THEN 'East'
+            ELSE 'West' END,
+       (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 10000) AS i;
+
+ANALYZE orders;
+
+-- Query
 CREATE INDEX idx_orders_name_hash ON orders USING hash (customer_name);
 
 EXPLAIN SELECT * FROM orders WHERE customer_name = 'Customer 7500';
@@ -58,7 +82,31 @@ In practice, a B-tree `index` handles equality just as well as a `hash index` wh
 
 A `composite index` spans two or more `columns` together, useful when `queries` consistently filter on the same combination of `columns`.
 
-```postgresql with=index_variants.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    status TEXT,
+    region TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, status, region, amount)
+SELECT i,
+       'Customer ' || i,
+       CASE WHEN i % 100 = 3 THEN 'active'
+            WHEN i % 100 = 7 THEN 'cancelled'
+            ELSE 'completed' END,
+       CASE WHEN i <= 2500 THEN 'North'
+            WHEN i <= 5000 THEN 'South'
+            WHEN i <= 7500 THEN 'East'
+            ELSE 'West' END,
+       (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 10000) AS i;
+
+ANALYZE orders;
+
+-- Query
 CREATE INDEX idx_orders_status_region ON orders (status, region);
 
 EXPLAIN SELECT * FROM orders WHERE status = 'active' AND region = 'North';
@@ -74,7 +122,31 @@ Column order in a `composite index` matters: this same `index` can still help a 
 
 A `partial index` includes only the `rows` matching a specified condition, which keeps the `index` smaller and faster to maintain when most `queries` only ever care about a subset of the `table`.
 
-```postgresql with=index_variants.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    status TEXT,
+    region TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, status, region, amount)
+SELECT i,
+       'Customer ' || i,
+       CASE WHEN i % 100 = 3 THEN 'active'
+            WHEN i % 100 = 7 THEN 'cancelled'
+            ELSE 'completed' END,
+       CASE WHEN i <= 2500 THEN 'North'
+            WHEN i <= 5000 THEN 'South'
+            WHEN i <= 7500 THEN 'East'
+            ELSE 'West' END,
+       (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 10000) AS i;
+
+ANALYZE orders;
+
+-- Query
 CREATE INDEX idx_orders_active_amount ON orders (amount) WHERE status = 'active';
 
 EXPLAIN SELECT * FROM orders WHERE status = 'active' AND amount > 100000.00;
@@ -85,7 +157,31 @@ EXPLAIN SELECT * FROM orders WHERE status = 'active' AND amount > 100000.00;
 
 ![A partial index stores only the rows matching the query condition](images/06_partial_index_active_rows_only.png)
 
-```postgresql with=index_variants.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    status TEXT,
+    region TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, status, region, amount)
+SELECT i,
+       'Customer ' || i,
+       CASE WHEN i % 100 = 3 THEN 'active'
+            WHEN i % 100 = 7 THEN 'cancelled'
+            ELSE 'completed' END,
+       CASE WHEN i <= 2500 THEN 'North'
+            WHEN i <= 5000 THEN 'South'
+            WHEN i <= 7500 THEN 'East'
+            ELSE 'West' END,
+       (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 10000) AS i;
+
+ANALYZE orders;
+
+-- Query
 CREATE INDEX idx_orders_amount_full ON orders (amount);
 CREATE INDEX idx_orders_active_amount ON orders (amount) WHERE status = 'active';
 
@@ -99,7 +195,31 @@ The `partial index` is a small fraction of the full one's size, since it carries
 
 An expression `index` `indexes` the result of a `function` or calculation applied to a `column`, rather than the `column`'s raw stored value, which matters when `queries` consistently search using a transformed version of that `column`.
 
-```postgresql with=index_variants.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    status TEXT,
+    region TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, status, region, amount)
+SELECT i,
+       'Customer ' || i,
+       CASE WHEN i % 100 = 3 THEN 'active'
+            WHEN i % 100 = 7 THEN 'cancelled'
+            ELSE 'completed' END,
+       CASE WHEN i <= 2500 THEN 'North'
+            WHEN i <= 5000 THEN 'South'
+            WHEN i <= 7500 THEN 'East'
+            ELSE 'West' END,
+       (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 10000) AS i;
+
+ANALYZE orders;
+
+-- Query
 CREATE INDEX idx_orders_lower_name ON orders (LOWER(customer_name));
 
 ANALYZE orders;
@@ -156,7 +276,31 @@ The extra `ANALYZE` is there because an expression `index` keeps its own statist
 
 Create a `partial index` on `amount` for `rows` where `status = 'cancelled'`, then confirm with `EXPLAIN` that a `query` for cancelled orders with `amount > 100000.00` uses it.
 
-```postgresql with=index_variants.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    status TEXT,
+    region TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, status, region, amount)
+SELECT i,
+       'Customer ' || i,
+       CASE WHEN i % 100 = 3 THEN 'active'
+            WHEN i % 100 = 7 THEN 'cancelled'
+            ELSE 'completed' END,
+       CASE WHEN i <= 2500 THEN 'North'
+            WHEN i <= 5000 THEN 'South'
+            WHEN i <= 7500 THEN 'East'
+            ELSE 'West' END,
+       (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 10000) AS i;
+
+ANALYZE orders;
+
+-- Query
 -- Write your queries below
 ```
 

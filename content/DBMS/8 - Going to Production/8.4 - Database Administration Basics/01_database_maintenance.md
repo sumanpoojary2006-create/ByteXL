@@ -10,7 +10,7 @@ Left unmanaged, this leftover space accumulates, and **`database` maintenance** 
 
 PostgreSQL's approach to updates, called `MVCC`, multiversion concurrency control, is what makes isolation between concurrent `transactions` possible in the first place, and it has a direct physical consequence.
 
-```postgresql file=maintenance_demo.sql
+```text
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     status TEXT
@@ -20,7 +20,16 @@ INSERT INTO shipments (shipment_id, status)
 SELECT i, 'in_transit' FROM generate_series(1, 5000) AS i;
 ```
 
-```postgresql with=maintenance_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status)
+SELECT i, 'in_transit' FROM generate_series(1, 5000) AS i;
+
+-- Query
 SELECT pg_size_pretty(pg_relation_size('shipments')) AS size_before_updates;
 
 UPDATE shipments SET status = 'delivered' WHERE shipment_id <= 4000;
@@ -39,7 +48,16 @@ Even though this `UPDATE` did not add a single new `row`, the `table`'s physical
 
 `VACUUM` is the command that scans a `table` for dead tuples and marks their space as reusable for future inserts and updates.
 
-```postgresql with=maintenance_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status)
+SELECT i, 'in_transit' FROM generate_series(1, 5000) AS i;
+
+-- Query
 VACUUM shipments;
 
 SELECT pg_size_pretty(pg_relation_size('shipments')) AS size_after_vacuum;
@@ -52,7 +70,16 @@ SELECT pg_size_pretty(pg_relation_size('shipments')) AS size_after_vacuum;
 
 The `query optimizer`, covered in the performance unit, relies on `table` and `column` statistics to estimate costs and choose plans, and those statistics do not update themselves automatically after a large batch of changes.
 
-```postgresql with=maintenance_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status)
+SELECT i, 'in_transit' FROM generate_series(1, 5000) AS i;
+
+-- Query
 ANALYZE shipments;
 
 SELECT relname, n_live_tup, n_dead_tup FROM pg_stat_user_tables WHERE relname = 'shipments';
@@ -67,7 +94,16 @@ SELECT relname, n_live_tup, n_dead_tup FROM pg_stat_user_tables WHERE relname = 
 
 Running `VACUUM` and `ANALYZE` manually after every change would be impractical, which is why PostgreSQL runs a background process, autovacuum, that performs both automatically once a `table`'s dead-tuple count or data changes cross a configured threshold.
 
-```postgresql with=maintenance_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status)
+SELECT i, 'in_transit' FROM generate_series(1, 5000) AS i;
+
+-- Query
 SHOW autovacuum;
 ```
 
@@ -111,7 +147,16 @@ SHOW autovacuum;
 
 Delete a large portion of the `shipments` `table`, check `n_dead_tup` before running `VACUUM`, then run it and check again, confirming the dead tuple count drops.
 
-```postgresql with=maintenance_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status)
+SELECT i, 'in_transit' FROM generate_series(1, 5000) AS i;
+
+-- Query
 -- Write your queries below
 ```
 

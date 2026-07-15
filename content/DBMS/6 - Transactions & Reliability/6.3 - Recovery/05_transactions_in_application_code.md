@@ -8,7 +8,7 @@ Closing out this unit means connecting everything learned about `transactions`, 
 
 Most `database` client libraries default to auto-commit mode, where every individual statement is automatically wrapped in its own tiny `transaction` and committed immediately, unless the code explicitly starts a `transaction` itself.
 
-```postgresql file=app_transactions.sql
+```text
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
     balance NUMERIC(10, 2) CHECK (balance >= 0)
@@ -17,7 +17,15 @@ CREATE TABLE accounts (
 INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00), (2, 3000.00);
 ```
 
-```postgresql with=app_transactions.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    balance NUMERIC(10, 2) CHECK (balance >= 0)
+);
+
+INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00), (2, 3000.00);
+
+-- Query
 UPDATE accounts SET balance = balance - 500.00 WHERE account_id = 1;
 UPDATE accounts SET balance = balance + 500.00 WHERE account_id = 2;
 
@@ -35,7 +43,15 @@ This is the behavior every application-level bug about "half a transfer went thr
 
 The fix, already demonstrated throughout this unit, is for application code to explicitly start a `transaction` before the first related statement and commit only after the last one succeeds.
 
-```postgresql with=app_transactions.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    balance NUMERIC(10, 2) CHECK (balance >= 0)
+);
+
+INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00), (2, 3000.00);
+
+-- Query
 BEGIN;
 UPDATE accounts SET balance = balance - 500.00 WHERE account_id = 1;
 UPDATE accounts SET balance = balance + 500.00 WHERE account_id = 2;
@@ -46,7 +62,15 @@ SELECT * FROM accounts;
 
 In real application code, this pattern is usually expressed with a try-and-catch style structure, roughly: open a `connection`, begin a `transaction`, run the statements the business operation requires, and commit only if every one of them succeeded; if any step raises an error, catch it and roll back instead of committing. Written as pseudocode alongside the SQL it wraps, the shape looks like this:
 
-```postgresql with=app_transactions.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    balance NUMERIC(10, 2) CHECK (balance >= 0)
+);
+
+INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00), (2, 3000.00);
+
+-- Query
 -- try:
 BEGIN;
 UPDATE accounts SET balance = balance - 500.00 WHERE account_id = 1;
@@ -67,7 +91,15 @@ The `COMMIT` only ever runs if both statements succeeded without error; any exce
 
 Every `lock` a `transaction` holds, covered in the concurrency control chapter, stays held until that `transaction` commits or rolls back. A `transaction` left open for a long time, whether because it is doing slow, unrelated work in between statements or because a bug forgot to commit at all, holds its `locks` the entire time, potentially blocking every other `transaction` that needs the same `rows`.
 
-```postgresql with=app_transactions.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    balance NUMERIC(10, 2) CHECK (balance >= 0)
+);
+
+INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00), (2, 3000.00);
+
+-- Query
 BEGIN;
 SELECT balance FROM accounts WHERE account_id = 1 FOR UPDATE;
 -- A well-behaved application does the minimum necessary work here,
@@ -83,7 +115,15 @@ The practical rule that follows directly from everything covered in this unit is
 
 Some failures covered in this unit, deadlocks in particular, are expected to happen occasionally under normal concurrent load and are meant to be retried, not treated as a fatal application error.
 
-```postgresql with=app_transactions.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    balance NUMERIC(10, 2) CHECK (balance >= 0)
+);
+
+INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00), (2, 3000.00);
+
+-- Query
 -- try:
 BEGIN;
 UPDATE accounts SET balance = balance - 200.00 WHERE account_id = 1;
@@ -138,7 +178,15 @@ Because a deadlock victim's `transaction` is guaranteed to have been fully rolle
 
 Write the try-and-catch style pseudocode pattern, in SQL with comments, for a `transaction` that inserts a new account and immediately transfers 100.00 into it from account 1, including a rollback branch for any failure.
 
-```postgresql with=app_transactions.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    balance NUMERIC(10, 2) CHECK (balance >= 0)
+);
+
+INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00), (2, 3000.00);
+
+-- Query
 -- Write your transaction below
 ```
 

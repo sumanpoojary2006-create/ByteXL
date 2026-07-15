@@ -8,7 +8,7 @@ This lesson connects those two facts directly to something Priya can actually se
 
 A larger `table` makes the cost of a full scan easy to observe directly.
 
-```postgresql file=scan_demo.sql
+```text
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
     customer_name TEXT,
@@ -20,7 +20,18 @@ SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
 FROM generate_series(1, 5000) AS i;
 ```
 
-```postgresql with=scan_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 5000) AS i;
+
+-- Query
 EXPLAIN SELECT * FROM orders WHERE customer_name = 'Customer 3000';
 ```
 
@@ -28,7 +39,18 @@ EXPLAIN SELECT * FROM orders WHERE customer_name = 'Customer 3000';
 - The plan here reports a "Seq Scan," short for `sequential scan`, meaning the `database` intends to read the `table` page by page, from the beginning, checking every `row`'s `customer_name` against 'Customer 3000' until it reaches the end.
 - Even though this `query` is only interested in exactly one `row` out of 5000, the heap organization from the previous lesson gives the `database` no shortcut, no way to know in advance which page holds that customer without checking.
 
-```postgresql with=scan_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 5000) AS i;
+
+-- Query
 SELECT COUNT(DISTINCT (ctid::text::point)[0]) AS pages_a_full_scan_must_read
 FROM orders;
 ```
@@ -41,7 +63,18 @@ Using the same page-number extraction from the first lesson, this counts how man
 
 Running the same shape of `query`, but filtering on `order_id`, the `table`'s `primary key`, produces a completely different plan.
 
-```postgresql with=scan_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 5000) AS i;
+
+-- Query
 EXPLAIN SELECT * FROM orders WHERE order_id = 3000;
 ```
 
@@ -57,7 +90,18 @@ Nothing about the `table`'s layout changed between these two `queries`; the only
 
 Doubling the number of `rows` in a heap `table` roughly doubles the number of pages it occupies, and a full scan reads every page, so a full scan's cost grows linearly with `table` size, a relationship worth being able to reason about directly.
 
-```postgresql with=scan_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 5000) AS i;
+
+-- Query
 SELECT pg_size_pretty(pg_relation_size('orders')) AS current_size;
 
 INSERT INTO orders (order_id, customer_name, amount)
@@ -113,7 +157,18 @@ A full scan is not always the wrong choice:
 
 Run `EXPLAIN` on a `query` filtering the `orders` `table` above for `amount > 120000`, a condition only a small fraction of `rows` will satisfy (`amount` tops out at 125000.00 for `order_id = 10000`), and note in a comment whether the plan shows a `sequential scan` and why that is expected given everything covered in this lesson.
 
-```postgresql with=scan_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 5000) AS i;
+
+-- Query
 -- Write your query and comment below
 ```
 

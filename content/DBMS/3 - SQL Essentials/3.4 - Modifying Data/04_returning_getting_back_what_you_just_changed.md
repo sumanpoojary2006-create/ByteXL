@@ -4,7 +4,7 @@ Zara has been running her `INSERT`, `UPDATE`, and `DELETE` statements the way Al
 
 A senior developer reviewing her work points out that PostgreSQL can hand that confirmation back immediately, as part of the very same statement, using a clause called **`RETURNING`**.
 
-```postgresql file=schema.sql
+```text
 CREATE TABLE students (
     student_id INTEGER PRIMARY KEY,
     full_name TEXT,
@@ -55,7 +55,53 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 
 Adding `RETURNING` to the end of an `INSERT` statement hands back the `row` exactly as it was written, in the same result set the statement produces.
 
-```postgresql with=schema.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    email TEXT,
+    city TEXT,
+    phone TEXT,
+    joined_on DATE
+);
+
+INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
+(1, 'Omkar Rane', 'omkar.rane@campusmail.edu', 'Bengaluru', '9845011111', '2025-01-10'),
+(2, 'Neha Sharma', 'neha.sharma@campusmail.edu', 'Mysuru', NULL, '2025-01-12'),
+(3, 'Varun Nair', 'varun.nair@gmail.com', 'Chennai', '9845022222', '2025-01-15'),
+(4, 'Siddharth Rao', 'siddharth.rao@campusmail.edu', 'Hyderabad', '9845033333', '2025-01-18'),
+(5, 'Yusuf Khan', 'yusuf.khan@gmail.com', 'Pune', NULL, '2025-01-20');
+
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    title TEXT,
+    department TEXT,
+    credits INTEGER
+);
+
+INSERT INTO courses (course_id, title, department, credits) VALUES
+(101, 'Database Systems', 'Computer Science', 4),
+(102, 'Data Structures', 'Computer Science', 4),
+(103, 'Linear Algebra', 'Mathematics', 3),
+(104, 'Discrete Mathematics', 'Mathematics', 3),
+(105, 'Microeconomics', 'Economics', 2);
+
+CREATE TABLE enrollments (
+    enrollment_id INTEGER PRIMARY KEY,
+    student_id INTEGER REFERENCES students(student_id),
+    course_id INTEGER REFERENCES courses(course_id),
+    enrolled_on DATE,
+    grade TEXT
+);
+
+INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade) VALUES
+(1, 1, 101, '2025-02-01', 'A'),
+(2, 1, 103, '2025-02-01', 'B+'),
+(3, 2, 101, '2025-02-02', NULL),
+(4, 3, 102, '2025-02-03', 'A-'),
+(5, 4, 104, '2025-02-04', 'B');
+
+-- Query
 INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade)
 VALUES (6, 5, 101, '2025-02-09', NULL)
 RETURNING enrollment_id, student_id, course_id, enrolled_on;
@@ -72,7 +118,53 @@ The output shows enrollment_id 6, student_id 5, course_id 101, and the enrolled_
 
 The same clause works on `UPDATE`, and it hands back the `row` as it looks after the change has been applied.
 
-```postgresql with=schema.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    email TEXT,
+    city TEXT,
+    phone TEXT,
+    joined_on DATE
+);
+
+INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
+(1, 'Omkar Rane', 'omkar.rane@campusmail.edu', 'Bengaluru', '9845011111', '2025-01-10'),
+(2, 'Neha Sharma', 'neha.sharma@campusmail.edu', 'Mysuru', NULL, '2025-01-12'),
+(3, 'Varun Nair', 'varun.nair@gmail.com', 'Chennai', '9845022222', '2025-01-15'),
+(4, 'Siddharth Rao', 'siddharth.rao@campusmail.edu', 'Hyderabad', '9845033333', '2025-01-18'),
+(5, 'Yusuf Khan', 'yusuf.khan@gmail.com', 'Pune', NULL, '2025-01-20');
+
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    title TEXT,
+    department TEXT,
+    credits INTEGER
+);
+
+INSERT INTO courses (course_id, title, department, credits) VALUES
+(101, 'Database Systems', 'Computer Science', 4),
+(102, 'Data Structures', 'Computer Science', 4),
+(103, 'Linear Algebra', 'Mathematics', 3),
+(104, 'Discrete Mathematics', 'Mathematics', 3),
+(105, 'Microeconomics', 'Economics', 2);
+
+CREATE TABLE enrollments (
+    enrollment_id INTEGER PRIMARY KEY,
+    student_id INTEGER REFERENCES students(student_id),
+    course_id INTEGER REFERENCES courses(course_id),
+    enrolled_on DATE,
+    grade TEXT
+);
+
+INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade) VALUES
+(1, 1, 101, '2025-02-01', 'A'),
+(2, 1, 103, '2025-02-01', 'B+'),
+(3, 2, 101, '2025-02-02', NULL),
+(4, 3, 102, '2025-02-03', 'A-'),
+(5, 4, 104, '2025-02-04', 'B');
+
+-- Query
 UPDATE students
 SET city = 'Chennai'
 WHERE student_id = 2
@@ -87,7 +179,53 @@ If the `WHERE` condition had matched no `rows` at all, `RETURNING` would come ba
 
 `RETURNING` attached to a `DELETE` hands back the `row` exactly as it looked the instant before it was removed.
 
-```postgresql with=schema.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    email TEXT,
+    city TEXT,
+    phone TEXT,
+    joined_on DATE
+);
+
+INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
+(1, 'Omkar Rane', 'omkar.rane@campusmail.edu', 'Bengaluru', '9845011111', '2025-01-10'),
+(2, 'Neha Sharma', 'neha.sharma@campusmail.edu', 'Mysuru', NULL, '2025-01-12'),
+(3, 'Varun Nair', 'varun.nair@gmail.com', 'Chennai', '9845022222', '2025-01-15'),
+(4, 'Siddharth Rao', 'siddharth.rao@campusmail.edu', 'Hyderabad', '9845033333', '2025-01-18'),
+(5, 'Yusuf Khan', 'yusuf.khan@gmail.com', 'Pune', NULL, '2025-01-20');
+
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    title TEXT,
+    department TEXT,
+    credits INTEGER
+);
+
+INSERT INTO courses (course_id, title, department, credits) VALUES
+(101, 'Database Systems', 'Computer Science', 4),
+(102, 'Data Structures', 'Computer Science', 4),
+(103, 'Linear Algebra', 'Mathematics', 3),
+(104, 'Discrete Mathematics', 'Mathematics', 3),
+(105, 'Microeconomics', 'Economics', 2);
+
+CREATE TABLE enrollments (
+    enrollment_id INTEGER PRIMARY KEY,
+    student_id INTEGER REFERENCES students(student_id),
+    course_id INTEGER REFERENCES courses(course_id),
+    enrolled_on DATE,
+    grade TEXT
+);
+
+INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade) VALUES
+(1, 1, 101, '2025-02-01', 'A'),
+(2, 1, 103, '2025-02-01', 'B+'),
+(3, 2, 101, '2025-02-02', NULL),
+(4, 3, 102, '2025-02-03', 'A-'),
+(5, 4, 104, '2025-02-04', 'B');
+
+-- Query
 DELETE FROM enrollments
 WHERE enrollment_id = 5
 RETURNING enrollment_id, student_id, course_id, grade;
@@ -135,7 +273,53 @@ The output shows enrollment_id 5, student_id 4, course_id 104, grade B, the last
 
 Insert a new student, Kabir Sethi, and use `RETURNING` to confirm the `row` in the same statement, with no separate `SELECT` afterward.
 
-```postgresql with=schema.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    email TEXT,
+    city TEXT,
+    phone TEXT,
+    joined_on DATE
+);
+
+INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
+(1, 'Omkar Rane', 'omkar.rane@campusmail.edu', 'Bengaluru', '9845011111', '2025-01-10'),
+(2, 'Neha Sharma', 'neha.sharma@campusmail.edu', 'Mysuru', NULL, '2025-01-12'),
+(3, 'Varun Nair', 'varun.nair@gmail.com', 'Chennai', '9845022222', '2025-01-15'),
+(4, 'Siddharth Rao', 'siddharth.rao@campusmail.edu', 'Hyderabad', '9845033333', '2025-01-18'),
+(5, 'Yusuf Khan', 'yusuf.khan@gmail.com', 'Pune', NULL, '2025-01-20');
+
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    title TEXT,
+    department TEXT,
+    credits INTEGER
+);
+
+INSERT INTO courses (course_id, title, department, credits) VALUES
+(101, 'Database Systems', 'Computer Science', 4),
+(102, 'Data Structures', 'Computer Science', 4),
+(103, 'Linear Algebra', 'Mathematics', 3),
+(104, 'Discrete Mathematics', 'Mathematics', 3),
+(105, 'Microeconomics', 'Economics', 2);
+
+CREATE TABLE enrollments (
+    enrollment_id INTEGER PRIMARY KEY,
+    student_id INTEGER REFERENCES students(student_id),
+    course_id INTEGER REFERENCES courses(course_id),
+    enrolled_on DATE,
+    grade TEXT
+);
+
+INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade) VALUES
+(1, 1, 101, '2025-02-01', 'A'),
+(2, 1, 103, '2025-02-01', 'B+'),
+(3, 2, 101, '2025-02-02', NULL),
+(4, 3, 102, '2025-02-03', 'A-'),
+(5, 4, 104, '2025-02-04', 'B');
+
+-- Query
 INSERT INTO students (student_id, full_name, email, city, phone, joined_on)
 VALUES (6, 'Kabir Sethi', 'kabir.sethi@campusmail.edu', 'Chennai', '9845077777', '2025-02-16')
 RETURNING student_id, full_name, city;

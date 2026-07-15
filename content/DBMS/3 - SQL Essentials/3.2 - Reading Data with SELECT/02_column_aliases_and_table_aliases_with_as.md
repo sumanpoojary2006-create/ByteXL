@@ -8,7 +8,7 @@ For her own work that is fine, but this sheet is going in front of people who ha
 
 Divya rewrites her `query`, adding `AS` after each `column` followed by the label she actually wants to appear in the result.
 
-```postgresql file=students.sql
+```text
 CREATE TABLE students (
     student_id INTEGER PRIMARY KEY,
     full_name TEXT,
@@ -29,7 +29,27 @@ INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALU
 (8, 'Priya Subramaniam', 'priya.subramaniam@example.com', 'Chennai', '9884066666', '2025-01-28');
 ```
 
-```postgresql with=students.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    email TEXT,
+    city TEXT,
+    phone TEXT,
+    joined_on DATE
+);
+
+INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
+(1, 'Ishaan Verma', 'ishaan.verma@example.com', 'Bengaluru', '9845011111', '2025-01-10'),
+(2, 'Meera Pillai', 'meera.pillai@example.com', 'Chennai', '9884022222', '2025-01-12'),
+(3, 'Arjun Bhat', 'arjun.bhat@example.com', 'Bengaluru', NULL, '2025-01-15'),
+(4, 'Kavya Reddy', 'kavya.reddy@example.com', 'Pune', '9922033333', '2025-01-18'),
+(5, 'Rohan Joshi', 'rohan.joshi@example.com', 'Hyderabad', '9640044444', '2025-01-20'),
+(6, 'Sneha Gowda', 'sneha.gowda@example.com', 'Mysuru', NULL, '2025-01-22'),
+(7, 'Aditya Kulkarni', 'aditya.kulkarni@example.com', 'Pune', '9822055555', '2025-01-25'),
+(8, 'Priya Subramaniam', 'priya.subramaniam@example.com', 'Chennai', '9884066666', '2025-01-28');
+
+-- Query
 SELECT full_name AS student_name, city AS location
 FROM students;
 ```
@@ -44,7 +64,27 @@ FROM students;
 
 SQL allows a shorter form: dropping the word `AS` entirely and just writing the alias right after the `column` name.
 
-```postgresql with=students.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    email TEXT,
+    city TEXT,
+    phone TEXT,
+    joined_on DATE
+);
+
+INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
+(1, 'Ishaan Verma', 'ishaan.verma@example.com', 'Bengaluru', '9845011111', '2025-01-10'),
+(2, 'Meera Pillai', 'meera.pillai@example.com', 'Chennai', '9884022222', '2025-01-12'),
+(3, 'Arjun Bhat', 'arjun.bhat@example.com', 'Bengaluru', NULL, '2025-01-15'),
+(4, 'Kavya Reddy', 'kavya.reddy@example.com', 'Pune', '9922033333', '2025-01-18'),
+(5, 'Rohan Joshi', 'rohan.joshi@example.com', 'Hyderabad', '9640044444', '2025-01-20'),
+(6, 'Sneha Gowda', 'sneha.gowda@example.com', 'Mysuru', NULL, '2025-01-22'),
+(7, 'Aditya Kulkarni', 'aditya.kulkarni@example.com', 'Pune', '9822055555', '2025-01-25'),
+(8, 'Priya Subramaniam', 'priya.subramaniam@example.com', 'Chennai', '9884066666', '2025-01-28');
+
+-- Query
 SELECT full_name student_name, city location
 FROM students;
 ```
@@ -61,7 +101,27 @@ Aliases are not only for `columns`. A `table` can be given a short alias too, an
 
 It looks unnecessary on a `query` this small, but the habit pays off the moment a `query` starts pulling from more than one `table`, which is exactly where the students, courses, and enrollments `tables` are eventually headed together.
 
-```postgresql with=students.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    email TEXT,
+    city TEXT,
+    phone TEXT,
+    joined_on DATE
+);
+
+INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
+(1, 'Ishaan Verma', 'ishaan.verma@example.com', 'Bengaluru', '9845011111', '2025-01-10'),
+(2, 'Meera Pillai', 'meera.pillai@example.com', 'Chennai', '9884022222', '2025-01-12'),
+(3, 'Arjun Bhat', 'arjun.bhat@example.com', 'Bengaluru', NULL, '2025-01-15'),
+(4, 'Kavya Reddy', 'kavya.reddy@example.com', 'Pune', '9922033333', '2025-01-18'),
+(5, 'Rohan Joshi', 'rohan.joshi@example.com', 'Hyderabad', '9640044444', '2025-01-20'),
+(6, 'Sneha Gowda', 'sneha.gowda@example.com', 'Mysuru', NULL, '2025-01-22'),
+(7, 'Aditya Kulkarni', 'aditya.kulkarni@example.com', 'Pune', '9822055555', '2025-01-25'),
+(8, 'Priya Subramaniam', 'priya.subramaniam@example.com', 'Chennai', '9884066666', '2025-01-28');
+
+-- Query
 SELECT s.full_name AS student_name, s.city AS location
 FROM students AS s;
 ```
@@ -110,7 +170,27 @@ Divya keeps it in her own `queries` because it reads more clearly to anyone who 
 
 Divya's next request from the Dean's office is a sheet with headers "Full Name" and "Email Address" instead of the raw `column` names, using a `table` alias `s` for students along the way. Write that `query`.
 
-```postgresql with=students.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    email TEXT,
+    city TEXT,
+    phone TEXT,
+    joined_on DATE
+);
+
+INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
+(1, 'Ishaan Verma', 'ishaan.verma@example.com', 'Bengaluru', '9845011111', '2025-01-10'),
+(2, 'Meera Pillai', 'meera.pillai@example.com', 'Chennai', '9884022222', '2025-01-12'),
+(3, 'Arjun Bhat', 'arjun.bhat@example.com', 'Bengaluru', NULL, '2025-01-15'),
+(4, 'Kavya Reddy', 'kavya.reddy@example.com', 'Pune', '9922033333', '2025-01-18'),
+(5, 'Rohan Joshi', 'rohan.joshi@example.com', 'Hyderabad', '9640044444', '2025-01-20'),
+(6, 'Sneha Gowda', 'sneha.gowda@example.com', 'Mysuru', NULL, '2025-01-22'),
+(7, 'Aditya Kulkarni', 'aditya.kulkarni@example.com', 'Pune', '9822055555', '2025-01-25'),
+(8, 'Priya Subramaniam', 'priya.subramaniam@example.com', 'Chennai', '9884066666', '2025-01-28');
+
+-- Query
 -- Write your query below
 ```
 

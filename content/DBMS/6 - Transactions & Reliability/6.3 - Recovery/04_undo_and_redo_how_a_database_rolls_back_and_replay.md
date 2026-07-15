@@ -14,7 +14,7 @@ Redo handles this in two steps:
 
 2. It reapplies every change belonging to a `transaction` that committed, bringing the data files up to date with everything the log promised had already succeeded.
 
-```postgresql file=recovery_demo.sql
+```text
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
     balance NUMERIC(10, 2)
@@ -23,7 +23,15 @@ CREATE TABLE accounts (
 INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00);
 ```
 
-```postgresql with=recovery_demo.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00);
+
+-- Query
 BEGIN;
 UPDATE accounts SET balance = balance - 1000.00 WHERE account_id = 1;
 COMMIT;
@@ -45,7 +53,15 @@ The opposite case is a `transaction` that was still open, uncommitted, at the mo
 
 Undo is the pass that walks through the log looking for `transactions` with no matching commit record, and reverses any of their changes that made it into the data files before the crash.
 
-```postgresql with=recovery_demo.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00);
+
+-- Query
 BEGIN;
 UPDATE accounts SET balance = balance - 2000.00 WHERE account_id = 1;
 -- Imagine a crash right here, with no COMMIT ever issued.
@@ -99,7 +115,15 @@ Redoing everything first, including eventually-undone work, might sound wasteful
 
 Using the `accounts` `table` above, run one `transaction` that commits a balance change and a second `transaction` that makes a change but rolls back instead, then write a comment explaining which pass, redo or undo, would be responsible for each one's outcome if this had instead been a genuine crash rather than explicit `COMMIT`/`ROLLBACK` commands.
 
-```postgresql with=recovery_demo.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00);
+
+-- Query
 -- Write your transactions and comment below
 ```
 

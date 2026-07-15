@@ -9,7 +9,7 @@
 
 The `accounts` `table` sets up the scenario, two accounts that two different transfer `transactions` both need to touch, in opposite order.
 
-```postgresql file=accounts_deadlock.sql
+```text
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
     owner_name TEXT,
@@ -21,7 +21,18 @@ INSERT INTO accounts (account_id, owner_name, balance) VALUES
 (2, 'Sanjay Rathi', 12000.00);
 ```
 
-```postgresql with=accounts_deadlock.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    owner_name TEXT,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, owner_name, balance) VALUES
+(1, 'Meera Iyer', 50000.00),
+(2, 'Sanjay Rathi', 12000.00);
+
+-- Query
 -- Transaction A: transferring from account 1 to account 2
 BEGIN;
 UPDATE accounts SET balance = balance - 1000.00 WHERE account_id = 1;
@@ -60,7 +71,18 @@ A `database` does not simply let two `transactions` wait forever. PostgreSQL, li
 
 3. The other `transaction` is freed to continue.
 
-```postgresql with=accounts_deadlock.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    owner_name TEXT,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, owner_name, balance) VALUES
+(1, 'Meera Iyer', 50000.00),
+(2, 'Sanjay Rathi', 12000.00);
+
+-- Query
 -- If a real deadlock were detected here, the database's response would look like:
 -- ERROR: deadlock detected
 -- DETAIL: Process 1234 waits for ShareLock on transaction 5678; blocked by process 5678.
@@ -76,7 +98,18 @@ The specific `transaction` chosen as the "victim" is typically whichever one the
 
 The most reliable way to avoid deadlocks in application code is to make sure every `transaction` that touches multiple `rows` always `locks` them in the same, consistent order, for example, always `locking` the account with the lower `account_id` first, regardless of which direction money is moving.
 
-```postgresql with=accounts_deadlock.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    owner_name TEXT,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, owner_name, balance) VALUES
+(1, 'Meera Iyer', 50000.00),
+(2, 'Sanjay Rathi', 12000.00);
+
+-- Query
 -- A deadlock-safe version of both transfer transactions, always locking
 -- the lower account_id first:
 BEGIN;
@@ -130,7 +163,18 @@ If every `transaction`, regardless of which direction it transfers money, always
 
 Rewrite a two-account transfer `transaction` against the `accounts` `table` above so that it `locks` both `rows` with `FOR UPDATE` in ascending `account_id` order before making any changes, regardless of which account the money is conceptually coming from.
 
-```postgresql with=accounts_deadlock.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    owner_name TEXT,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, owner_name, balance) VALUES
+(1, 'Meera Iyer', 50000.00),
+(2, 'Sanjay Rathi', 12000.00);
+
+-- Query
 -- Write your transaction below
 ```
 

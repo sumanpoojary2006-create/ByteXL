@@ -10,7 +10,7 @@ The clause that asks for one is **`ORDER BY`**, and it is what turns an unpredic
 
 Rhea's first fix is simple: add `ORDER BY` followed by the `column` she wants to sort on.
 
-```postgresql file=students.sql
+```text
 CREATE TABLE students (
     student_id INTEGER PRIMARY KEY,
     full_name TEXT,
@@ -31,7 +31,27 @@ INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALU
 (8, 'Priya Subramaniam', 'priya.subramaniam@example.com', 'Chennai', '9884066666', '2025-01-28');
 ```
 
-```postgresql with=students.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    email TEXT,
+    city TEXT,
+    phone TEXT,
+    joined_on DATE
+);
+
+INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
+(1, 'Ishaan Verma', 'ishaan.verma@example.com', 'Bengaluru', '9845011111', '2025-01-10'),
+(2, 'Meera Pillai', 'meera.pillai@example.com', 'Chennai', '9884022222', '2025-01-12'),
+(3, 'Arjun Bhat', 'arjun.bhat@example.com', 'Bengaluru', NULL, '2025-01-15'),
+(4, 'Kavya Reddy', 'kavya.reddy@example.com', 'Pune', '9922033333', '2025-01-18'),
+(5, 'Rohan Joshi', 'rohan.joshi@example.com', 'Hyderabad', '9640044444', '2025-01-20'),
+(6, 'Sneha Gowda', 'sneha.gowda@example.com', 'Mysuru', NULL, '2025-01-22'),
+(7, 'Aditya Kulkarni', 'aditya.kulkarni@example.com', 'Pune', '9822055555', '2025-01-25'),
+(8, 'Priya Subramaniam', 'priya.subramaniam@example.com', 'Chennai', '9884066666', '2025-01-28');
+
+-- Query
 SELECT full_name, city
 FROM students
 ORDER BY full_name;
@@ -49,7 +69,27 @@ The result now starts with Aditya Kulkarni and ends with Sneha Gowda, running al
 
 Sometimes the useful order runs the other way. If Rhea instead wants the newest joiners at the top of a "welcome our latest students" notice, ascending order on the join date would put the oldest joiners first, exactly backwards from what she needs. Adding `DESC` after the `column` reverses the direction.
 
-```postgresql with=students.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    email TEXT,
+    city TEXT,
+    phone TEXT,
+    joined_on DATE
+);
+
+INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
+(1, 'Ishaan Verma', 'ishaan.verma@example.com', 'Bengaluru', '9845011111', '2025-01-10'),
+(2, 'Meera Pillai', 'meera.pillai@example.com', 'Chennai', '9884022222', '2025-01-12'),
+(3, 'Arjun Bhat', 'arjun.bhat@example.com', 'Bengaluru', NULL, '2025-01-15'),
+(4, 'Kavya Reddy', 'kavya.reddy@example.com', 'Pune', '9922033333', '2025-01-18'),
+(5, 'Rohan Joshi', 'rohan.joshi@example.com', 'Hyderabad', '9640044444', '2025-01-20'),
+(6, 'Sneha Gowda', 'sneha.gowda@example.com', 'Mysuru', NULL, '2025-01-22'),
+(7, 'Aditya Kulkarni', 'aditya.kulkarni@example.com', 'Pune', '9822055555', '2025-01-25'),
+(8, 'Priya Subramaniam', 'priya.subramaniam@example.com', 'Chennai', '9884066666', '2025-01-28');
+
+-- Query
 SELECT full_name, joined_on
 FROM students
 ORDER BY joined_on DESC;
@@ -63,7 +103,27 @@ Now Priya Subramaniam, who joined on 2025-01-28, appears first, and Ishaan Verma
 - Suppose Rhea wants students grouped by city, and within each city, listed alphabetically by name, so a volunteer working the Bengaluru desk can find their group's names in order without scrolling past every other city first.
 - `ORDER BY` accepts a list of `columns`, and it sorts by the first one, then uses the second one only to break ties within groups that share the same first value.
 
-```postgresql with=students.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    email TEXT,
+    city TEXT,
+    phone TEXT,
+    joined_on DATE
+);
+
+INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
+(1, 'Ishaan Verma', 'ishaan.verma@example.com', 'Bengaluru', '9845011111', '2025-01-10'),
+(2, 'Meera Pillai', 'meera.pillai@example.com', 'Chennai', '9884022222', '2025-01-12'),
+(3, 'Arjun Bhat', 'arjun.bhat@example.com', 'Bengaluru', NULL, '2025-01-15'),
+(4, 'Kavya Reddy', 'kavya.reddy@example.com', 'Pune', '9922033333', '2025-01-18'),
+(5, 'Rohan Joshi', 'rohan.joshi@example.com', 'Hyderabad', '9640044444', '2025-01-20'),
+(6, 'Sneha Gowda', 'sneha.gowda@example.com', 'Mysuru', NULL, '2025-01-22'),
+(7, 'Aditya Kulkarni', 'aditya.kulkarni@example.com', 'Pune', '9822055555', '2025-01-25'),
+(8, 'Priya Subramaniam', 'priya.subramaniam@example.com', 'Chennai', '9884066666', '2025-01-28');
+
+-- Query
 SELECT full_name, city
 FROM students
 ORDER BY city, full_name;
@@ -108,7 +168,27 @@ Each `column` in the list can carry its own direction too, so `ORDER BY city, fu
 
 The office also wants a version of the roster sorted so that students from the same city are still grouped together, but this time with the most recently joined student in each city appearing first. Write a `query` that returns `full_name`, `city`, and `joined_on`, grouped by city ascending and, within each city, newest join date first.
 
-```postgresql with=students.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    email TEXT,
+    city TEXT,
+    phone TEXT,
+    joined_on DATE
+);
+
+INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
+(1, 'Ishaan Verma', 'ishaan.verma@example.com', 'Bengaluru', '9845011111', '2025-01-10'),
+(2, 'Meera Pillai', 'meera.pillai@example.com', 'Chennai', '9884022222', '2025-01-12'),
+(3, 'Arjun Bhat', 'arjun.bhat@example.com', 'Bengaluru', NULL, '2025-01-15'),
+(4, 'Kavya Reddy', 'kavya.reddy@example.com', 'Pune', '9922033333', '2025-01-18'),
+(5, 'Rohan Joshi', 'rohan.joshi@example.com', 'Hyderabad', '9640044444', '2025-01-20'),
+(6, 'Sneha Gowda', 'sneha.gowda@example.com', 'Mysuru', NULL, '2025-01-22'),
+(7, 'Aditya Kulkarni', 'aditya.kulkarni@example.com', 'Pune', '9822055555', '2025-01-25'),
+(8, 'Priya Subramaniam', 'priya.subramaniam@example.com', 'Chennai', '9884066666', '2025-01-28');
+
+-- Query
 -- Write your query below
 ```
 

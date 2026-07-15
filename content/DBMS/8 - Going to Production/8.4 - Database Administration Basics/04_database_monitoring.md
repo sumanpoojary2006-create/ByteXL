@@ -8,7 +8,7 @@ This helps teams respond before users are affected, instead of diagnosing the pr
 
 The `connection pooling` lesson introduced checking current `connections` against `max_connections` as a one-time check; monitoring turns that same check into something tracked continuously.
 
-```postgresql file=monitoring_demo.sql
+```text
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     status TEXT
@@ -18,7 +18,16 @@ INSERT INTO shipments (shipment_id, status)
 SELECT i, 'in_transit' FROM generate_series(1, 1000) AS i;
 ```
 
-```postgresql with=monitoring_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status)
+SELECT i, 'in_transit' FROM generate_series(1, 1000) AS i;
+
+-- Query
 SELECT count(*) AS current_connections,
        (SELECT setting::int FROM pg_settings WHERE name = 'max_connections') AS max_connections,
        round(100.0 * count(*) / (SELECT setting::int FROM pg_settings WHERE name = 'max_connections'), 1) AS percent_used
@@ -37,7 +46,16 @@ This catches a `connection leak`, covered in the pooling lesson, while there is 
 
 The dead tuples covered in the maintenance lesson are exactly the kind of metric worth tracking continuously, since a `table` whose dead-tuple count keeps climbing despite autovacuum running is a sign something is preventing cleanup from keeping up.
 
-```postgresql with=monitoring_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status)
+SELECT i, 'in_transit' FROM generate_series(1, 1000) AS i;
+
+-- Query
 SELECT relname, n_live_tup, n_dead_tup,
        round(100.0 * n_dead_tup / GREATEST(n_live_tup + n_dead_tup, 1), 1) AS dead_tuple_percent,
        last_autovacuum
@@ -52,7 +70,16 @@ Tracking `dead_tuple_percent` and `last_autovacuum` across a `database`'s busies
 
 A `database` keeps frequently accessed data cached in memory, and how often a `query` finds what it needs already in that cache, rather than having to read from disk, is one of the clearest overall health signals a running `database` offers.
 
-```postgresql with=monitoring_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status)
+SELECT i, 'in_transit' FROM generate_series(1, 1000) AS i;
+
+-- Query
 SELECT sum(heap_blks_hit) AS cache_hits,
        sum(heap_blks_read) AS disk_reads,
        round(100.0 * sum(heap_blks_hit) / GREATEST(sum(heap_blks_hit) + sum(heap_blks_read), 1), 2) AS cache_hit_ratio
@@ -69,7 +96,16 @@ A ratio that drops noticeably, tracked over time rather than as a single snapsho
 
 `pg_stat_activity`, used throughout this unit for one-off checks, is also the foundation for continuously monitoring `queries` that have been running unusually long, or are stuck waiting on a `lock` held by another session.
 
-```postgresql with=monitoring_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status)
+SELECT i, 'in_transit' FROM generate_series(1, 1000) AS i;
+
+-- Query
 SELECT pid, state, wait_event_type, wait_event, now() - query_start AS running_for, query
 FROM pg_stat_activity
 WHERE state != 'idle' AND now() - query_start > INTERVAL '5 seconds'
@@ -119,7 +155,16 @@ ORDER BY running_for DESC;
 
 Write a monitoring `query` that reports the five `tables` in `pg_stat_user_tables` with the lowest cache-friendliness, approximated by the highest ratio of sequential scans to `index scans`, a signal that those `tables` may be missing a useful `index`.
 
-```postgresql with=monitoring_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status)
+SELECT i, 'in_transit' FROM generate_series(1, 1000) AS i;
+
+-- Query
 -- Write your query below
 ```
 

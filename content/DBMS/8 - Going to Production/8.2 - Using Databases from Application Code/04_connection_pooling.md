@@ -8,11 +8,14 @@ Opening and closing a brand new `connection` for every single one of those reque
 
 Every open `connection` consumes real memory and resources on the `database` server itself, which is why PostgreSQL enforces a hard limit on how many `connections` it will accept at once.
 
-```postgresql file=pooling_demo.sql
+```text
 SHOW max_connections;
 ```
 
-```postgresql with=pooling_demo.sql
+```postgresql
+SHOW max_connections;
+
+-- Query
 SELECT count(*) AS current_connections FROM pg_stat_activity;
 ```
 
@@ -23,7 +26,10 @@ SELECT count(*) AS current_connections FROM pg_stat_activity;
 
 A `connection pool` maintains a fixed, modest number of already-open `connections`, and application code borrows one from the pool when it needs to run a `query`, then returns it when finished, rather than closing it.
 
-```postgresql with=pooling_demo.sql
+```postgresql
+SHOW max_connections;
+
+-- Query
 -- Conceptually, application code using a pool looks like this pseudocode,
 -- shown alongside the SQL it wraps:
 -- connection = pool.borrow_connection()
@@ -51,7 +57,10 @@ The pool typically maintains a fixed size, say 20 `connections`, regardless of h
 
 A returned `connection` has to be ready for a completely different, unrelated request to borrow next, which means it must never be handed back mid-`transaction` or holding onto leftover session state from whatever the previous request was doing.
 
-```postgresql with=pooling_demo.sql
+```postgresql
+SHOW max_connections;
+
+-- Query
 SELECT pid, state FROM pg_stat_activity WHERE state = 'idle in transaction';
 ```
 
@@ -65,7 +74,10 @@ This makes the bug hard to trace, because the request seeing the strange behavio
 
 A pool that is too small forces requests to wait for a `connection` to become available, adding latency under load. A pool that is too large risks exhausting the `database`'s `max_connections` limit, especially once multiple application instances each maintain their own pool against the same `database` server.
 
-```postgresql with=pooling_demo.sql
+```postgresql
+SHOW max_connections;
+
+-- Query
 SELECT usename, count(*) AS connections_per_user
 FROM pg_stat_activity
 GROUP BY usename;
@@ -110,7 +122,10 @@ In a real production setup, this kind of `query`, grouping open `connections` by
 
 Check the current `max_connections` setting and the current number of active `connections`, then write a comment estimating what percentage of the limit is currently in use.
 
-```postgresql with=pooling_demo.sql
+```postgresql
+SHOW max_connections;
+
+-- Query
 -- Write your queries and comment below
 ```
 

@@ -8,7 +8,7 @@ It means changing the shipment's status, and also inserting a `row` into a separ
 
 The `shipments` and `shipment_log` `tables` set up the two-statement operation a `procedure` will wrap.
 
-```postgresql file=procedures_demo.sql
+```text
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     status TEXT
@@ -24,7 +24,22 @@ CREATE TABLE shipment_log (
 INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'in_transit');
 ```
 
-```postgresql with=procedures_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+CREATE TABLE shipment_log (
+    log_id SERIAL PRIMARY KEY,
+    shipment_id INTEGER,
+    action TEXT,
+    logged_at TIMESTAMP DEFAULT NOW()
+);
+
+INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'in_transit');
+
+-- Query
 CREATE PROCEDURE mark_shipment_delivered(p_shipment_id INTEGER)
 LANGUAGE plpgsql
 AS $$
@@ -44,7 +59,31 @@ $$;
 
 A `procedure` is invoked with `CALL`, not `SELECT`, since it performs actions rather than returning a result set the way a `query` does.
 
-```postgresql with=procedures_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+CREATE TABLE shipment_log (
+    log_id SERIAL PRIMARY KEY,
+    shipment_id INTEGER,
+    action TEXT,
+    logged_at TIMESTAMP DEFAULT NOW()
+);
+
+INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'in_transit');
+
+CREATE PROCEDURE mark_shipment_delivered(p_shipment_id INTEGER)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE shipments SET status = 'delivered' WHERE shipment_id = p_shipment_id;
+    INSERT INTO shipment_log (shipment_id, action) VALUES (p_shipment_id, 'marked delivered');
+END;
+$$;
+
+-- Query
 CALL mark_shipment_delivered(1);
 
 SELECT * FROM shipments;
@@ -59,7 +98,31 @@ One call to `mark_shipment_delivered(1)` ran both the `UPDATE` and the `INSERT` 
 
 Unlike a plain SQL script, a `procedure` written in `plpgsql` is allowed to issue its own `COMMIT` or `ROLLBACK` partway through its body, useful for long-running `procedures` that need to save progress incrementally rather than treating the whole `procedure` as one giant, indivisible `transaction`.
 
-```postgresql with=procedures_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+CREATE TABLE shipment_log (
+    log_id SERIAL PRIMARY KEY,
+    shipment_id INTEGER,
+    action TEXT,
+    logged_at TIMESTAMP DEFAULT NOW()
+);
+
+INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'in_transit');
+
+CREATE PROCEDURE mark_shipment_delivered(p_shipment_id INTEGER)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE shipments SET status = 'delivered' WHERE shipment_id = p_shipment_id;
+    INSERT INTO shipment_log (shipment_id, action) VALUES (p_shipment_id, 'marked delivered');
+END;
+$$;
+
+-- Query
 CREATE PROCEDURE mark_multiple_delivered(shipment_ids INTEGER[])
 LANGUAGE plpgsql
 AS $$
@@ -125,7 +188,50 @@ A `procedure` moves that logic into the `database` itself, which means every cal
 
 Write a `procedure` named `cancel_shipment` that takes a `shipment_id`, sets its status to `'cancelled'`, and logs the action as `'cancelled'` in `shipment_log`, then call it for shipment 2.
 
-```postgresql with=procedures_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+CREATE TABLE shipment_log (
+    log_id SERIAL PRIMARY KEY,
+    shipment_id INTEGER,
+    action TEXT,
+    logged_at TIMESTAMP DEFAULT NOW()
+);
+
+INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'in_transit');
+
+CREATE PROCEDURE mark_shipment_delivered(p_shipment_id INTEGER)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE shipments SET status = 'delivered' WHERE shipment_id = p_shipment_id;
+    INSERT INTO shipment_log (shipment_id, action) VALUES (p_shipment_id, 'marked delivered');
+END;
+$$;
+
+CREATE PROCEDURE mark_multiple_delivered(shipment_ids INTEGER[])
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    sid INTEGER;
+BEGIN
+    FOREACH sid IN ARRAY shipment_ids
+    LOOP
+        UPDATE shipments SET status = 'delivered' WHERE shipment_id = sid;
+        INSERT INTO shipment_log (shipment_id, action) VALUES (sid, 'marked delivered (batch)');
+        COMMIT;
+    END LOOP;
+END;
+$$;
+
+CALL mark_multiple_delivered(ARRAY[2]);
+
+SELECT * FROM shipments;
+
+-- Query
 -- Write your procedure and call below
 ```
 

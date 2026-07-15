@@ -8,7 +8,7 @@ This attack has a name, **SQL injection**, and it remains one of the most common
 
 The earlier example returned extra `rows`; a real injection can go much further, touching data the `query` was never meant to involve at all.
 
-```postgresql file=injection_demo.sql
+```text
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     status TEXT
@@ -17,7 +17,15 @@ CREATE TABLE shipments (
 INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'delivered');
 ```
 
-```postgresql with=injection_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'delivered');
+
+-- Query
 -- Imagine application code building a query like this:
 -- shipment_id_input = "1; DROP TABLE shipments; --"
 -- sql_text = "SELECT * FROM shipments WHERE shipment_id = " + shipment_id_input
@@ -40,7 +48,15 @@ This is the severity that makes SQL injection so dangerous in practice. It is no
 
 The core defense, already introduced in the application-code chapter, is worth restating precisely here: a `prepared statement` never lets user-supplied text become part of the `query`'s structure, no matter what that text contains.
 
-```postgresql with=injection_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'delivered');
+
+-- Query
 PREPARE get_shipment (INTEGER) AS
 SELECT * FROM shipments WHERE shipment_id = $1;
 
@@ -55,7 +71,20 @@ EXECUTE get_shipment(1);
 
 It might seem like carefully checking and sanitizing user input before building a `query` would be enough on its own. It is a reasonable additional layer, but it is not a reliable substitute for `prepared statements`, since it depends entirely on the validation logic anticipating every possible dangerous pattern, an approach that has repeatedly proven incomplete in real-world security history.
 
-```postgresql with=injection_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'delivered');
+
+PREPARE get_shipment (INTEGER) AS
+SELECT * FROM shipments WHERE shipment_id = $1;
+
+EXECUTE get_shipment(1);
+
+-- Query
 -- A validation-only approach, without prepared statements, might try to
 -- reject any input containing a semicolon or the word "DROP":
 -- if ";" in user_input or "DROP" in user_input.upper():
@@ -73,7 +102,20 @@ Input validation still has real value, rejecting obviously malformed input early
 
 Even with `prepared statements` used everywhere, the least-privilege principle from earlier in this chapter provides a valuable second line of defense: if an injection vulnerability somehow still existed, the damage it could do is bounded by what the compromised `database` account was actually granted.
 
-```postgresql with=injection_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'delivered');
+
+PREPARE get_shipment (INTEGER) AS
+SELECT * FROM shipments WHERE shipment_id = $1;
+
+EXECUTE get_shipment(1);
+
+-- Query
 CREATE ROLE web_app WITH LOGIN PASSWORD 'change_this_in_real_use';
 GRANT SELECT, INSERT ON shipments TO web_app;
 ```
@@ -117,7 +159,23 @@ This is exactly why layered defenses matter: `prepared statements` should make i
 
 Rewrite the vulnerable, string-concatenation-style `query` from the beginning of this lesson as a safe, `prepared statement`, and explain in a comment exactly why the injected value can no longer change the `query`'s behavior.
 
-```postgresql with=injection_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'delivered');
+
+PREPARE get_shipment (INTEGER) AS
+SELECT * FROM shipments WHERE shipment_id = $1;
+
+EXECUTE get_shipment(1);
+
+CREATE ROLE web_app WITH LOGIN PASSWORD 'change_this_in_real_use';
+GRANT SELECT, INSERT ON shipments TO web_app;
+
+-- Query
 -- Write your prepared statement, execution, and comment below
 ```
 

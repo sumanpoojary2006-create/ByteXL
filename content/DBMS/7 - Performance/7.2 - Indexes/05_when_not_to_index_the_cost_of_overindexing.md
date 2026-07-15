@@ -8,7 +8,7 @@ Priya's team, excited after seeing `indexes` fix several slow reports, wants to 
 
 Each `index` on a `table` means each `INSERT` has to do that much more work, updating every one of them, not just writing the `row` itself.
 
-```postgresql file=overindex_demo.sql
+```text
 CREATE TABLE orders_few_indexes (
     order_id INTEGER PRIMARY KEY,
     customer_name TEXT,
@@ -37,14 +37,70 @@ ANALYZE orders_few_indexes;
 ANALYZE orders_many_indexes;
 ```
 
-```postgresql with=overindex_demo.sql
+```postgresql
+CREATE TABLE orders_few_indexes (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+CREATE TABLE orders_many_indexes (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+CREATE INDEX idx_many_name ON orders_many_indexes (customer_name);
+CREATE INDEX idx_many_amount ON orders_many_indexes (amount);
+CREATE INDEX idx_many_name_amount ON orders_many_indexes (customer_name, amount);
+
+INSERT INTO orders_few_indexes (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 5000) AS i;
+
+INSERT INTO orders_many_indexes (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 5000) AS i;
+
+ANALYZE orders_few_indexes;
+ANALYZE orders_many_indexes;
+
+-- Query
 EXPLAIN ANALYZE
 INSERT INTO orders_few_indexes (order_id, customer_name, amount)
 SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
 FROM generate_series(5001, 10000) AS i;
 ```
 
-```postgresql with=overindex_demo.sql
+```postgresql
+CREATE TABLE orders_few_indexes (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+CREATE TABLE orders_many_indexes (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+CREATE INDEX idx_many_name ON orders_many_indexes (customer_name);
+CREATE INDEX idx_many_amount ON orders_many_indexes (amount);
+CREATE INDEX idx_many_name_amount ON orders_many_indexes (customer_name, amount);
+
+INSERT INTO orders_few_indexes (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 5000) AS i;
+
+INSERT INTO orders_many_indexes (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 5000) AS i;
+
+ANALYZE orders_few_indexes;
+ANALYZE orders_many_indexes;
+
+-- Query
 EXPLAIN ANALYZE
 INSERT INTO orders_many_indexes (order_id, customer_name, amount)
 SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
@@ -60,7 +116,35 @@ FROM generate_series(5001, 10000) AS i;
 
 The `composite index` `idx_many_name_amount` in the setup above already sorts by `customer_name` first, which means it can serve most of what `idx_many_name` alone would serve, making `idx_many_name` at least partially redundant.
 
-```postgresql with=overindex_demo.sql
+```postgresql
+CREATE TABLE orders_few_indexes (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+CREATE TABLE orders_many_indexes (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+CREATE INDEX idx_many_name ON orders_many_indexes (customer_name);
+CREATE INDEX idx_many_amount ON orders_many_indexes (amount);
+CREATE INDEX idx_many_name_amount ON orders_many_indexes (customer_name, amount);
+
+INSERT INTO orders_few_indexes (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 5000) AS i;
+
+INSERT INTO orders_many_indexes (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 5000) AS i;
+
+ANALYZE orders_few_indexes;
+ANALYZE orders_many_indexes;
+
+-- Query
 EXPLAIN SELECT * FROM orders_many_indexes WHERE customer_name = 'Customer 2500';
 ```
 
@@ -77,7 +161,35 @@ An `index` only pays for itself if `queries` actually use it often enough, throu
 - A `column` that exists in the `table` but is essentially never filtered or sorted on gains nothing from being `indexed`.
 - It still pays the full write-side cost on every insert or update, regardless.
 
-```postgresql with=overindex_demo.sql
+```postgresql
+CREATE TABLE orders_few_indexes (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+CREATE TABLE orders_many_indexes (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+CREATE INDEX idx_many_name ON orders_many_indexes (customer_name);
+CREATE INDEX idx_many_amount ON orders_many_indexes (amount);
+CREATE INDEX idx_many_name_amount ON orders_many_indexes (customer_name, amount);
+
+INSERT INTO orders_few_indexes (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 5000) AS i;
+
+INSERT INTO orders_many_indexes (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 5000) AS i;
+
+ANALYZE orders_few_indexes;
+ANALYZE orders_many_indexes;
+
+-- Query
 SELECT indexname, pg_size_pretty(pg_relation_size(indexname::regclass)) AS index_size
 FROM pg_indexes
 WHERE tablename = 'orders_many_indexes';
@@ -124,7 +236,35 @@ The `partial index` technique from earlier in this chapter is often a better fit
 
 Compare the total `index` storage on `orders_many_indexes` against `orders_few_indexes`, and write a comment identifying which of the three `indexes` on `orders_many_indexes` looks the most redundant given the `composite index` already present.
 
-```postgresql with=overindex_demo.sql
+```postgresql
+CREATE TABLE orders_few_indexes (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+CREATE TABLE orders_many_indexes (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+CREATE INDEX idx_many_name ON orders_many_indexes (customer_name);
+CREATE INDEX idx_many_amount ON orders_many_indexes (amount);
+CREATE INDEX idx_many_name_amount ON orders_many_indexes (customer_name, amount);
+
+INSERT INTO orders_few_indexes (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 5000) AS i;
+
+INSERT INTO orders_many_indexes (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 5000) AS i;
+
+ANALYZE orders_few_indexes;
+ANALYZE orders_many_indexes;
+
+-- Query
 -- Write your query and comment below
 ```
 

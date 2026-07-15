@@ -8,7 +8,7 @@ This standard has a name, **serializability**, and understanding it precisely is
 
 The `accounts` `table` sets up two `transactions` whose combined effect depends entirely on execution order.
 
-```postgresql file=accounts_serializability.sql
+```text
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
     balance NUMERIC(10, 2)
@@ -17,7 +17,15 @@ CREATE TABLE accounts (
 INSERT INTO accounts (account_id, balance) VALUES (1, 1000.00);
 ```
 
-```postgresql with=accounts_serializability.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, balance) VALUES (1, 1000.00);
+
+-- Query
 -- Transaction A: apply a 10% bonus
 BEGIN;
 UPDATE accounts SET balance = balance * 1.10 WHERE account_id = 1;
@@ -59,7 +67,15 @@ A `lost update` is not just an inconvenient bug; it is a violation of serializab
 
 ## Verifying the Trade-off Directly
 
-```postgresql with=accounts_serializability.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, balance) VALUES (1, 1000.00);
+
+-- Query
 BEGIN;
 SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 SELECT balance FROM accounts WHERE account_id = 1;
@@ -103,7 +119,15 @@ Running a `transaction` under `SERIALIZABLE` guarantees, for every `transaction`
 
 Using the `accounts` `table` above, reset the balance to 1000.00, then run Transaction A's 10% bonus and Transaction B's flat 50.00 deduction in the reverse order from the first example, confirming the result matches the "B then A" calculation described earlier.
 
-```postgresql with=accounts_serializability.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, balance) VALUES (1, 1000.00);
+
+-- Query
 -- Write your queries below
 ```
 

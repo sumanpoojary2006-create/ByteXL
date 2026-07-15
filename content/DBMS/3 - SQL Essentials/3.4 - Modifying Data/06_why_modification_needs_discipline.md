@@ -4,7 +4,7 @@ Naveen has just been handed write access to the college's live enrollment system
 
 Naveen realizes that everything he has learned about `INSERT`, `UPDATE`, `DELETE`, `RETURNING`, and `ON CONFLICT` was never really a set of separate ideas about separate keywords. It was one continuous idea, that changing data is a fundamentally different act from reading it, and it calls for **discipline**, a habit of checking before acting that a `SELECT` never demanded in the first place.
 
-```postgresql file=schema.sql
+```text
 CREATE TABLE students (
     student_id INTEGER PRIMARY KEY,
     full_name TEXT,
@@ -59,7 +59,49 @@ This asymmetry, that reading forgives mistakes and writing does not, is the enti
 
 Every genuinely safe modification Naveen has seen so far starts the same way: know exactly which `rows` a `WHERE` clause will match, before running anything that changes them.
 
-```postgresql with=schema.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    email TEXT,
+    city TEXT,
+    phone TEXT,
+    joined_on DATE
+);
+
+INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
+(1, 'Omkar Rane', 'omkar.rane@campusmail.edu', 'Bengaluru', '9845011111', '2025-01-10'),
+(2, 'Neha Sharma', 'neha.sharma@campusmail.edu', 'Mysuru', NULL, '2025-01-12'),
+(3, 'Varun Nair', 'varun.nair@gmail.com', 'Chennai', '9845022222', '2025-01-15'),
+(4, 'Siddharth Rao', 'siddharth.rao@campusmail.edu', 'Hyderabad', '9845033333', '2025-01-18');
+
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    title TEXT,
+    department TEXT,
+    credits INTEGER
+);
+
+INSERT INTO courses (course_id, title, department, credits) VALUES
+(101, 'Database Systems', 'Computer Science', 4),
+(102, 'Data Structures', 'Computer Science', 4),
+(103, 'Linear Algebra', 'Mathematics', 3);
+
+CREATE TABLE enrollments (
+    enrollment_id INTEGER PRIMARY KEY,
+    student_id INTEGER REFERENCES students(student_id),
+    course_id INTEGER REFERENCES courses(course_id),
+    enrolled_on DATE,
+    grade TEXT
+);
+
+INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade) VALUES
+(1, 1, 101, '2025-02-01', 'A'),
+(2, 2, 101, '2025-02-02', NULL),
+(3, 3, 103, '2025-02-03', 'B+'),
+(4, 4, 102, '2025-02-04', NULL);
+
+-- Query
 SELECT enrollment_id, student_id, course_id, grade
 FROM enrollments
 WHERE student_id = 2 AND course_id = 101;
@@ -90,7 +132,49 @@ The habit worth carrying forward is a short pause built into the process itself:
 
 `RETURNING` is not just a convenience for skipping a second `query`, it is a built-in confirmation step that happens whether or not anyone remembers to ask for it separately.
 
-```postgresql with=schema.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    email TEXT,
+    city TEXT,
+    phone TEXT,
+    joined_on DATE
+);
+
+INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
+(1, 'Omkar Rane', 'omkar.rane@campusmail.edu', 'Bengaluru', '9845011111', '2025-01-10'),
+(2, 'Neha Sharma', 'neha.sharma@campusmail.edu', 'Mysuru', NULL, '2025-01-12'),
+(3, 'Varun Nair', 'varun.nair@gmail.com', 'Chennai', '9845022222', '2025-01-15'),
+(4, 'Siddharth Rao', 'siddharth.rao@campusmail.edu', 'Hyderabad', '9845033333', '2025-01-18');
+
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    title TEXT,
+    department TEXT,
+    credits INTEGER
+);
+
+INSERT INTO courses (course_id, title, department, credits) VALUES
+(101, 'Database Systems', 'Computer Science', 4),
+(102, 'Data Structures', 'Computer Science', 4),
+(103, 'Linear Algebra', 'Mathematics', 3);
+
+CREATE TABLE enrollments (
+    enrollment_id INTEGER PRIMARY KEY,
+    student_id INTEGER REFERENCES students(student_id),
+    course_id INTEGER REFERENCES courses(course_id),
+    enrolled_on DATE,
+    grade TEXT
+);
+
+INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade) VALUES
+(1, 1, 101, '2025-02-01', 'A'),
+(2, 2, 101, '2025-02-02', NULL),
+(3, 3, 103, '2025-02-03', 'B+'),
+(4, 4, 102, '2025-02-04', NULL);
+
+-- Query
 DELETE FROM enrollments
 WHERE student_id = 4 AND course_id = 102
 RETURNING enrollment_id, student_id, course_id;
@@ -137,7 +221,49 @@ The result shows exactly one `row` leaving the `table`, Siddharth Rao's Data Str
 
 Confirm exactly which enrollment belongs to Varun Nair in Linear Algebra, then correct his grade to A, using `RETURNING` to see the result immediately.
 
-```postgresql with=schema.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    email TEXT,
+    city TEXT,
+    phone TEXT,
+    joined_on DATE
+);
+
+INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
+(1, 'Omkar Rane', 'omkar.rane@campusmail.edu', 'Bengaluru', '9845011111', '2025-01-10'),
+(2, 'Neha Sharma', 'neha.sharma@campusmail.edu', 'Mysuru', NULL, '2025-01-12'),
+(3, 'Varun Nair', 'varun.nair@gmail.com', 'Chennai', '9845022222', '2025-01-15'),
+(4, 'Siddharth Rao', 'siddharth.rao@campusmail.edu', 'Hyderabad', '9845033333', '2025-01-18');
+
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    title TEXT,
+    department TEXT,
+    credits INTEGER
+);
+
+INSERT INTO courses (course_id, title, department, credits) VALUES
+(101, 'Database Systems', 'Computer Science', 4),
+(102, 'Data Structures', 'Computer Science', 4),
+(103, 'Linear Algebra', 'Mathematics', 3);
+
+CREATE TABLE enrollments (
+    enrollment_id INTEGER PRIMARY KEY,
+    student_id INTEGER REFERENCES students(student_id),
+    course_id INTEGER REFERENCES courses(course_id),
+    enrolled_on DATE,
+    grade TEXT
+);
+
+INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade) VALUES
+(1, 1, 101, '2025-02-01', 'A'),
+(2, 2, 101, '2025-02-02', NULL),
+(3, 3, 103, '2025-02-03', 'B+'),
+(4, 4, 102, '2025-02-04', NULL);
+
+-- Query
 SELECT enrollment_id, student_id, course_id, grade
 FROM enrollments
 WHERE student_id = 3 AND course_id = 103;

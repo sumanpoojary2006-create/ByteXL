@@ -8,7 +8,7 @@ Both questions lean on the same family of tools, the **comparison operators**, w
 
 SQL gives you six comparison operators, and every one of them reduces to the same thing `WHERE` has always done: test a `row`, keep it if the test is true.
 
-```postgresql file=schema.sql
+```text
 CREATE TABLE students (
     student_id INTEGER PRIMARY KEY,
     full_name TEXT,
@@ -74,7 +74,72 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 (10, 8, 105, '2025-02-08', 'B-');
 ```
 
-```postgresql with=schema.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    email TEXT,
+    city TEXT,
+    phone TEXT,
+    joined_on DATE
+);
+
+INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
+(1, 'Omkar Rane', 'omkar.rane@campusmail.edu', 'Bengaluru', '9845011111', '2025-01-10'),
+(2, 'Neha Sharma', 'neha.sharma@campusmail.edu', 'Mysuru', NULL, '2025-01-12'),
+(3, 'Varun Nair', 'varun.nair@gmail.com', 'Chennai', '9845022222', '2025-01-15'),
+(4, 'Siddharth Rao', 'siddharth.rao@campusmail.edu', 'Hyderabad', '9845033333', '2025-01-18'),
+(5, 'Yusuf Khan', 'yusuf.khan@gmail.com', 'Pune', NULL, '2025-01-20'),
+(6, 'Ishita Menon', 'ishita.menon@campusmail.edu', 'Bengaluru', '9845044444', '2025-01-22'),
+(7, 'Rahul Verma', 'rahul.verma@gmail.com', 'Chennai', '9845055555', '2025-01-25'),
+(8, 'Sanya Iyer', 'sanya.iyer@campusmail.edu', 'Mysuru', NULL, '2025-01-28');
+
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    title TEXT,
+    department TEXT,
+    credits INTEGER
+);
+
+INSERT INTO courses (course_id, title, department, credits) VALUES
+(101, 'Database Systems', 'Computer Science', 4),
+(102, 'Data Structures', 'Computer Science', 4),
+(103, 'Linear Algebra', 'Mathematics', 3),
+(104, 'Discrete Mathematics', 'Mathematics', 3),
+(105, 'Microeconomics', 'Economics', 2);
+
+CREATE TABLE instructors (
+    instructor_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    department TEXT
+);
+
+INSERT INTO instructors (instructor_id, full_name, department) VALUES
+(201, 'Ananya Bose', 'Computer Science'),
+(202, 'Manoj Pillai', 'Mathematics'),
+(203, 'Kavita Reddy', 'Economics');
+
+CREATE TABLE enrollments (
+    enrollment_id INTEGER PRIMARY KEY,
+    student_id INTEGER REFERENCES students(student_id),
+    course_id INTEGER REFERENCES courses(course_id),
+    enrolled_on DATE,
+    grade TEXT
+);
+
+INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade) VALUES
+(1, 1, 101, '2025-02-01', 'A'),
+(2, 1, 103, '2025-02-01', 'B+'),
+(3, 2, 101, '2025-02-02', NULL),
+(4, 3, 102, '2025-02-03', 'A-'),
+(5, 3, 105, '2025-02-03', NULL),
+(6, 4, 104, '2025-02-04', 'B'),
+(7, 5, 101, '2025-02-05', NULL),
+(8, 6, 102, '2025-02-06', 'A'),
+(9, 7, 103, '2025-02-07', 'C+'),
+(10, 8, 105, '2025-02-08', 'B-');
+
+-- Query
 SELECT title, credits
 FROM courses
 WHERE credits > 3;
@@ -89,7 +154,72 @@ WHERE credits > 3;
 
 Dates compare exactly the way numbers do: earlier dates are "smaller" than later ones. Neha can use this to see which enrollments were recorded in the opening days of registration.
 
-```postgresql with=schema.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    email TEXT,
+    city TEXT,
+    phone TEXT,
+    joined_on DATE
+);
+
+INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
+(1, 'Omkar Rane', 'omkar.rane@campusmail.edu', 'Bengaluru', '9845011111', '2025-01-10'),
+(2, 'Neha Sharma', 'neha.sharma@campusmail.edu', 'Mysuru', NULL, '2025-01-12'),
+(3, 'Varun Nair', 'varun.nair@gmail.com', 'Chennai', '9845022222', '2025-01-15'),
+(4, 'Siddharth Rao', 'siddharth.rao@campusmail.edu', 'Hyderabad', '9845033333', '2025-01-18'),
+(5, 'Yusuf Khan', 'yusuf.khan@gmail.com', 'Pune', NULL, '2025-01-20'),
+(6, 'Ishita Menon', 'ishita.menon@campusmail.edu', 'Bengaluru', '9845044444', '2025-01-22'),
+(7, 'Rahul Verma', 'rahul.verma@gmail.com', 'Chennai', '9845055555', '2025-01-25'),
+(8, 'Sanya Iyer', 'sanya.iyer@campusmail.edu', 'Mysuru', NULL, '2025-01-28');
+
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    title TEXT,
+    department TEXT,
+    credits INTEGER
+);
+
+INSERT INTO courses (course_id, title, department, credits) VALUES
+(101, 'Database Systems', 'Computer Science', 4),
+(102, 'Data Structures', 'Computer Science', 4),
+(103, 'Linear Algebra', 'Mathematics', 3),
+(104, 'Discrete Mathematics', 'Mathematics', 3),
+(105, 'Microeconomics', 'Economics', 2);
+
+CREATE TABLE instructors (
+    instructor_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    department TEXT
+);
+
+INSERT INTO instructors (instructor_id, full_name, department) VALUES
+(201, 'Ananya Bose', 'Computer Science'),
+(202, 'Manoj Pillai', 'Mathematics'),
+(203, 'Kavita Reddy', 'Economics');
+
+CREATE TABLE enrollments (
+    enrollment_id INTEGER PRIMARY KEY,
+    student_id INTEGER REFERENCES students(student_id),
+    course_id INTEGER REFERENCES courses(course_id),
+    enrolled_on DATE,
+    grade TEXT
+);
+
+INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade) VALUES
+(1, 1, 101, '2025-02-01', 'A'),
+(2, 1, 103, '2025-02-01', 'B+'),
+(3, 2, 101, '2025-02-02', NULL),
+(4, 3, 102, '2025-02-03', 'A-'),
+(5, 3, 105, '2025-02-03', NULL),
+(6, 4, 104, '2025-02-04', 'B'),
+(7, 5, 101, '2025-02-05', NULL),
+(8, 6, 102, '2025-02-06', 'A'),
+(9, 7, 103, '2025-02-07', 'C+'),
+(10, 8, 105, '2025-02-08', 'B-');
+
+-- Query
 SELECT enrollment_id, student_id, course_id, enrolled_on
 FROM enrollments
 WHERE enrolled_on < '2025-02-04'
@@ -108,7 +238,72 @@ Not-equal-to has two spellings that mean the same thing:
 
 Both are standard, and most teams simply pick one and stay consistent with it.
 
-```postgresql with=schema.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    email TEXT,
+    city TEXT,
+    phone TEXT,
+    joined_on DATE
+);
+
+INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
+(1, 'Omkar Rane', 'omkar.rane@campusmail.edu', 'Bengaluru', '9845011111', '2025-01-10'),
+(2, 'Neha Sharma', 'neha.sharma@campusmail.edu', 'Mysuru', NULL, '2025-01-12'),
+(3, 'Varun Nair', 'varun.nair@gmail.com', 'Chennai', '9845022222', '2025-01-15'),
+(4, 'Siddharth Rao', 'siddharth.rao@campusmail.edu', 'Hyderabad', '9845033333', '2025-01-18'),
+(5, 'Yusuf Khan', 'yusuf.khan@gmail.com', 'Pune', NULL, '2025-01-20'),
+(6, 'Ishita Menon', 'ishita.menon@campusmail.edu', 'Bengaluru', '9845044444', '2025-01-22'),
+(7, 'Rahul Verma', 'rahul.verma@gmail.com', 'Chennai', '9845055555', '2025-01-25'),
+(8, 'Sanya Iyer', 'sanya.iyer@campusmail.edu', 'Mysuru', NULL, '2025-01-28');
+
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    title TEXT,
+    department TEXT,
+    credits INTEGER
+);
+
+INSERT INTO courses (course_id, title, department, credits) VALUES
+(101, 'Database Systems', 'Computer Science', 4),
+(102, 'Data Structures', 'Computer Science', 4),
+(103, 'Linear Algebra', 'Mathematics', 3),
+(104, 'Discrete Mathematics', 'Mathematics', 3),
+(105, 'Microeconomics', 'Economics', 2);
+
+CREATE TABLE instructors (
+    instructor_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    department TEXT
+);
+
+INSERT INTO instructors (instructor_id, full_name, department) VALUES
+(201, 'Ananya Bose', 'Computer Science'),
+(202, 'Manoj Pillai', 'Mathematics'),
+(203, 'Kavita Reddy', 'Economics');
+
+CREATE TABLE enrollments (
+    enrollment_id INTEGER PRIMARY KEY,
+    student_id INTEGER REFERENCES students(student_id),
+    course_id INTEGER REFERENCES courses(course_id),
+    enrolled_on DATE,
+    grade TEXT
+);
+
+INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade) VALUES
+(1, 1, 101, '2025-02-01', 'A'),
+(2, 1, 103, '2025-02-01', 'B+'),
+(3, 2, 101, '2025-02-02', NULL),
+(4, 3, 102, '2025-02-03', 'A-'),
+(5, 3, 105, '2025-02-03', NULL),
+(6, 4, 104, '2025-02-04', 'B'),
+(7, 5, 101, '2025-02-05', NULL),
+(8, 6, 102, '2025-02-06', 'A'),
+(9, 7, 103, '2025-02-07', 'C+'),
+(10, 8, 105, '2025-02-08', 'B-');
+
+-- Query
 SELECT title, department
 FROM courses
 WHERE department <> 'Mathematics';
@@ -164,7 +359,72 @@ Every course except `Linear Algebra` and `Discrete Mathematics` comes back, sinc
 
 These same six operators work on text `columns`, not just numbers and dates. PostgreSQL compares strings character by character in alphabetical order, so `>` and `<` on a text `column` ask whether one value sorts after or before another.
 
-```postgresql with=schema.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    email TEXT,
+    city TEXT,
+    phone TEXT,
+    joined_on DATE
+);
+
+INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
+(1, 'Omkar Rane', 'omkar.rane@campusmail.edu', 'Bengaluru', '9845011111', '2025-01-10'),
+(2, 'Neha Sharma', 'neha.sharma@campusmail.edu', 'Mysuru', NULL, '2025-01-12'),
+(3, 'Varun Nair', 'varun.nair@gmail.com', 'Chennai', '9845022222', '2025-01-15'),
+(4, 'Siddharth Rao', 'siddharth.rao@campusmail.edu', 'Hyderabad', '9845033333', '2025-01-18'),
+(5, 'Yusuf Khan', 'yusuf.khan@gmail.com', 'Pune', NULL, '2025-01-20'),
+(6, 'Ishita Menon', 'ishita.menon@campusmail.edu', 'Bengaluru', '9845044444', '2025-01-22'),
+(7, 'Rahul Verma', 'rahul.verma@gmail.com', 'Chennai', '9845055555', '2025-01-25'),
+(8, 'Sanya Iyer', 'sanya.iyer@campusmail.edu', 'Mysuru', NULL, '2025-01-28');
+
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    title TEXT,
+    department TEXT,
+    credits INTEGER
+);
+
+INSERT INTO courses (course_id, title, department, credits) VALUES
+(101, 'Database Systems', 'Computer Science', 4),
+(102, 'Data Structures', 'Computer Science', 4),
+(103, 'Linear Algebra', 'Mathematics', 3),
+(104, 'Discrete Mathematics', 'Mathematics', 3),
+(105, 'Microeconomics', 'Economics', 2);
+
+CREATE TABLE instructors (
+    instructor_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    department TEXT
+);
+
+INSERT INTO instructors (instructor_id, full_name, department) VALUES
+(201, 'Ananya Bose', 'Computer Science'),
+(202, 'Manoj Pillai', 'Mathematics'),
+(203, 'Kavita Reddy', 'Economics');
+
+CREATE TABLE enrollments (
+    enrollment_id INTEGER PRIMARY KEY,
+    student_id INTEGER REFERENCES students(student_id),
+    course_id INTEGER REFERENCES courses(course_id),
+    enrolled_on DATE,
+    grade TEXT
+);
+
+INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade) VALUES
+(1, 1, 101, '2025-02-01', 'A'),
+(2, 1, 103, '2025-02-01', 'B+'),
+(3, 2, 101, '2025-02-02', NULL),
+(4, 3, 102, '2025-02-03', 'A-'),
+(5, 3, 105, '2025-02-03', NULL),
+(6, 4, 104, '2025-02-04', 'B'),
+(7, 5, 101, '2025-02-05', NULL),
+(8, 6, 102, '2025-02-06', 'A'),
+(9, 7, 103, '2025-02-07', 'C+'),
+(10, 8, 105, '2025-02-08', 'B-');
+
+-- Query
 SELECT full_name
 FROM students
 WHERE full_name >= 'M'
@@ -179,7 +439,72 @@ ORDER BY full_name;
 
 Write a `query` against `courses` that returns only the course with the lowest credit value, using a comparison operator rather than sorting and limiting.
 
-```postgresql with=schema.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    email TEXT,
+    city TEXT,
+    phone TEXT,
+    joined_on DATE
+);
+
+INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
+(1, 'Omkar Rane', 'omkar.rane@campusmail.edu', 'Bengaluru', '9845011111', '2025-01-10'),
+(2, 'Neha Sharma', 'neha.sharma@campusmail.edu', 'Mysuru', NULL, '2025-01-12'),
+(3, 'Varun Nair', 'varun.nair@gmail.com', 'Chennai', '9845022222', '2025-01-15'),
+(4, 'Siddharth Rao', 'siddharth.rao@campusmail.edu', 'Hyderabad', '9845033333', '2025-01-18'),
+(5, 'Yusuf Khan', 'yusuf.khan@gmail.com', 'Pune', NULL, '2025-01-20'),
+(6, 'Ishita Menon', 'ishita.menon@campusmail.edu', 'Bengaluru', '9845044444', '2025-01-22'),
+(7, 'Rahul Verma', 'rahul.verma@gmail.com', 'Chennai', '9845055555', '2025-01-25'),
+(8, 'Sanya Iyer', 'sanya.iyer@campusmail.edu', 'Mysuru', NULL, '2025-01-28');
+
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    title TEXT,
+    department TEXT,
+    credits INTEGER
+);
+
+INSERT INTO courses (course_id, title, department, credits) VALUES
+(101, 'Database Systems', 'Computer Science', 4),
+(102, 'Data Structures', 'Computer Science', 4),
+(103, 'Linear Algebra', 'Mathematics', 3),
+(104, 'Discrete Mathematics', 'Mathematics', 3),
+(105, 'Microeconomics', 'Economics', 2);
+
+CREATE TABLE instructors (
+    instructor_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    department TEXT
+);
+
+INSERT INTO instructors (instructor_id, full_name, department) VALUES
+(201, 'Ananya Bose', 'Computer Science'),
+(202, 'Manoj Pillai', 'Mathematics'),
+(203, 'Kavita Reddy', 'Economics');
+
+CREATE TABLE enrollments (
+    enrollment_id INTEGER PRIMARY KEY,
+    student_id INTEGER REFERENCES students(student_id),
+    course_id INTEGER REFERENCES courses(course_id),
+    enrolled_on DATE,
+    grade TEXT
+);
+
+INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade) VALUES
+(1, 1, 101, '2025-02-01', 'A'),
+(2, 1, 103, '2025-02-01', 'B+'),
+(3, 2, 101, '2025-02-02', NULL),
+(4, 3, 102, '2025-02-03', 'A-'),
+(5, 3, 105, '2025-02-03', NULL),
+(6, 4, 104, '2025-02-04', 'B'),
+(7, 5, 101, '2025-02-05', NULL),
+(8, 6, 102, '2025-02-06', 'A'),
+(9, 7, 103, '2025-02-07', 'C+'),
+(10, 8, 105, '2025-02-08', 'B-');
+
+-- Query
 SELECT title, credits
 FROM courses
 WHERE credits <= 2;

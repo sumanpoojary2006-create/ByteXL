@@ -11,7 +11,7 @@
 
 The `accounts` `table` from the previous lesson is the setup here again.
 
-```postgresql file=accounts.sql
+```text
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
     owner_name TEXT,
@@ -25,7 +25,18 @@ INSERT INTO accounts (account_id, owner_name, balance) VALUES
 
 A `constraint` violation partway through a `transaction` is one common, entirely unplanned way for a `transaction` to fail. Suppose a `CHECK` `constraint` requires a balance to never go negative.
 
-```postgresql with=accounts.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    owner_name TEXT,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, owner_name, balance) VALUES
+(1, 'Meera Iyer', 50000.00),
+(2, 'Sanjay Rathi', 12000.00);
+
+-- Query
 ALTER TABLE accounts ADD CONSTRAINT balance_not_negative CHECK (balance >= 0);
 
 -- This transaction would fail because it makes account 1 negative:
@@ -53,7 +64,18 @@ The closing `SELECT` shows both balances completely untouched, exactly as atomic
 
 It is worth being precise about what atomicity actually guarantees, since it is easy to expect too much from it. Atomicity only guarantees that a `transaction`'s own set of changes are indivisible; it says nothing about whether those changes, once committed, make logical sense.
 
-```postgresql with=accounts.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    owner_name TEXT,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, owner_name, balance) VALUES
+(1, 'Meera Iyer', 50000.00),
+(2, 'Sanjay Rathi', 12000.00);
+
+-- Query
 BEGIN;
 
 UPDATE accounts SET balance = balance - 5000.00 WHERE account_id = 1;
@@ -69,7 +91,18 @@ Rahul's earlier two-statement transfer was correct because both necessary statem
 
 Atomicity applies to however many statements sit between `BEGIN` and `COMMIT`, not just two. A `transaction` with five statements offers the same guarantee as one with two: all five succeed together, or none of them take effect.
 
-```postgresql with=accounts.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    owner_name TEXT,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, owner_name, balance) VALUES
+(1, 'Meera Iyer', 50000.00),
+(2, 'Sanjay Rathi', 12000.00);
+
+-- Query
 BEGIN;
 
 INSERT INTO accounts (account_id, owner_name, balance) VALUES (3, 'Farah Ali', 0.00);
@@ -118,7 +151,18 @@ This `transaction` opens a new account for Farah Ali and funds it from Meera's a
 
 Using the `balance_not_negative` `constraint` already added earlier in this lesson, attempt a `transaction` that tries to move 100000.00 from Sanjay's account (which only has 12000.00) to Meera's account. Confirm afterward that Sanjay's balance is unaffected.
 
-```postgresql with=accounts.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    owner_name TEXT,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, owner_name, balance) VALUES
+(1, 'Meera Iyer', 50000.00),
+(2, 'Sanjay Rathi', 12000.00);
+
+-- Query
 -- Write your transaction below
 ```
 

@@ -9,7 +9,7 @@
 
 The `sales` `table` records individual sales made by three team members.
 
-```postgresql file=sales.sql
+```text
 CREATE TABLE sales (
     sale_id INTEGER PRIMARY KEY,
     salesperson TEXT,
@@ -27,7 +27,24 @@ INSERT INTO sales (sale_id, salesperson, region, amount, sale_date) VALUES
 (6, 'Tarun Bakshi', 'East', 11000.00, '2025-06-03');
 ```
 
-```postgresql with=sales.sql
+```postgresql
+CREATE TABLE sales (
+    sale_id INTEGER PRIMARY KEY,
+    salesperson TEXT,
+    region TEXT,
+    amount NUMERIC(10, 2),
+    sale_date DATE
+);
+
+INSERT INTO sales (sale_id, salesperson, region, amount, sale_date) VALUES
+(1, 'Nikhil Rao', 'North', 12000.00, '2025-06-01'),
+(2, 'Nikhil Rao', 'North', 8500.00, '2025-06-05'),
+(3, 'Sana Fatima', 'South', 15000.00, '2025-06-02'),
+(4, 'Nikhil Rao', 'North', 9200.00, '2025-06-10'),
+(5, 'Sana Fatima', 'South', 6000.00, '2025-06-11'),
+(6, 'Tarun Bakshi', 'East', 11000.00, '2025-06-03');
+
+-- Query
 SELECT salesperson, SUM(amount) AS total_sales
 FROM sales
 GROUP BY salesperson;
@@ -39,7 +56,24 @@ This gives Leela three `rows`, one total per salesperson, but the individual sal
 
 A `window function` is written using an aggregate `function` followed by `OVER (...)`, and it does not collapse `rows` the way `GROUP BY` does.
 
-```postgresql with=sales.sql
+```postgresql
+CREATE TABLE sales (
+    sale_id INTEGER PRIMARY KEY,
+    salesperson TEXT,
+    region TEXT,
+    amount NUMERIC(10, 2),
+    sale_date DATE
+);
+
+INSERT INTO sales (sale_id, salesperson, region, amount, sale_date) VALUES
+(1, 'Nikhil Rao', 'North', 12000.00, '2025-06-01'),
+(2, 'Nikhil Rao', 'North', 8500.00, '2025-06-05'),
+(3, 'Sana Fatima', 'South', 15000.00, '2025-06-02'),
+(4, 'Nikhil Rao', 'North', 9200.00, '2025-06-10'),
+(5, 'Sana Fatima', 'South', 6000.00, '2025-06-11'),
+(6, 'Tarun Bakshi', 'East', 11000.00, '2025-06-03');
+
+-- Query
 SELECT salesperson, sale_id, amount,
        SUM(amount) OVER (PARTITION BY salesperson) AS salesperson_total
 FROM sales;
@@ -101,7 +135,24 @@ Nikhil's three `rows` all show 29700.00, his total across all three sales, sitti
 - `GROUP BY` controls how many `rows` appear in the final result, collapsing each group into one `row`.
 - `PARTITION BY` only controls which `rows` are included in each calculation, leaving every original `row` in place.
 
-```postgresql with=sales.sql
+```postgresql
+CREATE TABLE sales (
+    sale_id INTEGER PRIMARY KEY,
+    salesperson TEXT,
+    region TEXT,
+    amount NUMERIC(10, 2),
+    sale_date DATE
+);
+
+INSERT INTO sales (sale_id, salesperson, region, amount, sale_date) VALUES
+(1, 'Nikhil Rao', 'North', 12000.00, '2025-06-01'),
+(2, 'Nikhil Rao', 'North', 8500.00, '2025-06-05'),
+(3, 'Sana Fatima', 'South', 15000.00, '2025-06-02'),
+(4, 'Nikhil Rao', 'North', 9200.00, '2025-06-10'),
+(5, 'Sana Fatima', 'South', 6000.00, '2025-06-11'),
+(6, 'Tarun Bakshi', 'East', 11000.00, '2025-06-03');
+
+-- Query
 SELECT salesperson, sale_id, amount,
        SUM(amount) OVER () AS company_total
 FROM sales;
@@ -115,7 +166,24 @@ Leaving the parentheses after `OVER` completely empty means the window is the en
 
 A `window function` can be combined with `WHERE`, and it always operates on whatever `rows` survive filtering, computed after `WHERE` has already run but conceptually alongside the final `SELECT`.
 
-```postgresql with=sales.sql
+```postgresql
+CREATE TABLE sales (
+    sale_id INTEGER PRIMARY KEY,
+    salesperson TEXT,
+    region TEXT,
+    amount NUMERIC(10, 2),
+    sale_date DATE
+);
+
+INSERT INTO sales (sale_id, salesperson, region, amount, sale_date) VALUES
+(1, 'Nikhil Rao', 'North', 12000.00, '2025-06-01'),
+(2, 'Nikhil Rao', 'North', 8500.00, '2025-06-05'),
+(3, 'Sana Fatima', 'South', 15000.00, '2025-06-02'),
+(4, 'Nikhil Rao', 'North', 9200.00, '2025-06-10'),
+(5, 'Sana Fatima', 'South', 6000.00, '2025-06-11'),
+(6, 'Tarun Bakshi', 'East', 11000.00, '2025-06-03');
+
+-- Query
 SELECT salesperson, sale_id, amount,
        SUM(amount) OVER (PARTITION BY salesperson) AS salesperson_total
 FROM sales
@@ -157,7 +225,24 @@ Tarun Bakshi's East-region `row` is filtered out by `WHERE` before the `window f
 
 Leela wants to see every sale alongside the total sales for that sale's region, without losing any individual sale `rows`. Write a `query` against the `sales` `table` above using a `window function` partitioned by `region`.
 
-```postgresql with=sales.sql
+```postgresql
+CREATE TABLE sales (
+    sale_id INTEGER PRIMARY KEY,
+    salesperson TEXT,
+    region TEXT,
+    amount NUMERIC(10, 2),
+    sale_date DATE
+);
+
+INSERT INTO sales (sale_id, salesperson, region, amount, sale_date) VALUES
+(1, 'Nikhil Rao', 'North', 12000.00, '2025-06-01'),
+(2, 'Nikhil Rao', 'North', 8500.00, '2025-06-05'),
+(3, 'Sana Fatima', 'South', 15000.00, '2025-06-02'),
+(4, 'Nikhil Rao', 'North', 9200.00, '2025-06-10'),
+(5, 'Sana Fatima', 'South', 6000.00, '2025-06-11'),
+(6, 'Tarun Bakshi', 'East', 11000.00, '2025-06-03');
+
+-- Query
 -- Write your query below
 ```
 

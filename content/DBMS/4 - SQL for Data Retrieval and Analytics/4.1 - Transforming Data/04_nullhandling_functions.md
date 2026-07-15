@@ -11,7 +11,7 @@ Both gaps are stored as `NULL`, and both cause the same problem once Vikram trie
 
 The directory needs a phone number to display for every employee, even the ones with no secondary number recorded, Rather than leaving those `rows` blank, Vikram wants to fall back to the primary number, and if even that is missing, fall back to a placeholder.
 
-```postgresql file=employees.sql
+```text
 CREATE TABLE employees (
     employee_id INTEGER PRIMARY KEY,
     full_name TEXT,
@@ -28,7 +28,23 @@ INSERT INTO employees (employee_id, full_name, primary_phone, secondary_phone, m
 (5, 'Simran Kaur', '9811100006', NULL, 2);
 ```
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    primary_phone TEXT,
+    secondary_phone TEXT,
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, full_name, primary_phone, secondary_phone, manager_id) VALUES
+(1, 'Neha Choudhary', '9811100001', '9811100002', NULL),
+(2, 'Rahul Bose', '9811100003', NULL, 1),
+(3, 'Ayesha Khan', NULL, NULL, 1),
+(4, 'Manoj Tiwari', '9811100005', '9811100005', 2),
+(5, 'Simran Kaur', '9811100006', NULL, 2);
+
+-- Query
 SELECT full_name, COALESCE(secondary_phone, primary_phone, 'Not on file') AS contact_number
 FROM employees;
 ```
@@ -77,7 +93,23 @@ Tracing a few employees through the fallback chain makes the left-to-right scan 
 
 Manoj's `row` has an odd duplication: his `primary_phone` and `secondary_phone` are identical, which happened because someone copied the primary number into the secondary field by mistake instead of leaving it blank. Vikram wants the directory to treat a secondary number that exactly matches the primary as if it were not really provided at all.
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    primary_phone TEXT,
+    secondary_phone TEXT,
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, full_name, primary_phone, secondary_phone, manager_id) VALUES
+(1, 'Neha Choudhary', '9811100001', '9811100002', NULL),
+(2, 'Rahul Bose', '9811100003', NULL, 1),
+(3, 'Ayesha Khan', NULL, NULL, 1),
+(4, 'Manoj Tiwari', '9811100005', '9811100005', 2),
+(5, 'Simran Kaur', '9811100006', NULL, 2);
+
+-- Query
 SELECT full_name, primary_phone, secondary_phone,
        NULLIF(secondary_phone, primary_phone) AS real_secondary_phone
 FROM employees;
@@ -93,7 +125,23 @@ FROM employees;
 
 The two `functions` are often used together: first clean up an accidental duplicate with `NULLIF`, then supply a fallback with `COALESCE` so the final `column` has no blanks left at all.
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    primary_phone TEXT,
+    secondary_phone TEXT,
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, full_name, primary_phone, secondary_phone, manager_id) VALUES
+(1, 'Neha Choudhary', '9811100001', '9811100002', NULL),
+(2, 'Rahul Bose', '9811100003', NULL, 1),
+(3, 'Ayesha Khan', NULL, NULL, 1),
+(4, 'Manoj Tiwari', '9811100005', '9811100005', 2),
+(5, 'Simran Kaur', '9811100006', NULL, 2);
+
+-- Query
 SELECT full_name,
        COALESCE(NULLIF(secondary_phone, primary_phone), primary_phone, 'Not on file') AS best_contact_number
 FROM employees;
@@ -130,7 +178,23 @@ FROM employees;
 
 The company org chart needs a "reports to" `column`: for every employee, show their `employee_id` as the reporting line if `manager_id` is missing, otherwise show `manager_id` itself, aliased as `reports_to`. Write that `query` against the `employees` `table` above.
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    primary_phone TEXT,
+    secondary_phone TEXT,
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, full_name, primary_phone, secondary_phone, manager_id) VALUES
+(1, 'Neha Choudhary', '9811100001', '9811100002', NULL),
+(2, 'Rahul Bose', '9811100003', NULL, 1),
+(3, 'Ayesha Khan', NULL, NULL, 1),
+(4, 'Manoj Tiwari', '9811100005', '9811100005', 2),
+(5, 'Simran Kaur', '9811100006', NULL, 2);
+
+-- Query
 -- Write your query below
 ```
 

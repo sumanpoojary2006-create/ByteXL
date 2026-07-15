@@ -8,7 +8,7 @@ Unlike marking a shipment delivered, this is not a "run these statements togethe
 
 The `shipments` `table` holds the raw data a shipping-cost calculation depends on.
 
-```postgresql file=functions_demo.sql
+```text
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     distance_km NUMERIC(10, 2),
@@ -21,7 +21,19 @@ INSERT INTO shipments (shipment_id, distance_km, is_oversized) VALUES
 (3, 30.00, FALSE);
 ```
 
-```postgresql with=functions_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    distance_km NUMERIC(10, 2),
+    is_oversized BOOLEAN
+);
+
+INSERT INTO shipments (shipment_id, distance_km, is_oversized) VALUES
+(1, 120.00, FALSE),
+(2, 450.00, TRUE),
+(3, 30.00, FALSE);
+
+-- Query
 CREATE FUNCTION calculate_shipping_cost(distance NUMERIC, oversized BOOLEAN)
 RETURNS NUMERIC
 LANGUAGE plpgsql
@@ -49,7 +61,34 @@ Unlike the `procedure` from the previous lesson, which performed actions and ret
 
 Because a `function` returns a value, it can be called directly inside `SELECT`, exactly like a built-in `function` such as `ROUND` or `COALESCE` covered much earlier in this course.
 
-```postgresql with=functions_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    distance_km NUMERIC(10, 2),
+    is_oversized BOOLEAN
+);
+
+INSERT INTO shipments (shipment_id, distance_km, is_oversized) VALUES
+(1, 120.00, FALSE),
+(2, 450.00, TRUE),
+(3, 30.00, FALSE);
+
+CREATE FUNCTION calculate_shipping_cost(distance NUMERIC, oversized BOOLEAN)
+RETURNS NUMERIC
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    base_cost NUMERIC;
+BEGIN
+    base_cost := distance * 8.5;
+    IF oversized THEN
+        base_cost := base_cost + 500.00;
+    END IF;
+    RETURN base_cost;
+END;
+$$;
+
+-- Query
 SELECT shipment_id, distance_km, is_oversized,
        calculate_shipping_cost(distance_km, is_oversized) AS shipping_cost
 FROM shipments;
@@ -64,7 +103,34 @@ FROM shipments;
 
 A `function`, unlike a `procedure`, cannot issue its own `COMMIT` or `ROLLBACK`; it always runs as part of whatever `transaction` the calling statement is already inside.
 
-```postgresql with=functions_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    distance_km NUMERIC(10, 2),
+    is_oversized BOOLEAN
+);
+
+INSERT INTO shipments (shipment_id, distance_km, is_oversized) VALUES
+(1, 120.00, FALSE),
+(2, 450.00, TRUE),
+(3, 30.00, FALSE);
+
+CREATE FUNCTION calculate_shipping_cost(distance NUMERIC, oversized BOOLEAN)
+RETURNS NUMERIC
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    base_cost NUMERIC;
+BEGIN
+    base_cost := distance * 8.5;
+    IF oversized THEN
+        base_cost := base_cost + 500.00;
+    END IF;
+    RETURN base_cost;
+END;
+$$;
+
+-- Query
 SELECT calculate_shipping_cost(200.00, TRUE);
 ```
 
@@ -78,7 +144,34 @@ This is the clearest practical distinction between a `function` and the `procedu
 
 While `calculate_shipping_cost` returns a single value, a `function` can also be written to return an entire `table`-like result, usable in `FROM` exactly like the derived `tables` and CTEs covered earlier in this course.
 
-```postgresql with=functions_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    distance_km NUMERIC(10, 2),
+    is_oversized BOOLEAN
+);
+
+INSERT INTO shipments (shipment_id, distance_km, is_oversized) VALUES
+(1, 120.00, FALSE),
+(2, 450.00, TRUE),
+(3, 30.00, FALSE);
+
+CREATE FUNCTION calculate_shipping_cost(distance NUMERIC, oversized BOOLEAN)
+RETURNS NUMERIC
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    base_cost NUMERIC;
+BEGIN
+    base_cost := distance * 8.5;
+    IF oversized THEN
+        base_cost := base_cost + 500.00;
+    END IF;
+    RETURN base_cost;
+END;
+$$;
+
+-- Query
 CREATE FUNCTION oversized_shipments()
 RETURNS TABLE (shipment_id INTEGER, distance_km NUMERIC)
 LANGUAGE plpgsql
@@ -133,7 +226,46 @@ SELECT * FROM oversized_shipments();
 
 Write a `function` named `apply_discount` that takes an `amount` and a `discount_percent`, both `NUMERIC`, and returns the discounted amount, then use it inside a `SELECT` against the `shipments` `table` above to apply a flat 10 discount percent to each shipment's `distance_km` value, purely as a numeric exercise.
 
-```postgresql with=functions_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    distance_km NUMERIC(10, 2),
+    is_oversized BOOLEAN
+);
+
+INSERT INTO shipments (shipment_id, distance_km, is_oversized) VALUES
+(1, 120.00, FALSE),
+(2, 450.00, TRUE),
+(3, 30.00, FALSE);
+
+CREATE FUNCTION calculate_shipping_cost(distance NUMERIC, oversized BOOLEAN)
+RETURNS NUMERIC
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    base_cost NUMERIC;
+BEGIN
+    base_cost := distance * 8.5;
+    IF oversized THEN
+        base_cost := base_cost + 500.00;
+    END IF;
+    RETURN base_cost;
+END;
+$$;
+
+CREATE FUNCTION oversized_shipments()
+RETURNS TABLE (shipment_id INTEGER, distance_km NUMERIC)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT s.shipment_id, s.distance_km FROM shipments s WHERE s.is_oversized = TRUE;
+END;
+$$;
+
+SELECT * FROM oversized_shipments();
+
+-- Query
 -- Write your function and query below
 ```
 

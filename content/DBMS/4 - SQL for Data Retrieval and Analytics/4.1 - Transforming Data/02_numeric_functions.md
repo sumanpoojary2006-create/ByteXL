@@ -12,7 +12,7 @@ SQL's built-in **numeric `functions`** handle exactly this kind of cleanup, righ
 
 The `products` `table` stores prices with more decimal precision than any customer needs to see.
 
-```postgresql file=products.sql
+```text
 CREATE TABLE products (
     product_id INTEGER PRIMARY KEY,
     product_name TEXT,
@@ -29,7 +29,23 @@ INSERT INTO products (product_id, product_name, cost_price, selling_price, stock
 (5, 'Webcam', 780.8888, -1249.0000, 0.2100);
 ```
 
-```postgresql with=products.sql
+```postgresql
+CREATE TABLE products (
+    product_id INTEGER PRIMARY KEY,
+    product_name TEXT,
+    cost_price NUMERIC(10, 4),
+    selling_price NUMERIC(10, 4),
+    stock_weight_kg NUMERIC(10, 4)
+);
+
+INSERT INTO products (product_id, product_name, cost_price, selling_price, stock_weight_kg) VALUES
+(1, 'Wireless Mouse', 349.6789, 599.9950, 0.1450),
+(2, 'USB-C Cable', 89.3333, 149.0000, 0.0500),
+(3, 'Bluetooth Speaker', 1120.4567, 1899.9900, 0.6200),
+(4, 'Laptop Stand', 610.1111, 999.5000, 1.3000),
+(5, 'Webcam', 780.8888, -1249.0000, 0.2100);
+
+-- Query
 SELECT product_name, selling_price, ROUND(selling_price, 0) AS rounded_price
 FROM products;
 ```
@@ -43,7 +59,23 @@ FROM products;
 
 Sometimes a plain round is the wrong choice. If Arjun is calculating how many boxes are needed to ship a fractional number of kilograms, rounding down would leave stock behind, so he needs to always round up.
 
-```postgresql with=products.sql
+```postgresql
+CREATE TABLE products (
+    product_id INTEGER PRIMARY KEY,
+    product_name TEXT,
+    cost_price NUMERIC(10, 4),
+    selling_price NUMERIC(10, 4),
+    stock_weight_kg NUMERIC(10, 4)
+);
+
+INSERT INTO products (product_id, product_name, cost_price, selling_price, stock_weight_kg) VALUES
+(1, 'Wireless Mouse', 349.6789, 599.9950, 0.1450),
+(2, 'USB-C Cable', 89.3333, 149.0000, 0.0500),
+(3, 'Bluetooth Speaker', 1120.4567, 1899.9900, 0.6200),
+(4, 'Laptop Stand', 610.1111, 999.5000, 1.3000),
+(5, 'Webcam', 780.8888, -1249.0000, 0.2100);
+
+-- Query
 SELECT product_name, stock_weight_kg,
        CEIL(stock_weight_kg) AS boxes_needed_if_1kg_each,
        FLOOR(stock_weight_kg) AS full_kg_only
@@ -57,13 +89,45 @@ FROM products;
 
 The webcam `row` has a `selling_price` of -1249.0000, a data-entry mistake from a refund adjustment that got applied to the wrong `column`. Before fixing the source data, Arjun wants to see how far off each price is from zero, and separately, he wants to know which products can be packed into cartons of 6 with none left over.
 
-```postgresql with=products.sql
+```postgresql
+CREATE TABLE products (
+    product_id INTEGER PRIMARY KEY,
+    product_name TEXT,
+    cost_price NUMERIC(10, 4),
+    selling_price NUMERIC(10, 4),
+    stock_weight_kg NUMERIC(10, 4)
+);
+
+INSERT INTO products (product_id, product_name, cost_price, selling_price, stock_weight_kg) VALUES
+(1, 'Wireless Mouse', 349.6789, 599.9950, 0.1450),
+(2, 'USB-C Cable', 89.3333, 149.0000, 0.0500),
+(3, 'Bluetooth Speaker', 1120.4567, 1899.9900, 0.6200),
+(4, 'Laptop Stand', 610.1111, 999.5000, 1.3000),
+(5, 'Webcam', 780.8888, -1249.0000, 0.2100);
+
+-- Query
 SELECT product_name, selling_price, ABS(selling_price) AS positive_price
 FROM products
 WHERE selling_price < 0;
 ```
 
-```postgresql with=products.sql
+```postgresql
+CREATE TABLE products (
+    product_id INTEGER PRIMARY KEY,
+    product_name TEXT,
+    cost_price NUMERIC(10, 4),
+    selling_price NUMERIC(10, 4),
+    stock_weight_kg NUMERIC(10, 4)
+);
+
+INSERT INTO products (product_id, product_name, cost_price, selling_price, stock_weight_kg) VALUES
+(1, 'Wireless Mouse', 349.6789, 599.9950, 0.1450),
+(2, 'USB-C Cable', 89.3333, 149.0000, 0.0500),
+(3, 'Bluetooth Speaker', 1120.4567, 1899.9900, 0.6200),
+(4, 'Laptop Stand', 610.1111, 999.5000, 1.3000),
+(5, 'Webcam', 780.8888, -1249.0000, 0.2100);
+
+-- Query
 SELECT product_id, product_name, product_id % 6 AS remainder_when_packed_in_sixes
 FROM products;
 ```
@@ -151,7 +215,23 @@ Seeing a handful of inputs and outputs side by side makes each `function`'s beha
 
 Arjun needs a margin report: for every product, show the product name and the profit margin (`selling_price - cost_price`) rounded to two decimal places, aliased as `margin`. Write that `query` against the `products` `table` above.
 
-```postgresql with=products.sql
+```postgresql
+CREATE TABLE products (
+    product_id INTEGER PRIMARY KEY,
+    product_name TEXT,
+    cost_price NUMERIC(10, 4),
+    selling_price NUMERIC(10, 4),
+    stock_weight_kg NUMERIC(10, 4)
+);
+
+INSERT INTO products (product_id, product_name, cost_price, selling_price, stock_weight_kg) VALUES
+(1, 'Wireless Mouse', 349.6789, 599.9950, 0.1450),
+(2, 'USB-C Cable', 89.3333, 149.0000, 0.0500),
+(3, 'Bluetooth Speaker', 1120.4567, 1899.9900, 0.6200),
+(4, 'Laptop Stand', 610.1111, 999.5000, 1.3000),
+(5, 'Webcam', 780.8888, -1249.0000, 0.2100);
+
+-- Query
 -- Write your query below
 ```
 

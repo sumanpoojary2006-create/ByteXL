@@ -8,7 +8,7 @@ Ranking `functions` alone cannot filter, since `window functions` are not allowe
 
 The `sales` `table` now includes a `region` `column` so rankings can be scoped per region.
 
-```postgresql file=regional_sales.sql
+```text
 CREATE TABLE sales (
     salesperson TEXT,
     region TEXT,
@@ -25,7 +25,23 @@ INSERT INTO sales (salesperson, region, total_amount) VALUES
 ('Kunal Verma', 'East', 11000.00);
 ```
 
-```postgresql with=regional_sales.sql
+```postgresql
+CREATE TABLE sales (
+    salesperson TEXT,
+    region TEXT,
+    total_amount NUMERIC(10, 2)
+);
+
+INSERT INTO sales (salesperson, region, total_amount) VALUES
+('Nikhil Rao', 'North', 29700.00),
+('Aarav Singh', 'North', 24000.00),
+('Devika Rao', 'North', 18500.00),
+('Sana Fatima', 'South', 21000.00),
+('Tarun Bakshi', 'South', 21000.00),
+('Reema Ghosh', 'South', 15000.00),
+('Kunal Verma', 'East', 11000.00);
+
+-- Query
 SELECT salesperson, region, total_amount,
        RANK() OVER (PARTITION BY region ORDER BY total_amount DESC) AS region_rank
 FROM sales;
@@ -44,7 +60,23 @@ Every region starts its own count from 1, which is exactly the "within each regi
 
 Since `region_rank` cannot be referenced directly in `WHERE` within the same `query` that defines it, the ranked result needs to be named with a CTE first, then filtered from there.
 
-```postgresql with=regional_sales.sql
+```postgresql
+CREATE TABLE sales (
+    salesperson TEXT,
+    region TEXT,
+    total_amount NUMERIC(10, 2)
+);
+
+INSERT INTO sales (salesperson, region, total_amount) VALUES
+('Nikhil Rao', 'North', 29700.00),
+('Aarav Singh', 'North', 24000.00),
+('Devika Rao', 'North', 18500.00),
+('Sana Fatima', 'South', 21000.00),
+('Tarun Bakshi', 'South', 21000.00),
+('Reema Ghosh', 'South', 15000.00),
+('Kunal Verma', 'East', 11000.00);
+
+-- Query
 WITH ranked_sales AS (
     SELECT salesperson, region, total_amount,
            RANK() OVER (PARTITION BY region ORDER BY total_amount DESC) AS region_rank
@@ -68,7 +100,23 @@ Had South instead had a three-way tie for first place, all three tied `rows` wou
 
 If the business rule is strictly "exactly 2 per region, no matter what," regardless of ties, `ROW_NUMBER` guarantees exactly that count, at the cost of breaking ties arbitrarily.
 
-```postgresql with=regional_sales.sql
+```postgresql
+CREATE TABLE sales (
+    salesperson TEXT,
+    region TEXT,
+    total_amount NUMERIC(10, 2)
+);
+
+INSERT INTO sales (salesperson, region, total_amount) VALUES
+('Nikhil Rao', 'North', 29700.00),
+('Aarav Singh', 'North', 24000.00),
+('Devika Rao', 'North', 18500.00),
+('Sana Fatima', 'South', 21000.00),
+('Tarun Bakshi', 'South', 21000.00),
+('Reema Ghosh', 'South', 15000.00),
+('Kunal Verma', 'East', 11000.00);
+
+-- Query
 WITH ranked_sales AS (
     SELECT salesperson, region, total_amount,
            ROW_NUMBER() OVER (PARTITION BY region ORDER BY total_amount DESC) AS row_num
@@ -115,7 +163,23 @@ This CTE-plus-ranking-plus-filter shape generalizes far beyond sales regions: to
 
 Find the single lowest-selling salesperson in each region, using `RANK`. Write that `query` against the `sales` `table` above.
 
-```postgresql with=regional_sales.sql
+```postgresql
+CREATE TABLE sales (
+    salesperson TEXT,
+    region TEXT,
+    total_amount NUMERIC(10, 2)
+);
+
+INSERT INTO sales (salesperson, region, total_amount) VALUES
+('Nikhil Rao', 'North', 29700.00),
+('Aarav Singh', 'North', 24000.00),
+('Devika Rao', 'North', 18500.00),
+('Sana Fatima', 'South', 21000.00),
+('Tarun Bakshi', 'South', 21000.00),
+('Reema Ghosh', 'South', 15000.00),
+('Kunal Verma', 'East', 11000.00);
+
+-- Query
 -- Write your query below
 ```
 

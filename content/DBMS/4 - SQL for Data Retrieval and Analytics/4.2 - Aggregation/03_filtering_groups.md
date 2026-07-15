@@ -9,7 +9,7 @@
 
 The `orders` `table` is the same one used for grouping.
 
-```postgresql file=orders.sql
+```text
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
     customer_name TEXT,
@@ -36,7 +36,26 @@ INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUE
 
 `HAVING` runs after `GROUP BY` has already collapsed `rows` into groups and the `aggregate functions` have already produced their results, so it can filter directly on those aggregate values.
 
-```postgresql with=orders.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    category TEXT,
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUES
+(1, 'Ishita Rao', 'Fiction', 450.00, '2025-04-02'),
+(2, 'Vivek Menon', 'Non-Fiction', 899.00, '2025-04-03'),
+(3, 'Ishita Rao', 'Fiction', 320.00, '2025-04-05'),
+(4, 'Aman Gupta', 'Children', 210.00, '2025-04-06'),
+(5, 'Sonal Deshpande', 'Non-Fiction', 1450.00, '2025-04-08'),
+(6, 'Vivek Menon', 'Fiction', 610.00, '2025-04-10'),
+(7, 'Aman Gupta', 'Children', 175.00, '2025-04-12'),
+(8, 'Ishita Rao', 'Non-Fiction', 990.00, '2025-04-14');
+
+-- Query
 SELECT customer_name, SUM(amount) AS total_spent
 FROM orders
 GROUP BY customer_name
@@ -85,7 +104,26 @@ Ishita Rao, Vivek Menon, and Sonal Deshpande survive the filter; Aman Gupta, who
 
 `WHERE` and `HAVING` are not interchangeable, but they work well together, since each one filters at a different stage. `WHERE` can narrow down the `rows` before grouping even happens, which is often cheaper than grouping everything first and discarding groups afterward.
 
-```postgresql with=orders.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    category TEXT,
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUES
+(1, 'Ishita Rao', 'Fiction', 450.00, '2025-04-02'),
+(2, 'Vivek Menon', 'Non-Fiction', 899.00, '2025-04-03'),
+(3, 'Ishita Rao', 'Fiction', 320.00, '2025-04-05'),
+(4, 'Aman Gupta', 'Children', 210.00, '2025-04-06'),
+(5, 'Sonal Deshpande', 'Non-Fiction', 1450.00, '2025-04-08'),
+(6, 'Vivek Menon', 'Fiction', 610.00, '2025-04-10'),
+(7, 'Aman Gupta', 'Children', 175.00, '2025-04-12'),
+(8, 'Ishita Rao', 'Non-Fiction', 990.00, '2025-04-14');
+
+-- Query
 SELECT customer_name, SUM(amount) AS total_spent
 FROM orders
 WHERE category != 'Children'
@@ -109,7 +147,26 @@ The two clauses divide the work cleanly: `WHERE` picks which `rows` count, `HAVI
 
 `HAVING` works with any `aggregate function`, not just `SUM`. A common use is filtering on how many `rows` landed in a group.
 
-```postgresql with=orders.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    category TEXT,
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUES
+(1, 'Ishita Rao', 'Fiction', 450.00, '2025-04-02'),
+(2, 'Vivek Menon', 'Non-Fiction', 899.00, '2025-04-03'),
+(3, 'Ishita Rao', 'Fiction', 320.00, '2025-04-05'),
+(4, 'Aman Gupta', 'Children', 210.00, '2025-04-06'),
+(5, 'Sonal Deshpande', 'Non-Fiction', 1450.00, '2025-04-08'),
+(6, 'Vivek Menon', 'Fiction', 610.00, '2025-04-10'),
+(7, 'Aman Gupta', 'Children', 175.00, '2025-04-12'),
+(8, 'Ishita Rao', 'Non-Fiction', 990.00, '2025-04-14');
+
+-- Query
 SELECT customer_name, COUNT(*) AS orders_placed
 FROM orders
 GROUP BY customer_name
@@ -146,7 +203,26 @@ This surfaces only the customers who placed 3 or more orders, which is a differe
 
 The founders want to see only the product categories that generated less than 1000 in total revenue, so the team can decide whether to keep stocking them. Write a `query` against the `orders` `table` above that returns `category` and `total_revenue`, showing only categories under that threshold.
 
-```postgresql with=orders.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    category TEXT,
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUES
+(1, 'Ishita Rao', 'Fiction', 450.00, '2025-04-02'),
+(2, 'Vivek Menon', 'Non-Fiction', 899.00, '2025-04-03'),
+(3, 'Ishita Rao', 'Fiction', 320.00, '2025-04-05'),
+(4, 'Aman Gupta', 'Children', 210.00, '2025-04-06'),
+(5, 'Sonal Deshpande', 'Non-Fiction', 1450.00, '2025-04-08'),
+(6, 'Vivek Menon', 'Fiction', 610.00, '2025-04-10'),
+(7, 'Aman Gupta', 'Children', 175.00, '2025-04-12'),
+(8, 'Ishita Rao', 'Non-Fiction', 990.00, '2025-04-14');
+
+-- Query
 -- Write your query below
 ```
 

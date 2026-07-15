@@ -8,7 +8,7 @@ A subquery does not have to sit inside `WHERE` producing a single value or a lis
 
 The `employees` `table` is the same one used throughout this chapter.
 
-```postgresql file=employees.sql
+```text
 CREATE TABLE employees (
     employee_id INTEGER PRIMARY KEY,
     employee_name TEXT,
@@ -26,7 +26,24 @@ INSERT INTO employees (employee_id, employee_name, department, salary, manager_i
 (6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
 ```
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department TEXT,
+    salary NUMERIC(10, 2),
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, employee_name, department, salary, manager_id) VALUES
+(1, 'Ananya Sharma', 'Engineering', 95000.00, NULL),
+(2, 'Rajat Bhatia', 'Engineering', 78000.00, 1),
+(3, 'Meghna Iyer', 'Engineering', 82000.00, 1),
+(4, 'Sameer Khan', 'Sales', 65000.00, NULL),
+(5, 'Pooja Reddy', 'Sales', 58000.00, 4),
+(6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
+
+-- Query
 SELECT department, AVG(salary) AS department_avg
 FROM employees
 GROUP BY department;
@@ -34,7 +51,24 @@ GROUP BY department;
 
 This is the first step on its own: three `rows`, one average per department. Now that same `query` becomes the `FROM` clause of an outer `query`, wrapped in parentheses and given an alias.
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department TEXT,
+    salary NUMERIC(10, 2),
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, employee_name, department, salary, manager_id) VALUES
+(1, 'Ananya Sharma', 'Engineering', 95000.00, NULL),
+(2, 'Rajat Bhatia', 'Engineering', 78000.00, 1),
+(3, 'Meghna Iyer', 'Engineering', 82000.00, 1),
+(4, 'Sameer Khan', 'Sales', 65000.00, NULL),
+(5, 'Pooja Reddy', 'Sales', 58000.00, 4),
+(6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
+
+-- Query
 SELECT department, department_avg
 FROM (
     SELECT department, AVG(salary) AS department_avg
@@ -77,7 +111,24 @@ The outer `query` then treats `dept_averages` exactly like a real `table`, filte
 
 Every subquery used in `FROM` must be given a name, since the outer `query` needs some way to refer to it, the same way any real `table` needs a name to be selected from.
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department TEXT,
+    salary NUMERIC(10, 2),
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, employee_name, department, salary, manager_id) VALUES
+(1, 'Ananya Sharma', 'Engineering', 95000.00, NULL),
+(2, 'Rajat Bhatia', 'Engineering', 78000.00, 1),
+(3, 'Meghna Iyer', 'Engineering', 82000.00, 1),
+(4, 'Sameer Khan', 'Sales', 65000.00, NULL),
+(5, 'Pooja Reddy', 'Sales', 58000.00, 4),
+(6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
+
+-- Query
 SELECT department, department_avg
 FROM (
     SELECT department, AVG(salary) AS department_avg
@@ -94,7 +145,24 @@ Leaving off `AS dept_averages` here would cause an error in most `databases`; a 
 
 A `FROM` subquery can be `joined` to a normal `table` exactly like any other `table`, which is useful when a report needs both raw, `row`-level detail and a pre-computed summary side by side.
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department TEXT,
+    salary NUMERIC(10, 2),
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, employee_name, department, salary, manager_id) VALUES
+(1, 'Ananya Sharma', 'Engineering', 95000.00, NULL),
+(2, 'Rajat Bhatia', 'Engineering', 78000.00, 1),
+(3, 'Meghna Iyer', 'Engineering', 82000.00, 1),
+(4, 'Sameer Khan', 'Sales', 65000.00, NULL),
+(5, 'Pooja Reddy', 'Sales', 58000.00, 4),
+(6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
+
+-- Query
 SELECT e.employee_name, e.salary, dept_averages.department_avg,
        e.salary - dept_averages.department_avg AS diff_from_dept_avg
 FROM employees e
@@ -143,7 +211,24 @@ Here, `dept_averages` is `joined` to `employees` on the shared `department` `col
 
 Kabir wants to find the single department with the highest average salary, showing just its name and that average. Write a `query` using a `FROM` subquery against `employees` above, ordering the derived `table`'s results and keeping only the top `row`.
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department TEXT,
+    salary NUMERIC(10, 2),
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, employee_name, department, salary, manager_id) VALUES
+(1, 'Ananya Sharma', 'Engineering', 95000.00, NULL),
+(2, 'Rajat Bhatia', 'Engineering', 78000.00, 1),
+(3, 'Meghna Iyer', 'Engineering', 82000.00, 1),
+(4, 'Sameer Khan', 'Sales', 65000.00, NULL),
+(5, 'Pooja Reddy', 'Sales', 58000.00, 4),
+(6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
+
+-- Query
 -- Write your query below
 ```
 

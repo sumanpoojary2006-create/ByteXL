@@ -8,7 +8,7 @@
 
 The same `sales` `table` applies here.
 
-```postgresql file=sales.sql
+```text
 CREATE TABLE sales (
     sale_id INTEGER PRIMARY KEY,
     salesperson TEXT,
@@ -26,7 +26,24 @@ INSERT INTO sales (sale_id, salesperson, region, amount, sale_date) VALUES
 (6, 'Tarun Bakshi', 'East', 11000.00, '2025-06-03');
 ```
 
-```postgresql with=sales.sql
+```postgresql
+CREATE TABLE sales (
+    sale_id INTEGER PRIMARY KEY,
+    salesperson TEXT,
+    region TEXT,
+    amount NUMERIC(10, 2),
+    sale_date DATE
+);
+
+INSERT INTO sales (sale_id, salesperson, region, amount, sale_date) VALUES
+(1, 'Nikhil Rao', 'North', 12000.00, '2025-06-01'),
+(2, 'Nikhil Rao', 'North', 8500.00, '2025-06-05'),
+(3, 'Sana Fatima', 'South', 15000.00, '2025-06-02'),
+(4, 'Nikhil Rao', 'North', 9200.00, '2025-06-10'),
+(5, 'Sana Fatima', 'South', 6000.00, '2025-06-11'),
+(6, 'Tarun Bakshi', 'East', 11000.00, '2025-06-03');
+
+-- Query
 SELECT salesperson, sale_date, amount,
        SUM(amount) OVER (PARTITION BY salesperson ORDER BY sale_date) AS running_total
 FROM sales
@@ -52,7 +69,24 @@ His June 5 sale shows 20500.00, the first two sales combined, and his June 10 sa
 
 ![PARTITION BY splitting rows into lanes and ORDER BY arranging each lane by date](images/03_partition_by_order_by_window_lanes.png)
 
-```postgresql with=sales.sql
+```postgresql
+CREATE TABLE sales (
+    sale_id INTEGER PRIMARY KEY,
+    salesperson TEXT,
+    region TEXT,
+    amount NUMERIC(10, 2),
+    sale_date DATE
+);
+
+INSERT INTO sales (sale_id, salesperson, region, amount, sale_date) VALUES
+(1, 'Nikhil Rao', 'North', 12000.00, '2025-06-01'),
+(2, 'Nikhil Rao', 'North', 8500.00, '2025-06-05'),
+(3, 'Sana Fatima', 'South', 15000.00, '2025-06-02'),
+(4, 'Nikhil Rao', 'North', 9200.00, '2025-06-10'),
+(5, 'Sana Fatima', 'South', 6000.00, '2025-06-11'),
+(6, 'Tarun Bakshi', 'East', 11000.00, '2025-06-03');
+
+-- Query
 SELECT salesperson, sale_date, amount,
        SUM(amount) OVER (PARTITION BY salesperson ORDER BY sale_date) AS running_total,
        SUM(amount) OVER (PARTITION BY salesperson) AS salesperson_total
@@ -68,7 +102,24 @@ Showing both `window functions` side by side makes the difference concrete: `run
 
 `ORDER BY` inside `OVER` works even without `PARTITION BY`, producing a single running calculation across the entire result set, ordered as specified.
 
-```postgresql with=sales.sql
+```postgresql
+CREATE TABLE sales (
+    sale_id INTEGER PRIMARY KEY,
+    salesperson TEXT,
+    region TEXT,
+    amount NUMERIC(10, 2),
+    sale_date DATE
+);
+
+INSERT INTO sales (sale_id, salesperson, region, amount, sale_date) VALUES
+(1, 'Nikhil Rao', 'North', 12000.00, '2025-06-01'),
+(2, 'Nikhil Rao', 'North', 8500.00, '2025-06-05'),
+(3, 'Sana Fatima', 'South', 15000.00, '2025-06-02'),
+(4, 'Nikhil Rao', 'North', 9200.00, '2025-06-10'),
+(5, 'Sana Fatima', 'South', 6000.00, '2025-06-11'),
+(6, 'Tarun Bakshi', 'East', 11000.00, '2025-06-03');
+
+-- Query
 SELECT sale_date, salesperson, amount,
        SUM(amount) OVER (ORDER BY sale_date) AS company_running_total
 FROM sales
@@ -110,7 +161,24 @@ This tracks a company-wide running total across every sale, regardless of salesp
 
 Leela wants a running total of sales for the South region only, in date order, alongside each individual sale. Write a `query` against the `sales` `table` above using `PARTITION BY` and `ORDER BY` together inside `OVER`.
 
-```postgresql with=sales.sql
+```postgresql
+CREATE TABLE sales (
+    sale_id INTEGER PRIMARY KEY,
+    salesperson TEXT,
+    region TEXT,
+    amount NUMERIC(10, 2),
+    sale_date DATE
+);
+
+INSERT INTO sales (sale_id, salesperson, region, amount, sale_date) VALUES
+(1, 'Nikhil Rao', 'North', 12000.00, '2025-06-01'),
+(2, 'Nikhil Rao', 'North', 8500.00, '2025-06-05'),
+(3, 'Sana Fatima', 'South', 15000.00, '2025-06-02'),
+(4, 'Nikhil Rao', 'North', 9200.00, '2025-06-10'),
+(5, 'Sana Fatima', 'South', 6000.00, '2025-06-11'),
+(6, 'Tarun Bakshi', 'East', 11000.00, '2025-06-03');
+
+-- Query
 -- Write your query below
 ```
 

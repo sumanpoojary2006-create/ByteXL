@@ -8,7 +8,7 @@ SQL's **offset `functions`**, `LAG` and `LEAD`, are `window functions` purpose-b
 
 The `monthly_sales` `table` holds one `row` per salesperson per month.
 
-```postgresql file=monthly_sales.sql
+```text
 CREATE TABLE monthly_sales (
     salesperson TEXT,
     sale_month DATE,
@@ -24,7 +24,22 @@ INSERT INTO monthly_sales (salesperson, sale_month, total_amount) VALUES
 ('Sana Fatima', '2025-06-01', 21000.00);
 ```
 
-```postgresql with=monthly_sales.sql
+```postgresql
+CREATE TABLE monthly_sales (
+    salesperson TEXT,
+    sale_month DATE,
+    total_amount NUMERIC(10, 2)
+);
+
+INSERT INTO monthly_sales (salesperson, sale_month, total_amount) VALUES
+('Nikhil Rao', '2025-03-01', 22000.00),
+('Nikhil Rao', '2025-04-01', 25500.00),
+('Nikhil Rao', '2025-05-01', 21000.00),
+('Nikhil Rao', '2025-06-01', 29700.00),
+('Sana Fatima', '2025-05-01', 18000.00),
+('Sana Fatima', '2025-06-01', 21000.00);
+
+-- Query
 SELECT salesperson, sale_month, total_amount,
        LAG(total_amount) OVER (PARTITION BY salesperson ORDER BY sale_month) AS previous_month
 FROM monthly_sales
@@ -78,7 +93,22 @@ Nikhil's April `row` shows 22000.00 as its `previous_month`, exactly March's tot
 
 With the previous month's value sitting in the same `row`, calculating growth is now a plain subtraction.
 
-```postgresql with=monthly_sales.sql
+```postgresql
+CREATE TABLE monthly_sales (
+    salesperson TEXT,
+    sale_month DATE,
+    total_amount NUMERIC(10, 2)
+);
+
+INSERT INTO monthly_sales (salesperson, sale_month, total_amount) VALUES
+('Nikhil Rao', '2025-03-01', 22000.00),
+('Nikhil Rao', '2025-04-01', 25500.00),
+('Nikhil Rao', '2025-05-01', 21000.00),
+('Nikhil Rao', '2025-06-01', 29700.00),
+('Sana Fatima', '2025-05-01', 18000.00),
+('Sana Fatima', '2025-06-01', 21000.00);
+
+-- Query
 SELECT salesperson, sale_month, total_amount,
        total_amount - LAG(total_amount) OVER (PARTITION BY salesperson ORDER BY sale_month) AS change_from_last_month
 FROM monthly_sales
@@ -91,7 +121,22 @@ Nikhil's April change is 3500.00, an increase, and his May change is -4500.00, a
 
 `LEAD` is the mirror of `LAG`, reaching forward to a later `row` instead of an earlier one.
 
-```postgresql with=monthly_sales.sql
+```postgresql
+CREATE TABLE monthly_sales (
+    salesperson TEXT,
+    sale_month DATE,
+    total_amount NUMERIC(10, 2)
+);
+
+INSERT INTO monthly_sales (salesperson, sale_month, total_amount) VALUES
+('Nikhil Rao', '2025-03-01', 22000.00),
+('Nikhil Rao', '2025-04-01', 25500.00),
+('Nikhil Rao', '2025-05-01', 21000.00),
+('Nikhil Rao', '2025-06-01', 29700.00),
+('Sana Fatima', '2025-05-01', 18000.00),
+('Sana Fatima', '2025-06-01', 21000.00);
+
+-- Query
 SELECT salesperson, sale_month, total_amount,
        LEAD(total_amount) OVER (PARTITION BY salesperson ORDER BY sale_month) AS next_month
 FROM monthly_sales
@@ -110,7 +155,22 @@ Both `LAG` and `LEAD` accept two optional extra arguments:
 - A second argument specifying how many `rows` to look back or forward, defaulting to 1 when left out.
 - A third argument specifying what to return when there is no such `row`, instead of `NULL`.
 
-```postgresql with=monthly_sales.sql
+```postgresql
+CREATE TABLE monthly_sales (
+    salesperson TEXT,
+    sale_month DATE,
+    total_amount NUMERIC(10, 2)
+);
+
+INSERT INTO monthly_sales (salesperson, sale_month, total_amount) VALUES
+('Nikhil Rao', '2025-03-01', 22000.00),
+('Nikhil Rao', '2025-04-01', 25500.00),
+('Nikhil Rao', '2025-05-01', 21000.00),
+('Nikhil Rao', '2025-06-01', 29700.00),
+('Sana Fatima', '2025-05-01', 18000.00),
+('Sana Fatima', '2025-06-01', 21000.00);
+
+-- Query
 SELECT salesperson, sale_month, total_amount,
        LAG(total_amount, 2, 0) OVER (PARTITION BY salesperson ORDER BY sale_month) AS two_months_ago
 FROM monthly_sales
@@ -162,7 +222,22 @@ ORDER BY salesperson, sale_month;
 
 Leela wants to flag any month where a salesperson's total dropped compared to the previous month. Write a `query` against `monthly_sales` above that shows `salesperson`, `sale_month`, `total_amount`, and a `trend` `column` reading either "up" or "down" based on `LAG`.
 
-```postgresql with=monthly_sales.sql
+```postgresql
+CREATE TABLE monthly_sales (
+    salesperson TEXT,
+    sale_month DATE,
+    total_amount NUMERIC(10, 2)
+);
+
+INSERT INTO monthly_sales (salesperson, sale_month, total_amount) VALUES
+('Nikhil Rao', '2025-03-01', 22000.00),
+('Nikhil Rao', '2025-04-01', 25500.00),
+('Nikhil Rao', '2025-05-01', 21000.00),
+('Nikhil Rao', '2025-06-01', 29700.00),
+('Sana Fatima', '2025-05-01', 18000.00),
+('Sana Fatima', '2025-06-01', 21000.00);
+
+-- Query
 -- Write your query below
 ```
 

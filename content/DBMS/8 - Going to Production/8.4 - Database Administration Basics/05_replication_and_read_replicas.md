@@ -8,7 +8,7 @@ A production system serving real, sustained traffic eventually outgrows what one
 
 PostgreSQL's standard replication approach relies on exactly the mechanism covered in the `recovery` unit: the `write-ahead log`. A `replica` continuously receives the same `WAL` records the primary server generates, and replays them, effectively performing the same redo process `recovery` uses after a crash, except continuously, in near real time, against a running, healthy primary.
 
-```postgresql file=replication_demo.sql
+```text
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     status TEXT
@@ -17,7 +17,15 @@ CREATE TABLE shipments (
 INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit');
 ```
 
-```postgresql with=replication_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit');
+
+-- Query
 SELECT pg_current_wal_lsn() AS primary_wal_position;
 ```
 
@@ -35,7 +43,15 @@ This is why replication is often described as `recovery`'s mechanism, run contin
 
 A running PostgreSQL primary tracks every connected `replica` directly, exposing exactly how far behind each one currently is.
 
-```postgresql with=replication_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit');
+
+-- Query
 SELECT client_addr, state, sent_lsn, replay_lsn,
        sent_lsn - replay_lsn AS replication_lag_bytes
 FROM pg_stat_replication;
@@ -48,7 +64,15 @@ FROM pg_stat_replication;
 
 Because a `replica` applies changes slightly after the primary generates them, there is always some delay, however small, between a change committing on the primary and that same change becoming visible on a `replica`. A `query` reading from a `replica` can, in principle, see slightly stale data, a deliberate trade-off in exchange for spreading read load across more than one server.
 
-```postgresql with=replication_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit');
+
+-- Query
 -- A read-heavy reporting query, directed to a replica instead of the primary:
 -- SELECT status, COUNT(*) FROM shipments GROUP BY status;
 -- This runs identically whether issued against the primary or a replica,
@@ -105,7 +129,15 @@ A well-designed production deployment often uses replication for both purposes s
 
 Write the `query` that would report `replication lag` in seconds rather than bytes, using `pg_stat_replication`'s `replay_lag` `column`, and add a comment explaining why a reporting dashboard might be deliberately directed to `query` a `replica` instead of the primary.
 
-```postgresql with=replication_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit');
+
+-- Query
 -- Write your query and comment below
 ```
 

@@ -11,7 +11,7 @@
 
 A logical `backup`, produced with `pg_dump` as covered in the previous lesson, is restored by running its contents against a target `database`, recreating `tables` and reloading data.
 
-```postgresql file=restore_demo.sql
+```text
 CREATE TABLE shipments_backup_source (
     shipment_id INTEGER PRIMARY KEY,
     status TEXT
@@ -20,7 +20,15 @@ CREATE TABLE shipments_backup_source (
 INSERT INTO shipments_backup_source (shipment_id, status) VALUES (1, 'in_transit'), (2, 'delivered');
 ```
 
-```postgresql with=restore_demo.sql
+```postgresql
+CREATE TABLE shipments_backup_source (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments_backup_source (shipment_id, status) VALUES (1, 'in_transit'), (2, 'delivered');
+
+-- Query
 -- A real logical restore, run from a terminal, looks roughly like:
 -- psql -U postgres -d shipments_restored -f backup_2025_06_15.sql
 -- This runs the CREATE TABLE and data-loading statements from the dump
@@ -50,11 +58,27 @@ A full `backup` alone only restores a `database` to the exact moment that `backu
 
 Point-in-time `recovery`, or PITR, combines a full `backup` with the `write-ahead log` archive covered in the `recovery` unit, replaying logged changes forward from that `backup` up to, but not including, the moment of the mistake.
 
-```postgresql with=restore_demo.sql
+```postgresql
+CREATE TABLE shipments_backup_source (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments_backup_source (shipment_id, status) VALUES (1, 'in_transit'), (2, 'delivered');
+
+-- Query
 SELECT pg_current_wal_lsn() AS wal_position_now;
 ```
 
-```postgresql with=restore_demo.sql
+```postgresql
+CREATE TABLE shipments_backup_source (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments_backup_source (shipment_id, status) VALUES (1, 'in_transit'), (2, 'delivered');
+
+-- Query
 -- A real point-in-time recovery is configured roughly like:
 -- restore the most recent full backup taken before the incident
 -- set recovery_target_time = '2025-06-15 14:32:00'
@@ -69,7 +93,15 @@ This is precisely why the `write-ahead logging` covered earlier in this course m
 
 A `backup` file that exists is not proof that a `restore` will actually work; corruption, an incomplete transfer, or a subtly incompatible `database` version can all silently break a `backup`'s usefulness without ever showing an obvious error at `backup` time.
 
-```postgresql with=restore_demo.sql
+```postgresql
+CREATE TABLE shipments_backup_source (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments_backup_source (shipment_id, status) VALUES (1, 'in_transit'), (2, 'delivered');
+
+-- Query
 CREATE TABLE shipments_restored (
     shipment_id INTEGER PRIMARY KEY,
     status TEXT
@@ -125,7 +157,15 @@ This is exactly the kind of check the single `query` above represents in miniatu
 
 Simulate a `restore` by creating a new `table` `shipments_restored_v2`, loading it with the same two `rows` from `shipments_backup_source`, and then writing a verification `query` confirming the `row` count and contents match the original exactly.
 
-```postgresql with=restore_demo.sql
+```postgresql
+CREATE TABLE shipments_backup_source (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments_backup_source (shipment_id, status) VALUES (1, 'in_transit'), (2, 'delivered');
+
+-- Query
 -- Write your restore and verification below
 ```
 

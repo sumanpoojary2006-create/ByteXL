@@ -8,7 +8,7 @@
 
 The `sales` `table` again holds individual sales, this time including a tie for illustration.
 
-```postgresql file=sales_ranking.sql
+```text
 CREATE TABLE sales (
     sale_id INTEGER PRIMARY KEY,
     salesperson TEXT,
@@ -23,7 +23,21 @@ INSERT INTO sales (sale_id, salesperson, amount) VALUES
 (5, 'Kunal Verma', 11000.00);
 ```
 
-```postgresql with=sales_ranking.sql
+```postgresql
+CREATE TABLE sales (
+    sale_id INTEGER PRIMARY KEY,
+    salesperson TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO sales (sale_id, salesperson, amount) VALUES
+(1, 'Nikhil Rao', 29700.00),
+(2, 'Sana Fatima', 21000.00),
+(3, 'Tarun Bakshi', 21000.00),
+(4, 'Priya Bose', 18500.00),
+(5, 'Kunal Verma', 11000.00);
+
+-- Query
 SELECT salesperson, amount,
        ROW_NUMBER() OVER (ORDER BY amount DESC) AS row_num
 FROM sales;
@@ -40,7 +54,21 @@ FROM sales;
 
 `RANK()` gives tied `rows` the exact same rank number, and then skips ahead by the number of tied `rows` before continuing.
 
-```postgresql with=sales_ranking.sql
+```postgresql
+CREATE TABLE sales (
+    sale_id INTEGER PRIMARY KEY,
+    salesperson TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO sales (sale_id, salesperson, amount) VALUES
+(1, 'Nikhil Rao', 29700.00),
+(2, 'Sana Fatima', 21000.00),
+(3, 'Tarun Bakshi', 21000.00),
+(4, 'Priya Bose', 18500.00),
+(5, 'Kunal Verma', 11000.00);
+
+-- Query
 SELECT salesperson, amount,
        RANK() OVER (ORDER BY amount DESC) AS rank_position
 FROM sales;
@@ -55,7 +83,21 @@ Sana and Tarun both land on rank 2, correctly reflecting their tie, but the next
 
 `DENSE_RANK()` also gives tied `rows` the same rank, but it does not skip any numbers afterward, keeping the rank sequence consecutive.
 
-```postgresql with=sales_ranking.sql
+```postgresql
+CREATE TABLE sales (
+    sale_id INTEGER PRIMARY KEY,
+    salesperson TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO sales (sale_id, salesperson, amount) VALUES
+(1, 'Nikhil Rao', 29700.00),
+(2, 'Sana Fatima', 21000.00),
+(3, 'Tarun Bakshi', 21000.00),
+(4, 'Priya Bose', 18500.00),
+(5, 'Kunal Verma', 11000.00);
+
+-- Query
 SELECT salesperson, amount,
        DENSE_RANK() OVER (ORDER BY amount DESC) AS dense_rank_position
 FROM sales;
@@ -72,7 +114,21 @@ Sana and Tarun again both land on rank 2, but Priya Bose now gets rank 3, not 4,
 
 Placing all three ranking `functions` in the same `query` makes the difference between them immediately visible.
 
-```postgresql with=sales_ranking.sql
+```postgresql
+CREATE TABLE sales (
+    sale_id INTEGER PRIMARY KEY,
+    salesperson TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO sales (sale_id, salesperson, amount) VALUES
+(1, 'Nikhil Rao', 29700.00),
+(2, 'Sana Fatima', 21000.00),
+(3, 'Tarun Bakshi', 21000.00),
+(4, 'Priya Bose', 18500.00),
+(5, 'Kunal Verma', 11000.00);
+
+-- Query
 SELECT salesperson, amount,
        ROW_NUMBER() OVER (ORDER BY amount DESC) AS row_num,
        RANK() OVER (ORDER BY amount DESC) AS rank_position,
@@ -86,7 +142,21 @@ For the tied pair, `row_num` shows 2 and 3, `rank_position` shows 2 and 2, and `
 
 Ranking `functions` combine naturally with `PARTITION BY`, ranking `rows` separately within each group rather than across the whole `table`, the same partitioning behavior covered for aggregate `window functions`.
 
-```postgresql with=sales_ranking.sql
+```postgresql
+CREATE TABLE sales (
+    sale_id INTEGER PRIMARY KEY,
+    salesperson TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO sales (sale_id, salesperson, amount) VALUES
+(1, 'Nikhil Rao', 29700.00),
+(2, 'Sana Fatima', 21000.00),
+(3, 'Tarun Bakshi', 21000.00),
+(4, 'Priya Bose', 18500.00),
+(5, 'Kunal Verma', 11000.00);
+
+-- Query
 SELECT salesperson, amount,
        RANK() OVER (ORDER BY amount DESC) AS overall_rank
 FROM sales;
@@ -127,7 +197,21 @@ Without a region or team `column` in this smaller `table`, this example ranks ac
 
 The sales director wants a leaderboard using `DENSE_RANK`, showing only salespeople ranked in the top 3 tiers. Write a `query` against the `sales` `table` above that computes `DENSE_RANK` and filters to ranks 1 through 3.
 
-```postgresql with=sales_ranking.sql
+```postgresql
+CREATE TABLE sales (
+    sale_id INTEGER PRIMARY KEY,
+    salesperson TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO sales (sale_id, salesperson, amount) VALUES
+(1, 'Nikhil Rao', 29700.00),
+(2, 'Sana Fatima', 21000.00),
+(3, 'Tarun Bakshi', 21000.00),
+(4, 'Priya Bose', 18500.00),
+(5, 'Kunal Verma', 11000.00);
+
+-- Query
 -- Write your query below
 ```
 

@@ -10,14 +10,20 @@ A **`database` migration** is a versioned, ordered, tracked script that applies 
 
 Without any tracking, it is easy to lose track of which environment has which `schema` changes already applied.
 
-```postgresql file=migrations_demo.sql
+```text
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     status TEXT
 );
 ```
 
-```postgresql with=migrations_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+-- Query
 -- A developer, working directly, might run this by hand on their laptop:
 ALTER TABLE shipments ADD COLUMN priority TEXT DEFAULT 'normal';
 
@@ -34,7 +40,13 @@ Without a system tracking exactly which changes have been applied where, the hon
 
 The standard solution is a dedicated `table`, present in every environment, that records exactly which migrations have already run there.
 
-```postgresql with=migrations_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+-- Query
 CREATE TABLE schema_migrations (
     version TEXT PRIMARY KEY,
     applied_at TIMESTAMP DEFAULT NOW()
@@ -57,7 +69,23 @@ Every migration gets a unique, ordered identifier, here `0001_create_shipments` 
 
 A migration is typically a small, single-purpose script, reviewed like any other code change, rather than an ad-hoc command typed directly against a live `database`.
 
-```postgresql with=migrations_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+CREATE TABLE schema_migrations (
+    version TEXT PRIMARY KEY,
+    applied_at TIMESTAMP DEFAULT NOW()
+);
+
+INSERT INTO schema_migrations (version) VALUES ('0001_create_shipments');
+INSERT INTO schema_migrations (version) VALUES ('0002_add_priority_column');
+
+SELECT * FROM schema_migrations ORDER BY version;
+
+-- Query
 -- Migration 0003_add_delivery_deadline.sql
 ALTER TABLE shipments ADD COLUMN delivery_deadline DATE;
 
@@ -75,7 +103,23 @@ A tempting but dangerous migration pattern is dropping and recreating a `table` 
 
 A properly written migration changes structure while preserving data, using `ALTER TABLE ADD COLUMN`, `ALTER TABLE ALTER COLUMN`, and similar structure-preserving statements, exactly the commands covered when SQL data definition was first introduced early in this course, rather than `DROP TABLE` followed by a fresh `CREATE TABLE`.
 
-```postgresql with=migrations_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+CREATE TABLE schema_migrations (
+    version TEXT PRIMARY KEY,
+    applied_at TIMESTAMP DEFAULT NOW()
+);
+
+INSERT INTO schema_migrations (version) VALUES ('0001_create_shipments');
+INSERT INTO schema_migrations (version) VALUES ('0002_add_priority_column');
+
+SELECT * FROM schema_migrations ORDER BY version;
+
+-- Query
 -- A dangerous shortcut, never appropriate for a production migration:
 -- DROP TABLE shipments;
 -- CREATE TABLE shipments (shipment_id INTEGER PRIMARY KEY, status TEXT, priority TEXT);
@@ -122,7 +166,23 @@ This distinction, preserving data versus discarding it, is the single most impor
 
 Write a migration named `0004_add_carrier_column` that adds a `carrier` text `column` to `shipments`, and record it in `schema_migrations`, following the pattern established above.
 
-```postgresql with=migrations_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+CREATE TABLE schema_migrations (
+    version TEXT PRIMARY KEY,
+    applied_at TIMESTAMP DEFAULT NOW()
+);
+
+INSERT INTO schema_migrations (version) VALUES ('0001_create_shipments');
+INSERT INTO schema_migrations (version) VALUES ('0002_add_priority_column');
+
+SELECT * FROM schema_migrations ORDER BY version;
+
+-- Query
 -- Write your migration below
 ```
 

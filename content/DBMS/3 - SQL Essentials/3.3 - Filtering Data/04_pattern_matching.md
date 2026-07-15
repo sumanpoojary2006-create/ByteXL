@@ -11,7 +11,7 @@ What he needs is a way to match a partial shape of text rather than an exact val
 - `%` stands in for any number of characters, including zero.
 - `_` stands in for exactly one character.
 
-```postgresql file=schema.sql
+```text
 CREATE TABLE students (
     student_id INTEGER PRIMARY KEY,
     full_name TEXT,
@@ -77,7 +77,72 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 (10, 8, 105, '2025-02-08', 'B-');
 ```
 
-```postgresql with=schema.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    email TEXT,
+    city TEXT,
+    phone TEXT,
+    joined_on DATE
+);
+
+INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
+(1, 'Omkar Rane', 'omkar.rane@campusmail.edu', 'Bengaluru', '9845011111', '2025-01-10'),
+(2, 'Neha Sharma', 'neha.sharma@campusmail.edu', 'Mysuru', NULL, '2025-01-12'),
+(3, 'Varun Nair', 'varun.nair@gmail.com', 'Chennai', '9845022222', '2025-01-15'),
+(4, 'Siddharth Rao', 'siddharth.rao@campusmail.edu', 'Hyderabad', '9845033333', '2025-01-18'),
+(5, 'Yusuf Khan', 'yusuf.khan@gmail.com', 'Pune', NULL, '2025-01-20'),
+(6, 'Ishita Menon', 'ishita.menon@campusmail.edu', 'Bengaluru', '9845044444', '2025-01-22'),
+(7, 'Rahul Verma', 'rahul.verma@gmail.com', 'Chennai', '9845055555', '2025-01-25'),
+(8, 'Sanya Iyer', 'sanya.iyer@campusmail.edu', 'Mysuru', NULL, '2025-01-28');
+
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    title TEXT,
+    department TEXT,
+    credits INTEGER
+);
+
+INSERT INTO courses (course_id, title, department, credits) VALUES
+(101, 'Database Systems', 'Computer Science', 4),
+(102, 'Data Structures', 'Computer Science', 4),
+(103, 'Linear Algebra', 'Mathematics', 3),
+(104, 'Discrete Mathematics', 'Mathematics', 3),
+(105, 'Microeconomics', 'Economics', 2);
+
+CREATE TABLE instructors (
+    instructor_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    department TEXT
+);
+
+INSERT INTO instructors (instructor_id, full_name, department) VALUES
+(201, 'Ananya Bose', 'Computer Science'),
+(202, 'Manoj Pillai', 'Mathematics'),
+(203, 'Kavita Reddy', 'Economics');
+
+CREATE TABLE enrollments (
+    enrollment_id INTEGER PRIMARY KEY,
+    student_id INTEGER REFERENCES students(student_id),
+    course_id INTEGER REFERENCES courses(course_id),
+    enrolled_on DATE,
+    grade TEXT
+);
+
+INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade) VALUES
+(1, 1, 101, '2025-02-01', 'A'),
+(2, 1, 103, '2025-02-01', 'B+'),
+(3, 2, 101, '2025-02-02', NULL),
+(4, 3, 102, '2025-02-03', 'A-'),
+(5, 3, 105, '2025-02-03', NULL),
+(6, 4, 104, '2025-02-04', 'B'),
+(7, 5, 101, '2025-02-05', NULL),
+(8, 6, 102, '2025-02-06', 'A'),
+(9, 7, 103, '2025-02-07', 'C+'),
+(10, 8, 105, '2025-02-08', 'B-');
+
+-- Query
 SELECT full_name, email
 FROM students
 WHERE email LIKE '%campusmail.edu';
@@ -93,7 +158,72 @@ WHERE email LIKE '%campusmail.edu';
 
 `%` is not limited to the end of a pattern. Placing it at the start checks a suffix, placing it in the middle checks that two fragments both appear in order, and leaving it off one side anchors the match to that side.
 
-```postgresql with=schema.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    email TEXT,
+    city TEXT,
+    phone TEXT,
+    joined_on DATE
+);
+
+INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
+(1, 'Omkar Rane', 'omkar.rane@campusmail.edu', 'Bengaluru', '9845011111', '2025-01-10'),
+(2, 'Neha Sharma', 'neha.sharma@campusmail.edu', 'Mysuru', NULL, '2025-01-12'),
+(3, 'Varun Nair', 'varun.nair@gmail.com', 'Chennai', '9845022222', '2025-01-15'),
+(4, 'Siddharth Rao', 'siddharth.rao@campusmail.edu', 'Hyderabad', '9845033333', '2025-01-18'),
+(5, 'Yusuf Khan', 'yusuf.khan@gmail.com', 'Pune', NULL, '2025-01-20'),
+(6, 'Ishita Menon', 'ishita.menon@campusmail.edu', 'Bengaluru', '9845044444', '2025-01-22'),
+(7, 'Rahul Verma', 'rahul.verma@gmail.com', 'Chennai', '9845055555', '2025-01-25'),
+(8, 'Sanya Iyer', 'sanya.iyer@campusmail.edu', 'Mysuru', NULL, '2025-01-28');
+
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    title TEXT,
+    department TEXT,
+    credits INTEGER
+);
+
+INSERT INTO courses (course_id, title, department, credits) VALUES
+(101, 'Database Systems', 'Computer Science', 4),
+(102, 'Data Structures', 'Computer Science', 4),
+(103, 'Linear Algebra', 'Mathematics', 3),
+(104, 'Discrete Mathematics', 'Mathematics', 3),
+(105, 'Microeconomics', 'Economics', 2);
+
+CREATE TABLE instructors (
+    instructor_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    department TEXT
+);
+
+INSERT INTO instructors (instructor_id, full_name, department) VALUES
+(201, 'Ananya Bose', 'Computer Science'),
+(202, 'Manoj Pillai', 'Mathematics'),
+(203, 'Kavita Reddy', 'Economics');
+
+CREATE TABLE enrollments (
+    enrollment_id INTEGER PRIMARY KEY,
+    student_id INTEGER REFERENCES students(student_id),
+    course_id INTEGER REFERENCES courses(course_id),
+    enrolled_on DATE,
+    grade TEXT
+);
+
+INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade) VALUES
+(1, 1, 101, '2025-02-01', 'A'),
+(2, 1, 103, '2025-02-01', 'B+'),
+(3, 2, 101, '2025-02-02', NULL),
+(4, 3, 102, '2025-02-03', 'A-'),
+(5, 3, 105, '2025-02-03', NULL),
+(6, 4, 104, '2025-02-04', 'B'),
+(7, 5, 101, '2025-02-05', NULL),
+(8, 6, 102, '2025-02-06', 'A'),
+(9, 7, 103, '2025-02-07', 'C+'),
+(10, 8, 105, '2025-02-08', 'B-');
+
+-- Query
 SELECT full_name
 FROM students
 WHERE full_name LIKE 'S%';
@@ -107,7 +237,72 @@ WHERE full_name LIKE 'S%';
 
 `_` is stricter than `%`. It stands for exactly one character, no more and no fewer, which makes it useful when you know the shape of the text but not one specific letter in it.
 
-```postgresql with=schema.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    email TEXT,
+    city TEXT,
+    phone TEXT,
+    joined_on DATE
+);
+
+INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
+(1, 'Omkar Rane', 'omkar.rane@campusmail.edu', 'Bengaluru', '9845011111', '2025-01-10'),
+(2, 'Neha Sharma', 'neha.sharma@campusmail.edu', 'Mysuru', NULL, '2025-01-12'),
+(3, 'Varun Nair', 'varun.nair@gmail.com', 'Chennai', '9845022222', '2025-01-15'),
+(4, 'Siddharth Rao', 'siddharth.rao@campusmail.edu', 'Hyderabad', '9845033333', '2025-01-18'),
+(5, 'Yusuf Khan', 'yusuf.khan@gmail.com', 'Pune', NULL, '2025-01-20'),
+(6, 'Ishita Menon', 'ishita.menon@campusmail.edu', 'Bengaluru', '9845044444', '2025-01-22'),
+(7, 'Rahul Verma', 'rahul.verma@gmail.com', 'Chennai', '9845055555', '2025-01-25'),
+(8, 'Sanya Iyer', 'sanya.iyer@campusmail.edu', 'Mysuru', NULL, '2025-01-28');
+
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    title TEXT,
+    department TEXT,
+    credits INTEGER
+);
+
+INSERT INTO courses (course_id, title, department, credits) VALUES
+(101, 'Database Systems', 'Computer Science', 4),
+(102, 'Data Structures', 'Computer Science', 4),
+(103, 'Linear Algebra', 'Mathematics', 3),
+(104, 'Discrete Mathematics', 'Mathematics', 3),
+(105, 'Microeconomics', 'Economics', 2);
+
+CREATE TABLE instructors (
+    instructor_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    department TEXT
+);
+
+INSERT INTO instructors (instructor_id, full_name, department) VALUES
+(201, 'Ananya Bose', 'Computer Science'),
+(202, 'Manoj Pillai', 'Mathematics'),
+(203, 'Kavita Reddy', 'Economics');
+
+CREATE TABLE enrollments (
+    enrollment_id INTEGER PRIMARY KEY,
+    student_id INTEGER REFERENCES students(student_id),
+    course_id INTEGER REFERENCES courses(course_id),
+    enrolled_on DATE,
+    grade TEXT
+);
+
+INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade) VALUES
+(1, 1, 101, '2025-02-01', 'A'),
+(2, 1, 103, '2025-02-01', 'B+'),
+(3, 2, 101, '2025-02-02', NULL),
+(4, 3, 102, '2025-02-03', 'A-'),
+(5, 3, 105, '2025-02-03', NULL),
+(6, 4, 104, '2025-02-04', 'B'),
+(7, 5, 101, '2025-02-05', NULL),
+(8, 6, 102, '2025-02-06', 'A'),
+(9, 7, 103, '2025-02-07', 'C+'),
+(10, 8, 105, '2025-02-08', 'B-');
+
+-- Query
 SELECT full_name
 FROM students
 WHERE full_name LIKE '_a%';
@@ -123,7 +318,72 @@ WHERE full_name LIKE '_a%';
 
 `LIKE` is case-sensitive by default, so a pattern written in uppercase will not match lowercase text. PostgreSQL offers `ILIKE` as a convenience that matches regardless of letter case, which is handy when you are not sure how something was typed in.
 
-```postgresql with=schema.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    email TEXT,
+    city TEXT,
+    phone TEXT,
+    joined_on DATE
+);
+
+INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
+(1, 'Omkar Rane', 'omkar.rane@campusmail.edu', 'Bengaluru', '9845011111', '2025-01-10'),
+(2, 'Neha Sharma', 'neha.sharma@campusmail.edu', 'Mysuru', NULL, '2025-01-12'),
+(3, 'Varun Nair', 'varun.nair@gmail.com', 'Chennai', '9845022222', '2025-01-15'),
+(4, 'Siddharth Rao', 'siddharth.rao@campusmail.edu', 'Hyderabad', '9845033333', '2025-01-18'),
+(5, 'Yusuf Khan', 'yusuf.khan@gmail.com', 'Pune', NULL, '2025-01-20'),
+(6, 'Ishita Menon', 'ishita.menon@campusmail.edu', 'Bengaluru', '9845044444', '2025-01-22'),
+(7, 'Rahul Verma', 'rahul.verma@gmail.com', 'Chennai', '9845055555', '2025-01-25'),
+(8, 'Sanya Iyer', 'sanya.iyer@campusmail.edu', 'Mysuru', NULL, '2025-01-28');
+
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    title TEXT,
+    department TEXT,
+    credits INTEGER
+);
+
+INSERT INTO courses (course_id, title, department, credits) VALUES
+(101, 'Database Systems', 'Computer Science', 4),
+(102, 'Data Structures', 'Computer Science', 4),
+(103, 'Linear Algebra', 'Mathematics', 3),
+(104, 'Discrete Mathematics', 'Mathematics', 3),
+(105, 'Microeconomics', 'Economics', 2);
+
+CREATE TABLE instructors (
+    instructor_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    department TEXT
+);
+
+INSERT INTO instructors (instructor_id, full_name, department) VALUES
+(201, 'Ananya Bose', 'Computer Science'),
+(202, 'Manoj Pillai', 'Mathematics'),
+(203, 'Kavita Reddy', 'Economics');
+
+CREATE TABLE enrollments (
+    enrollment_id INTEGER PRIMARY KEY,
+    student_id INTEGER REFERENCES students(student_id),
+    course_id INTEGER REFERENCES courses(course_id),
+    enrolled_on DATE,
+    grade TEXT
+);
+
+INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade) VALUES
+(1, 1, 101, '2025-02-01', 'A'),
+(2, 1, 103, '2025-02-01', 'B+'),
+(3, 2, 101, '2025-02-02', NULL),
+(4, 3, 102, '2025-02-03', 'A-'),
+(5, 3, 105, '2025-02-03', NULL),
+(6, 4, 104, '2025-02-04', 'B'),
+(7, 5, 101, '2025-02-05', NULL),
+(8, 6, 102, '2025-02-06', 'A'),
+(9, 7, 103, '2025-02-07', 'C+'),
+(10, 8, 105, '2025-02-08', 'B-');
+
+-- Query
 SELECT full_name, email
 FROM students
 WHERE email ILIKE '%GMAIL%';
@@ -176,7 +436,72 @@ WHERE email ILIKE '%GMAIL%';
 
 Write a `query` that finds every student whose email address contains the text "verma", regardless of where it appears in the address.
 
-```postgresql with=schema.sql
+```postgresql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    email TEXT,
+    city TEXT,
+    phone TEXT,
+    joined_on DATE
+);
+
+INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
+(1, 'Omkar Rane', 'omkar.rane@campusmail.edu', 'Bengaluru', '9845011111', '2025-01-10'),
+(2, 'Neha Sharma', 'neha.sharma@campusmail.edu', 'Mysuru', NULL, '2025-01-12'),
+(3, 'Varun Nair', 'varun.nair@gmail.com', 'Chennai', '9845022222', '2025-01-15'),
+(4, 'Siddharth Rao', 'siddharth.rao@campusmail.edu', 'Hyderabad', '9845033333', '2025-01-18'),
+(5, 'Yusuf Khan', 'yusuf.khan@gmail.com', 'Pune', NULL, '2025-01-20'),
+(6, 'Ishita Menon', 'ishita.menon@campusmail.edu', 'Bengaluru', '9845044444', '2025-01-22'),
+(7, 'Rahul Verma', 'rahul.verma@gmail.com', 'Chennai', '9845055555', '2025-01-25'),
+(8, 'Sanya Iyer', 'sanya.iyer@campusmail.edu', 'Mysuru', NULL, '2025-01-28');
+
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    title TEXT,
+    department TEXT,
+    credits INTEGER
+);
+
+INSERT INTO courses (course_id, title, department, credits) VALUES
+(101, 'Database Systems', 'Computer Science', 4),
+(102, 'Data Structures', 'Computer Science', 4),
+(103, 'Linear Algebra', 'Mathematics', 3),
+(104, 'Discrete Mathematics', 'Mathematics', 3),
+(105, 'Microeconomics', 'Economics', 2);
+
+CREATE TABLE instructors (
+    instructor_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    department TEXT
+);
+
+INSERT INTO instructors (instructor_id, full_name, department) VALUES
+(201, 'Ananya Bose', 'Computer Science'),
+(202, 'Manoj Pillai', 'Mathematics'),
+(203, 'Kavita Reddy', 'Economics');
+
+CREATE TABLE enrollments (
+    enrollment_id INTEGER PRIMARY KEY,
+    student_id INTEGER REFERENCES students(student_id),
+    course_id INTEGER REFERENCES courses(course_id),
+    enrolled_on DATE,
+    grade TEXT
+);
+
+INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade) VALUES
+(1, 1, 101, '2025-02-01', 'A'),
+(2, 1, 103, '2025-02-01', 'B+'),
+(3, 2, 101, '2025-02-02', NULL),
+(4, 3, 102, '2025-02-03', 'A-'),
+(5, 3, 105, '2025-02-03', NULL),
+(6, 4, 104, '2025-02-04', 'B'),
+(7, 5, 101, '2025-02-05', NULL),
+(8, 6, 102, '2025-02-06', 'A'),
+(9, 7, 103, '2025-02-07', 'C+'),
+(10, 8, 105, '2025-02-08', 'B-');
+
+-- Query
 SELECT full_name, email
 FROM students
 WHERE email LIKE '%verma%';

@@ -10,7 +10,7 @@ A **`recursive CTE`** solves this by repeating its own logic against its own gro
 
 The `employees` `table` now includes a few more reporting levels to make the hierarchy worth walking.
 
-```postgresql file=employees_hierarchy.sql
+```text
 CREATE TABLE employees (
     employee_id INTEGER PRIMARY KEY,
     employee_name TEXT,
@@ -32,7 +32,22 @@ Ananya sits at the top with no manager, Rajat and Meghna report to her, Karan an
 
 A `recursive CTE` has two parts `joined` by `UNION ALL`: a base case that starts the recursion, and a recursive case that repeats, each time building on the previous round's result.
 
-```postgresql with=employees_hierarchy.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, employee_name, manager_id) VALUES
+(1, 'Ananya Sharma', NULL),
+(2, 'Rajat Bhatia', 1),
+(3, 'Meghna Iyer', 1),
+(4, 'Karan Oberoi', 2),
+(5, 'Divya Nambiar', 2),
+(6, 'Farhan Sheikh', 4);
+
+-- Query
 WITH RECURSIVE reporting_chain AS (
     SELECT employee_id, employee_name, manager_id, 1 AS level
     FROM employees
@@ -93,7 +108,22 @@ Two pieces of syntax are both required, for different reasons:
 
 The same recursive structure works in the opposite direction, finding every employee under a given manager instead of every manager above a given employee, just by flipping which side of the `join` condition matches which `column`.
 
-```postgresql with=employees_hierarchy.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, employee_name, manager_id) VALUES
+(1, 'Ananya Sharma', NULL),
+(2, 'Rajat Bhatia', 1),
+(3, 'Meghna Iyer', 1),
+(4, 'Karan Oberoi', 2),
+(5, 'Divya Nambiar', 2),
+(6, 'Farhan Sheikh', 4);
+
+-- Query
 WITH RECURSIVE team_below AS (
     SELECT employee_id, employee_name, manager_id, 1 AS level
     FROM employees
@@ -151,7 +181,22 @@ Starting from Ananya at level 1, the recursive case now matches `e.manager_id = 
 
 Find every employee who reports, directly or indirectly, to Rajat Bhatia, including how many levels below him each one sits. Write a `recursive CTE` against the `employees` `table` above, starting from Rajat.
 
-```postgresql with=employees_hierarchy.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, employee_name, manager_id) VALUES
+(1, 'Ananya Sharma', NULL),
+(2, 'Rajat Bhatia', 1),
+(3, 'Meghna Iyer', 1),
+(4, 'Karan Oberoi', 2),
+(5, 'Divya Nambiar', 2),
+(6, 'Farhan Sheikh', 4);
+
+-- Query
 -- Write your query below
 ```
 

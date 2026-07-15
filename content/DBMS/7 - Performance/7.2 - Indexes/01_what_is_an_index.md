@@ -8,7 +8,7 @@ Finding "Rathi, Sanjay" in a phone book does not mean reading every entry from t
 
 The `orders` `table` from the storage chapter, large enough for the cost difference to be visible, sets up the comparison. The closing `ANALYZE` statement refreshes the statistics the `query planner` uses to estimate how many `rows` a condition will match; every setup in this chapter runs it after loading data, and it returns in full detail alongside `EXPLAIN` in the next chapter.
 
-```postgresql file=index_demo.sql
+```text
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
     customer_name TEXT,
@@ -22,7 +22,20 @@ FROM generate_series(1, 10000) AS i;
 ANALYZE orders;
 ```
 
-```postgresql with=index_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 10000) AS i;
+
+ANALYZE orders;
+
+-- Query
 EXPLAIN SELECT * FROM orders WHERE customer_name = 'Customer 7500';
 ```
 
@@ -34,7 +47,20 @@ There is no structure supporting a search on `customer_name`, so the plan report
 
 `CREATE INDEX` builds a separate structure that keeps track of where `rows` with each value of a `column` can be found, without physically reordering the `table` itself.
 
-```postgresql with=index_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 10000) AS i;
+
+ANALYZE orders;
+
+-- Query
 CREATE INDEX idx_orders_customer_name ON orders (customer_name);
 
 EXPLAIN SELECT * FROM orders WHERE customer_name = 'Customer 7500';
@@ -53,7 +79,20 @@ An `index` is not a copy of the `table`. It is:
 
 Looking up a value in the `index` gives the `database` the exact physical location to fetch, instead of checking every `row`'s actual data to find a match.
 
-```postgresql with=index_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 10000) AS i;
+
+ANALYZE orders;
+
+-- Query
 CREATE INDEX idx_orders_customer_name ON orders (customer_name);
 
 SELECT pg_size_pretty(pg_relation_size('orders')) AS table_size,
@@ -66,7 +105,20 @@ The `index` takes up its own disk space, separate from the `table`, since it is 
 
 Because an `index` is a separate structure that must stay in sync with the `table`, every `INSERT`, `UPDATE`, or `DELETE` that touches an `indexed` `column` has to update the `index` too, not just the `table`.
 
-```postgresql with=index_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 10000) AS i;
+
+ANALYZE orders;
+
+-- Query
 CREATE INDEX idx_orders_customer_name ON orders (customer_name);
 
 SELECT pg_size_pretty(pg_relation_size('idx_orders_customer_name')) AS index_size_before;
@@ -119,7 +171,20 @@ This cost is usually small for one `index` on one `row`, but it is the reason `i
 
 Create an `index` on the `amount` `column` of the `orders` `table` above, then run `EXPLAIN` on a `query` filtering for `amount = 5000.00`, confirming the plan now uses an `index scan` instead of a `sequential scan`.
 
-```postgresql with=index_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 10000) AS i;
+
+ANALYZE orders;
+
+-- Query
 -- Write your queries below
 ```
 

@@ -8,12 +8,16 @@ PostgreSQL's answer to this is **`role`s**, the unified mechanism it uses to rep
 
 A `role` can represent a login-capable user or a non-login group, and the same `CREATE ROLE` command handles both, differing only in the options supplied.
 
-```postgresql file=roles_demo.sql
+```text
 CREATE ROLE reporting_app WITH LOGIN PASSWORD 'change_this_in_real_use';
 CREATE ROLE dev_alia WITH LOGIN PASSWORD 'change_this_in_real_use';
 ```
 
-```postgresql with=roles_demo.sql
+```postgresql
+CREATE ROLE reporting_app WITH LOGIN PASSWORD 'change_this_in_real_use';
+CREATE ROLE dev_alia WITH LOGIN PASSWORD 'change_this_in_real_use';
+
+-- Query
 SELECT rolname, rolcanlogin FROM pg_roles WHERE rolname IN ('reporting_app', 'dev_alia');
 ```
 
@@ -28,7 +32,11 @@ SELECT rolname, rolcanlogin FROM pg_roles WHERE rolname IN ('reporting_app', 'de
 
 A `role` does not have to represent a person or a service at all; it can exist purely as a named bundle of permissions that other `role`s can be added to.
 
-```postgresql with=roles_demo.sql
+```postgresql
+CREATE ROLE reporting_app WITH LOGIN PASSWORD 'change_this_in_real_use';
+CREATE ROLE dev_alia WITH LOGIN PASSWORD 'change_this_in_real_use';
+
+-- Query
 CREATE ROLE shipment_readers;
 
 GRANT shipment_readers TO reporting_app;
@@ -45,7 +53,16 @@ GRANT shipment_readers TO dev_alia;
 
 It might seem simpler to give every developer and every service the same single `database` login. This is a well-known anti-pattern, for reasons that go beyond convenience.
 
-```postgresql with=roles_demo.sql
+```postgresql
+CREATE ROLE reporting_app WITH LOGIN PASSWORD 'change_this_in_real_use';
+CREATE ROLE dev_alia WITH LOGIN PASSWORD 'change_this_in_real_use';
+
+CREATE ROLE shipment_readers;
+
+GRANT shipment_readers TO reporting_app;
+GRANT shipment_readers TO dev_alia;
+
+-- Query
 SELECT usename, query, query_start
 FROM pg_stat_activity
 WHERE usename = 'reporting_app';
@@ -61,7 +78,16 @@ WHERE usename = 'reporting_app';
 
 A `role`'s properties can be changed after creation, and a `role` that is no longer needed can be removed, though only once nothing still depends on it.
 
-```postgresql with=roles_demo.sql
+```postgresql
+CREATE ROLE reporting_app WITH LOGIN PASSWORD 'change_this_in_real_use';
+CREATE ROLE dev_alia WITH LOGIN PASSWORD 'change_this_in_real_use';
+
+CREATE ROLE shipment_readers;
+
+GRANT shipment_readers TO reporting_app;
+GRANT shipment_readers TO dev_alia;
+
+-- Query
 ALTER ROLE dev_alia WITH PASSWORD 'a_new_stronger_password';
 
 DROP ROLE shipment_readers;
@@ -102,7 +128,16 @@ Dropping `shipment_readers` succeeds here since nothing else in this example sti
 
 Create a new login `role` named `dev_farah` and a group `role` named `shipment_writers`, then add `dev_farah` as a member of `shipment_writers`.
 
-```postgresql with=roles_demo.sql
+```postgresql
+CREATE ROLE reporting_app WITH LOGIN PASSWORD 'change_this_in_real_use';
+CREATE ROLE dev_alia WITH LOGIN PASSWORD 'change_this_in_real_use';
+
+CREATE ROLE shipment_readers;
+
+GRANT shipment_readers TO reporting_app;
+GRANT shipment_readers TO dev_alia;
+
+-- Query
 -- Write your role creation and grant below
 ```
 

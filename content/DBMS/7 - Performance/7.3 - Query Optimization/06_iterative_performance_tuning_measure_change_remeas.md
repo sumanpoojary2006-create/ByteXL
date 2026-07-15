@@ -8,7 +8,7 @@ This final lesson walks through that full loop, start to finish, on one `query`.
 
 Before changing anything, the first step is always establishing an honest baseline with `EXPLAIN ANALYZE`, the actual-execution tool covered earlier in this chapter.
 
-```postgresql file=tuning_demo.sql
+```text
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
     customer_id INTEGER,
@@ -25,7 +25,23 @@ SELECT i, (i % 8000) + 1,
 FROM generate_series(1, 60000) AS i;
 ```
 
-```postgresql with=tuning_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    status TEXT,
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO orders (order_id, customer_id, status, amount, order_date)
+SELECT i, (i % 8000) + 1,
+       CASE WHEN i % 500 = 0 THEN 'refunded' ELSE 'completed' END,
+       (i * 7.25)::NUMERIC(10,2),
+       DATE '2025-01-01' + (i % 365)
+FROM generate_series(1, 60000) AS i;
+
+-- Query
 EXPLAIN ANALYZE
 SELECT customer_id, SUM(amount) AS total_refunded
 FROM orders
@@ -42,7 +58,23 @@ This baseline plan, with no supporting `index` on either `status` or `order_date
 
 Rather than adding several `indexes` at once, the disciplined approach is one change at a time, so its individual effect can be measured cleanly. A `composite index` matching both filter `columns` together, the technique covered in the `indexes` chapter, is a reasonable first attempt here.
 
-```postgresql with=tuning_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    status TEXT,
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO orders (order_id, customer_id, status, amount, order_date)
+SELECT i, (i % 8000) + 1,
+       CASE WHEN i % 500 = 0 THEN 'refunded' ELSE 'completed' END,
+       (i * 7.25)::NUMERIC(10,2),
+       DATE '2025-01-01' + (i % 365)
+FROM generate_series(1, 60000) AS i;
+
+-- Query
 CREATE INDEX idx_orders_status_date ON orders (status, order_date);
 ```
 
@@ -50,7 +82,23 @@ This single, targeted change is the entire first iteration, nothing else about t
 
 ## Step Three: Re-measure and Compare
 
-```postgresql with=tuning_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    status TEXT,
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO orders (order_id, customer_id, status, amount, order_date)
+SELECT i, (i % 8000) + 1,
+       CASE WHEN i % 500 = 0 THEN 'refunded' ELSE 'completed' END,
+       (i * 7.25)::NUMERIC(10,2),
+       DATE '2025-01-01' + (i % 365)
+FROM generate_series(1, 60000) AS i;
+
+-- Query
 EXPLAIN ANALYZE
 SELECT customer_id, SUM(amount) AS total_refunded
 FROM orders
@@ -70,7 +118,23 @@ Comparing this plan's actual time directly against the baseline's is the entire 
 
 If the first change helped but the `query` is still slower than needed, the loop continues: identify the next likely bottleneck from what `EXPLAIN ANALYZE` now shows, make one more targeted change, and measure again.
 
-```postgresql with=tuning_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    status TEXT,
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO orders (order_id, customer_id, status, amount, order_date)
+SELECT i, (i % 8000) + 1,
+       CASE WHEN i % 500 = 0 THEN 'refunded' ELSE 'completed' END,
+       (i * 7.25)::NUMERIC(10,2),
+       DATE '2025-01-01' + (i % 365)
+FROM generate_series(1, 60000) AS i;
+
+-- Query
 EXPLAIN ANALYZE
 SELECT customer_id, SUM(amount) AS total_refunded
 FROM orders
@@ -121,7 +185,23 @@ Measuring first, changing one thing, and measuring again is what turns tuning fr
 
 Using the `orders` `table` above, measure the baseline for a `query` filtering `WHERE customer_id = 4000`, add an appropriate `index`, and re-measure to confirm the improvement, following the same measure-change-re-measure discipline covered in this lesson.
 
-```postgresql with=tuning_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    status TEXT,
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO orders (order_id, customer_id, status, amount, order_date)
+SELECT i, (i % 8000) + 1,
+       CASE WHEN i % 500 = 0 THEN 'refunded' ELSE 'completed' END,
+       (i * 7.25)::NUMERIC(10,2),
+       DATE '2025-01-01' + (i % 365)
+FROM generate_series(1, 60000) AS i;
+
+-- Query
 -- Write your queries below
 ```
 

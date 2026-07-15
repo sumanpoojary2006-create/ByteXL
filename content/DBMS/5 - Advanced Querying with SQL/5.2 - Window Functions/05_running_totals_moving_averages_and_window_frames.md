@@ -8,7 +8,7 @@ The sales director's newest request needs a genuinely different range, a 3-month
 
 The `monthly_sales` `table` tracks one `row` per salesperson per month.
 
-```postgresql file=monthly_sales.sql
+```text
 CREATE TABLE monthly_sales (
     salesperson TEXT,
     sale_month DATE,
@@ -24,7 +24,22 @@ INSERT INTO monthly_sales (salesperson, sale_month, total_amount) VALUES
 ('Nikhil Rao', '2025-06-01', 29700.00);
 ```
 
-```postgresql with=monthly_sales.sql
+```postgresql
+CREATE TABLE monthly_sales (
+    salesperson TEXT,
+    sale_month DATE,
+    total_amount NUMERIC(10, 2)
+);
+
+INSERT INTO monthly_sales (salesperson, sale_month, total_amount) VALUES
+('Nikhil Rao', '2025-01-01', 18000.00),
+('Nikhil Rao', '2025-02-01', 20000.00),
+('Nikhil Rao', '2025-03-01', 22000.00),
+('Nikhil Rao', '2025-04-01', 25500.00),
+('Nikhil Rao', '2025-05-01', 21000.00),
+('Nikhil Rao', '2025-06-01', 29700.00);
+
+-- Query
 SELECT sale_month, total_amount,
        SUM(total_amount) OVER (ORDER BY sale_month) AS running_total
 FROM monthly_sales
@@ -37,7 +52,22 @@ This is the same running-total pattern from earlier in the chapter, and its exac
 
 The same running total can be written out fully, naming the frame instead of relying on the default.
 
-```postgresql with=monthly_sales.sql
+```postgresql
+CREATE TABLE monthly_sales (
+    salesperson TEXT,
+    sale_month DATE,
+    total_amount NUMERIC(10, 2)
+);
+
+INSERT INTO monthly_sales (salesperson, sale_month, total_amount) VALUES
+('Nikhil Rao', '2025-01-01', 18000.00),
+('Nikhil Rao', '2025-02-01', 20000.00),
+('Nikhil Rao', '2025-03-01', 22000.00),
+('Nikhil Rao', '2025-04-01', 25500.00),
+('Nikhil Rao', '2025-05-01', 21000.00),
+('Nikhil Rao', '2025-06-01', 29700.00);
+
+-- Query
 SELECT sale_month, total_amount,
        SUM(total_amount) OVER (
            ORDER BY sale_month
@@ -56,7 +86,22 @@ ORDER BY sale_month;
 
 A 3-month moving average needs a frame of exactly the current `row` plus the two `rows` before it, which `ROWS BETWEEN 2 PRECEDING AND CURRENT ROW` expresses directly.
 
-```postgresql with=monthly_sales.sql
+```postgresql
+CREATE TABLE monthly_sales (
+    salesperson TEXT,
+    sale_month DATE,
+    total_amount NUMERIC(10, 2)
+);
+
+INSERT INTO monthly_sales (salesperson, sale_month, total_amount) VALUES
+('Nikhil Rao', '2025-01-01', 18000.00),
+('Nikhil Rao', '2025-02-01', 20000.00),
+('Nikhil Rao', '2025-03-01', 22000.00),
+('Nikhil Rao', '2025-04-01', 25500.00),
+('Nikhil Rao', '2025-05-01', 21000.00),
+('Nikhil Rao', '2025-06-01', 29700.00);
+
+-- Query
 SELECT sale_month, total_amount,
        ROUND(AVG(total_amount) OVER (
            ORDER BY sale_month
@@ -74,7 +119,22 @@ January's moving average is just 18000.00, its own value, since only zero `rows`
 
 A frame does not have to be limited to `rows` before the current one; it can extend in both directions at once.
 
-```postgresql with=monthly_sales.sql
+```postgresql
+CREATE TABLE monthly_sales (
+    salesperson TEXT,
+    sale_month DATE,
+    total_amount NUMERIC(10, 2)
+);
+
+INSERT INTO monthly_sales (salesperson, sale_month, total_amount) VALUES
+('Nikhil Rao', '2025-01-01', 18000.00),
+('Nikhil Rao', '2025-02-01', 20000.00),
+('Nikhil Rao', '2025-03-01', 22000.00),
+('Nikhil Rao', '2025-04-01', 25500.00),
+('Nikhil Rao', '2025-05-01', 21000.00),
+('Nikhil Rao', '2025-06-01', 29700.00);
+
+-- Query
 SELECT sale_month, total_amount,
        ROUND(AVG(total_amount) OVER (
            ORDER BY sale_month
@@ -119,7 +179,22 @@ ORDER BY sale_month;
 
 Leela wants a 2-month moving total, the current month plus the one before it, for Nikhil's sales. Write a `query` against `monthly_sales` above using an explicit window frame to compute it.
 
-```postgresql with=monthly_sales.sql
+```postgresql
+CREATE TABLE monthly_sales (
+    salesperson TEXT,
+    sale_month DATE,
+    total_amount NUMERIC(10, 2)
+);
+
+INSERT INTO monthly_sales (salesperson, sale_month, total_amount) VALUES
+('Nikhil Rao', '2025-01-01', 18000.00),
+('Nikhil Rao', '2025-02-01', 20000.00),
+('Nikhil Rao', '2025-03-01', 22000.00),
+('Nikhil Rao', '2025-04-01', 25500.00),
+('Nikhil Rao', '2025-05-01', 21000.00),
+('Nikhil Rao', '2025-06-01', 29700.00);
+
+-- Query
 -- Write your query below
 ```
 

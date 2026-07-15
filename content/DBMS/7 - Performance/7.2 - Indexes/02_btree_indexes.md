@@ -8,7 +8,7 @@ PostgreSQL's default `index` type, and the default in nearly every relational `d
 
 Every `index` created in the previous lesson, without specifying a type, was already a B-tree, since it is PostgreSQL's default.
 
-```postgresql file=btree_demo.sql
+```text
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
     customer_name TEXT,
@@ -24,7 +24,22 @@ CREATE INDEX idx_orders_amount ON orders (amount);
 ANALYZE orders;
 ```
 
-```postgresql with=btree_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 10000) AS i;
+
+CREATE INDEX idx_orders_amount ON orders (amount);
+
+ANALYZE orders;
+
+-- Query
 SELECT indexname, indexdef FROM pg_indexes WHERE tablename = 'orders';
 ```
 
@@ -42,7 +57,22 @@ Searching a B-tree means starting at the root, comparing the target value, and f
 
 ![A B-tree is a balanced index with root, branch, and leaf levels](images/03_btree_balanced_root_branches_leaves.png)
 
-```postgresql with=btree_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 10000) AS i;
+
+CREATE INDEX idx_orders_amount ON orders (amount);
+
+ANALYZE orders;
+
+-- Query
 EXPLAIN SELECT * FROM orders WHERE amount = 5000.00;
 ```
 
@@ -52,7 +82,22 @@ The reported "`Index Scan`" here is the `query planner` choosing to walk down `i
 
 The defining property of a B-tree is that its depth, the number of levels a search has to walk through, grows extremely slowly as the number of entries grows, because each level can branch into many children at once rather than just two. Doubling the number of `rows` in a `table` typically adds at most one extra level to its B-tree, not double the search steps.
 
-```postgresql with=btree_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 10000) AS i;
+
+CREATE INDEX idx_orders_amount ON orders (amount);
+
+ANALYZE orders;
+
+-- Query
 INSERT INTO orders (order_id, customer_name, amount)
 SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
 FROM generate_series(10001, 100000) AS i;
@@ -68,7 +113,22 @@ Even after growing the `table` tenfold, the plan still reports an `index scan`, 
 
 Because a B-tree keeps its entries in sorted order at the leaf level, it supports far more than exact-match lookups. Range conditions, sorting, and finding the minimum or maximum value can all use the same structure directly.
 
-```postgresql with=btree_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 10000) AS i;
+
+CREATE INDEX idx_orders_amount ON orders (amount);
+
+ANALYZE orders;
+
+-- Query
 EXPLAIN SELECT * FROM orders WHERE amount BETWEEN 1000.00 AND 2000.00 ORDER BY amount;
 ```
 
@@ -109,7 +169,22 @@ This range `query` and its ordering both benefit from the same B-tree, since the
 
 Confirm that `idx_orders_amount` is used for a narrow range `query`, `amount > 124000.00`, a condition only the few highest-priced orders satisfy, then check the plan for finding the single largest `amount` in the `table`, and note in a comment whether the B-tree helps with that too.
 
-```postgresql with=btree_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, amount)
+SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 10000) AS i;
+
+CREATE INDEX idx_orders_amount ON orders (amount);
+
+ANALYZE orders;
+
+-- Query
 -- Write your queries and comment below
 ```
 

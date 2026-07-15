@@ -12,7 +12,7 @@ None of this needs a new `column` or a data-entry fix from head office. It needs
 
 The `restaurants` `table` stores a branch name and a locality in separate `columns`, but the delivery app wants them shown as one combined string.
 
-```postgresql file=restaurants.sql
+```text
 CREATE TABLE restaurants (
     restaurant_id INTEGER PRIMARY KEY,
     branch_name TEXT,
@@ -28,7 +28,22 @@ INSERT INTO restaurants (restaurant_id, branch_name, locality, manager_email) VA
 (5, 'Tandoor Express', 'Jayanagar', 'kiran.m@tandoorexpress.com  ');
 ```
 
-```postgresql with=restaurants.sql
+```postgresql
+CREATE TABLE restaurants (
+    restaurant_id INTEGER PRIMARY KEY,
+    branch_name TEXT,
+    locality TEXT,
+    manager_email TEXT
+);
+
+INSERT INTO restaurants (restaurant_id, branch_name, locality, manager_email) VALUES
+(1, 'Spice Route', 'Koramangala', '  RAVI.KUMAR@SPICEROUTE.COM  '),
+(2, 'SPICE ROUTE', 'Indiranagar', 'anita.rao@spiceroute.com'),
+(3, 'Curry Leaf', 'Whitefield', 'sunil.d@curryleaf.com'),
+(4, 'curry leaf', 'HSR Layout', '  priya.n@curryleaf.com'),
+(5, 'Tandoor Express', 'Jayanagar', 'kiran.m@tandoorexpress.com  ');
+
+-- Query
 SELECT CONCAT(branch_name, ' - ', locality) AS display_name
 FROM restaurants;
 ```
@@ -42,7 +57,22 @@ FROM restaurants;
 - The `branch_name` `column` has the same restaurant stored two different ways: "Spice Route" and "SPICE ROUTE" are meant to be the same branch, but a case-sensitive grouping or comparison would treat them as different values.
 - `UPPER` and `LOWER` force text into one case so comparisons and grouping stop caring about how someone originally typed it.
 
-```postgresql with=restaurants.sql
+```postgresql
+CREATE TABLE restaurants (
+    restaurant_id INTEGER PRIMARY KEY,
+    branch_name TEXT,
+    locality TEXT,
+    manager_email TEXT
+);
+
+INSERT INTO restaurants (restaurant_id, branch_name, locality, manager_email) VALUES
+(1, 'Spice Route', 'Koramangala', '  RAVI.KUMAR@SPICEROUTE.COM  '),
+(2, 'SPICE ROUTE', 'Indiranagar', 'anita.rao@spiceroute.com'),
+(3, 'Curry Leaf', 'Whitefield', 'sunil.d@curryleaf.com'),
+(4, 'curry leaf', 'HSR Layout', '  priya.n@curryleaf.com'),
+(5, 'Tandoor Express', 'Jayanagar', 'kiran.m@tandoorexpress.com  ');
+
+-- Query
 SELECT branch_name, UPPER(branch_name) AS shout_case, LOWER(branch_name) AS quiet_case
 FROM restaurants;
 ```
@@ -54,7 +84,22 @@ FROM restaurants;
 
 The `manager_email` `column` has a worse problem: some values have leading or trailing spaces, likely left over from a spreadsheet import. A space at the end of an email address makes `WHERE manager_email = 'ravi.kumar@spiceroute.com'` fail to match, even though the value looks identical on screen.
 
-```postgresql with=restaurants.sql
+```postgresql
+CREATE TABLE restaurants (
+    restaurant_id INTEGER PRIMARY KEY,
+    branch_name TEXT,
+    locality TEXT,
+    manager_email TEXT
+);
+
+INSERT INTO restaurants (restaurant_id, branch_name, locality, manager_email) VALUES
+(1, 'Spice Route', 'Koramangala', '  RAVI.KUMAR@SPICEROUTE.COM  '),
+(2, 'SPICE ROUTE', 'Indiranagar', 'anita.rao@spiceroute.com'),
+(3, 'Curry Leaf', 'Whitefield', 'sunil.d@curryleaf.com'),
+(4, 'curry leaf', 'HSR Layout', '  priya.n@curryleaf.com'),
+(5, 'Tandoor Express', 'Jayanagar', 'kiran.m@tandoorexpress.com  ');
+
+-- Query
 SELECT manager_email, TRIM(manager_email) AS cleaned_email, LENGTH(manager_email) AS raw_length, LENGTH(TRIM(manager_email)) AS clean_length
 FROM restaurants
 WHERE restaurant_id IN (1, 4, 5);
@@ -69,7 +114,22 @@ WHERE restaurant_id IN (1, 4, 5);
 
 Meera also needs just the domain of each manager's email, to check which restaurants still use the old `curryleaf.com` address before a rebrand. `SUBSTRING` extracts a piece of a string given a starting position and, optionally, a length.
 
-```postgresql with=restaurants.sql
+```postgresql
+CREATE TABLE restaurants (
+    restaurant_id INTEGER PRIMARY KEY,
+    branch_name TEXT,
+    locality TEXT,
+    manager_email TEXT
+);
+
+INSERT INTO restaurants (restaurant_id, branch_name, locality, manager_email) VALUES
+(1, 'Spice Route', 'Koramangala', '  RAVI.KUMAR@SPICEROUTE.COM  '),
+(2, 'SPICE ROUTE', 'Indiranagar', 'anita.rao@spiceroute.com'),
+(3, 'Curry Leaf', 'Whitefield', 'sunil.d@curryleaf.com'),
+(4, 'curry leaf', 'HSR Layout', '  priya.n@curryleaf.com'),
+(5, 'Tandoor Express', 'Jayanagar', 'kiran.m@tandoorexpress.com  ');
+
+-- Query
 SELECT manager_email,
        SUBSTRING(TRIM(manager_email) FROM POSITION('@' IN TRIM(manager_email)) + 1) AS domain
 FROM restaurants;
@@ -153,7 +213,22 @@ Lining up a few raw values against their cleaned results makes the transformatio
 
 Head office wants a cleaned-up manager directory: one `column` with the branch name in title case is out of scope for now, but they do want the trimmed, lowercase email for every restaurant, aliased as `contact_email`. Write that `query` against the `restaurants` `table` above.
 
-```postgresql with=restaurants.sql
+```postgresql
+CREATE TABLE restaurants (
+    restaurant_id INTEGER PRIMARY KEY,
+    branch_name TEXT,
+    locality TEXT,
+    manager_email TEXT
+);
+
+INSERT INTO restaurants (restaurant_id, branch_name, locality, manager_email) VALUES
+(1, 'Spice Route', 'Koramangala', '  RAVI.KUMAR@SPICEROUTE.COM  '),
+(2, 'SPICE ROUTE', 'Indiranagar', 'anita.rao@spiceroute.com'),
+(3, 'Curry Leaf', 'Whitefield', 'sunil.d@curryleaf.com'),
+(4, 'curry leaf', 'HSR Layout', '  priya.n@curryleaf.com'),
+(5, 'Tandoor Express', 'Jayanagar', 'kiran.m@tandoorexpress.com  ');
+
+-- Query
 -- Write your query below
 ```
 

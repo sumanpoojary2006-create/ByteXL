@@ -14,7 +14,7 @@ None of these pieces are new on their own; what is new is seeing exactly how the
 
 Region information lives on a separate `customers` `table`, not on `orders` itself, which is a completely normal way for a real `schema` to be organized.
 
-```postgresql file=orders_customers.sql
+```text
 CREATE TABLE customers (
     customer_name TEXT PRIMARY KEY,
     region TEXT
@@ -45,7 +45,37 @@ INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUE
 (8, 'Ishita Rao', 'Non-Fiction', 990.00, '2025-04-14');
 ```
 
-```postgresql with=orders_customers.sql
+```postgresql
+CREATE TABLE customers (
+    customer_name TEXT PRIMARY KEY,
+    region TEXT
+);
+
+INSERT INTO customers (customer_name, region) VALUES
+('Ishita Rao', 'South'),
+('Vivek Menon', 'West'),
+('Aman Gupta', 'North'),
+('Sonal Deshpande', 'West');
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT REFERENCES customers(customer_name),
+    category TEXT,
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUES
+(1, 'Ishita Rao', 'Fiction', 450.00, '2025-04-02'),
+(2, 'Vivek Menon', 'Non-Fiction', 899.00, '2025-04-03'),
+(3, 'Ishita Rao', 'Fiction', 320.00, '2025-04-05'),
+(4, 'Aman Gupta', 'Children', 210.00, '2025-04-06'),
+(5, 'Sonal Deshpande', 'Non-Fiction', 1450.00, '2025-04-08'),
+(6, 'Vivek Menon', 'Fiction', 610.00, '2025-04-10'),
+(7, 'Aman Gupta', 'Children', 175.00, '2025-04-12'),
+(8, 'Ishita Rao', 'Non-Fiction', 990.00, '2025-04-14');
+
+-- Query
 SELECT c.region, SUM(o.amount) AS region_revenue
 FROM orders o
 JOIN customers c ON o.customer_name = c.customer_name
@@ -60,7 +90,37 @@ The `JOIN` attaches each order to its customer's region before grouping ever hap
 
 The founders' request also wants only orders placed after April 7. That is a `row`-level condition, so it belongs in `WHERE`, applied before grouping, exactly as covered when `WHERE` and `HAVING` were first compared.
 
-```postgresql with=orders_customers.sql
+```postgresql
+CREATE TABLE customers (
+    customer_name TEXT PRIMARY KEY,
+    region TEXT
+);
+
+INSERT INTO customers (customer_name, region) VALUES
+('Ishita Rao', 'South'),
+('Vivek Menon', 'West'),
+('Aman Gupta', 'North'),
+('Sonal Deshpande', 'West');
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT REFERENCES customers(customer_name),
+    category TEXT,
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUES
+(1, 'Ishita Rao', 'Fiction', 450.00, '2025-04-02'),
+(2, 'Vivek Menon', 'Non-Fiction', 899.00, '2025-04-03'),
+(3, 'Ishita Rao', 'Fiction', 320.00, '2025-04-05'),
+(4, 'Aman Gupta', 'Children', 210.00, '2025-04-06'),
+(5, 'Sonal Deshpande', 'Non-Fiction', 1450.00, '2025-04-08'),
+(6, 'Vivek Menon', 'Fiction', 610.00, '2025-04-10'),
+(7, 'Aman Gupta', 'Children', 175.00, '2025-04-12'),
+(8, 'Ishita Rao', 'Non-Fiction', 990.00, '2025-04-14');
+
+-- Query
 SELECT c.region, SUM(o.amount) AS region_revenue
 FROM orders o
 JOIN customers c ON o.customer_name = c.customer_name
@@ -74,7 +134,37 @@ Only orders 5 through 8 survive the `WHERE` clause, and grouping happens on that
 
 The last two pieces, "at least two customers" and "sorted highest revenue first," need `HAVING` on a `COUNT(DISTINCT ...)` and an `ORDER BY` on the computed total.
 
-```postgresql with=orders_customers.sql
+```postgresql
+CREATE TABLE customers (
+    customer_name TEXT PRIMARY KEY,
+    region TEXT
+);
+
+INSERT INTO customers (customer_name, region) VALUES
+('Ishita Rao', 'South'),
+('Vivek Menon', 'West'),
+('Aman Gupta', 'North'),
+('Sonal Deshpande', 'West');
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT REFERENCES customers(customer_name),
+    category TEXT,
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUES
+(1, 'Ishita Rao', 'Fiction', 450.00, '2025-04-02'),
+(2, 'Vivek Menon', 'Non-Fiction', 899.00, '2025-04-03'),
+(3, 'Ishita Rao', 'Fiction', 320.00, '2025-04-05'),
+(4, 'Aman Gupta', 'Children', 210.00, '2025-04-06'),
+(5, 'Sonal Deshpande', 'Non-Fiction', 1450.00, '2025-04-08'),
+(6, 'Vivek Menon', 'Fiction', 610.00, '2025-04-10'),
+(7, 'Aman Gupta', 'Children', 175.00, '2025-04-12'),
+(8, 'Ishita Rao', 'Non-Fiction', 990.00, '2025-04-14');
+
+-- Query
 SELECT c.region, SUM(o.amount) AS region_revenue, COUNT(DISTINCT o.customer_name) AS customer_count
 FROM orders o
 JOIN customers c ON o.customer_name = c.customer_name
@@ -141,7 +231,37 @@ This ordering is exactly why `WHERE` cannot reference `SUM(amount)`, that aggreg
 
 The founders want one more cut: total revenue and order count per category, but only for orders from the West and South regions, only categories with more than one order, sorted by revenue descending. Write that `query` against the `orders` and `customers` `tables` above.
 
-```postgresql with=orders_customers.sql
+```postgresql
+CREATE TABLE customers (
+    customer_name TEXT PRIMARY KEY,
+    region TEXT
+);
+
+INSERT INTO customers (customer_name, region) VALUES
+('Ishita Rao', 'South'),
+('Vivek Menon', 'West'),
+('Aman Gupta', 'North'),
+('Sonal Deshpande', 'West');
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT REFERENCES customers(customer_name),
+    category TEXT,
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUES
+(1, 'Ishita Rao', 'Fiction', 450.00, '2025-04-02'),
+(2, 'Vivek Menon', 'Non-Fiction', 899.00, '2025-04-03'),
+(3, 'Ishita Rao', 'Fiction', 320.00, '2025-04-05'),
+(4, 'Aman Gupta', 'Children', 210.00, '2025-04-06'),
+(5, 'Sonal Deshpande', 'Non-Fiction', 1450.00, '2025-04-08'),
+(6, 'Vivek Menon', 'Fiction', 610.00, '2025-04-10'),
+(7, 'Aman Gupta', 'Children', 175.00, '2025-04-12'),
+(8, 'Ishita Rao', 'Non-Fiction', 990.00, '2025-04-14');
+
+-- Query
 -- Write your query below
 ```
 

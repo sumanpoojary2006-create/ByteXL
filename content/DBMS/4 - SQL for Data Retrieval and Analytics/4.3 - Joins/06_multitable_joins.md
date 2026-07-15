@@ -8,7 +8,7 @@ Zoya's dispatch manager wants exactly that: one line per order showing the custo
 
 `orders` now references three other `tables` at once: `customers`, `restaurants`, and `riders`.
 
-```postgresql file=full_delivery.sql
+```text
 CREATE TABLE customers (
     customer_id INTEGER PRIMARY KEY,
     customer_name TEXT
@@ -49,7 +49,47 @@ INSERT INTO orders (order_id, customer_id, restaurant_id, rider_id, amount) VALU
 (5, 2, 3, 1, 180.00);
 ```
 
-```postgresql with=full_delivery.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT
+);
+
+CREATE TABLE restaurants (
+    restaurant_id INTEGER PRIMARY KEY,
+    restaurant_name TEXT
+);
+
+CREATE TABLE riders (
+    rider_id INTEGER PRIMARY KEY,
+    rider_name TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(customer_id),
+    restaurant_id INTEGER REFERENCES restaurants(restaurant_id),
+    rider_id INTEGER REFERENCES riders(rider_id),
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO customers (customer_id, customer_name) VALUES
+(1, 'Aditi Kulkarni'), (2, 'Rohan Das'), (3, 'Kavya Nair');
+
+INSERT INTO restaurants (restaurant_id, restaurant_name) VALUES
+(1, 'Pizza Palace'), (2, 'Sushi Central'), (3, 'Burger Barn');
+
+INSERT INTO riders (rider_id, rider_name) VALUES
+(1, 'Suresh Pillai'), (2, 'Deepa Krishnan'), (3, 'Om Prakash');
+
+INSERT INTO orders (order_id, customer_id, restaurant_id, rider_id, amount) VALUES
+(1, 1, 1, 2, 450.00),
+(2, 2, 2, 1, 620.00),
+(3, 1, 3, 3, 300.00),
+(4, 3, 1, 2, 500.00),
+(5, 2, 3, 1, 180.00);
+
+-- Query
 SELECT orders.order_id,
        customers.customer_name,
        restaurants.restaurant_name,
@@ -77,7 +117,47 @@ By the time all three `JOIN` clauses have run, every order `row` carries a custo
 
 As the number of joined `tables` grows, writing the full `table` name in front of every `column` gets noisy. Aliases, introduced briefly with self `joins`, keep a multi-`table` `query` readable.
 
-```postgresql with=full_delivery.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT
+);
+
+CREATE TABLE restaurants (
+    restaurant_id INTEGER PRIMARY KEY,
+    restaurant_name TEXT
+);
+
+CREATE TABLE riders (
+    rider_id INTEGER PRIMARY KEY,
+    rider_name TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(customer_id),
+    restaurant_id INTEGER REFERENCES restaurants(restaurant_id),
+    rider_id INTEGER REFERENCES riders(rider_id),
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO customers (customer_id, customer_name) VALUES
+(1, 'Aditi Kulkarni'), (2, 'Rohan Das'), (3, 'Kavya Nair');
+
+INSERT INTO restaurants (restaurant_id, restaurant_name) VALUES
+(1, 'Pizza Palace'), (2, 'Sushi Central'), (3, 'Burger Barn');
+
+INSERT INTO riders (rider_id, rider_name) VALUES
+(1, 'Suresh Pillai'), (2, 'Deepa Krishnan'), (3, 'Om Prakash');
+
+INSERT INTO orders (order_id, customer_id, restaurant_id, rider_id, amount) VALUES
+(1, 1, 1, 2, 450.00),
+(2, 2, 2, 1, 620.00),
+(3, 1, 3, 3, 300.00),
+(4, 3, 1, 2, 500.00),
+(5, 2, 3, 1, 180.00);
+
+-- Query
 SELECT o.order_id, c.customer_name, r.restaurant_name, d.rider_name, o.amount
 FROM orders o
 JOIN customers c ON o.customer_id = c.customer_id
@@ -93,7 +173,47 @@ JOIN riders d ON o.rider_id = d.rider_id;
 - A multi-`table` `query` does not have to use the same `join` type for every `table`.
 - If the dispatch manager wants every order shown even for a rider who has somehow not yet been assigned, one `JOIN` in the chain can become a `LEFT JOIN` while the others stay as `INNER JOIN`.
 
-```postgresql with=full_delivery.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT
+);
+
+CREATE TABLE restaurants (
+    restaurant_id INTEGER PRIMARY KEY,
+    restaurant_name TEXT
+);
+
+CREATE TABLE riders (
+    rider_id INTEGER PRIMARY KEY,
+    rider_name TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(customer_id),
+    restaurant_id INTEGER REFERENCES restaurants(restaurant_id),
+    rider_id INTEGER REFERENCES riders(rider_id),
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO customers (customer_id, customer_name) VALUES
+(1, 'Aditi Kulkarni'), (2, 'Rohan Das'), (3, 'Kavya Nair');
+
+INSERT INTO restaurants (restaurant_id, restaurant_name) VALUES
+(1, 'Pizza Palace'), (2, 'Sushi Central'), (3, 'Burger Barn');
+
+INSERT INTO riders (rider_id, rider_name) VALUES
+(1, 'Suresh Pillai'), (2, 'Deepa Krishnan'), (3, 'Om Prakash');
+
+INSERT INTO orders (order_id, customer_id, restaurant_id, rider_id, amount) VALUES
+(1, 1, 1, 2, 450.00),
+(2, 2, 2, 1, 620.00),
+(3, 1, 3, 3, 300.00),
+(4, 3, 1, 2, 500.00),
+(5, 2, 3, 1, 180.00);
+
+-- Query
 SELECT o.order_id, c.customer_name, r.restaurant_name, d.rider_name
 FROM orders o
 JOIN customers c ON o.customer_id = c.customer_id
@@ -110,7 +230,47 @@ LEFT JOIN riders d ON o.rider_id = d.rider_id;
 
 Once several `tables` are joined, `WHERE`, `GROUP BY`, and `aggregate functions` all work exactly as they did on a single `table` or a two-`table` `join`, just with more `columns` available to filter or group by.
 
-```postgresql with=full_delivery.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT
+);
+
+CREATE TABLE restaurants (
+    restaurant_id INTEGER PRIMARY KEY,
+    restaurant_name TEXT
+);
+
+CREATE TABLE riders (
+    rider_id INTEGER PRIMARY KEY,
+    rider_name TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(customer_id),
+    restaurant_id INTEGER REFERENCES restaurants(restaurant_id),
+    rider_id INTEGER REFERENCES riders(rider_id),
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO customers (customer_id, customer_name) VALUES
+(1, 'Aditi Kulkarni'), (2, 'Rohan Das'), (3, 'Kavya Nair');
+
+INSERT INTO restaurants (restaurant_id, restaurant_name) VALUES
+(1, 'Pizza Palace'), (2, 'Sushi Central'), (3, 'Burger Barn');
+
+INSERT INTO riders (rider_id, rider_name) VALUES
+(1, 'Suresh Pillai'), (2, 'Deepa Krishnan'), (3, 'Om Prakash');
+
+INSERT INTO orders (order_id, customer_id, restaurant_id, rider_id, amount) VALUES
+(1, 1, 1, 2, 450.00),
+(2, 2, 2, 1, 620.00),
+(3, 1, 3, 3, 300.00),
+(4, 3, 1, 2, 500.00),
+(5, 2, 3, 1, 180.00);
+
+-- Query
 SELECT d.rider_name, COUNT(*) AS deliveries, SUM(o.amount) AS total_delivered_value
 FROM orders o
 JOIN riders d ON o.rider_id = d.rider_id
@@ -153,7 +313,47 @@ This groups by rider name after the `join` has already attached each order to it
 
 The dispatch manager wants a report showing, for every order over 300 in amount, the customer's name and the rider's name only, ordered by amount descending. Write that `query` against the `orders`, `customers`, and `riders` `tables` above.
 
-```postgresql with=full_delivery.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT
+);
+
+CREATE TABLE restaurants (
+    restaurant_id INTEGER PRIMARY KEY,
+    restaurant_name TEXT
+);
+
+CREATE TABLE riders (
+    rider_id INTEGER PRIMARY KEY,
+    rider_name TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(customer_id),
+    restaurant_id INTEGER REFERENCES restaurants(restaurant_id),
+    rider_id INTEGER REFERENCES riders(rider_id),
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO customers (customer_id, customer_name) VALUES
+(1, 'Aditi Kulkarni'), (2, 'Rohan Das'), (3, 'Kavya Nair');
+
+INSERT INTO restaurants (restaurant_id, restaurant_name) VALUES
+(1, 'Pizza Palace'), (2, 'Sushi Central'), (3, 'Burger Barn');
+
+INSERT INTO riders (rider_id, rider_name) VALUES
+(1, 'Suresh Pillai'), (2, 'Deepa Krishnan'), (3, 'Om Prakash');
+
+INSERT INTO orders (order_id, customer_id, restaurant_id, rider_id, amount) VALUES
+(1, 1, 1, 2, 450.00),
+(2, 2, 2, 1, 620.00),
+(3, 1, 3, 3, 300.00),
+(4, 3, 1, 2, 500.00),
+(5, 2, 3, 1, 180.00);
+
+-- Query
 -- Write your query below
 ```
 

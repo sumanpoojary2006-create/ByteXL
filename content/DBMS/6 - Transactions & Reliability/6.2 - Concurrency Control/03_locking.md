@@ -8,7 +8,7 @@ The fix is not clever application logic checking timestamps after the fact; it i
 
 The `inventory` `table` from the previous lesson is the setup again.
 
-```postgresql file=inventory_locking.sql
+```text
 CREATE TABLE inventory (
     product_id INTEGER PRIMARY KEY,
     product_name TEXT,
@@ -19,7 +19,17 @@ INSERT INTO inventory (product_id, product_name, stock_count) VALUES
 (1, 'Wireless Mouse', 50);
 ```
 
-```postgresql with=inventory_locking.sql
+```postgresql
+CREATE TABLE inventory (
+    product_id INTEGER PRIMARY KEY,
+    product_name TEXT,
+    stock_count INTEGER
+);
+
+INSERT INTO inventory (product_id, product_name, stock_count) VALUES
+(1, 'Wireless Mouse', 50);
+
+-- Query
 BEGIN;
 
 SELECT stock_count FROM inventory WHERE product_id = 1 FOR UPDATE;
@@ -52,7 +62,17 @@ Not every `lock` blocks every other operation equally. A shared `lock`, taken au
 
 An exclusive `lock`, the kind `FOR UPDATE` takes, blocks any other `transaction` from reading with intent to modify or from writing to that `row` at all, since two `transactions` both planning to change the same `row` is exactly the conflict that needs preventing.
 
-```postgresql with=inventory_locking.sql
+```postgresql
+CREATE TABLE inventory (
+    product_id INTEGER PRIMARY KEY,
+    product_name TEXT,
+    stock_count INTEGER
+);
+
+INSERT INTO inventory (product_id, product_name, stock_count) VALUES
+(1, 'Wireless Mouse', 50);
+
+-- Query
 BEGIN;
 SELECT stock_count FROM inventory WHERE product_id = 1;
 -- An ordinary SELECT like this takes no exclusive lock; other transactions
@@ -66,7 +86,17 @@ An ordinary `SELECT`, without `FOR UPDATE`, does not block other readers or even
 
 `Locking` in a well-behaved system is scoped as narrowly as possible, typically to individual `rows`, rather than to an entire `table`, so that unrelated `transactions` touching different `rows` never have to wait on each other.
 
-```postgresql with=inventory_locking.sql
+```postgresql
+CREATE TABLE inventory (
+    product_id INTEGER PRIMARY KEY,
+    product_name TEXT,
+    stock_count INTEGER
+);
+
+INSERT INTO inventory (product_id, product_name, stock_count) VALUES
+(1, 'Wireless Mouse', 50);
+
+-- Query
 INSERT INTO inventory (product_id, product_name, stock_count) VALUES (2, 'USB Cable', 200);
 
 BEGIN;
@@ -117,7 +147,17 @@ This `row`-level scope is what makes `locking` practical at real-world scale: a 
 
 Write a `transaction` that `locks` product 1's `row` with `FOR UPDATE`, deducts 8 units, and commits, then confirm the final stock count with a `SELECT`.
 
-```postgresql with=inventory_locking.sql
+```postgresql
+CREATE TABLE inventory (
+    product_id INTEGER PRIMARY KEY,
+    product_name TEXT,
+    stock_count INTEGER
+);
+
+INSERT INTO inventory (product_id, product_name, stock_count) VALUES
+(1, 'Wireless Mouse', 50);
+
+-- Query
 -- Write your transaction below
 ```
 

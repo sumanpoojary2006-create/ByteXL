@@ -8,7 +8,7 @@ A real application never gets that convenience for free; before it can run a sin
 
 An application typically opens a `connection` using a `connection string`, a compact format bundling everything the `database` needs to know: where the server is, which `database` to use, and who is connecting.
 
-```postgresql file=connection_demo.sql
+```text
 CREATE TABLE app_config (
     config_key TEXT PRIMARY KEY,
     config_value TEXT
@@ -21,7 +21,19 @@ INSERT INTO app_config (config_key, config_value) VALUES
 ('user', 'app_service_account');
 ```
 
-```postgresql with=connection_demo.sql
+```postgresql
+CREATE TABLE app_config (
+    config_key TEXT PRIMARY KEY,
+    config_value TEXT
+);
+
+INSERT INTO app_config (config_key, config_value) VALUES
+('host', 'db.internal.example.com'),
+('port', '5432'),
+('database', 'shipments_prod'),
+('user', 'app_service_account');
+
+-- Query
 SELECT * FROM app_config;
 ```
 
@@ -43,7 +55,19 @@ The `app_config` `table` above is only illustrative, showing the pieces such a s
 
 Opening a `connection` is not free: it typically means a network round trip to the server, an authentication handshake, and the server allocating resources on its side to track that `connection`. This is the reason a well-built application does not open a brand new `connection` for every single `query` it runs.
 
-```postgresql with=connection_demo.sql
+```postgresql
+CREATE TABLE app_config (
+    config_key TEXT PRIMARY KEY,
+    config_value TEXT
+);
+
+INSERT INTO app_config (config_key, config_value) VALUES
+('host', 'db.internal.example.com'),
+('port', '5432'),
+('database', 'shipments_prod'),
+('user', 'app_service_account');
+
+-- Query
 SELECT count(*) AS active_connections FROM pg_stat_activity;
 ```
 
@@ -53,7 +77,19 @@ SELECT count(*) AS active_connections FROM pg_stat_activity;
 
 A `connection` that is opened but never properly closed continues consuming server-side resources indefinitely, even after the application code that opened it has long since finished using it, or crashed without cleaning up.
 
-```postgresql with=connection_demo.sql
+```postgresql
+CREATE TABLE app_config (
+    config_key TEXT PRIMARY KEY,
+    config_value TEXT
+);
+
+INSERT INTO app_config (config_key, config_value) VALUES
+('host', 'db.internal.example.com'),
+('port', '5432'),
+('database', 'shipments_prod'),
+('user', 'app_service_account');
+
+-- Query
 SELECT pid, state, query, now() - query_start AS running_for
 FROM pg_stat_activity
 WHERE state = 'idle';
@@ -108,7 +144,19 @@ The two call for different handling: a `connection` failure often means retrying
 
 Query `pg_stat_activity` for the current `database`, filtering to just this session's own `connection`, and identify which `columns` describe the `connection` itself versus the `query` currently running on it.
 
-```postgresql with=connection_demo.sql
+```postgresql
+CREATE TABLE app_config (
+    config_key TEXT PRIMARY KEY,
+    config_value TEXT
+);
+
+INSERT INTO app_config (config_key, config_value) VALUES
+('host', 'db.internal.example.com'),
+('port', '5432'),
+('database', 'shipments_prod'),
+('user', 'app_service_account');
+
+-- Query
 -- Write your query below
 ```
 

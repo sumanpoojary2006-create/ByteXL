@@ -8,7 +8,7 @@
 
 The SQL standard defines four `isolation levels`, ordered from loosest to strictest, and each one is a promise about which of the earlier lesson's problems cannot occur.
 
-```postgresql file=isolation_demo.sql
+```text
 CREATE TABLE inventory (
     product_id INTEGER PRIMARY KEY,
     stock_count INTEGER
@@ -17,7 +17,15 @@ CREATE TABLE inventory (
 INSERT INTO inventory (product_id, stock_count) VALUES (1, 50);
 ```
 
-```postgresql with=isolation_demo.sql
+```postgresql
+CREATE TABLE inventory (
+    product_id INTEGER PRIMARY KEY,
+    stock_count INTEGER
+);
+
+INSERT INTO inventory (product_id, stock_count) VALUES (1, 50);
+
+-- Query
 SHOW transaction_isolation;
 ```
 
@@ -27,7 +35,15 @@ This confirms the default level for a new PostgreSQL session, `read committed`, 
 
 The `isolation level` can be set explicitly at the start of a `transaction`, overriding the session default for just that one `transaction`.
 
-```postgresql with=isolation_demo.sql
+```postgresql
+CREATE TABLE inventory (
+    product_id INTEGER PRIMARY KEY,
+    stock_count INTEGER
+);
+
+INSERT INTO inventory (product_id, stock_count) VALUES (1, 50);
+
+-- Query
 BEGIN;
 SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 SHOW transaction_isolation;
@@ -87,7 +103,15 @@ Each level adds one more guarantee on top of the last:
 
 ## Seeing REPEATABLE READ Prevent a Non-Repeatable Read
 
-```postgresql with=isolation_demo.sql
+```postgresql
+CREATE TABLE inventory (
+    product_id INTEGER PRIMARY KEY,
+    stock_count INTEGER
+);
+
+INSERT INTO inventory (product_id, stock_count) VALUES (1, 50);
+
+-- Query
 BEGIN;
 SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
 
@@ -148,7 +172,15 @@ Both reads inside this `transaction` are guaranteed to agree, because `REPEATABL
 
 Start a `transaction` under `REPEATABLE READ`, confirm the level with `SHOW transaction_isolation`, read `stock_count` for product 1 twice with an ordinary `SELECT` in between, and commit.
 
-```postgresql with=isolation_demo.sql
+```postgresql
+CREATE TABLE inventory (
+    product_id INTEGER PRIMARY KEY,
+    stock_count INTEGER
+);
+
+INSERT INTO inventory (product_id, stock_count) VALUES (1, 50);
+
+-- Query
 -- Write your transaction below
 ```
 

@@ -8,7 +8,7 @@ What Priya actually needs is the `table` split into separate buckets, one per ca
 
 The `orders` `table` from `aggregate functions` is the starting point again.
 
-```postgresql file=orders.sql
+```text
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
     customer_name TEXT,
@@ -28,7 +28,26 @@ INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUE
 (8, 'Ishita Rao', 'Non-Fiction', 990.00, '2025-04-14');
 ```
 
-```postgresql with=orders.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    category TEXT,
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUES
+(1, 'Ishita Rao', 'Fiction', 450.00, '2025-04-02'),
+(2, 'Vivek Menon', 'Non-Fiction', 899.00, '2025-04-03'),
+(3, 'Ishita Rao', 'Fiction', 320.00, '2025-04-05'),
+(4, 'Aman Gupta', 'Children', 210.00, '2025-04-06'),
+(5, 'Sonal Deshpande', 'Non-Fiction', 1450.00, '2025-04-08'),
+(6, 'Vivek Menon', 'Fiction', 610.00, '2025-04-10'),
+(7, 'Aman Gupta', 'Children', 175.00, '2025-04-12'),
+(8, 'Ishita Rao', 'Non-Fiction', 990.00, '2025-04-14');
+
+-- Query
 SELECT category, SUM(amount) AS category_revenue
 FROM orders
 GROUP BY category;
@@ -67,7 +86,26 @@ Fiction, Non-Fiction, and Children's books each get their own `row` in the resul
 
 A common mistake when starting with `GROUP BY` is trying to select a `column` that is neither grouped on nor wrapped in an `aggregate function`.
 
-```postgresql with=orders.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    category TEXT,
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUES
+(1, 'Ishita Rao', 'Fiction', 450.00, '2025-04-02'),
+(2, 'Vivek Menon', 'Non-Fiction', 899.00, '2025-04-03'),
+(3, 'Ishita Rao', 'Fiction', 320.00, '2025-04-05'),
+(4, 'Aman Gupta', 'Children', 210.00, '2025-04-06'),
+(5, 'Sonal Deshpande', 'Non-Fiction', 1450.00, '2025-04-08'),
+(6, 'Vivek Menon', 'Fiction', 610.00, '2025-04-10'),
+(7, 'Aman Gupta', 'Children', 175.00, '2025-04-12'),
+(8, 'Ishita Rao', 'Non-Fiction', 990.00, '2025-04-14');
+
+-- Query
 -- This is the mistake. Uncomment it in a local PostgreSQL session
 -- if you want to see the GROUP BY error directly:
 -- SELECT category, customer_name, SUM(amount) AS category_revenue
@@ -95,7 +133,26 @@ Either way, the `database` always knows exactly one value to produce per group.
 
 Priya can group by more than one `column` at a time, which produces one group for every distinct combination of the grouped values.
 
-```postgresql with=orders.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    category TEXT,
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUES
+(1, 'Ishita Rao', 'Fiction', 450.00, '2025-04-02'),
+(2, 'Vivek Menon', 'Non-Fiction', 899.00, '2025-04-03'),
+(3, 'Ishita Rao', 'Fiction', 320.00, '2025-04-05'),
+(4, 'Aman Gupta', 'Children', 210.00, '2025-04-06'),
+(5, 'Sonal Deshpande', 'Non-Fiction', 1450.00, '2025-04-08'),
+(6, 'Vivek Menon', 'Fiction', 610.00, '2025-04-10'),
+(7, 'Aman Gupta', 'Children', 175.00, '2025-04-12'),
+(8, 'Ishita Rao', 'Non-Fiction', 990.00, '2025-04-14');
+
+-- Query
 SELECT customer_name, category, COUNT(*) AS orders_placed, SUM(amount) AS total_spent
 FROM orders
 GROUP BY customer_name, category;
@@ -107,7 +164,26 @@ Each `row` in the result now represents one customer and one category together, 
 
 `GROUP BY` collapses `rows` into groups, but it does not control what order those groups appear in. Combining it with `ORDER BY` on the aggregated `column` gives a ranked summary.
 
-```postgresql with=orders.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    category TEXT,
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUES
+(1, 'Ishita Rao', 'Fiction', 450.00, '2025-04-02'),
+(2, 'Vivek Menon', 'Non-Fiction', 899.00, '2025-04-03'),
+(3, 'Ishita Rao', 'Fiction', 320.00, '2025-04-05'),
+(4, 'Aman Gupta', 'Children', 210.00, '2025-04-06'),
+(5, 'Sonal Deshpande', 'Non-Fiction', 1450.00, '2025-04-08'),
+(6, 'Vivek Menon', 'Fiction', 610.00, '2025-04-10'),
+(7, 'Aman Gupta', 'Children', 175.00, '2025-04-12'),
+(8, 'Ishita Rao', 'Non-Fiction', 990.00, '2025-04-14');
+
+-- Query
 SELECT category, SUM(amount) AS category_revenue
 FROM orders
 GROUP BY category
@@ -150,7 +226,26 @@ ORDER BY category_revenue DESC;
 
 The founders want to know how many orders each individual customer has placed, and their total spend, ranked from the highest spender down. Write a `query` against the `orders` `table` above that returns `customer_name`, an `order_count`, and a `total_spent`, ordered by `total_spent` descending.
 
-```postgresql with=orders.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    category TEXT,
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUES
+(1, 'Ishita Rao', 'Fiction', 450.00, '2025-04-02'),
+(2, 'Vivek Menon', 'Non-Fiction', 899.00, '2025-04-03'),
+(3, 'Ishita Rao', 'Fiction', 320.00, '2025-04-05'),
+(4, 'Aman Gupta', 'Children', 210.00, '2025-04-06'),
+(5, 'Sonal Deshpande', 'Non-Fiction', 1450.00, '2025-04-08'),
+(6, 'Vivek Menon', 'Fiction', 610.00, '2025-04-10'),
+(7, 'Aman Gupta', 'Children', 175.00, '2025-04-12'),
+(8, 'Ishita Rao', 'Non-Fiction', 990.00, '2025-04-14');
+
+-- Query
 -- Write your query below
 ```
 

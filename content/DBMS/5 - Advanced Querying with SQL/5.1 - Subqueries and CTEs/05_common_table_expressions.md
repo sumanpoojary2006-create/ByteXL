@@ -8,7 +8,7 @@ SQL offers a cleaner way to write exactly the same logic: a **`Common Table Expr
 
 The `employees` `table` is the same one used throughout this chapter.
 
-```postgresql file=employees.sql
+```text
 CREATE TABLE employees (
     employee_id INTEGER PRIMARY KEY,
     employee_name TEXT,
@@ -28,7 +28,24 @@ INSERT INTO employees (employee_id, employee_name, department, salary, manager_i
 
 Here is the derived-`table` version from an earlier lesson, for comparison.
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department TEXT,
+    salary NUMERIC(10, 2),
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, employee_name, department, salary, manager_id) VALUES
+(1, 'Ananya Sharma', 'Engineering', 95000.00, NULL),
+(2, 'Rajat Bhatia', 'Engineering', 78000.00, 1),
+(3, 'Meghna Iyer', 'Engineering', 82000.00, 1),
+(4, 'Sameer Khan', 'Sales', 65000.00, NULL),
+(5, 'Pooja Reddy', 'Sales', 58000.00, 4),
+(6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
+
+-- Query
 SELECT department, department_avg
 FROM (
     SELECT department, AVG(salary) AS department_avg
@@ -40,7 +57,24 @@ WHERE department_avg > (SELECT AVG(salary) FROM employees);
 
 And here is the same logic rewritten with a CTE.
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department TEXT,
+    salary NUMERIC(10, 2),
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, employee_name, department, salary, manager_id) VALUES
+(1, 'Ananya Sharma', 'Engineering', 95000.00, NULL),
+(2, 'Rajat Bhatia', 'Engineering', 78000.00, 1),
+(3, 'Meghna Iyer', 'Engineering', 82000.00, 1),
+(4, 'Sameer Khan', 'Sales', 65000.00, NULL),
+(5, 'Pooja Reddy', 'Sales', 58000.00, 4),
+(6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
+
+-- Query
 WITH dept_averages AS (
     SELECT department, AVG(salary) AS department_avg
     FROM employees
@@ -60,7 +94,24 @@ WHERE department_avg > (SELECT AVG(salary) FROM employees);
 
 A single `WITH` clause can define more than one CTE, separated by commas, and later CTEs are allowed to reference earlier ones, building up a multi-step calculation one readable piece at a time.
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department TEXT,
+    salary NUMERIC(10, 2),
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, employee_name, department, salary, manager_id) VALUES
+(1, 'Ananya Sharma', 'Engineering', 95000.00, NULL),
+(2, 'Rajat Bhatia', 'Engineering', 78000.00, 1),
+(3, 'Meghna Iyer', 'Engineering', 82000.00, 1),
+(4, 'Sameer Khan', 'Sales', 65000.00, NULL),
+(5, 'Pooja Reddy', 'Sales', 58000.00, 4),
+(6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
+
+-- Query
 WITH dept_averages AS (
     SELECT department, AVG(salary) AS department_avg
     FROM employees
@@ -91,7 +142,24 @@ For any `query` with more than one layer of subquery, reaching for a CTE instead
 
 CTEs are not limited to replacing `FROM` subqueries; any subquery, including the correlated and list-based ones from earlier lessons, can be pulled out into a named CTE if doing so makes the `query` easier to follow.
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department TEXT,
+    salary NUMERIC(10, 2),
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, employee_name, department, salary, manager_id) VALUES
+(1, 'Ananya Sharma', 'Engineering', 95000.00, NULL),
+(2, 'Rajat Bhatia', 'Engineering', 78000.00, 1),
+(3, 'Meghna Iyer', 'Engineering', 82000.00, 1),
+(4, 'Sameer Khan', 'Sales', 65000.00, NULL),
+(5, 'Pooja Reddy', 'Sales', 58000.00, 4),
+(6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
+
+-- Query
 WITH high_earners AS (
     SELECT employee_id, employee_name, salary
     FROM employees
@@ -137,7 +205,24 @@ This is a small example, but the pattern scales: as soon as a `WHERE` subquery's
 
 Rewrite the `correlated subquery` from the previous lesson, finding employees whose salary exceeds their own department's average, as a CTE-based `query` instead of a `WHERE`-embedded subquery.
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department TEXT,
+    salary NUMERIC(10, 2),
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, employee_name, department, salary, manager_id) VALUES
+(1, 'Ananya Sharma', 'Engineering', 95000.00, NULL),
+(2, 'Rajat Bhatia', 'Engineering', 78000.00, 1),
+(3, 'Meghna Iyer', 'Engineering', 82000.00, 1),
+(4, 'Sameer Khan', 'Sales', 65000.00, NULL),
+(5, 'Pooja Reddy', 'Sales', 58000.00, 4),
+(6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
+
+-- Query
 -- Write your query below
 ```
 

@@ -12,7 +12,7 @@ Tanvi's next request from the marketing team is more specific than a merged mail
 
 The same two customer `tables` from the `UNION` lesson apply here.
 
-```postgresql file=customers_channels.sql
+```text
 CREATE TABLE online_customers (
     customer_name TEXT,
     email TEXT
@@ -34,7 +34,28 @@ INSERT INTO store_customers (customer_name, email) VALUES
 ('Neha Bhatt', 'neha.bhatt@example.com');
 ```
 
-```postgresql with=customers_channels.sql
+```postgresql
+CREATE TABLE online_customers (
+    customer_name TEXT,
+    email TEXT
+);
+
+CREATE TABLE store_customers (
+    customer_name TEXT,
+    email TEXT
+);
+
+INSERT INTO online_customers (customer_name, email) VALUES
+('Aditi Kulkarni', 'aditi.k@example.com'),
+('Rohan Das', 'rohan.das@example.com'),
+('Kavya Nair', 'kavya.nair@example.com');
+
+INSERT INTO store_customers (customer_name, email) VALUES
+('Kavya Nair', 'kavya.nair@example.com'),
+('Imran Sheikh', 'imran.s@example.com'),
+('Neha Bhatt', 'neha.bhatt@example.com');
+
+-- Query
 SELECT customer_name, email FROM online_customers
 INTERSECT
 SELECT customer_name, email FROM store_customers;
@@ -50,7 +71,28 @@ SELECT customer_name, email FROM store_customers;
 
 `EXCEPT` (called `MINUS` in some `databases`, though PostgreSQL and MySQL both use `EXCEPT`) takes the first `query`'s results and removes anything that also appears in the second `query`'s results, keeping only what is left over.
 
-```postgresql with=customers_channels.sql
+```postgresql
+CREATE TABLE online_customers (
+    customer_name TEXT,
+    email TEXT
+);
+
+CREATE TABLE store_customers (
+    customer_name TEXT,
+    email TEXT
+);
+
+INSERT INTO online_customers (customer_name, email) VALUES
+('Aditi Kulkarni', 'aditi.k@example.com'),
+('Rohan Das', 'rohan.das@example.com'),
+('Kavya Nair', 'kavya.nair@example.com');
+
+INSERT INTO store_customers (customer_name, email) VALUES
+('Kavya Nair', 'kavya.nair@example.com'),
+('Imran Sheikh', 'imran.s@example.com'),
+('Neha Bhatt', 'neha.bhatt@example.com');
+
+-- Query
 SELECT customer_name, email FROM online_customers
 EXCEPT
 SELECT customer_name, email FROM store_customers;
@@ -64,7 +106,28 @@ This returns Aditi Kulkarni and Rohan Das, the two online customers who do not a
 
 Reversing the two `queries` in an `EXCEPT` statement produces a different, not merely reordered, result.
 
-```postgresql with=customers_channels.sql
+```postgresql
+CREATE TABLE online_customers (
+    customer_name TEXT,
+    email TEXT
+);
+
+CREATE TABLE store_customers (
+    customer_name TEXT,
+    email TEXT
+);
+
+INSERT INTO online_customers (customer_name, email) VALUES
+('Aditi Kulkarni', 'aditi.k@example.com'),
+('Rohan Das', 'rohan.das@example.com'),
+('Kavya Nair', 'kavya.nair@example.com');
+
+INSERT INTO store_customers (customer_name, email) VALUES
+('Kavya Nair', 'kavya.nair@example.com'),
+('Imran Sheikh', 'imran.s@example.com'),
+('Neha Bhatt', 'neha.bhatt@example.com');
+
+-- Query
 SELECT customer_name, email FROM store_customers
 EXCEPT
 SELECT customer_name, email FROM online_customers;
@@ -76,7 +139,28 @@ This returns Imran Sheikh and Neha Bhatt instead, the store customers who have n
 
 `INTERSECT` and `EXCEPT` follow the identical `column` requirements covered for `UNION`: both `queries` must return the same number of `columns`, in compatible types, in the same order, and the comparison happens across the whole `row`, not `column` by `column` independently.
 
-```postgresql with=customers_channels.sql
+```postgresql
+CREATE TABLE online_customers (
+    customer_name TEXT,
+    email TEXT
+);
+
+CREATE TABLE store_customers (
+    customer_name TEXT,
+    email TEXT
+);
+
+INSERT INTO online_customers (customer_name, email) VALUES
+('Aditi Kulkarni', 'aditi.k@example.com'),
+('Rohan Das', 'rohan.das@example.com'),
+('Kavya Nair', 'kavya.nair@example.com');
+
+INSERT INTO store_customers (customer_name, email) VALUES
+('Kavya Nair', 'kavya.nair@example.com'),
+('Imran Sheikh', 'imran.s@example.com'),
+('Neha Bhatt', 'neha.bhatt@example.com');
+
+-- Query
 SELECT customer_name FROM online_customers
 INTERSECT
 SELECT customer_name FROM store_customers;
@@ -114,7 +198,28 @@ SELECT customer_name FROM store_customers;
 
 Tanvi wants to confirm the loyalty reward list a different way: find every store customer who is also an online customer, using `INTERSECT`, but starting the `query` from `store_customers` this time instead of `online_customers`.
 
-```postgresql with=customers_channels.sql
+```postgresql
+CREATE TABLE online_customers (
+    customer_name TEXT,
+    email TEXT
+);
+
+CREATE TABLE store_customers (
+    customer_name TEXT,
+    email TEXT
+);
+
+INSERT INTO online_customers (customer_name, email) VALUES
+('Aditi Kulkarni', 'aditi.k@example.com'),
+('Rohan Das', 'rohan.das@example.com'),
+('Kavya Nair', 'kavya.nair@example.com');
+
+INSERT INTO store_customers (customer_name, email) VALUES
+('Kavya Nair', 'kavya.nair@example.com'),
+('Imran Sheikh', 'imran.s@example.com'),
+('Neha Bhatt', 'neha.bhatt@example.com');
+
+-- Query
 -- Write your query below
 ```
 

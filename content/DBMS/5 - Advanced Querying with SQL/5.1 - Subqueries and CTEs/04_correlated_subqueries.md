@@ -10,7 +10,7 @@ A subquery that reaches back into the outer `query`'s current `row` like this is
 
 The `employees` `table` is the same one used throughout this chapter.
 
-```postgresql file=employees.sql
+```text
 CREATE TABLE employees (
     employee_id INTEGER PRIMARY KEY,
     employee_name TEXT,
@@ -28,7 +28,24 @@ INSERT INTO employees (employee_id, employee_name, department, salary, manager_i
 (6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
 ```
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department TEXT,
+    salary NUMERIC(10, 2),
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, employee_name, department, salary, manager_id) VALUES
+(1, 'Ananya Sharma', 'Engineering', 95000.00, NULL),
+(2, 'Rajat Bhatia', 'Engineering', 78000.00, 1),
+(3, 'Meghna Iyer', 'Engineering', 82000.00, 1),
+(4, 'Sameer Khan', 'Sales', 65000.00, NULL),
+(5, 'Pooja Reddy', 'Sales', 58000.00, 4),
+(6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
+
+-- Query
 SELECT e1.employee_name, e1.department, e1.salary
 FROM employees e1
 WHERE e1.salary > (
@@ -49,7 +66,24 @@ A regular, uncorrelated subquery, like the ones from earlier lessons, runs exact
 
 ![A correlated subquery recalculating relative to the current outer row](images/07_correlated_subquery_per_outer_row.png)
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department TEXT,
+    salary NUMERIC(10, 2),
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, employee_name, department, salary, manager_id) VALUES
+(1, 'Ananya Sharma', 'Engineering', 95000.00, NULL),
+(2, 'Rajat Bhatia', 'Engineering', 78000.00, 1),
+(3, 'Meghna Iyer', 'Engineering', 82000.00, 1),
+(4, 'Sameer Khan', 'Sales', 65000.00, NULL),
+(5, 'Pooja Reddy', 'Sales', 58000.00, 4),
+(6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
+
+-- Query
 SELECT e1.employee_name,
        (SELECT AVG(e2.salary) FROM employees e2 WHERE e2.department = e1.department) AS dept_avg
 FROM employees e1;
@@ -61,7 +95,24 @@ Placed in the `SELECT` list instead of `WHERE`, the same `correlated subquery` n
 
 `Correlated subqueries` pair especially naturally with `EXISTS`, since `EXISTS` already checks `row` by `row` for a match, and the earlier `joins`-chapter examples of `EXISTS` were, without naming it directly, already `correlated subqueries`.
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department TEXT,
+    salary NUMERIC(10, 2),
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, employee_name, department, salary, manager_id) VALUES
+(1, 'Ananya Sharma', 'Engineering', 95000.00, NULL),
+(2, 'Rajat Bhatia', 'Engineering', 78000.00, 1),
+(3, 'Meghna Iyer', 'Engineering', 82000.00, 1),
+(4, 'Sameer Khan', 'Sales', 65000.00, NULL),
+(5, 'Pooja Reddy', 'Sales', 58000.00, 4),
+(6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
+
+-- Query
 SELECT e1.employee_name
 FROM employees e1
 WHERE EXISTS (
@@ -112,7 +163,24 @@ For small reference `tables` like this one, the difference is invisible, but it 
 
 Kabir wants to find every employee who earns more than their own direct manager. Write a `query` against `employees` above using a `correlated subquery` that compares each employee's salary to their manager's salary.
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department TEXT,
+    salary NUMERIC(10, 2),
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, employee_name, department, salary, manager_id) VALUES
+(1, 'Ananya Sharma', 'Engineering', 95000.00, NULL),
+(2, 'Rajat Bhatia', 'Engineering', 78000.00, 1),
+(3, 'Meghna Iyer', 'Engineering', 82000.00, 1),
+(4, 'Sameer Khan', 'Sales', 65000.00, NULL),
+(5, 'Pooja Reddy', 'Sales', 58000.00, 4),
+(6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
+
+-- Query
 -- Write your query below
 ```
 

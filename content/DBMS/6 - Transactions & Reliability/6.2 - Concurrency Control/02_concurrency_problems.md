@@ -13,7 +13,7 @@ Naming each one clearly is what makes the next lessons, on `locking` and `isolat
 
 A `dirty read` happens when one `transaction` reads a change made by another `transaction` that has not yet committed, and might still be rolled back.
 
-```postgresql file=inventory.sql
+```text
 CREATE TABLE inventory (
     product_id INTEGER PRIMARY KEY,
     product_name TEXT,
@@ -24,7 +24,17 @@ INSERT INTO inventory (product_id, product_name, stock_count) VALUES
 (1, 'Wireless Mouse', 50);
 ```
 
-```postgresql with=inventory.sql
+```postgresql
+CREATE TABLE inventory (
+    product_id INTEGER PRIMARY KEY,
+    product_name TEXT,
+    stock_count INTEGER
+);
+
+INSERT INTO inventory (product_id, product_name, stock_count) VALUES
+(1, 'Wireless Mouse', 50);
+
+-- Query
 -- Transaction A: adjusting stock, not yet committed
 BEGIN;
 UPDATE inventory SET stock_count = 0 WHERE product_id = 1;
@@ -51,7 +61,17 @@ SELECT stock_count FROM inventory WHERE product_id = 1;
 
 A `non-repeatable read` happens when a `transaction` reads the same `row` twice, and gets two different values, because another `transaction` committed a change to that `row` in between the two reads.
 
-```postgresql with=inventory.sql
+```postgresql
+CREATE TABLE inventory (
+    product_id INTEGER PRIMARY KEY,
+    product_name TEXT,
+    stock_count INTEGER
+);
+
+INSERT INTO inventory (product_id, product_name, stock_count) VALUES
+(1, 'Wireless Mouse', 50);
+
+-- Query
 -- Transaction A, checking stock twice within one longer-running transaction:
 BEGIN;
 SELECT stock_count FROM inventory WHERE product_id = 1;
@@ -75,7 +95,17 @@ Unlike a `dirty read`, the second read here would reflect genuinely committed da
 
 A `phantom read` is the same underlying problem as a non-repeatable read, but at the level of an entire `query`'s `row` count rather than a single `row`'s value: a `transaction` runs the same filtered `query` twice and gets a different number of `rows` back, because another `transaction` inserted or deleted matching `rows` in between.
 
-```postgresql with=inventory.sql
+```postgresql
+CREATE TABLE inventory (
+    product_id INTEGER PRIMARY KEY,
+    product_name TEXT,
+    stock_count INTEGER
+);
+
+INSERT INTO inventory (product_id, product_name, stock_count) VALUES
+(1, 'Wireless Mouse', 50);
+
+-- Query
 -- Transaction A:
 BEGIN;
 SELECT COUNT(*) FROM inventory WHERE stock_count < 50;
@@ -101,7 +131,17 @@ A `lost update` happens when two `transactions` both read the same value, both c
 
 ![Lost update where two transactions read the same value and one write overwrites the other](images/05_lost_update_overwritten_write.png)
 
-```postgresql with=inventory.sql
+```postgresql
+CREATE TABLE inventory (
+    product_id INTEGER PRIMARY KEY,
+    product_name TEXT,
+    stock_count INTEGER
+);
+
+INSERT INTO inventory (product_id, product_name, stock_count) VALUES
+(1, 'Wireless Mouse', 50);
+
+-- Query
 -- Transaction A: sells 5 units, based on a stock reading of 50
 -- Transaction B: sells 3 units, also based on the same reading of 50, at nearly the same time
 -- If both compute "50 minus their own sale" independently and write it back,
@@ -148,7 +188,17 @@ The final value here is 47, reflecting only the second `UPDATE`; the first sale'
 
 Using the `inventory` `table` above, write a `query` sequence that demonstrates a `lost update` on `stock_count` for product 1, where two separate deductions of 10 and 15 units are both computed from the same starting value of 50, and show what the final stock count incorrectly ends up as.
 
-```postgresql with=inventory.sql
+```postgresql
+CREATE TABLE inventory (
+    product_id INTEGER PRIMARY KEY,
+    product_name TEXT,
+    stock_count INTEGER
+);
+
+INSERT INTO inventory (product_id, product_name, stock_count) VALUES
+(1, 'Wireless Mouse', 50);
+
+-- Query
 -- Write your queries below
 ```
 

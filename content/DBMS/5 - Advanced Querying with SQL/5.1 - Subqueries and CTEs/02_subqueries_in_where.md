@@ -10,7 +10,7 @@ SQL provides different operators, **`IN`**, **`ANY`**, and **`ALL`**, specifical
 
 The `employees` `table` from the previous lesson is the setup here again.
 
-```postgresql file=employees.sql
+```text
 CREATE TABLE employees (
     employee_id INTEGER PRIMARY KEY,
     employee_name TEXT,
@@ -28,7 +28,24 @@ INSERT INTO employees (employee_id, employee_name, department, salary, manager_i
 (6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
 ```
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department TEXT,
+    salary NUMERIC(10, 2),
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, employee_name, department, salary, manager_id) VALUES
+(1, 'Ananya Sharma', 'Engineering', 95000.00, NULL),
+(2, 'Rajat Bhatia', 'Engineering', 78000.00, 1),
+(3, 'Meghna Iyer', 'Engineering', 82000.00, 1),
+(4, 'Sameer Khan', 'Sales', 65000.00, NULL),
+(5, 'Pooja Reddy', 'Sales', 58000.00, 4),
+(6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
+
+-- Query
 SELECT employee_name, salary
 FROM employees
 WHERE salary = (SELECT MAX(salary) FROM employees);
@@ -42,7 +59,24 @@ WHERE salary = (SELECT MAX(salary) FROM employees);
 
 Finding "employees in the same department as Rajat or Vikas" needs a subquery that can return more than one department.
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department TEXT,
+    salary NUMERIC(10, 2),
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, employee_name, department, salary, manager_id) VALUES
+(1, 'Ananya Sharma', 'Engineering', 95000.00, NULL),
+(2, 'Rajat Bhatia', 'Engineering', 78000.00, 1),
+(3, 'Meghna Iyer', 'Engineering', 82000.00, 1),
+(4, 'Sameer Khan', 'Sales', 65000.00, NULL),
+(5, 'Pooja Reddy', 'Sales', 58000.00, 4),
+(6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
+
+-- Query
 SELECT employee_name, department
 FROM employees
 WHERE department IN (
@@ -56,7 +90,24 @@ The inner `query` returns two departments, Engineering and Marketing, and `IN` c
 
 `IN` only checks for equality against a list. `ANY` and `ALL` extend the same idea to other comparison operators, such as `>` or `<`, against every value a subquery returns.
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department TEXT,
+    salary NUMERIC(10, 2),
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, employee_name, department, salary, manager_id) VALUES
+(1, 'Ananya Sharma', 'Engineering', 95000.00, NULL),
+(2, 'Rajat Bhatia', 'Engineering', 78000.00, 1),
+(3, 'Meghna Iyer', 'Engineering', 82000.00, 1),
+(4, 'Sameer Khan', 'Sales', 65000.00, NULL),
+(5, 'Pooja Reddy', 'Sales', 58000.00, 4),
+(6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
+
+-- Query
 SELECT employee_name, salary
 FROM employees
 WHERE salary > ANY (SELECT salary FROM employees WHERE department = 'Sales');
@@ -66,7 +117,24 @@ WHERE salary > ANY (SELECT salary FROM employees WHERE department = 'Sales');
 
 The Sales department's salaries are 65000.00 and 58000.00, so this returns everyone earning more than the lower of those two figures, since beating just one of them is enough to satisfy `ANY`.
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department TEXT,
+    salary NUMERIC(10, 2),
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, employee_name, department, salary, manager_id) VALUES
+(1, 'Ananya Sharma', 'Engineering', 95000.00, NULL),
+(2, 'Rajat Bhatia', 'Engineering', 78000.00, 1),
+(3, 'Meghna Iyer', 'Engineering', 82000.00, 1),
+(4, 'Sameer Khan', 'Sales', 65000.00, NULL),
+(5, 'Pooja Reddy', 'Sales', 58000.00, 4),
+(6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
+
+-- Query
 SELECT employee_name, salary
 FROM employees
 WHERE salary > ALL (SELECT salary FROM employees WHERE department = 'Sales');
@@ -81,7 +149,24 @@ WHERE salary > ALL (SELECT salary FROM employees WHERE department = 'Sales');
 
 `NOT IN` is the negated form of `IN`, but it carries the same risk covered when anti `joins` were introduced: if the subquery can return a `NULL`, `NOT IN` silently returns no `rows` at all, for every outer `row`, with no error to signal the problem.
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department TEXT,
+    salary NUMERIC(10, 2),
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, employee_name, department, salary, manager_id) VALUES
+(1, 'Ananya Sharma', 'Engineering', 95000.00, NULL),
+(2, 'Rajat Bhatia', 'Engineering', 78000.00, 1),
+(3, 'Meghna Iyer', 'Engineering', 82000.00, 1),
+(4, 'Sameer Khan', 'Sales', 65000.00, NULL),
+(5, 'Pooja Reddy', 'Sales', 58000.00, 4),
+(6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
+
+-- Query
 SELECT employee_name
 FROM employees
 WHERE employee_id NOT IN (
@@ -139,7 +224,24 @@ The `WHERE manager_id IS NOT NULL` filter inside the subquery is not optional he
 
 Kabir wants every employee who earns less than the lowest salary in Engineering. Write a `query` against `employees` above using `ALL` to express this.
 
-```postgresql with=employees.sql
+```postgresql
+CREATE TABLE employees (
+    employee_id INTEGER PRIMARY KEY,
+    employee_name TEXT,
+    department TEXT,
+    salary NUMERIC(10, 2),
+    manager_id INTEGER
+);
+
+INSERT INTO employees (employee_id, employee_name, department, salary, manager_id) VALUES
+(1, 'Ananya Sharma', 'Engineering', 95000.00, NULL),
+(2, 'Rajat Bhatia', 'Engineering', 78000.00, 1),
+(3, 'Meghna Iyer', 'Engineering', 82000.00, 1),
+(4, 'Sameer Khan', 'Sales', 65000.00, NULL),
+(5, 'Pooja Reddy', 'Sales', 58000.00, 4),
+(6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
+
+-- Query
 -- Write your query below
 ```
 

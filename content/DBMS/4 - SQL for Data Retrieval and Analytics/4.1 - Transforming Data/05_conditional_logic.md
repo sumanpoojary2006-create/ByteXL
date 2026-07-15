@@ -8,7 +8,7 @@ That label does not exist anywhere in the `table`, it depends on a rule applied 
 
 The `members` `table` tracks each member's visits for the current month.
 
-```postgresql file=members.sql
+```text
 CREATE TABLE members (
     member_id INTEGER PRIMARY KEY,
     full_name TEXT,
@@ -24,7 +24,22 @@ INSERT INTO members (member_id, full_name, visits_this_month, membership_type) V
 (5, 'Yusuf Ali', 9, 'basic');
 ```
 
-```postgresql with=members.sql
+```postgresql
+CREATE TABLE members (
+    member_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    visits_this_month INTEGER,
+    membership_type TEXT
+);
+
+INSERT INTO members (member_id, full_name, visits_this_month, membership_type) VALUES
+(1, 'Karan Malhotra', 18, 'premium'),
+(2, 'Nisha Verma', 4, 'standard'),
+(3, 'Aakash Jain', 11, 'standard'),
+(4, 'Ritu Sharma', 0, 'premium'),
+(5, 'Yusuf Ali', 9, 'basic');
+
+-- Query
 SELECT full_name, visits_this_month,
        CASE
            WHEN visits_this_month >= 12 THEN 'Highly Active'
@@ -83,7 +98,22 @@ Walking through every member against the rule shows exactly which branch each on
 
 The conditions are evaluated top to bottom, and the first true one wins, so the order they are written in changes the result. Writing the loosest condition first would break the logic above.
 
-```postgresql with=members.sql
+```postgresql
+CREATE TABLE members (
+    member_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    visits_this_month INTEGER,
+    membership_type TEXT
+);
+
+INSERT INTO members (member_id, full_name, visits_this_month, membership_type) VALUES
+(1, 'Karan Malhotra', 18, 'premium'),
+(2, 'Nisha Verma', 4, 'standard'),
+(3, 'Aakash Jain', 11, 'standard'),
+(4, 'Ritu Sharma', 0, 'premium'),
+(5, 'Yusuf Ali', 9, 'basic');
+
+-- Query
 SELECT full_name, visits_this_month,
        CASE
            WHEN visits_this_month >= 4 THEN 'Active'
@@ -99,7 +129,22 @@ Run this version and Karan, with 18 visits, gets labeled "Active" instead of "Hi
 
 `CASE` does not only compare numbers against thresholds; it can also branch on an exact match, which suits the `membership_type` `column` here.
 
-```postgresql with=members.sql
+```postgresql
+CREATE TABLE members (
+    member_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    visits_this_month INTEGER,
+    membership_type TEXT
+);
+
+INSERT INTO members (member_id, full_name, visits_this_month, membership_type) VALUES
+(1, 'Karan Malhotra', 18, 'premium'),
+(2, 'Nisha Verma', 4, 'standard'),
+(3, 'Aakash Jain', 11, 'standard'),
+(4, 'Ritu Sharma', 0, 'premium'),
+(5, 'Yusuf Ali', 9, 'basic');
+
+-- Query
 SELECT full_name, membership_type,
        CASE membership_type
            WHEN 'premium' THEN 'Full access, all branches'
@@ -119,7 +164,22 @@ This shorter form, `CASE membership_type WHEN 'premium' THEN ...`, compares the 
 
 `CASE` expressions can be used anywhere a normal value is allowed, including inside arithmetic, which lets Farah calculate a loyalty bonus that depends on both membership type and visit count in one pass.
 
-```postgresql with=members.sql
+```postgresql
+CREATE TABLE members (
+    member_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    visits_this_month INTEGER,
+    membership_type TEXT
+);
+
+INSERT INTO members (member_id, full_name, visits_this_month, membership_type) VALUES
+(1, 'Karan Malhotra', 18, 'premium'),
+(2, 'Nisha Verma', 4, 'standard'),
+(3, 'Aakash Jain', 11, 'standard'),
+(4, 'Ritu Sharma', 0, 'premium'),
+(5, 'Yusuf Ali', 9, 'basic');
+
+-- Query
 SELECT full_name,
        visits_this_month * CASE membership_type
                                 WHEN 'premium' THEN 10
@@ -137,7 +197,22 @@ The `CASE` expression resolves to a plain number for each `row`, either 10, 5, o
 
 The gym wants a discount eligibility flag: members with fewer than 5 visits this month get the label "Send Offer," everyone else gets "No Offer Needed." Write that `query` against the `members` `table` above, aliasing the result as `offer_status`.
 
-```postgresql with=members.sql
+```postgresql
+CREATE TABLE members (
+    member_id INTEGER PRIMARY KEY,
+    full_name TEXT,
+    visits_this_month INTEGER,
+    membership_type TEXT
+);
+
+INSERT INTO members (member_id, full_name, visits_this_month, membership_type) VALUES
+(1, 'Karan Malhotra', 18, 'premium'),
+(2, 'Nisha Verma', 4, 'standard'),
+(3, 'Aakash Jain', 11, 'standard'),
+(4, 'Ritu Sharma', 0, 'premium'),
+(5, 'Yusuf Ali', 9, 'basic');
+
+-- Query
 -- Write your query below
 ```
 

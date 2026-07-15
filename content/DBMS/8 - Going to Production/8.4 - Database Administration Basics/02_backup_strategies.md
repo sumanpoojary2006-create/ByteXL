@@ -8,7 +8,7 @@ The only real defense against losing data entirely is having a separate copy of 
 
 A logical `backup` captures the actual data and `schema` as a set of SQL statements or a portable data format, independent of the specific server it came from. PostgreSQL's `pg_dump` is the standard tool for this, run from outside the `database` as a command-line utility rather than as SQL itself.
 
-```postgresql file=backup_demo.sql
+```text
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     status TEXT
@@ -17,7 +17,15 @@ CREATE TABLE shipments (
 INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'delivered');
 ```
 
-```postgresql with=backup_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'delivered');
+
+-- Query
 -- pg_dump runs outside of SQL itself, from a terminal, roughly like:
 -- pg_dump -U postgres -d shipments_prod -f backup_2025_06_15.sql
 -- This produces a plain-text file containing CREATE TABLE, COPY, and other
@@ -43,7 +51,15 @@ A physical `backup`, using a tool like `pg_basebackup`, copies the `database`'s 
 
 It is generally faster to produce and `restore` for very large `databases`, since it skips the work of translating data into and out of SQL text, but the resulting `backup` is tied to the exact same `database` version and is not as portable across different environments as a logical `backup`.
 
-```postgresql with=backup_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'delivered');
+
+-- Query
 -- pg_basebackup also runs outside of SQL, roughly like:
 -- pg_basebackup -U postgres -D /backups/full_2025_06_15 -Fp -P
 -- This copies the actual data directory's files, combined with the
@@ -62,7 +78,15 @@ A full `backup` captures the entire `database` every time it runs, simple to rea
 
 An incremental `backup` captures only what has changed since the last `backup`, dramatically reducing both the time and storage each individual `backup` requires, at the cost of needing the full chain of `backups`, the last full one plus every incremental since, to perform a complete `restore`.
 
-```postgresql with=backup_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'delivered');
+
+-- Query
 SELECT pg_current_wal_lsn() AS current_wal_position;
 ```
 
@@ -139,7 +163,15 @@ How often to back up, and how long to keep each `backup`, is a deliberate trade-
 
 Using the `shipments` `table` above, write the `COPY` command that would export the `table`'s data to a CSV format, and add a comment describing whether this represents a logical or physical `backup` approach, and why.
 
-```postgresql with=backup_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'delivered');
+
+-- Query
 -- Write your COPY command and comment below
 ```
 

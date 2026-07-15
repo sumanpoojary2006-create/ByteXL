@@ -8,7 +8,7 @@ That extra jump, from `index` entry to `table` page, is called a heap fetch, and
 
 The `orders` `table` sets up a `query` that needs more than just the `indexed` `column`. Only 20 of its 10000 orders are still active, the selective situation an `index` is best at, and the closing `VACUUM ANALYZE` both refreshes the planner's statistics and marks the `table`'s pages as stable, something `index`-only scans, this lesson's subject, specifically depend on.
 
-```postgresql file=covering_demo.sql
+```text
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
     customer_name TEXT,
@@ -25,7 +25,23 @@ CREATE INDEX idx_orders_status ON orders (status);
 VACUUM ANALYZE orders;
 ```
 
-```postgresql with=covering_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    status TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, status, amount)
+SELECT i, 'Customer ' || i, CASE WHEN i % 500 = 0 THEN 'active' ELSE 'completed' END, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 10000) AS i;
+
+CREATE INDEX idx_orders_status ON orders (status);
+
+VACUUM ANALYZE orders;
+
+-- Query
 EXPLAIN SELECT order_id, amount FROM orders WHERE status = 'active';
 ```
 
@@ -37,7 +53,23 @@ The plan shows `idx_orders_status` finding the 20 matching `rows`, but that is n
 
 PostgreSQL's `INCLUDE` clause adds extra `columns` to an `index` purely for storage alongside the `indexed` `column`, without making them part of the searchable, sorted key itself.
 
-```postgresql with=covering_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    status TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, status, amount)
+SELECT i, 'Customer ' || i, CASE WHEN i % 500 = 0 THEN 'active' ELSE 'completed' END, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 10000) AS i;
+
+CREATE INDEX idx_orders_status ON orders (status);
+
+VACUUM ANALYZE orders;
+
+-- Query
 CREATE INDEX idx_orders_status_covering ON orders (status) INCLUDE (order_id, amount);
 
 EXPLAIN SELECT order_id, amount FROM orders WHERE status = 'active';
@@ -53,7 +85,23 @@ Every `column` the `query` asks for, both in `WHERE` and in `SELECT`, is now ava
 
 An ordinary `index`, without `INCLUDE`, only ever gets an `index-only scan` if the `query` happens to need nothing beyond the `indexed` `column` itself and the `table`'s visibility information the moment a `query` asks for even one `column` the `index` does not store, the `database` has no choice but to fall back to a regular `index scan` with a heap fetch for every matching `row`.
 
-```postgresql with=covering_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    status TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, status, amount)
+SELECT i, 'Customer ' || i, CASE WHEN i % 500 = 0 THEN 'active' ELSE 'completed' END, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 10000) AS i;
+
+CREATE INDEX idx_orders_status ON orders (status);
+
+VACUUM ANALYZE orders;
+
+-- Query
 CREATE INDEX idx_orders_status_covering ON orders (status) INCLUDE (order_id, amount);
 
 EXPLAIN SELECT order_id, amount, customer_name FROM orders WHERE status = 'active';
@@ -68,7 +116,23 @@ Adding `customer_name` to the `SELECT` list, a `column` not included in `idx_ord
 - The `index` grows larger, since it now physically stores copies of extra data beyond just the `indexed` key.
 - Every write to those included `columns` also has to update the `index`, the same maintenance cost every `index` carries, just spread across more `columns`.
 
-```postgresql with=covering_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    status TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, status, amount)
+SELECT i, 'Customer ' || i, CASE WHEN i % 500 = 0 THEN 'active' ELSE 'completed' END, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 10000) AS i;
+
+CREATE INDEX idx_orders_status ON orders (status);
+
+VACUUM ANALYZE orders;
+
+-- Query
 CREATE INDEX idx_orders_status_covering ON orders (status) INCLUDE (order_id, amount);
 
 SELECT pg_size_pretty(pg_relation_size('idx_orders_status')) AS plain_index_size,
@@ -113,7 +177,23 @@ SELECT pg_size_pretty(pg_relation_size('idx_orders_status')) AS plain_index_size
 
 Create a `covering index` on `customer_name` that includes `status`, then confirm with `EXPLAIN` that a `query` selecting both `columns`, filtered by `customer_name`, produces an `index-only scan`.
 
-```postgresql with=covering_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    status TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_name, status, amount)
+SELECT i, 'Customer ' || i, CASE WHEN i % 500 = 0 THEN 'active' ELSE 'completed' END, (i * 12.5)::NUMERIC(10,2)
+FROM generate_series(1, 10000) AS i;
+
+CREATE INDEX idx_orders_status ON orders (status);
+
+VACUUM ANALYZE orders;
+
+-- Query
 -- Write your queries below
 ```
 

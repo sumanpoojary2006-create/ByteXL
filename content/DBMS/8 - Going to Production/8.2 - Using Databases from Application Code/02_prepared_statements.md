@@ -8,7 +8,7 @@ This is a genuine hazard, both for correctness and for security, and the fix is 
 
 The `shipments` `table` sets up a simple lookup that an application might naively build by string concatenation.
 
-```postgresql file=prepared_demo.sql
+```text
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     destination TEXT
@@ -18,7 +18,16 @@ INSERT INTO shipments (shipment_id, destination) VALUES
 (1, 'Mumbai'), (2, 'Pune'), (3, 'Nagpur');
 ```
 
-```postgresql with=prepared_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    destination TEXT
+);
+
+INSERT INTO shipments (shipment_id, destination) VALUES
+(1, 'Mumbai'), (2, 'Pune'), (3, 'Nagpur');
+
+-- Query
 -- Imagine application code building this string directly:
 -- user_input = "1"
 -- sql_text = "SELECT * FROM shipments WHERE shipment_id = " + user_input
@@ -41,7 +50,16 @@ This category of problem, letting untrusted input change a `query`'s structure, 
 
 PostgreSQL supports `prepared statements` directly in SQL, and the same mechanism is what every `database` client library uses under the hood when it offers "parameterized `queries`."
 
-```postgresql with=prepared_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    destination TEXT
+);
+
+INSERT INTO shipments (shipment_id, destination) VALUES
+(1, 'Mumbai'), (2, 'Pune'), (3, 'Nagpur');
+
+-- Query
 PREPARE get_shipment (INTEGER) AS
 SELECT * FROM shipments WHERE shipment_id = $1;
 
@@ -61,7 +79,21 @@ Even if the supplied value were a maliciously crafted string, it would be handle
 
 The whole point of separating structure from value is that the same `prepared statement` can be executed repeatedly, with different values, without redefining the `query` each time.
 
-```postgresql with=prepared_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    destination TEXT
+);
+
+INSERT INTO shipments (shipment_id, destination) VALUES
+(1, 'Mumbai'), (2, 'Pune'), (3, 'Nagpur');
+
+PREPARE get_shipment (INTEGER) AS
+SELECT * FROM shipments WHERE shipment_id = $1;
+
+EXECUTE get_shipment(1);
+
+-- Query
 EXECUTE get_shipment(2);
 EXECUTE get_shipment(3);
 ```
@@ -74,7 +106,21 @@ Each `EXECUTE` reuses the exact same prepared `query` structure, only the value 
 
 Beyond safety, a `prepared statement` lets the `database` parse and plan the `query`'s structure once, then reuse that same plan across multiple executions with different values, skipping the repeated parsing and planning cost a fresh, newly-built SQL string would incur every single time.
 
-```postgresql with=prepared_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    destination TEXT
+);
+
+INSERT INTO shipments (shipment_id, destination) VALUES
+(1, 'Mumbai'), (2, 'Pune'), (3, 'Nagpur');
+
+PREPARE get_shipment (INTEGER) AS
+SELECT * FROM shipments WHERE shipment_id = $1;
+
+EXECUTE get_shipment(1);
+
+-- Query
 DEALLOCATE get_shipment;
 ```
 
@@ -113,7 +159,21 @@ DEALLOCATE get_shipment;
 
 Prepare a statement named `get_by_destination` that takes a `TEXT` parameter and selects shipments matching that destination, then execute it for `'Pune'`.
 
-```postgresql with=prepared_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    destination TEXT
+);
+
+INSERT INTO shipments (shipment_id, destination) VALUES
+(1, 'Mumbai'), (2, 'Pune'), (3, 'Nagpur');
+
+PREPARE get_shipment (INTEGER) AS
+SELECT * FROM shipments WHERE shipment_id = $1;
+
+EXECUTE get_shipment(1);
+
+-- Query
 -- Write your prepared statement and execution below
 ```
 

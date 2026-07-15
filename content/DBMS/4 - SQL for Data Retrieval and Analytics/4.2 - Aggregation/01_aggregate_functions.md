@@ -13,7 +13,7 @@ None of those questions can be answered by looking at one `row` of the `orders` 
 
 The `orders` `table` holds one `row` per order placed on the bookstore's site.
 
-```postgresql file=orders.sql
+```text
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
     customer_name TEXT,
@@ -33,7 +33,26 @@ INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUE
 (8, 'Ishita Rao', 'Non-Fiction', 990.00, '2025-04-14');
 ```
 
-```postgresql with=orders.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    category TEXT,
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUES
+(1, 'Ishita Rao', 'Fiction', 450.00, '2025-04-02'),
+(2, 'Vivek Menon', 'Non-Fiction', 899.00, '2025-04-03'),
+(3, 'Ishita Rao', 'Fiction', 320.00, '2025-04-05'),
+(4, 'Aman Gupta', 'Children', 210.00, '2025-04-06'),
+(5, 'Sonal Deshpande', 'Non-Fiction', 1450.00, '2025-04-08'),
+(6, 'Vivek Menon', 'Fiction', 610.00, '2025-04-10'),
+(7, 'Aman Gupta', 'Children', 175.00, '2025-04-12'),
+(8, 'Ishita Rao', 'Non-Fiction', 990.00, '2025-04-14');
+
+-- Query
 SELECT COUNT(*) AS total_orders
 FROM orders;
 ```
@@ -47,7 +66,26 @@ FROM orders;
 
 Revenue and average order value both come from the same `amount` `column`, just combined differently.
 
-```postgresql with=orders.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    category TEXT,
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUES
+(1, 'Ishita Rao', 'Fiction', 450.00, '2025-04-02'),
+(2, 'Vivek Menon', 'Non-Fiction', 899.00, '2025-04-03'),
+(3, 'Ishita Rao', 'Fiction', 320.00, '2025-04-05'),
+(4, 'Aman Gupta', 'Children', 210.00, '2025-04-06'),
+(5, 'Sonal Deshpande', 'Non-Fiction', 1450.00, '2025-04-08'),
+(6, 'Vivek Menon', 'Fiction', 610.00, '2025-04-10'),
+(7, 'Aman Gupta', 'Children', 175.00, '2025-04-12'),
+(8, 'Ishita Rao', 'Non-Fiction', 990.00, '2025-04-14');
+
+-- Query
 SELECT SUM(amount) AS total_revenue, AVG(amount) AS average_order_value
 FROM orders;
 ```
@@ -62,7 +100,26 @@ FROM orders;
 
 Priya's last question, the biggest single sale, needs a `function` that looks at every value and keeps only the extreme.
 
-```postgresql with=orders.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    category TEXT,
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUES
+(1, 'Ishita Rao', 'Fiction', 450.00, '2025-04-02'),
+(2, 'Vivek Menon', 'Non-Fiction', 899.00, '2025-04-03'),
+(3, 'Ishita Rao', 'Fiction', 320.00, '2025-04-05'),
+(4, 'Aman Gupta', 'Children', 210.00, '2025-04-06'),
+(5, 'Sonal Deshpande', 'Non-Fiction', 1450.00, '2025-04-08'),
+(6, 'Vivek Menon', 'Fiction', 610.00, '2025-04-10'),
+(7, 'Aman Gupta', 'Children', 175.00, '2025-04-12'),
+(8, 'Ishita Rao', 'Non-Fiction', 990.00, '2025-04-14');
+
+-- Query
 SELECT MIN(amount) AS smallest_order, MAX(amount) AS largest_order
 FROM orders;
 ```
@@ -75,7 +132,26 @@ FROM orders;
 
 All five `aggregate functions` can appear together in a single `SELECT`, each one summarizing the same set of `rows` in its own way.
 
-```postgresql with=orders.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    category TEXT,
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUES
+(1, 'Ishita Rao', 'Fiction', 450.00, '2025-04-02'),
+(2, 'Vivek Menon', 'Non-Fiction', 899.00, '2025-04-03'),
+(3, 'Ishita Rao', 'Fiction', 320.00, '2025-04-05'),
+(4, 'Aman Gupta', 'Children', 210.00, '2025-04-06'),
+(5, 'Sonal Deshpande', 'Non-Fiction', 1450.00, '2025-04-08'),
+(6, 'Vivek Menon', 'Fiction', 610.00, '2025-04-10'),
+(7, 'Aman Gupta', 'Children', 175.00, '2025-04-12'),
+(8, 'Ishita Rao', 'Non-Fiction', 990.00, '2025-04-14');
+
+-- Query
 SELECT COUNT(*) AS total_orders,
        SUM(amount) AS total_revenue,
        ROUND(AVG(amount), 2) AS average_order_value,
@@ -129,7 +205,26 @@ This single `query` answers every question the founders originally asked, in one
 
 The founders now want to know the total number of orders placed and the total revenue earned specifically from the "Fiction" category. Write a `query` against the `orders` `table` above that returns both numbers, aliased as `fiction_orders` and `fiction_revenue`.
 
-```postgresql with=orders.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    category TEXT,
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUES
+(1, 'Ishita Rao', 'Fiction', 450.00, '2025-04-02'),
+(2, 'Vivek Menon', 'Non-Fiction', 899.00, '2025-04-03'),
+(3, 'Ishita Rao', 'Fiction', 320.00, '2025-04-05'),
+(4, 'Aman Gupta', 'Children', 210.00, '2025-04-06'),
+(5, 'Sonal Deshpande', 'Non-Fiction', 1450.00, '2025-04-08'),
+(6, 'Vivek Menon', 'Fiction', 610.00, '2025-04-10'),
+(7, 'Aman Gupta', 'Children', 175.00, '2025-04-12'),
+(8, 'Ishita Rao', 'Non-Fiction', 990.00, '2025-04-14');
+
+-- Query
 -- Write your query below
 ```
 

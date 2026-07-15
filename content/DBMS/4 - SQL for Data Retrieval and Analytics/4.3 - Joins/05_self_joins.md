@@ -8,7 +8,7 @@ There is only one `table` involved, `riders`, but the report still needs two nam
 
 The `riders` `table` stores every rider once, with a `mentor_id` `column` that is `NULL` for riders who have no assigned mentor.
 
-```postgresql file=riders.sql
+```text
 CREATE TABLE riders (
     rider_id INTEGER PRIMARY KEY,
     rider_name TEXT,
@@ -24,7 +24,22 @@ INSERT INTO riders (rider_id, rider_name, mentor_id) VALUES
 (6, 'Om Prakash', 3);
 ```
 
-```postgresql with=riders.sql
+```postgresql
+CREATE TABLE riders (
+    rider_id INTEGER PRIMARY KEY,
+    rider_name TEXT,
+    mentor_id INTEGER REFERENCES riders(rider_id)
+);
+
+INSERT INTO riders (rider_id, rider_name, mentor_id) VALUES
+(1, 'Suresh Pillai', NULL),
+(2, 'Arjun Verma', NULL),
+(3, 'Deepa Krishnan', 1),
+(4, 'Farhan Iqbal', 1),
+(5, 'Nikita Rao', 2),
+(6, 'Om Prakash', 3);
+
+-- Query
 SELECT * FROM riders;
 ```
 
@@ -34,7 +49,22 @@ Reading this `table` `row` by `row` is already possible, since a human can trace
 
 The trick to a self `join` is giving the same `table` two different names, or aliases, so the `join` condition can tell them apart.
 
-```postgresql with=riders.sql
+```postgresql
+CREATE TABLE riders (
+    rider_id INTEGER PRIMARY KEY,
+    rider_name TEXT,
+    mentor_id INTEGER REFERENCES riders(rider_id)
+);
+
+INSERT INTO riders (rider_id, rider_name, mentor_id) VALUES
+(1, 'Suresh Pillai', NULL),
+(2, 'Arjun Verma', NULL),
+(3, 'Deepa Krishnan', 1),
+(4, 'Farhan Iqbal', 1),
+(5, 'Nikita Rao', 2),
+(6, 'Om Prakash', 3);
+
+-- Query
 SELECT mentee.rider_name AS rider, mentor.rider_name AS mentor
 FROM riders mentee
 JOIN riders mentor ON mentee.mentor_id = mentor.rider_id;
@@ -55,7 +85,22 @@ An `INNER JOIN` self `join`, like the one above, drops Suresh and Arjun entirely
 
 ![LEFT SELF JOIN keeping riders even when their mentor value is NULL](images/10_left_self_join_keeps_no_mentor.png)
 
-```postgresql with=riders.sql
+```postgresql
+CREATE TABLE riders (
+    rider_id INTEGER PRIMARY KEY,
+    rider_name TEXT,
+    mentor_id INTEGER REFERENCES riders(rider_id)
+);
+
+INSERT INTO riders (rider_id, rider_name, mentor_id) VALUES
+(1, 'Suresh Pillai', NULL),
+(2, 'Arjun Verma', NULL),
+(3, 'Deepa Krishnan', 1),
+(4, 'Farhan Iqbal', 1),
+(5, 'Nikita Rao', 2),
+(6, 'Om Prakash', 3);
+
+-- Query
 SELECT mentee.rider_name AS rider, mentor.rider_name AS mentor
 FROM riders mentee
 LEFT JOIN riders mentor ON mentee.mentor_id = mentor.rider_id;
@@ -102,7 +147,22 @@ Now all 6 riders appear, and Suresh and Arjun show `NULL` in the `mentor` `colum
 
 A self `join` can also answer a different kind of question: which riders currently mentor someone, listed once per rider regardless of how many mentees they have?
 
-```postgresql with=riders.sql
+```postgresql
+CREATE TABLE riders (
+    rider_id INTEGER PRIMARY KEY,
+    rider_name TEXT,
+    mentor_id INTEGER REFERENCES riders(rider_id)
+);
+
+INSERT INTO riders (rider_id, rider_name, mentor_id) VALUES
+(1, 'Suresh Pillai', NULL),
+(2, 'Arjun Verma', NULL),
+(3, 'Deepa Krishnan', 1),
+(4, 'Farhan Iqbal', 1),
+(5, 'Nikita Rao', 2),
+(6, 'Om Prakash', 3);
+
+-- Query
 SELECT DISTINCT mentor.rider_name AS is_a_mentor
 FROM riders mentee
 JOIN riders mentor ON mentee.mentor_id = mentor.rider_id;
@@ -148,7 +208,22 @@ JOIN riders mentor ON mentee.mentor_id = mentor.rider_id;
 
 Zoya wants to know which riders share the same mentor as Farhan Iqbal, not including Farhan himself. Write a `query` against the `riders` `table` above that returns the names of Farhan's mentorship-siblings.
 
-```postgresql with=riders.sql
+```postgresql
+CREATE TABLE riders (
+    rider_id INTEGER PRIMARY KEY,
+    rider_name TEXT,
+    mentor_id INTEGER REFERENCES riders(rider_id)
+);
+
+INSERT INTO riders (rider_id, rider_name, mentor_id) VALUES
+(1, 'Suresh Pillai', NULL),
+(2, 'Arjun Verma', NULL),
+(3, 'Deepa Krishnan', 1),
+(4, 'Farhan Iqbal', 1),
+(5, 'Nikita Rao', 2),
+(6, 'Om Prakash', 3);
+
+-- Query
 -- Write your query below
 ```
 

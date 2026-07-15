@@ -13,7 +13,7 @@ It might seem simpler for a `database` to just write a change straight to its da
 
 A separate, simpler, sequential log write is far cheaper and safer to make durable quickly than a full, scattered update to the actual data file structure.
 
-```postgresql file=wal_demo.sql
+```text
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
     balance NUMERIC(10, 2)
@@ -22,7 +22,15 @@ CREATE TABLE accounts (
 INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00);
 ```
 
-```postgresql with=wal_demo.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00);
+
+-- Query
 SELECT pg_current_wal_lsn();
 ```
 
@@ -33,7 +41,15 @@ SELECT pg_current_wal_lsn();
 
 The core rule of `write-ahead logging` is simple to state: a change to a data page is never written to permanent storage until the log record describing that change has already been written to permanent storage first.
 
-```postgresql with=wal_demo.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00);
+
+-- Query
 BEGIN;
 UPDATE accounts SET balance = balance - 500.00 WHERE account_id = 1;
 COMMIT;
@@ -63,7 +79,15 @@ This is exactly how durability is delivered in practice: not by guaranteeing eve
 
 Every change-making statement, `INSERT`, `UPDATE`, `DELETE`, and even structural changes like `CREATE TABLE`, generates a log record describing exactly what changed, before that change is considered complete.
 
-```postgresql with=wal_demo.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00);
+
+-- Query
 INSERT INTO accounts (account_id, balance) VALUES (2, 3000.00);
 DELETE FROM accounts WHERE account_id = 2;
 
@@ -105,7 +129,15 @@ Both the `INSERT` and the `DELETE` here each generate their own log entry, and t
 
 Check the current `WAL` position, run a `transaction` that inserts a new account and commits, and check the `WAL` position again, confirming it has advanced.
 
-```postgresql with=wal_demo.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00);
+
+-- Query
 -- Write your queries below
 ```
 

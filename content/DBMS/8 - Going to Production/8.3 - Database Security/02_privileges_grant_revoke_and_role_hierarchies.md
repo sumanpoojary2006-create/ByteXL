@@ -10,7 +10,7 @@
 
 The `shipments` `table` sets up a concrete case: `reporting_app` needs to read shipment data, but should never be able to change it.
 
-```postgresql file=grant_demo.sql
+```text
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     status TEXT,
@@ -23,7 +23,19 @@ INSERT INTO shipments (shipment_id, status, amount) VALUES
 CREATE ROLE reporting_app WITH LOGIN PASSWORD 'change_this_in_real_use';
 ```
 
-```postgresql with=grant_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO shipments (shipment_id, status, amount) VALUES
+(1, 'in_transit', 450.00), (2, 'delivered', 620.00);
+
+CREATE ROLE reporting_app WITH LOGIN PASSWORD 'change_this_in_real_use';
+
+-- Query
 GRANT SELECT ON shipments TO reporting_app;
 ```
 
@@ -39,7 +51,19 @@ since none of those privileges were ever granted. Every privilege in PostgreSQL 
 
 Privileges can be granted together in a single statement, and `REVOKE` removes a previously granted privilege without affecting any others the `role` still holds.
 
-```postgresql with=grant_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO shipments (shipment_id, status, amount) VALUES
+(1, 'in_transit', 450.00), (2, 'delivered', 620.00);
+
+CREATE ROLE reporting_app WITH LOGIN PASSWORD 'change_this_in_real_use';
+
+-- Query
 GRANT SELECT, INSERT, UPDATE ON shipments TO reporting_app;
 
 REVOKE UPDATE ON shipments FROM reporting_app;
@@ -54,7 +78,19 @@ REVOKE UPDATE ON shipments FROM reporting_app;
 
 Rather than granting privileges to every individual login `role` directly, the standard pattern, building on the group `role`s from the previous lesson, is to grant privileges to a group `role` once, and let membership in that group carry the permission automatically.
 
-```postgresql with=grant_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO shipments (shipment_id, status, amount) VALUES
+(1, 'in_transit', 450.00), (2, 'delivered', 620.00);
+
+CREATE ROLE reporting_app WITH LOGIN PASSWORD 'change_this_in_real_use';
+
+-- Query
 CREATE ROLE shipment_readers;
 GRANT SELECT ON shipments TO shipment_readers;
 
@@ -71,7 +107,25 @@ GRANT shipment_readers TO dev_alia;
 
 `GRANT` is not limited to whole `tables`; a privilege can be scoped down to specific `columns`, useful when a `role` should see most of a `table` but not one sensitive `column`.
 
-```postgresql with=grant_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO shipments (shipment_id, status, amount) VALUES
+(1, 'in_transit', 450.00), (2, 'delivered', 620.00);
+
+CREATE ROLE reporting_app WITH LOGIN PASSWORD 'change_this_in_real_use';
+
+CREATE ROLE shipment_readers;
+GRANT SELECT ON shipments TO shipment_readers;
+
+CREATE ROLE dev_alia WITH LOGIN PASSWORD 'change_this_in_real_use';
+GRANT shipment_readers TO dev_alia;
+
+-- Query
 CREATE ROLE support_staff WITH LOGIN PASSWORD 'change_this_in_real_use';
 GRANT SELECT (shipment_id, status) ON shipments TO support_staff;
 ```
@@ -112,7 +166,28 @@ GRANT SELECT (shipment_id, status) ON shipments TO support_staff;
 
 Grant `INSERT` on `shipments` to `support_staff`, on top of the `column`-restricted `SELECT` it already holds from earlier in this lesson, then revoke just the `INSERT` privilege, confirming `support_staff` retains its existing read access but loses the ability to insert.
 
-```postgresql with=grant_demo.sql
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO shipments (shipment_id, status, amount) VALUES
+(1, 'in_transit', 450.00), (2, 'delivered', 620.00);
+
+CREATE ROLE reporting_app WITH LOGIN PASSWORD 'change_this_in_real_use';
+
+CREATE ROLE shipment_readers;
+GRANT SELECT ON shipments TO shipment_readers;
+
+CREATE ROLE dev_alia WITH LOGIN PASSWORD 'change_this_in_real_use';
+GRANT shipment_readers TO dev_alia;
+
+CREATE ROLE support_staff WITH LOGIN PASSWORD 'change_this_in_real_use';
+GRANT SELECT (shipment_id, status) ON shipments TO support_staff;
+
+-- Query
 -- Write your grant and revoke below
 ```
 

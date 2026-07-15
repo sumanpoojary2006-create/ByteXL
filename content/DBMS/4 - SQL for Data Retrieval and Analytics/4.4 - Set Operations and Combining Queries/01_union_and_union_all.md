@@ -8,7 +8,7 @@ This is not a `join`, since she is not trying to match `rows` between the two `t
 
 Both customer `tables` share the same shape, a name and an email, which is a requirement for combining them this way.
 
-```postgresql file=customers_channels.sql
+```text
 CREATE TABLE online_customers (
     customer_name TEXT,
     email TEXT
@@ -30,7 +30,28 @@ INSERT INTO store_customers (customer_name, email) VALUES
 ('Neha Bhatt', 'neha.bhatt@example.com');
 ```
 
-```postgresql with=customers_channels.sql
+```postgresql
+CREATE TABLE online_customers (
+    customer_name TEXT,
+    email TEXT
+);
+
+CREATE TABLE store_customers (
+    customer_name TEXT,
+    email TEXT
+);
+
+INSERT INTO online_customers (customer_name, email) VALUES
+('Aditi Kulkarni', 'aditi.k@example.com'),
+('Rohan Das', 'rohan.das@example.com'),
+('Kavya Nair', 'kavya.nair@example.com');
+
+INSERT INTO store_customers (customer_name, email) VALUES
+('Kavya Nair', 'kavya.nair@example.com'),
+('Imran Sheikh', 'imran.s@example.com'),
+('Neha Bhatt', 'neha.bhatt@example.com');
+
+-- Query
 SELECT customer_name, email FROM online_customers
 UNION
 SELECT customer_name, email FROM store_customers;
@@ -78,7 +99,28 @@ SELECT customer_name, email FROM store_customers;
 
 Sometimes the duplicate itself is meaningful, not a mistake to clean up. If Tanvi instead wants to know exactly how many total customer records exist across both channels, including counting Kavya twice since she is genuinely a customer of both, `UNION ALL` keeps every `row` from both `queries` with no deduplication.
 
-```postgresql with=customers_channels.sql
+```postgresql
+CREATE TABLE online_customers (
+    customer_name TEXT,
+    email TEXT
+);
+
+CREATE TABLE store_customers (
+    customer_name TEXT,
+    email TEXT
+);
+
+INSERT INTO online_customers (customer_name, email) VALUES
+('Aditi Kulkarni', 'aditi.k@example.com'),
+('Rohan Das', 'rohan.das@example.com'),
+('Kavya Nair', 'kavya.nair@example.com');
+
+INSERT INTO store_customers (customer_name, email) VALUES
+('Kavya Nair', 'kavya.nair@example.com'),
+('Imran Sheikh', 'imran.s@example.com'),
+('Neha Bhatt', 'neha.bhatt@example.com');
+
+-- Query
 SELECT customer_name, email FROM online_customers
 UNION ALL
 SELECT customer_name, email FROM store_customers;
@@ -96,7 +138,28 @@ This returns 6 `rows` instead of 5, with Kavya Nair listed twice, once from each
 - Both `SELECT` statements combined with `UNION` or `UNION ALL` must return the same number of `columns`, in compatible data types, in the same order.
 - The `column` names in the final result come from the first `SELECT` statement, regardless of what the second one calls them.
 
-```postgresql with=customers_channels.sql
+```postgresql
+CREATE TABLE online_customers (
+    customer_name TEXT,
+    email TEXT
+);
+
+CREATE TABLE store_customers (
+    customer_name TEXT,
+    email TEXT
+);
+
+INSERT INTO online_customers (customer_name, email) VALUES
+('Aditi Kulkarni', 'aditi.k@example.com'),
+('Rohan Das', 'rohan.das@example.com'),
+('Kavya Nair', 'kavya.nair@example.com');
+
+INSERT INTO store_customers (customer_name, email) VALUES
+('Kavya Nair', 'kavya.nair@example.com'),
+('Imran Sheikh', 'imran.s@example.com'),
+('Neha Bhatt', 'neha.bhatt@example.com');
+
+-- Query
 SELECT customer_name AS person, email AS contact_email, 'online' AS source FROM online_customers
 UNION ALL
 SELECT customer_name, email, 'store' FROM store_customers;
@@ -110,7 +173,28 @@ SELECT customer_name, email, 'store' FROM store_customers;
 
 `ORDER BY` can only appear once, at the very end of the combined `query`, and it sorts the final stacked result rather than either `query` individually.
 
-```postgresql with=customers_channels.sql
+```postgresql
+CREATE TABLE online_customers (
+    customer_name TEXT,
+    email TEXT
+);
+
+CREATE TABLE store_customers (
+    customer_name TEXT,
+    email TEXT
+);
+
+INSERT INTO online_customers (customer_name, email) VALUES
+('Aditi Kulkarni', 'aditi.k@example.com'),
+('Rohan Das', 'rohan.das@example.com'),
+('Kavya Nair', 'kavya.nair@example.com');
+
+INSERT INTO store_customers (customer_name, email) VALUES
+('Kavya Nair', 'kavya.nair@example.com'),
+('Imran Sheikh', 'imran.s@example.com'),
+('Neha Bhatt', 'neha.bhatt@example.com');
+
+-- Query
 SELECT customer_name, email FROM online_customers
 UNION
 SELECT customer_name, email FROM store_customers
@@ -147,7 +231,28 @@ Placing `ORDER BY` after both `SELECT` statements sorts the entire combined list
 
 Tanvi wants a single list of every unique email address across both channels, with no names, sorted alphabetically. Write that `query` against `online_customers` and `store_customers` above.
 
-```postgresql with=customers_channels.sql
+```postgresql
+CREATE TABLE online_customers (
+    customer_name TEXT,
+    email TEXT
+);
+
+CREATE TABLE store_customers (
+    customer_name TEXT,
+    email TEXT
+);
+
+INSERT INTO online_customers (customer_name, email) VALUES
+('Aditi Kulkarni', 'aditi.k@example.com'),
+('Rohan Das', 'rohan.das@example.com'),
+('Kavya Nair', 'kavya.nair@example.com');
+
+INSERT INTO store_customers (customer_name, email) VALUES
+('Kavya Nair', 'kavya.nair@example.com'),
+('Imran Sheikh', 'imran.s@example.com'),
+('Neha Bhatt', 'neha.bhatt@example.com');
+
+-- Query
 -- Write your query below
 ```
 

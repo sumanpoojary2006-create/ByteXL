@@ -8,7 +8,7 @@
 
 The same `orders` `table`, with a deliberately skewed distribution, sets up a case where an estimate and reality can diverge.
 
-```postgresql file=analyze_demo.sql
+```text
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
     customer_id INTEGER,
@@ -23,7 +23,21 @@ CREATE INDEX idx_orders_customer_id ON orders (customer_id);
 ANALYZE orders;
 ```
 
-```postgresql with=analyze_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_id, amount)
+SELECT i, CASE WHEN i <= 15000 THEN 1 ELSE (i % 200) + 2 END, (i * 10.5)::NUMERIC(10,2)
+FROM generate_series(1, 20000) AS i;
+
+CREATE INDEX idx_orders_customer_id ON orders (customer_id);
+ANALYZE orders;
+
+-- Query
 EXPLAIN ANALYZE SELECT * FROM orders WHERE customer_id = 1;
 ```
 
@@ -38,7 +52,21 @@ The output now includes both the familiar `cost=` and `rows=` estimates from pla
 
 In this deliberately skewed dataset, three quarters of all `rows` belong to `customer_id = 1`, a distribution the optimizer's general statistics may not always model with perfect precision, especially before `ANALYZE` has run recently.
 
-```postgresql with=analyze_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_id, amount)
+SELECT i, CASE WHEN i <= 15000 THEN 1 ELSE (i % 200) + 2 END, (i * 10.5)::NUMERIC(10,2)
+FROM generate_series(1, 20000) AS i;
+
+CREATE INDEX idx_orders_customer_id ON orders (customer_id);
+ANALYZE orders;
+
+-- Query
 EXPLAIN ANALYZE SELECT * FROM orders WHERE customer_id = 1;
 ```
 
@@ -50,7 +78,21 @@ For example, it might choose an `index scan` for a condition that actually match
 
 For a step that gets executed more than once, such as the inner side of certain `join` strategies run once per outer `row`, `EXPLAIN ANALYZE` reports `loops=N`, and the `actual time` shown is the average per loop, not the total across all loops combined.
 
-```postgresql with=analyze_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_id, amount)
+SELECT i, CASE WHEN i <= 15000 THEN 1 ELSE (i % 200) + 2 END, (i * 10.5)::NUMERIC(10,2)
+FROM generate_series(1, 20000) AS i;
+
+CREATE INDEX idx_orders_customer_id ON orders (customer_id);
+ANALYZE orders;
+
+-- Query
 CREATE TABLE customers (
     customer_id INTEGER PRIMARY KEY,
     customer_name TEXT
@@ -74,7 +116,21 @@ If this plan runs its inner scan of `orders` once per matching customer, `loops=
 
 Because `EXPLAIN ANALYZE` genuinely executes the `query`, it is not risk-free to run against a statement that modifies data; an `UPDATE` or `DELETE` wrapped in `EXPLAIN ANALYZE` really performs that update or delete. PostgreSQL provides an option specifically to avoid this danger for write statements that still need analyzing.
 
-```postgresql with=analyze_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_id, amount)
+SELECT i, CASE WHEN i <= 15000 THEN 1 ELSE (i % 200) + 2 END, (i * 10.5)::NUMERIC(10,2)
+FROM generate_series(1, 20000) AS i;
+
+CREATE INDEX idx_orders_customer_id ON orders (customer_id);
+ANALYZE orders;
+
+-- Query
 BEGIN;
 EXPLAIN ANALYZE UPDATE orders SET amount = amount * 1.05 WHERE customer_id = 1;
 ROLLBACK;
@@ -120,7 +176,21 @@ Wrapping the `EXPLAIN ANALYZE UPDATE` in a `transaction` that ends with `ROLLBAC
 
 Run `EXPLAIN ANALYZE` on a `query` filtering `orders` for `customer_id = 50`, a value from the less-skewed portion of the data, and compare its estimated versus actual `row` counts to the earlier `customer_id = 1` example, noting in a comment which one shows a larger gap between estimate and reality.
 
-```postgresql with=analyze_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_id, amount)
+SELECT i, CASE WHEN i <= 15000 THEN 1 ELSE (i % 200) + 2 END, (i * 10.5)::NUMERIC(10,2)
+FROM generate_series(1, 20000) AS i;
+
+CREATE INDEX idx_orders_customer_id ON orders (customer_id);
+ANALYZE orders;
+
+-- Query
 -- Write your query and comment below
 ```
 

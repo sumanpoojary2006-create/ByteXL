@@ -8,7 +8,7 @@ The second letter in ACID, **consistency**, is the guarantee that a `transaction
 
 The `accounts` `table`, with a `constraint` restored from the previous lesson, defines exactly what counts as valid.
 
-```postgresql file=accounts_consistency.sql
+```text
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
     owner_name TEXT,
@@ -20,7 +20,18 @@ INSERT INTO accounts (account_id, owner_name, balance) VALUES
 (2, 'Sanjay Rathi', 12000.00);
 ```
 
-```postgresql with=accounts_consistency.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    owner_name TEXT,
+    balance NUMERIC(10, 2) CHECK (balance >= 0)
+);
+
+INSERT INTO accounts (account_id, owner_name, balance) VALUES
+(1, 'Meera Iyer', 50000.00),
+(2, 'Sanjay Rathi', 12000.00);
+
+-- Query
 -- This transaction would fail because the CHECK constraint
 -- prevents account 1 from becoming negative:
 -- BEGIN;
@@ -45,7 +56,7 @@ This is consistency and atomicity working together:
 
 `Constraints` that define validity are not limited to `CHECK`. A `foreign key` is just as much a consistency rule, and a `transaction` that would violate one is refused the same way.
 
-```postgresql file=orders_consistency.sql
+```text
 CREATE TABLE customers (
     customer_id INTEGER PRIMARY KEY,
     customer_name TEXT
@@ -60,7 +71,21 @@ CREATE TABLE orders (
 INSERT INTO customers (customer_id, customer_name) VALUES (1, 'Aditi Kulkarni');
 ```
 
-```postgresql with=orders_consistency.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(customer_id),
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO customers (customer_id, customer_name) VALUES (1, 'Aditi Kulkarni');
+
+-- Query
 -- This transaction would fail because customer_id 99 does not exist:
 -- BEGIN;
 -- INSERT INTO orders (order_id, customer_id, amount) VALUES (1, 99, 500.00);
@@ -81,7 +106,18 @@ SELECT * FROM orders;
 - A rule the `database` was never told about is not something it can protect.
 - If the actual business rule is "the total money across all accounts in the bank must never change," but no `constraint` expresses that, the `database` cannot stop a `transaction` that deducts money from one account without crediting it anywhere.
 
-```postgresql with=accounts_consistency.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    owner_name TEXT,
+    balance NUMERIC(10, 2) CHECK (balance >= 0)
+);
+
+INSERT INTO accounts (account_id, owner_name, balance) VALUES
+(1, 'Meera Iyer', 50000.00),
+(2, 'Sanjay Rathi', 12000.00);
+
+-- Query
 BEGIN;
 UPDATE accounts SET balance = balance - 5000.00 WHERE account_id = 1;
 COMMIT;
@@ -131,7 +167,21 @@ SELECT SUM(balance) AS total_money_in_bank FROM accounts;
 
 Add a `CHECK` `constraint` to the `orders` `table` requiring `amount > 0`, then attempt a `transaction` that inserts an order with `amount = -200.00`, and confirm it is rejected.
 
-```postgresql with=orders_consistency.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(customer_id),
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO customers (customer_id, customer_name) VALUES (1, 'Aditi Kulkarni');
+
+-- Query
 -- Write your transaction below
 ```
 

@@ -10,7 +10,7 @@ Most real-world performance problems trace back to a small handful of recurring 
 
 The clearest, most mechanical bottleneck is a filter condition on a `column` with no supporting `index`, forcing a `sequential scan` even when very few `rows` actually match.
 
-```postgresql file=bottleneck_demo.sql
+```text
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
     customer_id INTEGER,
@@ -25,13 +25,41 @@ SELECT i, (i % 5000) + 1,
 FROM generate_series(1, 50000) AS i;
 ```
 
-```postgresql with=bottleneck_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    status TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_id, status, amount)
+SELECT i, (i % 5000) + 1,
+       CASE WHEN i % 1000 = 0 THEN 'flagged' ELSE 'normal' END,
+       (i * 10.5)::NUMERIC(10,2)
+FROM generate_series(1, 50000) AS i;
+
+-- Query
 EXPLAIN ANALYZE SELECT * FROM orders WHERE status = 'flagged';
 ```
 
 Only about 1 in 1000 `rows` are flagged, a highly selective condition, but with no `index` on `status`, the plan is forced into a `sequential scan` of all 50000 `rows` to find the roughly 50 that match. This is the most straightforward bottleneck to diagnose, `EXPLAIN` clearly shows a `sequential scan`, and the fix, an `index`, is exactly what the previous chapter covered.
 
-```postgresql with=bottleneck_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    status TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_id, status, amount)
+SELECT i, (i % 5000) + 1,
+       CASE WHEN i % 1000 = 0 THEN 'flagged' ELSE 'normal' END,
+       (i * 10.5)::NUMERIC(10,2)
+FROM generate_series(1, 50000) AS i;
+
+-- Query
 CREATE INDEX idx_orders_status ON orders (status);
 
 EXPLAIN ANALYZE SELECT * FROM orders WHERE status = 'flagged';
@@ -45,7 +73,21 @@ The plan switches to an `index scan`, and the actual measured time drops accordi
 
 This bottleneck lives in application code, not in any single SQL statement. It happens when code first fetches a list of parent `rows` with one `query`, then loops over that list, running one additional `query` per item to fetch related data, N extra `queries` for N parent `rows`, instead of one `query` that fetches everything together.
 
-```postgresql with=bottleneck_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    status TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_id, status, amount)
+SELECT i, (i % 5000) + 1,
+       CASE WHEN i % 1000 = 0 THEN 'flagged' ELSE 'normal' END,
+       (i * 10.5)::NUMERIC(10,2)
+FROM generate_series(1, 50000) AS i;
+
+-- Query
 -- The N+1 pattern, shown as pseudocode alongside the SQL it represents:
 -- 1 query to fetch customers:
 SELECT customer_id FROM orders GROUP BY customer_id LIMIT 5;
@@ -61,7 +103,21 @@ SELECT customer_id FROM orders GROUP BY customer_id LIMIT 5;
 
 The fix is almost always the same one covered throughout the `joins` chapter: replace the loop of individual `queries` with a single `query` that `joins` or filters for everything needed at once.
 
-```postgresql with=bottleneck_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    status TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_id, status, amount)
+SELECT i, (i % 5000) + 1,
+       CASE WHEN i % 1000 = 0 THEN 'flagged' ELSE 'normal' END,
+       (i * 10.5)::NUMERIC(10,2)
+FROM generate_series(1, 50000) AS i;
+
+-- Query
 SELECT customer_id, order_id, amount
 FROM orders
 WHERE customer_id IN (
@@ -79,7 +135,21 @@ That is why N+1 is such a common, costly bottleneck in real applications built o
 
 Sometimes a `query` looks selective at a glance but is not, because a `function` or a type mismatch on the filtered `column` silently defeats an otherwise-present `index`, forcing a full scan the same way a missing `index` would.
 
-```postgresql with=bottleneck_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    status TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_id, status, amount)
+SELECT i, (i % 5000) + 1,
+       CASE WHEN i % 1000 = 0 THEN 'flagged' ELSE 'normal' END,
+       (i * 10.5)::NUMERIC(10,2)
+FROM generate_series(1, 50000) AS i;
+
+-- Query
 CREATE INDEX idx_orders_amount ON orders (amount);
 
 EXPLAIN SELECT * FROM orders WHERE amount::TEXT = '525.00';
@@ -87,7 +157,21 @@ EXPLAIN SELECT * FROM orders WHERE amount::TEXT = '525.00';
 
 Casting `amount` to text before comparing defeats `idx_orders_amount`, since the `index` is built on the numeric `column`'s own sorted values, not on a text-converted version of them, forcing a `sequential scan` despite an `index` technically existing on the underlying `column`. This is a subtle bottleneck precisely because the `query` author may not realize the cast is even happening, especially if it was introduced indirectly through application code building the condition dynamically.
 
-```postgresql with=bottleneck_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    status TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_id, status, amount)
+SELECT i, (i % 5000) + 1,
+       CASE WHEN i % 1000 = 0 THEN 'flagged' ELSE 'normal' END,
+       (i * 10.5)::NUMERIC(10,2)
+FROM generate_series(1, 50000) AS i;
+
+-- Query
 EXPLAIN SELECT * FROM orders WHERE amount = 525.00;
 ```
 
@@ -128,7 +212,21 @@ Removing the cast and comparing directly against the numeric value restores the 
 
 Check whether filtering `orders` on `customer_id = 42` uses an `index`, given there is currently no `index` on `customer_id`, then create one and confirm the plan changes.
 
-```postgresql with=bottleneck_demo.sql
+```postgresql
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    status TEXT,
+    amount NUMERIC(10, 2)
+);
+
+INSERT INTO orders (order_id, customer_id, status, amount)
+SELECT i, (i % 5000) + 1,
+       CASE WHEN i % 1000 = 0 THEN 'flagged' ELSE 'normal' END,
+       (i * 10.5)::NUMERIC(10,2)
+FROM generate_series(1, 50000) AS i;
+
+-- Query
 -- Write your queries below
 ```
 

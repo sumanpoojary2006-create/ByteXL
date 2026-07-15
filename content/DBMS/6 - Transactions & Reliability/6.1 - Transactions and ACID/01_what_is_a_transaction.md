@@ -10,7 +10,7 @@ The `database`'s answer to this problem is the **`transaction`**: a group of one
 
 The `accounts` `table` holds a simple balance per account, the starting point for Rahul's transfer feature.
 
-```postgresql file=accounts.sql
+```text
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
     owner_name TEXT,
@@ -22,7 +22,18 @@ INSERT INTO accounts (account_id, owner_name, balance) VALUES
 (2, 'Sanjay Rathi', 12000.00);
 ```
 
-```postgresql with=accounts.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    owner_name TEXT,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, owner_name, balance) VALUES
+(1, 'Meera Iyer', 50000.00),
+(2, 'Sanjay Rathi', 12000.00);
+
+-- Query
 UPDATE accounts SET balance = balance - 5000.00 WHERE account_id = 1;
 UPDATE accounts SET balance = balance + 5000.00 WHERE account_id = 2;
 
@@ -37,7 +48,18 @@ If the `connection` dropped after the first `UPDATE` ran but before the second o
 
 `BEGIN` starts a `transaction`, and `COMMIT` ends it, making every change inside permanent all at once. Everything between those two commands is treated as a single, indivisible unit.
 
-```postgresql with=accounts.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    owner_name TEXT,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, owner_name, balance) VALUES
+(1, 'Meera Iyer', 50000.00),
+(2, 'Sanjay Rathi', 12000.00);
+
+-- Query
 BEGIN;
 
 UPDATE accounts SET balance = balance - 5000.00 WHERE account_id = 1;
@@ -56,7 +78,18 @@ The two `UPDATE` statements are now bound together by `BEGIN` and `COMMIT`. If a
 
 If something inside a `transaction` turns out to be wrong before `COMMIT` runs, `ROLLBACK` discards every change made since `BEGIN`, as if none of it had ever happened.
 
-```postgresql with=accounts.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    owner_name TEXT,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, owner_name, balance) VALUES
+(1, 'Meera Iyer', 50000.00),
+(2, 'Sanjay Rathi', 12000.00);
+
+-- Query
 BEGIN;
 
 UPDATE accounts SET balance = balance - 5000.00 WHERE account_id = 1;
@@ -116,7 +149,18 @@ Any time an application needs "these changes happen together, or not at all," a 
 
 Meera wants to send 2000.00 to Sanjay, but decides midway through to cancel the transfer entirely. Write a `transaction` against the `accounts` `table` above that performs both balance updates, then rolls the whole thing back, and confirm with a final `SELECT` that both balances are unchanged.
 
-```postgresql with=accounts.sql
+```postgresql
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY,
+    owner_name TEXT,
+    balance NUMERIC(10, 2)
+);
+
+INSERT INTO accounts (account_id, owner_name, balance) VALUES
+(1, 'Meera Iyer', 50000.00),
+(2, 'Sanjay Rathi', 12000.00);
+
+-- Query
 -- Write your transaction below
 ```
 

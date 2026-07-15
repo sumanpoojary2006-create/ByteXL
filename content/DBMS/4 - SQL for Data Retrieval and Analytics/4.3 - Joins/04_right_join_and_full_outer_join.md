@@ -8,7 +8,7 @@ There is also a third option, a **`FULL OUTER JOIN`**, for the rarer case where 
 
 The same delivery `schema` applies here, with Neha Bhatt having no orders and Taco Town having no orders.
 
-```postgresql file=delivery.sql
+```text
 CREATE TABLE customers (
     customer_id INTEGER PRIMARY KEY,
     customer_name TEXT,
@@ -51,7 +51,49 @@ INSERT INTO orders (order_id, customer_id, restaurant_id, amount, order_date) VA
 (6, 2, 3, 180.00, '2025-05-06');
 ```
 
-```postgresql with=delivery.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    city TEXT
+);
+
+CREATE TABLE restaurants (
+    restaurant_id INTEGER PRIMARY KEY,
+    restaurant_name TEXT,
+    city TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(customer_id),
+    restaurant_id INTEGER REFERENCES restaurants(restaurant_id),
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO customers (customer_id, customer_name, city) VALUES
+(1, 'Aditi Kulkarni', 'Pune'),
+(2, 'Rohan Das', 'Kolkata'),
+(3, 'Kavya Nair', 'Kochi'),
+(4, 'Imran Sheikh', 'Hyderabad'),
+(5, 'Neha Bhatt', 'Ahmedabad');
+
+INSERT INTO restaurants (restaurant_id, restaurant_name, city) VALUES
+(1, 'Pizza Palace', 'Pune'),
+(2, 'Sushi Central', 'Kolkata'),
+(3, 'Burger Barn', 'Pune'),
+(4, 'Taco Town', 'Hyderabad');
+
+INSERT INTO orders (order_id, customer_id, restaurant_id, amount, order_date) VALUES
+(1, 1, 1, 450.00, '2025-05-01'),
+(2, 2, 2, 620.00, '2025-05-02'),
+(3, 1, 3, 300.00, '2025-05-03'),
+(4, 3, 1, 500.00, '2025-05-04'),
+(5, 4, 2, 275.00, '2025-05-05'),
+(6, 2, 3, 180.00, '2025-05-06');
+
+-- Query
 SELECT orders.order_id, restaurants.restaurant_name
 FROM orders
 RIGHT JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id;
@@ -71,7 +113,49 @@ Because a `RIGHT JOIN` is only ever the mirror of a `LEFT JOIN`, any `query` usi
 
 2. Swap `RIGHT JOIN` for `LEFT JOIN`.
 
-```postgresql with=delivery.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    city TEXT
+);
+
+CREATE TABLE restaurants (
+    restaurant_id INTEGER PRIMARY KEY,
+    restaurant_name TEXT,
+    city TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(customer_id),
+    restaurant_id INTEGER REFERENCES restaurants(restaurant_id),
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO customers (customer_id, customer_name, city) VALUES
+(1, 'Aditi Kulkarni', 'Pune'),
+(2, 'Rohan Das', 'Kolkata'),
+(3, 'Kavya Nair', 'Kochi'),
+(4, 'Imran Sheikh', 'Hyderabad'),
+(5, 'Neha Bhatt', 'Ahmedabad');
+
+INSERT INTO restaurants (restaurant_id, restaurant_name, city) VALUES
+(1, 'Pizza Palace', 'Pune'),
+(2, 'Sushi Central', 'Kolkata'),
+(3, 'Burger Barn', 'Pune'),
+(4, 'Taco Town', 'Hyderabad');
+
+INSERT INTO orders (order_id, customer_id, restaurant_id, amount, order_date) VALUES
+(1, 1, 1, 450.00, '2025-05-01'),
+(2, 2, 2, 620.00, '2025-05-02'),
+(3, 1, 3, 300.00, '2025-05-03'),
+(4, 3, 1, 500.00, '2025-05-04'),
+(5, 4, 2, 275.00, '2025-05-05'),
+(6, 2, 3, 180.00, '2025-05-06');
+
+-- Query
 SELECT orders.order_id, restaurants.restaurant_name
 FROM restaurants
 LEFT JOIN orders ON restaurants.restaurant_id = orders.restaurant_id;
@@ -83,7 +167,49 @@ This produces the identical result to the `RIGHT JOIN` version above. Since `LEF
 
 Neither `LEFT JOIN` nor `RIGHT JOIN` can show unmatched `rows` from both `customers` and `restaurants`-style `tables` in the same result; each one only protects a single side. `FULL OUTER JOIN` protects both sides simultaneously, keeping every `row` from either `table`, matched or not.
 
-```postgresql with=delivery.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    city TEXT
+);
+
+CREATE TABLE restaurants (
+    restaurant_id INTEGER PRIMARY KEY,
+    restaurant_name TEXT,
+    city TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(customer_id),
+    restaurant_id INTEGER REFERENCES restaurants(restaurant_id),
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO customers (customer_id, customer_name, city) VALUES
+(1, 'Aditi Kulkarni', 'Pune'),
+(2, 'Rohan Das', 'Kolkata'),
+(3, 'Kavya Nair', 'Kochi'),
+(4, 'Imran Sheikh', 'Hyderabad'),
+(5, 'Neha Bhatt', 'Ahmedabad');
+
+INSERT INTO restaurants (restaurant_id, restaurant_name, city) VALUES
+(1, 'Pizza Palace', 'Pune'),
+(2, 'Sushi Central', 'Kolkata'),
+(3, 'Burger Barn', 'Pune'),
+(4, 'Taco Town', 'Hyderabad');
+
+INSERT INTO orders (order_id, customer_id, restaurant_id, amount, order_date) VALUES
+(1, 1, 1, 450.00, '2025-05-01'),
+(2, 2, 2, 620.00, '2025-05-02'),
+(3, 1, 3, 300.00, '2025-05-03'),
+(4, 3, 1, 500.00, '2025-05-04'),
+(5, 4, 2, 275.00, '2025-05-05'),
+(6, 2, 3, 180.00, '2025-05-06');
+
+-- Query
 SELECT customers.customer_name, orders.order_id
 FROM customers
 FULL OUTER JOIN orders ON customers.customer_id = orders.customer_id;
@@ -97,7 +223,49 @@ This result includes Neha Bhatt with `NULL` order `columns`, exactly as a `LEFT 
 
 The same `IS NULL` filtering pattern from the `LEFT JOIN` lesson still applies, just checking both sides now.
 
-```postgresql with=delivery.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    city TEXT
+);
+
+CREATE TABLE restaurants (
+    restaurant_id INTEGER PRIMARY KEY,
+    restaurant_name TEXT,
+    city TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(customer_id),
+    restaurant_id INTEGER REFERENCES restaurants(restaurant_id),
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO customers (customer_id, customer_name, city) VALUES
+(1, 'Aditi Kulkarni', 'Pune'),
+(2, 'Rohan Das', 'Kolkata'),
+(3, 'Kavya Nair', 'Kochi'),
+(4, 'Imran Sheikh', 'Hyderabad'),
+(5, 'Neha Bhatt', 'Ahmedabad');
+
+INSERT INTO restaurants (restaurant_id, restaurant_name, city) VALUES
+(1, 'Pizza Palace', 'Pune'),
+(2, 'Sushi Central', 'Kolkata'),
+(3, 'Burger Barn', 'Pune'),
+(4, 'Taco Town', 'Hyderabad');
+
+INSERT INTO orders (order_id, customer_id, restaurant_id, amount, order_date) VALUES
+(1, 1, 1, 450.00, '2025-05-01'),
+(2, 2, 2, 620.00, '2025-05-02'),
+(3, 1, 3, 300.00, '2025-05-03'),
+(4, 3, 1, 500.00, '2025-05-04'),
+(5, 4, 2, 275.00, '2025-05-05'),
+(6, 2, 3, 180.00, '2025-05-06');
+
+-- Query
 SELECT customers.customer_name, orders.order_id
 FROM customers
 FULL OUTER JOIN orders ON customers.customer_id = orders.customer_id
@@ -144,7 +312,49 @@ This surfaces every `row` that is missing a partner on either side, in one `quer
 
 Zoya wants a single audit report showing every restaurant and every order, with no restaurant left out even if it has zero orders. Write that `query` against `restaurants` and `orders` above using whichever `join` type guarantees every restaurant appears, ordering the result by `restaurant_name`.
 
-```postgresql with=delivery.sql
+```postgresql
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    city TEXT
+);
+
+CREATE TABLE restaurants (
+    restaurant_id INTEGER PRIMARY KEY,
+    restaurant_name TEXT,
+    city TEXT
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(customer_id),
+    restaurant_id INTEGER REFERENCES restaurants(restaurant_id),
+    amount NUMERIC(10, 2),
+    order_date DATE
+);
+
+INSERT INTO customers (customer_id, customer_name, city) VALUES
+(1, 'Aditi Kulkarni', 'Pune'),
+(2, 'Rohan Das', 'Kolkata'),
+(3, 'Kavya Nair', 'Kochi'),
+(4, 'Imran Sheikh', 'Hyderabad'),
+(5, 'Neha Bhatt', 'Ahmedabad');
+
+INSERT INTO restaurants (restaurant_id, restaurant_name, city) VALUES
+(1, 'Pizza Palace', 'Pune'),
+(2, 'Sushi Central', 'Kolkata'),
+(3, 'Burger Barn', 'Pune'),
+(4, 'Taco Town', 'Hyderabad');
+
+INSERT INTO orders (order_id, customer_id, restaurant_id, amount, order_date) VALUES
+(1, 1, 1, 450.00, '2025-05-01'),
+(2, 2, 2, 620.00, '2025-05-02'),
+(3, 1, 3, 300.00, '2025-05-03'),
+(4, 3, 1, 500.00, '2025-05-04'),
+(5, 4, 2, 275.00, '2025-05-05'),
+(6, 2, 3, 180.00, '2025-05-06');
+
+-- Query
 -- Write your query below
 ```
 
