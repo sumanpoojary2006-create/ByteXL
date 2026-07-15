@@ -97,6 +97,8 @@ This single line, `load_catalog = add_timing(load_catalog)`, is exactly what the
 The `wrapper` function uses `*args` and `**kwargs` to accept any arguments without knowing the signature of the wrapped function. This makes the wrapper generic: it works with functions that take no arguments, positional arguments, keyword arguments, or any combination.
 
 ```python
+import time
+
 def add_timing(fn):
     def wrapper(*args, **kwargs):   # accepts anything
         start = time.time()
@@ -105,6 +107,12 @@ def add_timing(fn):
         print(f"{fn.__name__} took {elapsed:.4f}s")
         return result
     return wrapper
+
+def add(a, b):
+    return a + b
+
+timed_add = add_timing(add)
+print(timed_add(2, 3))
 ```
 
 Without `*args` and `**kwargs`, you would have to write a separate timing function for every function signature. With them, one wrapper works universally.

@@ -28,6 +28,16 @@ def retry(max_attempts=3):          # level 1: factory
             raise last_error
         return wrapper
     return decorator
+
+# Demo: a function that always fails, to show the retry loop in action
+@retry(max_attempts=3)
+def always_fails():
+    raise ValueError("simulated failure")
+
+try:
+    always_fails()
+except ValueError:
+    print("Gave up after 3 attempts")
 ```
 
 When Python sees `@retry(max_attempts=3)`, it evaluates `retry(max_attempts=3)` first, which returns `decorator`. Then it applies `decorator` to the function. The result is exactly the same as a plain `@decorator`, just with the arguments captured in a closure at the first level.
@@ -35,6 +45,20 @@ When Python sees `@retry(max_attempts=3)`, it evaluates `retry(max_attempts=3)` 
 ## Applying a Decorator With Arguments
 
 ```python
+def retry(max_attempts=3):
+    def decorator(fn):
+        def wrapper(*args, **kwargs):
+            last_error = None
+            for attempt in range(1, max_attempts + 1):
+                try:
+                    return fn(*args, **kwargs)
+                except Exception as error:
+                    last_error = error
+                    print(f"Attempt {attempt} failed: {error}")
+            raise last_error
+        return wrapper
+    return decorator
+
 @retry(max_attempts=3)
 def fetch_book(isbn):
     import random
@@ -56,10 +80,27 @@ The function is tried up to three times. Each failure is logged. On success, the
 The easiest way to confuse yourself with parameterized decorators is accidentally writing `@retry` instead of `@retry()`. Without the call, Python passes the function to `retry` directly as the first argument, but `retry` expects `max_attempts`, not a function.
 
 ```python
-@retry          # WRONG: passes the function to retry as max_attempts
-def fetch_book(isbn):
-    pass
-# TypeError: 'function' object cannot be interpreted as an integer
+def retry(max_attempts=3):
+    def decorator(fn):
+        def wrapper(*args, **kwargs):
+            last_error = None
+            for attempt in range(1, max_attempts + 1):
+                try:
+                    return fn(*args, **kwargs)
+                except Exception as error:
+                    last_error = error
+                    print(f"Attempt {attempt} failed: {error}")
+            raise last_error
+        return wrapper
+    return decorator
+
+# WRONG (do not run): @retry without parentheses passes fetch_book itself
+# as max_attempts, so retry's internal `max_attempts + 1` later raises
+# TypeError: unsupported operand type(s) for +: 'function' and 'int'
+#
+# @retry
+# def fetch_book(isbn):
+#     pass
 
 @retry()        # CORRECT: retry() returns the decorator, then the decorator wraps fn
 def fetch_book(isbn):

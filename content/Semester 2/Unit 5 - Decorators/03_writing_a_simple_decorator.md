@@ -11,6 +11,17 @@ This lesson introduces the `@` syntax, confirms it is exactly what she has alrea
 The decorator syntax `@name` placed above a function definition is exactly equivalent to `fn = name(fn)` placed immediately after the definition. No new language feature is involved; it is a shorthand.
 
 ```python
+import time
+
+def add_timing(fn):
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        result = fn(*args, **kwargs)
+        elapsed = time.time() - start
+        print(f"{fn.__name__} ran in {elapsed:.4f}s")
+        return result
+    return wrapper
+
 # Without @ syntax:
 def load_catalog(size):
     return list(range(size))

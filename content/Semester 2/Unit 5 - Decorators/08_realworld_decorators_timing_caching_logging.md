@@ -48,10 +48,8 @@ catalog = load_catalog(1000)
 results = search("5", catalog)
 
 # Demo:
-result = timed(5, "test", "example")
-print(f"timed(5, "test", "example") ->", result)
-result = load_catalog(5)
-print(f"load_catalog(5) ->", result)
+print(f"load_catalog(1000) -> list of {len(catalog)} items")
+print(f"search('5', catalog) -> {len(results)} matches")
 ```
 
 Two things to note: `time.perf_counter()` is more precise than `time.time()` for measuring elapsed CPU time; and logging the failure time on exception gives visibility into slow failures, not just slow successes.
@@ -109,13 +107,10 @@ def reserve_book(isbn, patron_id):
     return {"isbn": isbn, "patron": patron_id, "status": "reserved"}
 
 reserve_book("978-0441013593", "P001")
-reserve_book("invalid", "P002")   # error!
-
-# Demo:
-result = log_call(5)
-print(f"log_call(5) ->", result)
-result = reserve_book(5, 5)
-print(f"reserve_book(5, 5) ->", result)
+try:
+    reserve_book("invalid", "P002")   # error!
+except ValueError as e:
+    print(f"ValueError: {e}")
 ```
 
 ## Combining All Three
@@ -123,6 +118,44 @@ print(f"reserve_book(5, 5) ->", result)
 With `@functools.wraps` applied at every level, these decorators compose correctly:
 
 ```python
+import time
+import logging
+import functools
+
+logging.basicConfig(level=logging.DEBUG)
+
+def timed(fn=None, *, label=None):
+    if fn is None:
+        return functools.partial(timed, label=label)
+
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        name = label or fn.__name__
+        start = time.perf_counter()
+        try:
+            result = fn(*args, **kwargs)
+            elapsed = time.perf_counter() - start
+            logging.debug(f"{name} completed in {elapsed:.4f}s")
+            return result
+        except Exception:
+            elapsed = time.perf_counter() - start
+            logging.warning(f"{name} raised after {elapsed:.4f}s")
+            raise
+    return wrapper
+
+def log_call(fn):
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        logging.info(f"ENTER {fn.__name__} | args={args} kwargs={kwargs}")
+        try:
+            result = fn(*args, **kwargs)
+            logging.info(f"EXIT  {fn.__name__} | result={result!r}")
+            return result
+        except Exception as exc:
+            logging.error(f"ERROR {fn.__name__} | {type(exc).__name__}: {exc}")
+            raise
+    return wrapper
+
 @timed
 @log_call
 @functools.lru_cache(maxsize=64)
@@ -153,6 +186,44 @@ The `@lru_cache` is innermost (checks and populates the cache). `@log_call` wrap
 Apply all three production-quality decorators to a single function:
 
 ```python
+import time
+import logging
+import functools
+
+logging.basicConfig(level=logging.DEBUG)
+
+def timed(fn=None, *, label=None):
+    if fn is None:
+        return functools.partial(timed, label=label)
+
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        name = label or fn.__name__
+        start = time.perf_counter()
+        try:
+            result = fn(*args, **kwargs)
+            elapsed = time.perf_counter() - start
+            logging.debug(f"{name} completed in {elapsed:.4f}s")
+            return result
+        except Exception:
+            elapsed = time.perf_counter() - start
+            logging.warning(f"{name} raised after {elapsed:.4f}s")
+            raise
+    return wrapper
+
+def log_call(fn):
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        logging.info(f"ENTER {fn.__name__} | args={args} kwargs={kwargs}")
+        try:
+            result = fn(*args, **kwargs)
+            logging.info(f"EXIT  {fn.__name__} | result={result!r}")
+            return result
+        except Exception as exc:
+            logging.error(f"ERROR {fn.__name__} | {type(exc).__name__}: {exc}")
+            raise
+    return wrapper
+
 @timed
 @log_call
 @functools.lru_cache(maxsize=32)
@@ -162,8 +233,10 @@ def load_patron(patron_id):
 
 load_patron("P001")
 load_patron("P002")
-load_patron("P001")   # should be a cache hit
-print(load_patron.cache_info())
+load_patron("P001")   # logs ENTER again: @log_call sits outside @lru_cache
+# cache_info() itself is only on the innermost function; @functools.wraps
+# copies __wrapped__ but not cache_info, so reach it through the chain:
+print(load_patron.__wrapped__.__wrapped__.cache_info())
 ```
 
 Confirm that the second call to `"P001"` does not log `ENTER` again (it is a cache hit; the wrapped function is not called). If your `@log_call` decorator logs the hit, discuss why: `@log_call` is outside `@lru_cache`, so it runs on every call regardless of the cache. Explain which order places `@log_call` inside the cache (so only misses log).

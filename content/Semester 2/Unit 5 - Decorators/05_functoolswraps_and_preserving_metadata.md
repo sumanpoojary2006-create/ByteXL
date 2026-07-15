@@ -65,7 +65,18 @@ The `__wrapped__` attribute is a bonus: it points to the original function, whic
 `functools.wraps` is not just cosmetic. Several important tools depend on the function name and signature:
 
 ```python
+import functools
 import inspect
+import time
+
+def add_timing(fn):
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        result = fn(*args, **kwargs)
+        print(f"{fn.__name__} ran in {time.time() - start:.4f}s")
+        return result
+    return wrapper
 
 @add_timing
 def search(query, max_results=10):

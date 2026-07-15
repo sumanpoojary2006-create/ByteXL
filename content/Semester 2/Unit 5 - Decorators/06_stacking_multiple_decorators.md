@@ -3,6 +3,35 @@
 Kiran has three decorators: `@add_timing`, `@require_auth`, and `@log_call`. She wants to apply all three to one endpoint handler. She writes:
 
 ```python
+import functools
+import time
+
+def add_timing(fn):
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        result = fn(*args, **kwargs)
+        print(f"{fn.__name__} ran in {time.time() - start:.4f}s")
+        return result
+    return wrapper
+
+def require_auth(fn):
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        time.sleep(0.05)   # simulate an auth check taking real time
+        return fn(*args, **kwargs)
+    return wrapper
+
+def log_call(fn):
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        print(f"Calling {fn.__name__}")
+        return fn(*args, **kwargs)
+    return wrapper
+
+def lookup(isbn):
+    return {"isbn": isbn, "title": "Dune"}
+
 @add_timing
 @require_auth
 @log_call
@@ -110,14 +139,35 @@ except PermissionError as e:
 If Kiran wants the timer to only measure code that passed auth, she would put `@add_timing` *below* `@require_auth` (closer to `def`):
 
 ```python
+import functools
+
+def require_auth(fn):
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        token = kwargs.get("token")
+        if token != "valid-token":
+            raise PermissionError("Unauthorized")
+        return fn(*args, **kwargs)
+    return wrapper
+
+def add_timing(fn):
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        import time
+        start = time.time()
+        result = fn(*args, **kwargs)
+        print(f"{fn.__name__} ran in {time.time() - start:.4f}s")
+        return result
+    return wrapper
+
 @require_auth       # outermost: rejects early before timing
 @add_timing         # inner: only times what passed auth
 def get_book(isbn, token=None):
     return {"isbn": isbn}
 
 # Demo:
-result = get_book(5, 5)
-print(f"get_book(5, 5) ->", result)
+result = get_book(5, token="valid-token")
+print(f"get_book(5, token='valid-token') ->", result)
 ```
 
 ## The Mental Model: Nested Boxes
@@ -125,11 +175,29 @@ print(f"get_book(5, 5) ->", result)
 The clearest mental model is nested boxes. The decorator closest to `def` is the innermost box. Each decorator above it wraps around the previous layer.
 
 ```python
+import functools
+
+def make_labeled_decorator(label):
+    def decorator(fn):
+        @functools.wraps(fn)
+        def wrapper(*args, **kwargs):
+            print(f"{label}: enter")
+            result = fn(*args, **kwargs)
+            print(f"{label}: exit")
+            return result
+        return wrapper
+    return decorator
+
+A = make_labeled_decorator("A")
+B = make_labeled_decorator("B")
+C = make_labeled_decorator("C")
+
 @A
 @B
 @C
 def fn():
-    pass
+    print("fn body")
+    return "done"
 
 # fn = A(B(C(fn)))
 # Call chain: A.wrapper -> B.wrapper -> C.wrapper -> fn
@@ -177,6 +245,9 @@ def timed(fn):
 @timed
 def process(n):
     return sum(range(n))
+
+result = process(1000000)
+print(f"process(1000000) -> {result}")
 ```
 
 Run `process(1000000)` and read the output. Then swap the decorator order to `@timed @logged` and run again. Note the difference in which message appears first. Explain which order makes `@logged` measure only the function's own time (not the overhead of `@timed`).

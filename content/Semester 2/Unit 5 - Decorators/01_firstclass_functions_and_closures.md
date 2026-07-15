@@ -126,6 +126,10 @@ def make_logger(prefix):
 
 api_log = make_logger("API")
 db_log = make_logger("DB")
+
+api_log("Request received")
+db_log("Connection opened")
+print(api_log.__closure__[0].cell_contents)
 ```
 
 Create both loggers and call each with a message. Then inspect `api_log.__closure__[0].cell_contents` to confirm it contains the string `"API"`. Finally, write a `make_rate_limiter(max_calls)` factory that returns a function `call()` which increments a counter and raises a `RuntimeError` when the counter exceeds `max_calls`. You will need to use a mutable container (a list) to hold the counter inside the closure, since closures cannot reassign outer variables directly.
