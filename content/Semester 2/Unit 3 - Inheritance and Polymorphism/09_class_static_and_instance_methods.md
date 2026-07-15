@@ -103,27 +103,35 @@ The rule for static methods: use one when the function is logically associated w
 ## When to Use Each Kind
 
 ```python
-# Instance method: the function needs to read or modify a specific object's state
-def check_out(self):
-    self._copies -= 1
+class Book:
+    def __init__(self, title, isbn, copies):
+        self.title = title
+        self.isbn = isbn
+        self._copies = copies
 
-# Class method: the function creates instances, counts instances, or
-# works with class-level state
-@classmethod
-def from_dict(cls, data):
-    return cls(data["title"], data["isbn"], data.get("copies", 1))
+    # Instance method: the function needs to read or modify a specific object's state
+    def check_out(self):
+        self._copies -= 1
 
-# Static method: the function is related to the class conceptually
-# but does not need self or cls
-@staticmethod
-def is_valid_isbn(isbn):
-    return isbn.startswith("978")
+    # Class method: the function creates instances, counts instances, or
+    # works with class-level state
+    @classmethod
+    def from_dict(cls, data):
+        return cls(data["title"], data["isbn"], data.get("copies", 1))
+
+    # Static method: the function is related to the class conceptually
+    # but does not need self or cls
+    @staticmethod
+    def is_valid_isbn(isbn):
+        return isbn.startswith("978")
 
 # Demo:
-result = check_out()
-print(f"check_out() ->", result)
-result = from_dict([1, 2, 3])
-print(f"from_dict([1, 2, 3]) ->", result)
+b = Book("Dune", "978-0441013593", 3)
+b.check_out()
+print(f"copies after check_out() -> {b._copies}")
+
+b2 = Book.from_dict({"title": "Foundation", "isbn": "978-0553293357"})
+print(f"from_dict(...) -> {b2.title}, {b2.isbn}, copies={b2._copies}")
 ```
 
 ## Class, Static, and Instance Methods at a Glance
@@ -161,7 +169,7 @@ class Loan:
         self.returned = True
 
 # Demo:
-obj = Loan()
+obj = Loan.for_today("Priya", "978-0441013593")
 print(obj)
 ```
 

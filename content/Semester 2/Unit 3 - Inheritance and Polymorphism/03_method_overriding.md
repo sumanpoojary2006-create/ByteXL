@@ -178,8 +178,8 @@ for item in items:
 
 # Dune: 21-day loan
 # Foundation: No loan needed: always available
-# In-library use only: cannot be checked out
-# Oxford Dictionary: 21-day loan  <- Magazine inherits the default
+# Oxford Dictionary: In-library use only: cannot be checked out
+# Nature: 21-day loan  <- Magazine inherits the default
 ```
 
 The loop calls `checkout_policy()` on each item without knowing or caring what type each one is. Each type's own version of the method runs. This is the beginning of polymorphism, covered formally in the next lesson.

@@ -43,6 +43,9 @@ class SMSNotifier:
 class PushNotifier:
     def send(self, device_id, message):
         print(f"Push to {device_id}: {message}")
+
+# Demo: each concrete class fulfills the same informal "send" interface
+EmailNotifier().send("patron@email.com", "Your reservation is ready.")
 ```
 
 Each class has a `send` method. Python duck typing means `notify_patron` works with any of them without modification: if an object has a `send` method with the right signature, it qualifies as a notifier.
@@ -116,6 +119,19 @@ class ReservationManager:
         patron, contact = self._queue[isbn].pop(0)
         self._notifier.send(contact, f"'{book.title}' is available.")
         print(f"Notified {patron}")
+
+# Demo: a minimal catalog and notifier so reserve()/fulfill() have something to call
+class MockCatalog:
+    def find(self, isbn):
+        return type("Book", (), {"title": "Dune"})()
+
+class MockNotifier:
+    def send(self, contact, message):
+        print(f"Notification to {contact}: {message}")
+
+manager = ReservationManager(MockCatalog(), MockNotifier())
+manager.reserve("Priya", "978-001", "priya@email.com")
+manager.fulfill("978-001")
 ```
 
 The calling code only sees `reserve()` and `fulfill()`. The queue, the catalog lookup, the notification routing, all of that is hidden inside `ReservationManager`. Callers do not know it exists.

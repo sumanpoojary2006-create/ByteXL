@@ -118,6 +118,11 @@ Every `__init__` ran exactly once, in MRO order, because each one calls `super()
 Multiple inheritance is appropriate when an object genuinely has two independent, orthogonal roles: a `SearchableMixin`, a `LoggableMixin`, or a `SerializableMixin` that adds behavior orthogonally to a domain class. Mixins, classes that add specific capabilities without being primary base classes, are the most common and well-justified use of multiple inheritance.
 
 ```python
+class LibraryItem:
+    def __init__(self, title, isbn):
+        self.title = title
+        self.isbn = isbn
+
 class LoggableMixin:
     def log(self, message):
         print(f"[{self.__class__.__name__}] {message}")

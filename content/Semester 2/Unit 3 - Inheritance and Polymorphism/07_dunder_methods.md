@@ -91,6 +91,12 @@ print(f"In set: {len({b1, b2})} item(s)") # 1 -- deduped by hash+eq
 `__len__` makes `len(obj)` work and also determines truthiness: an object with `__len__` is falsy when its length is zero.
 
 ```python
+class Book:
+    def __init__(self, title, isbn, copies):
+        self.title = title
+        self.isbn = isbn
+        self._copies = copies
+
 class Shelf:
     def __init__(self):
         self._books = []

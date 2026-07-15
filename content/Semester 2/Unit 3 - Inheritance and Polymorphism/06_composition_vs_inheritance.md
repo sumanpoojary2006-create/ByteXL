@@ -13,6 +13,11 @@ This lesson covers the most common design decision in object-oriented programmin
 **Composition** models the "has-a" relationship. A `Library` *has* `LibraryItem` objects. An `Inventory` *has* a list of items. A `Checkout` *has* a patron and a book. These relationships mean one object holds a reference to another as an attribute, delegating behavior to it without claiming to be that thing.
 
 ```python
+class LibraryItem:
+    def __init__(self, title, isbn):
+        self.title = title
+        self.isbn = isbn
+
 # Inheritance: Book IS-A LibraryItem
 class Book(LibraryItem):
     def __init__(self, title, isbn, copies):
@@ -34,8 +39,8 @@ class Inventory:
         return [item for item in self._items if item.is_available()]
 
 # Demo:
-obj = Book("book_1", 2024, "example")
-print(obj)
+obj = Book("Dune", "978-0441013593", 3)
+print(f"{obj.title}: {obj.copies} copies")
 ```
 
 ## The Liskov Substitution Principle
@@ -76,8 +81,9 @@ class Inventory:
         return sum(1 for item in self._items if item.is_available())
 
 # Demo:
-obj = Inventory("inventory_1", 2024, "example")
-print(obj)
+obj = Inventory()
+obj.add(Book("Dune", "978-0441013593", 3))
+print(f"Inventory holds {len(obj._items)} item(s)")
 ```
 
 The composed version is simpler, easier to test (you can create an `Inventory` with mock items), and unaffected by changes to `LibraryItem`.
@@ -134,8 +140,9 @@ class Car:
         return self._engine.stop() + " -- parked"
 
 # Demo:
-obj = Engine("example", "example")
-print(obj)
+car = Car("Toyota", "Corolla")
+print(car.drive())
+print(car.park())
 ```
 
 `Car` uses composition: it *has* an `Engine`. Consider what would happen if you had written `class Car(Engine):` instead: would `isinstance(my_car, Engine)` make semantic sense? What would callers be allowed to do to a `Car` object that they should not be able to do? Use this analysis to articulate in one sentence why composition is the right choice here.

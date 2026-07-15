@@ -166,6 +166,13 @@ class Book:
 
     def __repr__(self):
         return f"Book({self.title!r}, copies={self._copies})"
+
+# Demo: the two pieces of this unit working together
+book = Book("Dune", "978-0441013593", copies=2)
+book.check_out()
+print(book)
+
+EmailNotifier().send_batch(["patron@email.com"], f"'{book.title}' checked out")
 ```
 
 ## Clean Interfaces at a Glance

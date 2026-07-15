@@ -89,12 +89,25 @@ This is more flexible than Java-style interface declarations: no shared base cla
 Polymorphism makes it easy to write functions that work across an entire collection without knowing the specifics:
 
 ```python
+class LibraryItem:
+    def __init__(self, title):
+        self.title = title
+    def checkout_policy(self):
+        return "21-day loan"
+
+class EBook(LibraryItem):
+    def checkout_policy(self):
+        return "Always available"
+
 def print_catalog_report(items):
     print("=== Catalog Report ===")
     for item in items:
         policy = item.checkout_policy()
         print(f"  {item.title:<40} {policy}")
     print(f"Total items: {len(items)}")
+
+# Demo:
+print_catalog_report([LibraryItem("Dune"), EBook("Foundation")])
 ```
 
 `print_catalog_report` is written once and works with any mix of item types, now and in the future. Adding `AudioBook` to the system requires only writing `AudioBook.checkout_policy()`. The report function never changes.
@@ -143,9 +156,9 @@ sensors = [
     PressureSensor(1013.25),
 ]
 
-# Demo:
-obj = Sensor("example")
-print(obj)
+# Demo: read every sensor polymorphically, no isinstance() checks
+for s in sensors:
+    print(f"{type(s).__name__}: {s.read()}")
 ```
 
 Write a function `log_readings(sensors)` that loops over the list and prints each `sensor.read()` without any `isinstance()` checks. Then add a `CO2Sensor` with a `read()` method and pass it into `log_readings` to confirm the function works without any modification.

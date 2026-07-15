@@ -159,7 +159,8 @@ class Patron:
         self.borrowed.remove(book_title)
 
 # Demo:
-obj = Patron()
+obj = Patron("Dev", "P-1001")
+obj.borrow("Dune")
 print(obj)
 ```
 
