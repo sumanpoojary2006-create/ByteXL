@@ -20,3 +20,11 @@ Automate repetition and process collections of data efficiently.
 ## How each lesson is written
 
 Each lesson follows the house style: a standardized **Introduction** heading (no page-title H1), a story-led flow with real-world examples and situation-based questions under natural headings, concept-scoped illustrations, and a closing **Conclusion**. Python is set up in Unit 1, so lessons here include simple, runnable, interactive snippets where students enter their own values. No emojis, no em dashes.
+
+## Mini Project
+
+Reading material, worked through after the numbered topics above.
+
+| Project | File |
+|---------|------|
+| Rock, Paper & Scissors | [rock_paper_scissors.md](rock_paper_scissors.md) |

@@ -23,4 +23,12 @@ Each lesson follows the house style: a standardized **Introduction** heading (no
 
 Lessons follow a single recurring character, Dev, coordinating the annual college class trip: a packing checklist, a growing snack list, the bus playlist, a list of paid-up students, fixed GPS stops, a bus seating chart, and the full day-by-day itinerary.
 
+## Mini Project
+
+Reading material, worked through after the numbered topics above.
+
+| Project | File |
+|---------|------|
+| Hangman | [hangman.md](hangman.md) |
+
 _Status: lesson content authored for all 8 topics, all code blocks verified to run correctly and match documented output._

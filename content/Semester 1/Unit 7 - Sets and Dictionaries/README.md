@@ -23,4 +23,12 @@ Each lesson follows the house style: a standardized **Introduction** heading (no
 
 Lessons follow a single recurring character, Tara, running gate registration and the merch stall at the college fest: deduplicating wristband scans, comparing two days of attendees, a merch price list, live stock edits, an end-of-day report, a closing-sale discount, a combined multi-stall report, and a final recap choosing between list, tuple, set, and dictionary.
 
+## Mini Project
+
+Reading material, worked through after the numbered topics above.
+
+| Project | File |
+|---------|------|
+| Shopping Cart | [shopping_cart.md](shopping_cart.md) |
+
 _Status: lesson content authored for all 8 topics, all code blocks verified to run and match documented output._

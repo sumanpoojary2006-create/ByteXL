@@ -1,6 +1,6 @@
 # Semester 1: Python Fundamentals
 
-13 units, taught in order over a 15-week term. See the curriculum workbook for the full week-wise plan and assessment design.
+14 units, taught in order over a 15-week term. See the curriculum workbook for the full week-wise plan and assessment design.
 
 ## Units
 
@@ -19,5 +19,6 @@
 | 11 | File Handling | 9 | [Unit 11 - File Handling](Unit%2011%20-%20File%20Handling/) |
 | 12 | Exception Handling | 9 | [Unit 12 - Exception Handling](Unit%2012%20-%20Exception%20Handling/) |
 | 13 | Debugging | 9 | [Unit 13 - Debugging](Unit%2013%20-%20Debugging/) |
+| 14 | Capstone Projects | 10 | [Unit 14 - Capstone Projects](Unit%2014%20-%20Capstone%20Projects/) |
 
 **Style:** professional, beginner-friendly, no emojis, no em dashes; standardized Introduction heading, narrative flow.

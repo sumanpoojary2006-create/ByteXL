@@ -24,4 +24,12 @@ Each lesson follows the house style: a standardized **Introduction** heading (no
 
 Lessons follow Meera, setting up a handmade-craft shop page: a username that reveals what a string really is, grabbing the last four digits of a phone number with slicing, a locked-in typo that explains immutability, a messy caption cleaned with string methods, tags split apart and a hashtag joined back together, an inbox checked for a missing at sign, a price list aligned into neat columns, a bio laid out with line breaks and quotes, and a full giveaway inbox cleaned and analysed end to end in the closing lesson.
 
+## Mini Project
+
+Reading material, worked through after the numbered topics above.
+
+| Project | File |
+|---------|------|
+| Password Generator | [password_generator.md](password_generator.md) |
+
 _Status: lesson content authored for all 9 topics, all code blocks verified to run correctly and match documented output._

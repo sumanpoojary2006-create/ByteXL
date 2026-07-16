@@ -24,4 +24,12 @@ Each lesson follows the house style: a standardized **Introduction** heading (no
 
 Lessons continue Asha's thread from Unit 3: her signup form that could reject bad input but never re-ask or survive a bad conversion. This unit closes that gap, moving from telling errors apart, to reading a traceback, to `try`/`except`, multiple and specific exception types, `else`/`finally`, raising her own exceptions, naming her own exception types, and finally combining a loop with `try`/`except` into the complete defensive validation pattern the control flow unit promised was coming. The closing lesson steps back to the design question of when to fail gracefully versus fail loudly.
 
+## Mini Project
+
+Reading material, worked through after the numbered topics above.
+
+| Project | File |
+|---------|------|
+| JSON Data Processor | [json_data_processor.md](json_data_processor.md) |
+
 _Status: lesson content authored for all 9 topics, all code blocks verified to run correctly and match documented output, including intentional error demonstrations._

@@ -24,4 +24,12 @@ Each lesson follows the house style: a standardized **Introduction** heading (no
 
 Lessons continue Tara's thread from Unit 7: her in-memory fest data vanishing on exit, reading and writing a wristband log, append-safe daily logging, crash-safe `with` blocks, pathlib-built report paths, glob-matched daily sales files, CSV sales records, the nested stall report saved as JSON, and closing pitfalls around missing files and encoding. Note: exception handling (try/except) is intentionally not used anywhere in this unit, since it is taught in the next one; missing-file handling here uses `Path.exists()` guard checks instead, with an explicit forward-reference to Unit 12.
 
+## Mini Project
+
+Reading material, worked through after the numbered topics above.
+
+| Project | File |
+|---------|------|
+| CSV Data Analyzer | [csv_data_analyzer.md](csv_data_analyzer.md) |
+
 _Status: lesson content authored for all 9 topics, all code blocks verified to run correctly and match documented output in isolated test directories._

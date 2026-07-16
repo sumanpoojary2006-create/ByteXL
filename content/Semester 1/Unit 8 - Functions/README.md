@@ -27,4 +27,12 @@ Each lesson follows the house style: a standardized **Introduction** heading (no
 
 Lessons follow a single recurring character, Naveen, the hostel's go-to "script guy": copy-pasted bill-splitting logic, a flexible service charge, variable-length contributor lists, quick sorting lambdas, a map/filter/reduce pipeline, built-in shortcuts, a tucked-away currency-formatting helper, scope pitfalls with a shared counter, a factorial explained out loud, and finally documenting his scripts before handing them off.
 
+## Mini Project
+
+Reading material, worked through after the numbered topics above.
+
+| Project | File |
+|---------|------|
+| Contact Book | [contact_book.md](contact_book.md) |
+
 _Status: lesson content authored for all 12 topics, all code blocks verified to run and match documented output._

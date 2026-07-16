@@ -21,3 +21,11 @@ Make programs decide and respond using branching logic.
 ## How each lesson is written
 
 Each lesson follows the house style: a standardized **Introduction** heading (no page-title H1), a story-led flow with real-world examples and situation-based questions under natural headings, concept-scoped illustrations, and a closing **Conclusion**. Python is set up in Unit 1, so lessons here include simple, runnable, interactive snippets where students enter their own values. No emojis, no em dashes.
+
+## Mini Project
+
+Reading material, worked through after the numbered topics above.
+
+| Project | File |
+|---------|------|
+| Number Guessing Game | [number_guessing_game.md](number_guessing_game.md) |
