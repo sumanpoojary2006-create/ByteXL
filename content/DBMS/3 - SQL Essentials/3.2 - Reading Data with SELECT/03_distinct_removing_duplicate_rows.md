@@ -6,7 +6,44 @@ She scrolls through the list herself, mentally crossing off repeats, to work out
 
 ## The Repeated-Rows Problem
 
-Before reaching for `DISTINCT`, it helps to see the problem it solves in plain output.
+Before reaching for `DISTINCT`, it helps to see the problem it solves in plain output. The `students` `table` holds this data:
+
+| student_id | full_name | email | city | phone | joined_on |
+| ---------- | ----------------- | ------------------------------ | --------- | ---------- | ---------- |
+| 1 | Ishaan Verma | ishaan.verma@example.com | Bengaluru | 9845011111 | 2025-01-10 |
+| 2 | Meera Pillai | meera.pillai@example.com | Chennai | 9884022222 | 2025-01-12 |
+| 3 | Arjun Bhat | arjun.bhat@example.com | Bengaluru | *NULL* | 2025-01-15 |
+| 4 | Kavya Reddy | kavya.reddy@example.com | Pune | 9922033333 | 2025-01-18 |
+| 5 | Rohan Joshi | rohan.joshi@example.com | Hyderabad | 9640044444 | 2025-01-20 |
+| 6 | Sneha Gowda | sneha.gowda@example.com | Mysuru | *NULL* | 2025-01-22 |
+| 7 | Aditya Kulkarni | aditya.kulkarni@example.com | Pune | 9822055555 | 2025-01-25 |
+| 8 | Priya Subramaniam | priya.subramaniam@example.com | Chennai | 9884066666 | 2025-01-28 |
+
+To build this `table` with this data, a `CREATE TABLE` statement defines the six `columns` shown above, and an `INSERT INTO` statement loads the eight `rows` into it.
+
+Simran asks for just the `city` `column`, one value per student, with no `DISTINCT` yet: `SELECT city FROM students;`.
+
+Expected output:
+
+| city |
+| --------- |
+| Bengaluru |
+| Chennai |
+| Bengaluru |
+| Pune |
+| Hyderabad |
+| Mysuru |
+| Pune |
+| Chennai |
+
+The result has eight `rows`, matching the eight students, and Bengaluru, Chennai, and Pune each appear twice because two students happen to live in each of those cities. Nothing is wrong with this `query`:
+
+- It is faithfully reporting one city per student.
+- It does not answer Simran's actual question, which is about the set of cities involved, not the list of students.
+
+![Selecting city returns repeated city values because each student row contributes one value](images/05_repeated_values_before_distinct.png)
+
+Try it yourself:
 
 ```postgresql file=init.sql
 CREATE TABLE students (
@@ -29,52 +66,13 @@ INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALU
 (8, 'Priya Subramaniam', 'priya.subramaniam@example.com', 'Chennai', '9884066666', '2025-01-28');
 ```
 
-The `students` `table` holds this data:
-
-| student_id | full_name | email | city | phone | joined_on |
-| ---------- | ----------------- | ------------------------------ | --------- | ---------- | ---------- |
-| 1 | Ishaan Verma | ishaan.verma@example.com | Bengaluru | 9845011111 | 2025-01-10 |
-| 2 | Meera Pillai | meera.pillai@example.com | Chennai | 9884022222 | 2025-01-12 |
-| 3 | Arjun Bhat | arjun.bhat@example.com | Bengaluru | *NULL* | 2025-01-15 |
-| 4 | Kavya Reddy | kavya.reddy@example.com | Pune | 9922033333 | 2025-01-18 |
-| 5 | Rohan Joshi | rohan.joshi@example.com | Hyderabad | 9640044444 | 2025-01-20 |
-| 6 | Sneha Gowda | sneha.gowda@example.com | Mysuru | *NULL* | 2025-01-22 |
-| 7 | Aditya Kulkarni | aditya.kulkarni@example.com | Pune | 9822055555 | 2025-01-25 |
-| 8 | Priya Subramaniam | priya.subramaniam@example.com | Chennai | 9884066666 | 2025-01-28 |
-
-Simran asks for just the `city` `column`, one value per student, with no `DISTINCT` yet.
-
 ```postgresql with=init.sql
 SELECT city FROM students;
 ```
 
-Expected output:
-
-| city |
-| --------- |
-| Bengaluru |
-| Chennai |
-| Bengaluru |
-| Pune |
-| Hyderabad |
-| Mysuru |
-| Pune |
-| Chennai |
-
-The result has eight `rows`, matching the eight students, and Bengaluru, Chennai, and Pune each appear twice because two students happen to live in each of those cities. Nothing is wrong with this `query`:
-
-- It is faithfully reporting one city per student.
-- It does not answer Simran's actual question, which is about the set of cities involved, not the list of students.
-
-![Selecting city returns repeated city values because each student row contributes one value](images/05_repeated_values_before_distinct.png)
-
 ## Collapsing Repeats With DISTINCT
 
-Adding the word `DISTINCT` right after `SELECT` changes the question from "what city does each student live in" to "what cities appear at all."
-
-```postgresql with=init.sql
-SELECT DISTINCT city FROM students;
-```
+Adding the word `DISTINCT` right after `SELECT` changes the question from "what city does each student live in" to "what cities appear at all": `SELECT DISTINCT city FROM students;`.
 
 Expected output:
 
@@ -90,11 +88,46 @@ This time the result has exactly five `rows`: Bengaluru, Chennai, Pune, Hyderaba
 
 ![DISTINCT filtering duplicate city cards into unique city values](images/06_distinct_unique_values.png)
 
+Try it yourself:
+
+```postgresql with=init.sql
+SELECT DISTINCT city FROM students;
+```
+
 ## DISTINCT Across More Than One Column
 
 - `DISTINCT` does not have to apply to a single `column`.
 - Given more than one `column` in the list, it keeps a `row` only if the entire combination of values, taken together, is unique, not just one `column` in isolation.
 - To see this clearly, it helps to look at a different `table` where a few `rows` genuinely repeat the same combination.
+
+The `courses` `table` holds this data:
+
+| course_id | title | department | credits |
+| --------- | -------------------- | ---------------- | ------: |
+| 101 | Database Systems | Computer Science | 4 |
+| 102 | Data Structures | Computer Science | 4 |
+| 103 | Linear Algebra | Mathematics | 3 |
+| 104 | Discrete Mathematics | Mathematics | 3 |
+| 105 | Microeconomics | Economics | 3 |
+
+To build this `table` with this data, a separate `CREATE TABLE` and `INSERT INTO` pair defines and loads it.
+
+`SELECT DISTINCT department, credits FROM courses;` asks which department-and-credit-load combinations actually exist.
+
+Expected output:
+
+| department | credits |
+| ---------------- | ------: |
+| Computer Science | 4 |
+| Mathematics | 3 |
+| Economics | 3 |
+
+- The courses `table` has five `rows`, but this `query` returns only three: `Computer Science, 4`, `Mathematics, 3`, and `Economics, 3`.
+- Both Computer Science courses are worth 4 credits, so that pair of values collapses into a single `row`, and the same happens for the two 3-credit Mathematics courses.
+- Economics stays on its own since no other `row` shares its exact department-and-credits combination.
+- `DISTINCT` here is answering "which department-and-credit-load combinations actually exist," a genuinely different question from listing every course.
+
+Try it yourself:
 
 ```postgresql file=init_002.sql
 CREATE TABLE courses (
@@ -112,32 +145,9 @@ INSERT INTO courses (course_id, title, department, credits) VALUES
 (105, 'Microeconomics', 'Economics', 3);
 ```
 
-The `courses` `table` holds this data:
-
-| course_id | title | department | credits |
-| --------- | -------------------- | ---------------- | ------: |
-| 101 | Database Systems | Computer Science | 4 |
-| 102 | Data Structures | Computer Science | 4 |
-| 103 | Linear Algebra | Mathematics | 3 |
-| 104 | Discrete Mathematics | Mathematics | 3 |
-| 105 | Microeconomics | Economics | 3 |
-
 ```postgresql with=init_002.sql
 SELECT DISTINCT department, credits FROM courses;
 ```
-
-Expected output:
-
-| department | credits |
-| ---------------- | ------: |
-| Computer Science | 4 |
-| Mathematics | 3 |
-| Economics | 3 |
-
-- The courses `table` has five `rows`, but this `query` returns only three: `Computer Science, 4`, `Mathematics, 3`, and `Economics, 3`.
-- Both Computer Science courses are worth 4 credits, so that pair of values collapses into a single `row`, and the same happens for the two 3-credit Mathematics courses.
-- Economics stays on its own since no other `row` shares its exact department-and-credits combination.
-- `DISTINCT` here is answering "which department-and-credit-load combinations actually exist," a genuinely different question from listing every course.
 
 ## DISTINCT at a Glance
 

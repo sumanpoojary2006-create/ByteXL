@@ -6,7 +6,43 @@ For her own work that is fine, but this sheet is going in front of people who ha
 
 ## Renaming a Column With AS
 
-Divya rewrites her `query`, adding `AS` after each `column` followed by the label she actually wants to appear in the result.
+The `students` `table` holds this data:
+
+| student_id | full_name | email | city | phone | joined_on |
+| ---------- | ----------------- | ------------------------------ | --------- | ---------- | ---------- |
+| 1 | Ishaan Verma | ishaan.verma@example.com | Bengaluru | 9845011111 | 2025-01-10 |
+| 2 | Meera Pillai | meera.pillai@example.com | Chennai | 9884022222 | 2025-01-12 |
+| 3 | Arjun Bhat | arjun.bhat@example.com | Bengaluru | *NULL* | 2025-01-15 |
+| 4 | Kavya Reddy | kavya.reddy@example.com | Pune | 9922033333 | 2025-01-18 |
+| 5 | Rohan Joshi | rohan.joshi@example.com | Hyderabad | 9640044444 | 2025-01-20 |
+| 6 | Sneha Gowda | sneha.gowda@example.com | Mysuru | *NULL* | 2025-01-22 |
+| 7 | Aditya Kulkarni | aditya.kulkarni@example.com | Pune | 9822055555 | 2025-01-25 |
+| 8 | Priya Subramaniam | priya.subramaniam@example.com | Chennai | 9884066666 | 2025-01-28 |
+
+To build this `table` with this data, a `CREATE TABLE` statement defines the six `columns` shown above, and an `INSERT INTO` statement loads the eight `rows` into it.
+
+Divya wants the `full_name` and `city` `columns`, but labelled "Student Name" and "Location" instead of their raw internal names. She rewrites her `query`, adding `AS` after each `column` followed by the label she actually wants to appear in the result: `SELECT full_name AS student_name, city AS location FROM students;`.
+
+Expected output:
+
+| student_name | location |
+| ----------------- | --------- |
+| Ishaan Verma | Bengaluru |
+| Meera Pillai | Chennai |
+| Arjun Bhat | Bengaluru |
+| Kavya Reddy | Pune |
+| Rohan Joshi | Hyderabad |
+| Sneha Gowda | Mysuru |
+| Aditya Kulkarni | Pune |
+| Priya Subramaniam | Chennai |
+
+- The data has not changed at all, still eight `rows` of the same names and cities, but the header `row` of the result now reads `student_name` and `location`.
+- `AS` sits between the real `column` and the label Divya wants in its place, and the label only exists for this one result, it never renames anything inside the actual `table`.
+- Run `SELECT * FROM students;` again separately and the `column` is still called `full_name` there, untouched.
+
+![Column aliases changing raw headers into friendlier output names using AS](images/03_column_alias_as_output_headers.png)
+
+Try it yourself:
 
 ```postgresql file=init.sql
 CREATE TABLE students (
@@ -29,53 +65,14 @@ INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALU
 (8, 'Priya Subramaniam', 'priya.subramaniam@example.com', 'Chennai', '9884066666', '2025-01-28');
 ```
 
-The `students` `table` holds this data:
-
-| student_id | full_name | email | city | phone | joined_on |
-| ---------- | ----------------- | ------------------------------ | --------- | ---------- | ---------- |
-| 1 | Ishaan Verma | ishaan.verma@example.com | Bengaluru | 9845011111 | 2025-01-10 |
-| 2 | Meera Pillai | meera.pillai@example.com | Chennai | 9884022222 | 2025-01-12 |
-| 3 | Arjun Bhat | arjun.bhat@example.com | Bengaluru | *NULL* | 2025-01-15 |
-| 4 | Kavya Reddy | kavya.reddy@example.com | Pune | 9922033333 | 2025-01-18 |
-| 5 | Rohan Joshi | rohan.joshi@example.com | Hyderabad | 9640044444 | 2025-01-20 |
-| 6 | Sneha Gowda | sneha.gowda@example.com | Mysuru | *NULL* | 2025-01-22 |
-| 7 | Aditya Kulkarni | aditya.kulkarni@example.com | Pune | 9822055555 | 2025-01-25 |
-| 8 | Priya Subramaniam | priya.subramaniam@example.com | Chennai | 9884066666 | 2025-01-28 |
-
-Divya wants the `full_name` and `city` `columns`, but labelled "Student Name" and "Location" instead of their raw internal names.
-
 ```postgresql with=init.sql
 SELECT full_name AS student_name, city AS location
 FROM students;
 ```
 
-Expected output:
-
-| student_name | location |
-| ----------------- | --------- |
-| Ishaan Verma | Bengaluru |
-| Meera Pillai | Chennai |
-| Arjun Bhat | Bengaluru |
-| Kavya Reddy | Pune |
-| Rohan Joshi | Hyderabad |
-| Sneha Gowda | Mysuru |
-| Aditya Kulkarni | Pune |
-| Priya Subramaniam | Chennai |
-
-- The data has not changed at all, still eight `rows` of the same names and cities, but the header `row` of the result now reads `student_name` and `location`.
-- `AS` sits between the real `column` and the label Divya wants in its place, and the label only exists for this one result, it never renames anything inside the actual `table`.
-- Run `SELECT * FROM students;` again separately and the `column` is still called `full_name` there, untouched.
-
-![Column aliases changing raw headers into friendlier output names using AS](images/03_column_alias_as_output_headers.png)
-
 ## AS Is Optional, But Worth Keeping
 
-SQL allows a shorter form: dropping the word `AS` entirely and just writing the alias right after the `column` name.
-
-```postgresql with=init.sql
-SELECT full_name student_name, city location
-FROM students;
-```
+SQL allows a shorter form: dropping the word `AS` entirely and just writing the alias right after the `column` name: `SELECT full_name student_name, city location FROM students;`.
 
 This produces the exact same output table shown above, `student_name` and `location` headers included. PostgreSQL is happy to accept either form, so why bother typing the extra word?
 
@@ -83,16 +80,18 @@ Without it, a reader scanning the `query` has to pause and work out whether `stu
 
 The two extra characters buy real clarity, which is why it is worth the habit even though PostgreSQL will not force it on you.
 
+Try it yourself:
+
+```postgresql with=init.sql
+SELECT full_name student_name, city location
+FROM students;
+```
+
 ## Giving a Table a Short Alias
 
 Aliases are not only for `columns`. A `table` can be given a short alias too, and once it has one, that alias can be used anywhere else in the same `query` in place of the full `table` name.
 
-It looks unnecessary on a `query` this small, but the habit pays off the moment a `query` starts pulling from more than one `table`, which is exactly where the students, courses, and enrollments `tables` are eventually headed together.
-
-```postgresql with=init.sql
-SELECT s.full_name AS student_name, s.city AS location
-FROM students AS s;
-```
+It looks unnecessary on a `query` this small, but the habit pays off the moment a `query` starts pulling from more than one `table`, which is exactly where the students, courses, and enrollments `tables` are eventually headed together: `SELECT s.full_name AS student_name, s.city AS location FROM students AS s;`.
 
 Expected output is identical to the two `queries` above, the same `student_name` and `location` `columns` for all eight students; only the `query` text changed, not the answer it produces.
 
@@ -101,6 +100,13 @@ Here `students AS s` tells PostgreSQL that `s` now stands for the students `tabl
 Divya keeps it in her own `queries` because it reads more clearly to anyone who has not seen the `query` before.
 
 ![A students table receiving the short table alias s for use in one query](images/04_table_alias_short_name.png)
+
+Try it yourself:
+
+```postgresql with=init.sql
+SELECT s.full_name AS student_name, s.city AS location
+FROM students AS s;
+```
 
 ## Aliases and Table Aliases at a Glance
 

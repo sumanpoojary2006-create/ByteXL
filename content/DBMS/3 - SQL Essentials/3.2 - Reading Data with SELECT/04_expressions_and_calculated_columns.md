@@ -11,24 +11,6 @@ A value built this way, out of `columns` and operators rather than read directly
 
 ## Doing Arithmetic in a SELECT List
 
-The courses `table` stores a `credits` `column` as a plain integer. Nikhil wants a doubled version of it for his workload score, and he gets it by writing the arithmetic directly where a `column` name would normally go.
-
-```postgresql file=init.sql
-CREATE TABLE courses (
-    course_id INTEGER PRIMARY KEY,
-    title TEXT,
-    department TEXT,
-    credits INTEGER
-);
-
-INSERT INTO courses (course_id, title, department, credits) VALUES
-(101, 'Database Systems', 'Computer Science', 4),
-(102, 'Data Structures', 'Computer Science', 4),
-(103, 'Linear Algebra', 'Mathematics', 3),
-(104, 'Discrete Mathematics', 'Mathematics', 3),
-(105, 'Microeconomics', 'Economics', 3);
-```
-
 The `courses` `table` holds this data:
 
 | course_id | title | department | credits |
@@ -39,10 +21,9 @@ The `courses` `table` holds this data:
 | 104 | Discrete Mathematics | Mathematics | 3 |
 | 105 | Microeconomics | Economics | 3 |
 
-```postgresql with=init.sql
-SELECT title, credits, credits * 2 AS double_credits
-FROM courses;
-```
+To build this `table` with this data, a `CREATE TABLE` statement defines the four `columns` shown above, and an `INSERT INTO` statement loads the five `rows` into it.
+
+The `credits` `column` is stored as a plain integer. Nikhil wants a doubled version of it for his workload score, and he gets it by writing the arithmetic directly where a `column` name would normally go: `SELECT title, credits, credits * 2 AS double_credits FROM courses;`.
 
 Expected output:
 
@@ -60,14 +41,32 @@ The usual arithmetic operators all work the same way inside a `SELECT` list: `+`
 
 ![An arithmetic expression turning credits into a calculated double_credits value](images/07_expression_arithmetic_calculated_column.png)
 
-## Combining Text With Concatenation
+Try it yourself:
 
-Numbers are not the only thing an expression can build. PostgreSQL lets you glue pieces of text together using the `||` operator, called concatenation, which is exactly what Nikhil needs for his combined label.
+```postgresql file=init.sql
+CREATE TABLE courses (
+    course_id INTEGER PRIMARY KEY,
+    title TEXT,
+    department TEXT,
+    credits INTEGER
+);
+
+INSERT INTO courses (course_id, title, department, credits) VALUES
+(101, 'Database Systems', 'Computer Science', 4),
+(102, 'Data Structures', 'Computer Science', 4),
+(103, 'Linear Algebra', 'Mathematics', 3),
+(104, 'Discrete Mathematics', 'Mathematics', 3),
+(105, 'Microeconomics', 'Economics', 3);
+```
 
 ```postgresql with=init.sql
-SELECT department || ': ' || title AS course_label
+SELECT title, credits, credits * 2 AS double_credits
 FROM courses;
 ```
+
+## Combining Text With Concatenation
+
+Numbers are not the only thing an expression can build. PostgreSQL lets you glue pieces of text together using the `||` operator, called concatenation, which is exactly what Nikhil needs for his combined label: `SELECT department || ': ' || title AS course_label FROM courses;`.
 
 Expected output:
 
@@ -83,14 +82,16 @@ Each row now returns a single text value: "Computer Science: Database Systems", 
 
 ![Text concatenation joining department, a separator, and title into one course label](images/08_expression_text_concatenation.png)
 
-## Mixing Expressions With Ordinary Columns
-
-An expression does not have to stand alone. It sits in the `SELECT` list exactly like any real `column`, so a single `query` can freely mix calculated values with `columns` pulled straight from the `table`.
+Try it yourself:
 
 ```postgresql with=init.sql
-SELECT course_id, title, credits, credits * 2 AS double_credits, department || ': ' || title AS course_label
+SELECT department || ': ' || title AS course_label
 FROM courses;
 ```
+
+## Mixing Expressions With Ordinary Columns
+
+An expression does not have to stand alone. It sits in the `SELECT` list exactly like any real `column`, so a single `query` can freely mix calculated values with `columns` pulled straight from the `table`: `SELECT course_id, title, credits, credits * 2 AS double_credits, department || ': ' || title AS course_label FROM courses;`.
 
 Expected output:
 
@@ -103,6 +104,13 @@ Expected output:
 | 105 | Microeconomics | 3 | 6 | Economics: Microeconomics |
 
 This single `query` returns five `columns`: two untouched `columns` straight off the `table`, `course_id` and `title`, alongside `credits` shown plainly, then the doubled value, then the combined label, all computed in one pass over the same five `rows`. Nothing stops a `query` from having as many expressions as it needs sitting beside as many plain `columns` as it needs.
+
+Try it yourself:
+
+```postgresql with=init.sql
+SELECT course_id, title, credits, credits * 2 AS double_credits, department || ': ' || title AS course_label
+FROM courses;
+```
 
 ## Expressions at a Glance
 

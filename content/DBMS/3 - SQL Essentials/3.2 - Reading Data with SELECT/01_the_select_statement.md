@@ -6,7 +6,42 @@ He is not filtering anything, not searching for one particular person, not doing
 
 ## Asking For Everything in a Table
 
-The students `table` already exists in the college's `database`, with one `row` per student and `columns` for their ID, name, email, city, phone number, and the date they joined. Karthik's first `query` asks for all of it, every `column`, every `row`.
+The students `table` already exists in the college's `database`, with one `row` per student and `columns` for their ID, name, email, city, phone number, and the date they joined. This is the data Karthik is working with:
+
+| student_id | full_name | email | city | phone | joined_on |
+| ---------- | ----------------- | ------------------------------ | --------- | ---------- | ---------- |
+| 1 | Ishaan Verma | ishaan.verma@example.com | Bengaluru | 9845011111 | 2025-01-10 |
+| 2 | Meera Pillai | meera.pillai@example.com | Chennai | 9884022222 | 2025-01-12 |
+| 3 | Arjun Bhat | arjun.bhat@example.com | Bengaluru | *NULL* | 2025-01-15 |
+| 4 | Kavya Reddy | kavya.reddy@example.com | Pune | 9922033333 | 2025-01-18 |
+| 5 | Rohan Joshi | rohan.joshi@example.com | Hyderabad | 9640044444 | 2025-01-20 |
+| 6 | Sneha Gowda | sneha.gowda@example.com | Mysuru | *NULL* | 2025-01-22 |
+| 7 | Aditya Kulkarni | aditya.kulkarni@example.com | Pune | 9822055555 | 2025-01-25 |
+| 8 | Priya Subramaniam | priya.subramaniam@example.com | Chennai | 9884066666 | 2025-01-28 |
+
+To build this `table` with this data, a `CREATE TABLE` statement defines the six `columns` shown above, and an `INSERT INTO` statement loads the eight `rows` into it.
+
+Karthik's first `query` asks for all of this, every `column`, every `row`, with no filtering at all: `SELECT * FROM students;`. `SELECT` names what to retrieve, `*` is a shorthand meaning "every `column`," and `FROM students` names the `table` to read from.
+
+Expected output:
+
+| student_id | full_name | email | city | phone | joined_on |
+| ---------- | ----------------- | ------------------------------ | --------- | ---------- | ---------- |
+| 1 | Ishaan Verma | ishaan.verma@example.com | Bengaluru | 9845011111 | 2025-01-10 |
+| 2 | Meera Pillai | meera.pillai@example.com | Chennai | 9884022222 | 2025-01-12 |
+| 3 | Arjun Bhat | arjun.bhat@example.com | Bengaluru | *NULL* | 2025-01-15 |
+| 4 | Kavya Reddy | kavya.reddy@example.com | Pune | 9922033333 | 2025-01-18 |
+| 5 | Rohan Joshi | rohan.joshi@example.com | Hyderabad | 9640044444 | 2025-01-20 |
+| 6 | Sneha Gowda | sneha.gowda@example.com | Mysuru | *NULL* | 2025-01-22 |
+| 7 | Aditya Kulkarni | aditya.kulkarni@example.com | Pune | 9822055555 | 2025-01-25 |
+| 8 | Priya Subramaniam | priya.subramaniam@example.com | Chennai | 9884066666 | 2025-01-28 |
+
+- Running this returns all eight `rows` and all six `columns`, exactly as they are stored — the output is identical to the source `table` because nothing was filtered or narrowed.
+- Karthik gets his orientation list in one line, and for a quick, throwaway look at a small `table`, that is a perfectly reasonable way to work.
+
+![SELECT star returning all columns and all rows from the students table](images/01_select_star_all_rows_columns.png)
+
+Try it yourself:
 
 ```postgresql file=init.sql
 CREATE TABLE students (
@@ -29,51 +64,13 @@ INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALU
 (8, 'Priya Subramaniam', 'priya.subramaniam@example.com', 'Chennai', '9884066666', '2025-01-28');
 ```
 
-Before running any `query`, it helps to see exactly what the `students` `table` holds. This is the data Karthik is working with:
-
-| student_id | full_name | email | city | phone | joined_on |
-| ---------- | ----------------- | ------------------------------ | --------- | ---------- | ---------- |
-| 1 | Ishaan Verma | ishaan.verma@example.com | Bengaluru | 9845011111 | 2025-01-10 |
-| 2 | Meera Pillai | meera.pillai@example.com | Chennai | 9884022222 | 2025-01-12 |
-| 3 | Arjun Bhat | arjun.bhat@example.com | Bengaluru | *NULL* | 2025-01-15 |
-| 4 | Kavya Reddy | kavya.reddy@example.com | Pune | 9922033333 | 2025-01-18 |
-| 5 | Rohan Joshi | rohan.joshi@example.com | Hyderabad | 9640044444 | 2025-01-20 |
-| 6 | Sneha Gowda | sneha.gowda@example.com | Mysuru | *NULL* | 2025-01-22 |
-| 7 | Aditya Kulkarni | aditya.kulkarni@example.com | Pune | 9822055555 | 2025-01-25 |
-| 8 | Priya Subramaniam | priya.subramaniam@example.com | Chennai | 9884066666 | 2025-01-28 |
-
-Karthik's first `query` asks for all of this, every `column`, every `row`, with no filtering at all.
-
 ```postgresql with=init.sql
 SELECT * FROM students;
 ```
 
-Expected output:
-
-| student_id | full_name | email | city | phone | joined_on |
-| ---------- | ----------------- | ------------------------------ | --------- | ---------- | ---------- |
-| 1 | Ishaan Verma | ishaan.verma@example.com | Bengaluru | 9845011111 | 2025-01-10 |
-| 2 | Meera Pillai | meera.pillai@example.com | Chennai | 9884022222 | 2025-01-12 |
-| 3 | Arjun Bhat | arjun.bhat@example.com | Bengaluru | *NULL* | 2025-01-15 |
-| 4 | Kavya Reddy | kavya.reddy@example.com | Pune | 9922033333 | 2025-01-18 |
-| 5 | Rohan Joshi | rohan.joshi@example.com | Hyderabad | 9640044444 | 2025-01-20 |
-| 6 | Sneha Gowda | sneha.gowda@example.com | Mysuru | *NULL* | 2025-01-22 |
-| 7 | Aditya Kulkarni | aditya.kulkarni@example.com | Pune | 9822055555 | 2025-01-25 |
-| 8 | Priya Subramaniam | priya.subramaniam@example.com | Chennai | 9884066666 | 2025-01-28 |
-
-- Running this returns all eight `rows` and all six `columns`, exactly as they are stored — the output is identical to the source `table` because nothing was filtered or narrowed.
-- `SELECT` names what to retrieve, `*` is a shorthand meaning "every `column`," and `FROM students` names the `table` to read from.
-- Karthik gets his orientation list in one line, and for a quick, throwaway look at a small `table`, that is a perfectly reasonable way to work.
-
-![SELECT star returning all columns and all rows from the students table](images/01_select_star_all_rows_columns.png)
-
 ## Asking For Only What You Need
 
-A few minutes later, the coordinator asks a narrower question: "I just need names and cities, for the seating arrangement." Pulling every `column` again and mentally ignoring the ones that do not matter would work, but it is not what a careful `query` looks like. Karthik instead names exactly the `columns` he wants, separated by commas, in the order he wants them to appear.
-
-```postgresql with=init.sql
-SELECT full_name, city FROM students;
-```
+A few minutes later, the coordinator asks a narrower question: "I just need names and cities, for the seating arrangement." Pulling every `column` again and mentally ignoring the ones that do not matter would work, but it is not what a careful `query` looks like. Karthik instead names exactly the `columns` he wants, separated by commas, in the order he wants them to appear: `SELECT full_name, city FROM students;`.
 
 Expected output:
 
@@ -88,11 +85,7 @@ Expected output:
 | Aditya Kulkarni | Pune |
 | Priya Subramaniam | Chennai |
 
-The result now has exactly two `columns`, `full_name` and `city`, for all eight students. Naming `columns` explicitly is not just shorter to read, it tells anyone looking at the `query`, including Karthik himself a month from now, precisely what data the `query` depends on. He can add `email` to the list just as easily.
-
-```postgresql with=init.sql
-SELECT full_name, email, city FROM students;
-```
+The result now has exactly two `columns`, `full_name` and `city`, for all eight students. Naming `columns` explicitly is not just shorter to read, it tells anyone looking at the `query`, including Karthik himself a month from now, precisely what data the `query` depends on. He can add `email` to the list just as easily: `SELECT full_name, email, city FROM students;`.
 
 Expected output:
 
@@ -110,6 +103,16 @@ Expected output:
 The `column` list can hold as many or as few `columns` as the task needs, in any order, and that order is exactly how they will appear in the result, regardless of how the `table` itself was created.
 
 ![Selecting only full_name and city instead of every column](images/02_select_specific_columns.png)
+
+Try it yourself:
+
+```postgresql with=init.sql
+SELECT full_name, city FROM students;
+```
+
+```postgresql with=init.sql
+SELECT full_name, email, city FROM students;
+```
 
 ## Why Not Always Use SELECT *
 
