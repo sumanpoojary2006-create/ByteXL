@@ -4,6 +4,8 @@ Yusuf is trying to list every enrollment that has already been graded, so he wri
 
 He has just run into the one place where SQL's usual comparison rules quietly stop applying: **`NULL`**, the marker for a value that is missing or not yet known.
 
+![NULL as an unknown value where grade equals NULL is wrong and grade IS NULL is correct](images/09_null_requires_is_null.png)
+
 ## Why grade = NULL Never Works
 
 `NULL` does not mean any of these:
@@ -108,8 +110,6 @@ Expected output:
 Zero `rows` come back, even though three enrollments genuinely have a `NULL` grade. The reason is that `=` asks "are these two values the same," and `NULL` is not a value at all, it is the absence of one. Comparing an unknown quantity against anything, even against another unknown quantity, does not produce true, it produces unknown, and `WHERE` only keeps `rows` where the condition comes out true.
 
 A condition that comes out unknown is treated exactly like one that came out false: the `row` is dropped either way.
-
-![NULL as an unknown value where grade equals NULL is wrong and grade IS NULL is correct](images/09_null_requires_is_null.png)
 
 ## IS NULL and IS NOT NULL
 
@@ -249,8 +249,6 @@ This should return Neha Sharma, Yusuf Khan, and Sanya Iyer, the three students w
 
 ## Conclusion
 
-- `NULL` represents a genuinely unknown value, not a stand-in for zero or empty text, which is exactly why an ordinary `=` comparison against it never returns true and `IS NULL` or `IS NOT NULL` exist as the dedicated way to ask the question instead.
-- `COALESCE` rounds this out by letting a report show something meaningful in place of a gap, without changing the underlying data at all.
-- Yusuf's original list of graded enrollments now comes back correctly once `WHERE grade = NULL` is replaced with `WHERE grade IS NOT NULL`, the fix for the exact trap that returned zero `rows` the first time he ran it.
-- Filtering and reading data only goes so far, though.
-- Sooner or later that in-progress enrollment needs its grade actually entered, a new student needs to be added to the roster, or an old record needs to be corrected, and that means moving from asking the `database` questions to actually changing what it holds.
+`NULL` represents an unknown or missing value, not zero or empty text. That is why `=` cannot find it, why `IS NULL` and `IS NOT NULL` exist, and why `COALESCE` is useful when a report needs a readable fallback without changing the stored data. Yusuf's graded-enrollment query works as soon as `WHERE grade = NULL` becomes `WHERE grade IS NOT NULL`.
+
+Filtering and reading data only goes so far. Eventually an in-progress enrollment needs its grade entered, a new student needs adding, or an old record needs correcting. Those tasks move from asking the `database` questions to changing the data it holds.

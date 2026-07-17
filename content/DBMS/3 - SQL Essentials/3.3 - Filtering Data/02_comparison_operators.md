@@ -4,6 +4,8 @@ Neha is checking which courses are worth the heavier workload before she registe
 
 Both questions lean on the same family of tools, the **comparison operators**, which let `WHERE` ask "greater than," "less than," or "not equal to," instead of only "equal to."
 
+![A credits greater than 3 comparison keeping only 4-credit course cards](images/03_comparison_credits_greater_than.png)
+
 ## Six Operators, One Idea
 
 SQL gives you six comparison operators, and every one of them reduces to the same thing `WHERE` has always done: test a `row`, keep it if the test is true.
@@ -99,8 +101,6 @@ Expected output:
 
 - That returns `Database Systems` and `Data Structures`, the two courses worth more than three credits.
 - `Linear Algebra` and `Discrete Mathematics` sit at exactly three credits, so `> 3` leaves them out; had Neha written `>= 3` instead, both would have qualified alongside the two Computer Science courses.
-
-![A credits greater than 3 comparison keeping only 4-credit course cards](images/03_comparison_credits_greater_than.png)
 
 ## Numeric and Date Comparisons Work the Same Way
 

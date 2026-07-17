@@ -4,6 +4,8 @@ Omkar is pulling together a report of Computer Science offerings for his advisor
 
 What he actually needs is a way to tell the `database` "only hand me back the `rows` where this is true," and that instruction has a name: the **`WHERE` clause**.
 
+![WHERE acting as a filter gate that keeps matching Computer Science rows and blocks other rows](images/01_where_filter_keeps_matching_rows.png)
+
 ## Filtering Rows Instead of Reading All of Them
 
 A `SELECT` without a `WHERE` clause returns every `row` a `table` has. Add a `WHERE` clause and the `database` tests each `row` against a condition, keeping only the `rows` where that condition is true and discarding the rest before the result ever reaches Omkar's screen.
@@ -100,8 +102,6 @@ Expected output:
 | Data Structures | Computer Science | 4 |
 
 Only `Database Systems` and `Data Structures` come back. The `database` evaluated the condition `department = 'Computer Science'` against every `row` in `courses`, kept the two `rows` where it held true, and dropped the mathematics and economics `rows` entirely. Omkar's advisor never even sees the `rows` that did not qualify.
-
-![WHERE acting as a filter gate that keeps matching Computer Science rows and blocks other rows](images/01_where_filter_keeps_matching_rows.png)
 
 ## Where WHERE Sits in a Query
 

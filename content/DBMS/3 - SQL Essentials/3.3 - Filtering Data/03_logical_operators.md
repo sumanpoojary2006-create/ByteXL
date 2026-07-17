@@ -4,6 +4,8 @@ Varun wants a shortlist of courses worth registering for: something that is eith
 
 The problem is that SQL read his conditions in an order he did not intend, and fixing it means learning how the **logical operators**, `AND`, `OR`, and `NOT`, actually combine.
 
+![AND and OR shown as gates where AND needs all checks true and OR needs at least one](images/05_and_or_logical_gates.png)
+
 ## Combining Conditions with AND and OR
 
 - `AND` keeps a `row` only when every condition attached to it is true.
@@ -131,8 +133,6 @@ Expected output:
 
 This returns three `rows`: `Linear Algebra`, `Discrete Mathematics`, and `Microeconomics`. `OR` only needs one side of the condition to be true, so every course in either department qualifies.
 
-![AND and OR shown as gates where AND needs all checks true and OR needs at least one](images/05_and_or_logical_gates.png)
-
 ## Where Parentheses Actually Matter
 
 Here is the `query` Varun originally wrote for his shortlist, exactly as he typed it.
@@ -251,7 +251,6 @@ This should return exactly `Database Systems` and `Data Structures`. Both Mathem
 
 ## Conclusion
 
-- `AND`, `OR`, and `NOT` let a single `WHERE` clause weigh several conditions at once, but `AND` silently binds tighter than `OR` whenever both appear together ungrouped, which is precisely the kind of quiet behaviour that turns a reasonable-looking `query` into a wrong answer.
-- Parentheses remove the ambiguity by stating the grouping explicitly rather than leaving it to a precedence rule the reader may not be thinking about.
-- Varun's shortlist now correctly grouped, `(department = 'Computer Science' OR department = 'Economics') AND credits > 3`, returns only the two Computer Science courses he actually wanted, with Microeconomics no longer sneaking in under its two credits.
-- With conditions on numbers, dates, and now combinations of several conditions all covered, the next gap is text that is not an exact match at all, finding `rows` by a partial pattern rather than a known value.
+`AND`, `OR`, and `NOT` let a single `WHERE` clause weigh several conditions at once. Because `AND` binds more tightly than `OR`, parentheses matter whenever the intended grouping is not obvious. Varun's correctly grouped condition, `(department = 'Computer Science' OR department = 'Economics') AND credits > 3`, now returns only the two qualifying Computer Science courses instead of allowing Microeconomics to slip through.
+
+With numeric, date, and combined conditions covered, the next gap is text that is not an exact match at all. Pattern matching provides the tools for finding `rows` from only part of a stored value.

@@ -4,6 +4,8 @@ Siddharth has been asked to pull together a list of everyone still using their c
 
 What he needs is a way to match a partial shape of text rather than an exact value, and that is what **pattern matching** with `LIKE` is for.
 
+![LIKE with percent wildcard matching any email that ends in campusmail.edu](images/07_like_percent_email_pattern.png)
+
 ## Matching Part of a String with LIKE
 
 `LIKE` compares a text `column` against a pattern instead of a fixed value. The pattern can include two special wildcard characters:
@@ -109,8 +111,6 @@ Expected output:
 - Five students come back: Omkar Rane, Neha Sharma, Siddharth Rao, Ishita Menon, and Sanya Iyer.
 - The `%` before `campusmail.edu` means "anything at all can appear before this text," so the pattern matches regardless of what the local part of the address looks like, as long as the address ends with `campusmail.edu`.
 - Varun Nair, Yusuf Khan, and Rahul Verma are left out, since their addresses end with `gmail.com` instead.
-
-![LIKE with percent wildcard matching any email that ends in campusmail.edu](images/07_like_percent_email_pattern.png)
 
 ## Anchoring a Pattern to the Start or Middle
 
@@ -238,7 +238,6 @@ This should return exactly one `row`, Rahul Verma, since his email address is th
 
 ## Conclusion
 
-- `LIKE` turns `WHERE` from a tool that only recognises exact values into one that can recognise a shape of text, using `%` for a stretch of any length and `_` for a single fixed position, with `ILIKE` available whenever letter case should not matter.
-- Siddharth can now pull his full list of college-issued addresses ahead of the mail migration with a single `WHERE email LIKE '%campusmail.edu'`, without ever needing a fixed value to match against.
-- Text is not the only place an exact match falls short, though.
-- Some `columns` do not hold a value at all, and comparing against nothing behaves in a way that trips up almost everyone the first time they meet it.
+`LIKE` turns `WHERE` from a tool that only recognises exact values into one that can recognise the shape of text. `%` stands for a stretch of any length, `_` stands for one character, and PostgreSQL's `ILIKE` ignores letter case. Siddharth can therefore retrieve every college-issued address with `WHERE email LIKE '%campusmail.edu'` without knowing each complete address beforehand.
+
+Text is not the only place where an exact comparison falls short. Some `columns` hold no known value at all, and working with that absence requires SQL's special `NULL` rules.
