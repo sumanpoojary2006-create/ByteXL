@@ -1,6 +1,6 @@
 # Database Management Systems
 
-8 units, each broken into chapters, each chapter into topics (lessons). Source of truth: `content/Curriculum/DBMS/Course Blueprint for RDBMS.xlsx`, sheet `Syllabus`. Coding-question scope: `content/Curriculum/DBMS/DBMS Coding-Question Scope.md`.
+9 units, each broken into chapters, each chapter into topics (lessons). Source of truth: `content/Curriculum/DBMS/Course Blueprint for RDBMS.xlsx`, sheet `Syllabus`. Coding-question scope: `content/Curriculum/DBMS/DBMS Coding-Question Scope.md`.
 
 ![DBMS course roadmap from foundations through production](images/01_dbms_course_roadmap.png)
 
@@ -74,6 +74,13 @@
       <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">4</td>
       <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">23</td>
       <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><a href="8%20-%20Going%20to%20Production/">Going to Production</a></td>
+    </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">9</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Capstone Projects</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">1</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">1</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><a href="9%20-%20Capstone%20Projects/">Capstone Projects</a></td>
     </tr>
   </tbody>
 </table>
