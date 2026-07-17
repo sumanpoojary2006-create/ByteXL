@@ -38,7 +38,27 @@ Inside that one `database`, Pooja's next job is to organize her `tables` sensibl
 
 She reaches for a `schema` named `campus` to hold everything belonging to this project, and then defines two `tables` inside it: `students`, one `row` per person enrolled at the institute, and `courses`, one `row` per course on offer. Every `column` gets a type that honestly matches the value it will hold, a habit she picked up from designing `tables` long before she ever touched live SQL.
 
-```postgresql
+Before writing the setup, inspect the two tables Pooja intends to create and populate.
+
+The `students` table will contain:
+
+| student_id | full_name | email | city | phone | joined_on |
+| ---------- | -------------- | -------------------------- | --------- | ---------- | ---------- |
+| 1 | Meera Nair | meera.nair@example.com | Kochi | 9876500001 | 2026-01-12 |
+| 2 | Arjun Das | arjun.das@example.com | Bengaluru | *NULL* | 2026-01-15 |
+| 3 | Fatima Sheikh | fatima.sheikh@example.com | Hyderabad | 9876500003 | 2026-02-01 |
+
+The `courses` table will contain:
+
+| course_id | title | department | credits |
+| --------- | ---------------------- | ---------------- | ------: |
+| 101 | Database Fundamentals | Computer Science | 4 |
+| 102 | Business Communication | Management | 2 |
+| 103 | Applied Statistics | Mathematics | 3 |
+
+To reproduce these tables, `init.sql` creates the `campus` schema, defines both table structures, and inserts the displayed rows. The active query file is kept separate so students can practise reading the finished tables without mixing retrieval SQL into the setup.
+
+```postgresql file=init.sql
 CREATE SCHEMA IF NOT EXISTS campus;
 
 CREATE TABLE campus.students (
@@ -66,10 +86,30 @@ INSERT INTO campus.courses (course_id, title, department, credits) VALUES
     (101, 'Database Fundamentals', 'Computer Science', 4),
     (102, 'Business Communication', 'Management', 2),
     (103, 'Applied Statistics', 'Mathematics', 3);
+```
 
+Once `init.sql` has prepared the data, the active query file reads both tables with `SELECT *`. Each statement requests every stored column and row from one table.
+
+```postgresql with=init.sql
 SELECT * FROM campus.students;
 SELECT * FROM campus.courses;
 ```
+
+Expected output from `campus.students`:
+
+| student_id | full_name | email | city | phone | joined_on |
+| ---------- | -------------- | -------------------------- | --------- | ---------- | ---------- |
+| 1 | Meera Nair | meera.nair@example.com | Kochi | 9876500001 | 2026-01-12 |
+| 2 | Arjun Das | arjun.das@example.com | Bengaluru | *NULL* | 2026-01-15 |
+| 3 | Fatima Sheikh | fatima.sheikh@example.com | Hyderabad | 9876500003 | 2026-02-01 |
+
+Expected output from `campus.courses`:
+
+| course_id | title | department | credits |
+| --------- | ---------------------- | ---------------- | ------: |
+| 101 | Database Fundamentals | Computer Science | 4 |
+| 102 | Business Communication | Management | 2 |
+| 103 | Applied Statistics | Mathematics | 3 |
 
 Reading through what each part does: `CREATE SCHEMA IF NOT EXISTS campus` sets up the named grouping first, since both `tables` need somewhere to live, and the `IF NOT EXISTS` guard means rerunning this statement will not fail with an error if the `schema` is already there.
 

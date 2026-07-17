@@ -16,55 +16,30 @@ He has just run into the one place where SQL's usual comparison rules quietly st
 
 It means "unknown." Three of Yusuf's enrollments have not been graded yet, because the courses are still in progress, so their `grade` `column` holds `NULL` rather than any particular grade.
 
+The `enrollments` `table` holds this data:
+
+| enrollment_id | student_id | course_id | enrolled_on | grade |
+| ------------- | ---------- | --------- | ---------- | ------ |
+| 1 | 1 | 101 | 2025-02-01 | A |
+| 2 | 1 | 103 | 2025-02-01 | B+ |
+| 3 | 2 | 101 | 2025-02-02 | *NULL* |
+| 4 | 3 | 102 | 2025-02-03 | A- |
+| 5 | 3 | 105 | 2025-02-03 | *NULL* |
+| 6 | 4 | 104 | 2025-02-04 | B |
+| 7 | 5 | 101 | 2025-02-05 | *NULL* |
+| 8 | 6 | 102 | 2025-02-06 | A |
+| 9 | 7 | 103 | 2025-02-07 | C+ |
+| 10 | 8 | 105 | 2025-02-08 | B- |
+
+Yusuf's attempted query is `SELECT enrollment_id, student_id, course_id, grade FROM enrollments WHERE grade = NULL;`. It looks similar to an ordinary equality check, but it cannot succeed because `NULL` means the value is unknown. An unknown comparison is not true, and `WHERE` keeps only true conditions.
+
+For hands-on practice, `init.sql` creates and populates only the displayed `enrollments` table:
+
 ```postgresql file=init.sql
-CREATE TABLE students (
-    student_id INTEGER PRIMARY KEY,
-    full_name TEXT,
-    email TEXT,
-    city TEXT,
-    phone TEXT,
-    joined_on DATE
-);
-
-INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
-(1, 'Omkar Rane', 'omkar.rane@campusmail.edu', 'Bengaluru', '9845011111', '2025-01-10'),
-(2, 'Neha Sharma', 'neha.sharma@campusmail.edu', 'Mysuru', NULL, '2025-01-12'),
-(3, 'Varun Nair', 'varun.nair@gmail.com', 'Chennai', '9845022222', '2025-01-15'),
-(4, 'Siddharth Rao', 'siddharth.rao@campusmail.edu', 'Hyderabad', '9845033333', '2025-01-18'),
-(5, 'Yusuf Khan', 'yusuf.khan@gmail.com', 'Pune', NULL, '2025-01-20'),
-(6, 'Ishita Menon', 'ishita.menon@campusmail.edu', 'Bengaluru', '9845044444', '2025-01-22'),
-(7, 'Rahul Verma', 'rahul.verma@gmail.com', 'Chennai', '9845055555', '2025-01-25'),
-(8, 'Sanya Iyer', 'sanya.iyer@campusmail.edu', 'Mysuru', NULL, '2025-01-28');
-
-CREATE TABLE courses (
-    course_id INTEGER PRIMARY KEY,
-    title TEXT,
-    department TEXT,
-    credits INTEGER
-);
-
-INSERT INTO courses (course_id, title, department, credits) VALUES
-(101, 'Database Systems', 'Computer Science', 4),
-(102, 'Data Structures', 'Computer Science', 4),
-(103, 'Linear Algebra', 'Mathematics', 3),
-(104, 'Discrete Mathematics', 'Mathematics', 3),
-(105, 'Microeconomics', 'Economics', 2);
-
-CREATE TABLE instructors (
-    instructor_id INTEGER PRIMARY KEY,
-    full_name TEXT,
-    department TEXT
-);
-
-INSERT INTO instructors (instructor_id, full_name, department) VALUES
-(201, 'Ananya Bose', 'Computer Science'),
-(202, 'Manoj Pillai', 'Mathematics'),
-(203, 'Kavita Reddy', 'Economics');
-
 CREATE TABLE enrollments (
     enrollment_id INTEGER PRIMARY KEY,
-    student_id INTEGER REFERENCES students(student_id),
-    course_id INTEGER REFERENCES courses(course_id),
+    student_id INTEGER,
+    course_id INTEGER,
     enrolled_on DATE,
     grade TEXT
 );
@@ -82,20 +57,7 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 (10, 8, 105, '2025-02-08', 'B-');
 ```
 
-The `enrollments` `table` holds this data:
-
-| enrollment_id | student_id | course_id | enrolled_on | grade |
-| ------------- | ---------- | --------- | ---------- | ------ |
-| 1 | 1 | 101 | 2025-02-01 | A |
-| 2 | 1 | 103 | 2025-02-01 | B+ |
-| 3 | 2 | 101 | 2025-02-02 | *NULL* |
-| 4 | 3 | 102 | 2025-02-03 | A- |
-| 5 | 3 | 105 | 2025-02-03 | *NULL* |
-| 6 | 4 | 104 | 2025-02-04 | B |
-| 7 | 5 | 101 | 2025-02-05 | *NULL* |
-| 8 | 6 | 102 | 2025-02-06 | A |
-| 9 | 7 | 103 | 2025-02-07 | C+ |
-| 10 | 8 | 105 | 2025-02-08 | B- |
+The active query file contains only the query being tested:
 
 ```postgresql with=init.sql
 SELECT enrollment_id, student_id, course_id, grade
@@ -150,7 +112,7 @@ Expected output:
 | 9 | 7 | 103 | C+ |
 | 10 | 8 | 105 | B- |
 
-This returns the other seven enrollments, every `row` where a grade has actually been recorded. The same pattern applies anywhere a `column` might be missing data. The `students` `table` has a `phone` `column` left `NULL` for three students who never provided one, and `phone IS NULL` is the only correct way to find them.
+This returns the other seven enrollments, every `row` where a grade has actually been recorded. The same pattern applies to any nullable `column`: use `IS NULL` to find missing values and `IS NOT NULL` to find recorded values.
 
 ## Supplying a Fallback with COALESCE
 
@@ -218,34 +180,23 @@ Every `row` that already had a grade shows that grade unchanged, since `COALESCE
 
 ## Your Turn
 
-Write a `query` that lists the `full_name` of every student who has not provided a phone number. The `students` `table` holds this data:
-
-| student_id | full_name | email | city | phone | joined_on |
-| ---------- | ------------- | ----------------------------- | --------- | ---------- | ---------- |
-| 1 | Omkar Rane | omkar.rane@campusmail.edu | Bengaluru | 9845011111 | 2025-01-10 |
-| 2 | Neha Sharma | neha.sharma@campusmail.edu | Mysuru | *NULL* | 2025-01-12 |
-| 3 | Varun Nair | varun.nair@gmail.com | Chennai | 9845022222 | 2025-01-15 |
-| 4 | Siddharth Rao | siddharth.rao@campusmail.edu | Hyderabad | 9845033333 | 2025-01-18 |
-| 5 | Yusuf Khan | yusuf.khan@gmail.com | Pune | *NULL* | 2025-01-20 |
-| 6 | Ishita Menon | ishita.menon@campusmail.edu | Bengaluru | 9845044444 | 2025-01-22 |
-| 7 | Rahul Verma | rahul.verma@gmail.com | Chennai | 9845055555 | 2025-01-25 |
-| 8 | Sanya Iyer | sanya.iyer@campusmail.edu | Mysuru | *NULL* | 2025-01-28 |
+Write a query that lists the enrollment ID and course ID for every enrollment whose grade has not yet been recorded. The required condition is `grade IS NULL`.
 
 ```postgresql with=init.sql
-SELECT full_name
-FROM students
-WHERE phone IS NULL;
+SELECT enrollment_id, course_id
+FROM enrollments
+WHERE grade IS NULL;
 ```
 
 Expected output:
 
-| full_name |
-| ----------- |
-| Neha Sharma |
-| Yusuf Khan |
-| Sanya Iyer |
+| enrollment_id | course_id |
+| ------------- | --------- |
+| 3 | 101 |
+| 5 | 105 |
+| 7 | 101 |
 
-This should return Neha Sharma, Yusuf Khan, and Sanya Iyer, the three students whose `phone` `column` was left `NULL` when the data was entered. Try writing `WHERE phone = NULL` instead and confirm it silently returns nothing, the same trap Yusuf ran into with grades.
+These three rows are the only enrollments with a missing grade. Replacing `IS NULL` with `= NULL` returns no rows, which demonstrates the same comparison trap from the opening example.
 
 ## Conclusion
 

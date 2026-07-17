@@ -1,6 +1,6 @@
 ## Introduction
 
-Omkar is pulling together a report of Computer Science offerings for his advisor. He starts the way anyone new to SQL does: `SELECT title, department, credits FROM courses;`. The result lists every course in the catalogue, mathematics and economics included, and he has to scroll past `rows` that have nothing to do with what his advisor asked for.
+Omkar is pulling together a report of Computer Science offerings for his advisor. His first attempt retrieves the entire course catalogue. The result includes Mathematics and Economics courses, so he has to scroll past `rows` that have nothing to do with what his advisor asked for.
 
 What he actually needs is a way to tell the `database` "only hand me back the `rows` where this is true," and that instruction has a name: the **`WHERE` clause**.
 
@@ -10,26 +10,40 @@ What he actually needs is a way to tell the `database` "only hand me back the `r
 
 A `SELECT` without a `WHERE` clause returns every `row` a `table` has. Add a `WHERE` clause and the `database` tests each `row` against a condition, keeping only the `rows` where that condition is true and discarding the rest before the result ever reaches Omkar's screen.
 
+The `courses` `table` is the only dataset needed for this lesson. Before looking at the filtering query, inspect all five stored `rows`:
+
+| course_id | title | department | credits |
+| --------- | -------------------- | ---------------- | ------: |
+| 101 | Database Systems | Computer Science | 4 |
+| 102 | Data Structures | Computer Science | 4 |
+| 103 | Linear Algebra | Mathematics | 3 |
+| 104 | Discrete Mathematics | Mathematics | 3 |
+| 105 | Microeconomics | Economics | 2 |
+
+To create this dataset for practice, `CREATE TABLE` defines the four `columns`, and `INSERT INTO` adds the five displayed `rows`. Those statements belong in the OneCompiler setup file. They prepare the data but do not explain filtering, so the lesson first focuses on the `WHERE` query itself.
+
+Omkar needs only the Computer Science courses. The query is `SELECT title, department, credits FROM courses WHERE department = 'Computer Science';`.
+
+- `SELECT title, department, credits` chooses the `columns` that will appear.
+- `FROM courses` identifies the source `table`.
+- `WHERE department = 'Computer Science'` tests each `row` and keeps it only when its department matches the required value.
+
+Expected output:
+
+| title | department | credits |
+| ---------------- | ---------------- | ------: |
+| Database Systems | Computer Science | 4 |
+| Data Structures | Computer Science | 4 |
+
+Only `Database Systems` and `Data Structures` come back. The `database` evaluated the condition `department = 'Computer Science'` against every `row` in `courses`, kept the two `rows` where it held true, and dropped the mathematics and economics `rows` entirely. Omkar's advisor never even sees the `rows` that did not qualify.
+
+## Hands-On Practice: Filter the Courses Table
+
+The OneCompiler exercise uses two files. `init.sql` creates and populates only the `courses` `table`. The active query file contains the `SELECT` statement with its `WHERE` clause. This separation lets you experiment with the filter without mixing setup SQL into the query being studied.
+
+First, `init.sql` prepares the dataset:
+
 ```postgresql file=init.sql
-CREATE TABLE students (
-    student_id INTEGER PRIMARY KEY,
-    full_name TEXT,
-    email TEXT,
-    city TEXT,
-    phone TEXT,
-    joined_on DATE
-);
-
-INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
-(1, 'Omkar Rane', 'omkar.rane@campusmail.edu', 'Bengaluru', '9845011111', '2025-01-10'),
-(2, 'Neha Sharma', 'neha.sharma@campusmail.edu', 'Mysuru', NULL, '2025-01-12'),
-(3, 'Varun Nair', 'varun.nair@gmail.com', 'Chennai', '9845022222', '2025-01-15'),
-(4, 'Siddharth Rao', 'siddharth.rao@campusmail.edu', 'Hyderabad', '9845033333', '2025-01-18'),
-(5, 'Yusuf Khan', 'yusuf.khan@gmail.com', 'Pune', NULL, '2025-01-20'),
-(6, 'Ishita Menon', 'ishita.menon@campusmail.edu', 'Bengaluru', '9845044444', '2025-01-22'),
-(7, 'Rahul Verma', 'rahul.verma@gmail.com', 'Chennai', '9845055555', '2025-01-25'),
-(8, 'Sanya Iyer', 'sanya.iyer@campusmail.edu', 'Mysuru', NULL, '2025-01-28');
-
 CREATE TABLE courses (
     course_id INTEGER PRIMARY KEY,
     title TEXT,
@@ -43,50 +57,9 @@ INSERT INTO courses (course_id, title, department, credits) VALUES
 (103, 'Linear Algebra', 'Mathematics', 3),
 (104, 'Discrete Mathematics', 'Mathematics', 3),
 (105, 'Microeconomics', 'Economics', 2);
-
-CREATE TABLE instructors (
-    instructor_id INTEGER PRIMARY KEY,
-    full_name TEXT,
-    department TEXT
-);
-
-INSERT INTO instructors (instructor_id, full_name, department) VALUES
-(201, 'Ananya Bose', 'Computer Science'),
-(202, 'Manoj Pillai', 'Mathematics'),
-(203, 'Kavita Reddy', 'Economics');
-
-CREATE TABLE enrollments (
-    enrollment_id INTEGER PRIMARY KEY,
-    student_id INTEGER REFERENCES students(student_id),
-    course_id INTEGER REFERENCES courses(course_id),
-    enrolled_on DATE,
-    grade TEXT
-);
-
-INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade) VALUES
-(1, 1, 101, '2025-02-01', 'A'),
-(2, 1, 103, '2025-02-01', 'B+'),
-(3, 2, 101, '2025-02-02', NULL),
-(4, 3, 102, '2025-02-03', 'A-'),
-(5, 3, 105, '2025-02-03', NULL),
-(6, 4, 104, '2025-02-04', 'B'),
-(7, 5, 101, '2025-02-05', NULL),
-(8, 6, 102, '2025-02-06', 'A'),
-(9, 7, 103, '2025-02-07', 'C+'),
-(10, 8, 105, '2025-02-08', 'B-');
 ```
 
-These four `tables`, students, courses, instructors, and enrollments, are the ones Omkar will keep coming back to. The `courses` `table` holds this data:
-
-| course_id | title | department | credits |
-| --------- | -------------------- | ---------------- | ------: |
-| 101 | Database Systems | Computer Science | 4 |
-| 102 | Data Structures | Computer Science | 4 |
-| 103 | Linear Algebra | Mathematics | 3 |
-| 104 | Discrete Mathematics | Mathematics | 3 |
-| 105 | Microeconomics | Economics | 2 |
-
-With this in place, his original problem has a one-line fix.
+Then the active query file applies the filter:
 
 ```postgresql with=init.sql
 SELECT title, department, credits
@@ -94,45 +67,31 @@ FROM courses
 WHERE department = 'Computer Science';
 ```
 
-Expected output:
-
-| title | department | credits |
-| ---------------- | ---------------- | ------: |
-| Database Systems | Computer Science | 4 |
-| Data Structures | Computer Science | 4 |
-
-Only `Database Systems` and `Data Structures` come back. The `database` evaluated the condition `department = 'Computer Science'` against every `row` in `courses`, kept the two `rows` where it held true, and dropped the mathematics and economics `rows` entirely. Omkar's advisor never even sees the `rows` that did not qualify.
+Run the active query file. OneCompiler loads `init.sql` beside it, and the result contains the same two Computer Science courses shown above.
 
 ## Where WHERE Sits in a Query
 
-The clause has a fixed position: it comes right after `FROM` and before `ORDER BY` or `LIMIT`. That ordering reflects the order the `database` actually works in: first decide which `table` to read, then decide which of its `rows` survive, and only after that decide how to sort or trim what is left. The `students` `table` holds this data:
+The clause has a fixed position: it comes right after `FROM` and before `ORDER BY` or `LIMIT`. That ordering reflects the work the `database` performs: choose a source `table`, keep the matching `rows`, sort those survivors, and finally limit the result if required.
 
-| student_id | full_name | email | city | phone | joined_on |
-| ---------- | ------------ | ---------------------------- | --------- | ---------- | ---------- |
-| 1 | Omkar Rane | omkar.rane@campusmail.edu | Bengaluru | 9845011111 | 2025-01-10 |
-| 2 | Neha Sharma | neha.sharma@campusmail.edu | Mysuru | *NULL* | 2025-01-12 |
-| 3 | Varun Nair | varun.nair@gmail.com | Chennai | 9845022222 | 2025-01-15 |
-| 4 | Siddharth Rao | siddharth.rao@campusmail.edu | Hyderabad | 9845033333 | 2025-01-18 |
-| 5 | Yusuf Khan | yusuf.khan@gmail.com | Pune | *NULL* | 2025-01-20 |
-| 6 | Ishita Menon | ishita.menon@campusmail.edu | Bengaluru | 9845044444 | 2025-01-22 |
-| 7 | Rahul Verma | rahul.verma@gmail.com | Chennai | 9845055555 | 2025-01-25 |
-| 8 | Sanya Iyer | sanya.iyer@campusmail.edu | Mysuru | *NULL* | 2025-01-28 |
-
-```postgresql with=init.sql
-SELECT full_name, city
-FROM students
-WHERE city = 'Chennai'
-ORDER BY full_name;
-```
+Suppose Omkar wants the Mathematics courses arranged alphabetically. The query is `SELECT title, department FROM courses WHERE department = 'Mathematics' ORDER BY title;`. `WHERE` first keeps the Mathematics `rows`, and `ORDER BY` then sorts only those matching `rows` by title.
 
 Expected output:
 
-| full_name | city |
-| ----------- | ------- |
-| Rahul Verma | Chennai |
-| Varun Nair | Chennai |
+| title | department |
+| -------------------- | ----------- |
+| Discrete Mathematics | Mathematics |
+| Linear Algebra | Mathematics |
 
-This returns Rahul Verma and Varun Nair, the two students based in Chennai, sorted alphabetically by name. Filtering happens before sorting: the `database` first narrows the `table` down to Chennai residents, and only then arranges those survivors in order. Writing `ORDER BY` before `WHERE` in the `query` text is not valid; the clause order in SQL always matches the sequence in which these decisions get made.
+Both Mathematics courses survive the filter. `Discrete Mathematics` appears first because the surviving `rows` are then sorted alphabetically by `title`. Writing `ORDER BY` before `WHERE` is invalid because SQL requires the clauses in their defined order.
+
+Try the explained query in the active file while keeping the same `init.sql` setup:
+
+```postgresql with=init.sql
+SELECT title, department
+FROM courses
+WHERE department = 'Mathematics'
+ORDER BY title;
+```
 
 ![SQL clause order showing WHERE filtering rows before ORDER BY sorts and LIMIT trims](images/02_where_clause_order.png)
 
@@ -177,7 +136,7 @@ This returns Rahul Verma and Varun Nair, the two students based in Chennai, sort
 
 ## Every Condition Is Just a True-or-False Test
 
-`department = 'Computer Science'` and `city = 'Chennai'` are both equality checks, the simplest kind of condition `WHERE` can hold. But `WHERE` accepts far more than equality:
+`department = 'Computer Science'` and `department = 'Mathematics'` are equality checks, the simplest kind of condition `WHERE` can hold. But `WHERE` accepts far more than equality:
 
 - Compare numbers and dates
 - Combine several conditions together
@@ -188,22 +147,21 @@ Every one of those is really the same idea underneath, a test that a `row` eithe
 
 ## Your Turn
 
-Using the same four `tables`, write a `query` that returns the `full_name` and `city` of every student based in Bengaluru.
+Using the same `courses` table, write a query that returns the `title`, `department`, and `credits` of every Economics course. The condition to apply is `department = 'Economics'`.
 
 ```postgresql with=init.sql
-SELECT full_name, city
-FROM students
-WHERE city = 'Bengaluru';
+SELECT title, department, credits
+FROM courses
+WHERE department = 'Economics';
 ```
 
 Expected output:
 
-| full_name | city |
-| ------------ | --------- |
-| Omkar Rane | Bengaluru |
-| Ishita Menon | Bengaluru |
+| title | department | credits |
+| -------------- | ---------- | ------: |
+| Microeconomics | Economics | 2 |
 
-Running this should return exactly two `rows`, Omkar Rane and Ishita Menon. If your result includes students from other cities, double check that the condition is written as `city = 'Bengaluru'` and not left out of the `query` entirely.
+The result contains only `Microeconomics` because it is the only `row` whose `department` value is `Economics`. If other courses appear, check that the `WHERE` clause is present and that the text value is enclosed in single quotes.
 
 ## Conclusion
 

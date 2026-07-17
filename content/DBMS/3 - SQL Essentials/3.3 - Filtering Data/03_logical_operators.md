@@ -13,26 +13,30 @@ The problem is that SQL read his conditions in an order he did not intend, and f
 
 Both let a single `WHERE` clause test more than one thing at a time.
 
+The lesson uses one `courses` table throughout:
+
+| course_id | title | department | credits |
+| --------- | -------------------- | ---------------- | ------: |
+| 101 | Database Systems | Computer Science | 4 |
+| 102 | Data Structures | Computer Science | 4 |
+| 103 | Linear Algebra | Mathematics | 3 |
+| 104 | Discrete Mathematics | Mathematics | 3 |
+| 105 | Microeconomics | Economics | 2 |
+
+To find Computer Science courses that also carry four credits, use `SELECT title, department, credits FROM courses WHERE department = 'Computer Science' AND credits = 4;`. The `department` check and the `credits` check must both be true for a row to survive.
+
+Expected output:
+
+| title | department | credits |
+| ---------------- | ---------------- | ------: |
+| Database Systems | Computer Science | 4 |
+| Data Structures | Computer Science | 4 |
+
+Both rows satisfy both conditions. The Mathematics courses fail the department test, and Microeconomics fails both tests.
+
+For hands-on practice, `init.sql` creates and populates only the displayed table:
+
 ```postgresql file=init.sql
-CREATE TABLE students (
-    student_id INTEGER PRIMARY KEY,
-    full_name TEXT,
-    email TEXT,
-    city TEXT,
-    phone TEXT,
-    joined_on DATE
-);
-
-INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
-(1, 'Omkar Rane', 'omkar.rane@campusmail.edu', 'Bengaluru', '9845011111', '2025-01-10'),
-(2, 'Neha Sharma', 'neha.sharma@campusmail.edu', 'Mysuru', NULL, '2025-01-12'),
-(3, 'Varun Nair', 'varun.nair@gmail.com', 'Chennai', '9845022222', '2025-01-15'),
-(4, 'Siddharth Rao', 'siddharth.rao@campusmail.edu', 'Hyderabad', '9845033333', '2025-01-18'),
-(5, 'Yusuf Khan', 'yusuf.khan@gmail.com', 'Pune', NULL, '2025-01-20'),
-(6, 'Ishita Menon', 'ishita.menon@campusmail.edu', 'Bengaluru', '9845044444', '2025-01-22'),
-(7, 'Rahul Verma', 'rahul.verma@gmail.com', 'Chennai', '9845055555', '2025-01-25'),
-(8, 'Sanya Iyer', 'sanya.iyer@campusmail.edu', 'Mysuru', NULL, '2025-01-28');
-
 CREATE TABLE courses (
     course_id INTEGER PRIMARY KEY,
     title TEXT,
@@ -46,76 +50,17 @@ INSERT INTO courses (course_id, title, department, credits) VALUES
 (103, 'Linear Algebra', 'Mathematics', 3),
 (104, 'Discrete Mathematics', 'Mathematics', 3),
 (105, 'Microeconomics', 'Economics', 2);
-
-CREATE TABLE instructors (
-    instructor_id INTEGER PRIMARY KEY,
-    full_name TEXT,
-    department TEXT
-);
-
-INSERT INTO instructors (instructor_id, full_name, department) VALUES
-(201, 'Ananya Bose', 'Computer Science'),
-(202, 'Manoj Pillai', 'Mathematics'),
-(203, 'Kavita Reddy', 'Economics');
-
-CREATE TABLE enrollments (
-    enrollment_id INTEGER PRIMARY KEY,
-    student_id INTEGER REFERENCES students(student_id),
-    course_id INTEGER REFERENCES courses(course_id),
-    enrolled_on DATE,
-    grade TEXT
-);
-
-INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade) VALUES
-(1, 1, 101, '2025-02-01', 'A'),
-(2, 1, 103, '2025-02-01', 'B+'),
-(3, 2, 101, '2025-02-02', NULL),
-(4, 3, 102, '2025-02-03', 'A-'),
-(5, 3, 105, '2025-02-03', NULL),
-(6, 4, 104, '2025-02-04', 'B'),
-(7, 5, 101, '2025-02-05', NULL),
-(8, 6, 102, '2025-02-06', 'A'),
-(9, 7, 103, '2025-02-07', 'C+'),
-(10, 8, 105, '2025-02-08', 'B-');
 ```
 
-The `students` `table` holds this data:
-
-| student_id | full_name | email | city | phone | joined_on |
-| ---------- | ------------- | ----------------------------- | --------- | ---------- | ---------- |
-| 1 | Omkar Rane | omkar.rane@campusmail.edu | Bengaluru | 9845011111 | 2025-01-10 |
-| 2 | Neha Sharma | neha.sharma@campusmail.edu | Mysuru | *NULL* | 2025-01-12 |
-| 3 | Varun Nair | varun.nair@gmail.com | Chennai | 9845022222 | 2025-01-15 |
-| 4 | Siddharth Rao | siddharth.rao@campusmail.edu | Hyderabad | 9845033333 | 2025-01-18 |
-| 5 | Yusuf Khan | yusuf.khan@gmail.com | Pune | *NULL* | 2025-01-20 |
-| 6 | Ishita Menon | ishita.menon@campusmail.edu | Bengaluru | 9845044444 | 2025-01-22 |
-| 7 | Rahul Verma | rahul.verma@gmail.com | Chennai | 9845055555 | 2025-01-25 |
-| 8 | Sanya Iyer | sanya.iyer@campusmail.edu | Mysuru | *NULL* | 2025-01-28 |
-
-And the `courses` `table` holds this data:
-
-| course_id | title | department | credits |
-| --------- | -------------------- | ---------------- | ------: |
-| 101 | Database Systems | Computer Science | 4 |
-| 102 | Data Structures | Computer Science | 4 |
-| 103 | Linear Algebra | Mathematics | 3 |
-| 104 | Discrete Mathematics | Mathematics | 3 |
-| 105 | Microeconomics | Economics | 2 |
+The active query file contains the logical condition:
 
 ```postgresql with=init.sql
-SELECT full_name, city
-FROM students
-WHERE city = 'Bengaluru' AND phone IS NOT NULL;
+SELECT title, department, credits
+FROM courses
+WHERE department = 'Computer Science' AND credits = 4;
 ```
 
-Expected output:
-
-| full_name | city |
-| ------------ | --------- |
-| Omkar Rane | Bengaluru |
-| Ishita Menon | Bengaluru |
-
-Both Bengaluru students, Omkar Rane and Ishita Menon, have a phone number on file, so `AND` keeps both `rows` here. Now compare it with `OR` over a different pair of conditions on the courses `table`.
+Now compare `AND` with `OR`. The query `SELECT title, department FROM courses WHERE department = 'Mathematics' OR department = 'Economics';` keeps a row when either department check is true.
 
 ```postgresql with=init.sql
 SELECT title, department
