@@ -49,6 +49,26 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 (3, 3, 103, '2025-02-03', 'B+');
 ```
 
+The `students`, `courses`, and `enrollments` `tables` hold this data:
+
+| student_id | full_name | city |
+| ---------- | ----------- | --------- |
+| 1 | Omkar Rane | Bengaluru |
+| 2 | Neha Sharma | Mysuru |
+| 3 | Varun Nair | Chennai |
+
+| course_id | title | department | credits |
+| --------- | ---------------- | ---------------- | ------: |
+| 101 | Database Systems | Computer Science | 4 |
+| 102 | Data Structures | Computer Science | 4 |
+| 103 | Linear Algebra | Mathematics | 3 |
+
+| enrollment_id | student_id | course_id | enrolled_on | grade |
+| ------------- | ---------- | --------- | ---------- | ------ |
+| 1 | 1 | 101 | 2025-02-01 | A |
+| 2 | 2 | 101 | 2025-02-02 | *NULL* |
+| 3 | 3 | 103 | 2025-02-03 | B+ |
+
 That `UNIQUE (student_id, course_id)` line is what gives `ON CONFLICT` something concrete to react to. Without it, PostgreSQL would have no rule saying two `rows` with the same student_id and course_id are a problem, and there would be nothing for an upsert to "conflict" against at all.
 
 ![A UNIQUE student_id plus course_id rule detecting a duplicate enrollment conflict](images/09_upsert_unique_conflict_rule.png)
@@ -64,6 +84,12 @@ ON CONFLICT (student_id, course_id)
 DO UPDATE SET grade = EXCLUDED.grade
 RETURNING enrollment_id, student_id, course_id, grade;
 ```
+
+Expected output, directly from the `RETURNING` clause:
+
+| enrollment_id | student_id | course_id | grade |
+| ------------- | ---------- | --------- | ----- |
+| 2 | 2 | 101 | B+ |
 
 PostgreSQL processed this in three steps:
 
@@ -88,6 +114,12 @@ DO UPDATE SET grade = EXCLUDED.grade
 RETURNING enrollment_id, student_id, course_id, grade;
 ```
 
+Expected output, directly from the `RETURNING` clause:
+
+| enrollment_id | student_id | course_id | grade |
+| ------------- | ---------- | --------- | ------ |
+| 5 | 3 | 102 | *NULL* |
+
 This time enrollment_id 5 appears in the result, a genuinely new `row`, because student_id 3 and course_id 102 had never been paired before and there was no conflict to react to.
 
 The exact same statement Aditya used a moment ago to update an existing `row` here performs a plain insert instead, because `ON CONFLICT` only changes behavior when a conflict is actually detected; otherwise the `INSERT` proceeds exactly as it would have without the clause at all.
@@ -105,6 +137,10 @@ ON CONFLICT (student_id, course_id)
 DO NOTHING
 RETURNING enrollment_id, student_id, course_id, grade;
 ```
+
+Expected output:
+
+*(no rows returned)*
 
 Nothing comes back from `RETURNING` at all, because student_id 1 and course_id 101 already exist as enrollment 1, and `DO NOTHING` means precisely that: the conflicting `row` is left exactly as it was, no error is raised, and no update happens either. This is the right choice whenever re-submitting an already-known pairing should simply be a harmless no-op rather than a correction.
 
@@ -154,6 +190,12 @@ ON CONFLICT (student_id, course_id)
 DO UPDATE SET grade = EXCLUDED.grade
 RETURNING enrollment_id, student_id, course_id, grade;
 ```
+
+Expected output, directly from the `RETURNING` clause:
+
+| enrollment_id | student_id | course_id | grade |
+| ------------- | ---------- | --------- | ----- |
+| 7 | 1 | 103 | A- |
 
 Since Omkar had never registered for course 103 before, this returns enrollment_id 7 as a genuinely new `row` with grade A-, showing the same statement handles a fresh pairing just as correctly as a repeated one.
 

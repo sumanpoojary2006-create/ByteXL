@@ -63,6 +63,19 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 (10, 8, 105, '2025-02-08', 'B-');
 ```
 
+Before the `INSERT`, the `students` `table` holds this data, eight `rows`, no Diya Kulkarni yet:
+
+| student_id | full_name | email | city | phone | joined_on |
+| ---------- | ------------- | ----------------------------- | --------- | ---------- | ---------- |
+| 1 | Omkar Rane | omkar.rane@campusmail.edu | Bengaluru | 9845011111 | 2025-01-10 |
+| 2 | Neha Sharma | neha.sharma@campusmail.edu | Mysuru | *NULL* | 2025-01-12 |
+| 3 | Varun Nair | varun.nair@gmail.com | Chennai | 9845022222 | 2025-01-15 |
+| 4 | Siddharth Rao | siddharth.rao@campusmail.edu | Hyderabad | 9845033333 | 2025-01-18 |
+| 5 | Yusuf Khan | yusuf.khan@gmail.com | Pune | *NULL* | 2025-01-20 |
+| 6 | Ishita Menon | ishita.menon@campusmail.edu | Bengaluru | 9845044444 | 2025-01-22 |
+| 7 | Rahul Verma | rahul.verma@gmail.com | Chennai | 9845055555 | 2025-01-25 |
+| 8 | Sanya Iyer | sanya.iyer@campusmail.edu | Mysuru | *NULL* | 2025-01-28 |
+
 ```postgresql with=init.sql
 INSERT INTO students (student_id, full_name, email, city, phone, joined_on)
 VALUES (9, 'Diya Kulkarni', 'diya.kulkarni@campusmail.edu', 'Pune', '9845066666', '2025-02-14');
@@ -71,6 +84,12 @@ SELECT student_id, full_name, city, phone
 FROM students
 WHERE student_id = 9;
 ```
+
+Expected output, after the `INSERT`:
+
+| student_id | full_name | city | phone |
+| ---------- | -------------- | ---- | ---------- |
+| 9 | Diya Kulkarni | Pune | 9845066666 |
 
 Alia's new student, Diya Kulkarni, now has a `row` of her own. The `column` list right after the `table` name, `(student_id, full_name, email, city, phone, joined_on)`, tells the `database` exactly which `column` each value in `VALUES` belongs to, so the ninth value in the `row` before it never gets misread as something it isn't.
 
@@ -92,13 +111,28 @@ FROM students
 WHERE student_id IN (10, 11);
 ```
 
+Expected output:
+
+| student_id | full_name | city |
+| ---------- | ----------- | ------- |
+| 10 | Kabir Sethi | Chennai |
+| 11 | Meera Das | *NULL* |
+
 Both Kabir and Meera arrive in the `table` with a single statement instead of two separate ones. Meera's `city` is left as `NULL` here because her form did not record one yet, which is a perfectly ordinary thing to leave blank as long as the `column` itself allows it.
 
 Batching `rows` like this is not just shorter to type; the `database` also treats the whole batch as one unit of work, which matters once a `table` has rules like `PRIMARY KEY` that must hold for every `row` in the statement together.
 
 ## Naming Columns Versus Relying on Column Order
 
-`INSERT` does not require a `column` list at all. Leaving it out tells the `database` to match your values to the `table`'s `columns` purely by position, in the exact order the `table` was created.
+`INSERT` does not require a `column` list at all. Leaving it out tells the `database` to match your values to the `table`'s `columns` purely by position, in the exact order the `table` was created. Before this `INSERT`, the `courses` `table` holds this data:
+
+| course_id | title | department | credits |
+| --------- | -------------------- | ---------------- | ------: |
+| 101 | Database Systems | Computer Science | 4 |
+| 102 | Data Structures | Computer Science | 4 |
+| 103 | Linear Algebra | Mathematics | 3 |
+| 104 | Discrete Mathematics | Mathematics | 3 |
+| 105 | Microeconomics | Economics | 2 |
 
 ```postgresql with=init.sql
 INSERT INTO courses VALUES (106, 'Operating Systems', 'Computer Science', 4);
@@ -107,6 +141,12 @@ SELECT course_id, title, department, credits
 FROM courses
 WHERE course_id = 106;
 ```
+
+Expected output, after the `INSERT`:
+
+| course_id | title | department | credits |
+| --------- | ------------------ | ---------------- | ------: |
+| 106 | Operating Systems | Computer Science | 4 |
 
 This works, and the new course lands correctly, but only because Alia happened to remember `courses` was created with `course_id`, `title`, `department`, `credits` in exactly that order. That is a fragile thing to depend on:
 
@@ -156,6 +196,12 @@ SELECT student_id, full_name, city, phone
 FROM students
 WHERE student_id = 12;
 ```
+
+Expected output:
+
+| student_id | full_name | city | phone |
+| ---------- | ----------- | --------- | ------ |
+| 12 | Farhan Ali | Hyderabad | *NULL* |
 
 Farhan now shows up with his city recorded and his phone left as `NULL`, exactly as it should be for a value that genuinely has not been provided yet.
 

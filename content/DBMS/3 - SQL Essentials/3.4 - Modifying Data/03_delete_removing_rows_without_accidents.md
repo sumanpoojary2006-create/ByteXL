@@ -59,6 +59,21 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 (10, 8, 105, '2025-02-08', 'B-');
 ```
 
+The `enrollments` `table` holds this data:
+
+| enrollment_id | student_id | course_id | enrolled_on | grade |
+| ------------- | ---------- | --------- | ---------- | ------ |
+| 1 | 1 | 101 | 2025-02-01 | A |
+| 2 | 1 | 103 | 2025-02-01 | B+ |
+| 3 | 2 | 101 | 2025-02-02 | *NULL* |
+| 4 | 3 | 102 | 2025-02-03 | A- |
+| 5 | 3 | 105 | 2025-02-03 | *NULL* |
+| 6 | 4 | 104 | 2025-02-04 | B |
+| 7 | 5 | 101 | 2025-02-05 | *NULL* |
+| 8 | 6 | 102 | 2025-02-06 | A |
+| 9 | 7 | 103 | 2025-02-07 | C+ |
+| 10 | 8 | 105 | 2025-02-08 | B- |
+
 ## Finding the Row Before Removing It
 
 Priyanka starts the same way Rohit learned to: a `SELECT` using the exact condition she is about to delete with, so she knows precisely what is about to disappear.
@@ -68,6 +83,12 @@ SELECT enrollment_id, student_id, course_id, enrolled_on
 FROM enrollments
 WHERE enrollment_id = 9;
 ```
+
+Expected output:
+
+| enrollment_id | student_id | course_id | enrolled_on |
+| ------------- | ---------- | --------- | ---------- |
+| 9 | 7 | 103 | 2025-02-07 |
 
 One `row` comes back: enrollment 9, Rahul Verma's registration in course 103, Linear Algebra. That is the exact `row` and only that `row` that her `DELETE` is about to remove.
 
@@ -83,6 +104,20 @@ SELECT enrollment_id, student_id, course_id
 FROM enrollments
 ORDER BY enrollment_id;
 ```
+
+Expected output, after the `DELETE`, enrollment 9 missing and every other `row` unchanged:
+
+| enrollment_id | student_id | course_id |
+| ------------- | ---------- | --------- |
+| 1 | 1 | 101 |
+| 2 | 1 | 103 |
+| 3 | 2 | 101 |
+| 4 | 3 | 102 |
+| 5 | 3 | 105 |
+| 6 | 4 | 104 |
+| 7 | 5 | 101 |
+| 8 | 6 | 102 |
+| 10 | 8 | 105 |
 
 - Enrollment 9 is gone from the results, and every other enrollment, all nine of the remaining ones, is untouched.
 - Unlike `UPDATE`, `DELETE` has no `SET` clause, because there is nothing to set, a deleted `row` simply stops existing in the `table`.
@@ -100,6 +135,25 @@ DELETE FROM enrollments;
 SELECT enrollment_id, student_id, course_id
 FROM enrollments;
 ```
+
+This snippet runs against the original `enrollments` data again, since each snippet starts fresh from `init.sql`. Before this `DELETE`, all ten `rows`, including enrollment 9, are still present:
+
+| enrollment_id | student_id | course_id |
+| ------------- | ---------- | --------- |
+| 1 | 1 | 101 |
+| 2 | 1 | 103 |
+| 3 | 2 | 101 |
+| 4 | 3 | 102 |
+| 5 | 3 | 105 |
+| 6 | 4 | 104 |
+| 7 | 5 | 101 |
+| 8 | 6 | 102 |
+| 9 | 7 | 103 |
+| 10 | 8 | 105 |
+
+Expected output, after the `DELETE` with no `WHERE` clause:
+
+*(no rows returned — the table is now empty)*
 
 The second `SELECT` returns nothing at all, because every single enrollment `row`, all ten of them, has been removed, not just Rahul's. Two failure modes look nearly identical here:
 
@@ -124,6 +178,26 @@ SELECT enrollment_id, student_id, course_id
 FROM enrollments
 ORDER BY enrollment_id;
 ```
+
+Before, from the first `SELECT`:
+
+| enrollment_id | student_id | course_id |
+| ------------- | ---------- | --------- |
+| 7 | 5 | 101 |
+
+After, from the closing `SELECT`, nine `rows` remain with enrollment 7 no longer among them:
+
+| enrollment_id | student_id | course_id |
+| ------------- | ---------- | --------- |
+| 1 | 1 | 101 |
+| 2 | 1 | 103 |
+| 3 | 2 | 101 |
+| 4 | 3 | 102 |
+| 5 | 3 | 105 |
+| 6 | 4 | 104 |
+| 8 | 6 | 102 |
+| 9 | 7 | 103 |
+| 10 | 8 | 105 |
 
 The first `SELECT` shows exactly one `row`, Yusuf Khan's registration in course 101. The `DELETE` reuses the identical `WHERE student_id = 5 AND course_id = 101` condition, and the closing `SELECT` confirms nine `rows` remain and Yusuf's course 101 enrollment is the only one missing.
 
@@ -174,6 +248,26 @@ SELECT enrollment_id, student_id, course_id
 FROM enrollments
 ORDER BY enrollment_id;
 ```
+
+Before, from the first `SELECT`:
+
+| enrollment_id | student_id | course_id |
+| ------------- | ---------- | --------- |
+| 3 | 2 | 101 |
+
+After, from the closing `SELECT`, nine `rows` remain with enrollment 3 no longer among them:
+
+| enrollment_id | student_id | course_id |
+| ------------- | ---------- | --------- |
+| 1 | 1 | 101 |
+| 2 | 1 | 103 |
+| 4 | 3 | 102 |
+| 5 | 3 | 105 |
+| 6 | 4 | 104 |
+| 7 | 5 | 101 |
+| 8 | 6 | 102 |
+| 9 | 7 | 103 |
+| 10 | 8 | 105 |
 
 The first `SELECT` isolates enrollment 3, Neha's `row` in course 101. The `DELETE` removes exactly that `row`, and the closing `SELECT` confirms nine `rows` remain with enrollment 3 no longer among them.
 

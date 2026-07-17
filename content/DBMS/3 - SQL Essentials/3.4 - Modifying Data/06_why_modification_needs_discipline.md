@@ -47,6 +47,28 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 (4, 4, 102, '2025-02-04', NULL);
 ```
 
+The `students`, `courses`, and `enrollments` `tables` hold this data:
+
+| student_id | full_name | email | city | phone | joined_on |
+| ---------- | ------------- | ----------------------------- | --------- | ---------- | ---------- |
+| 1 | Omkar Rane | omkar.rane@campusmail.edu | Bengaluru | 9845011111 | 2025-01-10 |
+| 2 | Neha Sharma | neha.sharma@campusmail.edu | Mysuru | *NULL* | 2025-01-12 |
+| 3 | Varun Nair | varun.nair@gmail.com | Chennai | 9845022222 | 2025-01-15 |
+| 4 | Siddharth Rao | siddharth.rao@campusmail.edu | Hyderabad | 9845033333 | 2025-01-18 |
+
+| course_id | title | department | credits |
+| --------- | ---------------- | ---------------- | ------: |
+| 101 | Database Systems | Computer Science | 4 |
+| 102 | Data Structures | Computer Science | 4 |
+| 103 | Linear Algebra | Mathematics | 3 |
+
+| enrollment_id | student_id | course_id | enrolled_on | grade |
+| ------------- | ---------- | --------- | ---------- | ------ |
+| 1 | 1 | 101 | 2025-02-01 | A |
+| 2 | 2 | 101 | 2025-02-02 | *NULL* |
+| 3 | 3 | 103 | 2025-02-03 | B+ |
+| 4 | 4 | 102 | 2025-02-04 | *NULL* |
+
 ## Why a SELECT Mistake and a Modification Mistake Are Not the Same
 
 A `SELECT` with a wrong `WHERE` clause returns the wrong `rows` on screen, and Naveen can simply notice, fix the condition, and run it again with nothing lost. An `UPDATE` or a `DELETE` with a wrong or missing `WHERE` clause changes or removes `rows` permanently, and by the time the mistake is noticed, the correct data may no longer exist anywhere to compare against.
@@ -69,6 +91,18 @@ SET grade = 'B'
 WHERE student_id = 2 AND course_id = 101
 RETURNING enrollment_id, student_id, course_id, grade;
 ```
+
+Before, from the `SELECT`:
+
+| enrollment_id | student_id | course_id | grade |
+| ------------- | ---------- | --------- | ------ |
+| 2 | 2 | 101 | *NULL* |
+
+After, directly from the `RETURNING` clause:
+
+| enrollment_id | student_id | course_id | grade |
+| ------------- | ---------- | --------- | ----- |
+| 2 | 2 | 101 | B |
 
 The `SELECT` confirms exactly one `row` before anything changes: Neha Sharma's ungraded Database Systems enrollment. The `UPDATE` reuses that identical condition rather than a rewritten or loosened version of it, and `RETURNING` confirms, in the same statement, that grade B landed on that one `row` and nothing else. Three separate habits are stacked in these two statements:
 
@@ -95,6 +129,12 @@ DELETE FROM enrollments
 WHERE student_id = 4 AND course_id = 102
 RETURNING enrollment_id, student_id, course_id;
 ```
+
+Expected output, directly from the `RETURNING` clause, the row's last snapshot before removal:
+
+| enrollment_id | student_id | course_id |
+| ------------- | ---------- | --------- |
+| 4 | 4 | 102 |
 
 The result shows exactly one `row` leaving the `table`, Siddharth Rao's Data Structures enrollment, and that visible confirmation, arriving in the same breath as the `DELETE` itself, is what turns "I think that worked" into "I can see that it worked."
 
@@ -147,6 +187,18 @@ SET grade = 'A'
 WHERE student_id = 3 AND course_id = 103
 RETURNING enrollment_id, student_id, course_id, grade;
 ```
+
+Before, from the `SELECT`:
+
+| enrollment_id | student_id | course_id | grade |
+| ------------- | ---------- | --------- | ----- |
+| 3 | 3 | 103 | B+ |
+
+After, directly from the `RETURNING` clause:
+
+| enrollment_id | student_id | course_id | grade |
+| ------------- | ---------- | --------- | ----- |
+| 3 | 3 | 103 | A |
 
 The `SELECT` isolates exactly one `row` before the change, the `UPDATE` reuses that same condition, and `RETURNING` confirms grade A landed on enrollment 3 and nowhere else.
 
