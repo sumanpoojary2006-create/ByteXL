@@ -668,6 +668,18 @@ def main() -> None:
         for block in blocks:
             raw_language = normalize_language(block.info)
             attrs = parse_fence_attrs(block.info)
+            if "file" in attrs:
+                setup_files[attrs["file"]] = block.code
+                display_language = raw_language or ""
+                replacements.append(
+                    (
+                        block.start,
+                        block.end,
+                        f"```{display_language}\n{block.code.rstrip()}\n```\n",
+                    )
+                )
+                continue
+
             convert, language, reason = should_convert(
                 raw_language,
                 block.code,
@@ -689,8 +701,6 @@ def main() -> None:
                 continue
 
             assert language is not None
-            if "file" in attrs:
-                setup_files[attrs["file"]] = block.code
 
             snippet_code = onecompiler_code(block, setup_files, reusable_context)
             file_block_index += 1

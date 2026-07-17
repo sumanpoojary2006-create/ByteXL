@@ -5,315 +5,253 @@ random.seed(17)
 
 # (description, explanation, difficulty, bloom, subtopic, correct, [distractors])
 SET1 = [
-    # 1. Scenario-based
+    # 2.1.1 Easy — Variables and Case Sensitivity
     (
-        "A ride-sharing app calculates a trip's cost from a base fare plus a per-kilometre rate.\n\n```python\nbase_fare = 50\ndistance_km = 12\nrate_per_km = 8\n\ncost = base_fare + distance_km * rate_per_km\n\nprint(cost)\n```\n\nA customer books a 12 km ride. What will the app print as the total cost?",
-        "Multiplication runs before addition, so `distance_km * rate_per_km` is 96 first, then `50 + 96` is 146.",
+        "A college admin portal stores student names for two different database tables — one for internal records and one for a public-facing leaderboard. A developer on the team writes:\n\n```python\nstudent_name = \"Riya Sharma\"\nStudent_Name = \"Ananya Verma\"\n```\n\nA junior teammate insists both variables point to the same memory location and will conflict. The senior developer disagrees. What does `print(student_name)` produce?",
+        "Python is case-sensitive. `student_name` and `Student_Name` are entirely different variables. `print(student_name)` prints `Riya Sharma`. The junior's assumption is a misconception carried over from case-insensitive languages.",
+        "easy", "understand", "variables-and-case-sensitivity",
+        "`Riya Sharma` — Python is case-sensitive; these are two distinct variables",
+        ["`Ananya Verma` — Python treats similarly spelled names as the same variable", "A `NameError` — two variables with similar names cannot coexist", "`Riya SharmaAnanya Verma` — Python merges values of similar names"],
+    ),
+    # 2.1.2 Easy — int and float, dynamic typing
+    (
+        "A canteen billing system initially sets the price of a meal as a whole number. Mid-semester, a partial subsidy changes it to a decimal. A student reviewing the code is confused about whether reassigning a variable to a different type is legal in Python.\n\n```python\nprice = 40\nprice = 36.5\n```\n\nWhat is `type(price)` after the second line, and does Python allow this?",
+        "Python is dynamically typed. A variable's type is determined by its current value, not declared upfront. When `price = 36.5` runs, Python reassigns `price` to a `float`. The earlier `int` binding is simply discarded. This is legal and fundamental to Python.",
+        "easy", "understand", "dynamic-typing",
+        "`float` — Python allows reassignment to a new type; this is valid",
+        ["`int` — Python keeps the original type and truncates `36.5` to `36`", "`str` — Python converts decimals to strings to avoid type conflict", "Python raises a `TypeError` — variables cannot change type after declaration"],
+    ),
+    # 2.1.3 Easy — Type Conversion
+    (
+        "A government scholarship portal collects a student's family income through a web form. All inputs arrive as strings. An intern writes the following to check if the family qualifies for the highest aid tier:\n\n```python\nincome = \"180000\"\nif income < 200000:\n    print(\"Eligible for full scholarship\")\n```\n\nThe intern is surprised by an error. What went wrong?",
+        "Web form inputs always arrive as strings. `\"180000\" < 200000` attempts to compare a `str` with an `int`, which Python 3 does not allow — it raises a `TypeError`. The fix is `int(income) < 200000`.",
+        "easy", "analyze", "type-conversion",
+        "`income` is a string; comparing `str` to `int` raises a `TypeError`",
+        ["The `if` syntax is wrong — `== True` must be added at the end", "The `<` operator does not work with numbers above 100,000", "String variables must be declared with `str()` before use in conditions"],
+    ),
+    # 2.1.4 Medium — Arithmetic, floor division and modulo
+    (
+        "A logistics startup assigns delivery orders to riders. At the end of each shift, the operations manager needs two numbers: how many complete batches of 6 orders each rider handled, and how many orders are left over. For a shift with 85 total orders, which pair of expressions gives both values correctly?",
+        "`85 // 6 = 14` gives the number of complete batches (floor division). `85 % 6 = 1` gives the leftover orders. `/` returns `14.166...` — a float, not a usable batch count. One of the distractors lists the two values in the wrong order relative to the question asked.",
         "medium", "apply", "arithmetic-operators",
-        "146",
-        ["744", "70", "116"],
+        "`85 // 6` and `85 % 6`",
+        ["`85 / 6` and `85 - 6`", "`85 % 6` and `85 // 6`", "`85 / 6` and `85 % 6`"],
     ),
-    # 2. Output prediction
+    # 2.1.5 Medium — Comparison Operators, boundary conditions
     (
-        "A developer traces how variable assignment works when one variable is set equal to another.\n\n```python\nx = 5\ny = x\nx = x + 1\n\nprint(x, y)\n```\n\nWhat will this code print?",
-        "`y = x` copies the value 5 into `y` at that moment. `x = x + 1` then changes `x` to 6, but `y` still holds 5, so `print(x, y)` shows `6 5`.",
-        "easy", "apply", "variables-and-assignment",
-        "6 5",
-        ["6 6", "5 6", "5 5"],
+        "An online exam platform lets students reattempt a paper only if their previous score was strictly below 40. A student who scored exactly 40 finds they cannot reattempt. The coordinator then updates the rule: reattempt is now allowed for scores of 40 and below. Which single change to the condition implements this correctly?\n\n```python\nscore = 40\nif score < 40:   # original\n```",
+        "`score < 40` excludes exactly 40. The updated rule includes 40, so `<=` is correct. `!=` would wrongly allow reattempt for any score that is not 40, including those above it. `==` only matches exactly 40, excluding lower failing scores.",
+        "medium", "apply", "comparison-operators",
+        "Change `<` to `<=`",
+        ["Change `<` to `!=`", "Change `<` to `==`", "Change `<` to `>`"],
     ),
-    # 3. Error identification
+    # 2.1.6 Medium — Logical Operators
     (
-        "A login form reads a user's typed age and immediately compares it to a number.\n\n```python\nage = input('Age: ')\n\nif age > 18:\n    print('Eligible')\n```\n\nWhen a user types '25', this code raises a `TypeError`. Why does this happen?",
-        "`input()` always returns a string, and Python cannot compare a string to the integer 18 with `>` without converting `age` to a number first.",
-        "medium", "analyze", "input-and-output",
-        "`input()` always returns a string, and a string can't be compared to an integer with `>`",
-        ["The variable `age` was never assigned a value", "`if` statements cannot use the `>` operator", "`input()` only works inside a `print()` call"],
+        "A hostel Wi-Fi system grants access only if a student's fee payment is complete AND they have not received a disciplinary warning this semester. A developer tests it with a student who has paid but has a warning:\n\n```python\nfee_paid = True\nwarning_received = True\naccess = fee_paid and not warning_received\n```\n\nThe developer expects `access` to be `True` since the fee is paid. What is `access` actually, and why?",
+        "`not warning_received` → `not True` → `False`. Then `True and False` → `False`. `and` requires both sides to be `True`. The developer's expectation is wrong — access is correctly denied because of the outstanding warning.",
+        "medium", "apply", "logical-operators",
+        "`False` — `not warning_received` evaluates to `False`, so access is denied",
+        ["`True` — `fee_paid` being `True` is sufficient; the second condition is ignored", "`True` — `not` applies to the entire expression, not just `warning_received`", "`False` — `and` always returns `False` when either operand involves `not`"],
     ),
-    # 4. Code correction
+    # 2.1.7 Medium — Operator Precedence
     (
-        "A program is supposed to calculate a discounted price for a ₹1000 item at 20% off, but a teammate's rewrite always gives 0.\n\n```python\nprice = 1000\ndiscount_percent = 20\n\nfinal_price = (price - price) * discount_percent / 100\n```\n\nWhich option correctly fixes this code so it calculates the discount properly?",
-        "The added parentheses force `price - price` to be calculated first, which is always 0. Removing them restores the correct order: subtract the discount amount from the original price.",
-        "hard", "analyze", "operator-precedence",
-        "Remove the parentheses: `final_price = price - price * discount_percent / 100`",
-        ["Change `discount_percent = 20` to `discount_percent = 100`", "Change `-` to `+` inside the parentheses", "Divide by `1000` instead of `100`"],
+        "A teacher writes the following expression on the board during a Python class to calculate a weighted score:\n\n```python\nresult = 10 + 4 * 3 ** 2 - 6 / 2\n```\n\nTwo students debate the answer. Kiran says `43.0`. Meena says `34.0` because she reads left to right. Who is correct?",
+        "Precedence order: `3**2 = 9`, then `4*9 = 36`, then `6/2 = 3.0`, then `10 + 36 - 3.0 = 43.0`. Meena's left-to-right reading would give a different incorrect result. Kiran is right.",
+        "medium", "apply", "operator-precedence",
+        "Kiran — Python follows precedence: `**` → `*` → `/` → `+/-`",
+        ["Meena — Python evaluates expressions strictly left to right", "Both are wrong — mixing `int` and `float` raises an error in Python", "Meena — division is always resolved before multiplication"],
     ),
-    # 5. Concept identification
+    # 2.1.8 Medium — Augmented Assignment
     (
-        "A program runs this line:\n\n```python\nresult = 10 > 5\n```\n\nWhich data type does the value stored in `result` belong to?",
-        "A comparison like `>` always produces a boolean value, `True` or `False`.",
-        "easy", "understand", "strings-and-booleans",
-        "Boolean (`bool`)",
-        ["Integer (`int`)", "String (`str`)", "Floating-point (`float`)"],
+        "A freelance developer builds a task tracker for a design agency. Each completed task adds ₹1,200 to the client's invoice. A new intern claims `+=` doesn't actually update the variable and insists on writing `total = total + 1200` explicitly each time. After 5 tasks starting from ₹0, what is the final value of `total` using `+=`, and is the intern correct?\n\n```python\ntotal = 0\ntotal += 1200  # repeated 5 times\n```",
+        "`+=` is augmented assignment — `total += 1200` is exactly `total = total + 1200`. After 5 operations from `0`, total reaches `6000`. The intern's concern is unfounded.",
+        "medium", "apply", "augmented-assignment",
+        "`total` is `6000` — `+=` is valid shorthand and the intern is wrong",
+        ["`total` is `0` — the intern is right, `+=` doesn't modify the variable", "`total` is `1200` — `+=` resets the value each time rather than accumulating", "`total` is `5` — `+=` counts the number of times it was applied"],
     ),
-    # 6. Dry-run / trace-based
+    # 2.1.9 Hard — f-strings, format specifiers
     (
-        "A savings app tracks a customer's balance through two operations: a withdrawal, followed by splitting what's left between two accounts.\n\n```python\nbalance = 100\nbalance -= 30\nbalance //= 2\n```\n\nWhat is the value of `balance` after this code runs?",
-        "First `balance -= 30` makes balance 70. Then `balance //= 2` floor-divides 70 by 2, giving 35.",
-        "medium", "apply", "assignment-operators",
-        "35",
-        ["50", "70", "17"],
+        "A placement cell generates offer letter summaries. CTC is stored in lakhs. The coordinator wants the value displayed with exactly 2 decimal places, and also asks whether arithmetic can be done inside the f-string to avoid creating a new variable. The developer writes:\n\n```python\nname = \"Sneha Reddy\"\nctc = 8\nprint(f\"{name} has been offered ₹{ctc:.2f} LPA\")\n```\n\n`ctc` is now an integer, not a float. What is printed?",
+        "`:.2f` works on both `int` and `float`. Python converts the integer to its float representation and applies the 2-decimal format. `8` becomes `8.00`. No error is raised.",
+        "hard", "analyze", "fstrings-format-specifiers",
+        "`Sneha Reddy has been offered ₹8.00 LPA`",
+        ["`Sneha Reddy has been offered ₹8 LPA` — `:.2f` is ignored for integers", "A `ValueError` — `:.2f` only works with float variables", "`Sneha Reddy has been offered ₹8.0 LPA`"],
     ),
-    # 7. Best replacement code
+    # 2.1.10 Hard — input(), type and concatenation trap
     (
-        "A developer writes this nested check to confirm both a payment and a seat are available:\n\n```python\nif payment_ok:\n    if seat_available:\n        confirmed = True\n    else:\n        confirmed = False\nelse:\n    confirmed = False\n```\n\nWhich option is the best way to simplify this into a single line?",
-        "`confirmed` should only be True when both `payment_ok` and `seat_available` are True — exactly what `and` checks in one line.",
-        "medium", "analyze", "comparison-and-logical-operators",
-        "`confirmed = payment_ok and seat_available`",
-        ["`confirmed = payment_ok or seat_available`", "`confirmed = not payment_ok and seat_available`", "`confirmed = payment_ok and not seat_available`"],
-    ),
-    # 8. Missing code / fill in the blank
-    (
-        "A form needs to convert a typed value into a whole number before doing arithmetic.\n\n```python\nage_text = '25'\nage = ______(age_text)\n```\n\nWhich function correctly replaces the blank so `age` becomes the integer 25?",
-        "`int()` parses a digit string and returns the equivalent whole number.",
-        "easy", "apply", "type-conversion",
-        "int",
-        ["str", "bool", "len"],
-    ),
-    # 9. Code-to-requirement matching
-    (
-        "A developer writes this code intending to check whether two calculated prices are equal:\n\n```python\nprice1 = 0.1 + 0.2\nprice2 = 0.3\n\nif price1 == price2:\n    same = True\nelse:\n    same = False\n```\n\nDoes this code correctly detect that `price1` and `price2` represent the same amount?",
-        "Floating-point numbers can't represent some decimals exactly, so `0.1 + 0.2` comes out as a value very slightly different from `0.3`. `==` sees them as unequal, so `same` becomes False even though the amounts are conceptually the same.",
-        "hard", "analyze", "numeric-types",
-        "No — floating-point rounding means `0.1 + 0.2` is not exactly `0.3`, so `same` becomes False",
-        ["Yes — `==` always works correctly for decimal numbers", "No — `==` cannot be used with `float` values at all", "Yes — but only because Python rounds automatically"],
-    ),
-    # 10. Edge-case reasoning
-    (
-        "A temperature-logging script computes the remainder of a negative reading using Python's `%` operator.\n\n```python\nresult = -7 % 3\n```\n\nWhat is the value of `result`?",
-        "Python's `%` follows floor division, so the result always has the same sign as the divisor: `-7 % 3` is 2, since `-7 // 3` is -3 and `-3 * 3 + 2 = -7`.",
-        "hard", "analyze", "arithmetic-operators",
-        "2",
-        ["-1", "-2", "1"],
+        "A student demonstrates a fee calculator to the class. The program collects the number of students and the fee per student, then prints the total. The admin enters `120` and `5000` during the demo. The student is shocked by the output:\n\n```python\nstudents = input(\"Number of students: \")\nfee = input(\"Fee per student: \")\ntotal = students + fee\nprint(\"Total fee collected: ₹\", total)\n```\n\nWhat is actually printed, and what is the root cause?",
+        "`input()` always returns a string. `\"120\" + \"5000\"` is string concatenation, producing `\"1205000\"`. The fix is to wrap both with `int()` before adding.",
+        "hard", "analyze", "input-type-trap",
+        "`Total fee collected: ₹ 1205000` — `+` on two strings concatenates them",
+        ["`Total fee collected: ₹ 600000` — `input()` auto-converts numeric entries to `int`", "`Total fee collected: ₹ 120` — Python uses only the first `input()` value", "A `TypeError` — the `+` operator does not work between two `input()` results"],
     ),
 ]
 
 SET2 = [
-    # --- Scenario-based (3) ---
+    # 2.2.1 Easy — Naming Conventions, PEP 8
     (
-        "A recipe app scales a serving size for a dinner party.\n\n```python\nservings = 7\nguests = 2\n\nportion = servings / guests\n\nprint(portion)\n```\n\nA recipe makes 7 portions and needs to be split evenly between 2 people. What will this app print as each person's share?",
-        "`/` performs true division, so 7 divided by 2 is 3.5, which prints.",
-        "easy", "apply", "numeric-types",
-        "3.5",
-        ["3", "4", "3.0"],
+        "During a code review at a college analytics startup, a tech lead flags one variable name as violating PEP 8 conventions, even though it runs without error. Which of these, used as a plain variable (not a class), would be flagged?",
+        "PEP 8 specifies that regular variable names should use `snake_case`. `StudentGrade` uses `CamelCase`, which PEP 8 reserves for class names. The other three correctly follow snake_case.",
+        "easy", "understand", "naming-conventions-pep8",
+        "`StudentGrade`",
+        ["`total_marks`", "`pass_count`", "`average_score`"],
     ),
+    # 2.2.2 Easy — int and float, type promotion
     (
-        "A signup form reads a user's birth year as typed text and converts it to a number for an age calculation.\n\n```python\nbirth_year_text = '2007'\nbirth_year = int(birth_year_text)\n\nprint(birth_year)\n```\n\nA user types '2007' as their birth year. What will the form print as the converted value?",
-        "`int('2007')` parses the digit string and returns the whole number 2007.",
-        "easy", "apply", "type-conversion",
-        "2007",
-        ["'2007'", "2007.0", "Error"],
+        "A hospital pharmacy system calculates a patient's bill. Tablet count is stored as an integer and price per tablet as a float. A billing clerk asks why the total always shows a decimal even when it seems like a whole number.\n\n```python\ntablets = 10\nprice_per_tablet = 2.5\ntotal = tablets * price_per_tablet\n```\n\nWhat is `total`, and what explains the decimal?",
+        "When `int` and `float` are used in arithmetic, Python promotes the result to `float`. `10 * 2.5 = 25.0`, not `25`. The clerk's observation is correct — it is intentional Python behaviour.",
+        "easy", "understand", "type-promotion",
+        "`25.0` — mixing `int` and `float` produces a `float`",
+        ["`25` — result is `int` since `tablets` is an `int`", "`25` — Python rounds to a whole number when one operand divides evenly", "`\"25.0\"` — Python converts to string when mixing types"],
     ),
+    # 2.2.3 Easy — Strings and Booleans
     (
-        "A weather app only issues a storm warning when two separate sensor readings both cross their thresholds.\n\n```python\nreading1 = 5\nreading2 = 2\n\nwarning = (reading1 > 3) and (reading2 > 4)\n\nprint(warning)\n```\n\nThe first sensor reads 5 (threshold 3) and the second reads 2 (threshold 4). What will this app print?",
-        "`reading1 > 3` is True, but `reading2 > 4` is False. `and` needs both to be True, so `warning` is False.",
-        "medium", "apply", "comparison-and-logical-operators",
-        "False",
-        ["True", "Error", "None"],
+        "A startup's employee onboarding tool stores each employee's display name and their active status. A new developer asks what types these variables are:\n\n```python\nemp_name = \"Kavitha Nair\"\nis_active = False\n```\n\n`emp_name` is of type ______ and `is_active` is of type ______.",
+        "Any value enclosed in quotes is a `str`. `False` is a boolean literal of type `bool`. Although `bool` is a subclass of `int` internally, `type(False)` returns `<class 'bool'>`.",
+        "easy", "understand", "strings-and-booleans",
+        "`str`, `bool`",
+        ["`str`, `int`", "`str`, `str`", "`int`, `bool`"],
     ),
-    # --- Output prediction (3) ---
+    # 2.2.4 Easy — Type Conversion, division always returns float
     (
-        "A loyalty-program script counts how many of three checks passed by adding the boolean results directly.\n\n```python\npassed = True + True + False\n\nprint(passed)\n```\n\nWhat will this code print?",
-        "Python treats `True` as 1 and `False` as 0 in arithmetic, so `True + True + False` becomes `1 + 1 + 0`, which is 2.",
-        "hard", "analyze", "strings-and-booleans",
-        "2",
-        ["3", "Error", "True"],
-    ),
-    (
-        "A shopping cart script starts empty and adds the same item price three times.\n\n```python\ntotal = 0\ntotal += 5\ntotal += 5\ntotal += 5\n\nprint(total)\n```\n\nWhat will this code print?",
-        "Each `+=` adds 5 onto the existing value, so three additions build up to 0 + 5 + 5 + 5 = 15.",
-        "medium", "apply", "assignment-operators",
-        "15",
-        ["5", "0", "20"],
-    ),
-    (
-        "A voting app checks whether a submitted candidate ID matches the one on file.\n\n```python\ncandidate_id = 'C102'\n\nprint(candidate_id == 'C102')\n```\n\nWhat will this code print?",
-        "The two strings are identical, so `==` evaluates to True.",
-        "easy", "apply", "comparison-and-logical-operators",
-        "True",
-        ["False", "Error", "'C102'"],
-    ),
-    # --- Dry-run / trace-based (3) ---
-    (
-        "A marathon app updates a runner's registered age once their birthday passes.\n\n```python\nage = 25\nage = 26\n```\n\nWhat is the value of `age` after this code runs?",
-        "The second assignment overwrites the first — `age` simply points to the new value, 26.",
-        "easy", "understand", "variables-and-assignment",
-        "26",
-        ["25", "Error", "None"],
-    ),
-    (
-        "A survey app reads a satisfaction rating typed as text.\n\n```python\nrating = float('4.5')\n```\n\nWhat is the value stored in `rating` after this line runs?",
-        "`float('4.5')` parses the text and returns the decimal value 4.5.",
-        "medium", "apply", "type-conversion",
-        "4.5",
-        ["'4.5'", "4", "Error"],
-    ),
-    (
-        "A warehouse system packs 17 identical parcels into vans that each hold 5 parcels.\n\n```python\nparcels = 17\nvans = parcels // 5\n```\n\nWhat is the value of `vans` after this code runs?",
-        "`//` is floor division. 17 divided by 5 is 3.4, and floor division drops the decimal part, giving 3.",
-        "medium", "apply", "arithmetic-operators",
-        "3",
-        ["3.4", "3.0", "2"],
-    ),
-    # --- Edge-case reasoning (3) ---
-    (
-        "A program reads a price as text and tries to convert it directly into a whole number.\n\n```python\nprice_text = '199.99'\nprice = int(price_text)\n```\n\nWhat happens when this code runs?",
-        "`int()` can only parse strings that represent whole numbers directly. `'199.99'` contains a decimal point, so `int('199.99')` raises a `ValueError`.",
-        "hard", "analyze", "type-conversion",
-        "It raises a ValueError",
-        ["It stores 200, rounded up", "It stores 199", "It stores 0"],
-    ),
-    (
-        "A feedback form treats an empty text response as 'no answer given.'\n\n```python\nresponse = ''\n```\n\nWhat does `bool(response)` evaluate to for this empty response?",
-        "An empty string is falsy in Python, so `bool('')` is False.",
-        "medium", "understand", "strings-and-booleans",
-        "False",
-        ["True", "Error", "None"],
-    ),
-    (
-        "A student checks how Python handles a chain of exponents, since `**` can be applied more than once in a row.\n\n```python\nresult = 2 ** 3 ** 2\n```\n\nWhat is the value of `result`?",
-        "`**` groups from right to left, so this is `2 ** (3 ** 2)` = `2 ** 9` = 512, not `(2 ** 3) ** 2` = 64.",
-        "hard", "analyze", "operator-precedence",
-        "512",
-        ["64", "18", "36"],
-    ),
-    # --- Concept identification (3) ---
-    (
-        "A program runs this line:\n\n```python\nage = int('25')\n```\n\nWhich concept does this line demonstrate?",
-        "This line converts a piece of text into a numeric type, which is type conversion.",
+        "A school's attendance system reads total working days from a config file as the string `\"60\"`. A developer converts it and computes the attendance percentage:\n\n```python\nworking_days = int(\"60\")\npresent = 45\npercentage = present / working_days * 100\n```\n\nA teacher asks: \"Is `percentage` a whole number or a decimal?\" What is the correct answer?",
+        "In Python 3, `/` always returns a `float` regardless of whether the operands are integers. `45 / 60 * 100 = 75.0`, not `75`. Use `//` if an integer result is needed.",
         "easy", "understand", "type-conversion",
-        "Type conversion",
-        ["Arithmetic operator", "Boolean logic", "String concatenation"],
+        "A decimal — `/` in Python 3 always returns a `float`",
+        ["A whole number — both `present` and `working_days` are integers after conversion", "A whole number — `* 100` converts the result back to integer", "A decimal — the original `\"60\"` was a string, so the result inherits that"],
     ),
+    # 2.2.5 Easy — Arithmetic, modulo for cycling
     (
-        "A program runs this line:\n\n```python\nleftover = 50 % 6\n```\n\nWhich concept does this line demonstrate?",
-        "`%` computes the remainder left over after division — the modulus operator.",
-        "easy", "understand", "arithmetic-operators",
-        "The modulus (remainder) operator",
-        ["Floor division", "Type conversion", "String formatting"],
-    ),
-    (
-        "A program runs this code:\n\n```python\nx = 5\ny = x\nx = x + 1\n```\n\nWhich concept does this code demonstrate?",
-        "This code stores a value in `x`, copies it to `y`, then reassigns `x` — variable assignment and reassignment.",
-        "medium", "understand", "variables-and-assignment",
-        "Variable assignment and reassignment",
-        ["A boolean comparison", "A type conversion", "String formatting"],
-    ),
-    # --- Logic modification (3) ---
-    (
-        "A ride-sharing app currently calculates cost using a flat rate per kilometre, with no base fare.\n\n```python\ndistance_km = 12\nrate_per_km = 8\n\ncost = distance_km * rate_per_km\n```\n\nThe business now wants to add a fixed base fare of 50 to every trip. What should be changed in the code?",
-        "Adding `50 +` to the calculation includes the fixed base fare on top of the distance-based cost.",
-        "medium", "apply", "arithmetic-operators",
-        "Change `cost = distance_km * rate_per_km` to `cost = 50 + distance_km * rate_per_km`",
-        ["Change `rate_per_km = 8` to `rate_per_km = 58`", "Change `*` to `+` only", "Change `distance_km = 12` to `distance_km = 50`"],
-    ),
-    (
-        "A billing app currently converts a typed price to a whole number, losing the paise.\n\n```python\nprice_text = '49.50'\nprice = int(price_text)\n```\n\nThe business wants the exact decimal amount preserved instead of rounding down to a whole number. What should be changed?",
-        "`float()` parses a decimal string and keeps the fractional part, unlike `int()`.",
-        "medium", "apply", "type-conversion",
-        "Change `int(price_text)` to `float(price_text)`",
-        ["Change `price_text = '49.50'` to `price_text = '4950'`", "Change `int` to `str`", "Add `+ 0.5` after `int(price_text)`"],
-    ),
-    (
-        "A discount checker currently requires a customer to be BOTH a loyalty member AND to have spent over ₹1000 to get a discount.\n\n```python\nis_member = True\nspent_over_1000 = False\n\neligible = is_member and spent_over_1000\n```\n\nThe business now wants the discount if EITHER condition is true. What should be changed?",
-        "`or` grants the discount if at least one condition is True, matching the new requirement.",
-        "medium", "apply", "comparison-and-logical-operators",
-        "Change `and` to `or`",
-        ["Change `is_member = True` to `is_member = False`", "Change `eligible = is_member and spent_over_1000` to `eligible = not is_member`", "Swap the two variable names"],
-    ),
-    # --- Error identification (2) ---
-    (
-        "A signup form accidentally tries to add a number directly onto typed input.\n\n```python\nage = input('Age: ')\n\nprint(age + 1)\n```\n\nThis raises a `TypeError`. Why?",
-        "`input()` always returns a string, and a string cannot be added to an integer without converting it first.",
-        "medium", "apply", "input-and-output",
-        "`age` is a string, and a string cannot be added to an integer directly",
-        ["The `input()` function never works inside `print()`", "The `+` operator does not work on variables", "`age` must be declared as global first"],
-    ),
-    (
-        "A student expects `10 - 2 * 3` to be evaluated strictly left to right, like reading normal text, expecting 24.\n\n```python\nresult = 10 - 2 * 3\n```\n\nPython gives `result = 4`, not 24. Why?",
-        "Multiplication has higher precedence than subtraction, so `2 * 3` is calculated first, giving 6, and then `10 - 6 = 4`.",
-        "medium", "analyze", "operator-precedence",
-        "Multiplication happens before subtraction, so `2 * 3` is calculated first, giving `10 - 6 = 4`",
-        ["Python evaluates every expression strictly left to right, with no exceptions", "The `-` operator is broken for expressions with multiplication", "`result` was assigned the wrong value by mistake elsewhere"],
-    ),
-    # --- Code correction (2) ---
-    (
-        "A program crashes when converting a decimal-looking price directly to an integer.\n\n```python\nprice_text = '199.99'\nprice = int(price_text)\n```\n\nWhich option correctly fixes this so the price is stored as a whole number without crashing?",
-        "Converting to `float` first parses the decimal text safely, and wrapping that in `int()` then truncates it to a whole number.",
-        "medium", "apply", "type-conversion",
-        "Use `int(float(price_text))` instead",
-        ["Use `str(price_text)` instead", "Use `bool(price_text)` instead", "Remove the quotes around `199.99` in the original text"],
-    ),
-    (
-        "A grading tool wants to check whether a score is strictly between 2 and 10, but a developer writes the check incorrectly.\n\n```python\nscore = 15\nresult = 2 < score > 10\n```\n\nThis produces a misleading `True` for scores that are actually too high. Which option correctly fixes this check?",
-        "`2 < score < 10` correctly chains both bounds, so a score of 15 correctly evaluates to False.",
-        "hard", "analyze", "comparison-and-logical-operators",
-        "Use `2 < score < 10` instead",
-        ["Use `score > 2 or score > 10` instead", "Change `15` to `'15'`", "Remove the `2 <` part entirely"],
-    ),
-    # --- Best replacement code (2) ---
-    (
-        "A developer currently checks a discount using a verbose nested structure:\n\n```python\nif is_member:\n    if spent_over_1000:\n        discount = 0.10\n    else:\n        discount = 0\nelse:\n    discount = 0\n```\n\nWhich option is the best way to simplify this into a single line?",
-        "`discount` should be 0.10 only when both conditions are True — a ternary expression combined with `and` captures this in one line.",
-        "hard", "analyze", "comparison-and-logical-operators",
-        "`discount = 0.10 if (is_member and spent_over_1000) else 0`",
-        ["`discount = 0.10 if is_member or spent_over_1000 else 0`", "`discount = 0.10 if not is_member else 0`", "`discount = 0.10 if spent_over_1000 else is_member`"],
-    ),
-    (
-        "A developer currently builds a formatted message using string concatenation with manual conversion:\n\n```python\nname = 'Asha'\nscore = 92\nmessage = 'Hello, ' + name + '! Your score is ' + str(score) + '.'\n```\n\nWhich option is the best way to rewrite this using an f-string?",
-        "An f-string can embed `name` and `score` directly inside curly braces, without manual `+` concatenation or `str()` conversion.",
-        "medium", "apply", "input-and-output",
-        "`message = f'Hello, {name}! Your score is {score}.'`",
-        ["`message = f'Hello, name! Your score is score.'`", "`message = 'Hello, {name}! Your score is {score}.'`", "`message = f'Hello, ' + {name} + '! Your score is ' + {score}`"],
-    ),
-    # --- Fill in the blank (2) ---
-    (
-        "A geometry app calculates the area of a square with side length 6.\n\n```python\nside = 6\narea = side ______ 2\n```\n\nWhich operator correctly replaces the blank so `area` becomes 36?",
-        "`**` is Python's exponentiation operator, so `side ** 2` computes 6 squared, which is 36.",
+        "A hostel warden assigns room numbers in a repeating cycle of 1 through 8. The room position for a student is determined by their serial number using modulo. Student serial number 25 is being processed. Which expression and result are correct?",
+        "`25 % 8 = 1` — 8 goes into 25 three times with remainder 1. Modulo gives the remainder, which is what a cycling room assignment needs. `25 // 8 = 3` gives the cycle count, not the room position.",
         "easy", "apply", "arithmetic-operators",
-        "**",
-        ["*", "//", "%"],
+        "`25 % 8` → `1`",
+        ["`25 // 8` → `3`", "`25 / 8` → `3.125`", "`25 % 8` → `3`"],
     ),
+    # 2.2.6 Medium — Comparison, equality vs boundary
     (
-        "A club-membership app needs to flip a guest's membership status to decide whether to show a 'join now' banner.\n\n```python\nis_member = False\nshow_banner = ______ is_member\n```\n\nWhich keyword correctly replaces the blank so `show_banner` becomes `True` for a non-member?",
-        "`not` flips a boolean, so `not False` evaluates to `True`.",
-        "easy", "apply", "comparison-and-logical-operators",
-        "not",
-        ["and", "or", "is"],
+        "A competitive coding platform awards a Gold Badge for more than 100 problems solved and a Silver Badge for exactly 100. A user has solved exactly 100 problems. What are the values of `gold` and `silver`?\n\n```python\nproblems_solved = 100\ngold = problems_solved > 100\nsilver = problems_solved == 100\n```",
+        "`100 > 100` is `False` — the user does not qualify for Gold. `100 == 100` is `True` — they qualify for Silver. The boundary between `>` and `==` is exactly what this question tests.",
+        "medium", "apply", "comparison-operators",
+        "`gold = False`, `silver = True`",
+        ["`gold = True`, `silver = True`", "`gold = True`, `silver = False`", "`gold = False`, `silver = False`"],
     ),
-    # --- Code-to-requirement matching (2) ---
+    # 2.2.7 Medium — Logical Operators, and/or combination
     (
-        "A developer writes this code to check if a number is even:\n\n```python\nnumber = 8\n\nif number % 2 == 0:\n    result = 'Even'\nelse:\n    result = 'Odd'\n```\n\nDoes this code correctly identify whether `number` is even?",
-        "`%` gives the remainder after division by 2. A number is even exactly when that remainder is 0, so this check is correct.",
-        "medium", "apply", "arithmetic-operators",
-        "Yes — `number % 2 == 0` is True only when the number divides evenly by 2",
-        ["No — it should check `number % 2 == 1` instead", "No — `%` only works with two whole numbers written directly in code", "No — this code will always print 'Odd'"],
+        "A Bengaluru EdTech platform offers a free trial to users who are either students OR referred by an existing member — but in both cases, they must not have a previously banned account. A developer writes:\n\n```python\nis_student = False\nis_referred = True\nis_banned = False\n\ntrial_eligible = (is_student or is_referred) and not is_banned\n```\n\nA QA tester claims the condition is wrong and will incorrectly block this user. Is the tester right?",
+        "`is_student or is_referred` → `False or True` → `True`. `not is_banned` → `not False` → `True`. `True and True` → `True`. The user is a referred, non-banned user — trial access is correctly granted. The tester is wrong.",
+        "medium", "analyze", "logical-operators",
+        "No — the logic evaluates correctly to `True`; the tester is wrong",
+        ["Yes — `or` must be replaced with `and` for the rule to work correctly", "Yes — `not is_banned` should be written as `is_banned == False` to work", "No — but the result is `False`, so access is actually denied"],
     ),
+    # 2.2.8 Medium — Augmented Assignment, tracing
     (
-        "A developer writes this code intending to safely handle any typed input before converting it to a number:\n\n```python\nage_text = '25'\n\nif age_text.isdigit():\n    age = int(age_text)\nelse:\n    age = 0\n```\n\nDoes this code correctly avoid a crash when given non-numeric input?",
-        "`isdigit()` confirms the text is purely numeric before `int()` is ever called, so non-numeric text falls into the safe `else` branch instead of crashing.",
+        "A mobile recharge app tracks a user's wallet. The user starts with ₹500, recharges ₹200, buys a data pack for ₹149, then receives a ₹30 cashback. The developer traces the wallet:\n\n```python\nbalance = 500\nbalance += 200\nbalance -= 149\nbalance += 30\n```\n\nThe developer claims the final balance is ₹611. What is it actually, and is the developer right?",
+        "`500 + 200 = 700`, `700 - 149 = 551`, `551 + 30 = 581`. The augmented operators work correctly and chain. The developer's code logic is right, but their stated answer of ₹611 is a manual arithmetic mistake.",
+        "medium", "apply", "augmented-assignment",
+        "₹581 — the code is correct but the developer made an arithmetic error",
+        ["₹581 — the developer's code is wrong; augmented operators don't chain", "₹611 — the developer is correct", "₹500 — augmented operators don't persist across lines"],
+    ),
+    # 2.2.9 Medium — Operator Precedence, mixed arithmetic
+    (
+        "A data science intern at a Pune analytics firm computes a normalised placement score:\n\n```python\nscore = 5 + 2 ** 3 * 4 / 8 - 1\n```\n\nHer manager says the result is `8.0`. The intern says it's `9.0`. Who is right?",
+        "`2**3 = 8`, `8 * 4 = 32`, `32 / 8 = 4.0`, `5 + 4.0 - 1 = 8.0`. The manager is correct. The intern likely misapplied the precedence order.",
+        "medium", "apply", "operator-precedence",
+        "The manager — the result is `8.0`",
+        ["The intern — the result is `9.0`", "Neither — Python raises a `ZeroDivisionError`", "Neither — the result is `12.0`"],
+    ),
+    # 2.2.10 Medium — type() and Conversion
+    (
+        "A health-tech startup processes blood pressure readings that arrive from a medical device as strings. Before running calculations, a developer confirms the type after conversion:\n\n```python\nreading = \"120\"\nconverted = float(reading)\nprint(type(converted) == float)\n```\n\nWhat does this print?",
+        "`float(\"120\")` converts `\"120\"` to `120.0`. `type(120.0) == float` compares type objects directly — this is valid Python. The result is `True`. `type()` returns a type object, and `==` works correctly with type comparisons.",
         "medium", "apply", "type-conversion",
-        "Yes — `isdigit()` confirms the text is safe to convert before `int()` is called",
-        ["No — `isdigit()` cannot be used before `int()`", "No — this code always crashes on any input", "Yes — but only for negative numbers"],
+        "`True` — `float()` converts the string and the type check passes",
+        ["`False` — `float(\"120\")` produces an `int` since `\"120\"` has no decimal point", "`False` — `type()` returns a string like `\"float\"`, not a type object", "An error — `type()` output cannot be compared using `==`"],
     ),
-    # --- Requirement-to-code selection (2) ---
+    # 2.2.11 Medium — input(), division on strings
     (
-        "Which code correctly converts a Celsius temperature stored in `celsius` to Fahrenheit, using the formula F = C times 9/5, plus 32?",
-        "Following the formula exactly: multiply `celsius` by `9 / 5` first, then add 32.",
-        "medium", "apply", "arithmetic-operators",
-        "`fahrenheit = celsius * 9 / 5 + 32`",
-        ["`fahrenheit = celsius * (9 / 5 + 32)`", "`fahrenheit = celsius + 9 / 5 * 32`", "`fahrenheit = (celsius * 9) / (5 + 32)`"],
+        "Two students test a Python script to split a restaurant bill. They enter `1200` and `4` when prompted. The output surprises them:\n\n```python\ntotal = input(\"Total bill: \")\npeople = input(\"Number of people: \")\nprint(\"Each person pays: ₹\", total / people)\n```\n\nWhat actually happens when this runs?",
+        "`input()` returns strings. `total = \"1200\"` and `people = \"4\"`. The `/` operator cannot divide two strings — it raises a `TypeError`. The fix is `int(input(...))` for both.",
+        "medium", "analyze", "input-type-trap",
+        "It raises a `TypeError` — you cannot divide two strings",
+        ["It prints `Each person pays: ₹ 300.0`", "It raises a `ValueError` — `input()` cannot accept numbers", "It prints `Each person pays: ₹ 12004`"],
     ),
+    # 2.2.12 Medium — f-strings, expressions and format specifiers
     (
-        "A store wants to round a computed price to exactly 2 decimal places for display, without changing the stored value. Which code correctly does this?",
-        "An f-string with `:.2f` formats the value for display with 2 decimal places, leaving the original `price` variable untouched.",
-        "medium", "understand", "input-and-output",
-        "`display = f'{price:.2f}'`",
-        ["`price = int(price)`", "`display = price[:2]`", "`price = round(price)`"],
+        "A placement coordinator wants to display a student's CTC in rupees without creating a separate variable for the conversion. CTC is stored in lakhs as a float. The coordinator asks the developer: \"Can we do the multiplication inside the f-string itself?\"\n\n```python\nname = \"Rohit Verma\"\nctc_lakhs = 12.5\nprint(f\"{name}'s CTC is ₹{ctc_lakhs * 100000:.0f}\")\n```\n\nWhat is printed?",
+        "f-strings allow full Python expressions inside `{}`. `12.5 * 100000 = 1250000.0`, and `:.0f` formats it with zero decimal places, giving `1250000`. The output is `Rohit Verma's CTC is ₹1250000`.",
+        "medium", "apply", "fstrings-format-specifiers",
+        "`Rohit Verma's CTC is ₹1250000`",
+        ["`Rohit Verma's CTC is ₹12.5`", "`Rohit Verma's CTC is ₹12500000.0`", "An error — arithmetic is not allowed inside f-string `{}`"],
+    ),
+    # 2.2.13 Medium — Boolean, truthiness of zero
+    (
+        "A quiz app tracks whether a student has attempted a question using an integer score: `0` if unattempted, any positive value if attempted. A developer writes:\n\n```python\nscore = 0\nif score:\n    print(\"Attempted\")\nelse:\n    print(\"Not attempted\")\n```\n\nA teammate argues this is wrong because `score` is an integer, not a boolean, and `if` only works with `True` or `False`. What is printed, and is the teammate right?",
+        "In Python, `0` is falsy. `if score:` with `score = 0` evaluates to `False`, so the `else` branch runs. The teammate is wrong — `if` accepts any value and Python defines clear truthiness rules for all built-in types.",
+        "medium", "understand", "truthiness",
+        "`Not attempted` — `0` is falsy in Python; the teammate is wrong",
+        ["`Attempted` — `0` is truthy since it is a defined, non-`None` value", "Nothing — the condition is skipped when the value is an integer", "A `TypeError` — `if` requires a boolean expression"],
+    ),
+    # 2.2.14 Medium — Arithmetic, exponentiation and parentheses
+    (
+        "A finance team computes the maturity value of a fixed deposit using `P × (1 + r)^n`. Two versions of the code are on the screen:\n\n```python\n# Version A\nmaturity_a = 50000 * 1 + 0.07 ** 5\n\n# Version B\nmaturity_b = 50000 * (1 + 0.07) ** 5\n```\n\nP = ₹50,000, r = 0.07, n = 5. Which version is correct, and why?",
+        "In Version A, precedence applies `0.07 ** 5` first (≈ 0.0000000168), then `50000 * 1 = 50000`, then adds the tiny value — giving roughly ₹50,000. Wrong formula. Version B uses parentheses to compute `1.07 ** 5 ≈ 1.4026`, then `50000 * 1.4026 ≈ ₹70,128`. Version B is correct.",
+        "medium", "analyze", "operator-precedence",
+        "Version B — parentheses force `(1 + 0.07)` before exponentiation",
+        ["Version A — `*` is evaluated before `**`, so the formula order is correct", "Both are equivalent — parentheses don't change the result here", "Version A — result is approximately ₹50,001 and matches the FD formula"],
+    ),
+    # 2.2.15 Hard — Comparison, assignment in condition
+    (
+        "During a code review at a fintech company, a reviewer flags the following snippet from a PIN verification module:\n\n```python\nentered_pin = \"1234\"\nif entered_pin = \"1234\":\n    print(\"Access granted\")\n```\n\nThe developer insists it should work. What actually happens?",
+        "Using `=` inside an `if` condition is a `SyntaxError` in Python. `=` is the assignment operator; Python does not permit it where an expression is expected. The developer must use `==`. This is one of the most common bugs beginners carry from mathematical notation.",
+        "hard", "analyze", "comparison-operators",
+        "It raises a `SyntaxError` — `=` is not valid in a condition; use `==`",
+        ["It prints `Access granted` — `=` and `==` are interchangeable inside `if` conditions", "It prints nothing — `=` returns `None`, which is falsy", "It raises a `TypeError` — strings cannot be compared using `=`"],
+    ),
+    # 2.2.16 Hard — Type Conversion, int() on a decimal string
+    (
+        "A data pipeline at an ed-tech company receives student ratings like `\"4.8\"` as strings from an API. A developer writes:\n\n```python\nrating = int(\"4.8\")\n```\n\nA senior developer immediately says it will fail. The junior disagrees, saying `4.8` is clearly a number. Who is right?",
+        "`int()` cannot directly parse a string containing a decimal point — it raises a `ValueError`. The correct approach is `int(float(\"4.8\"))`, which gives `4`. Note that `int(\"4\")` (no decimal point) works fine; the issue is specifically the decimal point in the string.",
+        "hard", "analyze", "type-conversion",
+        "The senior — `int()` cannot parse a decimal string; raises `ValueError`",
+        ["The junior — `int()` handles decimal strings by truncating to `4`", "The junior — `int(\"4.8\")` silently drops the decimal and returns `4`", "The senior — `int()` cannot handle any string containing a numeric value"],
+    ),
+    # 2.2.17 Hard — Operator Precedence, logical operators
+    (
+        "A smart gate at a corporate office opens only if the employee badge is valid AND the person either has a scheduled meeting OR is an authorised visitor. A developer writes:\n\n```python\nbadge_valid = False\nhas_meeting = False\nis_authorised = True\n\ngate_open = badge_valid and has_meeting or is_authorised\n```\n\nThe security team notices the gate opens even when `badge_valid` is `False`. Is this a bug?",
+        "`and` has higher precedence than `or`. The expression evaluates as `(False and False) or True` → `False or True` → `True`. The badge is never checked against `is_authorised`. The correct expression is `badge_valid and (has_meeting or is_authorised)`.",
+        "hard", "analyze", "operator-precedence",
+        "Yes — `and` binds tighter than `or`, bypassing the badge check entirely",
+        ["No — authorised visitors should always be admitted regardless of badge status", "No — `or` binds tighter than `and`, so the full intended logic is preserved", "Yes — the expression always evaluates to `True` regardless of any input"],
+    ),
+    # 2.2.18 Hard — Floor division with negatives
+    (
+        "A scheduling system tracks days relative to the start of an academic year. A data migration from a legacy C-based system introduces a negative value: `days = -7`. A developer familiar with C expects `-7 // 2` to return `-3`. A Python developer says the result is different. Who is right?",
+        "Python's `//` floors toward negative infinity. `-7 / 2 = -3.5`, and `floor(-3.5) = -4`. C truncates toward zero, giving `-3`. This difference causes subtle bugs when migrating numeric logic between languages.",
+        "hard", "analyze", "arithmetic-operators",
+        "The Python developer — Python floors toward negative infinity; result is `-4`",
+        ["The C developer — Python and C agree on this; `-7 // 2` returns `-3`", "Neither — Python returns `-3.5` for floor division on negative numbers", "The Python developer — Python returns `0` for floor division of any negative number"],
+    ),
+    # 2.2.19 Hard — Augmented assignment, chained operations and tracing
+    (
+        "A student fee reconciliation system processes three adjustments to a base fee in sequence: a ₹500 penalty for a late payment, a ₹200 rebate for an early clearance, and a further ₹150 penalty for a missed deadline. Starting from a base fee of ₹10,000, what is the final value?\n\n```python\nfee = 10000\nfee += 500\nfee -= 200\nfee += 150\n```",
+        "`10000 + 500 = 10500`, `10500 - 200 = 10300`, `10300 + 150 = 10450`. Augmented operators apply sequentially and do accumulate. The final fee is ₹10,450.",
+        "hard", "apply", "augmented-assignment",
+        "₹10,450",
+        ["₹10,150", "₹10,500", "₹10,000 — augmented operators don't accumulate across multiple lines"],
+    ),
+    # 2.2.20 Hard — Combined operators, multi-condition tracing
+    (
+        "A rural microfinance app in Tamil Nadu auto-approves small loans if all three conditions hold: applicant is between 21 and 55 years old (inclusive), monthly income is at least ₹8,000, and no existing default on record. An applicant is 34 years old, earns ₹9,500/month, and has a recorded default.\n\n```python\nage = 34\nincome = 9500\nhas_default = True\n\napproved = 21 <= age <= 55 and income >= 8000 and not has_default\n```\n\nWhat is `approved`, and which condition causes the rejection?",
+        "`21 <= 34 <= 55` → `True`. `9500 >= 8000` → `True`. `not has_default` → `not True` → `False`. `True and True and False` → `False`. The rejection is caused solely by the existing default record. Chained comparisons like `21 <= age <= 55` are valid Python and work as expected.",
+        "hard", "analyze", "logical-operators",
+        "`False` — `not has_default` is `False`, blocking approval",
+        ["`True` — all three conditions are satisfied for this applicant", "`False` — monthly income does not meet the minimum ₹8,000 threshold", "`False` — the chained comparison `21 <= age <= 55` fails for age values above 30"],
     ),
 ]
 
 assert len(SET1) == 10, len(SET1)
-assert len(SET2) == 30, len(SET2)
+assert len(SET2) == 20, len(SET2)
 
 
 def build_rows(items, set_label, title_prefix):
