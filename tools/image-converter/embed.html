@@ -49,9 +49,7 @@
 
     function decodePayload() {
       const token = window.location.hash.slice(1);
-      if (!token) {
-        throw new Error("Missing editor data.");
-      }
+      if (!token) throw new Error("Missing editor data.");
 
       const padded = token.replace(/-/g, "+").replace(/_/g, "/").padEnd(Math.ceil(token.length / 4) * 4, "=");
       const binary = atob(padded);
@@ -63,24 +61,26 @@
     }
 
     function splitPostgresqlCode(code) {
-      const match = String(code || "").match(/^--\s*Query\s*$/im);
+      const text = String(code || "");
+      const match = text.match(/^--\s*Query\s*$/im);
       if (!match || typeof match.index !== "number") {
-        return { setup: "", commands: String(code || "").replace(/\s+$/, "") };
+        return { setup: "", commands: text.replace(/\s+$/, "") };
       }
-      const setup = String(code || "").slice(0, match.index).replace(/\s+$/, "");
-      const commands = String(code || "").slice(match.index + match[0].length).replace(/^\s+/, "").replace(/\s+$/, "");
-      return { setup, commands: commands || String(code || "").replace(/\s+$/, "") };
+      const setup = text.slice(0, match.index).replace(/\s+$/, "");
+      const commands = text.slice(match.index + match[0].length).replace(/^\s+/, "").replace(/\s+$/, "");
+      return { setup, commands: commands || text.replace(/\s+$/, "") };
     }
 
-    function postgresqlFiles(snippet) {
-      const setupParts = (snippet.extraFiles || [])
-        .map((extra) => extra.content || "")
-        .filter(Boolean);
+    function oneCompilerFiles(snippet, language) {
+      if (language !== "postgresql") {
+        return [{
+          name: snippet.filename || "main.py",
+          content: snippet.code || ""
+        }];
+      }
       const split = splitPostgresqlCode(snippet.code || "");
-      if (split.setup) setupParts.push(split.setup);
       const files = [{ name: "commands.sql", content: split.commands }];
-      const initSql = setupParts.join("\n\n").trim();
-      if (initSql) files.push({ name: "init.sql", content: initSql });
+      if (split.setup) files.push({ name: "init.sql", content: split.setup });
       return files;
     }
 
@@ -100,33 +100,10 @@
 
       function populateCode() {
         if (!editor.contentWindow) return;
-        const isSql = ["mysql", "postgresql", "sqlite"].includes(language);
-        const files = [];
-        if (language === "postgresql") {
-          files.push(...postgresqlFiles(snippet));
-        } else if (isSql) {
-          const setup = (snippet.extraFiles || [])
-            .map((extra) => extra.content || "")
-            .filter(Boolean)
-            .join("\n\n");
-          const code = [setup, snippet.code || ""].filter(Boolean).join("\n\n");
-          files.push({
-            name: "main_001.sql",
-            content: code
-          });
-        } else {
-          files.push({
-            name: snippet.filename || "main.py",
-            content: snippet.code || ""
-          });
-          for (const extra of snippet.extraFiles || []) {
-            files.push({ name: extra.name, content: extra.content || "" });
-          }
-        }
         editor.contentWindow.postMessage({
           eventType: "populateCode",
           language,
-          files
+          files: oneCompilerFiles(snippet, language)
         }, "https://onecompiler.com");
       }
 

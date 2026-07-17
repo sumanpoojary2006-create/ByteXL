@@ -705,6 +705,7 @@ function iframeHtml(src, height) {
 }
 
 function filenameFor(language, index) {
+  if (language === "postgresql") return "commands.sql";
   if (SQL_LANGUAGES.has(language)) return "main_001.sql";
   if (language === "java") return "Main.java";
   const extension = FILE_EXTENSIONS[language] || language;

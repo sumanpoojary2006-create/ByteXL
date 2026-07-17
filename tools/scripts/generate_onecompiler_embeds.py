@@ -280,7 +280,9 @@ def reusable_setup_code(language: str, code: str) -> bool:
 
 
 def filename_for(language: str, index: int) -> str:
-    if language in {"mysql", "postgresql", "sqlite"}:
+    if language == "postgresql":
+        return "commands.sql"
+    if language in {"mysql", "sqlite"}:
         return "main_001.sql"
     extension = FILE_EXTENSIONS.get(language, language)
     if language == "java":
@@ -439,15 +441,38 @@ def wrapper_html(snippet: dict) -> str:
 
     editor.src = `https://onecompiler.com/embed/${{encodeURIComponent(snippet.language)}}?${{params.toString()}}`;
 
+    function splitPostgresqlCode(code) {{
+      const text = String(code || "");
+      const match = text.match(/^--\\s*Query\\s*$/im);
+      if (!match || typeof match.index !== "number") {{
+        return {{ setup: "", commands: text.replace(/\\s+$/, "") }};
+      }}
+      const setup = text.slice(0, match.index).replace(/\\s+$/, "");
+      const commands = text.slice(match.index + match[0].length).replace(/^\\s+/, "").replace(/\\s+$/, "");
+      return {{ setup, commands: commands || text.replace(/\\s+$/, "") }};
+    }}
+
+    function oneCompilerFiles() {{
+      if (snippet.language !== "postgresql") {{
+        return [{{
+          name: snippet.filename,
+          content: snippet.code
+        }}];
+      }}
+      const split = splitPostgresqlCode(snippet.code);
+      const files = [{{ name: "commands.sql", content: split.commands }}];
+      if (split.setup) {{
+        files.push({{ name: "init.sql", content: split.setup }});
+      }}
+      return files;
+    }}
+
     function populateCode() {{
       if (!editor.contentWindow) return;
       editor.contentWindow.postMessage({{
         eventType: "populateCode",
         language: snippet.language,
-        files: [{{
-          name: snippet.filename,
-          content: snippet.code
-        }}]
+        files: oneCompilerFiles()
       }}, "https://onecompiler.com");
     }}
 

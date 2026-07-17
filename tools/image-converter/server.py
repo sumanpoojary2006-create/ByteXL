@@ -106,6 +106,7 @@ ONECOMPILER_EDITOR_LANGUAGES = {
 }
 
 SQL_LANGUAGES = {"mysql", "postgresql", "sqlite"}
+POSTGRESQL_QUERY_MARKER = re.compile(r"(?im)^--\s*Query\s*$")
 
 
 def normalize_zip_path(path: str) -> str:
@@ -172,6 +173,35 @@ def onecompiler_save(payload: dict[str, Any]) -> Any:
         raise HTTPException(502, f"OneCompiler API request failed: {exc}") from exc
     except ValueError as exc:
         raise HTTPException(502, "OneCompiler returned an invalid response") from exc
+
+
+def split_postgresql_code(code: str) -> tuple[str, str]:
+    match = POSTGRESQL_QUERY_MARKER.search(code)
+    if not match:
+        return "", code.rstrip()
+
+    setup = code[: match.start()].rstrip()
+    commands = code[match.end() :].lstrip().rstrip()
+    return setup, commands or code.rstrip()
+
+
+def postgresql_files(code: str, extra_files: Any) -> list[dict[str, str]]:
+    setup_parts: list[str] = []
+    if isinstance(extra_files, list):
+        for extra in extra_files:
+            if not isinstance(extra, dict):
+                continue
+            content = str(extra.get("content") or "").rstrip()
+            if content:
+                setup_parts.append(content)
+
+    setup, commands = split_postgresql_code(code)
+    setup_parts.append(setup)
+    files = [{"name": "commands.sql", "content": commands}]
+    init_sql = "\n\n".join(part for part in setup_parts if part).strip()
+    if init_sql:
+        files.append({"name": "init.sql", "content": init_sql})
+    return files
 
 
 def bytexl_get(path: str) -> Any:
@@ -655,7 +685,10 @@ async def create_onecompiler_workspace(payload: dict[str, Any] = Body(...)):
     if snippet_id:
         tags.append(snippet_id[:40])
 
-    if language in SQL_LANGUAGES:
+    if language == "postgresql":
+        files = postgresql_files(code, extra_files)
+        extra_files = []
+    elif language in SQL_LANGUAGES:
         setup_parts: list[str] = []
         if isinstance(extra_files, list):
             for extra in extra_files:
@@ -669,21 +702,22 @@ async def create_onecompiler_workspace(payload: dict[str, Any] = Body(...)):
             code = "\n\n".join([*setup_parts, "-- Query\n" + query]).strip()
         filename = "main_001.sql"
         extra_files = []
-
-    # The main runnable file is always file 0 (the active tab). Non-SQL
-    # fixtures declared with `with=` are added beside it so file-reading
-    # examples still have their inputs available.
-    files: list[dict[str, str]] = [{"name": filename, "content": code}]
-    seen_names = {filename}
-    if isinstance(extra_files, list):
-        for extra in extra_files:
-            if not isinstance(extra, dict):
-                continue
-            extra_name = normalize_zip_path(str(extra.get("name") or "")).lstrip("/")
-            if not extra_name or extra_name.endswith("/") or extra_name in seen_names:
-                continue
-            files.append({"name": extra_name, "content": str(extra.get("content") or "")})
-            seen_names.add(extra_name)
+        files = [{"name": filename, "content": code}]
+    else:
+        # The main runnable file is always file 0 (the active tab). Non-SQL
+        # fixtures declared with `with=` are added beside it so file-reading
+        # examples still have their inputs available.
+        files = [{"name": filename, "content": code}]
+        seen_names = {filename}
+        if isinstance(extra_files, list):
+            for extra in extra_files:
+                if not isinstance(extra, dict):
+                    continue
+                extra_name = normalize_zip_path(str(extra.get("name") or "")).lstrip("/")
+                if not extra_name or extra_name.endswith("/") or extra_name in seen_names:
+                    continue
+                files.append({"name": extra_name, "content": str(extra.get("content") or "")})
+                seen_names.add(extra_name)
 
     properties: dict[str, Any] = {
         "language": editor_language,

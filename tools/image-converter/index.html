@@ -1429,7 +1429,7 @@
     return payload;
   }
   function snippetIdFor(path,index){return `${slugify(path.replace(/\.[^.]+$/,""))}-${String(index).padStart(3,"0")}`;}
-  function filenameFor(lang,i) { if(SQL_LANGUAGES.has(lang))return "main_001.sql"; if(lang==="java")return "Main.java"; return `main_${String(i).padStart(3,"0")}.${FILE_EXTENSIONS[lang]||lang}`; }
+  function filenameFor(lang,i) { if(lang==="postgresql")return "commands.sql"; if(SQL_LANGUAGES.has(lang))return "main_001.sql"; if(lang==="java")return "Main.java"; return `main_${String(i).padStart(3,"0")}.${FILE_EXTENSIONS[lang]||lang}`; }
   function makeFilenameMap(urlMap) { const m=new Map(); for(const[p,url]of urlMap.entries()){const fn=baseName(p);m.set(fn,m.has(fn)?null:url);} return m; }
   function splitMarkdownTarget(target) { const t=target.trim(); if(t.startsWith("<")&&t.includes(">")){const e=t.indexOf(">");return{localPath:t.slice(1,e),title:t.slice(e+1).trim()};} const m=t.match(/^(.*?)(\s+(?:"[^"]*"|'[^']*'|\([^)]*\)))$/); return m?{localPath:m[1].trim(),title:m[2].trim()}:{localPath:t,title:""}; }
   function hasUrlScheme(p){return /^[a-z][a-z0-9+.-]*:/i.test(p);}
