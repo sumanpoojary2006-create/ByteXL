@@ -8,7 +8,35 @@ What Aditya needs is a single statement that inserts a `row` if it is new and up
 
 ## Setting Up a Uniqueness Rule to Conflict Against
 
-An upsert only makes sense once the `database` has a rule to check a new `row` against, so Aditya's enrollments `table` needs a `UNIQUE` `constraint` on the combination of student_id and course_id, which states plainly that the same student cannot be enrolled in the same course twice.
+The `students`, `courses`, and `enrollments` `tables` hold this data:
+
+| student_id | full_name | city |
+| ---------- | ----------- | --------- |
+| 1 | Omkar Rane | Bengaluru |
+| 2 | Neha Sharma | Mysuru |
+| 3 | Varun Nair | Chennai |
+
+| course_id | title | department | credits |
+| --------- | ---------------- | ---------------- | ------: |
+| 101 | Database Systems | Computer Science | 4 |
+| 102 | Data Structures | Computer Science | 4 |
+| 103 | Linear Algebra | Mathematics | 3 |
+
+| enrollment_id | student_id | course_id | enrolled_on | grade |
+| ------------- | ---------- | --------- | ---------- | ------ |
+| 1 | 1 | 101 | 2025-02-01 | A |
+| 2 | 2 | 101 | 2025-02-02 | *NULL* |
+| 3 | 3 | 103 | 2025-02-03 | B+ |
+
+A setup file builds this starting point with `CREATE TABLE` and `INSERT INTO`. An upsert only makes sense once the `database` has a rule to check a new `row` against, so the `enrollments` `table` is created with a `UNIQUE (student_id, course_id)` `constraint`, which states plainly that the same student cannot be enrolled in the same course twice. That constraint line is what gives `ON CONFLICT` something concrete to react to; without it, PostgreSQL would have no rule saying two `rows` with the same student_id and course_id are a problem, and there would be nothing for an upsert to "conflict" against at all.
+
+![A UNIQUE student_id plus course_id rule detecting a duplicate enrollment conflict](images/09_upsert_unique_conflict_rule.png)
+
+### Hands-On Practice: Prepare the Tables
+
+The OneCompiler exercise uses two files. `init.sql` creates and populates the starting `tables`, including the `UNIQUE` `constraint`. The active query file contains only the statement being practised. Because each run reloads `init.sql`, the dataset is always fresh.
+
+First, `init.sql` prepares the source `tables`:
 
 ```postgresql file=init.sql
 CREATE TABLE students (
@@ -49,41 +77,11 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 (3, 3, 103, '2025-02-03', 'B+');
 ```
 
-The `students`, `courses`, and `enrollments` `tables` hold this data:
-
-| student_id | full_name | city |
-| ---------- | ----------- | --------- |
-| 1 | Omkar Rane | Bengaluru |
-| 2 | Neha Sharma | Mysuru |
-| 3 | Varun Nair | Chennai |
-
-| course_id | title | department | credits |
-| --------- | ---------------- | ---------------- | ------: |
-| 101 | Database Systems | Computer Science | 4 |
-| 102 | Data Structures | Computer Science | 4 |
-| 103 | Linear Algebra | Mathematics | 3 |
-
-| enrollment_id | student_id | course_id | enrolled_on | grade |
-| ------------- | ---------- | --------- | ---------- | ------ |
-| 1 | 1 | 101 | 2025-02-01 | A |
-| 2 | 2 | 101 | 2025-02-02 | *NULL* |
-| 3 | 3 | 103 | 2025-02-03 | B+ |
-
-That `UNIQUE (student_id, course_id)` line is what gives `ON CONFLICT` something concrete to react to. Without it, PostgreSQL would have no rule saying two `rows` with the same student_id and course_id are a problem, and there would be nothing for an upsert to "conflict" against at all.
-
-![A UNIQUE student_id plus course_id rule detecting a duplicate enrollment conflict](images/09_upsert_unique_conflict_rule.png)
+The active query files below all run against this same prepared dataset.
 
 ## INSERT ... ON CONFLICT DO UPDATE
 
-Aditya's first case: Neha Sharma's Database Systems enrollment already exists with no grade recorded, and the new submission carries her final grade, B+. He writes this as a single statement.
-
-```postgresql with=init.sql
-INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade)
-VALUES (4, 2, 101, '2025-02-02', 'B+')
-ON CONFLICT (student_id, course_id)
-DO UPDATE SET grade = EXCLUDED.grade
-RETURNING enrollment_id, student_id, course_id, grade;
-```
+Aditya's first case: Neha Sharma's Database Systems enrollment already exists with no grade recorded, and the new submission carries her final grade, B+. He writes this as a single statement: `INSERT INTO enrollments (...) VALUES (4, 2, 101, '2025-02-02', 'B+') ON CONFLICT (student_id, course_id) DO UPDATE SET grade = EXCLUDED.grade RETURNING ...;`.
 
 Expected output, directly from the `RETURNING` clause:
 
@@ -102,17 +100,21 @@ PostgreSQL processed this in three steps:
 - The result shows enrollment_id 2, the `row` that already existed, now carrying grade B+, not a new `row` with enrollment_id 4.
 - `EXCLUDED.grade` refers to the grade value from the `row` that was proposed for insertion, the B+ that never actually got inserted, letting the `UPDATE` branch reuse it without retyping it.
 
-## The Same Statement, Genuinely Inserting
+### Hands-On Practice: Upsert That Updates
 
-Aditya's second case: Varun Nair has newly registered for Data Structures, course_id 102, a pairing that has never been submitted before.
+Keep the same `init.sql` file and change only the active query file:
 
 ```postgresql with=init.sql
 INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade)
-VALUES (5, 3, 102, '2025-02-10', NULL)
+VALUES (4, 2, 101, '2025-02-02', 'B+')
 ON CONFLICT (student_id, course_id)
 DO UPDATE SET grade = EXCLUDED.grade
 RETURNING enrollment_id, student_id, course_id, grade;
 ```
+
+## The Same Statement, Genuinely Inserting
+
+Aditya's second case: Varun Nair has newly registered for Data Structures, course_id 102, a pairing that has never been submitted before. The same upsert shape, `INSERT INTO enrollments (...) VALUES (5, 3, 102, '2025-02-10', NULL) ON CONFLICT (student_id, course_id) DO UPDATE SET grade = EXCLUDED.grade RETURNING ...;`, handles it.
 
 Expected output, directly from the `RETURNING` clause:
 
@@ -126,9 +128,31 @@ The exact same statement Aditya used a moment ago to update an existing `row` he
 
 ![ON CONFLICT branching to INSERT when there is no conflict and UPDATE when there is one](images/10_upsert_insert_or_update_branch.png)
 
+### Hands-On Practice: Upsert That Inserts
+
+Keep the same `init.sql` file and change only the active query file:
+
+```postgresql with=init.sql
+INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade)
+VALUES (5, 3, 102, '2025-02-10', NULL)
+ON CONFLICT (student_id, course_id)
+DO UPDATE SET grade = EXCLUDED.grade
+RETURNING enrollment_id, student_id, course_id, grade;
+```
+
 ## ON CONFLICT DO NOTHING for the Simpler Case
 
-Sometimes there is no update to make at all, only a wish to insert a `row` if it is not already there and quietly skip it otherwise. `DO NOTHING` covers exactly that.
+Sometimes there is no update to make at all, only a wish to insert a `row` if it is not already there and quietly skip it otherwise. `DO NOTHING` covers exactly that: `INSERT INTO enrollments (...) VALUES (6, 1, 101, '2025-02-01', 'A') ON CONFLICT (student_id, course_id) DO NOTHING RETURNING ...;`.
+
+Expected output:
+
+*(no rows returned)*
+
+Nothing comes back from `RETURNING` at all, because student_id 1 and course_id 101 already exist as enrollment 1, and `DO NOTHING` means precisely that: the conflicting `row` is left exactly as it was, no error is raised, and no update happens either. This is the right choice whenever re-submitting an already-known pairing should simply be a harmless no-op rather than a correction.
+
+### Hands-On Practice: Upsert That Does Nothing
+
+Keep the same `init.sql` file and change only the active query file:
 
 ```postgresql with=init.sql
 INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade)
@@ -137,12 +161,6 @@ ON CONFLICT (student_id, course_id)
 DO NOTHING
 RETURNING enrollment_id, student_id, course_id, grade;
 ```
-
-Expected output:
-
-*(no rows returned)*
-
-Nothing comes back from `RETURNING` at all, because student_id 1 and course_id 101 already exist as enrollment 1, and `DO NOTHING` means precisely that: the conflicting `row` is left exactly as it was, no error is raised, and no update happens either. This is the right choice whenever re-submitting an already-known pairing should simply be a harmless no-op rather than a correction.
 
 ## Why Not Just Check First, Then Decide
 
@@ -184,14 +202,10 @@ Nothing comes back from `RETURNING` at all, because student_id 1 and course_id 1
 Omkar Rane's Linear Algebra grade needs to be recorded for the first time as A-, using an upsert in case it was already partially submitted.
 
 ```postgresql with=init.sql
-INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade)
-VALUES (7, 1, 103, '2025-02-11', 'A-')
-ON CONFLICT (student_id, course_id)
-DO UPDATE SET grade = EXCLUDED.grade
-RETURNING enrollment_id, student_id, course_id, grade;
+-- Write an INSERT ... ON CONFLICT ... RETURNING below
 ```
 
-Expected output, directly from the `RETURNING` clause:
+A working answer is `INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade) VALUES (7, 1, 103, '2025-02-11', 'A-') ON CONFLICT (student_id, course_id) DO UPDATE SET grade = EXCLUDED.grade RETURNING enrollment_id, student_id, course_id, grade;`. Expected output, directly from the `RETURNING` clause:
 
 | enrollment_id | student_id | course_id | grade |
 | ------------- | ---------- | --------- | ----- |
