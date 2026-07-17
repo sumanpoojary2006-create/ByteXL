@@ -29,9 +29,37 @@ INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALU
 (8, 'Priya Subramaniam', 'priya.subramaniam@example.com', 'Chennai', '9884066666', '2025-01-28');
 ```
 
+The `students` `table` holds this data:
+
+| student_id | full_name | email | city | phone | joined_on |
+| ---------- | ----------------- | ------------------------------ | --------- | ---------- | ---------- |
+| 1 | Ishaan Verma | ishaan.verma@example.com | Bengaluru | 9845011111 | 2025-01-10 |
+| 2 | Meera Pillai | meera.pillai@example.com | Chennai | 9884022222 | 2025-01-12 |
+| 3 | Arjun Bhat | arjun.bhat@example.com | Bengaluru | *NULL* | 2025-01-15 |
+| 4 | Kavya Reddy | kavya.reddy@example.com | Pune | 9922033333 | 2025-01-18 |
+| 5 | Rohan Joshi | rohan.joshi@example.com | Hyderabad | 9640044444 | 2025-01-20 |
+| 6 | Sneha Gowda | sneha.gowda@example.com | Mysuru | *NULL* | 2025-01-22 |
+| 7 | Aditya Kulkarni | aditya.kulkarni@example.com | Pune | 9822055555 | 2025-01-25 |
+| 8 | Priya Subramaniam | priya.subramaniam@example.com | Chennai | 9884066666 | 2025-01-28 |
+
+Simran asks for just the `city` `column`, one value per student, with no `DISTINCT` yet.
+
 ```postgresql with=init.sql
 SELECT city FROM students;
 ```
+
+Expected output:
+
+| city |
+| --------- |
+| Bengaluru |
+| Chennai |
+| Bengaluru |
+| Pune |
+| Hyderabad |
+| Mysuru |
+| Pune |
+| Chennai |
 
 The result has eight `rows`, matching the eight students, and Bengaluru, Chennai, and Pune each appear twice because two students happen to live in each of those cities. Nothing is wrong with this `query`:
 
@@ -47,6 +75,16 @@ Adding the word `DISTINCT` right after `SELECT` changes the question from "what 
 ```postgresql with=init.sql
 SELECT DISTINCT city FROM students;
 ```
+
+Expected output:
+
+| city |
+| --------- |
+| Bengaluru |
+| Chennai |
+| Pune |
+| Hyderabad |
+| Mysuru |
 
 This time the result has exactly five `rows`: Bengaluru, Chennai, Pune, Hyderabad, and Mysuru, each listed once no matter how many students share it. PostgreSQL builds the full list first and then throws away any `row` whose value is an exact repeat of one already kept. Simran gets the answer to her real question directly, without counting anything by hand.
 
@@ -74,9 +112,27 @@ INSERT INTO courses (course_id, title, department, credits) VALUES
 (105, 'Microeconomics', 'Economics', 3);
 ```
 
+The `courses` `table` holds this data:
+
+| course_id | title | department | credits |
+| --------- | -------------------- | ---------------- | ------: |
+| 101 | Database Systems | Computer Science | 4 |
+| 102 | Data Structures | Computer Science | 4 |
+| 103 | Linear Algebra | Mathematics | 3 |
+| 104 | Discrete Mathematics | Mathematics | 3 |
+| 105 | Microeconomics | Economics | 3 |
+
 ```postgresql with=init_002.sql
 SELECT DISTINCT department, credits FROM courses;
 ```
+
+Expected output:
+
+| department | credits |
+| ---------------- | ------: |
+| Computer Science | 4 |
+| Mathematics | 3 |
+| Economics | 3 |
 
 - The courses `table` has five `rows`, but this `query` returns only three: `Computer Science, 4`, `Mathematics, 3`, and `Economics, 3`.
 - Both Computer Science courses are worth 4 credits, so that pair of values collapses into a single `row`, and the same happens for the two 3-credit Mathematics courses.
@@ -115,7 +171,15 @@ The registrar wants to know which departments the college currently offers cours
 -- Write your query below
 ```
 
-`SELECT DISTINCT department FROM courses;` gets there in one line, returning Computer Science, Mathematics, and Economics, each exactly once, even though the underlying `table` has five course `rows` spread across those three departments.
+`SELECT DISTINCT department FROM courses;` gets there in one line. Expected output:
+
+| department |
+| ---------------- |
+| Computer Science |
+| Mathematics |
+| Economics |
+
+Each department is returned exactly once, even though the underlying `table` has five course `rows` spread across those three departments.
 
 ## Conclusion
 

@@ -29,10 +29,30 @@ INSERT INTO courses (course_id, title, department, credits) VALUES
 (105, 'Microeconomics', 'Economics', 3);
 ```
 
+The `courses` `table` holds this data:
+
+| course_id | title | department | credits |
+| --------- | -------------------- | ---------------- | ------: |
+| 101 | Database Systems | Computer Science | 4 |
+| 102 | Data Structures | Computer Science | 4 |
+| 103 | Linear Algebra | Mathematics | 3 |
+| 104 | Discrete Mathematics | Mathematics | 3 |
+| 105 | Microeconomics | Economics | 3 |
+
 ```postgresql with=init.sql
 SELECT title, credits, credits * 2 AS double_credits
 FROM courses;
 ```
+
+Expected output:
+
+| title | credits | double_credits |
+| -------------------- | ------: | --------------: |
+| Database Systems | 4 | 8 |
+| Data Structures | 4 | 8 |
+| Linear Algebra | 3 | 6 |
+| Discrete Mathematics | 3 | 6 |
+| Microeconomics | 3 | 6 |
 
 The result carries a third `column`, `double_credits`, holding 8, 8, 6, 6, and 6 for the five courses in that order, double whatever sat in `credits` for that `row`. PostgreSQL computes `credits * 2` fresh for every `row` as it builds the result; nothing about that math is stored anywhere, and running the same `query` again next year, after credit values might have changed, would simply recompute it from whatever `credits` holds then.
 
@@ -42,33 +62,25 @@ The usual arithmetic operators all work the same way inside a `SELECT` list: `+`
 
 ## Combining Text With Concatenation
 
-<table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
-  <thead>
-    <tr>
-      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Numbers are not the only thing an expression can build. PostgreSQL lets you glue pieces of text together using the `</th>
-      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;"></th>
-      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">` operator, called concatenation, which is exactly what Nikhil needs for his combined label.</th>
-    </tr>
-  </thead>
-  <tbody>
-  </tbody>
-</table>
+Numbers are not the only thing an expression can build. PostgreSQL lets you glue pieces of text together using the `||` operator, called concatenation, which is exactly what Nikhil needs for his combined label.
+
 ```postgresql with=init.sql
 SELECT department || ': ' || title AS course_label
 FROM courses;
 ```
 
-<table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
-  <thead>
-    <tr>
-      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Each row now returns a single text value: &quot;Computer Science: Database Systems&quot;, &quot;Computer Science: Data Structures&quot;, &quot;Mathematics: Linear Algebra&quot;, and so on. `</th>
-      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;"></th>
-      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;"><code> takes whatever sits on its left and right, department and a literal string in this case, and joins them into one piece of text, left to right. A literal piece of text written directly in the query, like </code>&#x27;: &#x27;` here, is just a fixed value in single quotes; it is not read from any column, it is simply inserted as-is between the two real column values, giving the colon-and-space separator its shape.</th>
-    </tr>
-  </thead>
-  <tbody>
-  </tbody>
-</table>
+Expected output:
+
+| course_label |
+| ---------------------------------- |
+| Computer Science: Database Systems |
+| Computer Science: Data Structures |
+| Mathematics: Linear Algebra |
+| Mathematics: Discrete Mathematics |
+| Economics: Microeconomics |
+
+Each row now returns a single text value: "Computer Science: Database Systems", "Computer Science: Data Structures", "Mathematics: Linear Algebra", and so on. `||` takes whatever sits on its left and right, department and a literal string in this case, and joins them into one piece of text, left to right. A literal piece of text written directly in the query, like `': '` here, is just a fixed value in single quotes; it is not read from any column, it is simply inserted as-is between the two real column values, giving the colon-and-space separator its shape.
+
 ![Text concatenation joining department, a separator, and title into one course label](images/08_expression_text_concatenation.png)
 
 ## Mixing Expressions With Ordinary Columns
@@ -79,6 +91,16 @@ An expression does not have to stand alone. It sits in the `SELECT` list exactly
 SELECT course_id, title, credits, credits * 2 AS double_credits, department || ': ' || title AS course_label
 FROM courses;
 ```
+
+Expected output:
+
+| course_id | title | credits | double_credits | course_label |
+| --------- | -------------------- | ------: | --------------: | ---------------------------------- |
+| 101 | Database Systems | 4 | 8 | Computer Science: Database Systems |
+| 102 | Data Structures | 4 | 8 | Computer Science: Data Structures |
+| 103 | Linear Algebra | 3 | 6 | Mathematics: Linear Algebra |
+| 104 | Discrete Mathematics | 3 | 6 | Mathematics: Discrete Mathematics |
+| 105 | Microeconomics | 3 | 6 | Economics: Microeconomics |
 
 This single `query` returns five `columns`: two untouched `columns` straight off the `table`, `course_id` and `title`, alongside `credits` shown plainly, then the doubled value, then the combined label, all computed in one pass over the same five `rows`. Nothing stops a `query` from having as many expressions as it needs sitting beside as many plain `columns` as it needs.
 
@@ -119,7 +141,17 @@ The catalog page also needs a "credit hours per week" figure, assuming each cred
 -- Write your query below
 ```
 
-`SELECT title, credits * 15 AS contact_hours FROM courses;` produces exactly that, showing 60 contact hours for each 4-credit course and 45 for each 3-credit course, computed fresh from whatever `credits` currently holds.
+`SELECT title, credits * 15 AS contact_hours FROM courses;` produces exactly that. Expected output:
+
+| title | contact_hours |
+| -------------------- | --------------: |
+| Database Systems | 60 |
+| Data Structures | 60 |
+| Linear Algebra | 45 |
+| Discrete Mathematics | 45 |
+| Microeconomics | 45 |
+
+60 contact hours show for each 4-credit course and 45 for each 3-credit course, computed fresh from whatever `credits` currently holds.
 
 ## Conclusion
 

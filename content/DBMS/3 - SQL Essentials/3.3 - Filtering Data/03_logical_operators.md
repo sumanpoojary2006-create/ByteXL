@@ -77,11 +77,41 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 (10, 8, 105, '2025-02-08', 'B-');
 ```
 
+The `students` `table` holds this data:
+
+| student_id | full_name | email | city | phone | joined_on |
+| ---------- | ------------- | ----------------------------- | --------- | ---------- | ---------- |
+| 1 | Omkar Rane | omkar.rane@campusmail.edu | Bengaluru | 9845011111 | 2025-01-10 |
+| 2 | Neha Sharma | neha.sharma@campusmail.edu | Mysuru | *NULL* | 2025-01-12 |
+| 3 | Varun Nair | varun.nair@gmail.com | Chennai | 9845022222 | 2025-01-15 |
+| 4 | Siddharth Rao | siddharth.rao@campusmail.edu | Hyderabad | 9845033333 | 2025-01-18 |
+| 5 | Yusuf Khan | yusuf.khan@gmail.com | Pune | *NULL* | 2025-01-20 |
+| 6 | Ishita Menon | ishita.menon@campusmail.edu | Bengaluru | 9845044444 | 2025-01-22 |
+| 7 | Rahul Verma | rahul.verma@gmail.com | Chennai | 9845055555 | 2025-01-25 |
+| 8 | Sanya Iyer | sanya.iyer@campusmail.edu | Mysuru | *NULL* | 2025-01-28 |
+
+And the `courses` `table` holds this data:
+
+| course_id | title | department | credits |
+| --------- | -------------------- | ---------------- | ------: |
+| 101 | Database Systems | Computer Science | 4 |
+| 102 | Data Structures | Computer Science | 4 |
+| 103 | Linear Algebra | Mathematics | 3 |
+| 104 | Discrete Mathematics | Mathematics | 3 |
+| 105 | Microeconomics | Economics | 2 |
+
 ```postgresql with=init.sql
 SELECT full_name, city
 FROM students
 WHERE city = 'Bengaluru' AND phone IS NOT NULL;
 ```
+
+Expected output:
+
+| full_name | city |
+| ------------ | --------- |
+| Omkar Rane | Bengaluru |
+| Ishita Menon | Bengaluru |
 
 Both Bengaluru students, Omkar Rane and Ishita Menon, have a phone number on file, so `AND` keeps both `rows` here. Now compare it with `OR` over a different pair of conditions on the courses `table`.
 
@@ -90,6 +120,14 @@ SELECT title, department
 FROM courses
 WHERE department = 'Mathematics' OR department = 'Economics';
 ```
+
+Expected output:
+
+| title | department |
+| -------------------- | ---------- |
+| Linear Algebra | Mathematics |
+| Discrete Mathematics | Mathematics |
+| Microeconomics | Economics |
 
 This returns three `rows`: `Linear Algebra`, `Discrete Mathematics`, and `Microeconomics`. `OR` only needs one side of the condition to be true, so every course in either department qualifies.
 
@@ -105,6 +143,14 @@ FROM courses
 WHERE department = 'Computer Science' AND credits > 3 OR department = 'Economics';
 ```
 
+Expected output:
+
+| title | department | credits |
+| ---------------- | ---------------- | ------: |
+| Database Systems | Computer Science | 4 |
+| Data Structures | Computer Science | 4 |
+| Microeconomics | Economics | 2 |
+
 - This returns three courses: `Database Systems`, `Data Structures`, and `Microeconomics`, even though `Microeconomics` carries only two credits, well below the "more than three" requirement Varun cares about.
 - The reason is that SQL evaluates `AND` before `OR` when neither is grouped by parentheses, the same way multiplication is evaluated before addition in ordinary arithmetic.
 - Varun's clause was actually read as `(department = 'Computer Science' AND credits > 3) OR department = 'Economics'`, so any Economics course sneaks in regardless of its credit value.
@@ -116,6 +162,13 @@ SELECT title, department, credits
 FROM courses
 WHERE (department = 'Computer Science' OR department = 'Economics') AND credits > 3;
 ```
+
+Expected output:
+
+| title | department | credits |
+| ---------------- | ---------------- | ------: |
+| Database Systems | Computer Science | 4 |
+| Data Structures | Computer Science | 4 |
 
 - Now only `Database Systems` and `Data Structures` come back.
 - `Microeconomics` is correctly dropped, since it fails the `credits > 3` test once that test is applied to the right group of `rows`.
@@ -132,6 +185,14 @@ SELECT title, credits
 FROM courses
 WHERE NOT credits > 3;
 ```
+
+Expected output:
+
+| title | credits |
+| -------------------- | ------: |
+| Linear Algebra | 3 |
+| Discrete Mathematics | 3 |
+| Microeconomics | 2 |
 
 This returns `Linear Algebra`, `Discrete Mathematics`, and `Microeconomics`, the three courses whose credit value is not greater than three. It reads naturally alongside `AND` and `OR`, and like both of them, it can be wrapped in parentheses to control exactly which condition it applies to when the clause grows more complex.
 
@@ -178,6 +239,13 @@ SELECT title, department, credits
 FROM courses
 WHERE (department = 'Mathematics' OR department = 'Computer Science') AND credits >= 4;
 ```
+
+Expected output:
+
+| title | department | credits |
+| ---------------- | ---------------- | ------: |
+| Database Systems | Computer Science | 4 |
+| Data Structures | Computer Science | 4 |
 
 This should return exactly `Database Systems` and `Data Structures`. Both Mathematics courses carry only three credits, so they are correctly excluded once the parentheses force the department check to be grouped before the credit check applies to it.
 

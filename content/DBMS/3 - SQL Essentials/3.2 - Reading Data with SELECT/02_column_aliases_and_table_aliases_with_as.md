@@ -29,10 +29,38 @@ INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALU
 (8, 'Priya Subramaniam', 'priya.subramaniam@example.com', 'Chennai', '9884066666', '2025-01-28');
 ```
 
+The `students` `table` holds this data:
+
+| student_id | full_name | email | city | phone | joined_on |
+| ---------- | ----------------- | ------------------------------ | --------- | ---------- | ---------- |
+| 1 | Ishaan Verma | ishaan.verma@example.com | Bengaluru | 9845011111 | 2025-01-10 |
+| 2 | Meera Pillai | meera.pillai@example.com | Chennai | 9884022222 | 2025-01-12 |
+| 3 | Arjun Bhat | arjun.bhat@example.com | Bengaluru | *NULL* | 2025-01-15 |
+| 4 | Kavya Reddy | kavya.reddy@example.com | Pune | 9922033333 | 2025-01-18 |
+| 5 | Rohan Joshi | rohan.joshi@example.com | Hyderabad | 9640044444 | 2025-01-20 |
+| 6 | Sneha Gowda | sneha.gowda@example.com | Mysuru | *NULL* | 2025-01-22 |
+| 7 | Aditya Kulkarni | aditya.kulkarni@example.com | Pune | 9822055555 | 2025-01-25 |
+| 8 | Priya Subramaniam | priya.subramaniam@example.com | Chennai | 9884066666 | 2025-01-28 |
+
+Divya wants the `full_name` and `city` `columns`, but labelled "Student Name" and "Location" instead of their raw internal names.
+
 ```postgresql with=init.sql
 SELECT full_name AS student_name, city AS location
 FROM students;
 ```
+
+Expected output:
+
+| student_name | location |
+| ----------------- | --------- |
+| Ishaan Verma | Bengaluru |
+| Meera Pillai | Chennai |
+| Arjun Bhat | Bengaluru |
+| Kavya Reddy | Pune |
+| Rohan Joshi | Hyderabad |
+| Sneha Gowda | Mysuru |
+| Aditya Kulkarni | Pune |
+| Priya Subramaniam | Chennai |
 
 - The data has not changed at all, still eight `rows` of the same names and cities, but the header `row` of the result now reads `student_name` and `location`.
 - `AS` sits between the real `column` and the label Divya wants in its place, and the label only exists for this one result, it never renames anything inside the actual `table`.
@@ -49,7 +77,7 @@ SELECT full_name student_name, city location
 FROM students;
 ```
 
-This produces the exact same result as the version with `AS`. PostgreSQL is happy to accept either form, so why bother typing the extra word?
+This produces the exact same output table shown above, `student_name` and `location` headers included. PostgreSQL is happy to accept either form, so why bother typing the extra word?
 
 Without it, a reader scanning the `query` has to pause and work out whether `student_name` is a second `column` being selected or a rename of the one before it. With `AS` sitting in between, the intent is unambiguous at a glance: this word is a label, not another `column`.
 
@@ -65,6 +93,8 @@ It looks unnecessary on a `query` this small, but the habit pays off the moment 
 SELECT s.full_name AS student_name, s.city AS location
 FROM students AS s;
 ```
+
+Expected output is identical to the two `queries` above, the same `student_name` and `location` `columns` for all eight students; only the `query` text changed, not the answer it produces.
 
 Here `students AS s` tells PostgreSQL that `s` now stands for the students `table` for the rest of this `query`, so `s.full_name` means "the `full_name` `column`, from the `table` aliased as `s`." The `AS` before a `table` alias is optional too, and it is common to see it dropped, `FROM students s`, which behaves identically.
 
@@ -114,7 +144,20 @@ Divya's next request from the Dean's office is a sheet with headers "Full Name" 
 -- Write your query below
 ```
 
-A working answer looks like `SELECT s.full_name AS "Full Name", s.email AS "Email Address" FROM students AS s;`. Notice the double quotes around aliases that contain a space, since PostgreSQL treats an unquoted alias as a single word and would otherwise misread "Full Name" as two separate tokens.
+A working answer looks like `SELECT s.full_name AS "Full Name", s.email AS "Email Address" FROM students AS s;`. Expected output:
+
+| Full Name | Email Address |
+| ----------------- | ------------------------------ |
+| Ishaan Verma | ishaan.verma@example.com |
+| Meera Pillai | meera.pillai@example.com |
+| Arjun Bhat | arjun.bhat@example.com |
+| Kavya Reddy | kavya.reddy@example.com |
+| Rohan Joshi | rohan.joshi@example.com |
+| Sneha Gowda | sneha.gowda@example.com |
+| Aditya Kulkarni | aditya.kulkarni@example.com |
+| Priya Subramaniam | priya.subramaniam@example.com |
+
+Notice the double quotes around aliases that contain a space, since PostgreSQL treats an unquoted alias as a single word and would otherwise misread "Full Name" as two separate tokens.
 
 ## Conclusion
 

@@ -77,11 +77,34 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 (10, 8, 105, '2025-02-08', 'B-');
 ```
 
+The `students` `table` holds this data:
+
+| student_id | full_name | email | city | phone | joined_on |
+| ---------- | ------------- | ----------------------------- | --------- | ---------- | ---------- |
+| 1 | Omkar Rane | omkar.rane@campusmail.edu | Bengaluru | 9845011111 | 2025-01-10 |
+| 2 | Neha Sharma | neha.sharma@campusmail.edu | Mysuru | *NULL* | 2025-01-12 |
+| 3 | Varun Nair | varun.nair@gmail.com | Chennai | 9845022222 | 2025-01-15 |
+| 4 | Siddharth Rao | siddharth.rao@campusmail.edu | Hyderabad | 9845033333 | 2025-01-18 |
+| 5 | Yusuf Khan | yusuf.khan@gmail.com | Pune | *NULL* | 2025-01-20 |
+| 6 | Ishita Menon | ishita.menon@campusmail.edu | Bengaluru | 9845044444 | 2025-01-22 |
+| 7 | Rahul Verma | rahul.verma@gmail.com | Chennai | 9845055555 | 2025-01-25 |
+| 8 | Sanya Iyer | sanya.iyer@campusmail.edu | Mysuru | *NULL* | 2025-01-28 |
+
 ```postgresql with=init.sql
 SELECT full_name, email
 FROM students
 WHERE email LIKE '%campusmail.edu';
 ```
+
+Expected output:
+
+| full_name | email |
+| ------------- | ----------------------------- |
+| Omkar Rane | omkar.rane@campusmail.edu |
+| Neha Sharma | neha.sharma@campusmail.edu |
+| Siddharth Rao | siddharth.rao@campusmail.edu |
+| Ishita Menon | ishita.menon@campusmail.edu |
+| Sanya Iyer | sanya.iyer@campusmail.edu |
 
 - Five students come back: Omkar Rane, Neha Sharma, Siddharth Rao, Ishita Menon, and Sanya Iyer.
 - The `%` before `campusmail.edu` means "anything at all can appear before this text," so the pattern matches regardless of what the local part of the address looks like, as long as the address ends with `campusmail.edu`.
@@ -99,6 +122,13 @@ FROM students
 WHERE full_name LIKE 'S%';
 ```
 
+Expected output:
+
+| full_name |
+| ------------- |
+| Siddharth Rao |
+| Sanya Iyer |
+
 - This returns Siddharth Rao and Sanya Iyer, the two students whose name begins with the letter S.
 - The trailing `%` in `'S%'` is doing the real work here: it is what allows any amount of text to follow the S, matching a name of any length as long as it starts with that letter.
 - `LIKE` never adds a wildcard on its own, so dropping that `%` and writing `full_name LIKE 'S'` would demand an exact, single-character match and return nothing at all, since no student's full name is just the letter S by itself.
@@ -112,6 +142,14 @@ SELECT full_name
 FROM students
 WHERE full_name LIKE '_a%';
 ```
+
+Expected output:
+
+| full_name |
+| ----------- |
+| Varun Nair |
+| Rahul Verma |
+| Sanya Iyer |
 
 - Three names come back: Varun Nair, Rahul Verma, and Sanya Iyer.
 - The pattern says "any single character, followed by the letter a, followed by anything," and all three names happen to have `a` as their second letter.
@@ -128,6 +166,14 @@ SELECT full_name, email
 FROM students
 WHERE email ILIKE '%GMAIL%';
 ```
+
+Expected output:
+
+| full_name | email |
+| ----------- | --------------------- |
+| Varun Nair | varun.nair@gmail.com |
+| Yusuf Khan | yusuf.khan@gmail.com |
+| Rahul Verma | rahul.verma@gmail.com |
 
 - This still returns Varun Nair, Yusuf Khan, and Rahul Verma, even though the pattern is written in uppercase and the stored addresses are all lowercase.
 - Swapping `ILIKE` for `LIKE` here with the same uppercase pattern would return nothing at all, since `LIKE` treats `GMAIL` and `gmail` as different text entirely.
@@ -181,6 +227,12 @@ SELECT full_name, email
 FROM students
 WHERE email LIKE '%verma%';
 ```
+
+Expected output:
+
+| full_name | email |
+| ----------- | ---------------------- |
+| Rahul Verma | rahul.verma@gmail.com |
 
 This should return exactly one `row`, Rahul Verma, since his email address is the only one containing that fragment anywhere in it. Try replacing `%verma%` with just `verma%` and notice the result becomes empty, since that pattern demands the address start with "verma" rather than merely contain it.
 

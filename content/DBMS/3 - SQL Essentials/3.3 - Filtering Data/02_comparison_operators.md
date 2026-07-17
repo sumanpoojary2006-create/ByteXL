@@ -74,11 +74,28 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 (10, 8, 105, '2025-02-08', 'B-');
 ```
 
+The `courses` `table` holds this data:
+
+| course_id | title | department | credits |
+| --------- | -------------------- | ---------------- | ------: |
+| 101 | Database Systems | Computer Science | 4 |
+| 102 | Data Structures | Computer Science | 4 |
+| 103 | Linear Algebra | Mathematics | 3 |
+| 104 | Discrete Mathematics | Mathematics | 3 |
+| 105 | Microeconomics | Economics | 2 |
+
 ```postgresql with=init.sql
 SELECT title, credits
 FROM courses
 WHERE credits > 3;
 ```
+
+Expected output:
+
+| title | credits |
+| ---------------- | ------: |
+| Database Systems | 4 |
+| Data Structures | 4 |
 
 - That returns `Database Systems` and `Data Structures`, the two courses worth more than three credits.
 - `Linear Algebra` and `Discrete Mathematics` sit at exactly three credits, so `> 3` leaves them out; had Neha written `>= 3` instead, both would have qualified alongside the two Computer Science courses.
@@ -87,7 +104,20 @@ WHERE credits > 3;
 
 ## Numeric and Date Comparisons Work the Same Way
 
-Dates compare exactly the way numbers do: earlier dates are "smaller" than later ones. Neha can use this to see which enrollments were recorded in the opening days of registration.
+Dates compare exactly the way numbers do: earlier dates are "smaller" than later ones. Neha can use this to see which enrollments were recorded in the opening days of registration. The `enrollments` `table` holds this data:
+
+| enrollment_id | student_id | course_id | enrolled_on | grade |
+| ------------- | ---------- | --------- | ---------- | ----- |
+| 1 | 1 | 101 | 2025-02-01 | A |
+| 2 | 1 | 103 | 2025-02-01 | B+ |
+| 3 | 2 | 101 | 2025-02-02 | *NULL* |
+| 4 | 3 | 102 | 2025-02-03 | A- |
+| 5 | 3 | 105 | 2025-02-03 | *NULL* |
+| 6 | 4 | 104 | 2025-02-04 | B |
+| 7 | 5 | 101 | 2025-02-05 | *NULL* |
+| 8 | 6 | 102 | 2025-02-06 | A |
+| 9 | 7 | 103 | 2025-02-07 | C+ |
+| 10 | 8 | 105 | 2025-02-08 | B- |
 
 ```postgresql with=init.sql
 SELECT enrollment_id, student_id, course_id, enrolled_on
@@ -95,6 +125,16 @@ FROM enrollments
 WHERE enrolled_on < '2025-02-04'
 ORDER BY enrolled_on;
 ```
+
+Expected output:
+
+| enrollment_id | student_id | course_id | enrolled_on |
+| ------------- | ---------- | --------- | ---------- |
+| 1 | 1 | 101 | 2025-02-01 |
+| 2 | 1 | 103 | 2025-02-01 |
+| 3 | 2 | 101 | 2025-02-02 |
+| 4 | 3 | 102 | 2025-02-03 |
+| 5 | 3 | 105 | 2025-02-03 |
 
 - This returns the five enrollments dated the 1st, 2nd, and 3rd of February, stopping just before the 4th.
 - The `<` operator treats `'2025-02-04'` as a genuine date value here because the `column` itself is typed `DATE`, so PostgreSQL compares calendar order rather than comparing the text character by character.
@@ -113,6 +153,14 @@ SELECT title, department
 FROM courses
 WHERE department <> 'Mathematics';
 ```
+
+Expected output:
+
+| title | department |
+| ---------------- | ---------------- |
+| Database Systems | Computer Science |
+| Data Structures | Computer Science |
+| Microeconomics | Economics |
 
 Every course except `Linear Algebra` and `Discrete Mathematics` comes back, since those are the only two `rows` where the condition `department <> 'Mathematics'` is false.
 
@@ -162,7 +210,18 @@ Every course except `Linear Algebra` and `Discrete Mathematics` comes back, sinc
 
 ## Text Compares Alphabetically Too
 
-These same six operators work on text `columns`, not just numbers and dates. PostgreSQL compares strings character by character in alphabetical order, so `>` and `<` on a text `column` ask whether one value sorts after or before another.
+These same six operators work on text `columns`, not just numbers and dates. PostgreSQL compares strings character by character in alphabetical order, so `>` and `<` on a text `column` ask whether one value sorts after or before another. The `students` `table` holds this data:
+
+| student_id | full_name | email | city | phone | joined_on |
+| ---------- | ------------- | ----------------------------- | --------- | ---------- | ---------- |
+| 1 | Omkar Rane | omkar.rane@campusmail.edu | Bengaluru | 9845011111 | 2025-01-10 |
+| 2 | Neha Sharma | neha.sharma@campusmail.edu | Mysuru | *NULL* | 2025-01-12 |
+| 3 | Varun Nair | varun.nair@gmail.com | Chennai | 9845022222 | 2025-01-15 |
+| 4 | Siddharth Rao | siddharth.rao@campusmail.edu | Hyderabad | 9845033333 | 2025-01-18 |
+| 5 | Yusuf Khan | yusuf.khan@gmail.com | Pune | *NULL* | 2025-01-20 |
+| 6 | Ishita Menon | ishita.menon@campusmail.edu | Bengaluru | 9845044444 | 2025-01-22 |
+| 7 | Rahul Verma | rahul.verma@gmail.com | Chennai | 9845055555 | 2025-01-25 |
+| 8 | Sanya Iyer | sanya.iyer@campusmail.edu | Mysuru | *NULL* | 2025-01-28 |
 
 ```postgresql with=init.sql
 SELECT full_name
@@ -170,6 +229,18 @@ FROM students
 WHERE full_name >= 'M'
 ORDER BY full_name;
 ```
+
+Expected output:
+
+| full_name |
+| ------------- |
+| Neha Sharma |
+| Omkar Rane |
+| Rahul Verma |
+| Sanya Iyer |
+| Siddharth Rao |
+| Varun Nair |
+| Yusuf Khan |
 
 - Every name starting with M onward comes back: Neha Sharma, Omkar Rane, Rahul Verma, Sanya Iyer, Siddharth Rao, Varun Nair, and Yusuf Khan.
 - Ishita Menon is left out because `'Ishita Menon'` sorts before `'M'` alphabetically.
@@ -184,6 +255,12 @@ SELECT title, credits
 FROM courses
 WHERE credits <= 2;
 ```
+
+Expected output:
+
+| title | credits |
+| -------------- | ------: |
+| Microeconomics | 2 |
 
 This should return only `Microeconomics`, the sole course carrying two credits. Try changing `<=` to `<` and notice the result stays the same here, since no course carries fewer than two credits, then try it against data where a boundary value actually exists to see the difference show up.
 

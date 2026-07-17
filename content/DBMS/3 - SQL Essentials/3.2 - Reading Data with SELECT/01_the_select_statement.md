@@ -29,11 +29,39 @@ INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALU
 (8, 'Priya Subramaniam', 'priya.subramaniam@example.com', 'Chennai', '9884066666', '2025-01-28');
 ```
 
+Before running any `query`, it helps to see exactly what the `students` `table` holds. This is the data Karthik is working with:
+
+| student_id | full_name | email | city | phone | joined_on |
+| ---------- | ----------------- | ------------------------------ | --------- | ---------- | ---------- |
+| 1 | Ishaan Verma | ishaan.verma@example.com | Bengaluru | 9845011111 | 2025-01-10 |
+| 2 | Meera Pillai | meera.pillai@example.com | Chennai | 9884022222 | 2025-01-12 |
+| 3 | Arjun Bhat | arjun.bhat@example.com | Bengaluru | *NULL* | 2025-01-15 |
+| 4 | Kavya Reddy | kavya.reddy@example.com | Pune | 9922033333 | 2025-01-18 |
+| 5 | Rohan Joshi | rohan.joshi@example.com | Hyderabad | 9640044444 | 2025-01-20 |
+| 6 | Sneha Gowda | sneha.gowda@example.com | Mysuru | *NULL* | 2025-01-22 |
+| 7 | Aditya Kulkarni | aditya.kulkarni@example.com | Pune | 9822055555 | 2025-01-25 |
+| 8 | Priya Subramaniam | priya.subramaniam@example.com | Chennai | 9884066666 | 2025-01-28 |
+
+Karthik's first `query` asks for all of this, every `column`, every `row`, with no filtering at all.
+
 ```postgresql with=init.sql
 SELECT * FROM students;
 ```
 
-- Running this returns all eight `rows` and all six `columns`, exactly as they are stored.
+Expected output:
+
+| student_id | full_name | email | city | phone | joined_on |
+| ---------- | ----------------- | ------------------------------ | --------- | ---------- | ---------- |
+| 1 | Ishaan Verma | ishaan.verma@example.com | Bengaluru | 9845011111 | 2025-01-10 |
+| 2 | Meera Pillai | meera.pillai@example.com | Chennai | 9884022222 | 2025-01-12 |
+| 3 | Arjun Bhat | arjun.bhat@example.com | Bengaluru | *NULL* | 2025-01-15 |
+| 4 | Kavya Reddy | kavya.reddy@example.com | Pune | 9922033333 | 2025-01-18 |
+| 5 | Rohan Joshi | rohan.joshi@example.com | Hyderabad | 9640044444 | 2025-01-20 |
+| 6 | Sneha Gowda | sneha.gowda@example.com | Mysuru | *NULL* | 2025-01-22 |
+| 7 | Aditya Kulkarni | aditya.kulkarni@example.com | Pune | 9822055555 | 2025-01-25 |
+| 8 | Priya Subramaniam | priya.subramaniam@example.com | Chennai | 9884066666 | 2025-01-28 |
+
+- Running this returns all eight `rows` and all six `columns`, exactly as they are stored — the output is identical to the source `table` because nothing was filtered or narrowed.
 - `SELECT` names what to retrieve, `*` is a shorthand meaning "every `column`," and `FROM students` names the `table` to read from.
 - Karthik gets his orientation list in one line, and for a quick, throwaway look at a small `table`, that is a perfectly reasonable way to work.
 
@@ -47,11 +75,37 @@ A few minutes later, the coordinator asks a narrower question: "I just need name
 SELECT full_name, city FROM students;
 ```
 
+Expected output:
+
+| full_name | city |
+| ----------------- | --------- |
+| Ishaan Verma | Bengaluru |
+| Meera Pillai | Chennai |
+| Arjun Bhat | Bengaluru |
+| Kavya Reddy | Pune |
+| Rohan Joshi | Hyderabad |
+| Sneha Gowda | Mysuru |
+| Aditya Kulkarni | Pune |
+| Priya Subramaniam | Chennai |
+
 The result now has exactly two `columns`, `full_name` and `city`, for all eight students. Naming `columns` explicitly is not just shorter to read, it tells anyone looking at the `query`, including Karthik himself a month from now, precisely what data the `query` depends on. He can add `email` to the list just as easily.
 
 ```postgresql with=init.sql
 SELECT full_name, email, city FROM students;
 ```
+
+Expected output:
+
+| full_name | email | city |
+| ----------------- | ------------------------------ | --------- |
+| Ishaan Verma | ishaan.verma@example.com | Bengaluru |
+| Meera Pillai | meera.pillai@example.com | Chennai |
+| Arjun Bhat | arjun.bhat@example.com | Bengaluru |
+| Kavya Reddy | kavya.reddy@example.com | Pune |
+| Rohan Joshi | rohan.joshi@example.com | Hyderabad |
+| Sneha Gowda | sneha.gowda@example.com | Mysuru |
+| Aditya Kulkarni | aditya.kulkarni@example.com | Pune |
+| Priya Subramaniam | priya.subramaniam@example.com | Chennai |
 
 The `column` list can hold as many or as few `columns` as the task needs, in any order, and that order is exactly how they will appear in the result, regardless of how the `table` itself was created.
 
@@ -107,7 +161,20 @@ The coordinator now wants a phone contact sheet: just the name and the phone num
 -- Write your query below
 ```
 
-If your `query` starts with `SELECT full_name, phone FROM students;`, you are done, and you will notice Arjun Bhat and Sneha Gowda show up with an empty phone value, since no number was recorded for either of them. That gap will matter a great deal once filtering enters the picture.
+If your `query` starts with `SELECT full_name, phone FROM students;`, you are done. Expected output:
+
+| full_name | phone |
+| ----------------- | ---------- |
+| Ishaan Verma | 9845011111 |
+| Meera Pillai | 9884022222 |
+| Arjun Bhat | *NULL* |
+| Kavya Reddy | 9922033333 |
+| Rohan Joshi | 9640044444 |
+| Sneha Gowda | *NULL* |
+| Aditya Kulkarni | 9822055555 |
+| Priya Subramaniam | 9884066666 |
+
+Arjun Bhat and Sneha Gowda show up with an empty phone value, since no number was recorded for either of them. That gap will matter a great deal once filtering enters the picture.
 
 ## Conclusion
 

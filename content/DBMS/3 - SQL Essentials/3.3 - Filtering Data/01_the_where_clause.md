@@ -74,7 +74,17 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 (10, 8, 105, '2025-02-08', 'B-');
 ```
 
-These four `tables`, students, courses, instructors, and enrollments, are the ones Omkar will keep coming back to. With them in place, his original problem has a one-line fix.
+These four `tables`, students, courses, instructors, and enrollments, are the ones Omkar will keep coming back to. The `courses` `table` holds this data:
+
+| course_id | title | department | credits |
+| --------- | -------------------- | ---------------- | ------: |
+| 101 | Database Systems | Computer Science | 4 |
+| 102 | Data Structures | Computer Science | 4 |
+| 103 | Linear Algebra | Mathematics | 3 |
+| 104 | Discrete Mathematics | Mathematics | 3 |
+| 105 | Microeconomics | Economics | 2 |
+
+With this in place, his original problem has a one-line fix.
 
 ```postgresql with=init.sql
 SELECT title, department, credits
@@ -82,13 +92,31 @@ FROM courses
 WHERE department = 'Computer Science';
 ```
 
+Expected output:
+
+| title | department | credits |
+| ---------------- | ---------------- | ------: |
+| Database Systems | Computer Science | 4 |
+| Data Structures | Computer Science | 4 |
+
 Only `Database Systems` and `Data Structures` come back. The `database` evaluated the condition `department = 'Computer Science'` against every `row` in `courses`, kept the two `rows` where it held true, and dropped the mathematics and economics `rows` entirely. Omkar's advisor never even sees the `rows` that did not qualify.
 
 ![WHERE acting as a filter gate that keeps matching Computer Science rows and blocks other rows](images/01_where_filter_keeps_matching_rows.png)
 
 ## Where WHERE Sits in a Query
 
-The clause has a fixed position: it comes right after `FROM` and before `ORDER BY` or `LIMIT`. That ordering reflects the order the `database` actually works in: first decide which `table` to read, then decide which of its `rows` survive, and only after that decide how to sort or trim what is left.
+The clause has a fixed position: it comes right after `FROM` and before `ORDER BY` or `LIMIT`. That ordering reflects the order the `database` actually works in: first decide which `table` to read, then decide which of its `rows` survive, and only after that decide how to sort or trim what is left. The `students` `table` holds this data:
+
+| student_id | full_name | email | city | phone | joined_on |
+| ---------- | ------------ | ---------------------------- | --------- | ---------- | ---------- |
+| 1 | Omkar Rane | omkar.rane@campusmail.edu | Bengaluru | 9845011111 | 2025-01-10 |
+| 2 | Neha Sharma | neha.sharma@campusmail.edu | Mysuru | *NULL* | 2025-01-12 |
+| 3 | Varun Nair | varun.nair@gmail.com | Chennai | 9845022222 | 2025-01-15 |
+| 4 | Siddharth Rao | siddharth.rao@campusmail.edu | Hyderabad | 9845033333 | 2025-01-18 |
+| 5 | Yusuf Khan | yusuf.khan@gmail.com | Pune | *NULL* | 2025-01-20 |
+| 6 | Ishita Menon | ishita.menon@campusmail.edu | Bengaluru | 9845044444 | 2025-01-22 |
+| 7 | Rahul Verma | rahul.verma@gmail.com | Chennai | 9845055555 | 2025-01-25 |
+| 8 | Sanya Iyer | sanya.iyer@campusmail.edu | Mysuru | *NULL* | 2025-01-28 |
 
 ```postgresql with=init.sql
 SELECT full_name, city
@@ -96,6 +124,13 @@ FROM students
 WHERE city = 'Chennai'
 ORDER BY full_name;
 ```
+
+Expected output:
+
+| full_name | city |
+| ----------- | ------- |
+| Rahul Verma | Chennai |
+| Varun Nair | Chennai |
 
 This returns Rahul Verma and Varun Nair, the two students based in Chennai, sorted alphabetically by name. Filtering happens before sorting: the `database` first narrows the `table` down to Chennai residents, and only then arranges those survivors in order. Writing `ORDER BY` before `WHERE` in the `query` text is not valid; the clause order in SQL always matches the sequence in which these decisions get made.
 
@@ -160,6 +195,13 @@ SELECT full_name, city
 FROM students
 WHERE city = 'Bengaluru';
 ```
+
+Expected output:
+
+| full_name | city |
+| ------------ | --------- |
+| Omkar Rane | Bengaluru |
+| Ishita Menon | Bengaluru |
 
 Running this should return exactly two `rows`, Omkar Rane and Ishita Menon. If your result includes students from other cities, double check that the condition is written as `city = 'Bengaluru'` and not left out of the `query` entirely.
 
