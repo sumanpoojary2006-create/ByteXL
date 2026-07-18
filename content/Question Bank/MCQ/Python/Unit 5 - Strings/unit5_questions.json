@@ -61,7 +61,7 @@
   },
   {
     "set": 1,
-    "difficulty": "hard",
+    "difficulty": "medium",
     "bloom": "analyze",
     "subtopic": "splitting-and-joining",
     "description": "A publishing tool turns a title into a URL slug:\n\n```python\nraw = \"  Red Blue  \"\nwords = raw.strip().lower().split()\nslug = \"-\".join(words)\nprint(slug)\n```\n\nWhat is printed?",
@@ -76,7 +76,7 @@
   },
   {
     "set": 1,
-    "difficulty": "hard",
+    "difficulty": "medium",
     "bloom": "analyze",
     "subtopic": "practical-text-processing",
     "description": "A signup form should ignore outer spaces and capitalisation before doing a rough email check. Which version correctly handles the input `\"  ASHA@MAIL.COM  \"`?",
@@ -136,7 +136,7 @@
   },
   {
     "set": 1,
-    "difficulty": "hard",
+    "difficulty": "medium",
     "bloom": "analyze",
     "subtopic": "searching-within-strings",
     "description": "Two alert checks are tested with `sentence = \"FOX alert\"`:\n\n```python\n# Version A\nprint(\"fox\" in sentence.lower())\n\n# Version B\nprint(\"Fox\" in sentence.lower())\n```\n\nWhat does each version print?",
@@ -466,7 +466,7 @@
   },
   {
     "set": 2,
-    "difficulty": "hard",
+    "difficulty": "medium",
     "bloom": "analyze",
     "subtopic": "escape-sequences-and-multiline-strings",
     "description": "A normal string and a raw string contain the same two typed symbols:\n\n```python\nnormal = \"\\n\"\nraw = r\"\\n\"\nprint(len(normal), len(raw))\n```\n\nWhat is printed?",
@@ -481,7 +481,7 @@
   },
   {
     "set": 2,
-    "difficulty": "hard",
+    "difficulty": "medium",
     "bloom": "analyze",
     "subtopic": "practical-text-processing",
     "description": "A text analyser cleans a short phrase and reports two measures:\n\n```python\nclean = \"  red blue  \".strip()\nprint(len(clean.split()))\nprint(len(clean.replace(\" \", \"\")))\n```\n\nWhat are the two results?",
@@ -511,7 +511,7 @@
   },
   {
     "set": 2,
-    "difficulty": "hard",
+    "difficulty": "medium",
     "bloom": "analyze",
     "subtopic": "common-string-methods",
     "description": "An age field accepts whole-number digits but users sometimes type outer spaces:\n\n```python\nentry = input(\"Age: \")\nif entry.isdigit():\n    print(\"Accepted\")\nelse:\n    print(\"Digits only\")\n```\n\nWhich input is rejected now but would pass after changing the check to `entry.strip().isdigit()`?",
@@ -586,7 +586,7 @@
   },
   {
     "set": 2,
-    "difficulty": "hard",
+    "difficulty": "medium",
     "bloom": "analyze",
     "subtopic": "practical-text-processing",
     "description": "Two cleaning pipelines process `raw = \"  A,B  \"`:\n\n```python\n# Version A\nclean_a = raw.strip().replace(\",\", \"\").lower()\n\n# Version B\nclean_b = raw.replace(\",\", \"\").lower()\n```\n\nAre their results equivalent?",

@@ -16,11 +16,11 @@
   },
   {
     "set": 1,
-    "difficulty": "hard",
+    "difficulty": "medium",
     "bloom": "analyze",
     "subtopic": "avoiding-infinite-loops-and-off-by-one-errors",
-    "description": "Two ticket systems should print every counter number from 1 through `counters`. A tester wants one input that exposes the defect in Version A:\n\n```python\n# Version A\nfor number in range(1, counters):\n    print(number)\n\n# Version B\nfor number in range(1, counters + 1):\n    print(number)\n```\n\nWhich test input makes the difference impossible to miss?",
-    "explanation": "With `counters = 1`, Version A uses `range(1, 1)`, which is empty, so it prints no counter at all. Version B uses `range(1, 2)` and correctly prints 1. Larger inputs also differ at the last value, but this boundary test exposes the defect most sharply.",
+    "description": "Two ticket systems should print every counter number from 1 through `counters`. A tester wants the smallest positive boundary input that exposes Version A's defect:\n\n```python\n# Version A\nfor number in range(1, counters):\n    print(number)\n\n# Version B\nfor number in range(1, counters + 1):\n    print(number)\n```\n\nWhich input is the smallest positive test that distinguishes the versions?",
+    "explanation": "With `counters = 1`, Version A uses the empty `range(1, 1)` and prints nothing, while Version B uses `range(1, 2)` and prints 1. Larger positive inputs also expose the missing final value, but 1 is the smallest positive boundary test.",
     "options": [
       "`counters = 0`",
       "`counters = 1`",
@@ -76,7 +76,7 @@
   },
   {
     "set": 1,
-    "difficulty": "hard",
+    "difficulty": "medium",
     "bloom": "analyze",
     "subtopic": "nested-loops-grids-and-patterns",
     "description": "A seating audit skips column 2 in every row:\n\n```python\nfor row in range(1, 4):\n    for column in range(1, 4):\n        if column == 2:\n            continue\n        print(row, column)\n```\n\nHow many row-column pairs print, and which columns appear?",
@@ -226,7 +226,7 @@
   },
   {
     "set": 2,
-    "difficulty": "hard",
+    "difficulty": "medium",
     "bloom": "analyze",
     "subtopic": "common-loop-patterns",
     "description": "A search flag briefly becomes true, then ends false:\n\n```python\nfound = False\nfor item in [4, 7, 9]:\n    if item == 7:\n        found = True\n    else:\n        found = False\nprint(found)\n```\n\nWhy does the search report `False` even though 7 is present?",
@@ -301,7 +301,7 @@
   },
   {
     "set": 2,
-    "difficulty": "hard",
+    "difficulty": "medium",
     "bloom": "analyze",
     "subtopic": "break-continue-and-loop-else",
     "description": "A scanner ignores blank codes but should announce when the entire scan finishes:\n\n```python\nfor code in [\"\", \"A12\"]:\n    if code == \"\":\n        continue\n    print(\"Checked\", code)\nelse:\n    print(\"Scan complete\")\n```\n\nWhat messages are printed?",
@@ -361,7 +361,7 @@
   },
   {
     "set": 2,
-    "difficulty": "hard",
+    "difficulty": "medium",
     "bloom": "analyze",
     "subtopic": "nested-loops-grids-and-patterns",
     "description": "A number pattern should grow by one digit on each row:\n\n```python\nfor row in range(1, 4):\n    for number in range(1, row + 1):\n        print(number, end=\"\")\n    print()\n```\n\nWhich pattern is printed?",
@@ -496,7 +496,7 @@
   },
   {
     "set": 2,
-    "difficulty": "hard",
+    "difficulty": "medium",
     "bloom": "analyze",
     "subtopic": "nested-loops-grids-and-patterns",
     "description": "A banner uses a descending `range()` to print a shrinking star pattern:\n\n```python\nfor row in range(4, 0, -1):\n    for star in range(row):\n        print(\"*\", end=\"\")\n    print()\n```\n\nWhich pattern is produced?",

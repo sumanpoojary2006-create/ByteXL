@@ -1,0 +1,602 @@
+[
+  {
+    "set": 1,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "variables-and-assignment",
+    "description": "A report stores two labels that differ only by capital letters:\n\n```python\nregion = \"South\"\nRegion = \"North\"\nregion = Region\n```\n\nWhat does `region` hold after the last line?",
+    "explanation": "Python treats `region` and `Region` as different names. The last line reads the value from `Region` and stores it in `region`, so `region` changes from `\"South\"` to `\"North\"`.",
+    "options": [
+      "`\"South\"`",
+      "`\"SouthNorth\"`",
+      "A `NameError`",
+      "`\"North\"`"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 1,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "numeric-types",
+    "description": "A delivery record stores 14 parcels, a distance of 8.75 km, and the signal value `3 + 2j`. Which type order matches the three values?",
+    "explanation": "A whole-item count is an `int`, a decimal measurement is a `float`, and a value with `j` is a `complex` number.",
+    "options": [
+      "`float, int, complex`",
+      "`int, complex, float`",
+      "`int, float, complex`",
+      "`str, float, int`"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 1,
+    "difficulty": "easy",
+    "bloom": "understand",
+    "subtopic": "strings-and-booleans",
+    "description": "Python converts these values to Booleans:\n\n```python\na = bool(0)\nb = bool(\"0\")\n```\n\nWhat are `a` and `b`?",
+    "explanation": "Numeric zero is falsy, so `bool(0)` is `False`. The string `\"0\"` contains one character, so it is non-empty and truthy.",
+    "options": [
+      "`False, True`",
+      "`False, False`",
+      "`True, False`",
+      "`True, True`"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 1,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "type-conversion",
+    "description": "A form gives `units` as the text `\"12\"`. The bill must add 3 extra units and then charge ₹5 per unit. Which expression produces `75`?",
+    "explanation": "The text must become a number before addition. `(int(units) + 3) * 5` gives `(12 + 3) * 5 = 75`. Converting after concatenation would turn `\"12\" + \"3\"` into `\"123\"`.",
+    "options": [
+      "`(int(units) + 3) * 5`",
+      "`int(units + \"3\") * 5`",
+      "`units + 3 * 5`",
+      "`str(units + 3) * 5`"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 1,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "arithmetic-operators",
+    "description": "A bakery packs 58 rolls into boxes of 8. It needs the number of full boxes and the rolls left unpacked, in that order. Which pair is correct?",
+    "explanation": "Floor division gives complete groups: `58 // 8 = 7`. Modulo gives the remainder: `58 % 8 = 2`. The requested order is therefore `7, 2`.",
+    "options": [
+      "`58 % 8, 58 // 8`",
+      "`58 / 8, 58 % 8`",
+      "`58 // 8, 58 % 8`",
+      "`58 // 8, 58 / 8`"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 1,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "comparison-and-logical-operators",
+    "description": "A retry system accepts scores from 0 through 40 and must reject every score above 40. Which expression enforces the full upper-bound rule?",
+    "explanation": "The valid range ends at 40, so `score <= 40` accepts 39 and 40 while rejecting 41, 42, and every larger value. `score != 41` is not sufficient because it would wrongly accept 42.",
+    "options": [
+      "`score < 40`",
+      "`score <= 40`",
+      "`score == 40`",
+      "`score != 41`"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 1,
+    "difficulty": "hard",
+    "bloom": "analyze",
+    "subtopic": "comparison-and-logical-operators",
+    "description": "A download is allowed when the user is signed in and either owns the file or has a shared link. A signed-out user with a shared link must be blocked. Which expression follows all three rules?",
+    "explanation": "Ownership and a shared link are alternatives, but sign-in is required for either one. Parentheses keep the `or` choices inside the mandatory `signed_in and (...)` check.",
+    "options": [
+      "`signed_in and owns_file or has_link`",
+      "`signed_in and (owns_file or has_link)`",
+      "`signed_in or owns_file and has_link`",
+      "`(signed_in or owns_file) and has_link`"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 1,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "assignment-operators",
+    "description": "A wallet is updated in this order:\n\n```python\nbalance = 600\nbalance -= 125\nbalance *= 2\nbalance += 50\n```\n\nWhat is the final balance?",
+    "explanation": "The updates use the current value each time: `600 - 125 = 475`, `475 * 2 = 950`, and `950 + 50 = 1000`. Applying the multiplication to only 125 changes the stated order.",
+    "options": [
+      "`825`",
+      "`1050`",
+      "`475`",
+      "`1000`"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 1,
+    "difficulty": "hard",
+    "bloom": "analyze",
+    "subtopic": "operator-precedence",
+    "description": "A score is calculated as:\n\n```python\nscore = 6 + 2 * 5 ** 2 / 10 - 1\n```\n\nWhat value is stored?",
+    "explanation": "Power runs first: `5 ** 2 = 25`. Then multiplication and division run left to right: `2 * 25 / 10 = 5.0`. Finally, `6 + 5.0 - 1 = 10.0`.",
+    "options": [
+      "`10.0`",
+      "`15.0`",
+      "`24.0`",
+      "`9`"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 1,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "input-and-output",
+    "description": "A receipt prints:\n\n```python\nprice = 99.5\nqty = 3\nprint(f\"₹{price * qty:,.2f}\")\n```\n\nWhat appears?",
+    "explanation": "The expression inside the braces gives `99.5 * 3 = 298.5`. The format displays two decimal places and adds grouping only when needed, so the result is `₹298.50`.",
+    "options": [
+      "`₹298.500`",
+      "`₹298.50`",
+      "`₹99.50₹99.50₹99.50`",
+      "`₹price * qty`"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "easy",
+    "bloom": "understand",
+    "subtopic": "variables-and-assignment",
+    "description": "A price is corrected twice:\n\n```python\nprice = 40\nprice = 36.5\nprice = \"36.5\"\n```\n\nWhat does `type(price)` report at the end?",
+    "explanation": "A variable’s type comes from its current value. The final value has quotation marks, so it is text and `type(price)` reports `str`; the earlier integer and float no longer determine the type.",
+    "options": [
+      "<class 'float'>",
+      "<class 'int'>",
+      "A `TypeError`",
+      "<class 'str'>"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "input-and-output",
+    "description": "Two entries are typed as `120` and `30`:\n\n```python\nfirst = input(\"First: \")\nsecond = input(\"Second: \")\ntotal = first + second\n```\n\nThe program stores `\"12030\"`. Which replacement stores `150`?",
+    "explanation": "Both input values are strings. Converting each one before addition gives `120 + 30 = 150`. Converting after `first + second` would convert the already-concatenated text `\"12030\"`.",
+    "options": [
+      "`total = int(first + second)`",
+      "`total = first + int(second)`",
+      "`total = str(first) + str(second)`",
+      "`total = int(first) + int(second)`"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "easy",
+    "bloom": "understand",
+    "subtopic": "variables-and-assignment",
+    "description": "A program needs a name for the second exam score. Which name follows Python’s rules and PEP 8 style?",
+    "explanation": "`second_score` starts with a letter, uses only letters and an underscore, and follows snake_case. A name cannot start with a digit or contain a space, and `class` is reserved.",
+    "options": [
+      "`second_score`",
+      "`2nd_score`",
+      "`second score`",
+      "`class`"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "numeric-types",
+    "description": "A sensor stores this signal:\n\n```python\nsignal = 3 + 4j\nresult = signal.real + signal.imag\n```\n\nWhat is `result`?",
+    "explanation": "For `3 + 4j`, `.real` is `3.0` and `.imag` is `4.0`. Their sum is the float `7.0`.",
+    "options": [
+      "`0+7j`",
+      "`3+4j`",
+      "`7.0`",
+      "`12.0`"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "easy",
+    "bloom": "understand",
+    "subtopic": "strings-and-booleans",
+    "description": "A badge must show `Ravi Kumar`:\n\n```python\nfirst = \"Ravi\"\nlast = \"Kumar\"\n```\n\nWhich expression produces that exact text?",
+    "explanation": "Concatenation joins exactly the characters supplied. The middle string `\" \"` provides the one required space between the two names.",
+    "options": [
+      "`first + last`",
+      "`first, last`",
+      "`first + \"_\" + last`",
+      "`first + \" \" + last`"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "type-conversion",
+    "description": "A measurement is converted twice:\n\n```python\nvalue = int(7.9)\nresult = float(value) + 0.5\n```\n\nWhat is `result`?",
+    "explanation": "`int(7.9)` cuts off the decimal part and gives `7`; it does not round to 8. Converting 7 to a float and adding 0.5 gives `7.5`.",
+    "options": [
+      "`8.5`",
+      "`7.5`",
+      "`7.9`",
+      "A `ValueError`"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "easy",
+    "bloom": "understand",
+    "subtopic": "type-conversion",
+    "description": "What does this print?\n\n```python\nvalue = \"18\"\nvalue = int(value)\nprint(type(value))\n```",
+    "explanation": "`int(\"18\")` converts numeric text to the integer `18`. After reassignment, `value` holds an integer, so `type(value)` reports `int`.",
+    "options": [
+      "<class 'str'>",
+      "<class 'float'>",
+      "<class 'int'>",
+      "`18`"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "arithmetic-operators",
+    "description": "A report calculates both values:\n\n```python\na = 17 / 5\nb = 17 // 5\n```\n\nWhich pair is stored in `a, b`?",
+    "explanation": "True division keeps the fractional part and returns `3.4`. Floor division returns the complete quotient `3`.",
+    "options": [
+      "`3.4, 3`",
+      "`3, 3.4`",
+      "`3, 2`",
+      "`3.4, 2`"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "input-and-output",
+    "description": "Seats repeat in groups numbered 0 through 5. The stored seat position is `ticket_number % 6`. What position is stored for ticket 20?",
+    "explanation": "Twenty contains three full groups of six with a remainder of two. Modulo returns that remainder, so `20 % 6` is `2`.",
+    "options": [
+      "`2`",
+      "`3`",
+      "`6`",
+      "`14`"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "input-and-output",
+    "description": "A square grid has 12 rows and 12 columns. Which expression evaluates to its 144 cells using the power operator?",
+    "explanation": "Squaring 12 means raising it to power 2, written `12 ** 2`, which gives 144. `12 * 2` doubles instead, and `^` is not Python’s power operator.",
+    "options": [
+      "`12 * 2`",
+      "`12 ^ 2`",
+      "`2 ** 12`",
+      "`12 ** 2`"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "assignment-operators",
+    "description": "The text `\"A17\"` must be compared with `saved_code`, and the Boolean answer must be stored in `same`. Which line does both jobs?",
+    "explanation": "`saved_code == \"A17\"` produces a Boolean. The single `=` then stores that result in `same`. Chained assignment stores text rather than testing equality.",
+    "options": [
+      "`same == saved_code = \"A17\"`",
+      "`same = saved_code == \"A17\"`",
+      "`same = saved_code = \"A17\"`",
+      "`same == saved_code == \"A17\"`"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "comparison-and-logical-operators",
+    "description": "A package has weight `5`. What does this store?\n\n```python\nweight = 5\nvalid = 2 < weight <= 5\n```\n\nChoose the value and the reason.",
+    "explanation": "The chain means `2 < weight and weight <= 5`. Both comparisons are true for 5, including the upper boundary, so `valid` is `True`.",
+    "options": [
+      "`False`, because chained comparisons are invalid",
+      "`False`, because 5 is excluded from both ends",
+      "`True`, because only `2 < weight` is checked",
+      "`True`, because 5 is above 2 and included by `<= 5`"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "comparison-and-logical-operators",
+    "description": "A maintenance alert should be sent when a sensor is offline or its battery is low, but alerts must be suppressed during maintenance. Which expression follows the complete rule?",
+    "explanation": "The two alert causes are alternatives, so they belong inside `(offline or battery_low)`. The mandatory suppression rule is placed outside: `not maintenance and (...)`. Requiring both faults would miss a single serious fault, while using `or` with maintenance would allow unwanted alerts.",
+    "options": [
+      "`not maintenance or offline or battery_low`",
+      "`maintenance and (offline or battery_low)`",
+      "`not maintenance and (offline or battery_low)`",
+      "`not maintenance and offline and battery_low`"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "hard",
+    "bloom": "analyze",
+    "subtopic": "comparison-and-logical-operators",
+    "description": "What is stored here?\n\n```python\nresult = False and (10 / 0)\n```\n\nDoes Python reach the division?",
+    "explanation": "For `and`, a false left side already decides the result. Python short-circuits, does not evaluate `10 / 0`, and stores `False`; therefore no division error occurs.",
+    "options": [
+      "A `ZeroDivisionError`",
+      "`0`",
+      "`False`; the division is skipped",
+      "`True`"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "assignment-operators",
+    "description": "A game score changes like this:\n\n```python\nscore = 18\nscore += 7\nscore //= 4\nscore **= 2\n```\n\nWhat is the final score?",
+    "explanation": "The current value changes after each line: `18 + 7 = 25`, `25 // 4 = 6`, and `6 ** 2 = 36`.",
+    "options": [
+      "`36`",
+      "`39`",
+      "`6`",
+      "`25`"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "assignment-operators",
+    "description": "After `stock = 23`, the line `stock %= 5` runs. Which longer line is exactly equivalent?",
+    "explanation": "An augmented operator applies its arithmetic operator to the current value and stores the result back. Therefore `stock %= 5` means `stock = stock % 5`.",
+    "options": [
+      "`stock = 5 % stock`",
+      "`stock = stock % 5`",
+      "`stock = stock // 5`",
+      "`stock = stock * 5`"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "operator-precedence",
+    "description": "Two readings are 18 and 30. This formula gives 33 instead of 24:\n\n```python\naverage = 18 + 30 / 2\n```\n\nWhich smallest repair gives 24?",
+    "explanation": "Division runs before addition, so the original is `18 + 15`. Parentheses make the sum happen first: `(18 + 30) / 2 = 24.0`.",
+    "options": [
+      "`average = 18 + (30 / 2)`",
+      "`average = 18 / 2 + 30`",
+      "`average = (18 + 30) / 2`",
+      "`average = 18 + 30 // 2`"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "operator-precedence",
+    "description": "A balance is calculated as `100 - 30 - 20`. What value does Python produce?",
+    "explanation": "Subtraction operators have equal precedence and associate from left to right. Python calculates `100 - 30 = 70`, then `70 - 20 = 50`.",
+    "options": [
+      "`90`",
+      "`70`",
+      "`50`",
+      "`150`"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "hard",
+    "bloom": "analyze",
+    "subtopic": "operator-precedence",
+    "description": "What is the value of `2 ** 3 ** 2`?",
+    "explanation": "Exponentiation associates from right to left. Python groups the expression as `2 ** (3 ** 2)`, giving `2 ** 9 = 512`, not `(2 ** 3) ** 2 = 64`.",
+    "options": [
+      "`64`",
+      "`36`",
+      "`256`",
+      "`512`"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "easy",
+    "bloom": "understand",
+    "subtopic": "input-and-output",
+    "description": "What does this display?\n\n```python\nroute = \"A12\"\nseats = 3\nprint(route, seats)\n```\n",
+    "explanation": "`print` accepts values of different types when they are separated by commas and places a space between them by default. The result is `A12 3`.",
+    "options": [
+      "`A123`",
+      "`A12 3`",
+      "A `TypeError`",
+      "`route seats`"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "input-and-output",
+    "description": "A receipt runs:\n\n```python\nqty = 4\nprice = 12.5\nprint(f\"Total: {qty * price}\")\n```\n\nWhat is printed?",
+    "explanation": "An f-string evaluates the expression inside braces. `4 * 12.5` is the float `50.0`, so the line displays `Total: 50.0`.",
+    "options": [
+      "`Total: 50`",
+      "`Total: qty * price`",
+      "A `TypeError`",
+      "`Total: 50.0`"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "easy",
+    "bloom": "understand",
+    "subtopic": "input-and-output",
+    "description": "What does this print?\n\n```python\nusers = 1500000\nprint(f\"{users:,}\")\n```\n",
+    "explanation": "The comma format specifier groups thousands. It displays the integer `1500000` as `1,500,000` without changing the stored value.",
+    "options": [
+      "`1500000,`",
+      "`1.500.000`",
+      "`1,500,000`",
+      "`1500,000`"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "input-and-output",
+    "description": "A dashboard stores completion as `0.873` and prints `f\"{completion:.1%}\"`. What appears?",
+    "explanation": "The percent format multiplies the stored fraction by 100 and adds `%`. One decimal place turns `0.873` into `87.3%`.",
+    "options": [
+      "`87.3%`",
+      "`0.9%`",
+      "`0.873%`",
+      "`87%`"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "strings-and-booleans",
+    "description": "This line must produce the text `\"Room 204\"`:\n\n```python\nroom = 204\nlabel = \"Room \" + room\n```\n\nWhich replacement works?",
+    "explanation": "The plus operator can concatenate strings only with strings. `str(room)` converts 204 to text, so `\"Room \" + str(room)` gives the required label.",
+    "options": [
+      "`label = int(\"Room \") + room`",
+      "`label = \"Room \" + str(room)`",
+      "`label = \"Room \" + int(room)`",
+      "`label = str(\"Room \" + room)`"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "strings-and-booleans",
+    "description": "An entry field returns `\"4\"`. What does this store?\n\n```python\nentry = \"4\"\nresult = entry * 3\n```\n",
+    "explanation": "Multiplying a string by an integer repeats the text. Since `entry` is `\"4\"`, the result is `\"444\"`, not the number 12.",
+    "options": [
+      "`\"444\"`",
+      "`12`",
+      "`\"12\"`",
+      "A `TypeError`"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "numeric-types",
+    "description": "A test expects this to be exactly `0.3`:\n\n```python\nresult = 0.1 + 0.2\n```\n\nWhat value is normally stored by Python?",
+    "explanation": "Many decimal fractions cannot be represented exactly in binary floating point. Python therefore normally stores a nearby value displayed as `0.30000000000000004`; this is expected floating-point behavior.",
+    "options": [
+      "`0.3` exactly",
+      "`0.12`",
+      "`0.30000000000000004`",
+      "A `TypeError`"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "numeric-types",
+    "description": "A signal is updated:\n\n```python\nz = 2 + 3j\nresult = z + 4\n```\n\nWhat is `result`?",
+    "explanation": "Adding the real number 4 changes only the real part. The real part becomes `2 + 4 = 6`, while the imaginary part stays `3j`, giving `6 + 3j`.",
+    "options": [
+      "`(2+7j)`",
+      "`(6+7j)`",
+      "A `TypeError`",
+      "`(6+3j)`"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "variables-and-assignment",
+    "description": "Which pair contains one name that starts with a digit and one reserved word, so neither can be used as a variable name?",
+    "explanation": "`2nd_place` is invalid because a name cannot start with a digit. `class` is reserved by Python. The other pairs use valid names, even when their style could be improved.",
+    "options": [
+      "`2nd_place, class`",
+      "`place_2, total_marks`",
+      "`Score, score`",
+      "`first_name, value1`"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "input-and-output",
+    "description": "What is stored here?\n\n```python\ncode = \"42\"\nsame = code == 42\n```\n",
+    "explanation": "Equality comparison is allowed across these types, but the string `\"42\"` is not the integer `42`. The result is the Boolean `False`; Python does not convert them automatically.",
+    "options": [
+      "`True`",
+      "`False`",
+      "A `TypeError`",
+      "`\"False\"`"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "hard",
+    "bloom": "analyze",
+    "subtopic": "operator-precedence",
+    "description": "A discount should be 10% of the full cost `price * qty`:\n\n```python\nprice = 200\nqty = 3\nrate = 10\n```\n\nWhich expression directly calculates the final price `540.0`?",
+    "explanation": "The full cost is `200 * 3 = 600`. The discount is `rate / 100 * 600 = 60.0`, leaving `540.0`. Parentheses make the intended base explicit.",
+    "options": [
+      "`price * (qty - rate) / 100`",
+      "`price * qty - (rate / 100) * (price * qty)`",
+      "`price * qty - rate / 100`",
+      "`(price * qty - rate) / 100`"
+    ],
+    "answer": "B"
+  }
+]
