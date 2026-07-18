@@ -14,8 +14,6 @@ Meera's manager, watching her frown at the form, explains that this is a well-kn
 
 ![Simple, composite, derived, and multivalued attributes on a gym member form](images/03_attribute_types_gym_form.png)
 
-## Definition
-
 **Definition:** **Attribute types** describe how an entity's facts are structured: simple attributes hold one indivisible value, composite attributes contain meaningful parts, derived attributes are calculated from other data, and multivalued attributes can hold several values for one entity.
 
 ## Simple Attributes: One Fact, One Value

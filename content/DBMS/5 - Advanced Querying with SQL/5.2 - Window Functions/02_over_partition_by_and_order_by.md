@@ -4,8 +4,6 @@
 - Her next request needs sequence to matter: "show me each of Nikhil's sales next to his running total up to and including that sale, in date order." That is a fundamentally different calculation from a flat per-salesperson total; it depends on which sales came before which, within the window.
 - `OVER (...)` supports exactly this with a second ingredient alongside `PARTITION BY`: an `ORDER BY` that runs inside the window itself, changing what "the related `rows`" for each calculation actually means.
 
-## Definition
-
 **Definition:** `PARTITION BY` decides which `rows` share a window, and `ORDER BY` inside that same `OVER (...)` clause decides the sequence within it, together turning a flat per-group total into a `row`-by-`row` running calculation.
 
 ## Ordering Rows Within a Window

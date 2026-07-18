@@ -7,8 +7,6 @@ Naina realises that everything so far has been a picture of the world, not yet a
 - A diagram cannot store a single `row` of real data; it can only describe the shape that the data will eventually take.
 - What she needs now is a disciplined, repeatable `procedure` for turning every rectangle, oval, and diamond into something a relational `database` actually understands: `tables`, `columns`, and keys. That `procedure` is called **mapping an ER diagram to relational `tables`**, and once Naina learns its handful of rules, the translation stops feeling like guesswork and starts feeling almost mechanical.
 
-## Definition
-
 **Definition:** Converting an ER diagram into relational `tables` follows a small, dependable set of rules: every entity becomes a `table` with its simple attributes as `columns` and its identifying attribute as the `primary key`, every one-to-many relationship is implemented by placing a `foreign key` on the `table` representing the "many" side, every one-to-one relationship places a unique `foreign key` on one side or merges the two `tables` outright, and every many-to-many relationship requires a new junction `table` holding a `foreign key` pointing to each of the two entities it connects.
 
 ## Rule One: Every Entity Becomes a Table

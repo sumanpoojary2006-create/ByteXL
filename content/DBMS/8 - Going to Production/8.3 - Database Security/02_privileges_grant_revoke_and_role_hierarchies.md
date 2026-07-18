@@ -2,8 +2,6 @@
 
 Creating a `role`, covered in the previous lesson, establishes an identity, but by default a freshly created `role` can do almost nothing beyond connect. `reporting_app` cannot read a single `row` until it is explicitly told it is allowed to. **`GRANT`** and **`REVOKE`** are the commands that add and remove specific permissions, called privileges, on specific `database` objects for a specific `role`, and together they are how PostgreSQL enforces exactly who can do exactly what.
 
-## Definition
-
 **Definition:** `GRANT` adds a specific privilege for a specific `role` on a specific object, `REVOKE` removes one without disturbing others, and granting privileges to a group `role` rather than individual login `role`s lets an entire team's permissions be managed in one place, changes that propagate automatically to every member.
 
 ## Granting a Specific Privilege on a Specific Table

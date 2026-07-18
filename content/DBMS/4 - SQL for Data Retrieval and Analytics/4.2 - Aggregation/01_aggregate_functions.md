@@ -9,8 +9,6 @@ Priya handles finance reporting for a small online bookstore, and every question
 
 None of those questions can be answered by looking at one `row` of the `orders` `table`; each one requires looking at every `row` and boiling it down to a single number. SQL calls this **aggregation**, and it provides a small set of built-in `aggregate functions`, `COUNT`, `SUM`, `AVG`, `MIN`, and `MAX`, that do exactly this kind of summarizing.
 
-## Definition
-
 **Definition:** `COUNT`, `SUM`, `AVG`, `MIN`, and `MAX` collapse an entire result set into single summary numbers, answering exactly the kind of whole-business questions raw `rows` cannot answer on their own.
 
 ## Counting Rows

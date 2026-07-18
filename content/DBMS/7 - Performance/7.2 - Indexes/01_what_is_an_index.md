@@ -4,8 +4,6 @@ The previous chapter left Priya with a precise problem: a `full table scan` chec
 
 Finding "Rathi, Sanjay" in a phone book does not mean reading every entry from the first page onward; the book is alphabetically sorted, so a reader can jump straight to the R section and narrow in from there. A `database` **`index`** does exactly this for a `table`: a separate structure, built on one or more `columns`, that lets the `database` jump directly to matching `rows` instead of checking every one.
 
-## Definition
-
 **Definition:** An `index` is a separate, sorted structure built on one or more `columns` that lets the `database` jump directly to matching `rows` instead of scanning the whole `table`, trading extra storage and slightly slower writes for dramatically faster reads on the `indexed` `column`, the same trade a phone book's alphabetical sorting makes over a randomly ordered list of names.
 
 ## Searching Without an Index

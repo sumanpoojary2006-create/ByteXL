@@ -10,8 +10,6 @@ When Kiran's clinic finally moved to a proper `database`, the software itself st
 
 Type -3 into the age field, and the system will not accept it. These automatic, built-in rules that a `database` enforces on every single `row`, without needing a human to double-check by hand, are called **`constraints`**, and they are what quietly turns a `database` from "a place that stores whatever it's given" into "a place that only ever holds data you can actually trust."
 
-## Definition
-
 **Definition:** A `constraint` is a promise the `database` itself keeps on every single `row`, automatically and without exception, so that the trustworthiness of a `table` never depends on how careful, or how tired, the person entering the data happens to be that day.
 
 ## A Constraint Is a Rule the Database Enforces For You

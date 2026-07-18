@@ -10,8 +10,6 @@ Now there are two." What Devika is being asked to solve is a **`primary key` str
 
 ![Auto-increment primary keys from one database compared with UUIDs created safely by many systems](images/03_auto_increment_vs_uuid_primary_keys.png)
 
-## Definition
-
 **Definition:** An auto-incrementing integer and a UUID both satisfy the basic requirement of a `primary key`: a value that is unique for every `row`.
 
 ## Auto-Incrementing Integers: Simple, Compact, and Fast

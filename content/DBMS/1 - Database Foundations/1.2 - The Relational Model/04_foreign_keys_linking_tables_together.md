@@ -15,8 +15,6 @@ That Customer ID `column` sitting inside the Orders `table`, referring back to a
 - It is a `column` in one `table` that points to the `primary key` of another `table`.
 - It is the mechanism that lets separate `tables` stay connected to each other instead of existing as unrelated, disconnected piles of `rows`.
 
-## Definition
-
 **Definition:** A `foreign key` is how one `table` reaches out and anchors itself to a specific, real `row` living inside another `table`, turning two separate grids of data into one connected, trustworthy structure.
 
 ## Two Tables That Need to Talk to Each Other

@@ -6,8 +6,6 @@ Worse, he cannot tell which is which until he checks, and checking first with a 
 
 What Aditya needs is a single statement that inserts a `row` if it is new and updates it if it already exists, and PostgreSQL provides exactly that with **`ON CONFLICT`**, the clause behind what is commonly called an upsert.
 
-## Definition
-
 **Definition:** An **upsert** is a single operation that inserts a new row when no matching row exists or updates the existing row when a uniqueness conflict occurs; PostgreSQL implements it with `INSERT ... ON CONFLICT`.
 
 ## Setting Up a Uniqueness Rule to Conflict Against

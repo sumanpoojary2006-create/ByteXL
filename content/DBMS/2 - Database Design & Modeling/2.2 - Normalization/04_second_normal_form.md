@@ -53,8 +53,6 @@ Every `row` here is already in 1NF, each cell holds one atomic value, no comma-s
 
 ![Second Normal Form showing ProductName and ProductPrice depending only on ProductID, not the full composite key](images/07_second_normal_form_partial_dependency.png)
 
-## Definition
-
 **Definition:** Second `Normal Form` asks a `table` with a `composite key` one pointed question: does every non-key `column` genuinely need the whole key, or is some `column` really only attached to part of it?
 
 ## Second Normal Form Builds Directly on First Normal Form

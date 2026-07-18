@@ -8,8 +8,6 @@ Divya runs the front desk software for a small clinic, and the `appointments` `t
 
 A timestamp is a single value, but the questions above need it pulled apart, compared, or measured against right now. SQL's **date and time `functions`** exist for exactly this kind of work.
 
-## Definition
-
 **Definition:** Date and time `functions` turn a single stored timestamp into whatever shape a question needs: `NOW()` and `CURRENT_DATE` for a reference point, interval arithmetic for shifting dates forward or measuring spans, and `EXTRACT` for pulling out just a weekday or an hour.
 
 ## Getting the Current Moment

@@ -4,8 +4,6 @@ Kabir is analyzing salaries at a mid-sized company, and his manager asks a simpl
 
 He cannot type `WHERE salary > AVG(salary)` directly, since `aggregate functions` cannot sit inside a `WHERE` clause, a rule covered back when `HAVING` was introduced. What he needs is a way to compute that average first, then use the result as part of a larger `query`. That is exactly what a **subquery** is: a complete `query` nested inside another `query`, used as a stand-in for a value.
 
-## Definition
-
 **Definition:** A subquery is an ordinary `SELECT` statement nested inside another `query`, computed first and substituted in as a value, letting a `query` depend on a number, a list, or a `table` that only exists once that inner `query` has run.
 
 ## A Query Inside a Query

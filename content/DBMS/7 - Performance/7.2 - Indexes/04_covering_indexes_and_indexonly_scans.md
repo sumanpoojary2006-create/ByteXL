@@ -4,8 +4,6 @@ An `index scan`, covered throughout this chapter, is already far cheaper than a 
 
 That extra jump, from `index` entry to `table` page, is called a heap fetch, and for a `query` that touches many `rows`, all those extra jumps add up. A **covering `index`** is an `index` built specifically to eliminate that extra step entirely, letting the `database` answer a `query` using only the `index`, never touching the `table` at all.
 
-## Definition
-
 **Definition:** A `covering index`, built with `INCLUDE`, stores extra `columns` alongside the `indexed` key so that a matching `query` can be answered entirely from the `index`, skipping the heap fetch a regular `index scan` still requires, at the cost of a larger `index` and more write overhead.
 
 ## Watching a Heap Fetch Happen

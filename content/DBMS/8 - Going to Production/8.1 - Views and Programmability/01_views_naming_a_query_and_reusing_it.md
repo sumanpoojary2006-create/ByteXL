@@ -4,8 +4,6 @@ Devraj maintains reporting for a logistics company, and one particular `query`, 
 
 A **`view`** solves this by giving a `query` a permanent name in the `database` itself, so that everyone references the same saved definition instead of retyping it.
 
-## Definition
-
 **Definition:** A `view` saves a `query` under a reusable name, always re-running against current data rather than storing a snapshot, which turns a frequently repeated, error-prone `query` into a single, consistently defined building block every downstream report can rely on.
 
 ## Creating a View from an Existing Query

@@ -4,8 +4,6 @@ Rohit is going through this term's address updates. One student, Varun Nair, has
 
 The tool for that job is **`UPDATE`**, the statement that modifies values already sitting in a `table`, and Rohit is about to learn that of everything he has typed so far, this is the one that deserves the most care before he presses enter.
 
-## Definition
-
 **Definition:** The **`UPDATE` statement** changes values in existing table rows; its `SET` clause specifies the new values, and its `WHERE` clause limits which rows are changed.
 
 ## Checking Before Changing

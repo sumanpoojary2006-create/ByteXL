@@ -3,8 +3,6 @@
 - `EXPLAIN` has appeared throughout this unit as a way to check whether a `query` uses a `sequential scan` or an `index scan`, but its output carries more detail than just a scan type, and reading that detail precisely is what turns `EXPLAIN` from a yes-or-no check into a genuine diagnostic tool.
 - Priya wants to understand not just what plan the optimizer chose, but how expensive it expects that plan to be, and how it expects the different parts of a `query` to fit together.
 
-## Definition
-
 **Definition:** `EXPLAIN` output names the chosen operation for each step of a `query`, an estimated relative cost, an estimated `row` count, and an estimated `row` width, nested to show which steps feed into which, and none of those cost numbers represent actual measured time, only the optimizer's own relative comparison between candidate plans.
 
 ## The Basic Shape of an EXPLAIN Plan

@@ -13,8 +13,6 @@ Neither `table`, alone, can answer the parent's question.
 
 2. Throwing away the pairings that do not make sense.
 
-## Definition
-
 **Definition:** A `join` takes two relations that each hold part of an answer and combines them into one, by first considering every possible pairing of `rows` and then keeping only the pairings whose matching condition genuinely holds, most commonly that a shared `column` agrees between the two sides.
 
 ## Farah's Two Relations

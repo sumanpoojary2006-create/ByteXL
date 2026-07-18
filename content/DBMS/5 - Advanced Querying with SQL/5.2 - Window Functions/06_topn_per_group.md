@@ -4,8 +4,6 @@ The sales director's final request ties together nearly everything in this chapt
 
 Ranking `functions` alone cannot filter, since `window functions` are not allowed inside `WHERE`, the same restriction noted when ranking `functions` were first introduced. Solving this cleanly needs a ranking `function` wrapped in a CTE.
 
-## Definition
-
 **Definition:** A top-N-per-group report combines a ranking `function` partitioned by the grouping `column` with a CTE that makes the rank filterable, and the choice between `ROW_NUMBER`, `RANK`, and `DENSE_RANK` decides exactly how ties are handled in the result.
 
 ## Ranking Within Each Region

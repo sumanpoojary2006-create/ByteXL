@@ -8,8 +8,6 @@ This is the problem **concurrency control** exists to solve: coordinating multip
 
 ![Two passengers trying to book the same seat at the same time, creating double-booking risk](images/01_double_booking_risk_same_seat.png)
 
-## Definition
-
 **Definition:** Concurrency control coordinates multiple `transactions` touching the same data at nearly the same time, aiming for a result that matches what would have happened if those `transactions` had run one after another, even though in reality they overlap.
 
 ## Simulating the Double-Booking Problem

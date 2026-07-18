@@ -10,8 +10,6 @@ A shop owner named Ilyas Bakery Supplies called to say Sunrise Traders had sent 
 
 She fixed that `row` and moved on, not yet realizing she was looking at a symptom of something much bigger, a design flaw that `database` designers have a name for: the `table` needed to be **normalized**, split apart so that each fact about the business lives in exactly one place instead of scattered across every `row` that happens to mention it.
 
-## Definition
-
 **Definition:** An update anomaly, an insert anomaly, and a `delete anomaly` are three different symptoms of the same underlying disease: a `table` that mixes facts about several different real-world things into one set of `rows`, so that a single fact ends up copied wherever it is needed.
 
 ## One Table Trying to Hold Three Different Stories

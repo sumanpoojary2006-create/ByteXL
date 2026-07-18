@@ -4,8 +4,6 @@ Opening a `connection` has a real cost, covered when connecting from application
 
 Opening and closing a brand new `connection` for every single one of those requests would mean paying that `connection` cost constantly, and it would also risk overwhelming the `database` server, which can only sustain a limited number of simultaneous `connections`. **`Connection pooling`** solves both problems: instead of opening a fresh `connection` per request, an application keeps a pool of already-open `connections` ready to be borrowed, used, and returned.
 
-## Definition
-
 **Definition:** `Connection pooling` reuses a fixed set of already-open `connections` across many requests instead of opening and closing one per request, avoiding both the repeated `connection` cost and the risk of exhausting the `database`'s shared `max_connections` limit, with careful attention needed to ensure a `connection` is always returned to the pool in a clean, `transaction`-free state.
 
 ## Why a Database Cannot Handle Unlimited Connections

@@ -8,8 +8,6 @@ Staring at that outline, Arjun notices something he did not expect.
 
 The request breaks apart into exactly the same handful of moves he has spent the last few weeks learning: narrow down to certain `rows`, keep only certain `columns`, and combine two relations where a value matches. **Mapping a structured `query` onto `relational algebra`** is what finally shows Arjun that the `query` language he is about to learn is not a new set of ideas at all, it is a familiar set of ideas wearing a different outfit.
 
-## Definition
-
 **Definition:** Every structured `query` a person writes against a relational `database` is, underneath its wording, a short chain of the same handful of operations: selection to narrow `rows`, projection to narrow `columns`, `join` to combine relations on a shared value, and set operations to combine or compare relations of the same shape.
 
 ## Restaurants and Zones: Arjun's Two Relations

@@ -4,8 +4,6 @@ When a `database` restarts after a crash, the log holds a record of everything t
 
 Committed work must be preserved, durability demands it. Uncommitted work must be discarded, atomicity demands it. This is the job of **redo** and **undo**, the two passes `recovery` makes over the log every time a `database` restarts after an unclean shutdown.
 
-## Definition
-
 **Definition:** Redo reapplies every committed `transaction`'s changes to guarantee durability, and undo reverses every uncommitted `transaction`'s changes to guarantee atomicity, and together the two passes are what actually turn a crashed, potentially inconsistent set of data files back into an exact, correct reflection of every `transaction` that had genuinely finished before the crash.
 
 ## Redo: Replaying Committed Work That Never Made It to Disk

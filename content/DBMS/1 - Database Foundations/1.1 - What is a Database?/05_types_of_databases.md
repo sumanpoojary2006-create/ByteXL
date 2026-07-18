@@ -4,8 +4,6 @@ Kiran, a final-year student interning with a small software team, is given her f
 
 He laughs, not unkindly, and pulls up three very different systems already running behind apps she uses daily. "Database," she learns, does not mean one shape of storage. It means a family of shapes, each built for a different kind of data.
 
-## Definition
-
 **Definition:** A **database type** is a category based on how data is organized and related. Relational databases use tables, document databases store flexible documents, key-value databases pair unique keys with values, and graph databases represent data as connected nodes and edges.
 
 ## The Relational Model: Neat Rows and Columns

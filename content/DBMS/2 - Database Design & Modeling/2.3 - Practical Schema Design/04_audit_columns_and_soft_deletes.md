@@ -8,8 +8,6 @@ Farah escalates to engineering, and the response she gets back is not reassuring
 
 Her tech lead, reviewing the incident afterward, explains what should have been in place from the start, a pair of practices called **audit `columns` and soft deletes**, a small set of extra `columns` that record when a `row` was created and changed, and a way of "deleting" a `row` that keeps it recoverable instead of erasing it outright.
 
-## Definition
-
 **Definition:** Audit `columns` and soft deletes both answer the same underlying worry: that a `database`, left to simply overwrite and erase without a trace, remembers nothing about its own past.
 
 ## Audit Columns: A Quiet Record of When Things Happened

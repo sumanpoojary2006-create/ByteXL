@@ -4,8 +4,6 @@ Every `query` in this course has run under a single, implicit `database` account
 
 PostgreSQL's answer to this is **`role`s**, the unified mechanism it uses to represent both individual users and groups of permissions, and understanding `role`s is the foundation the rest of this chapter's security material builds on.
 
-## Definition
-
 **Definition:** A `role` in PostgreSQL can represent either an individually authenticating account or a non-login group used to bundle permissions, and structuring access around distinct `role`s per person and per service, rather than a single shared login, is what makes accountability and precise permission management possible at all.
 
 ## Creating a Role

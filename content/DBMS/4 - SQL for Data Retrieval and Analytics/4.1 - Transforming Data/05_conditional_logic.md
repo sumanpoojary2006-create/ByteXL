@@ -4,8 +4,6 @@ Farah builds reports for a small gym chain, and the `members` `table` stores eac
 
 That label does not exist anywhere in the `table`, it depends on a rule applied to the visit count, and different visit counts should produce different labels within the very same `query`. This is exactly what SQL's **`CASE`** expression is for: choosing between several possible outputs based on a condition, `row` by `row`.
 
-## Definition
-
 **Definition:** `CASE` turns a raw `column` value into whatever label, category, or calculated result a business question actually needs, checking conditions in order and returning the first match, with `ELSE` as a safety net for everything else.
 
 ## Writing a Simple CASE Expression

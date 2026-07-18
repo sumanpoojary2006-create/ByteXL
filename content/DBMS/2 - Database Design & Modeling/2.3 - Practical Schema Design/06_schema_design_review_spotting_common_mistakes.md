@@ -10,8 +10,6 @@ The draft in front of her is a single `table` called `booking`, and by the time 
 
 ![Schema review checklist catching key, naming, money, timestamp, and duplicate-data problems before launch](images/11_schema_review_checklist.png)
 
-## Definition
-
 **Definition:** A **schema design review** is a structured examination of tables, keys, relationships, constraints, data types, and naming choices to find integrity and maintainability problems before the schema is deployed.
 
 ## The Flawed Draft

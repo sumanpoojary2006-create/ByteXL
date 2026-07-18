@@ -10,8 +10,6 @@ What Vivek needs is a shared visual language, one where a rectangle always means
 
 That shared language is the **ER diagram**, a standardised way of drawing entities, their attributes, and the relationships between them, using a small, fixed set of shapes and lines so that anyone trained in the notation can read the design at a glance, without needing the original designer in the room to explain it.
 
-## Definition
-
 **Definition:** An ER diagram gives a design a shared visual vocabulary: rectangles for entities, ovals for attributes, diamonds for relationships, with underlines, dashes, and double outlines layered on to capture identifying, derived, and multivalued attributes, and with labelled or crow's-foot lines capturing cardinality and participation together.
 
 ## The Core Shapes and What Each One Means

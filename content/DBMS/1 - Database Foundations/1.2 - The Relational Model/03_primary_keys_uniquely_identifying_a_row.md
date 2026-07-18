@@ -12,8 +12,6 @@ From that point on, "Ravi Kumar, Roll No. 20456" and "Ravi Kumar, Roll No.
 
 What Tara stumbled into is one of the most important ideas in the relational model. A `table` needs some `column`, or combination of `columns`, whose value is guaranteed to be different for every single `row`, so that any one `row` can always be picked out with total certainty. That `column` is called the `table`'s **`primary key`**.
 
-## Definition
-
 **Definition:** A `primary key` is the `column`, or combination of `columns`, a `table` leans on to guarantee that every `row` can always be told apart from every other `row`, no matter how large the `table` grows or how many `rows` happen to share the same name, city, or course.
 
 ## Why "Just Search by Name" Falls Apart

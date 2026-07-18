@@ -4,8 +4,6 @@ The `recovery` mechanisms covered in an earlier unit, `write-ahead logging`, che
 
 The only real defense against losing data entirely is having a separate copy of it somewhere else, and a **`backup` strategy** is the deliberate plan for how, how often, and where that copy is kept.
 
-## Definition
-
 **Definition:** A `backup` strategy is the deliberate answer to how, how often, and where a `database`'s data is copied somewhere safe, with logical `backups` like `pg_dump` offering portability and physical `backups` like `pg_basebackup` offering speed, and full versus incremental approaches trading simplicity against storage and time efficiency, all shaped by how much data loss is actually acceptable and how far back a `restore` might realistically need to reach.
 
 ## Logical Backups: A Portable Copy of the Data Itself

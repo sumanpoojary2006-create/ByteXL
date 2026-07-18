@@ -4,8 +4,6 @@ Everything in this unit so far has been demonstrated by typing `BEGIN`, some sta
 
 Closing out this unit means connecting everything learned about `transactions`, ACID, concurrency, and `recovery`, back to the actual pattern a developer writes day to day.
 
-## Definition
-
 **Definition:** Every guarantee this unit has built, atomicity, consistency, isolation, durability, concurrency control, and crash `recovery`, ultimately exists so that application code can follow one simple, disciplined pattern: begin a `transaction` around exactly the statements that must succeed or fail together, commit only when all of them succeed, roll back on any failure, keep the `transaction` short, and retry safely when a deadlock is the cause.
 
 ## Auto-commit: The Default Behavior Worth Knowing About

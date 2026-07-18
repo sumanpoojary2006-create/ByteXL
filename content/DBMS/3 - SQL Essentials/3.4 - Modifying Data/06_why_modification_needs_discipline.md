@@ -4,8 +4,6 @@ Naveen has just been handed write access to the college's live enrollment system
 
 Naveen realizes that everything he has learned about `INSERT`, `UPDATE`, `DELETE`, `RETURNING`, and `ON CONFLICT` was never really a set of separate ideas about separate keywords. It was one continuous idea, that changing data is a fundamentally different act from reading it, and it calls for **discipline**, a habit of checking before acting that a `SELECT` never demanded in the first place.
 
-## Definition
-
 **Definition:** **Disciplined data modification** means identifying the exact rows a write statement will affect, protecting related changes with transactions when necessary, and verifying the result so accidental or partial changes do not damage the data.
 
 ## Why a SELECT Mistake and a Modification Mistake Are Not the Same

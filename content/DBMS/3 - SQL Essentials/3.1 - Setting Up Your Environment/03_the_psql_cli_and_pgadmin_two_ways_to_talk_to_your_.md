@@ -10,8 +10,6 @@ The other is **pgAdmin**, a graphical client where `databases`, `schemas`, and `
 
 ![psql and pgAdmin shown as two different doors into the same PostgreSQL server](images/05_psql_pgadmin_two_doors_same_server.png)
 
-## Definition
-
 **Definition:** **psql** is PostgreSQL's command-line client for entering SQL and administrative commands, while **pgAdmin** is a graphical interface for performing many of the same tasks through menus, forms, and visual tools.
 
 ## Inside psql: Typing Your Way to an Answer

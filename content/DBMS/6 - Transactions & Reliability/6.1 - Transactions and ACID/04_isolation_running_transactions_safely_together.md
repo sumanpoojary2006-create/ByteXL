@@ -4,8 +4,6 @@ Every `transaction` covered so far has run alone, one `connection`, one sequence
 
 The third letter in ACID, **isolation**, is the guarantee that concurrently running `transactions` do not interfere with each other in ways that produce incorrect results, specifically, that one `transaction`'s in-progress, uncommitted changes stay invisible to every other `transaction` until they are actually committed.
 
-## Definition
-
 **Definition:** Isolation guarantees that concurrently running `transactions` do not see each other's uncommitted, potentially-to-be-rolled-back changes, keeping a `transaction`'s in-progress work private until it actually commits, which is what makes it safe for a real system to run many `transactions` against the same data at once.
 
 ## What a Transaction Can See of Its Own Changes

@@ -4,8 +4,6 @@ Rahul's transfer feature now groups statements atomically, keeps the data consis
 
 The fourth letter in ACID, **durability**, is the guarantee that once a `transaction` has committed, its changes are permanent, surviving a crash, a power loss, or a restart, even if the change had only existed in memory a moment before.
 
-## Definition
-
 **Definition:** Durability closes the loop that atomicity, consistency, and isolation open: once a `transaction` commits, its result is guaranteed permanent, surviving any crash, because the `database` records it somewhere durable before ever reporting success.
 
 ## COMMIT Means Permanent, Not Just Visible

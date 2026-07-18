@@ -14,8 +14,6 @@ This layered way of describing a `database`, from what one user sees, to how the
 
 ![The external, conceptual, and internal schemas showing three views of one college results database](images/01_three_schema_architecture_layers.png)
 
-## Definition
-
 **Definition:** The `three-schema architecture` is really just an honest admission that "the `database`" means different things to different people looking at it from different heights: a tailored screen for an end user at the external level, a shared structural design at the conceptual level, and raw stored bytes at the internal level.
 
 ## Three Views of One Database

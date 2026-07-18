@@ -4,8 +4,6 @@ Every mechanism covered in this chapter, `locking`, `isolation levels`, and dead
 
 This standard has a name, **serializability**, and understanding it precisely is what ties together why `locking`, `isolation levels`, and deadlock resolution all exist in the first place.
 
-## Definition
-
 **Definition:** Serializability is the standard every mechanism in this chapter ultimately serves: a guarantee that concurrent `transactions`, however they actually interleave in real time, produce a result equivalent to running them one at a time in some order, and `locking`, `isolation levels`, and deadlock detection are all the practical machinery a `database` uses to approach or fully guarantee that standard.
 
 ## What "Equivalent to Some Serial Order" Means

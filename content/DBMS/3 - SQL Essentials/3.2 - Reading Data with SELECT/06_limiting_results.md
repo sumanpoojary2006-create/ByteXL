@@ -4,8 +4,6 @@ Tanvi is building a small dashboard widget titled "Recent Enrollments" for the d
 
 Pulling the whole `table` and cutting it down to five `rows` in whatever code renders the widget would work, but it means dragging far more data across the network than the screen will ever show. What Tanvi actually wants is to ask the `database` itself for just the first few `rows` of a result, and SQL has a clause built for exactly that request: **`LIMIT`**.
 
-## Definition
-
 **Definition:** `LIMIT` trims a result down to a manageable number of `rows`, and `OFFSET` lets a `query` skip past `rows` already handled, together making dashboard previews and paginated `views` practical without ever pulling more data than a screen can use.
 
 ## Cutting a Result Down to N Rows

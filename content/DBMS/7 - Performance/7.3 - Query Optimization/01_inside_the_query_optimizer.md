@@ -4,8 +4,6 @@ Every `EXPLAIN` output used so far in this unit was treated as a simple fact: "t
 
 Given a SQL `query`, there is often more than one valid way to actually execute it, scan the whole `table` or use an `index`, `join` two `tables` in this order or that order, and the optimizer's job is to choose, in advance, which of those valid strategies is likely to be cheapest, before running any of them.
 
-## Definition
-
 **Definition:** The `query optimizer` evaluates multiple valid ways to execute the same SQL `query`, estimating the cost of each using statistics about the data rather than actually running every option, and chooses whichever it estimates will be cheapest, which is why the same `index` can be used in one `query` and skipped entirely in another depending on how selective the condition actually is.
 
 ## The Same Query, More Than One Valid Plan

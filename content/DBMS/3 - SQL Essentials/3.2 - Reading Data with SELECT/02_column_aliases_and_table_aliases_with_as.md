@@ -4,8 +4,6 @@ Divya is putting together a one-page summary for the Dean's office, and she need
 
 For her own work that is fine, but this sheet is going in front of people who have never seen a `database` `table` in their life. She wants the headers to read "Student Name" and "Location" instead. Renaming a `column` in the output, without touching the actual `table`, is what a **`column` alias** does, and SQL gives her a clean way to write it: the `AS` keyword.
 
-## Definition
-
 **Definition:** Aliases let a `query` speak in whatever words are most useful to whoever is reading the result, without ever touching the underlying `table`.
 
 ## Renaming a Column With AS

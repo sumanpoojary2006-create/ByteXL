@@ -6,8 +6,6 @@ Both questions lean on the same family of tools, the **comparison operators**, w
 
 ![A credits greater than 3 comparison keeping only 4-credit course cards](images/03_comparison_credits_greater_than.png)
 
-## Definition
-
 **Definition:** Comparison operators let `WHERE` reach past plain equality into ordering: greater than, less than, and their inclusive cousins, all working across numbers, dates, and text.
 
 ## Six Operators, One Idea

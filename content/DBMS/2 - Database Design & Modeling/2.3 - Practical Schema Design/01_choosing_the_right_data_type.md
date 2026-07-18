@@ -11,8 +11,6 @@ Two `columns` stop him cold:
 
 ![Column cards being matched to suitable data types such as decimal, integer, boolean, and datetime](images/01_data_type_column_matching.png)
 
-## Definition
-
 **Definition:** Choosing a data type is really choosing a promise: what a `column` will and will not accept, and how precisely it will hold on to the values it is given.
 
 ## Whole Numbers, Decimals, and the Trap of Storing Money as a Float

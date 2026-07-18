@@ -46,8 +46,6 @@ By every rule Naina and Arjun applied earlier, this `table` looks completely cle
 
 The reason a `table` can pass 1NF, 2NF, and 3NF and still hide this kind of repetition is a subtlety that a stricter rule, **Boyce-Codd `Normal Form`**, or BCNF, was built specifically to catch.
 
-## Definition
-
 **Definition:** Boyce-Codd `Normal Form` closes the one gap 3NF leaves open: a `table` can satisfy every earlier rule and still repeat data whenever a functional dependency's determinant is not itself a `candidate key`, especially when the dependent `column` happens to be part of the `primary key` rather than sitting outside it.
 
 ## The Rule Everyone at Sunrise Traders Already Knows About This Warehouse

@@ -4,8 +4,6 @@ Kabir's department-average report from the `FROM` subquery lesson worked correct
 
 SQL offers a cleaner way to write exactly the same logic: a **`Common Table Expression`**, written with a `WITH` clause, which names an intermediate result up front and lets the rest of the `query` read top to bottom in the order the logic actually happens.
 
-## Definition
-
 **Definition:** A CTE, written with `WITH`, names an intermediate `query` result up front so the rest of a statement can read top to bottom instead of inside out, and several CTEs can be chained together, each one building on the last, without losing clarity as the logic grows more layered.
 
 ## Rewriting a Subquery as a CTE

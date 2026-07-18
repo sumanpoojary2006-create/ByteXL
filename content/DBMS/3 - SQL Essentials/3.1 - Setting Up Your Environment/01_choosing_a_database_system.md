@@ -14,8 +14,6 @@ What Ishaan actually needs is not a ranking of which `database` is "best" in som
 
 He needs to understand what a **relational `database` management system**, a piece of software that stores data in structured `tables` and lets him ask precise questions of it using a shared `query` language, is built to do well, and which of the several relational systems on offer make the most sense for someone learning the craft from scratch. That question has a much calmer answer than the forum threads suggest.
 
-## Definition
-
 **Definition:** Choosing a `database` system is not about finding one flawless option and discarding the rest, it is about matching a system's actual design to the shape of the problem in front of you.
 
 ## The Relational Family Ishaan Keeps Running Into

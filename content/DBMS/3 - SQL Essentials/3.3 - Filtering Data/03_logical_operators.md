@@ -6,8 +6,6 @@ The problem is that SQL read his conditions in an order he did not intend, and f
 
 ![AND and OR shown as gates where AND needs all checks true and OR needs at least one](images/05_and_or_logical_gates.png)
 
-## Definition
-
 **Definition:** `AND`, `OR`, and `NOT` let a single `WHERE` clause weigh several conditions at once.
 
 ## Combining Conditions with AND and OR

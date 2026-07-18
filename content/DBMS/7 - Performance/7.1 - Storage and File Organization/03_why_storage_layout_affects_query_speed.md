@@ -4,8 +4,6 @@ The previous two lessons established two physical facts: data is read in whole p
 
 This lesson connects those two facts directly to something Priya can actually see happen: without any help, finding `rows` in a heap `table` means reading every single page, checking every single `row`, an approach called a `full table scan`, and it gets slower in direct proportion to how large the `table` grows.
 
-## Definition
-
 **Definition:** Without a supporting structure on the `column` being filtered, a heap-organized `table` forces a `query` into a `full table scan`, reading every single page and checking every single `row`, with cost that scales directly with `table` size regardless of how few `rows` the `query` actually needs; the `primary key` search escaped this fate only because PostgreSQL quietly built an `index` for it.
 
 ## Watching a Full Table Scan Happen

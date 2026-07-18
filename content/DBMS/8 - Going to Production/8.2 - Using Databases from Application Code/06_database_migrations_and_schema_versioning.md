@@ -6,8 +6,6 @@ A real application's `schema` changes constantly over its lifetime, new `columns
 
 A **`database` migration** is a versioned, ordered, tracked script that applies exactly one `schema` change, and the discipline built around running them is called `schema` versioning.
 
-## Definition
-
 **Definition:** A `database` migration is a small, versioned, tracked script that applies exactly one `schema` change, recorded in a dedicated `table` so the same set of migrations can be safely and consistently applied across a developer's laptop, a testing environment, and production, with structure-preserving statements protecting existing data rather than destructive shortcuts that discard it.
 
 ## The Problem Migrations Solve

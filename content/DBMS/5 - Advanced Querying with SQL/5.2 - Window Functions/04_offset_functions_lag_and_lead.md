@@ -4,8 +4,6 @@ Leela's next report tracks month-over-month growth: for each salesperson's month
 
 SQL's **offset `functions`**, `LAG` and `LEAD`, are `window functions` purpose-built for exactly this: pulling a value from a `row` a fixed number of positions before or after the current one, within an ordered window.
 
-## Definition
-
 **Definition:** `LAG` and `LEAD` pull a value from a neighboring `row`, before or after the current one within an ordered window, turning `row`-to-`row` comparisons like month-over-month change into a straightforward calculation on a single `row` instead of a self `join` across two.
 
 ## Looking Back at the Previous Row with LAG

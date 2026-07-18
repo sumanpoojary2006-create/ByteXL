@@ -12,8 +12,6 @@ What Sanjay is living through is the practical cost of ignoring **naming convent
 
 ![Messy database names being reorganized into consistent naming conventions](images/05_naming_conventions_messy_vs_consistent.png)
 
-## Definition
-
 **Definition:** A naming convention is a small, almost invisible kind of documentation, one that lives inside the names themselves rather than in a separate document nobody reads.
 
 ## Singular or Plural Table Names: Pick One and Never Look Back

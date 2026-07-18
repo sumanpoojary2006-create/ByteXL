@@ -12,8 +12,6 @@ Kiran, the backend developer sitting next to Kabir, put it simply: "The `databas
 
 ![The system catalog storing metadata about tables, columns, keys, permissions, and indexes](images/07_system_catalog_metadata_memory.png)
 
-## Definition
-
 **Definition:** The `system catalog` is the `database`'s memory of its own shape: every `table`, every `column`, every type, every `constraint`, and every permission, recorded once and consulted constantly.
 
 ## What Actually Lives in the Catalog

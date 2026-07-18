@@ -4,8 +4,6 @@
 - Different applications also have different tolerances: a dashboard showing an approximate `view` count can live with a non-repeatable read that a banking transfer never could.
 - SQL exposes this trade-off directly through **isolation levels**, a per-`transaction` setting that controls exactly which of the concurrency problems from earlier in this chapter, `dirty reads`, non-repeatable reads, and phantom reads, the `database` is allowed to permit in exchange for less `locking` and better performance.
 
-## Definition
-
 **Definition:** `Isolation levels` let a `transaction` choose exactly how much protection against concurrency problems it needs, trading stricter guarantees for more waiting and potential retries, with `READ COMMITTED` as a sensible everyday default and `SERIALIZABLE` reserved for operations where any interference at all is unacceptable.
 
 ## The Four Standard Isolation Levels

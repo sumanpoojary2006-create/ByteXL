@@ -9,8 +9,6 @@ The double-booking scenario from the previous lesson is one specific example of 
 
 Naming each one clearly is what makes the next lessons, on `locking` and `isolation levels`, possible to reason about at all.
 
-## Definition
-
 **Definition:** `Dirty reads`, non-repeatable reads, phantom reads, and lost updates each name a specific way concurrent `transactions` can interfere with each other, giving a precise vocabulary for problems that would otherwise all just look like unpredictable bugs under load.
 
 ## Dirty Reads: Seeing Data That Was Never Actually Committed

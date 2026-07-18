@@ -4,8 +4,6 @@ Every lesson in this chapter so far has shown an `index` making a `query` faster
 
 Priya's team, excited after seeing `indexes` fix several slow reports, wants to add an `index` to every `column` in the `orders` `table` "just in case." This lesson is about why that instinct, taken too far, makes the system slower overall, not faster.
 
-## Definition
-
 **Definition:** Every `index` carries a real, ongoing cost in storage and write performance, paid on every insert, update, and delete, regardless of how often that `index` actually gets used to speed up a read, which means `indexing` should be a deliberate decision matched to actual `query` patterns, not a reflexive habit applied to every `column`.
 
 ## The Write Cost of Every Additional Index

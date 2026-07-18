@@ -4,8 +4,6 @@ Simran has been asked a question that sounds like it should have a short answer:
 
 She scrolls through the list herself, mentally crossing off repeats, to work out that there are really only five distinct cities represented. That is exactly the kind of tedious, error-prone work a `database` should be doing for her. The tool for it is **`DISTINCT`**, a keyword that tells PostgreSQL to collapse repeated values in a result down to one appearance each.
 
-## Definition
-
 **Definition:** `DISTINCT` strips a result down to its genuinely unique `rows`, whether uniqueness is judged on a single `column` or on the combination of every `column` named in the `SELECT` list.
 
 ## The Repeated-Rows Problem

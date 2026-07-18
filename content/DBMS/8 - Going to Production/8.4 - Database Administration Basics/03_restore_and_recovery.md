@@ -6,8 +6,6 @@
 - **Restore and `recovery`** is the practice of reconstructing a working `database` from a `backup`.
 - It should be rehearsed deliberately, not attempted for the first time during a real emergency.
 
-## Definition
-
 **Definition:** Restoring a `backup`, whether a logical `restore` reapplying a dump script or a `point-in-time recovery` replaying archived write-ahead logs to an exact moment, is only genuinely useful if it has actually been tested and verified ahead of time, since an unverified `backup` offers only the appearance of safety rather than the real thing.
 
 ## Restoring from a Logical Backup

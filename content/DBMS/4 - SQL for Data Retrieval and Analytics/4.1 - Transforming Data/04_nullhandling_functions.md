@@ -7,8 +7,6 @@ Vikram maintains the employee directory for a mid-sized company, and the `employ
 
 Both gaps are stored as `NULL`, and both cause the same problem once Vikram tries to build a printable directory: `NULL` values show up as blank cells or, worse, silently break calculations that touch them. SQL provides two small but essential `functions`, **`COALESCE`** and **`NULLIF`**, built specifically to handle `NULL` gracefully instead of letting it derail a `query`.
 
-## Definition
-
 **Definition:** `COALESCE` and `NULLIF` are small `functions` that solve a large, recurring problem: real data has gaps, and a `query` that ignores those gaps produces blank cells, broken math, or misleading duplicates.
 
 ## Filling In a Default When a Value Is Missing

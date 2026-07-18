@@ -6,8 +6,6 @@ His next question breaks that independence: "for each employee, is their salary 
 
 A subquery that reaches back into the outer `query`'s current `row` like this is called a **`correlated subquery`**, and it behaves less like a one-time calculation and more like a small `function` run once per `row`.
 
-## Definition
-
 **Definition:** A `correlated subquery` reaches into the outer `query`'s current `row`, recalculating its result for every `row` rather than running once and reusing a fixed answer, which makes it the right tool whenever a comparison needs to be relative to each `row`'s own context, such as its own department or its own manager.
 
 ## A Subquery That References the Outer Row

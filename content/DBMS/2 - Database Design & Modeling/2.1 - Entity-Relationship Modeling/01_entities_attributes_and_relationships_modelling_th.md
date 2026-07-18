@@ -18,8 +18,6 @@ Long before any `table` gets created, this three-part exercise, naming the thing
 
 ![Kabir identifying library entities, their attributes, and the relationships between them](images/01_entities_attributes_relationships_library.png)
 
-## Definition
-
 **Definition:** An entity is a distinct real-world thing a system needs to remember facts about, an attribute is one of those facts, and a relationship is a meaningful `connection` between two entities.
 
 ## Finding the Entities Hiding in a Domain

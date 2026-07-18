@@ -6,8 +6,6 @@ She now wants to know when to reach for a `join`, when to reach for `EXISTS`, an
 
 The short version is that `joins` combine `columns` from two `tables` side by side, while set operations combine entire `rows` from two `queries` stacked vertically, and that structural difference is what decides which tool actually fits a given question.
 
-## Definition
-
 **Definition:** `Joins` widen `rows` by attaching `columns` from a matching `table`, set operations stack or compare whole `rows` across similarly shaped `queries`, and `EXISTS` checks for a match without pulling in any `columns` at all, and recognizing which shape a question actually needs is what decides between them.
 
 ## The Core Difference: Sideways vs. Stacked

@@ -1,0 +1,164 @@
+## Introduction
+
+Every diagnostic tool used across this course, `EXPLAIN ANALYZE`, `pg_stat_activity`, `pg_relation_size`, has been reached for reactively, after a specific `query` was already suspected of being slow. **Database monitoring** flips that around: continuously watching key health metrics so that a genuine problem, a `connection pool` nearing its limit, a `table` bloating with dead tuples, a `query` that has quietly started running far slower than usual, is caught and addressed before it becomes an outage.
+
+This helps teams respond before users are affected, instead of diagnosing the problem only after an outage has already begun.
+
+**Definition:** Continuous monitoring of `connection` usage, `table` bloat, cache hit ratio, and long-running or blocked `queries` turns the diagnostic tools used reactively throughout this course into an early-warning system, catching degrading health before it becomes a full outage, rather than only after users are already affected.
+
+## Watching Connection Usage Over Time
+
+The `connection pooling` lesson introduced checking current `connections` against `max_connections` as a one-time check; monitoring turns that same check into something tracked continuously.
+
+## Source Data Used in This Lesson
+
+Some lessons need a larger dataset to make execution plans or maintenance behavior visible. For those tables, `init.sql` generates the rows instead of listing every row manually.
+
+### Generated `shipments` dataset
+
+| Column | Definition in the setup |
+| --- | --- |
+| `shipment_id` | `INTEGER PRIMARY KEY` |
+| `status` | `TEXT` |
+
+The setup generates 1,000 rows, numbered from 1 through 1000. This scale is intentional because performance behavior is difficult to observe on a tiny table.
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
+```postgresql
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    status TEXT
+);
+
+INSERT INTO shipments (shipment_id, status)
+SELECT i, 'in_transit' FROM generate_series(1, 1000) AS i;
+```
+
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahdcn" 
+ width="100%"
+></iframe>
+
+Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
+
+A monitoring system would run a `query` shaped like this on a regular interval, minutes or even seconds apart:
+
+1. Tracking `percent_used` over time.
+
+2. Alerting once it crosses a concerning threshold.
+
+This catches a `connection leak`, covered in the pooling lesson, while there is still time to investigate, rather than discovering it only once new `connections` start being refused outright.
+
+## Watching Table Bloat and Maintenance Health
+
+The dead tuples covered in the maintenance lesson are exactly the kind of metric worth tracking continuously, since a `table` whose dead-tuple count keeps climbing despite autovacuum running is a sign something is preventing cleanup from keeping up.
+
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahdp3" 
+ width="100%"
+></iframe>
+
+Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
+
+Tracking `dead_tuple_percent` and `last_autovacuum` across a `database`'s busiest `tables` over time reveals whether autovacuum is genuinely keeping pace with write activity, or whether a `table` is quietly accumulating bloat faster than it is being cleaned, a slow-building problem that gradually degrades `query` performance long before it becomes an obvious emergency.
+
+## Watching Cache Hit Ratio
+
+A `database` keeps frequently accessed data cached in memory, and how often a `query` finds what it needs already in that cache, rather than having to read from disk, is one of the clearest overall health signals a running `database` offers.
+
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahdxz" 
+ width="100%"
+></iframe>
+
+Expected result: PostgreSQL returns the rows described below. Compare the visible columns and row-level effect with the explanation, since security and administration settings may make some values environment-dependent.
+
+A healthy, well-provisioned `database` typically sustains a cache hit ratio well above 90%, meaning the vast majority of reads are served from fast memory rather than slower disk access.
+
+A ratio that drops noticeably, tracked over time rather than as a single snapshot, can signal that the `database`'s available memory is no longer large enough for its actual working data set, a capacity signal worth acting on before it manifests as widespread `query` slowdowns.
+
+![Database monitoring continuously tracks connections, dead tuples, cache hit ratio, and long queries](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_monitoring_database_health_metrics.png)
+
+## Watching for Long-Running and Blocked Queries
+
+`pg_stat_activity`, used throughout this unit for one-off checks, is also the foundation for continuously monitoring `queries` that have been running unusually long, or are stuck waiting on a `lock` held by another session.
+
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahe93" 
+ width="100%"
+></iframe>
+
+Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
+
+- `wait_event_type` and `wait_event` reveal specifically what a `query` is stuck waiting on, if anything, such as a `lock` held by another `transaction`, exactly the kind of contention the concurrency control unit covered.
+- A monitoring system alerting on `queries` that exceed a reasonable running-time threshold, tuned to what "reasonable" actually means for a given application, catches runaway or blocked `queries` early, rather than letting them silently degrade the whole system's responsiveness.
+
+![Monitoring alerts can catch blocked or long-running queries before users are affected](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_monitoring_blocked_query_alert.png)
+
+## Database Monitoring at a Glance
+
+<table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
+  <thead>
+    <tr>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Metric</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Query source</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">What it signals</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Connection usage</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>pg_stat_activity</code> vs. <code>max_connections</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Risk of exhausting the connection limit</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Dead tuple percentage</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>pg_stat_user_tables</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Whether maintenance is keeping pace with writes</td>
+    </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Cache hit ratio</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>pg_statio_user_tables</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Whether available memory matches the working data set</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Long-running or blocked queries</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><code>pg_stat_activity</code>, <code>wait_event</code></td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Runaway queries or <code>lock</code> contention needing attention</td>
+    </tr>
+  </tbody>
+</table>
+
+## Your Turn
+
+Write a monitoring `query` that reports the five `tables` in `pg_stat_user_tables` with the lowest cache-friendliness, approximated by the highest ratio of sequential scans to `index scans`, a signal that those `tables` may be missing a useful `index`.
+
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaheht" 
+ width="100%"
+></iframe>
+
+Expected result and verification:
+
+`SELECT relname, seq_scan, idx_scan, seq_scan - COALESCE(idx_scan, 0) AS scan_imbalance FROM pg_stat_user_tables ORDER BY scan_imbalance DESC LIMIT 5;` surfaces `tables` where sequential scans dominate over `index scans`, exactly the missing-`index` bottleneck covered in the performance unit, now framed as something to monitor continuously rather than diagnose only after a specific `query` is already reported as slow.
+
+## Conclusion
+
+Continuous monitoring of `connection` usage, `table` bloat, cache hit ratio, and long-running or blocked `queries` turns the diagnostic tools used reactively throughout this course into an early-warning system, catching degrading health before it becomes a full outage, rather than only after users are already affected.
+
+The final lesson in this unit, and this course, looks at a technique for both improving availability and spreading read load across more than one `database` server: replication.

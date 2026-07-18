@@ -11,8 +11,6 @@ What Rohan is being pushed to nail down is **cardinality**, the count of how man
 
 ![One-to-one, one-to-many, and many-to-many relationships shown with visible connection counts](images/05_relationship_cardinality_three_shapes.png)
 
-## Definition
-
 **Definition:** Cardinality describes how many instances of one entity can be linked to how many instances of another through a relationship, and it comes in three familiar shapes: one-to-one, where both sides are capped at a single match; one-to-many, where one side can have several matches but the other side cannot; and many-to-many, where both sides can have several matches at once.
 
 ## One-to-One: A Single Match on Both Sides

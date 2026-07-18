@@ -5,8 +5,6 @@
 - Each `transaction` is waiting on the other, forever, unless something intervenes.
 - This standoff is called a **deadlock**, and every production `database` includes a mechanism specifically to detect and break it.
 
-## Definition
-
 **Definition:** A deadlock forms when two `transactions` each hold a `lock` the other needs, a cycle the `database` detects automatically and breaks by rolling back one of the two `transactions`, leaving the application to retry, and the most reliable prevention is `locking` multiple `rows` in a consistent order across every `transaction` in the system.
 
 ## How a Deadlock Forms

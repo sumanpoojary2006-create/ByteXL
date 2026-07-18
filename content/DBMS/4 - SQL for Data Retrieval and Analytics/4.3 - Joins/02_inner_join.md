@@ -5,8 +5,6 @@
 - What matters is understanding exactly what "inner" means: an inner `join` keeps a `row` in the result only when a match is found on both sides of the `join` condition.
 - Rows with no match on either side are silently left out, and that quiet exclusion is worth understanding precisely before relying on it.
 
-## Definition
-
 **Definition:** `INNER JOIN`, and its shorthand `JOIN`, keeps only the `rows` where both sides of the `join` condition find a partner, quietly dropping everything else, which makes it the right choice whenever unmatched `rows` carry no useful information for the question at hand.
 
 ## Confirming the Match-Only Behavior

@@ -6,8 +6,6 @@ What he actually needs is a way to tell the `database` "only hand me back the `r
 
 ![WHERE acting as a filter gate that keeps matching Computer Science rows and blocks other rows](images/01_where_filter_keeps_matching_rows.png)
 
-## Definition
-
 **Definition:** The `WHERE` clause is what turns a `table` dump into an actual answer: it sits between `FROM` and `ORDER BY`, and it tests every `row` against a condition before deciding what makes it into the result.
 
 ## Filtering Rows Instead of Reading All of Them

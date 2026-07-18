@@ -4,8 +4,6 @@ The running total from earlier in this chapter, built with `SUM(amount) OVER (PA
 
 The sales director's newest request needs a genuinely different range, a 3-month moving average, where each month's value is the average of itself and the two months before it, not the average of everything since the beginning. Getting this right means controlling the **window frame** directly, the exact slice of `rows` a `window function` looks at for each calculation.
 
-## Definition
-
 **Definition:** A window frame, written with `ROWS BETWEEN ... AND ...`, controls exactly which rows a `window function` considers for each calculation, and changing it turns the same `SUM` or `AVG` from a full running total into a fixed-size moving calculation or a centered average.
 
 ## The Default Frame Behind a Running Total

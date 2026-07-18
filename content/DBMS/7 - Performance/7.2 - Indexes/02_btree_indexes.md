@@ -4,8 +4,6 @@ The previous lesson treated an `index` as a sorted list pointing back to `rows`,
 
 PostgreSQL's default `index` type, and the default in nearly every relational `database`, is a **B-tree**, a structure specifically designed so that even a huge number of entries can be searched in just a handful of steps.
 
-## Definition
-
 **Definition:** A B-tree keeps an `index`'s entries in a balanced, sorted tree structure, so that even huge `tables` can be searched in just a handful of steps, and its sorted nature means the same structure naturally supports equality lookups, range `queries`, sorting, and minimum or maximum searches, all without a separate scan.
 
 ## Why CREATE INDEX Defaults to a B-Tree

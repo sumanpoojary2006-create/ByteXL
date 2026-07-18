@@ -4,8 +4,6 @@ The delivery startup runs a mentorship program for new riders: every experienced
 
 There is only one `table` involved, `riders`, but the report still needs two names sitting side by side on one line, which is exactly the shape a `join` produces. The twist is that both sides of this `join` come from the same `table`. That is a **self `join`**: a `table` joined to a copy of itself.
 
-## Definition
-
 **Definition:** A self `join` is not a different kind of `join` mechanically, it is the same `JOIN`, `LEFT JOIN`, or any other `join` type covered so far, applied to one `table` referenced twice under two different aliases, which is exactly what a hierarchy or a peer relationship stored in a single `table` needs.
 
 ## Why One Table Needs to Act Like Two

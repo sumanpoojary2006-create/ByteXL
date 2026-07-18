@@ -6,8 +6,6 @@ He has just run into the one place where SQL's usual comparison rules quietly st
 
 ![NULL as an unknown value where grade equals NULL is wrong and grade IS NULL is correct](images/09_null_requires_is_null.png)
 
-## Definition
-
 **Definition:** `NULL` represents an unknown or missing value, not zero or empty text.
 
 ## Why grade = NULL Never Works
