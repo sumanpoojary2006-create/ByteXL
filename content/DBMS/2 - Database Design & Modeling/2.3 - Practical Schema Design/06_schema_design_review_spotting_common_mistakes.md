@@ -95,6 +95,69 @@ The last problem Meenal raises is a question about the future rather than the pr
 
 Because this identifier is meant to be public-facing, an unguessable identifier, generated independently rather than counted upward from a shared starting point, is the safer choice, even though a plain integer would have been fine for a purely internal `table` nobody outside the company ever sees.
 
+Here is the flawed draft as runnable DDL, exactly as Meenal's colleague first proposed it, followed by the corrected two-table design so the difference is visible in code, not just prose.
+
+```postgresql file=flawed.sql
+CREATE TABLE booking (
+    StudentName TEXT,
+    StudentEmail TEXT,
+    eventTitle TEXT,
+    event_date DATE,
+    ticketPrice FLOAT,
+    seatNo TEXT
+);
+
+INSERT INTO booking (StudentName, StudentEmail, eventTitle, event_date, ticketPrice, seatNo) VALUES
+    ('Naina Fernandes', 'naina@college.edu', 'Tech Fest Finals', '2026-08-10', 299.50, 'A12'),
+    ('Naina Fernandes', 'naina@college.edu', 'Cultural Night', '2026-08-15', 149.00, 'B04');
+```
+
+Running `SELECT * FROM booking;` against this table shows every one of Meenal's six problems at once: no `primary key` to tell the two rows apart reliably, `StudentName` and `StudentEmail` retyped verbatim on both rows, three different casing styles across the columns, and `ticketPrice` sitting in a type that can silently round.
+
+The corrected design splits students from bookings and fixes every naming and type issue Meenal flagged:
+
+```postgresql file=init.sql
+CREATE TABLE students (
+    student_id  INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    full_name   TEXT NOT NULL,
+    email       TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE bookings (
+    booking_id    INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    student_id    INTEGER NOT NULL REFERENCES students(student_id),
+    event_title   TEXT NOT NULL,
+    event_date    DATE NOT NULL,
+    ticket_price  NUMERIC(10, 2) NOT NULL,
+    seat_no       TEXT NOT NULL,
+    created_at    TIMESTAMP NOT NULL DEFAULT now(),
+    updated_at    TIMESTAMP NOT NULL DEFAULT now()
+);
+
+INSERT INTO students (full_name, email) VALUES
+    ('Naina Fernandes', 'naina@college.edu');
+
+INSERT INTO bookings (student_id, event_title, event_date, ticket_price, seat_no) VALUES
+    (1, 'Tech Fest Finals', '2026-08-10', 299.50, 'A12'),
+    (1, 'Cultural Night', '2026-08-15', 149.00, 'B04');
+```
+
+```postgresql with=init.sql
+SELECT b.booking_id, s.full_name, b.event_title, b.ticket_price
+FROM bookings b
+JOIN students s ON b.student_id = s.student_id
+ORDER BY b.booking_id;
+```
+
+Expected output:
+
+| booking_id | full_name | event_title | ticket_price |
+| -----------: | ---------------- | ----------------- | -------------: |
+| 1 | Naina Fernandes | Tech Fest Finals | 299.50 |
+| 2 | Naina Fernandes | Cultural Night | 149.00 |
+
+Naina's name and email now exist exactly once, in `students`, no matter how many events she books, and `ticket_price` holds an exact `NUMERIC` value instead of a `FLOAT` that could quietly round.
+
 ## The Corrected Design
 
 After Meenal's notes, the single flawed `table` becomes two well-formed ones.
@@ -217,6 +280,12 @@ After Meenal's notes, the single flawed `table` becomes two well-formed ones.
     </tr>
   </tbody>
 </table>
+
+## Your Turn: Run the Review
+
+A colleague drafts a single `feedback` table with columns `RespondentName`, `RespondentEmail`, `courseTitle`, `rating` (declared FLOAT), and `comment`, with no primary key. Run Meenal's review against it: list the problems, in the order she would likely notice them.
+
+A working answer: first, no primary key exists anywhere, so nothing guarantees two identical feedback rows can be told apart. Second, `RespondentName` mixes PascalCase with `courseTitle`'s camelCase, an inconsistent naming style. Third, `rating` stored as FLOAT risks the same silent rounding problem as `ticketPrice`, though ratings are usually small whole numbers so an INTEGER might be the honest fix here instead of NUMERIC. Fourth, there are no `created_at` or `updated_at` columns, so nobody can tell when feedback was submitted. Fifth, `RespondentName` and `RespondentEmail` would repeat on every piece of feedback the same respondent ever leaves, the same redundancy Meenal split into a separate Students table.
 
 ## Conclusion
 

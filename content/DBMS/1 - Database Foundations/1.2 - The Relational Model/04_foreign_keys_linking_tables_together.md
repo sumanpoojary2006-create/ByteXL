@@ -177,6 +177,12 @@ With a `foreign key` in place, asking "show me every order Meera Pillai has ever
   </tbody>
 </table>
 
+## Your Turn: Spot the Dangling Order
+
+Ravi adds a Delivery Partners `table`, with Partner ID as its `primary key`, and adds a Partner ID `column` to Orders so every order records who is delivering it. A new order arrives with Partner ID 77, but no `row` for Partner ID 77 exists anywhere in the Delivery Partners `table`. What should happen, and why?
+
+That order should be rejected, or at least flagged as invalid, because a `foreign key` carries the promise that every value in the child `table` must match a value that genuinely exists in the parent `table`. Letting Partner ID 77 slip into Orders unchallenged would recreate exactly the "Deliver to Customer, urgent" problem Ravi started with, an order pointing at a delivery partner who, as far as the `database` is concerned, does not exist.
+
 ## Conclusion
 
 A `foreign key` is how one `table` reaches out and anchors itself to a specific, real `row` living inside another `table`, turning two separate grids of data into one connected, trustworthy structure. Ravi's Orders `table` only became useful the moment every order could be traced, with certainty, back to the customer who actually placed it.

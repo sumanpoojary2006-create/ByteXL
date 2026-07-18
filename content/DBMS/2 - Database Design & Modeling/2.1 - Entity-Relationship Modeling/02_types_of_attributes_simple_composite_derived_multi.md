@@ -184,6 +184,12 @@ That distinction carries forward directly into how a `database` eventually gets 
 
 ![Attribute types flowing into different storage decisions](images/04_attribute_storage_decision_flow.png)
 
+## Your Turn: Classify the Attributes
+
+A hospital's Patient entity has these candidate attributes: blood group, home address, age, years since first admission, and list of allergies. Sort each one into simple, composite, derived, or multivalued, and justify the trickiest call.
+
+A working answer: blood group is simple, one indivisible value; home address is composite, splitting into street, city, and pincode the hospital genuinely needs separately for billing and referrals; age and years since first admission are both derived, the first from date of birth and the second from admission date, so neither should be stored directly; list of allergies is multivalued, since a single patient can have zero, one, or several allergies at once, and cramming them into one text field would repeat the exact mistake Meera's phone-number field made.
+
 ## Conclusion
 
 Attributes are not all the same shape. A simple attribute holds one indivisible value, a composite attribute is built from smaller meaningful parts, a derived attribute can always be recalculated from something already stored, and a multivalued attribute allows more than one value for a single entity at the same time.

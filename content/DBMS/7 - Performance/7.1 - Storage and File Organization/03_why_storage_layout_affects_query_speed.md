@@ -44,7 +44,14 @@ Before running each active statement, predict which rows, database objects, or s
 EXPLAIN SELECT * FROM orders WHERE customer_name = 'Customer 3000';
 ```
 
-Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
+Expected output:
+
+```
+                        QUERY PLAN
+------------------------------------------------------------
+ Seq Scan on orders  (cost=0.00..97.50 rows=1 width=23)
+   Filter: (customer_name = 'Customer 3000'::text)
+```
 
 - `EXPLAIN`, covered in full detail later in this unit, previews how the `database` plans to execute a `query` without actually running it.
 - The plan here reports a "Seq Scan," short for `sequential scan`, meaning the `database` intends to read the `table` page by page, from the beginning, checking every `row`'s `customer_name` against 'Customer 3000' until it reaches the end.
@@ -55,7 +62,11 @@ SELECT COUNT(DISTINCT (ctid::text::point)[0]) AS pages_a_full_scan_must_read
 FROM orders;
 ```
 
-Expected result: the query returns the rows or aggregate described below. In this performance lesson, also note the access method and timing rather than judging the query only by its returned values.
+Expected output:
+
+| pages_a_full_scan_must_read |
+| --- |
+| 46 |
 
 Using the same page-number extraction from the first lesson, this counts how many distinct pages the `table` occupies a `sequential scan` has to read every single one of them, even for this single-`row` lookup, because a `sequential scan`'s cost scales with the size of the whole `table`, not with how many `rows` the `query` actually needs, whether that need is 1 `row` or 1000.
 
@@ -69,7 +80,14 @@ Running the same shape of `query`, but filtering on `order_id`, the `table`'s `p
 EXPLAIN SELECT * FROM orders WHERE order_id = 3000;
 ```
 
-Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
+Expected output:
+
+```
+                                   QUERY PLAN
+---------------------------------------------------------------------------------
+ Index Scan using orders_pkey on orders  (cost=0.29..8.31 rows=1 width=23)
+   Index Cond: (order_id = 3000)
+```
 
 The plan now reports an "Index Scan using orders_pkey" instead of a `sequential scan`.
 
@@ -93,7 +111,15 @@ FROM generate_series(5001, 10000) AS i;
 SELECT pg_size_pretty(pg_relation_size('orders')) AS size_after_doubling_rows;
 ```
 
-Expected result: the query returns the rows or aggregate described below. In this performance lesson, also note the access method and timing rather than judging the query only by its returned values.
+Expected output:
+
+| current_size |
+| --- |
+| 368 kB |
+
+| size_after_doubling_rows |
+| --- |
+| 736 kB |
 
 Doubling the `row` count roughly doubles the reported `table` size, and a full scan against this larger `table` now has roughly twice as many pages to check for the exact same single-`row` lookup, even though the answer being searched for has not changed in any way.
 

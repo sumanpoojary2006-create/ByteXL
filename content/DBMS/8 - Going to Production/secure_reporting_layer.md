@@ -25,6 +25,7 @@ Before writing project queries, inspect the starting data so every task has a vi
 | --- | --- | --- | --- |
 | 1 | 1200.00 | 700.00 | 2026-01-10 |
 | 2 | 500.00 | 300.00 | 2026-02-02 |
+
 Use two files in OneCompiler. Keep all `CREATE TABLE` and `INSERT` statements in `init.sql`; keep only the current task query in the active SQL file. The `with=init.sql` attribute connects the two files.
 
 ```postgresql file=init.sql

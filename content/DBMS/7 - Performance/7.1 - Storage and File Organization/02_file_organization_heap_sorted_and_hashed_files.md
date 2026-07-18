@@ -45,7 +45,14 @@ Before running each active statement, predict which rows, database objects, or s
 SELECT ctid, order_id, customer_name FROM orders;
 ```
 
-Expected result: the query returns the rows or aggregate described below. In this performance lesson, also note the access method and timing rather than judging the query only by its returned values.
+Expected output:
+
+| ctid | order_id | customer_name |
+| --- | --- | --- |
+| (0,1) | 5 | Rohan Das |
+| (0,2) | 2 | Aditi Kulkarni |
+| (0,3) | 8 | Kavya Nair |
+| (0,4) | 1 | Imran Sheikh |
 
 Even though these `rows` were inserted with `order_id` values 5, 2, 8, then 1, their `ctid` values still reflect insertion order, not sorted `order_id` order, since a heap makes no attempt to keep `rows` physically sorted by any `column`.
 
@@ -88,7 +95,14 @@ FROM orders
 ORDER BY customer_name;
 ```
 
-Expected result: the query returns the rows or aggregate described below. In this performance lesson, also note the access method and timing rather than judging the query only by its returned values.
+Expected output:
+
+| customer_name | bucket |
+| --- | --- |
+| Aditi Kulkarni | 3 |
+| Imran Sheikh | 7 |
+| Kavya Nair | 1 |
+| Rohan Das | 5 |
 
 With the names listed alphabetically, the bucket numbers jump around with no pattern at all: names that sit next to each other in alphabetical order land in completely unrelated buckets, and that is not a flaw but the entire design. A hash `function` deliberately scatters values evenly so that no bucket gets overloaded, and the unavoidable price is that any notion of "nearby" or "in between" is destroyed on the way in.
 

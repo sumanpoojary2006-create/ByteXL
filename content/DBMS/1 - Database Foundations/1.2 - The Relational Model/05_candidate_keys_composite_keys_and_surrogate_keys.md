@@ -170,6 +170,12 @@ And if truly nothing in the real-world data can be trusted to stay unique, inven
 
 ![A key-selection decision path from natural unique columns to composite or surrogate keys](images/10_key_selection_decision_path.png)
 
+## Your Turn: Classify the Keys
+
+Aisha adds a fourth `table`, Reading Room Bookings, with `columns` for Roll No, Seat Number, Booking Date, and an auto-generated Booking ID that the `table` assigns to every new `row`. A student can book different seats on different days, and the same seat gets booked by different students on different days, but a given seat can never be double-booked on the same date. Identify the `candidate key`, the `composite key`, and the `surrogate key` in this `table`.
+
+Seat Number plus Booking Date together form the `composite key`, since neither `column` alone is unique, a seat repeats across many dates and a date repeats across many seats, but the pairing of one seat on one date never repeats. Booking ID is the `surrogate key`, an artificial number invented purely to give each booking a reliable identity. Because that composite pairing could itself have served as the `primary key` instead of Booking ID, it also qualifies as a `candidate key`, exactly as Accession No did for Aisha's Books `table`.
+
 ## Conclusion
 
 Candidate keys widen the lens from "the one `primary key`" to every `column` that honestly could have filled that `role`. Composite keys show that uniqueness sometimes only emerges once several `columns` are considered together, rather than any one of them alone. And surrogate keys reveal that a `database` is perfectly willing to manufacture an identity out of nothing when the real world simply refuses to offer one naturally.

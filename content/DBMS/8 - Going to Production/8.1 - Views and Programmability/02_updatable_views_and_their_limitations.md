@@ -51,7 +51,11 @@ UPDATE in_transit_shipments SET destination = 'Thane' WHERE shipment_id = 1;
 SELECT * FROM shipments WHERE shipment_id = 1;
 ```
 
-Expected result: PostgreSQL applies the requested change. Use the follow-up query and the explanation below to confirm the affected rows or refreshed data.
+Expected output:
+
+| shipment_id | driver_id | status | destination |
+| --- | --- | --- | --- |
+| 1 | 1 | in_transit | Thane |
 
 The `UPDATE` was issued against `in_transit_shipments`, the `view`, not `shipments` directly, and the underlying `table`'s `row` genuinely changed, confirmed by the final `SELECT` against `shipments` itself. PostgreSQL is able to translate this write for two reasons:
 
@@ -84,7 +88,13 @@ JOIN drivers d ON s.driver_id = d.driver_id;
 SELECT * FROM shipments_with_driver;
 ```
 
-Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
+Expected output:
+
+| shipment_id | driver_name | destination |
+| --- | --- | --- |
+| 1 | Manoj Yadav | Mumbai |
+| 2 | Farah Ali | Pune |
+| 3 | Manoj Yadav | Nagpur |
 
 This `UPDATE` fails, since PostgreSQL refuses to guess how to translate a write against a `join`ed `view` back into the correct underlying `table` and `row`. The rule is not about the `view` being "too complicated" in a vague sense; it is specifically about whether the mapping from a `view` `row` back to exactly one underlying `table` `row` is unambiguous, and a `join` between two `tables` inherently breaks that guarantee.
 
@@ -121,7 +131,12 @@ GROUP BY driver_id;
 SELECT * FROM driver_shipment_counts;
 ```
 
-Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
+Expected output (from the final `SELECT`, against `driver_shipment_counts`):
+
+| driver_id | shipment_count |
+| --- | ---: |
+| 1 | 2 |
+| 2 | 1 |
 
 This fails for a more fundamental reason than the `join` case: `shipment_count` is not a stored value at all, it is calculated fresh from however many `rows` currently match, so "setting" it to 5 is not a meaningful operation the `database` could even attempt to translate into a real change.
 

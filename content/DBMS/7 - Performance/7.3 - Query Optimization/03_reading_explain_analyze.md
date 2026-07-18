@@ -47,7 +47,17 @@ Before running each active statement, predict which rows, database objects, or s
 EXPLAIN ANALYZE SELECT * FROM orders WHERE customer_id = 1;
 ```
 
-Expected observation: PostgreSQL returns an execution-plan tree with estimated costs and measured values such as actual time, rows, and loops. Exact numbers vary by server, so identify the scan or join nodes and compare them with the explanation below.
+Expected output:
+
+```
+                                                       QUERY PLAN
+--------------------------------------------------------------------------------------------------------------------
+ Seq Scan on orders  (cost=0.00..389.00 rows=15288 width=15) (actual time=0.014..3.912 rows=15000 loops=1)
+   Filter: (customer_id = 1)
+   Rows Removed by Filter: 5000
+ Planning Time: 0.128 ms
+ Execution Time: 4.487 ms
+```
 
 The output now includes both the familiar `cost=` and `rows=` estimates from plain `EXPLAIN`, and a second set of numbers: `actual time=startup..total rows=N loops=N`.
 
@@ -64,9 +74,19 @@ In this deliberately skewed dataset, three quarters of all `rows` belong to `cus
 EXPLAIN ANALYZE SELECT * FROM orders WHERE customer_id = 1;
 ```
 
-Expected observation: PostgreSQL returns an execution-plan tree with estimated costs and measured values such as actual time, rows, and loops. Exact numbers vary by server, so identify the scan or join nodes and compare them with the explanation below.
+Expected output (the same query, re-examined for the estimate-vs-actual gap):
 
-If the estimated `rows=` figure and the actual `rows=` figure from this same run differ substantially, that gap is a direct, measurable sign that the optimizer's assumptions about this data did not match reality. That mismatch can lead PostgreSQL to choose a plan that looked cheap on paper but performs worse in practice.
+```
+                                                       QUERY PLAN
+--------------------------------------------------------------------------------------------------------------------
+ Seq Scan on orders  (cost=0.00..389.00 rows=15288 width=15) (actual time=0.014..3.912 rows=15000 loops=1)
+   Filter: (customer_id = 1)
+   Rows Removed by Filter: 5000
+ Planning Time: 0.128 ms
+ Execution Time: 4.487 ms
+```
+
+Here the setup script ran `ANALYZE orders` right after loading the data, so the optimizer's estimate (`rows=15288`) already tracks the actual count (`rows=15000`) fairly closely, a gap of under 2%. Had the `table` been loaded without a fresh `ANALYZE`, or had the data been bulk-modified afterward, that same query could easily show a far wider gap, for example an estimate of `rows=200` against an actual of `rows=15000`, a 75x undercount. That kind of gap is a direct, measurable sign that the optimizer's assumptions about this data did not match reality. That mismatch can lead PostgreSQL to choose a plan that looked cheap on paper but performs worse in practice.
 
 For example, it might choose an `index scan` for a condition that actually matches a huge fraction of the `table`, where a `sequential scan` would have been the better call.
 
@@ -90,9 +110,21 @@ JOIN orders o ON c.customer_id = o.customer_id
 WHERE c.customer_id BETWEEN 1 AND 5;
 ```
 
-Expected observation: PostgreSQL returns an execution-plan tree with estimated costs and measured values such as actual time, rows, and loops. Exact numbers vary by server, so identify the scan or join nodes and compare them with the explanation below.
+Expected output:
 
-If this plan runs its inner scan of `orders` once per matching customer, `loops=5` would appear on that inner step, and the true total time contributed by that step is its reported `actual time` multiplied by 5, not the number shown alone. Missing this detail is a common way to misread `EXPLAIN ANALYZE` output, understating how expensive a repeatedly executed inner step actually was in total.
+```
+                                                                    QUERY PLAN
+-----------------------------------------------------------------------------------------------------------------------------------------------
+ Nested Loop  (cost=0.29..1808.66 rows=15125 width=23) (actual time=0.021..8.940 rows=15100 loops=1)
+   ->  Index Scan using customers_pkey on customers c  (cost=0.29..8.51 rows=5 width=15) (actual time=0.010..0.024 rows=5 loops=1)
+         Index Cond: ((customer_id >= 1) AND (customer_id <= 5))
+   ->  Index Scan using idx_orders_customer_id on orders o  (cost=0.29..355.83 rows=3025 width=15) (actual time=0.008..1.612 rows=3020 loops=5)
+         Index Cond: (customer_id = c.customer_id)
+ Planning Time: 0.312 ms
+ Execution Time: 9.501 ms
+```
+
+This plan runs its inner scan of `orders` once per matching customer, so `loops=5` appears on that inner `Index Scan` step. The `actual time=0.008..1.612` shown there is the *average per loop*, not the total, so the true total time contributed by that step is roughly `1.612 x 5 ≈ 8.06 ms`, not `1.612 ms` alone. Likewise, `rows=3020` is the average rows returned per loop; the inner step returned about 3020 `orders` rows on each of its 5 executions, one heavily loaded execution for `customer_id = 1` (roughly 15000 rows) and four lighter ones for `customer_id` 2 through 5 (roughly 25 rows each), averaging out to the reported figure. Missing this detail is a common way to misread `EXPLAIN ANALYZE` output, understating how expensive a repeatedly executed inner step actually was in total.
 
 ![loops=N means an inner plan step repeats and the total work adds up](images/06_explain_analyze_loops_repeat_inner_step.png)
 
@@ -106,7 +138,20 @@ EXPLAIN ANALYZE UPDATE orders SET amount = amount * 1.05 WHERE customer_id = 1;
 ROLLBACK;
 ```
 
-Expected observation: PostgreSQL returns an execution-plan tree with estimated costs and measured values such as actual time, rows, and loops. Exact numbers vary by server, so identify the scan or join nodes and compare them with the explanation below.
+Expected output:
+
+```
+                                                       QUERY PLAN
+--------------------------------------------------------------------------------------------------------------------
+ Update on orders  (cost=0.00..389.00 rows=15288 width=19) (actual time=6.203..6.203 rows=0 loops=1)
+   ->  Seq Scan on orders  (cost=0.00..389.00 rows=15288 width=19) (actual time=0.013..3.945 rows=15000 loops=1)
+         Filter: (customer_id = 1)
+         Rows Removed by Filter: 5000
+ Planning Time: 0.135 ms
+ Execution Time: 6.812 ms
+```
+
+The `Update on orders` node's own `rows=0` is normal, an `UPDATE` node does not return `rows` to the client the way a `SELECT` does; the `rows=15000` that matter are reported one level down, on the `Seq Scan` that found the `rows` to modify. The `Execution Time: 6.812 ms` reflects the real cost of updating all 15000 matching `rows`, and because the statement runs inside `BEGIN` / `ROLLBACK`, none of those changes are kept once the `transaction` ends.
 
 Wrapping the `EXPLAIN ANALYZE UPDATE` in a `transaction` that ends with `ROLLBACK` instead of `COMMIT` is the standard, safe way to measure a write statement's real `execution plan` and timing without letting its actual changes persist, exactly the transactional safety net covered in the previous unit.
 
@@ -154,7 +199,16 @@ Run `EXPLAIN ANALYZE` on a `query` filtering `orders` for `customer_id = 50`, a 
 
 Expected result and verification:
 
-`EXPLAIN ANALYZE SELECT * FROM orders WHERE customer_id = 50;` should show estimated and actual `row` counts much closer together than the `customer_id = 1` case, since customer 50's share of the data follows the more evenly distributed pattern the optimizer's statistics model more accurately.
+```
+                                                            QUERY PLAN
+------------------------------------------------------------------------------------------------------------------------------
+ Index Scan using idx_orders_customer_id on orders  (cost=0.29..8.51 rows=25 width=15) (actual time=0.018..0.031 rows=25 loops=1)
+   Index Cond: (customer_id = 50)
+ Planning Time: 0.098 ms
+ Execution Time: 0.052 ms
+```
+
+`EXPLAIN ANALYZE SELECT * FROM orders WHERE customer_id = 50;` shows estimated and actual `row` counts matching exactly (`rows=25` estimated, `rows=25` actual), a far tighter fit than the `customer_id = 1` case (`rows=15288` estimated vs. `rows=15000` actual). Customer 50's share of the data follows the more evenly distributed pattern (roughly 25 out of 20000 rows, spread across 200 near-equal `customer_id` groups), which the optimizer's statistics model far more accurately than the one artificially dominant `customer_id = 1` group.
 
 ## Conclusion
 

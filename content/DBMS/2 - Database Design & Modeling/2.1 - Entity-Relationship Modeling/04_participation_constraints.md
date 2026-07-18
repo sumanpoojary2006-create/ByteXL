@@ -153,6 +153,12 @@ Knowing both facts about a relationship, its cardinality and its participation, 
   </tbody>
 </table>
 
+## Your Turn: Total or Partial
+
+A ride-hailing app has a Driver-Drives-Trip relationship: every trip in the system was completed by exactly one driver, and a driver on the platform might currently have zero completed trips if they just signed up. State the participation of Trip in this relationship, and the participation of Driver, and explain the asymmetry in one sentence each.
+
+A working answer: Trip has total participation, since a trip that exists in the system, by definition, was driven by somebody; there is no such thing as an orphaned trip with no driver. Driver has partial participation, because a newly onboarded driver is a perfectly valid record even before their first trip is logged, the same asymmetry Aisha found between Orders and Customers.
+
 ## Conclusion
 
 Participation `constraint` asks a question cardinality never answers on its own: whether every instance of an entity is required to take part in a relationship, called total participation, or whether some instances are free to exist outside it, called partial participation.

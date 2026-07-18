@@ -41,9 +41,13 @@ ALTER TABLE shipments ADD COLUMN priority TEXT DEFAULT 'normal';
 SELECT * FROM shipments;
 ```
 
-Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
+Expected output:
 
-This works perfectly on this one `database`. The problem appears the moment there is more than one `database` involved: did this same `ALTER TABLE` get run against the testing environment.
+| shipment_id | status | priority |
+| --- | --- | --- |
+| *(no rows)* | | |
+
+`shipments` was created empty by `init.sql`, so `ALTER TABLE ... ADD COLUMN priority` only changes the `table`'s structure, adding an empty `priority` `column` with a `'normal'` default for any future `row`; there is no data yet for the `SELECT` to return. This works perfectly on this one `database`. The problem appears the moment there is more than one `database` involved: did this same `ALTER TABLE` get run against the testing environment.
 
 Against production. In what order, if there were several changes made this week.
 
@@ -65,7 +69,12 @@ INSERT INTO schema_migrations (version) VALUES ('0002_add_priority_column');
 SELECT * FROM schema_migrations ORDER BY version;
 ```
 
-Expected result: PostgreSQL applies the requested change. Use the follow-up query and the explanation below to confirm the affected rows or refreshed data.
+Expected output:
+
+| version | applied_at |
+| --- | --- |
+| 0001_create_shipments | *(timestamp of the `INSERT`)* |
+| 0002_add_priority_column | *(timestamp of the `INSERT`)* |
 
 Every migration gets a unique, ordered identifier, here `0001_create_shipments` and `0002_add_priority_column`, and a migration tool checks this `table` before running anything:
 
@@ -98,7 +107,21 @@ SELECT * FROM shipments;
 SELECT * FROM schema_migrations ORDER BY version;
 ```
 
-Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
+Expected output:
+
+`shipments` still has no rows, but now carries the `delivery_deadline` `column`:
+
+| shipment_id | status | priority | delivery_deadline |
+| --- | --- | --- | --- |
+| *(no rows)* | | | |
+
+`schema_migrations` now records all three migrations:
+
+| version | applied_at |
+| --- | --- |
+| 0001_create_shipments | *(timestamp of the `INSERT`)* |
+| 0002_add_priority_column | *(timestamp of the `INSERT`)* |
+| 0003_add_delivery_deadline | *(timestamp of the `INSERT`)* |
 
 Writing the `ALTER TABLE` and the corresponding insert into `schema_migrations` together, as one unit, keeps the `schema` change and its record of having happened tightly coupled, exactly the kind of pairing a `transaction`, covered in an earlier unit, is well suited to wrap, so that either both take effect or neither does, never leaving the `schema` changed without the tracking `table` reflecting it.
 
@@ -128,9 +151,14 @@ SELECT * FROM schema_migrations ORDER BY version;
 ALTER TABLE shipments ADD COLUMN new_notes TEXT;
 ```
 
-Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
+Expected output (from the `SELECT` earlier in this block, before the structure-preserving `ALTER TABLE` runs):
 
-This distinction, preserving data versus discarding it, is the single most important discipline in writing a safe migration, and it is exactly why migrations against a production `database` always deserve careful review before being applied, the same caution this course has emphasized around any `DROP` or `DELETE` since the modifying-data chapter early on.
+| version | applied_at |
+| --- | --- |
+| 0001_create_shipments | *(timestamp of the `INSERT`)* |
+| 0002_add_priority_column | *(timestamp of the `INSERT`)* |
+
+The final `ALTER TABLE shipments ADD COLUMN new_notes TEXT` returns no rows of its own; it just adds the `column` while leaving every existing `row` intact, in contrast with the commented-out `DROP TABLE` shortcut above it. This distinction, preserving data versus discarding it, is the single most important discipline in writing a safe migration, and it is exactly why migrations against a production `database` always deserve careful review before being applied, the same caution this course has emphasized around any `DROP` or `DELETE` since the modifying-data chapter early on.
 
 ![Safe migrations preserve existing data, while drop-and-recreate shortcuts destroy it](images/12_safe_migration_preserves_data.png)
 

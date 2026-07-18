@@ -1,9 +1,6 @@
 ## Introduction
 
-- `Role`s, privileges, `least privilege`, `row-level security`.
-- The security mechanisms covered so far, including `roles`, privileges, `least privilege`, row-level security, and injection prevention, work to prevent unwanted access before it happens.
-- **Auditing** is the complementary discipline for after the fact: recording who did what and when.
-- If something goes wrong, or simply needs reviewing later, auditing gives the team an actual trail to examine instead of forcing everyone to guess.
+The security mechanisms covered so far, `roles`, privileges, `least privilege`, `row-level security`, and injection prevention, all work to prevent unwanted access before it happens. **Auditing** is the complementary discipline for after the fact: recording who did what and when, so that if something goes wrong, or simply needs reviewing later, the team has an actual trail to examine instead of forcing everyone to guess.
 
 ## Recording Who Changed a Row, Using a Trigger
 
@@ -82,7 +79,7 @@ FOR EACH ROW
 EXECUTE FUNCTION audit_shipments_change();
 ```
 
-Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
+Expected result: `CREATE FUNCTION` and `CREATE TRIGGER` return no rows; they arm the audit mechanism on `shipments` without touching any data yet. The next section fires the `trigger` for real and shows the row it writes into `audit_log`.
 
 - `TG_OP` is a special variable automatically available inside a `trigger` `function`, holding the operation that fired it, `'INSERT'`, `'UPDATE'`, or `'DELETE'`. `current_user` captures exactly which `role`'s `connection` made the change, tying every audit entry back to a specific, accountable identity.
 - This preserves the accountability that shared logins destroy.
@@ -121,7 +118,11 @@ UPDATE shipments SET status = 'delivered' WHERE shipment_id = 1;
 SELECT table_name, action, changed_by, old_data, new_data FROM audit_log;
 ```
 
-Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
+Expected output:
+
+| table_name | action | changed_by | old_data | new_data |
+| --- | --- | --- | --- | --- |
+| shipments | UPDATE | postgres | {"status": "in_transit", "shipment_id": 1} | {"status": "delivered", "shipment_id": 1} |
 
 The audit entry shows `action = 'UPDATE'`, `changed_by` recording exactly which `role` made the change, and both the `row`'s state before, `status: in_transit`, and after, `status: delivered`, preserved in `old_data` and `new_data`. This is a complete, precise record: not just that something changed, but exactly what changed, who changed it, and when.
 
@@ -237,8 +238,14 @@ EXECUTE FUNCTION audit_shipments_change();
 
 Expected result and verification:
 
-- Running `INSERT INTO shipments (shipment_id, status) VALUES (2, 'in_transit')
-- `DELETE` FROM shipments `WHERE` shipment_id = 2;` followed by ``SELECT` action, changed_by, old_data, new_data FROM audit_log `WHERE` (old_data->>'shipment_id')::int = 2 OR (new_data->>'shipment_id')::int = 2;` shows two entries: an ``INSERT`` with `new_data` populated and `old_data` null, and a ``DELETE`` with `old_data` populated and `new_data` null, exactly mirroring what genuinely happened to that `row`.
+Running `INSERT INTO shipments (shipment_id, status) VALUES (2, 'in_transit');` followed by `DELETE FROM shipments WHERE shipment_id = 2;` and then `SELECT action, changed_by, old_data, new_data FROM audit_log WHERE (old_data->>'shipment_id')::int = 2 OR (new_data->>'shipment_id')::int = 2;` gives:
+
+| action | changed_by | old_data | new_data |
+| --- | --- | --- | --- |
+| INSERT | postgres | *NULL* | {"status": "in_transit", "shipment_id": 2} |
+| DELETE | postgres | {"status": "in_transit", "shipment_id": 2} | *NULL* |
+
+Two entries come back: an `INSERT` with `new_data` populated and `old_data` null, and a `DELETE` with `old_data` populated and `new_data` null, exactly mirroring what genuinely happened to that `row`.
 
 ## Conclusion
 

@@ -195,6 +195,12 @@ Once the shapes and lines are all in place, Vivek's manager teaches him to read 
 
 "Patient, connected by a double line labelled N, to Admits, connected by a single line labelled 1, to Doctor" translates directly into the sentence "many patients are admitted, and every admitted patient must have exactly one admitting doctor, though a doctor may have zero admitted patients right now." Every fact that took Vivek a full paragraph to explain earlier now sits compactly inside a handful of connected shapes, readable by anyone who knows the legend, without a single word of narration needed.
 
+## Your Turn: Read the Notation
+
+A diagram shows a rectangle labelled "Author" connected by a single line to a diamond labelled "Writes," which connects by a double line labelled "N" to a rectangle labelled "Book." The Book rectangle also has an oval attached with a dashed outline, labelled "Years in Print." Describe, in a sentence, what this diagram is telling you, including what the dashed oval means.
+
+A working answer: the single line on the Author side means partial participation, an author can exist in the system without having written a book yet, while the double line on the Book side means total participation, every book must have been written by some author. The "N" label means one author can write many books. The dashed "Years in Print" oval is a derived attribute, a value the system calculates from a book's publication date rather than storing directly, exactly the way Vivek's notation marks a computed fact with a dashed outline instead of a solid one.
+
 ## Conclusion
 
 An ER diagram gives a design a shared visual vocabulary: rectangles for entities, ovals for attributes, diamonds for relationships, with underlines, dashes, and double outlines layered on to capture identifying, derived, and multivalued attributes, and with labelled or crow's-foot lines capturing cardinality and participation together.

@@ -180,12 +180,18 @@ Rewrite a two-account transfer `transaction` against the `accounts` `table` abov
 
 Expected result and verification:
 
-- A deadlock-safe version `locks` the lower id first regardless of transfer direction: `BEGIN
-- `SELECT` * FROM accounts `WHERE` account_id = 1 FOR `UPDATE`
-- `SELECT` * FROM accounts `WHERE` account_id = 2 FOR `UPDATE`
-- `UPDATE` accounts SET balance = balance + 500.00 `WHERE` account_id = 1
-- `UPDATE` accounts SET balance = balance - 500.00 `WHERE` account_id = 2
-- `COMMIT`;`, and following this same ordering convention everywhere in the application prevents the circular wait that causes a deadlock.
+A deadlock-safe version `locks` the lower id first regardless of transfer direction:
+
+```sql
+BEGIN;
+SELECT * FROM accounts WHERE account_id = 1 FOR UPDATE;
+SELECT * FROM accounts WHERE account_id = 2 FOR UPDATE;
+UPDATE accounts SET balance = balance + 500.00 WHERE account_id = 1;
+UPDATE accounts SET balance = balance - 500.00 WHERE account_id = 2;
+COMMIT;
+```
+
+Following this same ordering convention everywhere in the application prevents the circular wait that causes a deadlock.
 
 ## Conclusion
 

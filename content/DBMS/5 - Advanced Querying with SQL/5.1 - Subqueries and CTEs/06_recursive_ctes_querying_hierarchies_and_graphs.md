@@ -200,6 +200,7 @@ Expected output:
 | Karan Oberoi | 2 |
 | Divya Nambiar | 2 |
 | Farhan Sheikh | 3 |
+
 ## Conclusion
 
 A `recursive CTE` repeats its own logic against a growing result set until no new `rows` appear, which is exactly the tool needed for hierarchies and graphs whose depth is not known in advance, whether that means walking up an org chart to find every manager above a person or walking down to find every report beneath one.

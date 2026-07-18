@@ -201,8 +201,9 @@ Expected output:
 | 2025-04-01 | 25500.00 | 47500.00 |
 | 2025-05-01 | 21000.00 | 46500.00 |
 | 2025-06-01 | 29700.00 | 50700.00 |
+
 ## Conclusion
 
-A window frame, written with `ROWS BETWEEN, AND ...`, controls exactly which rows a `window `function`` considers for each calculation, and changing it turns the same `SUM` or `AVG` from a full running total into a fixed-size moving calculation or a centered average. Leela can now build the exact 3-month moving average the director asked for, with full control over how wide that window actually is.
+A window frame, written with `ROWS BETWEEN ... AND ...`, controls exactly which rows a `window function` considers for each calculation, and changing it turns the same `SUM` or `AVG` from a full running total into a fixed-size moving calculation or a centered average. Leela can now build the exact 3-month moving average the director asked for, with full control over how wide that window actually is.
 
 With individual `rows` ranked, compared, and smoothed, the last piece is combining ranking with filtering to find a top few `rows` within each group.

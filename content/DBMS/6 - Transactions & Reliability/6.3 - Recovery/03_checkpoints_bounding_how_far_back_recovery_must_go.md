@@ -77,7 +77,11 @@ Running `CHECKPOINT` by hand is useful for understanding what it does, but in pr
 SHOW checkpoint_timeout;
 ```
 
-Expected observation: PostgreSQL completes `CHECKPOINT` without returning a business-data table. The important result is that dirty pages are flushed and the recovery starting point advances.
+Expected output:
+
+| checkpoint_timeout |
+| --- |
+| 5min |
 
 - `checkpoint_timeout` reports how long PostgreSQL waits, at most, between automatic checkpoints, 5 minutes by default.
 - This is a deliberate trade-off: checkpointing more frequently keeps `recovery` time shorter after a crash, since less log needs replaying, but each checkpoint itself costs time and disk activity while it runs, so checkpointing too aggressively can slow down the `database`'s normal, everyday operation.

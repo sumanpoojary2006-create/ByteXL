@@ -63,9 +63,7 @@ END;
 $$;
 ```
 
-Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
-
-`CREATE PROCEDURE mark_shipment_delivered(p_shipment_id INTEGER)` defines a named routine, written in `plpgsql`, PostgreSQL's own procedural extension of SQL:
+Expected result: `CREATE PROCEDURE` returns no rows; it registers `mark_shipment_delivered` so later statements in this lesson can `CALL` it. `CREATE PROCEDURE mark_shipment_delivered(p_shipment_id INTEGER)` defines a named routine, written in `plpgsql`, PostgreSQL's own procedural extension of SQL:
 
 - It accepts one parameter and runs both statements inside it every time it is called.
 - The `$$ ... $$` markers, called dollar-quoting, wrap the `procedure`'s body, letting it contain semicolons and even quoted strings of its own without confusing the outer `CREATE PROCEDURE` statement's own boundaries.
@@ -90,7 +88,20 @@ SELECT * FROM shipments;
 SELECT * FROM shipment_log;
 ```
 
-Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
+Expected output:
+
+`shipments`:
+
+| shipment_id | status |
+| --- | --- |
+| 1 | delivered |
+| 2 | in_transit |
+
+`shipment_log`:
+
+| log_id | shipment_id | action | logged_at |
+| --- | --- | --- | --- |
+| 1 | 1 | marked delivered | *(timestamp of the `CALL`)* |
 
 One call to `mark_shipment_delivered(1)` ran both the `UPDATE` and the `INSERT` from the `procedure`'s body, and both `tables` now reflect that single logical operation, exactly the two-statements-together guarantee Devraj wanted, now enforced automatically by the `procedure` itself rather than relying on every caller to remember both steps.
 
@@ -130,7 +141,12 @@ CALL mark_multiple_delivered(ARRAY[2]);
 SELECT * FROM shipments;
 ```
 
-Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
+Expected output:
+
+| shipment_id | status |
+| --- | --- |
+| 1 | in_transit |
+| 2 | delivered |
 
 - `FOREACH sid IN ARRAY shipment_ids LOOP ...
 - END LOOP` is `plpgsql`'s looping construct, iterating over every value passed in, and the `COMMIT` inside the loop saves each shipment's update independently, rather than risking the entire batch being rolled back together if one shipment far down the list ran into a problem.

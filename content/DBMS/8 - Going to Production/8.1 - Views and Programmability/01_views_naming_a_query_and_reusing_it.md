@@ -68,7 +68,12 @@ WHERE s.status = 'in_transit';
 SELECT * FROM active_shipments;
 ```
 
-Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
+Expected output:
+
+| shipment_id | driver_name | destination |
+| --- | --- | --- |
+| 1 | Manoj Yadav | Mumbai |
+| 3 | Manoj Yadav | Nagpur |
 
 `CREATE VIEW active_shipments AS` saves the `join` and filter as a named object in the `database`. From that point on:
 
@@ -95,7 +100,11 @@ UPDATE shipments SET status = 'delivered' WHERE shipment_id = 1;
 SELECT * FROM active_shipments;
 ```
 
-Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
+Expected output (from the second `SELECT`, after the `UPDATE`):
+
+| shipment_id | driver_name | destination |
+| --- | --- | --- |
+| 3 | Manoj Yadav | Nagpur |
 
 After Manoj's Mumbai shipment is marked delivered, querying `active_shipments` again immediately reflects that change, showing only the one remaining in-transit shipment, even though nothing about the `view` itself was touched. This is the core behavior that distinguishes a plain `view` from the `materialized view` covered later in this chapter: a plain `view` has no storage of its own and is always exactly as current as the underlying `tables`.
 
@@ -119,7 +128,11 @@ FROM active_shipments
 GROUP BY driver_name;
 ```
 
-Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
+Expected output:
+
+| driver_name | active_shipment_count |
+| --- | ---: |
+| Manoj Yadav | 2 |
 
 This groups directly on top of `active_shipments`, without ever repeating the underlying `join` or filter condition, demonstrating exactly the reuse a `view` is meant to provide: the complexity of "what counts as an active shipment" is defined once, in the `view`, and every downstream `query` simply builds on top of that single, agreed-upon definition.
 
@@ -145,7 +158,13 @@ WHERE s.status IN ('in_transit', 'delayed');
 SELECT * FROM active_shipments;
 ```
 
-Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
+Expected output (from the final `SELECT`, against the redefined `view`):
+
+| shipment_id | driver_name | destination | status |
+| --- | --- | --- | --- |
+| 1 | Manoj Yadav | Mumbai | in_transit |
+| 3 | Manoj Yadav | Nagpur | in_transit |
+| 4 | Sunil Chauhan | Nashik | delayed |
 
 Redefining the `view` to also include delayed shipments changes what every downstream `query` built on top of `active_shipments` sees, immediately and consistently, without anyone needing to hunt down and update every copy-pasted version of the original `query` scattered across scripts and dashboards, exactly the maintenance problem a `view` exists to solve.
 

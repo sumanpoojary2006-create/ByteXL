@@ -164,6 +164,12 @@ Real-world `tables` reach for the same pattern constantly, because most collecti
 - A quick way to test whether a `column` deserves to be a `table`'s `primary key` is to imagine the `table` growing to a hundred thousand `rows` and ask: could two `rows` ever, even by rare coincidence, end up with the same value in this `column`?
 - If the honest answer is yes, that `column` cannot be trusted alone as the `primary key`, and the `table` needs either a different `column` or, sometimes, more than one `column` working together to guarantee uniqueness.
 
+## Your Turn: Judge the Candidates
+
+Tara is now designing a Staff `table` for the hostel's warden office, with `columns` for Name, Phone Number, PAN Number, and Date of Joining. Which of these would you trust as the `primary key`, and why would the others fall short?
+
+PAN Number is the safer choice: every staff member's PAN is unique and, unlike a phone number, it does not get reassigned or changed once issued. Name fails immediately, since two staff members could share one, exactly the Ravi Kumar problem. Phone Number is unique today but can change if someone gets a new number, and Date of Joining is not unique at all, since more than one staff member could easily start on the same day, so neither can be trusted to identify a `row` on its own.
+
 ## Conclusion
 
 A `primary key` is the `column`, or combination of `columns`, a `table` leans on to guarantee that every `row` can always be told apart from every other `row`, no matter how large the `table` grows or how many `rows` happen to share the same name, city, or course.

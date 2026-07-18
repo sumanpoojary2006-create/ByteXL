@@ -46,7 +46,14 @@ Before running each active statement, predict which rows, database objects, or s
 EXPLAIN SELECT * FROM orders WHERE customer_name = 'Customer 7500';
 ```
 
-Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
+Expected output:
+
+```
+                            QUERY PLAN
+-------------------------------------------------------------------
+ Seq Scan on orders  (cost=0.00..195.00 rows=1 width=23)
+   Filter: (customer_name = 'Customer 7500'::text)
+```
 
 There is no structure supporting a search on `customer_name`, so the plan reports a `sequential scan`, checking all 10000 `rows` to find the one whose name matches, exactly the phone-book equivalent of reading every page from the beginning because nothing is organized to help.
 
@@ -62,7 +69,14 @@ CREATE INDEX idx_orders_customer_name ON orders (customer_name);
 EXPLAIN SELECT * FROM orders WHERE customer_name = 'Customer 7500';
 ```
 
-Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
+Expected output:
+
+```
+                                        QUERY PLAN
+--------------------------------------------------------------------------------------------
+ Index Scan using idx_orders_customer_name on orders  (cost=0.29..8.31 rows=1 width=23)
+   Index Cond: (customer_name = 'Customer 7500'::text)
+```
 
 The plan changes to an "`Index Scan`," using `idx_orders_customer_name` to jump almost directly to the matching `row`, rather than checking all 10000. The `index` itself is sorted by `customer_name`, the same way a phone book is sorted by last name, so the `database` can narrow down to the matching entries the same way a reader flips to the right section of a phone book instead of starting from page one.
 
@@ -84,7 +98,11 @@ SELECT pg_size_pretty(pg_relation_size('orders')) AS table_size,
        pg_size_pretty(pg_relation_size('idx_orders_customer_name')) AS index_size;
 ```
 
-Expected observation: PostgreSQL confirms that the index was created. The command does not return business rows; its effect is verified by rerunning the related query or `EXPLAIN` statement.
+Expected output:
+
+| table_size | index_size |
+| --- | --- |
+| 728 kB | 320 kB |
 
 The `index` takes up its own disk space, separate from the `table`, since it is a genuinely separate structure that has to be built and stored. This is the fundamental trade-off every `index` represents: extra storage and extra maintenance work, in exchange for dramatically faster lookups on the `indexed` `column`.
 
@@ -104,7 +122,15 @@ FROM generate_series(10001, 20000) AS i;
 SELECT pg_size_pretty(pg_relation_size('idx_orders_customer_name')) AS index_size_after;
 ```
 
-Expected observation: PostgreSQL confirms that the index was created. The command does not return business rows; its effect is verified by rerunning the related query or `EXPLAIN` statement.
+Expected output:
+
+| index_size_before |
+| --- |
+| 320 kB |
+
+| index_size_after |
+| --- |
+| 640 kB |
 
 The `index` visibly grows after the insert, which is the proof that every one of those 10000 new `rows` did double work:
 

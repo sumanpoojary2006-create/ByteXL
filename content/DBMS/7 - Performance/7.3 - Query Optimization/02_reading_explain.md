@@ -45,7 +45,14 @@ Before running each active statement, predict which rows, database objects, or s
 EXPLAIN SELECT * FROM orders WHERE customer_id = 50;
 ```
 
-Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
+Expected output:
+
+```
+                                       QUERY PLAN
+-----------------------------------------------------------------------------------------
+ Index Scan using idx_orders_customer_id on orders  (cost=0.29..8.51 rows=100 width=15)
+   Index Cond: (customer_id = 50)
+```
 
 A typical line of output looks like `Index Scan using idx_orders_customer_id on orders (cost=0.29..8.51 rows=100 width=15)`:
 
@@ -66,9 +73,16 @@ A cost of 8.51 for one `query` and 8.51 for a completely different `query` does 
 EXPLAIN SELECT * FROM orders;
 ```
 
-Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
+Expected output:
 
-This plan reports a much higher total cost than the single-customer lookup above, since it has to account for producing all 20000 `rows` instead of roughly 100, and that relative difference in cost is exactly the kind of comparison `EXPLAIN`'s numbers are meant for: judging one plan as cheaper or more expensive than another, not reading off a literal duration.
+```
+                        QUERY PLAN
+------------------------------------------------------------
+ Seq Scan on orders  (cost=0.00..339.00 rows=20000 width=15)
+```
+
+- No `WHERE` clause means every `row` must be read, so the optimizer skips the `index` entirely and goes straight to a `Seq Scan`, with `rows=20000` matching the full `table`.
+- The total cost of 339.00 is far higher than the 8.51 total cost of the single-customer `index scan` above, since it has to account for producing all 20000 `rows` instead of roughly 100, and that relative difference in cost is exactly the kind of comparison `EXPLAIN`'s numbers are meant for: judging one plan as cheaper or more expensive than another, not reading off a literal duration.
 
 ## Reading a Plan with Multiple Steps
 
@@ -81,9 +95,20 @@ WHERE customer_id < 100
 GROUP BY customer_id;
 ```
 
-Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
+Expected output:
 
-- The plan here shows an outer step, likely `HashAggregate`, wrapping an inner step, likely a `Bitmap Heap Scan` or `Index Scan` on `orders`, indented beneath it.
+```
+                                       QUERY PLAN
+-----------------------------------------------------------------------------------------
+ HashAggregate  (cost=246.75..247.74 rows=99 width=36)
+   Group Key: customer_id
+   ->  Bitmap Heap Scan on orders  (cost=98.75..196.75 rows=9900 width=15)
+         Recheck Cond: (customer_id < 100)
+         ->  Bitmap Index Scan on idx_orders_customer_id  (cost=0.00..96.28 rows=9900 width=0)
+               Index Cond: (customer_id < 100)
+```
+
+- The plan here shows an outer `HashAggregate` step, wrapping an inner `Bitmap Heap Scan` (fed by a `Bitmap Index Scan`) on `orders`, indented beneath it.
 - Reading a nested plan means starting from the innermost, most indented step, which runs first and feeds its output upward, and working outward toward the final, least indented step, which represents the last operation applied before the result is returned.
 - The aggregation cannot begin until the filtered `rows` beneath it have been gathered, which is exactly why it is nested underneath that scan in the output.
 
@@ -98,9 +123,21 @@ Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs
 EXPLAIN SELECT * FROM orders WHERE customer_id = 50 OR customer_id = 75;
 ```
 
-Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
+Expected output:
 
-This plan may report a `Bitmap Index Scan` feeding into a `Bitmap Heap Scan`, a two-step strategy the optimizer sometimes chooses when a condition matches a moderate number of `rows` scattered across the `table`, gathering matching `row` locations first through the `index`. It then fetches them from the `table` in a more efficient, sorted order. This is a distinct strategy from either a plain `sequential scan` or a plain `index scan`.
+```
+                                            QUERY PLAN
+----------------------------------------------------------------------------------------------
+ Bitmap Heap Scan on orders  (cost=8.60..16.85 rows=200 width=15)
+   Recheck Cond: ((customer_id = 50) OR (customer_id = 75))
+   ->  BitmapOr  (cost=8.60..8.60 rows=200 width=0)
+         ->  Bitmap Index Scan on idx_orders_customer_id  (cost=0.00..4.30 rows=100 width=0)
+               Index Cond: (customer_id = 50)
+         ->  Bitmap Index Scan on idx_orders_customer_id  (cost=0.00..4.30 rows=100 width=0)
+               Index Cond: (customer_id = 75)
+```
+
+This plan reports a `BitmapOr` combining two `Bitmap Index Scan`s, one per matched value, feeding into a single `Bitmap Heap Scan`, a two-step strategy the optimizer sometimes chooses when a condition matches a moderate number of `rows` scattered across the `table`, gathering matching `row` locations first through the `index`. It then fetches them from the `table` in a more efficient, sorted order. This is a distinct strategy from either a plain `sequential scan` or a plain `index scan`.
 
 ## Reading EXPLAIN at a Glance
 
@@ -145,7 +182,14 @@ Run `EXPLAIN` on a `query` that filters `orders` for `amount > 205000.00`, a con
 
 Expected result and verification:
 
-`EXPLAIN SELECT * FROM orders WHERE amount > 205000.00;` reports a low estimated `row` count, reflecting how few of the generated `rows` actually exceed that amount, and a correspondingly low total cost, since the optimizer expects this condition to be highly selective.
+```
+                              QUERY PLAN
+-------------------------------------------------------------------------
+ Seq Scan on orders  (cost=0.00..389.00 rows=477 width=15)
+   Filter: (amount > 205000.00)
+```
+
+`EXPLAIN SELECT * FROM orders WHERE amount > 205000.00;` reports a low estimated `row` count (477, matching order IDs roughly 19524 through 20000), reflecting how few of the generated `rows` actually exceed that amount. There is no `index` on `amount`, so even a highly selective condition like this one still runs as a `Seq Scan` with a `Filter` applied afterward, unlike the `customer_id` examples above where an `index` was available.
 
 ## Conclusion
 

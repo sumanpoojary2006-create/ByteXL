@@ -1,7 +1,6 @@
 ## Introduction
 
-- `GRANT` and `REVOKE`, covered in the previous lesson, are just tools; they say nothing about how much access any given `role` should actually have.
-- The **principle of `least privilege`** answers that question directly: every `role` should be granted exactly the access it needs to do its job, and nothing more, not "might need someday," not "it's easier to just grant everything." This lesson is less about new syntax and more about the judgment that should guide every `GRANT` statement written from here on.
+`GRANT` and `REVOKE`, covered in the previous lesson, are just tools; they say nothing about how much access any given `role` should actually have. The **principle of `least privilege`** answers that question directly: every `role` should be granted exactly the access it needs to do its job, and nothing more, not "might need someday," not "it's easier to just grant everything." This lesson is less about new syntax and more about the judgment that should guide every `GRANT` statement written from here on.
 
 ## The Tempting Shortcut, and Why It Is a Real Risk
 
@@ -106,9 +105,13 @@ FROM information_schema.role_table_grants
 WHERE grantee = 'reporting_app';
 ```
 
-Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
+Expected output:
 
-`information_schema.role_table_grants` lists every privilege currently held by a given `role`, across every `table`, a direct way to check whether `reporting_app`'s actual granted permissions still match what it genuinely needs, or whether some stale grant from an earlier, now-irrelevant task is still sitting there, unnoticed, quietly widening that account's blast radius.
+| grantee | table_name | privilege_type |
+| --- | --- | --- |
+| *(no rows)* | | |
+
+This block only grants `SELECT` and `UPDATE` to `dev_alia`; `reporting_app` was created by `init.sql` but was never granted anything in this fresh session, so filtering `role_table_grants` for `reporting_app` correctly comes back empty here. In a real, long-running `database`, this same `query` is exactly how a team would spot that `reporting_app` unexpectedly does, or does not, hold a grant it should. `information_schema.role_table_grants` lists every privilege currently held by a given `role`, across every `table`, a direct way to check whether `reporting_app`'s actual granted permissions still match what it genuinely needs, or whether some stale grant from an earlier, now-irrelevant task is still sitting there, unnoticed, quietly widening that account's blast radius.
 
 ![Periodic grant review compares current permissions with current need and removes stale access](images/06_review_grants_revoke_stale_access.png)
 

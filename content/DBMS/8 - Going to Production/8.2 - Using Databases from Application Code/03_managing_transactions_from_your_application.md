@@ -98,7 +98,12 @@ SELECT * FROM shipments;
 COMMIT;
 ```
 
-Expected result: PostgreSQL applies the requested change. Use the follow-up query and the explanation below to confirm the affected rows or refreshed data.
+Expected output:
+
+| shipment_id | status |
+| --- | --- |
+| 1 | delivered |
+| 2 | in_transit |
 
 - `SAVEPOINT before_risky_step` marks a checkpoint partway through the `transaction`.
 - `ROLLBACK TO SAVEPOINT before_risky_step` undoes only the changes made after that point, shipment 2's incorrect update, while keeping everything before it, shipment 1's valid update, fully intact and still part of the `transaction`.

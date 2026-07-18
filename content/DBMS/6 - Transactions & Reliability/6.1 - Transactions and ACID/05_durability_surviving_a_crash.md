@@ -141,9 +141,16 @@ Check the current `synchronous_commit` setting, then run a committed `transactio
 
 Expected result and verification:
 
-- If you run `SHOW synchronous_commit;` followed by `BEGIN
-- `UPDATE` accounts SET balance = balance + 500.00 `WHERE` account_id = 2
-- `COMMIT`;` and then ``SELECT` balance FROM accounts `WHERE` account_id = 2;`, the balance shows 12500.00, and durability is the reason that value can be trusted to still be there even after an immediate crash, since `COMMIT` would not have returned successfully until the change was already recorded somewhere a crash cannot erase.
+If you run `SHOW synchronous_commit;` followed by:
+
+```sql
+BEGIN;
+UPDATE accounts SET balance = balance + 500.00 WHERE account_id = 2;
+COMMIT;
+SELECT balance FROM accounts WHERE account_id = 2;
+```
+
+the balance shows 12500.00, and durability is the reason that value can be trusted to still be there even after an immediate crash, since `COMMIT` would not have returned successfully until the change was already recorded somewhere a crash cannot erase.
 
 ## Conclusion
 

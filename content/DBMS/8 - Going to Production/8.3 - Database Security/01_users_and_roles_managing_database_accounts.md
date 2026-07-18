@@ -32,7 +32,12 @@ Before running each active statement, predict which rows, database objects, or s
 SELECT rolname, rolcanlogin FROM pg_roles WHERE rolname IN ('reporting_app', 'dev_alia');
 ```
 
-Expected result: PostgreSQL returns the rows described below. Compare the visible columns and row-level effect with the explanation, since security and administration settings may make some values environment-dependent.
+Expected output:
+
+| rolname | rolcanlogin |
+| --- | --- |
+| reporting_app | TRUE |
+| dev_alia | TRUE |
 
 `WITH LOGIN` marks a `role` as one that can actually authenticate and open a `connection`, exactly the two `role`s created here:
 

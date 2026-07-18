@@ -197,6 +197,7 @@ Expected output:
 | --- | --- | --- | --- |
 | Ananya Sharma | Engineering | 95000.00 | 85000.00 |
 | Sameer Khan | Sales | 65000.00 | 61500.00 |
+
 ## Conclusion
 
 A CTE, written with `WITH`, names an intermediate `query` result up front so the rest of a statement can read top to bottom instead of inside out, and several CTEs can be chained together, each one building on the last, without losing clarity as the logic grows more layered. Kabir's department-average report is now something a colleague can read and understand in one pass.

@@ -138,8 +138,7 @@ Expected output:
 | --- |
 | Neha Bhatt |
 
-- This returns exactly one `row`, Neha Bhatt, the same answer the `LEFT `JOIN` ...
-- `WHERE` order_id IS NULL` pattern produced earlier, but arrived at without ever `joining` a single column from `orders` into the result.
+- This returns exactly one `row`, Neha Bhatt, the same answer the `LEFT JOIN ... WHERE order_id IS NULL` pattern produced earlier, but arrived at without ever `joining` a single column from `orders` into the result.
 - For a pure existence check like this one, `NOT EXISTS` states the intent more directly: "keep this customer only if no order references them," rather than "`join` every order, then throw away everything except the empty matches."
 
 ![NOT EXISTS acting like an anti join by returning rows with no matching order](images/14_not_exists_anti_join_no_match.png)

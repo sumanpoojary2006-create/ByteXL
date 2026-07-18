@@ -61,19 +61,15 @@ SELECT * FROM seats WHERE seat_id = '14C';
 
 Expected output 1:
 
-
-
 | is_available |
 | --- |
-| 1 |
+| TRUE |
 
 Expected output 2:
 
-
-
 | seat_id | flight_number | is_available |
 | --- | --- | --- |
-| 14C | AI202 | 0 |
+| 14C | AI202 | FALSE |
 
 - The `SELECT` step, on its own, is not a mistake, and isolation was never violated, since neither passenger read the other's uncommitted work.
 - The problem is the gap in time between reading "available" and acting on that reading with an `UPDATE`.

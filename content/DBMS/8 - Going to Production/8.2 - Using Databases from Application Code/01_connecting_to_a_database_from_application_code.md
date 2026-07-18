@@ -44,7 +44,14 @@ Before running each active statement, predict which rows, database objects, or s
 SELECT * FROM app_config;
 ```
 
-Expected result: PostgreSQL returns the rows described below. Compare the visible columns and row-level effect with the explanation, since security and administration settings may make some values environment-dependent.
+Expected output:
+
+| config_key | config_value |
+| --- | --- |
+| host | db.internal.example.com |
+| port | 5432 |
+| database | shipments_prod |
+| user | app_service_account |
 
 A real `connection string` built from values like these would look something like `postgresql://app_service_account:password@db.internal.example.com:5432/shipments_prod`, bundling four pieces into one string most `database` client libraries accept directly:
 

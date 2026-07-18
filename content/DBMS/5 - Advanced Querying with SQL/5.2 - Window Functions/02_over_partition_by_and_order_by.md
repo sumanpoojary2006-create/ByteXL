@@ -177,6 +177,7 @@ Expected output:
 | --- | --- | --- | --- |
 | Sana Fatima | 2025-06-02 | 15000.00 | 15000.00 |
 | Sana Fatima | 2025-06-11 | 6000.00 | 21000.00 |
+
 ## Conclusion
 
 `PARTITION BY` decides which `rows` share a window, and `ORDER BY` inside that same `OVER (...)` clause decides the sequence within it, together turning a flat per-group total into a `row`-by-`row` running calculation. Leela can now show a running total that grows sale by sale, exactly the shape her report needed. Sums are only one kind of window calculation; the next lesson introduces `functions` built specifically to rank `rows` within a window.

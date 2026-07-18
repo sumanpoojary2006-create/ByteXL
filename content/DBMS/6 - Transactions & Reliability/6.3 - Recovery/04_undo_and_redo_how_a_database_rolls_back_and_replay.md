@@ -51,8 +51,6 @@ SELECT balance FROM accounts WHERE account_id = 1;
 
 Expected output:
 
-
-
 | balance |
 | --- |
 | 4000.00 |
@@ -80,13 +78,11 @@ SELECT balance FROM accounts WHERE account_id = 1;
 
 Expected output:
 
-
-
 | balance |
 | --- |
 | 5000.00 |
 
-The explicit `ROLLBACK` here demonstrates the same outcome undo would achieve automatically after a crash: the balance remains 4000.00, as if the 2000.00 deduction never happened.
+The explicit `ROLLBACK` here demonstrates the same outcome undo would achieve automatically after a crash: the balance remains 5000.00, as if the 2000.00 deduction never happened.
 
 In a genuine crash scenario, no `ROLLBACK` would ever be issued by anyone, since the whole application vanished along with the server, but PostgreSQL's undo pass performs the identical reversal automatically during `recovery`, simply by recognizing that this `transaction`'s log entries have no corresponding commit record.
 

@@ -70,7 +70,14 @@ CREATE INDEX idx_orders_name_hash ON orders USING hash (customer_name);
 EXPLAIN SELECT * FROM orders WHERE customer_name = 'Customer 7500';
 ```
 
-Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
+Expected output:
+
+```
+                                    QUERY PLAN
+-----------------------------------------------------------------------------------
+ Index Scan using idx_orders_name_hash on orders  (cost=0.00..8.02 rows=1 width=27)
+   Index Cond: (customer_name = 'Customer 7500'::text)
+```
 
 The plan reports an "Index Scan" using `idx_orders_name_hash`: the `database` hashes 'Customer 7500' once and goes straight to the matching bucket. The same `index` would provide no help at all for `WHERE customer_name > 'Customer 7500'` or `ORDER BY customer_name`, since a `hash index` carries no ordering information whatsoever.
 
@@ -88,7 +95,14 @@ CREATE INDEX idx_orders_status_region ON orders (status, region);
 EXPLAIN SELECT * FROM orders WHERE status = 'active' AND region = 'North';
 ```
 
-Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
+Expected output:
+
+```
+                                            QUERY PLAN
+----------------------------------------------------------------------------------------------------
+ Index Scan using idx_orders_status_region on orders  (cost=0.29..12.55 rows=25 width=27)
+   Index Cond: ((status = 'active'::text) AND (region = 'North'::text))
+```
 
 The plan shows `idx_orders_status_region` narrowing straight down to the roughly 25 active North-region orders. `idx_orders_status_region` sorts first by `status`, then by `region` within each `status` value, so a `query` filtering on both `columns` together can use the `index` efficiently.
 
@@ -106,7 +120,16 @@ CREATE INDEX idx_orders_active_amount ON orders (amount) WHERE status = 'active'
 EXPLAIN SELECT * FROM orders WHERE status = 'active' AND amount > 100000.00;
 ```
 
-Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
+Expected output:
+
+```
+                                                QUERY PLAN
+------------------------------------------------------------------------------------------------------
+ Index Scan using idx_orders_active_amount on orders  (cost=0.28..9.51 rows=20 width=27)
+   Index Cond: (amount > 100000.00)
+```
+
+Notice there is no separate `Filter: (status = 'active')` line, since the `partial index`'s own predicate already guarantees every entry in it satisfies `status = 'active'`, so the condition does not need to be rechecked.
 
 - `idx_orders_active_amount` only ever contains the roughly 100 `rows` where `status = 'active'`, entirely excluding the other 9900 completed and cancelled orders, and the plan shows it being used to satisfy this `query`, since the `query`'s filter matches the `index`'s condition.
 - Inserting a completed order never touches this `index` at all, and the size saving is directly visible next to a full `index` on the same `column`:
@@ -121,7 +144,11 @@ SELECT pg_size_pretty(pg_relation_size('idx_orders_amount_full')) AS full_index_
        pg_size_pretty(pg_relation_size('idx_orders_active_amount')) AS partial_index_size;
 ```
 
-Expected observation: PostgreSQL confirms that the index was created. The command does not return business rows; its effect is verified by rerunning the related query or `EXPLAIN` statement.
+Expected output:
+
+| full_index_size | partial_index_size |
+| --- | --- |
+| 320 kB | 16 kB |
 
 The `partial index` is a small fraction of the full one's size, since it carries roughly 100 entries instead of 10000, which is exactly its appeal for a system where active orders are a thin slice of a much larger historical `table`: compact, cheap to maintain, and just as fast for the `queries` that match its condition.
 
@@ -137,7 +164,14 @@ ANALYZE orders;
 EXPLAIN SELECT * FROM orders WHERE LOWER(customer_name) = 'customer 7500';
 ```
 
-Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
+Expected output:
+
+```
+                                       QUERY PLAN
+-----------------------------------------------------------------------------------------
+ Index Scan using idx_orders_lower_name on orders  (cost=0.29..8.31 rows=1 width=27)
+   Index Cond: (lower(customer_name) = 'customer 7500'::text)
+```
 
 A plain B-tree on `customer_name` would not help a `query` filtering on `LOWER(customer_name)`, since that `index` is sorted by the raw `column` value, not the lowercased result of a `function` applied to it. `idx_orders_lower_name` instead stores the already-lowercased value, and the plan reports an "Index Scan" using it; the same `query` without an expression `index` would fall back to a `sequential scan`, computing `LOWER(customer_name)` fresh for every `row`.
 
@@ -194,7 +228,16 @@ Create a `partial index` on `amount` for `rows` where `status = 'cancelled'`, th
 
 Expected result and verification:
 
-If you run `CREATE INDEX idx_orders_cancelled_amount ON orders (amount) WHERE status = 'cancelled';` followed by `EXPLAIN SELECT * FROM orders WHERE status = 'cancelled' AND amount > 100000.00;`, the plan shows `idx_orders_cancelled_amount` being used, since the `partial index`'s condition matches the `query`'s filter exactly and it only ever contains the `table`'s cancelled orders.
+If you run `CREATE INDEX idx_orders_cancelled_amount ON orders (amount) WHERE status = 'cancelled';` followed by `EXPLAIN SELECT * FROM orders WHERE status = 'cancelled' AND amount > 100000.00;`, the plan returns:
+
+```
+                                                  QUERY PLAN
+--------------------------------------------------------------------------------------------------------
+ Index Scan using idx_orders_cancelled_amount on orders  (cost=0.28..9.44 rows=20 width=27)
+   Index Cond: (amount > 100000.00)
+```
+
+`idx_orders_cancelled_amount` is used, since the `partial index`'s condition matches the `query`'s filter exactly and it only ever contains the `table`'s cancelled orders.
 
 ## Conclusion
 

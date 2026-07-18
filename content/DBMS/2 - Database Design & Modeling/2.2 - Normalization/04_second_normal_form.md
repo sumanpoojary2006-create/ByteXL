@@ -206,6 +206,12 @@ Arjun treats 2NF as a genuine warning sign to hunt for, not merely a checkbox to
   </tbody>
 </table>
 
+## Your Turn: Find the Partial Dependency
+
+A college table EnrollmentGrades is keyed by the composite pair (RollNumber, CourseCode) and holds StudentName, CourseTitle, and Grade. Decide which non-key columns depend on the whole key and which depend on only part of it, then describe the split.
+
+A working answer: Grade genuinely depends on the full pair, since a student's grade is specific to that student in that particular course. StudentName depends on RollNumber alone, and CourseTitle depends on CourseCode alone, both partial dependencies, exactly the pattern Arjun found with ProductName and ProductPrice. The fix splits the table into Students (RollNumber, StudentName), Courses (CourseCode, CourseTitle), and a slimmer EnrollmentGrades left holding only RollNumber, CourseCode, and Grade.
+
 ## Conclusion
 
 Second `Normal Form` asks a `table` with a `composite key` one pointed question: does every non-key `column` genuinely need the whole key, or is some `column` really only attached to part of it?

@@ -84,6 +84,12 @@ Every other part of the `database`, and every application asking sensible questi
   </tbody>
 </table>
 
+## Your Turn: Trace the Lookup
+
+Kiran tries to insert a new student `row` into the Students `table` without a roll number, and separately, Kabir writes a `query` that tries to `join` Students with a `table` called "Grades" that was never actually created. Explain what the `system catalog` does in each case before either action is allowed to proceed.
+
+For Kiran's insert, the `database` consults the catalog to check whether roll number is marked as a required `column`, and since the catalog records it as one that may never be left empty, the insert is rejected before it ever touches the stored `rows`. For Kabir's `query`, the `database` checks the catalog's list of `table` names and finds no entry for "Grades" at all, so the `query` is refused immediately with a clear error, the same way Kabir's mistyped "studentemail" `column` was caught earlier, rather than the `database` wasting effort scanning for a `table` that was never defined.
+
 ## Conclusion
 
 The `system catalog` is the `database`'s memory of its own shape: every `table`, every `column`, every type, every `constraint`, and every permission, recorded once and consulted constantly. It is what lets a `database` validate a `query` before running it, enforce the rules it was designed with, and stay internally consistent even as its structure grows and changes over time.

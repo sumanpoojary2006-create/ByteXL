@@ -195,6 +195,7 @@ Expected output:
 | Pooja Reddy | 58000.00 |
 | Vikas Malhotra | 60000.00 |
 
+
 ## Conclusion
 
 A subquery is an ordinary `SELECT` statement nested inside another `query`, computed first and substituted in as a value, letting a `query` depend on a number, a list, or a `table` that only exists once that inner `query` has run. Kabir can now compare salaries against a company average, or a department average, without ever hardcoding a number that data changes could silently invalidate.

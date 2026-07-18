@@ -157,9 +157,7 @@ Expected output:
 
 - Here `restaurants` is on the left, so every restaurant is guaranteed to appear, and filtering for `orders.order_id IS NULL` now finds restaurants with no orders instead of customers with no orders.
 - This returns Taco Town, the one restaurant from earlier lessons that has never received a single order.
-- The same `LEFT `JOIN` ...
-- `WHERE` ...
-- IS NULL` pattern answers two entirely different business questions, depending purely on which `table` is written first.
+- The same `LEFT JOIN ... WHERE ... IS NULL` pattern answers two entirely different business questions, depending purely on which `table` is written first.
 
 ## Counting Orders Per Customer, Including Zero
 

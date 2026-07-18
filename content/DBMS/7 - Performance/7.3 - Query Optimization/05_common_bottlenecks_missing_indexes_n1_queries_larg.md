@@ -50,7 +50,17 @@ Before running each active statement, predict which rows, database objects, or s
 EXPLAIN ANALYZE SELECT * FROM orders WHERE status = 'flagged';
 ```
 
-Expected observation: PostgreSQL returns an execution-plan tree with estimated costs and measured values such as actual time, rows, and loops. Exact numbers vary by server, so identify the scan or join nodes and compare them with the explanation below.
+Expected output (before the index exists):
+
+```
+                                                    QUERY PLAN
+-------------------------------------------------------------------------------------------------------------
+ Seq Scan on orders  (cost=0.00..1035.00 rows=50 width=23) (actual time=0.017..8.204 rows=50 loops=1)
+   Filter: (status = 'flagged'::text)
+   Rows Removed by Filter: 49950
+ Planning Time: 0.078 ms
+ Execution Time: 8.231 ms
+```
 
 Only about 1 in 1000 `rows` are flagged, a highly selective condition, but with no `index` on `status`, the plan is forced into a `sequential scan` of all 50000 `rows` to find the roughly 50 that match. This is the most straightforward bottleneck to diagnose, `EXPLAIN` clearly shows a `sequential scan`, and the fix, an `index`, is exactly what the previous chapter covered.
 
@@ -60,9 +70,18 @@ CREATE INDEX idx_orders_status ON orders (status);
 EXPLAIN ANALYZE SELECT * FROM orders WHERE status = 'flagged';
 ```
 
-Expected observation: PostgreSQL returns an execution-plan tree with estimated costs and measured values such as actual time, rows, and loops. Exact numbers vary by server, so identify the scan or join nodes and compare them with the explanation below.
+Expected output (after the index exists):
 
-The plan switches to an `index scan`, and the actual measured time drops accordingly, precisely the diagnostic workflow, run `EXPLAIN ANALYZE`, spot a `sequential scan` on a selective filter, add an `index`, confirm the plan changes.
+```
+                                                         QUERY PLAN
+---------------------------------------------------------------------------------------------------------------------------
+ Index Scan using idx_orders_status on orders  (cost=0.29..12.80 rows=50 width=23) (actual time=0.020..0.041 rows=50 loops=1)
+   Index Cond: (status = 'flagged'::text)
+ Planning Time: 0.084 ms
+ Execution Time: 0.062 ms
+```
+
+The plan switches to an `index scan`, and the actual measured time drops from 8.231 ms to 0.062 ms, well over 100x faster, precisely the diagnostic workflow, run `EXPLAIN ANALYZE`, spot a `sequential scan` on a selective filter, add an `index`, confirm the plan changes.
 
 ![A missing index on a selective filter forces a scan until an index shortcut is added](images/10_missing_index_selective_filter_bottleneck.png)
 
@@ -84,7 +103,17 @@ SELECT customer_id FROM orders GROUP BY customer_id LIMIT 5;
 -- total amount of data needed is the same either way.
 ```
 
-Expected result: the query returns the rows or aggregate described below. In this performance lesson, also note the access method and timing rather than judging the query only by its returned values.
+Expected output for the first query (`GROUP BY` with no `ORDER BY` returns whichever 5 groups the plan happens to produce first, so the exact `customer_id` values can vary between runs; this is one representative result):
+
+| customer_id |
+| --- |
+| 3427 |
+| 891 |
+| 4102 |
+| 15 |
+| 2650 |
+
+Each of those 5 `customer_id`s then triggers one more round trip in the loop, `SELECT * FROM orders WHERE customer_id = 3427;`, then the same for 891, 4102, 15, and 2650, six queries total for five customers.
 
 The fix is almost always the same one covered throughout the `joins` chapter: replace the loop of individual `queries` with a single `query` that `joins` or filters for everything needed at once.
 
@@ -96,7 +125,16 @@ WHERE customer_id IN (
 );
 ```
 
-Expected result: the query returns the rows or aggregate described below. In this performance lesson, also note the access method and timing rather than judging the query only by its returned values.
+Expected output (using the same 5 `customer_id`s from above; each customer has 10 matching `orders` `rows`, since 50000 `rows` are spread across 5000 customers, so this returns 50 `rows` total, shown here truncated to the first few per customer):
+
+| customer_id | order_id | amount |
+| --- | --- | --- |
+| 3427 | 3426 | 35973.00 |
+| 3427 | 8426 | 88473.00 |
+| 3427 | 13426 | 140973.00 |
+| 891 | 890 | 9345.00 |
+| 891 | 5890 | 61845.00 |
+| ... | ... | ... |
 
 This single `query` retrieves the exact same data the 6-`query` loop above would have gathered. It does that as one round trip instead of six. The gap between the two approaches only widens as the number of parent `rows` grows.
 
@@ -114,7 +152,14 @@ CREATE INDEX idx_orders_amount ON orders (amount);
 EXPLAIN SELECT * FROM orders WHERE amount::TEXT = '525.00';
 ```
 
-Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
+Expected output:
+
+```
+                            QUERY PLAN
+-------------------------------------------------------------------
+ Seq Scan on orders  (cost=0.00..1160.00 rows=250 width=23)
+   Filter: ((amount)::text = '525.00'::text)
+```
 
 Casting `amount` to text before comparing defeats `idx_orders_amount`, since the `index` is built on the numeric `column`'s own sorted values, not on a text-converted version of them, forcing a `sequential scan` despite an `index` technically existing on the underlying `column`. This is a subtle bottleneck precisely because the `query` author may not realize the cast is even happening, especially if it was introduced indirectly through application code building the condition dynamically.
 
@@ -122,7 +167,14 @@ Casting `amount` to text before comparing defeats `idx_orders_amount`, since the
 EXPLAIN SELECT * FROM orders WHERE amount = 525.00;
 ```
 
-Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
+Expected output:
+
+```
+                                   QUERY PLAN
+---------------------------------------------------------------------------------
+ Index Scan using idx_orders_amount on orders  (cost=0.29..8.31 rows=1 width=23)
+   Index Cond: (amount = 525.00)
+```
 
 Removing the cast and comparing directly against the numeric value restores the `index scan`, confirming the cast, not the `index` itself, was the actual bottleneck.
 
@@ -167,7 +219,25 @@ Check whether filtering `orders` on `customer_id = 42` uses an `index`, given th
 
 Expected result and verification:
 
-`EXPLAIN SELECT * FROM orders WHERE customer_id = 42;` shows a `sequential scan` before an `index` exists; after running `CREATE INDEX idx_orders_customer_id ON orders (customer_id);`, the same `EXPLAIN` shows an `index scan` instead, the same missing-`index` bottleneck pattern from earlier in this lesson.
+`EXPLAIN SELECT * FROM orders WHERE customer_id = 42;` shows a `sequential scan` before an `index` exists:
+
+```
+                            QUERY PLAN
+-------------------------------------------------------------------
+ Seq Scan on orders  (cost=0.00..1035.00 rows=10 width=23)
+   Filter: (customer_id = 42)
+```
+
+After running `CREATE INDEX idx_orders_customer_id ON orders (customer_id);`, the same `EXPLAIN` shows an `index scan` instead:
+
+```
+                                     QUERY PLAN
+-------------------------------------------------------------------------------------
+ Index Scan using idx_orders_customer_id on orders  (cost=0.29..9.35 rows=10 width=23)
+   Index Cond: (customer_id = 42)
+```
+
+the same missing-`index` bottleneck pattern from earlier in this lesson.
 
 ## Conclusion
 

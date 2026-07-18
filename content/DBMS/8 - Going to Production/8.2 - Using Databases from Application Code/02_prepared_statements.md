@@ -51,7 +51,21 @@ SELECT * FROM shipments WHERE shipment_id = 1;
 SELECT * FROM shipments WHERE shipment_id = 1 OR 1=1;
 ```
 
-Expected observation: PostgreSQL completes the statement, and the explanation below identifies the database object, permission, or operational effect to verify.
+Expected output:
+
+The safe, single-value query returns only shipment 1:
+
+| shipment_id | destination |
+| --- | --- |
+| 1 | Mumbai |
+
+The tampered query, with `OR 1=1` appended, returns every row instead:
+
+| shipment_id | destination |
+| --- | --- |
+| 1 | Mumbai |
+| 2 | Pune |
+| 3 | Nagpur |
 
 The second `query` demonstrates exactly what happens once user-provided text is treated as part of the SQL itself rather than as a single, inert value: the `query`'s actual logic changes entirely, returning all three shipments instead of the one that was asked for.
 
@@ -68,7 +82,11 @@ SELECT * FROM shipments WHERE shipment_id = $1;
 EXECUTE get_shipment(1);
 ```
 
-Expected observation: PostgreSQL completes the statement, and the explanation below identifies the database object, permission, or operational effect to verify.
+Expected output:
+
+| shipment_id | destination |
+| --- | --- |
+| 1 | Mumbai |
 
 This splits the `query` into two separate pieces:
 
@@ -93,7 +111,19 @@ EXECUTE get_shipment(2);
 EXECUTE get_shipment(3);
 ```
 
-Expected observation: PostgreSQL completes the statement, and the explanation below identifies the database object, permission, or operational effect to verify.
+Expected output, one result set per `EXECUTE`:
+
+| shipment_id | destination |
+| --- | --- |
+| 1 | Mumbai |
+
+| shipment_id | destination |
+| --- | --- |
+| 2 | Pune |
+
+| shipment_id | destination |
+| --- | --- |
+| 3 | Nagpur |
 
 Each `EXECUTE` reuses the exact same prepared `query` structure, only the value plugged into `$1` changes, exactly the pattern a real application follows when handling many different incoming requests for different shipment IDs, using the same underlying `prepared statement` each time.
 
@@ -112,9 +142,13 @@ EXECUTE get_shipment(1);
 DEALLOCATE get_shipment;
 ```
 
-Expected observation: PostgreSQL completes the statement, and the explanation below identifies the database object, permission, or operational effect to verify.
+Expected output (from `EXECUTE get_shipment(1)`, before `DEALLOCATE` runs):
 
-`DEALLOCATE` releases a `prepared statement` once it is no longer needed; in a real application, this typically happens automatically when a `connection` closes, or explicitly if the `query` is no longer needed for the lifetime of a long-running `connection`.
+| shipment_id | destination |
+| --- | --- |
+| 1 | Mumbai |
+
+`DEALLOCATE` itself returns no rows; it just releases the prepared `query` plan. `DEALLOCATE` releases a `prepared statement` once it is no longer needed; in a real application, this typically happens automatically when a `connection` closes, or explicitly if the `query` is no longer needed for the lifetime of a long-running `connection`.
 
 ## Prepared Statements at a Glance
 

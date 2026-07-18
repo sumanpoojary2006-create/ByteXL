@@ -166,12 +166,12 @@ Expected output:
 
 | salesperson | sale_month | total_amount | two_months_ago |
 | --- | --- | --- | --- |
-| Nikhil Rao | 2025-03-01 | 22000.00 | 0 |
-| Nikhil Rao | 2025-04-01 | 25500.00 | 0 |
-| Nikhil Rao | 2025-05-01 | 21000.00 | 22000 |
-| Nikhil Rao | 2025-06-01 | 29700.00 | 25500 |
-| Sana Fatima | 2025-05-01 | 18000.00 | 0 |
-| Sana Fatima | 2025-06-01 | 21000.00 | 0 |
+| Nikhil Rao | 2025-03-01 | 22000.00 | 0.00 |
+| Nikhil Rao | 2025-04-01 | 25500.00 | 0.00 |
+| Nikhil Rao | 2025-05-01 | 21000.00 | 22000.00 |
+| Nikhil Rao | 2025-06-01 | 29700.00 | 25500.00 |
+| Sana Fatima | 2025-05-01 | 18000.00 | 0.00 |
+| Sana Fatima | 2025-06-01 | 21000.00 | 0.00 |
 
 `LAG(total_amount, 2, 0)` reaches back two `rows` instead of one, and supplies 0 instead of `NULL` whenever there is no `row` that far back, which is useful when a downstream calculation needs a real number rather than a `NULL` to work with.
 
@@ -235,6 +235,7 @@ Expected output:
 | Nikhil Rao | 2025-06-01 | 29700.00 | up |
 | Sana Fatima | 2025-05-01 | 18000.00 | up |
 | Sana Fatima | 2025-06-01 | 21000.00 | up |
+
 ## Conclusion
 
 `LAG` and `LEAD` pull a value from a neighboring `row`, before or after the current one within an ordered window, turning `row`-to-`row` comparisons like month-over-month change into a straightforward calculation on a single `row` instead of a self `join` across two. Leela can now show growth, decline, and trend directly in her monthly report. Comparing to one neighboring `row` is useful, but some calculations need to look across a whole range of surrounding `rows` at once, which is where window frames come in.

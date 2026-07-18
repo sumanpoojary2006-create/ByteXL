@@ -125,6 +125,12 @@ Defining a strict domain for every attribute, before data starts arriving, is wh
 - A useful habit, whenever you meet a new `column` in any `table` for the rest of this course, is to pause and ask two questions: what kind of value is this attribute meant to hold, and what values, even though they might technically be the same type, would actually be nonsense here.
 - That second question is usually the more revealing one.
 
+## Your Turn: Set the Boundaries
+
+Kabir wants to add two more `columns` to his Members `table`: "Membership Plan" (Monthly, Quarterly, or Annual) and "Joining Date." For each, decide what the domain should be, and name one value that looks technically valid but should still be rejected.
+
+Membership Plan's domain is a short fixed list: only "Monthly," "Quarterly," or "Annual" are legal, so a value like "Yearly" would be rejected even though it is ordinary text, because it does not match any of the three allowed labels. Joining Date's domain is genuine calendar dates that are not in the future, so "2027-01-01" would technically be a valid date but should still be rejected, since nobody can join Kabir's gym tomorrow's yesterday.
+
 ## Conclusion
 
 An attribute is a `column`'s name, but its domain is the promise behind that name, the exact boundary of values the `column` will ever legitimately hold. Fixing that boundary in advance, before a single `row` exists, is what stops a `database` from quietly filling up with entries that look like data but mean nothing, an age written as a word, a phone number that is really a sentence.

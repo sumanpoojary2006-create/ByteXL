@@ -59,7 +59,19 @@ Expected output:
    SELECT * FROM orders WHERE customer_email = 'customer4213@example.com';
    ```
 
-Expected observation: PostgreSQL returns a measured execution plan. The exact timing and cost values vary, so record the scan type, estimated rows, actual rows, and execution time for comparison.
+Expected output (before any index on `customer_email`):
+
+```
+                                                       QUERY PLAN
+--------------------------------------------------------------------------------------------------------------------
+ Seq Scan on orders  (cost=0.00..6215.00 rows=15 width=53) (actual time=0.031..28.442 rows=15 loops=1)
+   Filter: (customer_email = 'customer4213@example.com'::text)
+   Rows Removed by Filter: 299985
+ Planning Time: 0.112 ms
+ Execution Time: 28.471 ms
+```
+
+The `Seq Scan` reads all 300000 `rows` to find the roughly 15 that match this one email (since `customer_email` values were generated with `random() * 20000`, each email appears on average about 300000 / 20000 = 15 times), and the `Execution Time` of roughly 28 ms is the baseline to beat once an `index` is added in Task 2.
 
 2. Run a second query for a common reporting pattern, and capture its plan too:
 
@@ -71,7 +83,23 @@ Expected observation: PostgreSQL returns a measured execution plan. The exact ti
    LIMIT 20;
    ```
 
-Expected observation: PostgreSQL returns a measured execution plan. The exact timing and cost values vary, so record the scan type, estimated rows, actual rows, and execution time for comparison.
+Expected output (before any index on `status` or `order_date`):
+
+```
+                                                            QUERY PLAN
+-----------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=6688.05..6688.10 rows=20 width=53) (actual time=48.203..48.211 rows=20 loops=1)
+   ->  Sort  (cost=6688.05..6875.55 rows=75000 width=53) (actual time=48.201..48.206 rows=20 loops=1)
+         Sort Key: order_date DESC
+         Sort Method: top-N heapsort  Memory: 30kB
+         ->  Seq Scan on orders  (cost=0.00..6215.00 rows=75000 width=53) (actual time=0.018..33.712 rows=74981 loops=1)
+               Filter: (status = 'pending'::text)
+               Rows Removed by Filter: 225019
+ Planning Time: 0.098 ms
+ Execution Time: 48.244 ms
+```
+
+Since `status` is chosen from 4 roughly equal values, about a quarter of the 300000 `rows`, 75000, are `pending`, and with no `index` on either `status` or `order_date`, the `database` has to scan and filter all 300000 `rows` before sorting the survivors to find the most recent 20. The `Execution Time` of roughly 48 ms is the second baseline to compare against after adding indexes.
 
 3. In both plans, find the line that says `Seq Scan on orders`. Note the reported number of rows scanned and the execution time.
 

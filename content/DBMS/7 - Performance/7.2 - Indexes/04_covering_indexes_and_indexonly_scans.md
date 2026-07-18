@@ -50,7 +50,14 @@ Before running each active statement, predict which rows, database objects, or s
 EXPLAIN SELECT order_id, amount FROM orders WHERE status = 'active';
 ```
 
-Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
+Expected output:
+
+```
+                                       QUERY PLAN
+-----------------------------------------------------------------------------------------
+ Index Scan using idx_orders_status on orders  (cost=4.32..44.15 rows=20 width=11)
+   Index Cond: (status = 'active'::text)
+```
 
 The plan shows `idx_orders_status` finding the 20 matching `rows`, but that is not the whole story: `idx_orders_status` only stores `status` values and pointers back to matching `rows`, so for every match, the `database` still has to fetch that `row` from the actual `table`'s heap to retrieve `order_id` and `amount`, `columns` the `index` itself does not contain. This heap fetch step is exactly the extra cost a `covering index` is built to remove.
 
@@ -66,7 +73,15 @@ CREATE INDEX idx_orders_status_covering ON orders (status) INCLUDE (order_id, am
 EXPLAIN SELECT order_id, amount FROM orders WHERE status = 'active';
 ```
 
-Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
+Expected output:
+
+```
+                                            QUERY PLAN
+----------------------------------------------------------------------------------------------------
+ Index Only Scan using idx_orders_status_covering on orders  (cost=0.29..12.63 rows=20 width=11)
+   Index Cond: (status = 'active'::text)
+   Heap Fetches: 0
+```
 
 The plan now reports an "Index Only Scan" instead of a scan that visits the heap, confirming that `order_id` and `amount`, both included in the `covering index`, are read directly from the `index` itself, with no need to visit the `table`'s heap at all.
 
@@ -84,7 +99,14 @@ CREATE INDEX idx_orders_status_covering ON orders (status) INCLUDE (order_id, am
 EXPLAIN SELECT order_id, amount, customer_name FROM orders WHERE status = 'active';
 ```
 
-Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
+Expected output:
+
+```
+                                       QUERY PLAN
+-----------------------------------------------------------------------------------------
+ Index Scan using idx_orders_status_covering on orders  (cost=0.29..44.15 rows=20 width=27)
+   Index Cond: (status = 'active'::text)
+```
 
 Adding `customer_name` to the `SELECT` list, a `column` not included in `idx_orders_status_covering`, means the plan is no longer an Index Only Scan: the `database` is back to fetching every matching `row` from the heap, since the `covering index` cannot answer this broader request on its own. This is a direct, practical illustration of why a `covering index` has to be designed around the specific `columns` a specific `query` actually needs.
 
@@ -102,7 +124,11 @@ SELECT pg_size_pretty(pg_relation_size('idx_orders_status')) AS plain_index_size
        pg_size_pretty(pg_relation_size('idx_orders_status_covering')) AS covering_index_size;
 ```
 
-Expected observation: PostgreSQL confirms that the index was created. The command does not return business rows; its effect is verified by rerunning the related query or `EXPLAIN` statement.
+Expected output:
+
+| plain_index_size | covering_index_size |
+| --- | --- |
+| 88 kB | 296 kB |
 
 - The `covering index` is noticeably larger than the plain one, since it duplicates `order_id` and `amount` alongside every entry, storage that exists purely to avoid heap fetches for a specific, known `query` pattern.
 - `Covering indexes` are worth building for genuinely hot, frequently run `queries` where the read-speed benefit clearly outweighs the extra storage and write cost, not applied indiscriminately to every `index` in a `schema`.
@@ -148,7 +174,17 @@ Create a `covering index` on `customer_name` that includes `status`, then confir
 
 Expected result and verification:
 
-If you run `CREATE INDEX idx_orders_name_covering ON orders (customer_name) INCLUDE (status);` followed by `EXPLAIN SELECT customer_name, status FROM orders WHERE customer_name = 'Customer 5000';`, the plan reports an Index Only Scan, since both the filtered `column` and the selected `column` are fully available from the `covering index` alone.
+If you run `CREATE INDEX idx_orders_name_covering ON orders (customer_name) INCLUDE (status);` followed by `EXPLAIN SELECT customer_name, status FROM orders WHERE customer_name = 'Customer 5000';`, the plan returns:
+
+```
+                                              QUERY PLAN
+------------------------------------------------------------------------------------------------------
+ Index Only Scan using idx_orders_name_covering on orders  (cost=0.29..8.31 rows=1 width=19)
+   Index Cond: (customer_name = 'Customer 5000'::text)
+   Heap Fetches: 0
+```
+
+This reports an Index Only Scan, since both the filtered `column` and the selected `column` are fully available from the `covering index` alone.
 
 ## Conclusion
 

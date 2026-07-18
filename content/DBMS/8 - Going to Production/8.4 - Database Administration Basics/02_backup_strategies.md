@@ -44,7 +44,13 @@ Before running each active statement, predict which rows, database objects, or s
 COPY shipments TO STDOUT WITH (FORMAT csv, HEADER true);
 ```
 
-Expected observation: PostgreSQL completes the statement, and the explanation below identifies the database object, permission, or operational effect to verify.
+Expected output (streamed as CSV text rather than a query result table):
+
+```
+shipment_id,status
+1,in_transit
+2,delivered
+```
 
 `pg_dump` produces a file that is, at its core, a script: running it against an empty `database` recreates three things exactly as they existed at the moment the dump was taken:
 

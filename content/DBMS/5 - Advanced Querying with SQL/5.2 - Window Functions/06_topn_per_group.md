@@ -183,6 +183,7 @@ Expected output:
 | Kunal Verma | East | 11000.00 |
 | Devika Rao | North | 18500.00 |
 | Reema Ghosh | South | 15000.00 |
+
 ## Conclusion
 
 A top-N-per-group report combines a ranking `function` partitioned by the grouping `column` with a CTE that makes the rank filterable, and the choice between `ROW_NUMBER`, `RANK`, and `DENSE_RANK` decides exactly how ties are handled in the result. This pattern closes out the chapter by combining partitioning, ordering, ranking, and CTEs into a single, genuinely useful report shape.

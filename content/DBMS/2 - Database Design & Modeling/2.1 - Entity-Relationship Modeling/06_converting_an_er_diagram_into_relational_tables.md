@@ -215,6 +215,12 @@ This is the moment Naina's earlier objection, that a diagram is only a picture a
 
 None of it is arbitrary, and none of it required guessing, because each rule follows directly from what the diagram was already saying about cardinality and participation.
 
+## Your Turn: Map the Diagram
+
+A gym's ER diagram has a Trainer entity and a Member entity, connected by a many-to-many "Trains" relationship that itself carries a session date attribute. Trainer also has a one-to-one relationship with a Locker entity, with total participation on the Locker side. Describe the tables this diagram produces, including any table that does not correspond to a rectangle at all.
+
+A working answer: Trainer becomes a Trainers table and Member becomes a Members table, each with their own simple attributes as columns. Trains, being many-to-many, needs a brand new junction table, say TrainingSessions, holding a foreign key to Trainer, a foreign key to Member, and the session date attribute that belongs to the relationship itself, not to either entity alone. Trainer-Locker, being one-to-one with total participation on the Locker side, places a unique foreign key pointing to Trainer on the Lockers table, guaranteeing no trainer is ever assigned two lockers.
+
 ## Conclusion
 
 Converting an ER diagram into relational `tables` follows a small, dependable set of rules: every entity becomes a `table` with its simple attributes as `columns` and its identifying attribute as the `primary key`, every one-to-many relationship is implemented by placing a `foreign key` on the `table` representing the "many" side, every one-to-one relationship places a unique `foreign key` on one side or merges the two `tables` outright, and every many-to-many relationship requires a new junction `table` holding a `foreign key` pointing to each of the two entities it connects.

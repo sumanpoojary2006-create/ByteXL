@@ -46,9 +46,13 @@ Before running each active statement, predict which rows, database objects, or s
 SELECT * FROM shipments WHERE shipment_id = 1;
 ```
 
-Expected result: PostgreSQL applies the requested change. Use the follow-up query and the explanation below to confirm the affected rows or refreshed data.
+Expected output:
 
-This is the severity that makes SQL injection so dangerous in practice. It is not limited to reading extra `rows`:
+| shipment_id | status |
+| --- | --- |
+| 1 | in_transit |
+
+This `SELECT` itself runs safely; the commented-out lines above it illustrate what an unguarded, multi-statement injection would attempt if the `database` driver allowed it. This is the severity that makes SQL injection so dangerous in practice. It is not limited to reading extra `rows`:
 
 - It can delete, modify, or destroy data entirely.
 - Depending on the `database` account's granted privileges, it can reach into `tables` the application was never designed to touch at all, exactly the blast radius the least-privilege lesson in this chapter warned about.
@@ -66,7 +70,11 @@ SELECT * FROM shipments WHERE shipment_id = $1;
 EXECUTE get_shipment(1);
 ```
 
-Expected observation: PostgreSQL completes the statement, and the explanation below identifies the database object, permission, or operational effect to verify.
+Expected output:
+
+| shipment_id | status |
+| --- | --- |
+| 1 | in_transit |
 
 - Because `$1` is a genuine parameter, not text pasted into a string, there is no possible value that could be supplied for it that would change the `query`'s structure.
 - Since `get_shipment` declares `$1` as `INTEGER`, a value like `1; DROP TABLE shipments; --` would actually be rejected outright with a type error before the `query` ever ran, PostgreSQL refusing to treat that text as a valid integer in the first place; for a `TEXT`-typed parameter instead, the same malicious string would be accepted as data and compared literally, simply matching no `row`, but either way it is never interpreted as additional SQL syntax.
@@ -93,7 +101,11 @@ EXECUTE get_shipment(1);
 SELECT * FROM shipments WHERE shipment_id = 1;
 ```
 
-Expected observation: PostgreSQL completes the statement, and the explanation below identifies the database object, permission, or operational effect to verify.
+Expected output (from the `EXECUTE` and the final `SELECT`, both querying `shipment_id = 1`):
+
+| shipment_id | status |
+| --- | --- |
+| 1 | in_transit |
 
 Input validation still has real value, rejecting obviously malformed input early, improving error messages, catching genuine mistakes, but it should never be relied upon as the sole defense against injection; that `role` belongs to `prepared statements`.
 

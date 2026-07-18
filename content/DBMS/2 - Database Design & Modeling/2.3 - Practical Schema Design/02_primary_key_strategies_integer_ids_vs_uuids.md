@@ -34,6 +34,59 @@ They are also unordered by nature, so a `table` `indexed` by UUID insert order d
 
 In exchange, a UUID gives Devika two things an integer cannot: safe generation across multiple independent systems, and an identifier that reveals nothing about how many `rows` exist or in what order they were created, which matters when the identifier is ever exposed publicly.
 
+Here are the two strategies side by side as real PostgreSQL. The first table mints IDs the old, single-database way Vaanam used to rely on; the second mints them the way two independent data centers safely can, with no shared counter at all.
+
+```postgresql file=init.sql
+CREATE TABLE shipments_internal (
+    shipment_id  INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    destination  TEXT NOT NULL
+);
+
+CREATE TABLE shipments_public (
+    shipment_uuid  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    destination    TEXT NOT NULL
+);
+
+INSERT INTO shipments_internal (destination) VALUES
+    ('Chennai Depot'),
+    ('Pune Hub'),
+    ('Kochi Warehouse');
+
+INSERT INTO shipments_public (destination) VALUES
+    ('Chennai Depot'),
+    ('Pune Hub'),
+    ('Kochi Warehouse');
+```
+
+The active query shows what each strategy actually hands back as the key value:
+
+```postgresql with=init.sql
+SELECT shipment_id, destination FROM shipments_internal ORDER BY shipment_id;
+```
+
+Expected output:
+
+| shipment_id | destination |
+| -----------: | --------------- |
+| 1 | Chennai Depot |
+| 2 | Pune Hub |
+| 3 | Kochi Warehouse |
+
+```postgresql with=init.sql
+SELECT shipment_uuid, destination FROM shipments_public ORDER BY destination;
+```
+
+Expected output (actual UUID values vary on every run):
+
+| shipment_uuid | destination |
+| ------------------------------------ | --------------- |
+| 3f2a1c9e-... | Chennai Depot |
+| 8b7d4e21-... | Kochi Warehouse |
+| a91c5f60-... | Pune Hub |
+
+- `shipments_internal.shipment_id` climbs predictably, 1, 2, 3, exactly the compact, readable counter that only works safely because one database is doing all the counting.
+- `shipments_public.shipment_uuid` uses `gen_random_uuid()`, PostgreSQL's built-in generator, so two data centers inserting at the same instant would never collide, at the cost of a longer, unordered, less human-readable value.
+
 ## Matching the Strategy to the Situation
 
 Devika's tech lead frames the decision as a question about where and how `rows` get created, not as a question of which option is objectively "better." A single, centrally controlled `database` serving an internal admin tool has no coordination problem to solve, so an auto-incrementing integer remains the simplest, fastest, most space-efficient choice available, and reaching for a UUID there would just be paying a cost for a problem that does not exist.
@@ -116,6 +169,12 @@ Even inside a single `database` with no distribution problem at all, a team migh
     </tr>
   </tbody>
 </table>
+
+## Your Turn: Choose the Key Strategy
+
+A campus food-delivery app runs on a single database today, but the founders are already talking about opening a second regional server next year, and order confirmation links will be shown to customers in a browser. Should the Orders table use an auto-incrementing integer or a UUID as its primary key, and does your answer change once the second server is live?
+
+A working answer: today, with one database and no public exposure concern beyond the confirmation link, an auto-incrementing integer would work internally, but since order IDs already appear in customer-facing URLs, a UUID (or another unguessable identifier) is the safer choice right now, exactly like Meenal's booking_id decision, to stop a curious visitor from incrementing a number to browse other customers' orders. Once the second regional server goes live, that same UUID choice also solves the coordination problem Devika hit at Vaanam, letting both servers mint new order IDs independently with no risk of collision.
 
 ## Conclusion
 

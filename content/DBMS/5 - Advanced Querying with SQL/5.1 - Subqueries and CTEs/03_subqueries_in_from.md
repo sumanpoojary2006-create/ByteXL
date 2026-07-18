@@ -205,6 +205,7 @@ Expected output:
 | department | department_avg |
 | --- | --- |
 | Engineering | 85000.00 |
+
 ## Conclusion
 
 A subquery in `FROM`, or derived `table`, lets a `query` treat an intermediate result, especially a grouped or aggregated one, as if it were a real `table`, complete with the ability to filter, `join`, or select from it further.

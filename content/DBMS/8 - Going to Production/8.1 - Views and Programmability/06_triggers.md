@@ -76,7 +76,7 @@ FOR EACH ROW
 EXECUTE FUNCTION log_status_change();
 ```
 
-Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
+Expected result: `CREATE FUNCTION` and `CREATE TRIGGER` return no rows; they arm the logging `trigger` on `shipments` without touching any data yet. The next section fires an `UPDATE` and shows the row it writes into `shipment_log`.
 
 - `RETURNS TRIGGER` marks this as a special `function` meant to be called by a `trigger`, not directly by a `SELECT`.
 - Inside it, `OLD` refers to the `row`'s values before the change, and `NEW` refers to its values after, both automatically available inside a `trigger` `function` without being declared anywhere.
@@ -108,7 +108,11 @@ UPDATE shipments SET status = 'delivered' WHERE shipment_id = 1;
 SELECT * FROM shipment_log;
 ```
 
-Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
+Expected output:
+
+| log_id | shipment_id | old_status | new_status | logged_at |
+| --- | --- | --- | --- | --- |
+| 1 | 1 | in_transit | delivered | *(timestamp of the `UPDATE`)* |
 
 A plain `UPDATE`, with no `procedure`, no special syntax, no cooperation from Devraj's colleague required, produced a log entry automatically, capturing both the old status, `in_transit`, and the new one, `delivered`. This is the core advantage a `trigger` has over the `procedure` from earlier in this chapter: the logging behavior is now a property of the `table` itself, impossible to accidentally skip.
 
@@ -158,9 +162,13 @@ EXECUTE FUNCTION prevent_invalid_status();
 SELECT shipment_id, status FROM shipments WHERE shipment_id = 2;
 ```
 
-Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
+Expected output:
 
-This `UPDATE` is rejected outright, with the `trigger`'s own `RAISE EXCEPTION` message, before the invalid status ever reaches the `table`, since `BEFORE UPDATE` runs ahead of the actual write and can refuse it entirely by raising an error. This is a form of validation logic that goes beyond what a plain `CHECK` `constraint` can express, since it can reference custom error messages and arbitrary procedural logic, not just a fixed boolean condition.
+| shipment_id | status |
+| --- | --- |
+| 2 | in_transit |
+
+Shipment 2 is still shown at its original status because the invalid `UPDATE` above is commented out rather than actually run; had it run, `trg_validate_status` would have raised `Invalid status: lost_in_space` and left shipment 2 exactly this way anyway, since the rejected write never reaches the `table`. This `UPDATE` is rejected outright, with the `trigger`'s own `RAISE EXCEPTION` message, before the invalid status ever reaches the `table`, since `BEFORE UPDATE` runs ahead of the actual write and can refuse it entirely by raising an error. This is a form of validation logic that goes beyond what a plain `CHECK` `constraint` can express, since it can reference custom error messages and arbitrary procedural logic, not just a fixed boolean condition.
 
 ## Triggers Can Make a Joined View Writable
 
@@ -228,9 +236,13 @@ UPDATE shipment_status_view SET status = 'delayed' WHERE shipment_id = 1;
 SELECT * FROM shipments WHERE shipment_id = 1;
 ```
 
-Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
+Expected output:
 
-Here `shipment_status_view` is a simple enough `view` to be updatable on its own, but the pattern generalizes directly to the `join`-based `view`s that cannot be, letting an `INSTEAD OF` `trigger` define exactly how a write against a complex `view` should be translated into changes on the real underlying `tables`.
+| shipment_id | status |
+| --- | --- |
+| 1 | delayed |
+
+The `UPDATE` against `shipment_status_view` never touches the `view` directly; `trg_instead_of_update` intercepts it and runs the underlying `UPDATE shipments SET status = 'delayed' WHERE shipment_id = 1` instead, so `shipments` itself now shows shipment 1 as `delayed`. Here `shipment_status_view` is a simple enough `view` to be updatable on its own, but the pattern generalizes directly to the `join`-based `view`s that cannot be, letting an `INSTEAD OF` `trigger` define exactly how a write against a complex `view` should be translated into changes on the real underlying `tables`.
 
 ![Trigger timing options: BEFORE validates, AFTER audits, and INSTEAD OF redirects view writes](images/12_trigger_timing_before_after_instead_of.png)
 

@@ -144,9 +144,15 @@ Using the `accounts` `table` above, write a `transaction` that intentionally vio
 
 Expected result and verification:
 
-- A `transaction` like `BEGIN
-- `UPDATE` accounts SET balance = -1.00 `WHERE` account_id = 1
-- `COMMIT`;` is rejected outright, and because it is a `transaction` failure, nothing beyond this one statement is affected, unlike a system crash, which would require the `database` to recover its state across every `transaction` that was in progress anywhere on the server at the moment of the crash.
+A `transaction` like:
+
+```sql
+BEGIN;
+UPDATE accounts SET balance = -1.00 WHERE account_id = 1;
+COMMIT;
+```
+
+is rejected outright, and because it is a `transaction` failure, nothing beyond this one statement is affected, unlike a system crash, which would require the `database` to recover its state across every `transaction` that was in progress anywhere on the server at the moment of the crash.
 
 ## Conclusion
 

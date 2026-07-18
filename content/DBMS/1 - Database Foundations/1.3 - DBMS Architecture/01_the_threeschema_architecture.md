@@ -96,6 +96,12 @@ By inserting the conceptual level as a buffer between the external `views` above
 
 Each group works confidently at its own level, trusting that the layer below it is doing its job.
 
+## Your Turn: Place the Change
+
+The registrar's team decides to compress and reorganise the files that store the Marks `table` on disk to save space, and separately, a professor asks for a new external `view` that shows only failing students in a course. Which level of the `three-schema architecture` does each change belong to, and does either one require touching the other levels?
+
+Compressing and reorganising the stored files is a change at the internal, physical level, since it only concerns how bytes are laid out on disk, and it requires no change to the conceptual `schema` or to Tara's result screen, which keeps asking for roll number and marks exactly as before. Adding a new "failing students" `view` for the professor is a change at the external level, a fresh tailored slice built on top of the same existing conceptual `schema`, so it needs no change to how Marks, Students, and Courses are structured underneath, and it certainly does not touch the internal storage layout at all.
+
 ## Conclusion
 
 The `three-schema architecture` is really just an honest admission that "the `database`" means different things to different people looking at it from different heights: a tailored screen for an end user at the external level, a shared structural design at the conceptual level, and raw stored bytes at the internal level.

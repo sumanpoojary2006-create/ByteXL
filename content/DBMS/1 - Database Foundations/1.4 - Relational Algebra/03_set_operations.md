@@ -186,6 +186,12 @@ S104 and S107 are removed because they also appear in the Robotics Club relation
   </tbody>
 </table>
 
+## Your Turn: Check Union-Compatibility and Pick the Operation
+
+Meera is later asked for one more list: students who joined Robotics Club but have never joined Coding Club. First, could this pair of relations be compared with a set operation at all, and second, which operation and which order gives the right answer?
+
+Yes, the pair is union-compatible, since both relations still have exactly one `column`, student_id, drawing from the same pool of the college's student IDs, so a set operation is valid here. The request needs difference, applied as Robotics Club minus Coding Club, which keeps only the `rows` in Robotics Club that do not also appear in Coding Club. Applying it to Meera's data leaves just S112, the one student who joined robotics but never coding, and reversing the order would instead give the coding-only members, a different answer entirely, which is exactly why order matters for difference and not for union or intersection.
+
 ## Conclusion
 
 Union, intersection, and difference let a `database` compare two relations the way set theory compares two collections, but only once those relations are union-compatible, meaning they agree on the number of `columns` and the domain each `column` draws from.

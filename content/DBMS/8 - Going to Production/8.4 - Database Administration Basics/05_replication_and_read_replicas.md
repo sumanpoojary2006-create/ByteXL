@@ -78,7 +78,11 @@ Because a `replica` applies changes slightly after the primary generates them, t
 SELECT status, COUNT(*) FROM shipments GROUP BY status;
 ```
 
-Expected observation: PostgreSQL completes the statement, and the explanation below identifies the database object, permission, or operational effect to verify.
+Expected output:
+
+| status | count |
+| --- | ---: |
+| in_transit | 1 |
 
 This is why `replicas` are typically used for read traffic that can tolerate a small amount of staleness, dashboards, analytics, reporting, exactly the kind of workload this course has repeatedly used as its running examples, while writes, and any read that absolutely requires the most current possible data, continue to go to the primary.
 

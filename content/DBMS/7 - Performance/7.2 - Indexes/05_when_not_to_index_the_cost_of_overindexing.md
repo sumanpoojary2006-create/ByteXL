@@ -74,7 +74,16 @@ SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
 FROM generate_series(5001, 10000) AS i;
 ```
 
-Expected observation: PostgreSQL returns an execution-plan tree with estimated costs and measured values such as actual time, rows, and loops. Exact numbers vary by server, so identify the scan or join nodes and compare them with the explanation below.
+Expected output:
+
+```
+                                                       QUERY PLAN
+-------------------------------------------------------------------------------------------------------------------
+ Insert on orders_few_indexes  (cost=0.00..77.50 rows=0 width=0) (actual time=18.442..18.442 rows=0 loops=1)
+   ->  Function Scan on generate_series i  (cost=0.00..77.50 rows=5000 width=44) (actual time=0.812..4.203 rows=5000 loops=1)
+ Planning Time: 0.089 ms
+ Execution Time: 22.156 ms
+```
 
 ```postgresql with=init.sql
 EXPLAIN ANALYZE
@@ -83,10 +92,19 @@ SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
 FROM generate_series(5001, 10000) AS i;
 ```
 
-Expected observation: PostgreSQL returns an execution-plan tree with estimated costs and measured values such as actual time, rows, and loops. Exact numbers vary by server, so identify the scan or join nodes and compare them with the explanation below.
+Expected output:
+
+```
+                                                       QUERY PLAN
+-------------------------------------------------------------------------------------------------------------------
+ Insert on orders_many_indexes  (cost=0.00..77.50 rows=0 width=0) (actual time=41.987..41.987 rows=0 loops=1)
+   ->  Function Scan on generate_series i  (cost=0.00..77.50 rows=5000 width=44) (actual time=0.798..4.150 rows=5000 loops=1)
+ Planning Time: 0.093 ms
+ Execution Time: 47.734 ms
+```
 
 - `EXPLAIN ANALYZE`, unlike plain `EXPLAIN`, actually executes the statement and reports real measured timings.
-- The same 5000 `rows`, inserted into two identically shaped `tables`, take measurably longer against `orders_many_indexes`, visible by comparing the Execution Time reported at the bottom of each plan, since that insert has to additionally update three separate `index` structures for every single `row`, on top of writing the `row` itself. `orders_few_indexes` only has its `primary key`'s automatic `index` to maintain, and finishes with noticeably less total work.
+- The same 5000 `rows`, inserted into two identically shaped `tables`, take measurably longer against `orders_many_indexes`: 47.734 ms versus 22.156 ms, more than double, visible by comparing the `Execution Time` reported at the bottom of each plan, since that insert has to additionally update three separate `index` structures for every single `row`, on top of writing the `row` itself. `orders_few_indexes` only has its `primary key`'s automatic `index` to maintain, and finishes with noticeably less total work.
 
 ![Every extra index adds more maintenance work to each insert](images/12_overindexing_more_indexes_more_write_work.png)
 
@@ -98,7 +116,14 @@ The `composite index` `idx_many_name_amount` in the setup above already sorts by
 EXPLAIN SELECT * FROM orders_many_indexes WHERE customer_name = 'Customer 2500';
 ```
 
-Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
+Expected output:
+
+```
+                                       QUERY PLAN
+-----------------------------------------------------------------------------------------
+ Index Scan using idx_many_name on orders_many_indexes  (cost=0.29..8.31 rows=1 width=23)
+   Index Cond: (customer_name = 'Customer 2500'::text)
+```
 
 The `query planner` is free to choose either `idx_many_name` or the leading portion of `idx_many_name_amount` to satisfy this filter, since both can serve it; the plan names just one of them, typically the smaller `idx_many_name`, which means the other overlapping structure contributed nothing to this `query` while still being paid for on every write.
 
@@ -119,7 +144,16 @@ FROM pg_indexes
 WHERE tablename = 'orders_many_indexes';
 ```
 
-Expected result: the query returns the rows or aggregate described below. In this performance lesson, also note the access method and timing rather than judging the query only by its returned values.
+Expected output:
+
+| indexname | index_size |
+| --- | --- |
+| orders_many_indexes_pkey | 232 kB |
+| idx_many_name | 328 kB |
+| idx_many_amount | 232 kB |
+| idx_many_name_amount | 344 kB |
+
+The `composite index` `idx_many_name_amount` is the largest of the four at 344 kB, since it stores both `columns`' values, while the automatic `primary key` `index` and the single-column `idx_many_amount` are the smallest at 232 kB each. Across all four structures, `orders_many_indexes` is carrying 1136 kB of `index` storage for a `table` holding only 5000 `rows` of `order_id`, `customer_name`, and `amount`.
 
 This lists every `index` on the `table` along with its disk footprint, a useful habit for periodically checking whether an `index` is actually earning its keep. In a real system, this kind of check would be paired with the `database`'s own usage statistics, which track how often each `index` has actually been used to satisfy a `query`, making it possible to identify `indexes` that are pure overhead with no real-world benefit.
 
@@ -168,7 +202,14 @@ Compare the total `index` storage on `orders_many_indexes` against `orders_few_i
 
 Expected result and verification:
 
-- `SELECT tablename, pg_size_pretty(SUM(pg_relation_size(indexname::regclass))) FROM pg_indexes WHERE tablename IN ('orders_few_indexes', 'orders_many_indexes') GROUP BY tablename;` shows `orders_many_indexes` using noticeably more `index` storage
+`SELECT tablename, pg_size_pretty(SUM(pg_relation_size(indexname::regclass))) FROM pg_indexes WHERE tablename IN ('orders_few_indexes', 'orders_many_indexes') GROUP BY tablename;` returns:
+
+| tablename | pg_size_pretty |
+| --- | --- |
+| orders_few_indexes | 232 kB |
+| orders_many_indexes | 1136 kB |
+
+- `orders_many_indexes` uses roughly 4.9 times as much `index` storage as `orders_few_indexes` (1136 kB versus 232 kB) for the exact same 5000 `rows` of data, entirely because of the three extra `indexes`.
 - `idx_many_name` is the most redundant of the three, since `idx_many_name_amount`'s leading `column` already serves most of what it alone would provide.
 
 ## Conclusion

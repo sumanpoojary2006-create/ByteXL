@@ -49,7 +49,12 @@ FROM shipments
 WHERE status = 'in_transit';
 ```
 
-Expected observation: PostgreSQL completes the statement, and the explanation below identifies the database object, permission, or operational effect to verify.
+Expected output:
+
+| shipment_id | driver_id | status | destination |
+| --- | --- | --- | --- |
+| 1 | 1 | in_transit | Mumbai |
+| 3 | 1 | in_transit | Nagpur |
 
 The generated SQL here is clean and matches exactly what a developer would have written by hand, and this is the ORM's main selling point: for straightforward `queries` like this one:
 
@@ -77,7 +82,13 @@ SELECT shipment_id, driver_id, status, destination FROM shipments;
 -- SELECT * FROM drivers WHERE driver_id = 1;
 ```
 
-Expected observation: PostgreSQL completes the statement, and the explanation below identifies the database object, permission, or operational effect to verify.
+Expected output:
+
+| shipment_id | driver_id | status | destination |
+| --- | --- | --- | --- |
+| 1 | 1 | in_transit | Mumbai |
+| 2 | 2 | delivered | Pune |
+| 3 | 1 | in_transit | Nagpur |
 
 - Nothing about the object-oriented loop above looks like a `database` performance hazard; `shipment.driver.driver_name` reads like ordinary property access, not a `database` call.
 - This is exactly the danger: an ORM's abstraction can hide the fact that a `query` is happening at all, making it easy to write code that is correct but silently slow, unless the developer specifically knows to ask the ORM to fetch related data eagerly, in one combined `query`, rather than one at a time as each object is touched.
@@ -97,7 +108,11 @@ HAVING COUNT(*) > 0
 ORDER BY active_shipments DESC;
 ```
 
-Expected result: PostgreSQL returns the rows described below. Compare the visible columns and row-level effect with the explanation, since security and administration settings may make some values environment-dependent.
+Expected output:
+
+| driver_id | active_shipments |
+| --- | ---: |
+| 1 | 2 |
 
 A `query` shaped like this, with `GROUP BY`, `HAVING`, and `ORDER BY` working together, is something every SQL developer can write directly and reason about precisely, with full control over exactly what plan the `database` is likely to choose.
 

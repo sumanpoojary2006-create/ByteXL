@@ -197,6 +197,12 @@ Arjun and Naina's two problems can look similar at a glance, both involve a `col
   </tbody>
 </table>
 
+## Your Turn: Trace the Transitive Chain
+
+A single-key Employees table, keyed by EmployeeID alone, stores EmployeeName, DepartmentID, and DepartmentBuilding. Trace the dependency chain from EmployeeID to DepartmentBuilding, name the transitive dependency, and describe the fix.
+
+A working answer: EmployeeID -> DepartmentID holds directly, since every employee belongs to one department, and DepartmentID -> DepartmentBuilding holds directly too, since every department sits in one building. But EmployeeID -> DepartmentBuilding only holds by riding through DepartmentID, a non-key column, exactly the two-hop pattern Naina found with OrderID, CustomerID, and CustomerCity. The fix moves DepartmentBuilding into a Departments table keyed by DepartmentID, leaving Employees with only what genuinely depends on EmployeeID directly.
+
 ## Conclusion
 
 Third `Normal Form` closes a gap that Second `Normal Form` cannot reach on its own: a `table` can have the simplest possible key, a single `column`, and still repeat data endlessly if some non-key `column` is really describing a different non-key `column` instead of the key itself.

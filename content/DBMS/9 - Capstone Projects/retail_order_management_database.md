@@ -32,9 +32,146 @@ Before running any query, display or sketch the source tables involved and predi
 - The spreadsheet repeats `unit_price` for the same product on different orders. Why does your normalized `order_items` table still need its own `unit_price` column instead of always looking the price up from `products`? What happens to old orders if a product's price changes next month?
 - Your `categories` table references itself through `parent_category_id`. What `ON DELETE` behaviour did you choose for that self-reference, and what would happen to "Gaming Laptops" if someone deleted "Laptops" with the wrong choice?
 
+## Reference Schema and Starting Data
+
+Compare your own Stage 1 design against this reference schema before moving on. It is deliberately one valid answer, not the only one, use it to check your instincts, then adapt it if your own reasoning led somewhere slightly different.
+
+### `categories`
+
+| category_id | name | parent_category_id |
+| --- | --- | --- |
+| 1 | Electronics | *NULL* |
+| 2 | Laptops | 1 |
+| 3 | Stationery | *NULL* |
+
+### `products`
+
+| product_id | name | category_id | price | stock_quantity |
+| --- | --- | --- | ---: | ---: |
+| 1 | Wireless Mouse | 1 | 599.00 | 40 |
+| 2 | USB-C Hub | 1 | 1499.00 | 25 |
+| 3 | Gaming Laptop Pro | 2 | 65000.00 | 6 |
+| 4 | Ultrabook Air | 2 | 55000.00 | 10 |
+| 5 | Notebook | 3 | 45.00 | 200 |
+| 6 | Gel Pen Pack | 3 | 120.00 | 150 |
+
+### `customers`
+
+| customer_id | full_name | email |
+| --- | --- | --- |
+| 1 | Ananya Rao | ananya@mail.com |
+| 2 | Rahul Nair | rahul@mail.com |
+| 3 | Priya Menon | priya@mail.com |
+| 4 | Karan Shah | karan@mail.com |
+
+Use two files in OneCompiler throughout the capstone. Keep every `CREATE TABLE` and `INSERT` statement in `init.sql`; keep only the task query currently being worked on in the active SQL file.
+
+```postgresql file=init.sql
+CREATE TABLE categories (
+    category_id         INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name                TEXT NOT NULL,
+    parent_category_id  INTEGER REFERENCES categories(category_id) ON DELETE SET NULL,
+    created_at          TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at          TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE products (
+    product_id      INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name            TEXT NOT NULL,
+    category_id     INTEGER NOT NULL REFERENCES categories(category_id) ON DELETE RESTRICT,
+    price           NUMERIC(10, 2) NOT NULL CHECK (price >= 0),
+    stock_quantity  INTEGER NOT NULL DEFAULT 0 CHECK (stock_quantity >= 0),
+    created_at      TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at      TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE customers (
+    customer_id  INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    full_name    TEXT NOT NULL,
+    email        TEXT NOT NULL UNIQUE,
+    created_at   TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at   TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE orders (
+    order_id     INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    customer_id  INTEGER NOT NULL REFERENCES customers(customer_id) ON DELETE RESTRICT,
+    order_date   DATE NOT NULL DEFAULT CURRENT_DATE,
+    created_at   TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at   TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE order_items (
+    order_id    INTEGER NOT NULL REFERENCES orders(order_id) ON DELETE CASCADE,
+    product_id  INTEGER NOT NULL REFERENCES products(product_id) ON DELETE RESTRICT,
+    quantity    INTEGER NOT NULL CHECK (quantity > 0),
+    unit_price  NUMERIC(10, 2) NOT NULL CHECK (unit_price >= 0),
+    PRIMARY KEY (order_id, product_id)
+);
+
+INSERT INTO categories (name, parent_category_id) VALUES
+('Electronics', NULL),
+('Laptops', 1),
+('Stationery', NULL);
+
+INSERT INTO products (name, category_id, price, stock_quantity) VALUES
+('Wireless Mouse', 1, 599.00, 40),
+('USB-C Hub', 1, 1499.00, 25),
+('Gaming Laptop Pro', 2, 65000.00, 6),
+('Ultrabook Air', 2, 55000.00, 10),
+('Notebook', 3, 45.00, 200),
+('Gel Pen Pack', 3, 120.00, 150);
+
+INSERT INTO customers (full_name, email) VALUES
+('Ananya Rao', 'ananya@mail.com'),
+('Rahul Nair', 'rahul@mail.com'),
+('Priya Menon', 'priya@mail.com'),
+('Karan Shah', 'karan@mail.com');
+```
+
+### Confirm the Setup
+
+Run this in the active SQL file before starting Stage 2. It confirms `init.sql` loaded the expected number of rows and that "Gaming Laptops" nests correctly under "Electronics."
+
+```postgresql with=init.sql
+SELECT p.name, c.name AS category, parent.name AS parent_category
+FROM products p
+JOIN categories c ON p.category_id = c.category_id
+LEFT JOIN categories parent ON c.parent_category_id = parent.category_id
+WHERE p.name = 'Gaming Laptop Pro';
+```
+
+Expected output:
+
+| name | category | parent_category |
+| --- | --- | --- |
+| Gaming Laptop Pro | Laptops | Electronics |
+
+### Worked Example: Products Over 500
+
+To calibrate what a finished Stage 2 query and its expected output should look like, here is one worked answer to the "which products cost more than 500" task.
+
+```postgresql with=init.sql
+SELECT name, price
+FROM products
+WHERE price > 500
+ORDER BY price DESC;
+```
+
+Expected output:
+
+| name | price |
+| --- | ---: |
+| Gaming Laptop Pro | 65000.00 |
+| Ultrabook Air | 55000.00 |
+| USB-C Hub | 1499.00 |
+| Wireless Mouse | 599.00 |
+
+Four of the six seeded products clear the 500 threshold; the Notebook (45.00) and Gel Pen Pack (120.00) are correctly excluded. Use this same reasoning, source data first, then the query, then a checked expected-output table, for the remaining Stage 2 tasks and every stage that follows.
+
 ### Stage 2: Populate and Query the Catalogue
 
-1. Insert at least 3 categories (with one nested inside another), 6 products spread across them, and 4 customers.
+1. Insert at least 3 categories (with one nested inside another), 6 products spread across them, and 4 customers. If you are working from the reference schema above, this step is already done, extend it with your own additional rows if you want more variety to query against.
 
 2. Write `SELECT` queries using aliases, `DISTINCT`, calculated columns, `ORDER BY`, and `LIMIT` to answer: which products cost more than 500, what are the distinct categories represented, and which 3 products are the most expensive.
 

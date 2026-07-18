@@ -76,6 +76,16 @@ Aisha needed to understand `backups` and access rules that neither of the other 
 
 ![One person covering developer and DBA responsibilities in a small team compared with specialized large teams](images/14_roles_small_vs_large_team.png)
 
+## Your Turn: Whose Job Is It?
+
+For each situation below, name the role responsible, end user, developer, or administrator.
+
+1. A student opens the college portal and downloads her marksheet as a PDF.
+2. Someone decides that a search for "Sharma" should also match "Sharma Verma" as a partial hit.
+3. Someone notices the server's disk is 90% full and schedules an upgrade before it runs out.
+
+Situation 1 is the end user, the student is only ever interacting with the portal's screen, with no idea what runs underneath it. Situation 2 is the developer, deciding exactly what counts as a matching search is precisely the kind of precise, `query`-facing logic Kiran had to write. Situation 3 is the administrator, watching over disk space and system health is squarely a DBA's responsibility, the kind of quiet, unglamorous work that only becomes visible the one time it is neglected.
+
 ## Conclusion
 
 A `database` rarely serves just one kind of person across its lifetime. End users interact with it only through an application's surface, developers build that application by speaking to the `database` directly, and administrators keep the whole system healthy, secure, and running underneath both of them.

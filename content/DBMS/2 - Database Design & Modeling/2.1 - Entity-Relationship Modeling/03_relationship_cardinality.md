@@ -149,6 +149,12 @@ Rohan closes his notes with a simple observation: cardinality is not a detail to
 
 Mislabel a many-to-many relationship as one-to-many, and the system will silently refuse to let a student enrol in a second course. Every one of these mistakes traces back to the same root cause: nobody sat down and asked, plainly, "for one of these, how many of the other can there be, and for one of the other, how many of this can there be?"
 
+## Your Turn: Name the Cardinality
+
+A hospital tracks Doctors and the Clinics they work out of. In this hospital, a doctor can hold consultations at several different clinics through the week, and a busy clinic naturally hosts many different doctors across its shifts. Meanwhile, every prescription in the system is written by exactly one doctor. State the cardinality of Doctor-to-Clinic, and of Doctor-to-Prescription, reading each one from both directions.
+
+A working answer: Doctor-to-Clinic is many-to-many, since one doctor can work at several clinics and one clinic hosts several doctors, neither side caps out at one. Doctor-to-Prescription is one-to-many: one doctor writes many prescriptions over time, but each individual prescription traces back to exactly one doctor who wrote it, the same asymmetry Rohan found between departments and employees.
+
 ## Conclusion
 
 Cardinality describes how many instances of one entity can be linked to how many instances of another through a relationship, and it comes in three familiar shapes: one-to-one, where both sides are capped at a single match; one-to-many, where one side can have several matches but the other side cannot; and many-to-many, where both sides can have several matches at once.

@@ -80,7 +80,12 @@ SELECT * FROM shipments;
 RESET ROLE;
 ```
 
-Expected observation: PostgreSQL completes the statement, and the explanation below identifies the database object, permission, or operational effect to verify.
+Expected output:
+
+| shipment_id | branch | status |
+| --- | --- | --- |
+| 1 | Mumbai | in_transit |
+| 3 | Mumbai | delayed |
 
 - `SET ROLE mumbai_coordinator` switches the current session to act as that `role`, and the plain `SELECT * FROM shipments`, with no `WHERE` clause written at all, still returns only the two Mumbai `rows`.
 - The policy is enforced by the `database` itself, beneath the `query`, exactly the guarantee application-side filtering alone could never provide, since application-side filtering only protects against `queries` that remembered to include it.

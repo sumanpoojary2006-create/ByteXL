@@ -216,6 +216,7 @@ Expected output:
 | Sameer Khan | 65000.00 |
 | Pooja Reddy | 58000.00 |
 | Vikas Malhotra | 60000.00 |
+
 ## Conclusion
 
 A subquery inside `WHERE` can compare against a single value directly, or against a whole list of values using `IN`, `NOT IN`, `ANY`, or `ALL`, each suited to a different shape of question, with `NOT IN` needing an explicit guard against `NULL` that `NOT EXISTS` does not. Kabir can now compare an employee against a computed department, or against every value in an entire salary list, all in a single statement.

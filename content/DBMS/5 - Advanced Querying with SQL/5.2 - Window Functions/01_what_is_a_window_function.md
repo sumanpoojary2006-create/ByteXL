@@ -226,6 +226,7 @@ Expected output:
 | Sana Fatima | South | 15000.00 | 21000.00 |
 | Sana Fatima | South | 6000.00 | 21000.00 |
 
+
 ## Conclusion
 
 A `window function` computes an aggregate-style value across a related set of `rows`, defined by `OVER (...)`, without collapsing those `rows` into a single summary `row` the way `GROUP BY` does, giving Leela both individual detail and group-level context in the same result.

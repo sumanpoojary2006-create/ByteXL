@@ -166,11 +166,10 @@ If your `query` is `SELECT e1.employee_name FROM employees e1 WHERE e1.salary > 
 
 Expected output:
 
-| employee_name |
-| --- |
-| No rows |
+*(no rows returned)*
 
 An empty result is still a correct one: it confirms nobody in the `table` currently out-earns their manager.
+
 
 ## Conclusion
 

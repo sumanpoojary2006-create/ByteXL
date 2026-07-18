@@ -157,9 +157,15 @@ Check the current `transaction` `isolation level` for this session, then run a `
 
 Expected result and verification:
 
-- If you run `SHOW transaction_isolation;` followed by `BEGIN
-- `UPDATE` accounts SET balance = balance + 1000.00 `WHERE` account_id = 2
-- `SELECT` balance FROM accounts `WHERE` account_id = 2;`, the `isolation level` reports as `read committed`, and the ``SELECT`` shows 13000.00, the updated balance, visible within this same transaction even before a `COMMIT` is issued.
+If you run `SHOW transaction_isolation;` followed by:
+
+```sql
+BEGIN;
+UPDATE accounts SET balance = balance + 1000.00 WHERE account_id = 2;
+SELECT balance FROM accounts WHERE account_id = 2;
+```
+
+the `isolation level` reports as `read committed`, and the `SELECT` shows 13000.00, the updated balance, visible within this same transaction even before a `COMMIT` is issued.
 
 ## Conclusion
 

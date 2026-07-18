@@ -74,6 +74,16 @@ Held up against the familiar failures of plain shared files, a DBMS earns its pr
 - **Against inconsistency**, because that fact now lives in exactly one place, updating it there is enough, with no forgotten second copy left disagreeing later.
 - **Against `lost updates`**, it coordinates two people saving changes at nearly the same moment, so one genuine update is never silently thrown away by the other, the exact failure that cost a coordinator her confirmed interview slots.
 
+## Your Turn: Database or DBMS?
+
+For each item below, decide whether it is describing the **`database`** (the organized data itself) or the **DBMS** (the software managing it).
+
+1. The list of every registered student, their roll numbers, and their attendance records, sitting on the college server.
+2. MySQL, installed on that same server, running the process that answers every query the portal sends.
+3. The moment the college migrates from MySQL to PostgreSQL and every student record is copied across untouched.
+
+Item 1 is the `database`: it is the organized content, the actual facts about students and attendance. Item 2 is the DBMS: it is the software doing the work of storing, retrieving, and protecting that content. Item 3 is the clearest proof of the distinction: if the two words meant the same thing, swapping the software would mean swapping the data too, but the records survive the migration completely unchanged, exactly because a `database` and its DBMS are two separate things.
+
 ## Conclusion
 
 A `database` is the organized data, and a DBMS is the separate software built specifically to manage that data safely on its behalf, and the two words are never interchangeable no matter how often vendors blur them together. The test survives any real scrutiny: swapping the DBMS should never touch the underlying data, and any proposal that confuses the two is quietly asking the wrong question.
