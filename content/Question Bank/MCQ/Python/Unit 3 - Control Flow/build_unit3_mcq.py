@@ -90,7 +90,7 @@ add(1, "medium", "analyze", "if-else",
     "C")
 
 # Q5 - unexpected behaviour from independent ifs
-add(1, "hard", "analyze", "if-else",
+add(1, "medium", "analyze", "if-else",
     "A fitness band should give one badge per day. But users with high step counts say several badges pop up at once. Here is the badge code for a 12,000-step day:\n\n"
     "```python\nsteps = 12000\nif steps >= 5000:\n    print(\"Bronze\")\nif steps >= 8000:\n    print(\"Silver\")\nif steps >= 10000:\n    print(\"Gold\")\n```\n\n"
     "What does it print, and why do users see a pile-up?",
@@ -105,7 +105,7 @@ add(1, "hard", "analyze", "if-else",
 add(1, "medium", "understand", "match-case",
     "An app must turn one typed word — \"lights\", \"fan\", \"tv\", or \"ac\" — into an action, and reply \"Not recognised\" for anything else. Every choice compares the same word against a fixed value.\n\n"
     "Which structure fits this best?",
-    "Comparing one value to several fixed options, with a default for the rest, is exactly what `match-case` is for — `case _` handles anything unknown. Four separate `if`s could fire more than once and have no clean default, one `if` with `or` cannot pick a different action per word, and deep nesting only adds clutter.",
+    "Comparing one value to several fixed options, with a default for the rest, is exactly what `match-case` is for — `case _` handles anything unknown. Four equality-based `if` statements would repeat the same comparison and need extra logic for an unknown word; they would not all match the same word. One `if` with `or` cannot choose a different action per word, and deep nesting only adds clutter.",
     ("A match-case block with a case _ for anything else",
      "Four separate if statements, one per word",
      "One if that joins all four words with or",
@@ -175,11 +175,11 @@ add(2, "medium", "analyze", "if-else",
      "38.0"),
     "D")
 
-# Q12 - the smallest correct elif (nudged to medium)
+# Q12 - the smallest correct elif
 add(2, "medium", "apply", "elif-multi-way-branching",
-    "A courier charges by weight: under 1 kg is \"Light\", 1 to 5 kg is \"Standard\", over 5 kg is \"Heavy\". The `if` above already handled `weight < 1`, so anything reaching the `elif` is at least 1 kg:\n\n"
+    "A courier charges by weight: under 1 kg is \"Light\", 1 to 5 kg is \"Standard\", and over 5 kg is \"Heavy\":\n\n"
     "```python\nweight = 3.0\nif weight < 1:\n    print(\"Light\")\nelif ________:\n    print(\"Standard\")\nelse:\n    print(\"Heavy\")\n```\n\n"
-    "Which is the shortest condition that still works?",
+    "Which is the shortest condition that correctly completes the chain?",
     "Since `weight < 1` is already ruled out, the value is guaranteed to be 1 or more — no need to re-check the lower end. Only the top edge is left, and 5 is included, so `weight <= 5` is enough. `weight < 5` wrongly pushes 5 into \"Heavy\"; the others re-test a lower bound that is already certain.",
     ("weight > 1 and weight < 5",
      "weight <= 5",
@@ -188,7 +188,7 @@ add(2, "medium", "apply", "elif-multi-way-branching",
     "B")
 
 # Q13 - choosing input that exposes a str-vs-int bug
-add(2, "hard", "analyze", "input-validation",
+add(2, "medium", "analyze", "input-validation",
     "During testing, this age check is always called with whole numbers, and every call passes. But in the real app the value comes straight from `input()`:\n\n"
     "```python\ndef check_can_vote(age):\n    return \"Eligible\" if age >= 18 else \"Not eligible\"\n```\n\n"
     "Which single call behaves like the real app and reveals the hidden problem?",
@@ -295,7 +295,7 @@ add(2, "medium", "understand", "elif-multi-way-branching",
     "A")
 
 # Q22 - condition order bug
-add(2, "hard", "analyze", "elif-multi-way-branching",
+add(2, "medium", "analyze", "elif-multi-way-branching",
     "A data plan charges: up to 2 GB is free, up to 10 GB is ₹100, over 10 GB is ₹300. A user on 1.5 GB — clearly free — was charged ₹100:\n\n"
     "```python\ngb = 1.5\nif gb <= 10:\n    charge = 100\nelif gb <= 2:\n    charge = 0\nelse:\n    charge = 300\nprint(charge)\n```\n\n"
     "Why was the free user charged?",
@@ -343,7 +343,7 @@ add(2, "medium", "understand", "truthiness-and-boolean-logic",
     "A")
 
 # Q26 - tracing multiple conditions in a chain
-add(2, "hard", "analyze", "truthiness-and-boolean-logic",
+add(2, "medium", "analyze", "truthiness-and-boolean-logic",
     "A dispatcher checks a robot in order. Right now it has an order but no free slot yet:\n\n"
     "```python\nhas_order = True\nslot_free = False\nzone = \"\"\n\nif has_order and slot_free:\n    print(\"Robot dispatched\")\nelif has_order and not slot_free:\n    print(\"Order queued — waiting for a slot\")\nelif not has_order and zone:\n    print(\"Idle move to zone\")\nelse:\n    print(\"Robot idle\")\n```\n\n"
     "Which one line prints?",
@@ -354,16 +354,16 @@ add(2, "hard", "analyze", "truthiness-and-boolean-logic",
      "Robot dispatched"),
     "B")
 
-# Q27 - truthiness of the number 0
-add(2, "easy", "understand", "truthiness-and-boolean-logic",
-    "A phone hides its alert badge when nothing is unread. Right now the unread counter is 0:\n\n"
-    "```python\nnotifications = 0\nif notifications:\n    print(\"You have new alerts\")\nelse:\n    print(\"No new alerts\")\n```\n\n"
-    "What prints?",
-    "The number `0` is falsy, so `if notifications:` is False and the `else` runs, printing `No new alerts`. Any other number would be truthy and show the alert.",
-    ("You have new alerts — any number is truthy",
-     "An error — a number is not a boolean",
-     "No new alerts — 0 is falsy",
-     "You have new alerts — 0 still counts as something"),
+# Q27 - flow continues after a skipped if block
+add(2, "easy", "understand", "the-if-statement",
+    "A quiz records every result, but prints `Passed` only for scores of 50 or more:\n\n"
+    "```python\nscore = 45\nif score >= 50:\n    print(\"Passed\")\nprint(\"Result recorded\")\n```\n\n"
+    "What does the program print?",
+    "`score >= 50` is False, so Python skips the indented `print(\"Passed\")`. The final print is outside the `if` block, so it still runs. The program prints only `Result recorded`.",
+    ("Passed only",
+     "Nothing",
+     "Result recorded only",
+     "Passed, then Result recorded"),
     "C")
 
 # Q28 - completing an inclusive-range condition (rule shown by which values count)
@@ -415,7 +415,7 @@ add(2, "easy", "apply", "the-if-statement",
     "C")
 
 # Q32 - equivalence: two ifs with opposite conditions vs if-else
-add(2, "hard", "analyze", "if-else",
+add(2, "medium", "analyze", "if-else",
     "A reviewer worries the two-`if` heater code might set the value twice, or disagree with the `if`/`else` version for some temperature:\n\n"
     "```python\n# Version A\nif temp < 18:\n    heater = \"ON\"\nelse:\n    heater = \"OFF\"\n\n# Version B\nif temp < 18:\n    heater = \"ON\"\nif temp >= 18:\n    heater = \"OFF\"\n```\n\n"
     "The two conditions are opposites. Can the versions ever give different results?",
@@ -474,16 +474,16 @@ add(2, "medium", "understand", "input-validation",
      "The size check stops it — File too large"),
     "D")
 
-# Q37 - truthiness of None
-add(2, "easy", "understand", "truthiness-and-boolean-logic",
-    "A new profile has no photo yet, so `photo` is `None`. A designer expects the default avatar to show:\n\n"
-    "```python\nphoto = None\nif photo:\n    print(\"Showing photo\")\nelse:\n    print(\"Showing default avatar\")\n```\n\n"
-    "What prints?",
-    "`None` is falsy, so `if photo:` is False and the `else` runs, printing `Showing default avatar` — just as the designer expects. `None` is Python's way of saying \"no value\", so it counts as absent rather than causing an error.",
-    ("Showing photo — None is truthy",
-     "Showing default avatar — None is falsy",
-     "An error — photo has no value",
-     "Nothing — None skips both branches"),
+# Q37 - match without a catch-all
+add(2, "easy", "understand", "match-case",
+    "A menu handles choices `\"1\"` and `\"2\"`, but it has no catch-all case. The user enters `\"9\"`:\n\n"
+    "```python\nchoice = \"9\"\nmatch choice:\n    case \"1\":\n        print(\"Balance\")\n    case \"2\":\n        print(\"Deposit\")\nprint(\"Menu closed\")\n```\n\n"
+    "What does the program print?",
+    "Neither named case matches `\"9\"`, and there is no `case _`, so the `match` block prints nothing. Execution then continues after the block and prints `Menu closed`.",
+    ("Balance, then Menu closed",
+     "Menu closed only",
+     "An error because case _ is required",
+     "Nothing"),
     "B")
 
 # Q38 - analysing a nested chain
@@ -498,16 +498,16 @@ add(2, "medium", "understand", "nested-conditions-and-guard-clauses",
      "Please check in first"),
     "A")
 
-# Q39 - operator precedence with no brackets
-add(2, "hard", "analyze", "truthiness-and-boolean-logic",
-    "A notification rule has no brackets. Here `urgent` is True, `weekend` is False, and `muted` is True:\n\n"
-    "```python\nweekend = False\nurgent = True\nmuted = True\nif urgent or weekend and not muted:\n    print(\"Notify user\")\nelse:\n    print(\"Stay silent\")\n```\n\n"
-    "What prints? (Order: `not` first, then `and`, then `or`.)",
-    "Work inside-out: `weekend and not muted` → `False and (not True)` → `False and False` → False. The line becomes `urgent or False` → `True or False` → True, so it prints `Notify user`. `or` needs only one side to be True.",
-    ("Stay silent — being muted stops all alerts",
-     "Nothing — the operators cancel out",
-     "Notify user — urgent is True, and or needs only one true side",
-     "An error — you cannot mix and and or"),
+# Q39 - preserving safe validation order while flattening nested logic
+add(2, "hard", "analyze", "input-validation",
+    "A registration form first checks whether an age entry contains only digits. It converts the entry only after that check succeeds:\n\n"
+    "```python\nentry = input(\"Age: \")\nif entry.isdigit():\n    age = int(entry)\n    if age >= 18:\n        print(\"Accepted\")\n    else:\n        print(\"Must be 18 or older\")\nelse:\n    print(\"Digits only\")\n```\n\n"
+    "Which flat rewrite preserves all three outcomes without trying `int(entry)` on invalid text?",
+    "The safe order is: reject non-digits first, convert only in the remaining branches, then separate adults from under-18 entries. Option C does exactly that. The other rewrites either convert invalid text too early, accept every digit-only entry without checking the age, or attach the final message to the wrong condition.",
+    ("`if int(entry) >= 18: print(\"Accepted\")`\n`elif not entry.isdigit(): print(\"Digits only\")`\n`else: print(\"Must be 18 or older\")`",
+     "`if entry.isdigit(): print(\"Accepted\")`\n`elif int(entry) < 18: print(\"Must be 18 or older\")`\n`else: print(\"Digits only\")`",
+     "`if not entry.isdigit(): print(\"Digits only\")`\n`elif int(entry) < 18: print(\"Must be 18 or older\")`\n`else: print(\"Accepted\")`",
+     "`if not entry.isdigit(): print(\"Digits only\")`\n`elif int(entry) >= 18: print(\"Must be 18 or older\")`\n`else: print(\"Accepted\")`"),
     "C")
 
 # Q40 - truthiness in a compound and condition
