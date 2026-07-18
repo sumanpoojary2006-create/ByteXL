@@ -65,15 +65,16 @@ add(1, "easy", "apply", "the-if-statement",
      "cart_total == 999"),
     "A")
 
-# Q3 - identifying an incorrect boundary condition (infer boundary from example)
-add(1, "medium", "analyze", "the-if-statement",
-    "A cinema gives a child ticket to anyone under 13. So a 12-year-old gets one, but a 13-year-old does not. Four coders wrote the age check in different ways, and only one of them still hands a child ticket to a 13-year-old.\n\n"
-    "Which condition is the wrong one?",
-    "The cut-off is 13: a 12-year-old passes, a 13-year-old fails. `age <= 13` is True at 13, so it wrongly gives the child ticket — that is the broken one. `age < 13` and `age <= 12` both stop at 12, and `age < 13 and age >= 0` is the same rule with a lower floor.",
-    ("age < 13",
-     "age <= 13",
-     "age < 13 and age >= 0",
-     "age <= 12"),
+# Q3 - elif ordering: the first true condition wins
+add(1, "medium", "analyze", "elif-multi-way-branching",
+    "A grading chain should label 90 and above as \"A\", 75-89 as \"B\", and 60-74 as \"C\". A developer writes the checks from the lowest boundary upward, and a top scorer of 95 comes out labelled \"C\":\n\n"
+    "```python\nmarks = 95\nif marks >= 60:\n    print(\"C\")\nelif marks >= 75:\n    print(\"B\")\nelif marks >= 90:\n    print(\"A\")\n```\n\n"
+    "Why does 95 print \"C\"?",
+    "An elif chain is checked top to bottom, and the first true condition wins — every branch after it is skipped. For 95, `marks >= 60` is already true, so it prints \"C\" and never reaches the checks for \"B\" or \"A\". The fix is to order the conditions from the highest threshold down.",
+    ("Because 95 is not greater than 90",
+     "Because the first true condition wins — marks >= 60 matches first, so the rest are skipped",
+     "Because an elif chain prints every branch that is true",
+     "Because the else branch is missing"),
     "B")
 
 # Q4 - spot the boundary bug (from a complaint)
