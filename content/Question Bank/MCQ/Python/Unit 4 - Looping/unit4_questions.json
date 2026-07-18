@@ -364,13 +364,13 @@
     "difficulty": "hard",
     "bloom": "analyze",
     "subtopic": "nested-loops-grids-and-patterns",
-    "description": "A status board builds two rows:\n\n```python\nfor row in range(2):\n    for column in range(3):\n        print(row, end=\"\")\n    print()\n```\n\nWhich layout appears?",
-    "explanation": "For outer row 0, the inner loop prints `0` three times on one line. The empty `print()` starts a new line. The second outer pass prints `1` three times. The layout is `000` above `111`.",
+    "description": "A number pattern should grow by one digit on each row:\n\n```python\nfor row in range(1, 4):\n    for number in range(1, row + 1):\n        print(number, end=\"\")\n    print()\n```\n\nWhich pattern is printed?",
+    "explanation": "The outer loop creates rows 1, 2, and 3. On each row, the inner range ends at `row + 1`, so it prints the numbers from 1 through the current row. The resulting pattern is `1`, then `12`, then `123`.",
     "options": [
-      "`01` on each of three lines",
-      "`000` on line 1; `111` on line 2",
-      "`012` on each of two lines",
-      "`000111` on one line"
+      "`123` on each of three lines",
+      "`1` on line 1; `12` on line 2; `123` on line 3",
+      "`1` on line 1; `22` on line 2; `333` on line 3",
+      "`123` on a single line"
     ],
     "answer": "B"
   },
@@ -499,13 +499,13 @@
     "difficulty": "hard",
     "bloom": "analyze",
     "subtopic": "nested-loops-grids-and-patterns",
-    "description": "A grid scan stops each row when it reaches column 3:\n\n```python\nfor row in range(1, 4):\n    for column in range(1, 5):\n        if column == 3:\n            break\n        print(row, column)\n```\n\nHow many pairs print, and does the outer loop stop?",
-    "explanation": "For each of the three rows, columns 1 and 2 print, then `break` exits only the inner loop at column 3. The outer loop continues with the next row. That produces 3 × 2 = 6 pairs.",
+    "description": "A banner uses a descending `range()` to print a shrinking star pattern:\n\n```python\nfor row in range(4, 0, -1):\n    for star in range(row):\n        print(\"*\", end=\"\")\n    print()\n```\n\nWhich pattern is produced?",
+    "explanation": "The outer loop supplies 4, 3, 2, then 1. The inner loop prints exactly `row` stars before the empty `print()` starts the next line. Therefore the rows shrink from four stars to one star.",
     "options": [
-      "2 pairs; both loops stop at column 3",
-      "3 pairs; one pair prints per row",
-      "6 pairs; only the inner loop stops each time",
-      "12 pairs; `break` has no effect in nested loops"
+      "One row containing ten stars",
+      "Rows containing 1, 2, 3, then 4 stars",
+      "Rows containing 4, 3, 2, then 1 star",
+      "Four rows containing four stars each"
     ],
     "answer": "C"
   },
@@ -589,13 +589,13 @@
     "difficulty": "hard",
     "bloom": "analyze",
     "subtopic": "nested-loops-grids-and-patterns",
-    "description": "Two versions each print six `X` characters:\n\n```python\n# Version A\nfor row in range(2):\n    for column in range(3):\n        print(\"X\", end=\"\")\n    print()\n\n# Version B\nfor item in range(6):\n    print(\"X\", end=\"\")\n```\n\nAre their visible results equivalent?",
-    "explanation": "Both versions print six characters, but Version A uses the outer loop to create two lines of three `X` characters. Version B never prints a newline, so all six appear on one line. Equal counts do not make the layouts equivalent.",
+    "description": "A display prints spaces before stars to align a three-row pattern:\n\n```python\nfor row in range(1, 4):\n    for space in range(3 - row):\n        print(\" \", end=\"\")\n    for star in range(row):\n        print(\"*\", end=\"\")\n    print()\n```\n\nWhich description matches the output?",
+    "explanation": "The first inner loop prints 2, 1, then 0 leading spaces, while the second prints 1, 2, then 3 stars. The decreasing indentation keeps the final star of every row aligned, producing a right-aligned growing triangle.",
     "options": [
-      "Yes; any six printed characters have the same layout",
-      "Yes; both create two rows of three",
-      "No; Version A prints only three characters",
-      "No; A makes two rows and B makes one line"
+      "A left-aligned triangle with 1, 2, then 3 stars",
+      "A shrinking triangle with 3, 2, then 1 star",
+      "A 3 by 3 square with spaces after each star",
+      "A right-aligned triangle with 1, 2, then 3 stars"
     ],
     "answer": "D"
   }
