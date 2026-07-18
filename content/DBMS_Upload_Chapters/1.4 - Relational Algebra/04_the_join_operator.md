@@ -220,6 +220,12 @@ Conceptually, then, a `join` is nothing more exotic than "pair everything with e
   </tbody>
 </table>
 
+## Your Turn: Trace the Missing Student
+
+Farah adds a fourth enrollment `row` for ST03, Dev Sharma, in course SQL201. If she now `joins` Students and Enrollments on student_id, how many `rows` does the result have, and does Dev Sharma still get left out the way he was before?
+
+The `join` now produces four `rows` instead of three, since the cartesian product of three students against four enrollment `rows` yields matching pairs wherever the two student_id values agree, and with Dev Sharma's new enrollment added, ST03 now has a genuine match to keep. Dev Sharma no longer gets left out, because his `row` in Students finally has a corresponding `row` in Enrollments to pair with, exactly the way ST01 and ST02 always did, once his missing enrollment record is filled in.
+
 ## Conclusion
 
 A `join` takes two relations that each hold part of an answer and combines them into one, by first considering every possible pairing of `rows` and then keeping only the pairings whose matching condition genuinely holds, most commonly that a shared `column` agrees between the two sides.

@@ -35,6 +35,46 @@ The order history, preferences, and loyalty progress would never have been at ri
 
 ![Soft delete hiding a row with deleted_at and restoring it instead of erasing it permanently](images/08_soft_delete_deleted_at_restore.png)
 
+Here is a Customers table with all three audit columns Farah's tech lead wishes had existed before Rekha's account vanished, followed by the soft delete itself and the query that keeps deleted customers out of everyday view.
+
+```postgresql file=init.sql
+CREATE TABLE customers (
+    customer_id  INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    full_name    TEXT NOT NULL,
+    created_at   TIMESTAMP NOT NULL DEFAULT now(),
+    updated_at   TIMESTAMP NOT NULL DEFAULT now(),
+    deleted_at   TIMESTAMP
+);
+
+INSERT INTO customers (full_name) VALUES
+    ('Rekha Menon'),
+    ('Ilyas Bakery Supplies');
+```
+
+The active file performs the soft delete, the weekend cleanup script's job done safely this time, only marking `deleted_at`, never removing the row:
+
+```postgresql with=init.sql
+UPDATE customers
+SET deleted_at = NOW()
+WHERE full_name = 'Rekha Menon';
+```
+
+Now the everyday application query filters the soft-deleted row out, exactly the habit every future read has to remember:
+
+```postgresql with=init.sql
+SELECT customer_id, full_name, created_at, deleted_at
+FROM customers
+WHERE deleted_at IS NULL;
+```
+
+Expected output:
+
+| customer_id | full_name | created_at | deleted_at |
+| ------------: | ---------------------- | ------------------- | ---------- |
+| 2 | Ilyas Bakery Supplies | 2026-07-18 10:02:00 | |
+
+Rekha Menon's row is excluded from this active view, not erased, so support could restore her account in seconds by clearing `deleted_at` back to `NULL`, exactly what Farah wished she could have done on that Tuesday phone call.
+
 ## The Tradeoffs Nobody Should Skip Past
 
 - Soft deletes are not a free upgrade, and Farah's tech lead is careful to walk through the cost alongside the benefit.
@@ -102,6 +142,12 @@ The order history, preferences, and loyalty progress would never have been at ri
     </tr>
   </tbody>
 </table>
+
+## Your Turn: Design the Recovery Path
+
+A library's Members table currently has no audit columns and deletes a row outright when a membership is cancelled. Propose the three columns to add, and describe, in one sentence, exactly what a librarian would do to restore a member who was cancelled by mistake yesterday.
+
+A working answer: add `created_at` and `updated_at`, filled in automatically on insert and on every change, plus a nullable `deleted_at` that stays empty for active members and gets stamped with the cancellation moment instead of triggering a real delete. To restore a mistakenly cancelled member, the librarian would find the row by name, confirm `deleted_at` was set yesterday, and simply clear that single timestamp back to `NULL`, the same one-column fix that would have saved Farah's entire phone call with Rekha Menon.
 
 ## Conclusion
 

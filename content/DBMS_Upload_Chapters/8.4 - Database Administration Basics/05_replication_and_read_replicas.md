@@ -8,6 +8,20 @@ A production system serving real, sustained traffic eventually outgrows what one
 
 PostgreSQL's standard replication approach relies on exactly the mechanism covered in the `recovery` unit: the `write-ahead log`. A `replica` continuously receives the same `WAL` records the primary server generates, and replays them, effectively performing the same redo process `recovery` uses after a crash, except continuously, in near real time, against a running, healthy primary.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `shipments`
+
+| shipment_id | status |
+| --- | --- |
+| 1 | in_transit |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
@@ -17,9 +31,13 @@ CREATE TABLE shipments (
 INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit');
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 SELECT pg_current_wal_lsn() AS primary_wal_position;
 ```
+
+Expected result: PostgreSQL returns the rows described below. Compare the visible columns and row-level effect with the explanation, since security and administration settings may make some values environment-dependent.
 
 Every change made on the primary, this `INSERT` included, generates `WAL` records exactly as covered in the `recovery` unit. In a replicated setup:
 
@@ -41,6 +59,8 @@ SELECT client_addr, state, sent_lsn, replay_lsn,
 FROM pg_stat_replication;
 ```
 
+Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
+
 - `pg_stat_replication` would list one `row` per connected `replica` in a real replicated deployment
 - this example environment has none connected, so the `query` returns no `rows`, but the `columns` themselves describe exactly what matters: `sent_lsn` is how far the primary has sent `WAL`, `replay_lsn` is how far a given `replica` has actually applied it, and the difference between them is `replication lag`, the gap between "happened on the primary" and "visible on this `replica`."
 
@@ -57,6 +77,12 @@ Because a `replica` applies changes slightly after the primary generates them, t
 -- to, under heavy load or network trouble, much longer.
 SELECT status, COUNT(*) FROM shipments GROUP BY status;
 ```
+
+Expected output:
+
+| status | count |
+| --- | ---: |
+| in_transit | 1 |
 
 This is why `replicas` are typically used for read traffic that can tolerate a small amount of staleness, dashboards, analytics, reporting, exactly the kind of workload this course has repeatedly used as its running examples, while writes, and any read that absolutely requires the most current possible data, continue to go to the primary.
 
@@ -108,6 +134,8 @@ Write the `query` that would report `replication lag` in seconds rather than byt
 ```postgresql with=init.sql
 -- Write your query and comment below
 ```
+
+Expected result and verification:
 
 - `SELECT client_addr, replay_lag FROM pg_stat_replication;` reports lag as a time interval directly
 - a reporting dashboard is a strong candidate for querying a `replica` because its workload is read-only and can comfortably tolerate a few seconds of staleness, freeing the primary to dedicate its full capacity to the writes and time-sensitive reads that genuinely need up-to-the-moment accuracy.

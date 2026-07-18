@@ -8,9 +8,29 @@ Arjun manages pricing for a small electronics store, and the `products` `table` 
 
 SQL's built-in **numeric `functions`** handle exactly this kind of cleanup, right inside the `query`.
 
+![ROUND turning an over-precise selling price into a customer-ready price](images/03_round_price_display_precision.png)
+
 ## Rounding to a Sensible Precision
 
 The `products` `table` stores prices with more decimal precision than any customer needs to see.
+
+Before applying any function, inspect the source data:
+
+| product_id | product_name | cost_price | selling_price | stock_weight_kg | stock_units |
+| ---------: | ----------------- | ---------: | ------------: | --------------: | ----------: |
+| 1 | Wireless Mouse | 349.6789 | 599.9950 | 0.1450 | 24 |
+| 2 | USB-C Cable | 89.3333 | 149.0000 | 0.0500 | 13 |
+| 3 | Bluetooth Speaker | 1120.4567 | 1899.9900 | 0.6200 | 18 |
+| 4 | Laptop Stand | 610.1111 | 999.5000 | 1.3000 | 7 |
+| 5 | Webcam | 780.8888 | -1249.0000 | 0.2100 | 12 |
+
+Arjun wants customer-ready whole-number prices. The query is `SELECT product_name, selling_price, ROUND(selling_price, 0) AS rounded_price FROM products;`. The second argument, `0`, tells PostgreSQL that no decimal places should remain.
+
+## Hands-On Practice: Round Product Prices
+
+The OneCompiler exercise uses two files. `init.sql` creates and populates the displayed `products` table. The active query file contains only the numeric-function query being practised. Where a query does not include `ORDER BY`, the database may return the correct rows in a different order from the example output.
+
+First, `init.sql` prepares the dataset:
 
 ```postgresql file=init.sql
 CREATE TABLE products (
@@ -18,30 +38,45 @@ CREATE TABLE products (
     product_name TEXT,
     cost_price NUMERIC(10, 4),
     selling_price NUMERIC(10, 4),
-    stock_weight_kg NUMERIC(10, 4)
+    stock_weight_kg NUMERIC(10, 4),
+    stock_units INTEGER
 );
 
-INSERT INTO products (product_id, product_name, cost_price, selling_price, stock_weight_kg) VALUES
-(1, 'Wireless Mouse', 349.6789, 599.9950, 0.1450),
-(2, 'USB-C Cable', 89.3333, 149.0000, 0.0500),
-(3, 'Bluetooth Speaker', 1120.4567, 1899.9900, 0.6200),
-(4, 'Laptop Stand', 610.1111, 999.5000, 1.3000),
-(5, 'Webcam', 780.8888, -1249.0000, 0.2100);
+INSERT INTO products (product_id, product_name, cost_price, selling_price, stock_weight_kg, stock_units) VALUES
+(1, 'Wireless Mouse', 349.6789, 599.9950, 0.1450, 24),
+(2, 'USB-C Cable', 89.3333, 149.0000, 0.0500, 13),
+(3, 'Bluetooth Speaker', 1120.4567, 1899.9900, 0.6200, 18),
+(4, 'Laptop Stand', 610.1111, 999.5000, 1.3000, 7),
+(5, 'Webcam', 780.8888, -1249.0000, 0.2100, 12);
 ```
+
+Then the active query file rounds each selling price:
+
+Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
 
 ```postgresql with=init.sql
 SELECT product_name, selling_price, ROUND(selling_price, 0) AS rounded_price
 FROM products;
 ```
 
+Expected output:
+
+| product_name | selling_price | rounded_price |
+| ----------------- | ------------: | ------------: |
+| Wireless Mouse | 599.9950 | 600 |
+| USB-C Cable | 149.0000 | 149 |
+| Bluetooth Speaker | 1899.9900 | 1900 |
+| Laptop Stand | 999.5000 | 1000 |
+| Webcam | -1249.0000 | -1249 |
+
 - `ROUND(value, 0)` rounds `selling_price` to the nearest whole number, which is what a price tag needs.
 - The second argument controls how many decimal places survive the rounding, so `ROUND(selling_price, 2)` would keep two decimal places instead of zero, useful when a currency still needs cents shown.
-
-![ROUND turning an over-precise selling price into a customer-ready price](images/03_round_price_display_precision.png)
 
 ## Rounding Up and Rounding Down on Purpose
 
 Sometimes a plain round is the wrong choice. If Arjun is calculating how many boxes are needed to ship a fractional number of kilograms, rounding down would leave stock behind, so he needs to always round up.
+
+He compares both directions with `SELECT product_name, stock_weight_kg, CEIL(stock_weight_kg) AS boxes_needed_if_1kg_each, FLOOR(stock_weight_kg) AS full_kg_only FROM products;`. `CEIL` answers the capacity question, while `FLOOR` counts only complete kilograms.
 
 ```postgresql with=init.sql
 SELECT product_name, stock_weight_kg,
@@ -50,12 +85,22 @@ SELECT product_name, stock_weight_kg,
 FROM products;
 ```
 
+Expected output:
+
+| product_name | stock_weight_kg | boxes_needed_if_1kg_each | full_kg_only |
+| ----------------- | --------------: | ------------------------: | -----------: |
+| Wireless Mouse | 0.1450 | 1 | 0 |
+| USB-C Cable | 0.0500 | 1 | 0 |
+| Bluetooth Speaker | 0.6200 | 1 | 0 |
+| Laptop Stand | 1.3000 | 2 | 1 |
+| Webcam | 0.2100 | 1 | 0 |
+
 - `CEIL` (short for ceiling) always rounds up to the next whole number, so 0.145 becomes 1 and 1.3 becomes 2, guaranteeing enough capacity.
 - `FLOOR` does the opposite, always rounding down, which is useful when Arjun only wants to count complete, full kilograms and discard the leftover fraction.
 
 ## Working with Distance from Zero and Remainders
 
-The webcam `row` has a `selling_price` of -1249.0000, a data-entry mistake from a refund adjustment that got applied to the wrong `column`. Before fixing the source data, Arjun wants to see how far off each price is from zero, and separately, he wants to know which products can be packed into cartons of 6 with none left over.
+The webcam `row` has a `selling_price` of -1249.0000, a data-entry mistake from a refund adjustment that got applied to the wrong `column`. Before fixing the source data, Arjun wants to measure its distance from zero. The query is `SELECT product_name, selling_price, ABS(selling_price) AS positive_price FROM products WHERE selling_price < 0;`.
 
 ```postgresql with=init.sql
 SELECT product_name, selling_price, ABS(selling_price) AS positive_price
@@ -63,13 +108,31 @@ FROM products
 WHERE selling_price < 0;
 ```
 
+Expected output:
+
+| product_name | selling_price | positive_price |
+| ------------ | ------------: | -------------: |
+| Webcam | -1249.0000 | 1249.0000 |
+
+Arjun also packs stock into cartons of six units. The query `SELECT product_name, stock_units, stock_units % 6 AS units_left_over FROM products;` returns the remainder after forming as many complete cartons as possible.
+
 ```postgresql with=init.sql
-SELECT product_id, product_name, product_id % 6 AS remainder_when_packed_in_sixes
+SELECT product_name, stock_units, stock_units % 6 AS units_left_over
 FROM products;
 ```
 
+Expected output:
+
+| product_name | stock_units | units_left_over |
+| ----------------- | ----------: | --------------: |
+| Wireless Mouse | 24 | 0 |
+| USB-C Cable | 13 | 1 |
+| Bluetooth Speaker | 18 | 0 |
+| Laptop Stand | 7 | 1 |
+| Webcam | 12 | 0 |
+
 - `ABS` strips the sign off a number, turning -1249.0000 into 1249.0000, which is what flagged the webcam `row` as suspicious in the first place: a price should never be negative.
-- The `%` operator, also written as `MOD(a, b)` in some `databases`, returns the remainder of a division, and here it shows which product IDs would divide evenly into groups of 6 (a remainder of 0) versus which would not.
+- The `%` operator, also written as `MOD(a, b)` in some `databases`, returns the remainder of a division. A remainder of 0 means every unit fits into complete cartons of six; a remainder of 1 means one unit is left over.
 
 ![CEIL, FLOOR, ABS, and remainder reshaping numeric values for reports](images/04_numeric_functions_rounding_abs_mod.png)
 
@@ -151,11 +214,23 @@ Seeing a handful of inputs and outputs side by side makes each `function`'s beha
 
 Arjun needs a margin report: for every product, show the product name and the profit margin (`selling_price - cost_price`) rounded to two decimal places, aliased as `margin`. Write that `query` against the `products` `table` above.
 
+The calculation happens before rounding: `ROUND(selling_price - cost_price, 2)` subtracts the stored cost from the selling price and then keeps two decimal places.
+
 ```postgresql with=init.sql
 -- Write your query below
 ```
 
 If your `query` is `SELECT product_name, ROUND(selling_price - cost_price, 2) AS margin FROM products;`, the webcam `row` will show a large negative margin, one more confirmation that its price needs a manual fix.
+
+Expected output:
+
+| product_name | margin |
+| ----------------- | -------: |
+| Wireless Mouse | 250.32 |
+| USB-C Cable | 59.67 |
+| Bluetooth Speaker | 779.53 |
+| Laptop Stand | 389.39 |
+| Webcam | -2029.89 |
 
 ## Conclusion
 

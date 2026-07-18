@@ -12,6 +12,33 @@ A **`trigger`** delivers exactly this: a piece of logic the `database` runs auto
 
 A `trigger` is built from two pieces: a special kind of `function` describing what to do, and a `CREATE TRIGGER` statement attaching that `function` to a specific `table` and event.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `shipments`
+
+| shipment_id | status |
+| --- | --- |
+| 1 | in_transit |
+| 2 | in_transit |
+
+The setup also creates the following empty supporting tables. Later statements populate them as the operation runs.
+
+### Empty `shipment_log` table
+
+| Column | Definition in the setup |
+| --- | --- |
+| `log_id` | `SERIAL PRIMARY KEY` |
+| `shipment_id` | `INTEGER` |
+| `old_status` | `TEXT` |
+| `new_status` | `TEXT` |
+| `logged_at` | `TIMESTAMP DEFAULT NOW()` |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
@@ -28,6 +55,8 @@ CREATE TABLE shipment_log (
 
 INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'in_transit');
 ```
+
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
 ```postgresql with=init.sql
 CREATE FUNCTION log_status_change()
@@ -46,6 +75,8 @@ AFTER UPDATE ON shipments
 FOR EACH ROW
 EXECUTE FUNCTION log_status_change();
 ```
+
+Expected result: `CREATE FUNCTION` and `CREATE TRIGGER` return no rows; they arm the logging `trigger` on `shipments` without touching any data yet. The next section fires an `UPDATE` and shows the row it writes into `shipment_log`.
 
 - `RETURNS TRIGGER` marks this as a special `function` meant to be called by a `trigger`, not directly by a `SELECT`.
 - Inside it, `OLD` refers to the `row`'s values before the change, and `NEW` refers to its values after, both automatically available inside a `trigger` `function` without being declared anywhere.
@@ -76,6 +107,12 @@ UPDATE shipments SET status = 'delivered' WHERE shipment_id = 1;
 
 SELECT * FROM shipment_log;
 ```
+
+Expected output:
+
+| log_id | shipment_id | old_status | new_status | logged_at |
+| --- | --- | --- | --- | --- |
+| 1 | 1 | in_transit | delivered | *(timestamp of the `UPDATE`)* |
 
 A plain `UPDATE`, with no `procedure`, no special syntax, no cooperation from Devraj's colleague required, produced a log entry automatically, capturing both the old status, `in_transit`, and the new one, `delivered`. This is the core advantage a `trigger` has over the `procedure` from earlier in this chapter: the logging behavior is now a property of the `table` itself, impossible to accidentally skip.
 
@@ -125,7 +162,13 @@ EXECUTE FUNCTION prevent_invalid_status();
 SELECT shipment_id, status FROM shipments WHERE shipment_id = 2;
 ```
 
-This `UPDATE` is rejected outright, with the `trigger`'s own `RAISE EXCEPTION` message, before the invalid status ever reaches the `table`, since `BEFORE UPDATE` runs ahead of the actual write and can refuse it entirely by raising an error. This is a form of validation logic that goes beyond what a plain `CHECK` `constraint` can express, since it can reference custom error messages and arbitrary procedural logic, not just a fixed boolean condition.
+Expected output:
+
+| shipment_id | status |
+| --- | --- |
+| 2 | in_transit |
+
+Shipment 2 is still shown at its original status because the invalid `UPDATE` above is commented out rather than actually run; had it run, `trg_validate_status` would have raised `Invalid status: lost_in_space` and left shipment 2 exactly this way anyway, since the rejected write never reaches the `table`. This `UPDATE` is rejected outright, with the `trigger`'s own `RAISE EXCEPTION` message, before the invalid status ever reaches the `table`, since `BEFORE UPDATE` runs ahead of the actual write and can refuse it entirely by raising an error. This is a form of validation logic that goes beyond what a plain `CHECK` `constraint` can express, since it can reference custom error messages and arbitrary procedural logic, not just a fixed boolean condition.
 
 ## Triggers Can Make a Joined View Writable
 
@@ -193,7 +236,13 @@ UPDATE shipment_status_view SET status = 'delayed' WHERE shipment_id = 1;
 SELECT * FROM shipments WHERE shipment_id = 1;
 ```
 
-Here `shipment_status_view` is a simple enough `view` to be updatable on its own, but the pattern generalizes directly to the `join`-based `view`s that cannot be, letting an `INSTEAD OF` `trigger` define exactly how a write against a complex `view` should be translated into changes on the real underlying `tables`.
+Expected output:
+
+| shipment_id | status |
+| --- | --- |
+| 1 | delayed |
+
+The `UPDATE` against `shipment_status_view` never touches the `view` directly; `trg_instead_of_update` intercepts it and runs the underlying `UPDATE shipments SET status = 'delayed' WHERE shipment_id = 1` instead, so `shipments` itself now shows shipment 1 as `delayed`. Here `shipment_status_view` is a simple enough `view` to be updatable on its own, but the pattern generalizes directly to the `join`-based `view`s that cannot be, letting an `INSTEAD OF` `trigger` define exactly how a write against a complex `view` should be translated into changes on the real underlying `tables`.
 
 ![Trigger timing options: BEFORE validates, AFTER audits, and INSTEAD OF redirects view writes](images/12_trigger_timing_before_after_instead_of.png)
 
@@ -293,6 +342,8 @@ SELECT * FROM shipments WHERE shipment_id = 1;
 
 -- Write your trigger function, trigger, and insert below
 ```
+
+Expected result and verification:
 
 A correct `trigger` `function` inserts into `shipment_log` using `NEW.shipment_id` and `NEW.status`, with `old_status` left as `NULL`, attached via `CREATE TRIGGER ... AFTER `INSERT` ON shipments FOR EACH ROW EXECUTE FUNCTION ...`; inserting a new shipment afterward produces a matching log `row` automatically, with no explicit logging statement needed at the call site.
 

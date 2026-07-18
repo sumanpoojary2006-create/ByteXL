@@ -8,6 +8,22 @@ Unlike marking a shipment delivered, this is not a "run these statements togethe
 
 The `shipments` `table` holds the raw data a shipping-cost calculation depends on.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `shipments`
+
+| shipment_id | distance_km | is_oversized |
+| --- | --- | --- |
+| 1 | 120.00 | FALSE |
+| 2 | 450.00 | TRUE |
+| 3 | 30.00 | FALSE |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
@@ -20,6 +36,8 @@ INSERT INTO shipments (shipment_id, distance_km, is_oversized) VALUES
 (2, 450.00, TRUE),
 (3, 30.00, FALSE);
 ```
+
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
 ```postgresql with=init.sql
 CREATE FUNCTION calculate_shipping_cost(distance NUMERIC, oversized BOOLEAN)
@@ -38,7 +56,7 @@ END;
 $$;
 ```
 
-`CREATE FUNCTION calculate_shipping_cost(...) RETURNS NUMERIC` declares that this routine always produces exactly one `NUMERIC` value. Inside the body:
+Expected result: `CREATE FUNCTION` returns no rows; it registers `calculate_shipping_cost` so later statements in this lesson can call it. `CREATE FUNCTION calculate_shipping_cost(...) RETURNS NUMERIC` declares that this routine always produces exactly one `NUMERIC` value. Inside the body:
 
 - `DECLARE` introduces a local variable, `base_cost`, used only within this `function`.
 - `RETURN` sends the final computed value back to whatever called the `function`.
@@ -70,6 +88,14 @@ SELECT shipment_id, distance_km, is_oversized,
 FROM shipments;
 ```
 
+Expected output:
+
+| shipment_id | distance_km | is_oversized | shipping_cost |
+| --- | ---: | --- | ---: |
+| 1 | 120.00 | FALSE | 1020.000 |
+| 2 | 450.00 | TRUE | 4325.000 |
+| 3 | 30.00 | FALSE | 255.000 |
+
 - `calculate_shipping_cost(distance_km, is_oversized)` runs once per `row`, taking that `row`'s own `column` values as arguments, and its result appears as an ordinary computed `column`, just like any built-in `function` would.
 - This is the behavior that makes `functions` so useful for exactly Devraj's problem: the shipping-cost logic now lives in one place, and every report that needs it simply calls the `function` rather than re-deriving the formula.
 
@@ -97,6 +123,12 @@ $$;
 
 SELECT calculate_shipping_cost(200.00, TRUE);
 ```
+
+Expected output:
+
+| calculate_shipping_cost |
+| ---: |
+| 2200.000 |
 
 This restriction exists precisely because a `function` is meant to be called from within a `SELECT`, potentially many times in a single `query`, one call per `row`, and allowing it to independently commit or roll back partway through would make no sense in that context; a single `SELECT` is not something that can be partially committed `row` by `row`.
 
@@ -136,6 +168,12 @@ $$;
 
 SELECT * FROM oversized_shipments();
 ```
+
+Expected output:
+
+| shipment_id | distance_km |
+| --- | ---: |
+| 2 | 450.00 |
 
 - `RETURNS TABLE (...)` declares the shape of `rows` this `function` will produce, and `RETURN QUERY` runs an actual `SELECT` inside the `function`, streaming its `rows` back as the `function`'s result.
 - Calling `oversized_shipments()` in `FROM` then behaves exactly like selecting from a `view`, except this one can accept parameters and contain more elaborate procedural logic than a plain `view`'s single `query` allows.
@@ -208,6 +246,8 @@ SELECT * FROM oversized_shipments();
 
 -- Write your function and query below
 ```
+
+Expected result and verification:
 
 A correct `function` computes `amount - (amount * discount_percent / 100)` and returns it; calling `SELECT shipment_id, apply_discount(distance_km, 10) AS discounted_distance FROM shipments;` applies it `row` by `row`, exactly the same reusable pattern `calculate_shipping_cost` demonstrated earlier.
 

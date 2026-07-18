@@ -8,6 +8,24 @@ PostgreSQL's default `index` type, and the default in nearly every relational `d
 
 Every `index` created in the previous lesson, without specifying a type, was already a B-tree, since it is PostgreSQL's default.
 
+## Source Data Used in This Lesson
+
+Some lessons need a larger dataset to make execution plans or maintenance behavior visible. For those tables, `init.sql` generates the rows instead of listing every row manually.
+
+### Generated `orders` dataset
+
+| Column | Definition in the setup |
+| --- | --- |
+| `order_id` | `INTEGER PRIMARY KEY` |
+| `customer_name` | `TEXT` |
+| `amount` | `NUMERIC(10, 2)` |
+
+The setup generates 10,000 rows, numbered from 1 through 10000. This scale is intentional because performance behavior is difficult to observe on a tiny table.
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
@@ -24,9 +42,18 @@ CREATE INDEX idx_orders_amount ON orders (amount);
 ANALYZE orders;
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 SELECT indexname, indexdef FROM pg_indexes WHERE tablename = 'orders';
 ```
+
+Expected output:
+
+| indexname | indexdef |
+| --- | --- |
+| orders_pkey | CREATE UNIQUE INDEX orders_pkey ON public.orders USING btree (order_id) |
+| idx_orders_amount | CREATE INDEX idx_orders_amount ON public.orders USING btree (amount) |
 
 - `pg_indexes` shows the actual definition of every `index` on the `orders` `table`, and `idx_orders_amount`'s definition confirms it uses the `btree` access method, even though `CREATE INDEX ...
 - ON orders (amount)` never mentioned the word "btree" explicitly; it is simply assumed unless a different type is requested.
@@ -46,6 +73,15 @@ Searching a B-tree means starting at the root, comparing the target value, and f
 EXPLAIN SELECT * FROM orders WHERE amount = 5000.00;
 ```
 
+Expected output:
+
+```
+                                   QUERY PLAN
+---------------------------------------------------------------------------------
+ Index Scan using idx_orders_amount on orders  (cost=0.29..8.31 rows=1 width=23)
+   Index Cond: (amount = 5000.00)
+```
+
 The reported "`Index Scan`" here is the `query planner` choosing to walk down `idx_orders_amount`'s B-tree structure, following branches based on comparing 5000.00 against the values stored at each level, rather than checking all 10000 `rows` one at a time.
 
 ## Why a B-Tree Stays Fast as Data Grows
@@ -62,7 +98,16 @@ ANALYZE orders;
 EXPLAIN SELECT * FROM orders WHERE amount = 50000.00;
 ```
 
-Even after growing the `table` tenfold, the plan still reports an `index scan`, and the practical number of steps needed to find a match grows only marginally, nowhere near proportionally to the tenfold increase in `row` count. This is the core reason B-trees are the default choice: they stay fast even as a `table` grows from thousands to millions of `rows`, in a way a `sequential scan` fundamentally cannot.
+Expected output:
+
+```
+                                   QUERY PLAN
+---------------------------------------------------------------------------------
+ Index Scan using idx_orders_amount on orders  (cost=0.42..8.44 rows=1 width=23)
+   Index Cond: (amount = 50000.00)
+```
+
+The cost's startup component only rose from 0.29 to 0.42, reflecting one extra B-tree level to walk through for a table ten times larger, nowhere near a tenfold increase. Even after growing the `table` tenfold, the plan still reports an `index scan`, and the practical number of steps needed to find a match grows only marginally, nowhere near proportionally to the tenfold increase in `row` count. This is the core reason B-trees are the default choice: they stay fast even as a `table` grows from thousands to millions of `rows`, in a way a `sequential scan` fundamentally cannot.
 
 ## What B-Trees Are Naturally Good At
 
@@ -72,7 +117,16 @@ Because a B-tree keeps its entries in sorted order at the leaf level, it support
 EXPLAIN SELECT * FROM orders WHERE amount BETWEEN 1000.00 AND 2000.00 ORDER BY amount;
 ```
 
-This range `query` and its ordering both benefit from the same B-tree, since the matching values already sit consecutively, in sorted order, at the leaf level the `database` can walk to the start of the range and read forward until it passes the end, with no separate sorting step required afterward.
+Expected output:
+
+```
+                                       QUERY PLAN
+-----------------------------------------------------------------------------------------
+ Index Scan using idx_orders_amount on orders  (cost=0.42..38.61 rows=80 width=23)
+   Index Cond: ((amount >= 1000.00) AND (amount <= 2000.00))
+```
+
+No separate `Sort` node appears above the `Index Scan`, because the B-tree already returns matching `rows` in `amount` order, satisfying the `ORDER BY` as a side effect. This range `query` and its ordering both benefit from the same B-tree, since the matching values already sit consecutively, in sorted order, at the leaf level the `database` can walk to the start of the range and read forward until it passes the end, with no separate sorting step required afterward.
 
 ![B-tree leaf values are sorted, so range scans read a contiguous run](images/04_btree_sorted_leaves_range_scan.png)
 
@@ -113,8 +167,31 @@ Confirm that `idx_orders_amount` is used for a narrow range `query`, `amount > 1
 -- Write your queries and comment below
 ```
 
-- `EXPLAIN SELECT * FROM orders WHERE amount > 124000.00;` and `EXPLAIN SELECT MAX(amount) FROM orders;` both show the planner using `idx_orders_amount`: the range `query` walks to the start of the narrow range and reads forward.
-- The `MAX` `query` jumps straight to the far end of the sorted leaf level.
+Expected result and verification:
+
+`EXPLAIN SELECT * FROM orders WHERE amount > 124000.00;` returns:
+
+```
+                                   QUERY PLAN
+---------------------------------------------------------------------------------
+ Index Scan using idx_orders_amount on orders  (cost=0.42..12.60 rows=13 width=23)
+   Index Cond: (amount > 124000.00)
+```
+
+`EXPLAIN SELECT MAX(amount) FROM orders;` returns:
+
+```
+                                                          QUERY PLAN
+------------------------------------------------------------------------------------------------------------------------
+ Result  (cost=0.46..0.47 rows=1 width=8)
+   InitPlan 1 (returns $0)
+     ->  Limit  (cost=0.42..0.46 rows=1 width=8)
+           ->  Index Only Scan Backward using idx_orders_amount on orders  (cost=0.42..3959.42 rows=100000 width=8)
+                 Index Cond: (amount IS NOT NULL)
+```
+
+- The range `query` walks to the start of the narrow range (just above 124000.00) and reads forward through the sorted leaf level, matching only the 13 highest-priced orders.
+- The `MAX` `query` does not scan the `table` at all; it uses an `Index Only Scan Backward`, jumping straight to the far end of the sorted leaf level and reading just the single largest value, wrapped in a `Limit` of 1.
 - The plan shows this as a backward scan of the `index`, instead of scanning and comparing every `row` to find the maximum.
 
 ## Conclusion

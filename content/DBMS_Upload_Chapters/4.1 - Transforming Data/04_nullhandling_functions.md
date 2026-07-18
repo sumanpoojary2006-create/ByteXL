@@ -11,6 +11,24 @@ Both gaps are stored as `NULL`, and both cause the same problem once Vikram trie
 
 The directory needs a phone number to display for every employee, even the ones with no secondary number recorded, Rather than leaving those `rows` blank, Vikram wants to fall back to the primary number, and if even that is missing, fall back to a placeholder.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the data they will use. The tables below show the rows loaded by the setup file.
+
+### `employees`
+
+| employee_id | full_name | primary_phone | secondary_phone | manager_id |
+| --- | --- | --- | --- | --- |
+| 1 | Neha Choudhary | 9811100001 | 9811100002 | *NULL* |
+| 2 | Rahul Bose | 9811100003 | *NULL* | 1 |
+| 3 | Ayesha Khan | *NULL* | *NULL* | 1 |
+| 4 | Manoj Tiwari | 9811100005 | 9811100005 | 2 |
+| 5 | Simran Kaur | 9811100006 | *NULL* | 2 |
+
+The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
+
+## Hands-On Setup: Prepare the Data
+
 ```postgresql file=init.sql
 CREATE TABLE employees (
     employee_id INTEGER PRIMARY KEY,
@@ -28,10 +46,22 @@ INSERT INTO employees (employee_id, full_name, primary_phone, secondary_phone, m
 (5, 'Simran Kaur', '9811100006', NULL, 2);
 ```
 
+Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
+
 ```postgresql with=init.sql
 SELECT full_name, COALESCE(secondary_phone, primary_phone, 'Not on file') AS contact_number
 FROM employees;
 ```
+
+Expected output:
+
+| full_name | contact_number |
+| --- | --- |
+| Neha Choudhary | 9811100002 |
+| Rahul Bose | 9811100003 |
+| Ayesha Khan | Not on file |
+| Manoj Tiwari | 9811100005 |
+| Simran Kaur | 9811100006 |
 
 - `COALESCE` scans its arguments left to right and returns the first one that is not `NULL`.
 - For Rahul, `secondary_phone` is `NULL`, so it falls through to `primary_phone`.
@@ -83,6 +113,16 @@ SELECT full_name, primary_phone, secondary_phone,
 FROM employees;
 ```
 
+Expected output:
+
+| full_name | primary_phone | secondary_phone | real_secondary_phone |
+| --- | --- | --- | --- |
+| Neha Choudhary | 9811100001 | 9811100002 | 9811100002 |
+| Rahul Bose | 9811100003 | *NULL* | *NULL* |
+| Ayesha Khan | *NULL* | *NULL* | *NULL* |
+| Manoj Tiwari | 9811100005 | 9811100005 | *NULL* |
+| Simran Kaur | 9811100006 | *NULL* | *NULL* |
+
 - `NULLIF(a, b)` compares its two arguments, and if they are equal, it returns `NULL`; otherwise it returns `a` unchanged.
 - For Manoj, `secondary_phone` equals `primary_phone`, so the result is `NULL` instead of a duplicate number.
 - For every other employee, the two phone values differ, so `real_secondary_phone` just passes through whatever `secondary_phone` already held.
@@ -98,6 +138,16 @@ SELECT full_name,
        COALESCE(NULLIF(secondary_phone, primary_phone), primary_phone, 'Not on file') AS best_contact_number
 FROM employees;
 ```
+
+Expected output:
+
+| full_name | best_contact_number |
+| --- | --- |
+| Neha Choudhary | 9811100002 |
+| Rahul Bose | 9811100003 |
+| Ayesha Khan | Not on file |
+| Manoj Tiwari | 9811100005 |
+| Simran Kaur | 9811100006 |
 
 - Reading from the inside out: `NULLIF` first turns Manoj's duplicated secondary number into `NULL`, then `COALESCE` steps in and falls back to his `primary_phone` since the secondary is now effectively missing.
 - Every other `row` resolves the same way it did before, since `NULLIF` only changes behavior when the two compared values are identical.
@@ -136,9 +186,23 @@ The company org chart needs a "reports to" `column`: for every employee, show th
 
 If your `query` is `SELECT full_name, COALESCE(manager_id, employee_id) AS reports_to FROM employees;`, Neha's `row` will show her own `employee_id` in the `reports_to` `column`, correctly marking her as the top of the chart with nobody above her.
 
+
+Expected output for the practice query:
+
+| full_name | reports_to |
+| --- | --- |
+| Neha Choudhary | 1 |
+| Rahul Bose | 1 |
+| Ayesha Khan | 1 |
+| Manoj Tiwari | 2 |
+| Simran Kaur | 2 |
+
 ## Conclusion
 
-- `COALESCE` and `NULLIF` are small `functions` that solve a large, recurring problem: real data has gaps, and a `query` that ignores those gaps produces blank cells, broken math, or misleading duplicates.
-- `COALESCE` fills a missing value with a fallback, and `NULLIF` turns an unwanted match into a `NULL` that `COALESCE` can then catch.
-- Vikram's directory now shows a usable number for every employee and a clean reporting line for every `row`.
-- Cleaning up individual values is one kind of transformation; choosing between entirely different outputs based on a condition is the next tool to add.
+`COALESCE` and `NULLIF` are small `functions` that solve a large, recurring problem: real data has gaps, and a `query` that ignores those gaps produces blank cells, broken math, or misleading duplicates.
+
+`COALESCE` fills a missing value with a fallback, and `NULLIF` turns an unwanted match into a `NULL` that `COALESCE` can then catch.
+
+Vikram's directory now shows a usable number for every employee and a clean reporting line for every `row`.
+
+Cleaning up individual values is one kind of transformation; choosing between entirely different outputs based on a condition is the next tool to add.

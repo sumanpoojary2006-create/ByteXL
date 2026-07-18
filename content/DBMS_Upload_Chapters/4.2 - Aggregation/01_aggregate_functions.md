@@ -13,6 +13,27 @@ None of those questions can be answered by looking at one `row` of the `orders` 
 
 The `orders` `table` holds one `row` per order placed on the bookstore's site.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the data they will use. The tables below show the rows loaded by the setup file.
+
+### `orders`
+
+| order_id | customer_name | category | amount | order_date |
+| --- | --- | --- | --- | --- |
+| 1 | Ishita Rao | Fiction | 450 | 2025-04-02 |
+| 2 | Vivek Menon | Non-Fiction | 899 | 2025-04-03 |
+| 3 | Ishita Rao | Fiction | 320 | 2025-04-05 |
+| 4 | Aman Gupta | Children | 210 | 2025-04-06 |
+| 5 | Sonal Deshpande | Non-Fiction | 1450 | 2025-04-08 |
+| 6 | Vivek Menon | Fiction | 610 | 2025-04-10 |
+| 7 | Aman Gupta | Children | 175 | 2025-04-12 |
+| 8 | Ishita Rao | Non-Fiction | 990 | 2025-04-14 |
+
+The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
+
+## Hands-On Setup: Prepare the Data
+
 ```postgresql file=init.sql
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
@@ -33,10 +54,18 @@ INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUE
 (8, 'Ishita Rao', 'Non-Fiction', 990.00, '2025-04-14');
 ```
 
+Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
+
 ```postgresql with=init.sql
 SELECT COUNT(*) AS total_orders
 FROM orders;
 ```
+
+Expected output:
+
+| total_orders |
+| --- |
+| 8 |
 
 - `COUNT(*)` counts every `row` in the result set, regardless of what any `column` contains, and here it answers Priya's first question directly: the bookstore received 8 orders.
 - `COUNT(column_name)` behaves slightly differently, counting only the `rows` where that specific `column` is not `NULL`, which matters once a `table` has optional fields.
@@ -52,6 +81,12 @@ SELECT SUM(amount) AS total_revenue, AVG(amount) AS average_order_value
 FROM orders;
 ```
 
+Expected output:
+
+| total_revenue | average_order_value |
+| --- | --- |
+| 5104 | 638 |
+
 - `SUM` adds up every value in the specified `column` across all matching `rows`, giving Priya total revenue in one number.
 - `AVG` divides that same sum by the count of `rows` automatically, giving the average order value without Priya having to calculate it by hand from the other two numbers.
 - Both `functions` ignore `NULL` values in the `column` they are summarizing, rather than treating a `NULL` as zero.
@@ -66,6 +101,12 @@ Priya's last question, the biggest single sale, needs a `function` that looks at
 SELECT MIN(amount) AS smallest_order, MAX(amount) AS largest_order
 FROM orders;
 ```
+
+Expected output:
+
+| smallest_order | largest_order |
+| --- | --- |
+| 175 | 1450 |
 
 - `MIN` returns the smallest value found in the `column` across all matching `rows`, and `MAX` returns the largest.
 - Here, the smallest order is Aman Gupta's 175.00 children's book purchase, and the largest is Sonal Deshpande's 1450.00 non-fiction order.
@@ -83,6 +124,12 @@ SELECT COUNT(*) AS total_orders,
        MAX(amount) AS largest_order
 FROM orders;
 ```
+
+Expected output:
+
+| total_orders | total_revenue | average_order_value | smallest_order | largest_order |
+| --- | --- | --- | --- | --- |
+| 8 | 5104 | 638 | 175 | 1450 |
 
 This single `query` answers every question the founders originally asked, in one pass over the `table`, with `ROUND` from the previous chapter cleaning up the average to two decimal places. This is the shape a founder-facing summary dashboard `query` usually takes: a handful of `aggregate functions`, no `GROUP BY` yet, producing exactly one summary `row` for the whole `table`.
 
@@ -135,8 +182,17 @@ The founders now want to know the total number of orders placed and the total re
 
 If your `query` filters with `WHERE category = 'Fiction'` before aggregating, it returns 3 orders and 1380.00 in revenue, since `WHERE` narrows the `rows` down first and the `aggregate functions` only ever see what survives that filter.
 
+
+Expected output for the practice query:
+
+| fiction_orders | fiction_revenue |
+| --- | --- |
+| 3 | 1380 |
+
 ## Conclusion
 
-- `COUNT`, `SUM`, `AVG`, `MIN`, and `MAX` collapse an entire result set into single summary numbers, answering exactly the kind of whole-business questions raw `rows` cannot answer on their own.
-- Priya now has order counts, revenue, average order value, and the smallest and largest sales, all from one small `table`.
-- So far every aggregate has summarized the whole `table` at once; the next step is producing one summary per category instead of a single overall number.
+`COUNT`, `SUM`, `AVG`, `MIN`, and `MAX` collapse an entire result set into single summary numbers, answering exactly the kind of whole-business questions raw `rows` cannot answer on their own.
+
+Priya now has order counts, revenue, average order value, and the smallest and largest sales, all from one small `table`.
+
+So far every aggregate has summarized the whole `table` at once; the next step is producing one summary per category instead of a single overall number.

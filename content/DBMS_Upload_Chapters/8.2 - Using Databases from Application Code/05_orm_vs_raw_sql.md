@@ -8,6 +8,22 @@ Neither approach is universally correct; each trades away something the other of
 
 An ORM's core promise is translating object-oriented code into SQL automatically, without the developer writing SQL text directly.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `shipments`
+
+| shipment_id | driver_id | status | destination |
+| --- | --- | --- | --- |
+| 1 | 1 | in_transit | Mumbai |
+| 2 | 2 | delivered | Pune |
+| 3 | 1 | in_transit | Nagpur |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
@@ -22,6 +38,8 @@ INSERT INTO shipments (shipment_id, driver_id, status, destination) VALUES
 (3, 1, 'in_transit', 'Nagpur');
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 -- ORM-style code, in pseudocode, might read like:
 -- shipments = Shipment.objects.filter(status='in_transit')
@@ -30,6 +48,13 @@ SELECT shipment_id, driver_id, status, destination
 FROM shipments
 WHERE status = 'in_transit';
 ```
+
+Expected output:
+
+| shipment_id | driver_id | status | destination |
+| --- | --- | --- | --- |
+| 1 | 1 | in_transit | Mumbai |
+| 3 | 1 | in_transit | Nagpur |
 
 The generated SQL here is clean and matches exactly what a developer would have written by hand, and this is the ORM's main selling point: for straightforward `queries` like this one:
 
@@ -57,6 +82,14 @@ SELECT shipment_id, driver_id, status, destination FROM shipments;
 -- SELECT * FROM drivers WHERE driver_id = 1;
 ```
 
+Expected output:
+
+| shipment_id | driver_id | status | destination |
+| --- | --- | --- | --- |
+| 1 | 1 | in_transit | Mumbai |
+| 2 | 2 | delivered | Pune |
+| 3 | 1 | in_transit | Nagpur |
+
 - Nothing about the object-oriented loop above looks like a `database` performance hazard; `shipment.driver.driver_name` reads like ordinary property access, not a `database` call.
 - This is exactly the danger: an ORM's abstraction can hide the fact that a `query` is happening at all, making it easy to write code that is correct but silently slow, unless the developer specifically knows to ask the ORM to fetch related data eagerly, in one combined `query`, rather than one at a time as each object is touched.
 
@@ -74,6 +107,12 @@ GROUP BY driver_id
 HAVING COUNT(*) > 0
 ORDER BY active_shipments DESC;
 ```
+
+Expected output:
+
+| driver_id | active_shipments |
+| --- | ---: |
+| 1 | 2 |
 
 A `query` shaped like this, with `GROUP BY`, `HAVING`, and `ORDER BY` working together, is something every SQL developer can write directly and reason about precisely, with full control over exactly what plan the `database` is likely to choose.
 
@@ -126,6 +165,8 @@ Using the `shipments` `table` above, write the raw SQL a developer might reach f
 ```postgresql with=init.sql
 -- Write your query below
 ```
+
+Expected result and verification:
 
 One approach uses a `window function` from earlier in this course: `SELECT shipment_id, driver_id, COUNT(*) OVER (PARTITION BY driver_id) AS driver_shipment_count FROM shipments;`, answering the question in a single `query`, exactly the kind of precise, one-`query`-only control raw SQL offers over letting an ORM's default per-object access pattern generate one `query` per `row` instead.
 

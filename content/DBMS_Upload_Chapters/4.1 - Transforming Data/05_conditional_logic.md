@@ -8,6 +8,24 @@ That label does not exist anywhere in the `table`, it depends on a rule applied 
 
 The `members` `table` tracks each member's visits for the current month.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the data they will use. The tables below show the rows loaded by the setup file.
+
+### `members`
+
+| member_id | full_name | visits_this_month | membership_type |
+| --- | --- | --- | --- |
+| 1 | Karan Malhotra | 18 | premium |
+| 2 | Nisha Verma | 4 | standard |
+| 3 | Aakash Jain | 11 | standard |
+| 4 | Ritu Sharma | 0 | premium |
+| 5 | Yusuf Ali | 9 | basic |
+
+The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
+
+## Hands-On Setup: Prepare the Data
+
 ```postgresql file=init.sql
 CREATE TABLE members (
     member_id INTEGER PRIMARY KEY,
@@ -24,6 +42,8 @@ INSERT INTO members (member_id, full_name, visits_this_month, membership_type) V
 (5, 'Yusuf Ali', 9, 'basic');
 ```
 
+Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
+
 ```postgresql with=init.sql
 SELECT full_name, visits_this_month,
        CASE
@@ -33,6 +53,16 @@ SELECT full_name, visits_this_month,
        END AS activity_label
 FROM members;
 ```
+
+Expected output:
+
+| full_name | visits_this_month | activity_label |
+| --- | --- | --- |
+| Karan Malhotra | 18 | Highly Active |
+| Nisha Verma | 4 | Active |
+| Aakash Jain | 11 | Active |
+| Ritu Sharma | 0 | At Risk |
+| Yusuf Ali | 9 | Active |
 
 - `CASE` checks each `WHEN` condition in order, top to bottom, and returns the value after the first `THEN` whose condition is true.
 - If none of the `WHEN` conditions match, it falls back to whatever follows `ELSE`.
@@ -93,6 +123,16 @@ SELECT full_name, visits_this_month,
 FROM members;
 ```
 
+Expected output:
+
+| full_name | visits_this_month | mislabeled |
+| --- | --- | --- |
+| Karan Malhotra | 18 | Active |
+| Nisha Verma | 4 | Active |
+| Aakash Jain | 11 | Active |
+| Ritu Sharma | 0 | At Risk |
+| Yusuf Ali | 9 | Active |
+
 Run this version and Karan, with 18 visits, gets labeled "Active" instead of "Highly Active," because `visits_this_month >= 4` is checked first and is already true at 18 visits, so the `CASE` expression stops right there and never reaches the "Highly Active" condition. The rule to remember is simple: put the most specific or most restrictive condition first.
 
 ## Branching on a Column Value Instead of a Range
@@ -109,6 +149,16 @@ SELECT full_name, membership_type,
        END AS plan_description
 FROM members;
 ```
+
+Expected output:
+
+| full_name | membership_type | plan_description |
+| --- | --- | --- |
+| Karan Malhotra | premium | Full access, all branches |
+| Nisha Verma | standard | Full access, home branch only |
+| Aakash Jain | standard | Full access, home branch only |
+| Ritu Sharma | premium | Full access, all branches |
+| Yusuf Ali | basic | Gym floor only, no classes |
 
 This shorter form, `CASE membership_type WHEN 'premium' THEN ...`, compares the `column` directly against each listed value instead of writing out a full condition each time:
 
@@ -129,6 +179,16 @@ SELECT full_name,
 FROM members;
 ```
 
+Expected output:
+
+| full_name | loyalty_points |
+| --- | --- |
+| Karan Malhotra | 180 |
+| Nisha Verma | 20 |
+| Aakash Jain | 55 |
+| Ritu Sharma | 0 |
+| Yusuf Ali | 18 |
+
 The `CASE` expression resolves to a plain number for each `row`, either 10, 5, or 2 depending on membership type, and that number is then multiplied directly by `visits_this_month`, producing a single loyalty-points `column` without a second `query` or a temporary `table`.
 
 ![CASE choosing a membership multiplier before calculating loyalty points](images/10_case_multiplier_loyalty_points.png)
@@ -143,8 +203,21 @@ The gym wants a discount eligibility flag: members with fewer than 5 visits this
 
 If your `query` uses `CASE WHEN visits_this_month < 5 THEN 'Send Offer' ELSE 'No Offer Needed' END AS offer_status`, only Nisha and Ritu will be flagged for an offer, matching their visit counts of 4 and 0.
 
+
+Expected output for the practice query:
+
+| full_name | offer_status |
+| --- | --- |
+| Karan Malhotra | No Offer Needed |
+| Nisha Verma | Send Offer |
+| Aakash Jain | No Offer Needed |
+| Ritu Sharma | Send Offer |
+| Yusuf Ali | No Offer Needed |
+
 ## Conclusion
 
-- `CASE` turns a raw `column` value into whatever label, category, or calculated result a business question actually needs, checking conditions in order and returning the first match, with `ELSE` as a safety net for everything else.
-- Farah used it to label activity levels, describe membership plans in plain language, and calculate loyalty points, all from two `columns` of raw data.
-- Individual `rows` transformed this way are useful, but many real questions need entire groups of `rows` summarized into one number, which is where aggregation begins.
+`CASE` turns a raw `column` value into whatever label, category, or calculated result a business question actually needs, checking conditions in order and returning the first match, with `ELSE` as a safety net for everything else.
+
+Farah used it to label activity levels, describe membership plans in plain language, and calculate loyalty points, all from two `columns` of raw data.
+
+Individual `rows` transformed this way are useful, but many real questions need entire groups of `rows` summarized into one number, which is where aggregation begins.

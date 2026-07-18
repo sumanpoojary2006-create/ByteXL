@@ -8,7 +8,22 @@ The clause that asks for one is **`ORDER BY`**, and it is what turns an unpredic
 
 ## Sorting Ascending, the Default
 
-Rhea's first fix is simple: add `ORDER BY` followed by the `column` she wants to sort on.
+The `students` `table` holds this data, in no particular order:
+
+| student_id | full_name | email | city | phone | joined_on |
+| ---------- | ----------------- | ------------------------------ | --------- | ---------- | ---------- |
+| 1 | Ishaan Verma | ishaan.verma@example.com | Bengaluru | 9845011111 | 2025-01-10 |
+| 2 | Meera Pillai | meera.pillai@example.com | Chennai | 9884022222 | 2025-01-12 |
+| 3 | Arjun Bhat | arjun.bhat@example.com | Bengaluru | *NULL* | 2025-01-15 |
+| 4 | Kavya Reddy | kavya.reddy@example.com | Pune | 9922033333 | 2025-01-18 |
+| 5 | Rohan Joshi | rohan.joshi@example.com | Hyderabad | 9640044444 | 2025-01-20 |
+| 6 | Sneha Gowda | sneha.gowda@example.com | Mysuru | *NULL* | 2025-01-22 |
+| 7 | Aditya Kulkarni | aditya.kulkarni@example.com | Pune | 9822055555 | 2025-01-25 |
+| 8 | Priya Subramaniam | priya.subramaniam@example.com | Chennai | 9884066666 | 2025-01-28 |
+
+Rhea's first fix is simple: add `ORDER BY` followed by the `column` she wants to sort on. The query is `SELECT full_name, city FROM students ORDER BY full_name;`.
+
+For hands-on practice, `init.sql` creates and populates the displayed `students` table:
 
 ```postgresql file=init.sql
 CREATE TABLE students (
@@ -31,11 +46,26 @@ INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALU
 (8, 'Priya Subramaniam', 'priya.subramaniam@example.com', 'Chennai', '9884066666', '2025-01-28');
 ```
 
+The active query file contains the sort being practised:
+
 ```postgresql with=init.sql
 SELECT full_name, city
 FROM students
 ORDER BY full_name;
 ```
+
+Expected output:
+
+| full_name | city |
+| ----------------- | --------- |
+| Aditya Kulkarni | Pune |
+| Arjun Bhat | Bengaluru |
+| Ishaan Verma | Bengaluru |
+| Kavya Reddy | Pune |
+| Meera Pillai | Chennai |
+| Priya Subramaniam | Chennai |
+| Rohan Joshi | Hyderabad |
+| Sneha Gowda | Mysuru |
 
 The result now starts with Aditya Kulkarni and ends with Sneha Gowda, running alphabetically A to Z the whole way through. This is ascending order, and it is what PostgreSQL uses whenever `ORDER BY` is given a `column` with no further instruction:
 
@@ -47,7 +77,7 @@ The result now starts with Aditya Kulkarni and ends with Sneha Gowda, running al
 
 ## Sorting Descending
 
-Sometimes the useful order runs the other way. If Rhea instead wants the newest joiners at the top of a "welcome our latest students" notice, ascending order on the join date would put the oldest joiners first, exactly backwards from what she needs. Adding `DESC` after the `column` reverses the direction.
+Sometimes the useful order runs the other way. If Rhea instead wants the newest joiners at the top of a "welcome our latest students" notice, ascending order on the join date would put the oldest joiners first, exactly backwards from what she needs. Adding `DESC` after the `column` reverses the direction. The query is `SELECT full_name, joined_on FROM students ORDER BY joined_on DESC;`.
 
 ```postgresql with=init.sql
 SELECT full_name, joined_on
@@ -55,19 +85,45 @@ FROM students
 ORDER BY joined_on DESC;
 ```
 
+Expected output:
+
+| full_name | joined_on |
+| ----------------- | ---------- |
+| Priya Subramaniam | 2025-01-28 |
+| Aditya Kulkarni | 2025-01-25 |
+| Sneha Gowda | 2025-01-22 |
+| Rohan Joshi | 2025-01-20 |
+| Kavya Reddy | 2025-01-18 |
+| Arjun Bhat | 2025-01-15 |
+| Meera Pillai | 2025-01-12 |
+| Ishaan Verma | 2025-01-10 |
+
 Now Priya Subramaniam, who joined on 2025-01-28, appears first, and Ishaan Verma, who joined on 2025-01-10, appears last. Writing `ASC` explicitly is also allowed for ascending order, but since ascending is the default, most people leave it out and only write `DESC` when they actually need the reverse.
 
 ## Sorting by More Than One Column
 
 - A single sort key is not always enough.
 - Suppose Rhea wants students grouped by city, and within each city, listed alphabetically by name, so a volunteer working the Bengaluru desk can find their group's names in order without scrolling past every other city first.
-- `ORDER BY` accepts a list of `columns`, and it sorts by the first one, then uses the second one only to break ties within groups that share the same first value.
+- `ORDER BY` accepts a list of `columns`, and it sorts by the first one, then uses the second one only to break ties within groups that share the same first value. The query is `SELECT full_name, city FROM students ORDER BY city, full_name;`.
 
 ```postgresql with=init.sql
 SELECT full_name, city
 FROM students
 ORDER BY city, full_name;
 ```
+
+Expected output:
+
+| full_name | city |
+| ----------------- | --------- |
+| Arjun Bhat | Bengaluru |
+| Ishaan Verma | Bengaluru |
+| Meera Pillai | Chennai |
+| Priya Subramaniam | Chennai |
+| Rohan Joshi | Hyderabad |
+| Sneha Gowda | Mysuru |
+| Aditya Kulkarni | Pune |
+| Kavya Reddy | Pune |
 
 The result groups all of Bengaluru's students together, sorted alphabetically within that group, then moves to Chennai's students sorted alphabetically within that group, and so on through Hyderabad, Mysuru, and Pune. Arjun Bhat appears before Ishaan Verma within Bengaluru because the tie on city is broken by name.
 
@@ -112,11 +168,21 @@ The office also wants a version of the roster sorted so that students from the s
 -- Write your query below
 ```
 
-`SELECT full_name, city, joined_on FROM students ORDER BY city, joined_on DESC;` does exactly this: cities still run alphabetically overall, but inside each city's block the most recent joiner leads.
+`SELECT full_name, city, joined_on FROM students ORDER BY city, joined_on DESC;` does exactly this. Expected output:
+
+| full_name | city | joined_on |
+| ----------------- | --------- | ---------- |
+| Arjun Bhat | Bengaluru | 2025-01-15 |
+| Ishaan Verma | Bengaluru | 2025-01-10 |
+| Priya Subramaniam | Chennai | 2025-01-28 |
+| Meera Pillai | Chennai | 2025-01-12 |
+| Rohan Joshi | Hyderabad | 2025-01-20 |
+| Sneha Gowda | Mysuru | 2025-01-22 |
+| Aditya Kulkarni | Pune | 2025-01-25 |
+| Kavya Reddy | Pune | 2025-01-18 |
+
+Cities still run alphabetically overall, but inside each city's block the most recent joiner leads.
 
 ## Conclusion
 
-- `ORDER BY` replaces an unpredictable `row` order with one you actually chose, ascending by default or reversed with DESC, and it can chain several `columns` together so later ones only settle ties left by earlier ones.
-- None of this changes how `rows` are stored, it only shapes the sequence a particular `query` hands back.
-- Rhea's orientation roster can now print alphabetically by name, or grouped by city with each group internally sorted, so her volunteers can find any student in seconds instead of scanning an unpredictable list.
-- Once a result can be put into a meaningful order, the natural next question is how to show only the first handful of `rows` from a large, sorted result, which is exactly the kind of trimming a dashboard preview needs.
+`ORDER BY` replaces an unpredictable `row` order with one you actually chose, ascending by default or reversed with DESC, and it can chain several `columns` together so later ones only settle ties left by earlier ones. None of this changes how `rows` are stored, it only shapes the sequence a particular `query` hands back. Rhea's orientation roster can now print alphabetically by name, or grouped by city with each group internally sorted, so her volunteers can find any student in seconds instead of scanning an unpredictable list. Once a result can be put into a meaningful order, the natural next question is how to show only the first handful of `rows` from a large, sorted result, which is exactly the kind of trimming a dashboard preview needs.

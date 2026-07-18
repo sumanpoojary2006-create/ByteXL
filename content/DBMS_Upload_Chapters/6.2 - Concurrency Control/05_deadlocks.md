@@ -9,6 +9,21 @@
 
 The `accounts` `table` sets up the scenario, two accounts that two different transfer `transactions` both need to touch, in opposite order.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `accounts`
+
+| account_id | owner_name | balance |
+| --- | --- | --- |
+| 1 | Meera Iyer | 50000.00 |
+| 2 | Sanjay Rathi | 12000.00 |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
@@ -20,6 +35,8 @@ INSERT INTO accounts (account_id, owner_name, balance) VALUES
 (1, 'Meera Iyer', 50000.00),
 (2, 'Sanjay Rathi', 12000.00);
 ```
+
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
 ```postgresql with=init.sql
 -- Transaction A: transferring from account 1 to account 2
@@ -46,6 +63,8 @@ UPDATE accounts SET balance = balance - 1000.00 WHERE account_id = 1;
 ROLLBACK;
 ```
 
+Expected observation: PostgreSQL completes the transaction-control statements. Use the following explanation and any closing `SELECT` to verify whether the changes were committed or rolled back.
+
 Each `transaction` is individually doing something perfectly reasonable, `locking` one `row` and then requesting a second `row` it needs, but the two together form a cycle: A waits on B, and B waits on A, with no possible way for either to naturally continue.
 
 ![A deadlock cycle where Transaction A waits for B and Transaction B waits for A](images/10_deadlock_wait_cycle.png)
@@ -70,6 +89,15 @@ A `database` does not simply let two `transactions` wait forever. PostgreSQL, li
 SELECT * FROM accounts;
 ```
 
+Expected output:
+
+
+
+| account_id | owner_name | balance |
+| --- | --- | --- |
+| 1 | Meera Iyer | 50000.00 |
+| 2 | Sanjay Rathi | 12000.00 |
+
 The specific `transaction` chosen as the "victim" is typically whichever one the `database` determines is cheapest to roll back, and the application on the receiving end of that error is expected to catch it and retry the whole `transaction` from the beginning, this time likely succeeding, since the other `transaction` has usually finished by the time the retry runs.
 
 ## Preventing Deadlocks Through Consistent Lock Ordering
@@ -88,6 +116,22 @@ UPDATE accounts SET balance = balance + 1000.00 WHERE account_id = 2;
 
 COMMIT;
 ```
+
+Expected output 1:
+
+
+
+| account_id | owner_name | balance |
+| --- | --- | --- |
+| 1 | Meera Iyer | 50000.00 |
+
+Expected output 2:
+
+
+
+| account_id | owner_name | balance |
+| --- | --- | --- |
+| 2 | Sanjay Rathi | 12000.00 |
 
 If every `transaction`, regardless of which direction it transfers money, always `locks` account 1 before account 2 whenever both are involved, the circular waiting pattern from the earlier example can never form: whichever `transaction` gets to account 1 first simply makes the other one wait its turn, in a straight line rather than a cycle.
 
@@ -134,12 +178,20 @@ Rewrite a two-account transfer `transaction` against the `accounts` `table` abov
 -- Write your transaction below
 ```
 
-- A deadlock-safe version `locks` the lower id first regardless of transfer direction: `BEGIN
-- `SELECT` * FROM accounts `WHERE` account_id = 1 FOR `UPDATE`
-- `SELECT` * FROM accounts `WHERE` account_id = 2 FOR `UPDATE`
-- `UPDATE` accounts SET balance = balance + 500.00 `WHERE` account_id = 1
-- `UPDATE` accounts SET balance = balance - 500.00 `WHERE` account_id = 2
-- `COMMIT`;`, and following this same ordering convention everywhere in the application prevents the circular wait that causes a deadlock.
+Expected result and verification:
+
+A deadlock-safe version `locks` the lower id first regardless of transfer direction:
+
+```sql
+BEGIN;
+SELECT * FROM accounts WHERE account_id = 1 FOR UPDATE;
+SELECT * FROM accounts WHERE account_id = 2 FOR UPDATE;
+UPDATE accounts SET balance = balance + 500.00 WHERE account_id = 1;
+UPDATE accounts SET balance = balance - 500.00 WHERE account_id = 2;
+COMMIT;
+```
+
+Following this same ordering convention everywhere in the application prevents the circular wait that causes a deadlock.
 
 ## Conclusion
 

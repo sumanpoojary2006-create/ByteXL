@@ -97,6 +97,12 @@ The reassuring part of this whole dilemma is that a `database` never forces a si
 
 Sanjay's bookstore might reasonably choose to block deletion on the Customers-to-Orders relationship, since order history matters, while cascading deletion on a Posts-to-Comments relationship elsewhere in the same system, since a comment truly has no life of its own once its post is gone. Both choices can live side by side in the same `database`, each one matched carefully to what the relationship actually represents.
 
+## Your Turn: Pick the Policy
+
+Sanjay's bookstore also has a Publishers `table` and a Books `table`, where every book's `foreign key` points back to its publisher. A small publisher goes out of business and its `row` needs to be removed. Should this relationship block, cascade, or set the link empty, and what should happen for a Wishlists `table`, where each wishlist entry points to a book a customer wants, if that book is ever discontinued and deleted?
+
+The Publishers-to-Books relationship should block deletion, or at worst set the link empty, because the books themselves are still real products the store sells and their sales history matters, so silently cascading the delete would wipe out records of books that customers actually bought. The Wishlists-to-Books relationship is a better fit for cascading, or setting the link empty, since a wishlist entry for a book that no longer exists has nothing left to point to and no independent value of its own, much like a comment losing its meaning once its post is gone.
+
 ## Conclusion
 
 Every `foreign key` eventually forces the same honest question: if the `row` being pointed at disappears or changes, what should happen to the `rows` depending on it, and a relational `database` lets that answer be blocking, cascading, or clearing the link, chosen deliberately for each relationship rather than left to chance.

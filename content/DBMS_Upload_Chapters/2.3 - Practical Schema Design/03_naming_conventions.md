@@ -84,6 +84,46 @@ Sanjay's rule of thumb going forward is that a `foreign key` `column` should alw
   </tbody>
 </table>
 
+Here is a small `transactions` table built following every rule Sanjay's team settled on: plural table name applied consistently, snake_case throughout, a specific name instead of the reserved-sounding `order`, and a foreign key named after the table it references.
+
+```postgresql file=init.sql
+CREATE TABLE customers (
+    customer_id  INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    full_name    TEXT NOT NULL
+);
+
+CREATE TABLE transactions (
+    transaction_id  INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    customer_id     INTEGER NOT NULL REFERENCES customers(customer_id),
+    attempt_number  INTEGER NOT NULL,
+    amount          NUMERIC(10, 2) NOT NULL
+);
+
+INSERT INTO customers (full_name) VALUES ('Ilyas Bakery Supplies');
+
+INSERT INTO transactions (customer_id, attempt_number, amount) VALUES
+    (1, 1, 2500.00),
+    (1, 2, 899.00);
+```
+
+The active query confirms the naming pays off immediately, a reader can tell exactly what `customer_id` points to without inspecting any data:
+
+```postgresql with=init.sql
+SELECT t.transaction_id, c.full_name, t.attempt_number, t.amount
+FROM transactions t
+JOIN customers c ON t.customer_id = c.customer_id
+ORDER BY t.transaction_id;
+```
+
+Expected output:
+
+| transaction_id | full_name | attempt_number | amount |
+| ---------------: | ---------------------- | ---------------: | ------: |
+| 1 | Ilyas Bakery Supplies | 1 | 2500.00 |
+| 2 | Ilyas Bakery Supplies | 2 | 899.00 |
+
+`customer_id` inside `transactions` leaves no doubt it refers to a row in `customers`, and `attempt_number` avoids the collision a bare `order` column would have risked with the database's own vocabulary.
+
 ## Naming Conventions at a Glance
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
@@ -122,6 +162,12 @@ Sanjay's rule of thumb going forward is that a `foreign key` `column` should alw
     </tr>
   </tbody>
 </table>
+
+## Your Turn: Fix the Names
+
+A draft schema has a table named `Ticket` next to a table named `venues`, a column named `venueID` inside `Ticket`, and a column named `group` recording which seating group a ticket belongs to. List every naming problem here and state the fix for each, following Sanjay's rules.
+
+A working answer: `Ticket` and `venues` mix singular and plural, so the team should pick one, say plural, and rename `Ticket` to `tickets`. `venueID` uses camelCase inside an otherwise snake_case schema, so it becomes `venue_id`, which also happens to follow the foreign-key rule of naming it after the table it references. The `group` column collides with a word many database systems reserve for their own grouping instructions, so it should be renamed to something specific like `seating_group`, the same fix Sanjay applied to the `order` column.
 
 ## Conclusion
 

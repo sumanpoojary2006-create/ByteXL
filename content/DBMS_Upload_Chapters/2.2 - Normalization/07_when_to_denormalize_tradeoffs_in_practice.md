@@ -117,6 +117,12 @@ The difference is that Vivek is choosing that risk deliberately, for one specifi
   </tbody>
 </table>
 
+## Your Turn: Decide the Tradeoff
+
+A hospital's fully normalized schema requires joining five tables to show a doctor "how many patients did I admit per month, by diagnosis category," a report run once a quarter by department heads. The same schema is queried constantly throughout the day by nurses checking a single patient's current admission status. Which of these two workloads is a candidate for denormalization, and which should stay untouched, and why?
+
+A working answer: the quarterly per-doctor admissions report is the candidate for denormalization, following Vivek's logic exactly, it is a read-heavy, infrequent, tolerant-of-staleness report joining many tables, worth a separate refreshed summary structure once it is demonstrably slow. The nurses' constant single-patient status lookups should stay on the fully normalized tables untouched, since that workload needs every write, an admission, a status change, to be correct and visible immediately, precisely the situation where anomaly-free writes matter most.
+
 ## Conclusion
 
 Normalization and denormalization are not rival philosophies where one side is simply right, they are two ends of a genuine trade-off between safe, anomaly-free writes and fast, uncombined reads, and a mature `schema` uses each where it earns its keep.

@@ -87,6 +87,12 @@ A bank `transaction` is created once, queried whenever a statement is generated,
 
 ![Dinner orders, student records, and bank transactions sharing a lifecycle across different timescales](images/16_lifecycle_across_timescales.png)
 
+## Your Turn: Trace the Lifecycle
+
+A college issues a library card to a new student. Walk through the card's data across its lifecycle: describe one concrete moment for creation, one for query, one for update, and one for deletion or archival.
+
+A working answer: creation happens the moment the library desk issues the card and a new record is inserted with the student's ID, name, and issue date. Query happens every time the student scans the card to borrow a book, the front desk reading the same record to confirm it is valid. Update happens when a book is borrowed or returned, the same record's "currently borrowed" field changing in place rather than a new record being created. Deletion or archival happens years later, after the student graduates and stops using the library, when the college either removes the record or moves it into an inactive-alumni archive it rarely queries directly. The shape is identical to Asha's dinner order, just stretched across years instead of one evening.
+
 ## Conclusion
 
 Every piece of data in a `database` moves through the same rough arc: it is created once, read far more often than it is changed, updated as circumstances shift, and eventually deleted or set aside once it stops earning its place among the actively used records.

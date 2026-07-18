@@ -11,6 +11,21 @@
 
 The `accounts` `table` from the previous lesson is the setup here again.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `accounts`
+
+| account_id | owner_name | balance |
+| --- | --- | --- |
+| 1 | Meera Iyer | 50000.00 |
+| 2 | Sanjay Rathi | 12000.00 |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
@@ -22,6 +37,8 @@ INSERT INTO accounts (account_id, owner_name, balance) VALUES
 (1, 'Meera Iyer', 50000.00),
 (2, 'Sanjay Rathi', 12000.00);
 ```
+
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
 A `constraint` violation partway through a `transaction` is one common, entirely unplanned way for a `transaction` to fail. Suppose a `CHECK` `constraint` requires a balance to never go negative.
 
@@ -36,6 +53,8 @@ ALTER TABLE accounts ADD CONSTRAINT balance_not_negative CHECK (balance >= 0);
 
 SELECT account_id, balance FROM accounts;
 ```
+
+Expected result: the constraint is added successfully, and the final `SELECT` still shows the original account balances. If the commented invalid transfer is enabled, PostgreSQL rejects it because it would create a negative balance.
 
 This `transaction` fails in a chain:
 
@@ -61,6 +80,8 @@ UPDATE accounts SET balance = balance - 5000.00 WHERE account_id = 1;
 COMMIT;
 ```
 
+Expected observation: PostgreSQL completes the transaction-control statements. Use the following explanation and any closing `SELECT` to verify whether the changes were committed or rolled back.
+
 This `transaction` is perfectly atomic: it either commits this single `UPDATE` or it does not. But it deducts 5000.00 from Meera without crediting it anywhere, which is a logic bug, not an atomicity failure. Atomicity guarantees that whatever statements are grouped inside `BEGIN` and `COMMIT` happen together; it is still the application's responsibility to group the correct statements together in the first place.
 
 Rahul's earlier two-statement transfer was correct because both necessary statements were inside the same `transaction`, not because atomicity somehow inferred that a credit needed to accompany the debit.
@@ -80,6 +101,16 @@ COMMIT;
 
 SELECT account_id, owner_name, balance FROM accounts;
 ```
+
+Expected output:
+
+
+
+| account_id | owner_name | balance |
+| --- | --- | --- |
+| 1 | Meera Iyer | 49000.00 |
+| 2 | Sanjay Rathi | 12000.00 |
+| 3 | Farah Ali | 1000.00 |
 
 This `transaction` opens a new account for Farah Ali and funds it from Meera's account, three statements acting as one atomic unit. If the `INSERT` for the new account had failed, for instance because `account_id = 3` already existed, neither `UPDATE` would take effect either, keeping Meera's balance untouched rather than deducting money toward an account that was never actually created.
 
@@ -121,6 +152,8 @@ Using the `balance_not_negative` `constraint` already added earlier in this less
 ```postgresql with=init.sql
 -- Write your transaction below
 ```
+
+Expected result and verification:
 
 If your `transaction` attempts `UPDATE accounts SET balance = balance - 100000.00 WHERE account_id = 2;` inside a `BEGIN`/`COMMIT` block, the statement is rejected for violating `balance_not_negative`, the `transaction` fails as a whole, and a closing `SELECT` confirms Sanjay's balance is still 12000.00.
 

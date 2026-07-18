@@ -10,6 +10,44 @@ This is precisely the problem a **`join`** solves: combining `rows` from two or 
 
 Three small `tables` model the food delivery system: customers who place orders, restaurants that fulfill them, and the orders that connect the two.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the data they will use. The tables below show the rows loaded by the setup file.
+
+### `customers`
+
+| customer_id | customer_name | city |
+| --- | --- | --- |
+| 1 | Aditi Kulkarni | Pune |
+| 2 | Rohan Das | Kolkata |
+| 3 | Kavya Nair | Kochi |
+| 4 | Imran Sheikh | Hyderabad |
+| 5 | Neha Bhatt | Ahmedabad |
+
+### `restaurants`
+
+| restaurant_id | restaurant_name | city |
+| --- | --- | --- |
+| 1 | Pizza Palace | Pune |
+| 2 | Sushi Central | Kolkata |
+| 3 | Burger Barn | Pune |
+| 4 | Taco Town | Hyderabad |
+
+### `orders`
+
+| order_id | customer_id | restaurant_id | amount | order_date |
+| --- | --- | --- | --- | --- |
+| 1 | 1 | 1 | 450 | 2025-05-01 |
+| 2 | 2 | 2 | 620 | 2025-05-02 |
+| 3 | 1 | 3 | 300 | 2025-05-03 |
+| 4 | 3 | 1 | 500 | 2025-05-04 |
+| 5 | 4 | 2 | 275 | 2025-05-05 |
+| 6 | 2 | 3 | 180 | 2025-05-06 |
+
+The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
+
+## Hands-On Setup: Prepare the Data
+
 ```postgresql file=init.sql
 CREATE TABLE customers (
     customer_id INTEGER PRIMARY KEY,
@@ -53,9 +91,22 @@ INSERT INTO orders (order_id, customer_id, restaurant_id, amount, order_date) VA
 (6, 2, 3, 180.00, '2025-05-06');
 ```
 
+Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
+
 ```postgresql with=init.sql
 SELECT * FROM orders;
 ```
+
+Expected output:
+
+| order_id | customer_id | restaurant_id | amount | order_date |
+| --- | --- | --- | --- | --- |
+| 1 | 1 | 1 | 450 | 2025-05-01 |
+| 2 | 2 | 2 | 620 | 2025-05-02 |
+| 3 | 1 | 3 | 300 | 2025-05-03 |
+| 4 | 3 | 1 | 500 | 2025-05-04 |
+| 5 | 4 | 2 | 275 | 2025-05-05 |
+| 6 | 2 | 3 | 180 | 2025-05-06 |
 
 Every `row` here is technically complete, an order id, who placed it, which restaurant it went to, an amount, and a date, but "who placed it" is just the number 1 or 2, not a name. Anyone reading this `table` has to separately look up `customer_id` 1 in the `customers` `table` to know it means Aditi Kulkarni. That lookup step, done manually, is exactly what a `join` automates.
 
@@ -75,6 +126,17 @@ FROM orders
 JOIN customers ON orders.customer_id = customers.customer_id;
 ```
 
+Expected output:
+
+| order_id | customer_name | amount |
+| --- | --- | --- |
+| 1 | Aditi Kulkarni | 450 |
+| 2 | Rohan Das | 620 |
+| 3 | Aditi Kulkarni | 300 |
+| 4 | Kavya Nair | 500 |
+| 5 | Imran Sheikh | 275 |
+| 6 | Rohan Das | 180 |
+
 `JOIN customers ON orders.customer_id = customers.customer_id` tells the `database` exactly how the two `tables` relate: a `row` in `orders` matches a `row` in `customers` when their `customer_id` values are equal. Two things happen for every match found:
 
 1. The `database` locates the matching `row` in `customers`.
@@ -93,6 +155,17 @@ FROM orders
 JOIN customers ON orders.customer_id = customers.customer_id
 JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id;
 ```
+
+Expected output:
+
+| order_id | customer_name | restaurant_name | amount |
+| --- | --- | --- | --- |
+| 1 | Aditi Kulkarni | Pizza Palace | 450 |
+| 2 | Rohan Das | Sushi Central | 620 |
+| 3 | Aditi Kulkarni | Burger Barn | 300 |
+| 4 | Kavya Nair | Pizza Palace | 500 |
+| 5 | Imran Sheikh | Sushi Central | 275 |
+| 6 | Rohan Das | Burger Barn | 180 |
 
 This `joins` three `tables` at once, and the result reads like a single flat `table` with an order id, the customer's real name, the restaurant's real name, and the amount, exactly the shape a report needs:
 
@@ -166,8 +239,17 @@ Zoya needs a quick check: which restaurant did order 4 go to, by name, not by id
 
 If your `query` `joins` `orders` to `restaurants` on `restaurant_id` and filters with `WHERE orders.order_id = 4`, it returns "Pizza Palace," confirming order 4 went to the same restaurant as order 1.
 
+
+Expected output for the practice query:
+
+| order_id | restaurant_name |
+| --- | --- |
+| 4 | Pizza Palace |
+
 ## Conclusion
 
-- `Joins` exist because normalized `tables` intentionally keep related facts apart, one customer stored once, one restaurant stored once, and a `query` is what pulls those separated facts back together into a single readable result.
-- Zoya can now see customer names and restaurant names sitting right next to order amounts, without ever duplicating that data in storage.
-- The `join` used here always found a match on both sides; the next lesson looks closely at what that matching actually requires and what happens to `rows` that do not find one.
+`Joins` exist because normalized `tables` intentionally keep related facts apart, one customer stored once, one restaurant stored once, and a `query` is what pulls those separated facts back together into a single readable result.
+
+Zoya can now see customer names and restaurant names sitting right next to order amounts, without ever duplicating that data in storage.
+
+The `join` used here always found a match on both sides; the next lesson looks closely at what that matching actually requires and what happens to `rows` that do not find one.

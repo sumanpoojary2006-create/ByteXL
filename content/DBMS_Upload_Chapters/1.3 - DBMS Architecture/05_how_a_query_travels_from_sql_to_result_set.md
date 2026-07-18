@@ -89,6 +89,12 @@ This is the **result set**, and it travels back up through the same layers it ca
 
 ![Catalog errors, slow plans, and transaction conflicts appearing at different stages of the query journey](images/10_query_journey_troubleshooting_points.png)
 
+## Your Turn: Find the Stalled Stage
+
+Aisha watches two `queries` behave strangely on a later shift: one `query` asking for a `table` called "Refunds" returns an instant error and never touches any data, while another `query` asking for Tara's marks runs correctly but takes far longer than usual to come back, even though the SQL itself looks perfectly ordinary. Which stage of the journey is responsible for each outcome?
+
+The instant error on "Refunds" happens at the parsing and catalog-check stage, since the `database` consults the `system catalog`, finds no `table` by that name, and refuses to proceed any further, exactly as it would for a mistyped `column`. The slow-but-correct `query` for Tara's marks got past validation just fine, so the delay points to the planning or execution stage instead, perhaps a poorly chosen plan that scans more `rows` than necessary, or a moment of contention with another `transaction` touching the same data during execution.
+
 ## Conclusion
 
 A `query` is never answered in one single motion. It is checked, planned, carried out, and only then returned, and every stop along that journey belongs to a distinct part of the system responsible for it: the catalog that validates, the component that plans and the one that fetches and guards the data, and the layered design that lets each of those parts change without dragging the others down with it.

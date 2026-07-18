@@ -8,6 +8,21 @@ Closing out this unit means connecting everything learned about `transactions`, 
 
 Most `database` client libraries default to auto-commit mode, where every individual statement is automatically wrapped in its own tiny `transaction` and committed immediately, unless the code explicitly starts a `transaction` itself.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `accounts`
+
+| account_id | balance |
+| --- | --- |
+| 1 | 5000.00 |
+| 2 | 3000.00 |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
@@ -17,12 +32,23 @@ CREATE TABLE accounts (
 INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00), (2, 3000.00);
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 UPDATE accounts SET balance = balance - 500.00 WHERE account_id = 1;
 UPDATE accounts SET balance = balance + 500.00 WHERE account_id = 2;
 
 SELECT * FROM accounts;
 ```
+
+Expected output:
+
+
+
+| account_id | balance |
+| --- | --- |
+| 1 | 4500.00 |
+| 2 | 3500.00 |
 
 Run without an explicit `BEGIN`, each `UPDATE` here commits on its own, immediately, the moment it finishes, exactly the atomicity gap the very first lesson of this unit opened with.
 
@@ -44,6 +70,15 @@ COMMIT;
 SELECT * FROM accounts;
 ```
 
+Expected output:
+
+
+
+| account_id | balance |
+| --- | --- |
+| 1 | 4500.00 |
+| 2 | 3500.00 |
+
 In real application code, this pattern is usually expressed with a try-and-catch style structure, roughly: open a `connection`, begin a `transaction`, run the statements the business operation requires, and commit only if every one of them succeeded; if any step raises an error, catch it and roll back instead of committing. Written as pseudocode alongside the SQL it wraps, the shape looks like this:
 
 ```postgresql with=init.sql
@@ -58,6 +93,15 @@ COMMIT;
 
 SELECT * FROM accounts;
 ```
+
+Expected output:
+
+
+
+| account_id | balance |
+| --- | --- |
+| 1 | 4500.00 |
+| 2 | 3500.00 |
 
 The `COMMIT` only ever runs if both statements succeeded without error; any exception raised by the `database`, a `constraint` violation, a deadlock, a lost `connection`, skips straight to the `ROLLBACK` branch instead, guaranteeing the `transaction` never commits a partial result.
 
@@ -76,6 +120,14 @@ SELECT balance FROM accounts WHERE account_id = 1 FOR UPDATE;
 UPDATE accounts SET balance = balance - 100.00 WHERE account_id = 1;
 COMMIT;
 ```
+
+Expected output:
+
+
+
+| balance |
+| --- |
+| 5000.00 |
 
 The practical rule that follows directly from everything covered in this unit is: a `transaction` should contain only the `database` statements that genuinely need to succeed or fail together, and nothing slow or unrelated, such as calling an external payment gateway or waiting on user input, should ever happen while a `transaction` sits open holding `locks`.
 
@@ -96,6 +148,15 @@ COMMIT;
 
 SELECT * FROM accounts;
 ```
+
+Expected output:
+
+
+
+| account_id | balance |
+| --- | --- |
+| 1 | 4800.00 |
+| 2 | 3200.00 |
 
 Because a deadlock victim's `transaction` is guaranteed to have been fully rolled back by the `database`, retrying it from scratch is always safe the application simply repeats the same `BEGIN` through `COMMIT` sequence again, and it typically succeeds the second time, once whatever `transaction` it was competing with has already finished.
 
@@ -141,6 +202,8 @@ Write the try-and-catch style pseudocode pattern, in SQL with comments, for a `t
 ```postgresql with=init.sql
 -- Write your transaction below
 ```
+
+Expected result and verification:
 
 A correct pattern opens with `-- try:` and `BEGIN;`, runs `INSERT INTO accounts (account_id, balance) VALUES (3, 0.00);` followed by the two balance-adjusting `UPDATE` statements, then `COMMIT;`, with a trailing `-- except: ROLLBACK;` comment noting that any failure at any point before `COMMIT` should `trigger` a full rollback rather than a partial commit.
 

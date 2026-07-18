@@ -76,6 +76,12 @@ A habit worth carrying forward from this internship onward: before reaching for 
 
 ![One application choosing relational, key-value, and document stores for different jobs](images/10_choose_database_by_data_shape.png)
 
+## Your Turn: Match the Data to Its Shape
+
+A fitness app needs to store three kinds of data: (1) every workout a user has logged, with the same fields every time, exercise name, sets, reps, and date; (2) a fast lookup of "which user is this access token for" on every request; (3) each user's profile, where some users add a detailed injury history and coaching notes while most add nothing extra at all. For each of the three, name the best-fitting model, relational, key-value, or document, and explain why.
+
+Workout logs fit the relational model: every entry shares the same fixed fields (exercise, sets, reps, date), and the app will want to relate them to a specific user reliably. The access-token lookup fits key-value: it is a single known key returning a single value instantly, with no relationships to reason about. The user profiles fit a document model: different users' profiles genuinely vary in shape, some carrying extra fields a relational table would force every other user to also have, unused and empty.
+
 ## Conclusion
 
 "Database" names a family of tools rather than one single structure. Relational `databases` organize data into related `tables` built for consistent, interconnected records, key-value stores trade relationships for extremely fast lookups by a known key, and document `databases` embrace records that vary in shape from one to the next inside the same collection.

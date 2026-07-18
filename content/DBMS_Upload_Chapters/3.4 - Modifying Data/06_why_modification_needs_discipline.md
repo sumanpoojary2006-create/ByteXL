@@ -4,6 +4,72 @@ Naveen has just been handed write access to the college's live enrollment system
 
 Naveen realizes that everything he has learned about `INSERT`, `UPDATE`, `DELETE`, `RETURNING`, and `ON CONFLICT` was never really a set of separate ideas about separate keywords. It was one continuous idea, that changing data is a fundamentally different act from reading it, and it calls for **discipline**, a habit of checking before acting that a `SELECT` never demanded in the first place.
 
+## Why a SELECT Mistake and a Modification Mistake Are Not the Same
+
+The `students`, `courses`, and `enrollments` `tables` hold this data:
+
+| student_id | full_name | email | city | phone | joined_on |
+| ---------- | ------------- | ----------------------------- | --------- | ---------- | ---------- |
+| 1 | Omkar Rane | omkar.rane@campusmail.edu | Bengaluru | 9845011111 | 2025-01-10 |
+| 2 | Neha Sharma | neha.sharma@campusmail.edu | Mysuru | *NULL* | 2025-01-12 |
+| 3 | Varun Nair | varun.nair@gmail.com | Chennai | 9845022222 | 2025-01-15 |
+| 4 | Siddharth Rao | siddharth.rao@campusmail.edu | Hyderabad | 9845033333 | 2025-01-18 |
+
+| course_id | title | department | credits |
+| --------- | ---------------- | ---------------- | ------: |
+| 101 | Database Systems | Computer Science | 4 |
+| 102 | Data Structures | Computer Science | 4 |
+| 103 | Linear Algebra | Mathematics | 3 |
+
+| enrollment_id | student_id | course_id | enrolled_on | grade |
+| ------------- | ---------- | --------- | ---------- | ------ |
+| 1 | 1 | 101 | 2025-02-01 | A |
+| 2 | 2 | 101 | 2025-02-02 | *NULL* |
+| 3 | 3 | 103 | 2025-02-03 | B+ |
+| 4 | 4 | 102 | 2025-02-04 | *NULL* |
+
+A setup file builds this starting point with `CREATE TABLE` and `INSERT INTO`. That setup is necessary for the hands-on exercises but is not the topic here; the topic is the discipline that keeps every modification safe.
+
+A `SELECT` with a wrong `WHERE` clause returns the wrong `rows` on screen, and Naveen can simply notice, fix the condition, and run it again with nothing lost. An `UPDATE` or a `DELETE` with a wrong or missing `WHERE` clause changes or removes `rows` permanently, and by the time the mistake is noticed, the correct data may no longer exist anywhere to compare against.
+
+This asymmetry, that reading forgives mistakes and writing does not, is the entire reason a modification statement deserves a slower hand than a `query` typed to satisfy curiosity.
+
+![A SELECT mistake can be retried, while an UPDATE or DELETE mistake changes real data](images/11_select_mistake_vs_modification_mistake.png)
+
+## Knowing Exactly Which Rows Before Touching Any of Them
+
+Every genuinely safe modification Naveen has seen so far starts the same way: know exactly which `rows` a `WHERE` clause will match, before running anything that changes them. He checks with `SELECT enrollment_id, student_id, course_id, grade FROM enrollments WHERE student_id = 2 AND course_id = 101;` first.
+
+Before, from the `SELECT`:
+
+| enrollment_id | student_id | course_id | grade |
+| ------------- | ---------- | --------- | ------ |
+| 2 | 2 | 101 | *NULL* |
+
+Only then does he run `UPDATE enrollments SET grade = 'B' WHERE student_id = 2 AND course_id = 101 RETURNING ...;` with that identical condition.
+
+After, directly from the `RETURNING` clause:
+
+| enrollment_id | student_id | course_id | grade |
+| ------------- | ---------- | --------- | ----- |
+| 2 | 2 | 101 | B |
+
+The `SELECT` confirms exactly one `row` before anything changes: Neha Sharma's ungraded Database Systems enrollment. The `UPDATE` reuses that identical condition rather than a rewritten or loosened version of it, and `RETURNING` confirms, in the same statement, that grade B landed on that one `row` and nothing else. Three separate habits are stacked in these two statements:
+
+1. Checking first.
+
+2. Matching the condition exactly.
+
+3. Confirming immediately.
+
+None of them is difficult, they simply have to be done on purpose rather than skipped because a `SELECT` never seemed to need them.
+
+### Hands-On Practice: Check, Update, Confirm
+
+The OneCompiler exercise uses two files. `init.sql` creates and populates the starting `tables`. The active query file contains only the statements being practised. Because each run reloads `init.sql`, the dataset is always fresh.
+
+First, `init.sql` prepares the source `tables`:
+
 ```postgresql file=init.sql
 CREATE TABLE students (
     student_id INTEGER PRIMARY KEY,
@@ -47,17 +113,7 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 (4, 4, 102, '2025-02-04', NULL);
 ```
 
-## Why a SELECT Mistake and a Modification Mistake Are Not the Same
-
-A `SELECT` with a wrong `WHERE` clause returns the wrong `rows` on screen, and Naveen can simply notice, fix the condition, and run it again with nothing lost. An `UPDATE` or a `DELETE` with a wrong or missing `WHERE` clause changes or removes `rows` permanently, and by the time the mistake is noticed, the correct data may no longer exist anywhere to compare against.
-
-This asymmetry, that reading forgives mistakes and writing does not, is the entire reason a modification statement deserves a slower hand than a `query` typed to satisfy curiosity.
-
-![A SELECT mistake can be retried, while an UPDATE or DELETE mistake changes real data](images/11_select_mistake_vs_modification_mistake.png)
-
-## Knowing Exactly Which Rows Before Touching Any of Them
-
-Every genuinely safe modification Naveen has seen so far starts the same way: know exactly which `rows` a `WHERE` clause will match, before running anything that changes them.
+Then the active query file checks the target `row`, changes it, and confirms the change:
 
 ```postgresql with=init.sql
 SELECT enrollment_id, student_id, course_id, grade
@@ -70,16 +126,6 @@ WHERE student_id = 2 AND course_id = 101
 RETURNING enrollment_id, student_id, course_id, grade;
 ```
 
-The `SELECT` confirms exactly one `row` before anything changes: Neha Sharma's ungraded Database Systems enrollment. The `UPDATE` reuses that identical condition rather than a rewritten or loosened version of it, and `RETURNING` confirms, in the same statement, that grade B landed on that one `row` and nothing else. Three separate habits are stacked in these two statements:
-
-1. Checking first.
-
-2. Matching the condition exactly.
-
-3. Confirming immediately.
-
-None of them is difficult, they simply have to be done on purpose rather than skipped because a `SELECT` never seemed to need them.
-
 ## Treating a Modification as a Decision, Not a Reflex
 
 A `SELECT` can be typed as fast as a thought, because getting it wrong costs nothing more than glancing at an unexpected result and trying again. An `INSERT`, `UPDATE`, or `DELETE` against real data should never be typed at that same speed.
@@ -88,17 +134,27 @@ The habit worth carrying forward is a short pause built into the process itself:
 
 ## What RETURNING Adds to That Discipline
 
-`RETURNING` is not just a convenience for skipping a second `query`, it is a built-in confirmation step that happens whether or not anyone remembers to ask for it separately.
+`RETURNING` is not just a convenience for skipping a second `query`, it is a built-in confirmation step that happens whether or not anyone remembers to ask for it separately. Running `DELETE FROM enrollments WHERE student_id = 4 AND course_id = 102 RETURNING enrollment_id, student_id, course_id;` removes a `row` and shows it in the same breath.
+
+Expected output, directly from the `RETURNING` clause, the row's last snapshot before removal:
+
+| enrollment_id | student_id | course_id |
+| ------------- | ---------- | --------- |
+| 4 | 4 | 102 |
+
+The result shows exactly one `row` leaving the `table`, Siddharth Rao's Data Structures enrollment, and that visible confirmation, arriving in the same breath as the `DELETE` itself, is what turns "I think that worked" into "I can see that it worked."
+
+![Safe modification checklist: select the target, reuse the same WHERE, and confirm with RETURNING](images/12_safe_modification_checklist.png)
+
+### Hands-On Practice: Delete with a Built-In Receipt
+
+Keep the same `init.sql` file and change only the active query file:
 
 ```postgresql with=init.sql
 DELETE FROM enrollments
 WHERE student_id = 4 AND course_id = 102
 RETURNING enrollment_id, student_id, course_id;
 ```
-
-The result shows exactly one `row` leaving the `table`, Siddharth Rao's Data Structures enrollment, and that visible confirmation, arriving in the same breath as the `DELETE` itself, is what turns "I think that worked" into "I can see that it worked."
-
-![Safe modification checklist: select the target, reuse the same WHERE, and confirm with RETURNING](images/12_safe_modification_checklist.png)
 
 ## Discipline Habits at a Glance
 
@@ -138,15 +194,20 @@ The result shows exactly one `row` leaving the `table`, Siddharth Rao's Data Str
 Confirm exactly which enrollment belongs to Varun Nair in Linear Algebra, then correct his grade to A, using `RETURNING` to see the result immediately.
 
 ```postgresql with=init.sql
-SELECT enrollment_id, student_id, course_id, grade
-FROM enrollments
-WHERE student_id = 3 AND course_id = 103;
-
-UPDATE enrollments
-SET grade = 'A'
-WHERE student_id = 3 AND course_id = 103
-RETURNING enrollment_id, student_id, course_id, grade;
+-- Check, update, then confirm below
 ```
+
+A working answer runs `SELECT enrollment_id, student_id, course_id, grade FROM enrollments WHERE student_id = 3 AND course_id = 103;`, then `UPDATE enrollments SET grade = 'A' WHERE student_id = 3 AND course_id = 103 RETURNING enrollment_id, student_id, course_id, grade;`. Before, from the `SELECT`:
+
+| enrollment_id | student_id | course_id | grade |
+| ------------- | ---------- | --------- | ----- |
+| 3 | 3 | 103 | B+ |
+
+After, directly from the `RETURNING` clause:
+
+| enrollment_id | student_id | course_id | grade |
+| ------------- | ---------- | --------- | ----- |
+| 3 | 3 | 103 | A |
 
 The `SELECT` isolates exactly one `row` before the change, the `UPDATE` reuses that same condition, and `RETURNING` confirms grade A landed on enrollment 3 and nowhere else.
 

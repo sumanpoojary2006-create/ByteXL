@@ -8,6 +8,20 @@
 
 The SQL standard defines four `isolation levels`, ordered from loosest to strictest, and each one is a promise about which of the earlier lesson's problems cannot occur.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `inventory`
+
+| product_id | stock_count |
+| --- | --- |
+| 1 | 50 |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE inventory (
     product_id INTEGER PRIMARY KEY,
@@ -17,9 +31,13 @@ CREATE TABLE inventory (
 INSERT INTO inventory (product_id, stock_count) VALUES (1, 50);
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 SHOW transaction_isolation;
 ```
+
+Expected observation: PostgreSQL returns one row containing the current server or transaction setting. The exact value depends on the OneCompiler PostgreSQL environment, so compare the setting name and meaning rather than memorizing a particular value.
 
 This confirms the default level for a new PostgreSQL session, `read committed`, sitting in the middle of the strictness spectrum, neither the loosest nor the strictest option available.
 
@@ -34,6 +52,8 @@ SHOW transaction_isolation;
 SELECT stock_count FROM inventory WHERE product_id = 1;
 COMMIT;
 ```
+
+Expected observation: PostgreSQL returns one row containing the current server or transaction setting. The exact value depends on the OneCompiler PostgreSQL environment, so compare the setting name and meaning rather than memorizing a particular value.
 
 - `SET TRANSACTION ISOLATION LEVEL SERIALIZABLE` requests the strictest level available, for the duration of this one `transaction` only; the session's default reverts back afterward for the next `transaction`.
 - PostgreSQL does not implement `READ UNCOMMITTED` as a genuinely looser level, it is treated the same as `READ COMMITTED`, so PostgreSQL in practice offers three distinct behaviors even though four names exist in the standard.
@@ -105,6 +125,8 @@ SELECT stock_count FROM inventory WHERE product_id = 1;
 COMMIT;
 ```
 
+Expected observation: the isolation-level command completes inside the transaction. Its effect becomes visible when the same read is tested from two concurrent sessions, as explained below.
+
 Both reads inside this `transaction` are guaranteed to agree, because `REPEATABLE READ` takes a consistent snapshot of the data as of when the `transaction` began, and every read within that `transaction` is served from that same snapshot rather than the constantly updating live data.
 
 ![Repeatable read keeping the same row value stable across two reads](images/09_repeatable_read_same_row_stays_same.png)
@@ -152,10 +174,10 @@ Start a `transaction` under `REPEATABLE READ`, confirm the level with `SHOW tran
 -- Write your transaction below
 ```
 
+Expected result and verification:
+
 If you run `BEGIN; SET TRANSACTION ISOLATION LEVEL REPEATABLE READ; SHOW transaction_isolation; SELECT stock_count FROM inventory WHERE product_id = 1; SELECT stock_count FROM inventory WHERE product_id = 1; COMMIT;`, the `isolation level` reports as `repeatable read`, and both reads return 50, consistently.
 
 ## Conclusion
 
-- `Isolation levels` let a `transaction` choose exactly how much protection against concurrency problems it needs, trading stricter guarantees for more waiting and potential retries, with `READ COMMITTED` as a sensible everyday default and `SERIALIZABLE` reserved for operations where any interference at all is unacceptable.
-- Rahul can now choose the right level for a banking transfer versus a simple analytics `query`, rather than treating every `transaction` identically.
-- `Locking` and strict isolation both come with a hazard worth understanding on its own: two `transactions` can end up waiting on each other in a way that never resolves.
+`Isolation levels` let a `transaction` choose exactly how much protection against concurrency problems it needs, trading stricter guarantees for more waiting and potential retries, with `READ COMMITTED` as a sensible everyday default and `SERIALIZABLE` reserved for operations where any interference at all is unacceptable. Rahul can now choose the right level for a banking transfer versus a simple analytics `query`, rather than treating every `transaction` identically. `Locking` and strict isolation both come with a hazard worth understanding on its own: two `transactions` can end up waiting on each other in a way that never resolves.

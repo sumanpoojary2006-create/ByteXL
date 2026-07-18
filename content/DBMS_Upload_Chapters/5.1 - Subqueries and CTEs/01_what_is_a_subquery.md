@@ -8,6 +8,25 @@ He cannot type `WHERE salary > AVG(salary)` directly, since `aggregate functions
 
 The `employees` `table` holds one `row` per employee, with a salary and a department.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `employees`
+
+| employee_id | employee_name | department | salary | manager_id |
+| --- | --- | --- | --- | --- |
+| 1 | Ananya Sharma | Engineering | 95000.00 | NULL |
+| 2 | Rajat Bhatia | Engineering | 78000.00 | 1 |
+| 3 | Meghna Iyer | Engineering | 82000.00 | 1 |
+| 4 | Sameer Khan | Sales | 65000.00 | NULL |
+| 5 | Pooja Reddy | Sales | 58000.00 | 4 |
+| 6 | Vikas Malhotra | Marketing | 60000.00 | NULL |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE employees (
     employee_id INTEGER PRIMARY KEY,
@@ -26,9 +45,17 @@ INSERT INTO employees (employee_id, employee_name, department, salary, manager_i
 (6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 SELECT AVG(salary) FROM employees;
 ```
+
+Expected output:
+
+| AVG(salary) |
+| --- |
+| 73000.00 |
 
 That single number, the company-wide average salary, is what Kabir's question actually depends on. Instead of running this `query` separately, copying the number down, and typing it into a second `query` by hand, a subquery lets him embed this exact `query` inside another one.
 
@@ -41,6 +68,8 @@ WHERE salary > (SELECT AVG(salary) FROM employees);
 The parentheses around `SELECT AVG(salary) FROM employees` mark it as a subquery, sometimes called an inner `query`, nested inside the outer `query`'s `WHERE` clause. The `database` runs the inner `query` first, gets back a single number, and then substitutes that number directly into the outer `query`'s condition, as if Kabir had typed the average in by hand:
 
 ![A subquery running inside an outer query and providing one average salary value](images/01_subquery_inner_query_value.png)
+
+Expected output:
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
   <thead>
@@ -77,6 +106,14 @@ FROM employees
 WHERE salary > 73000.00;
 ```
 
+Expected output:
+
+| employee_name | salary |
+| --- | --- |
+| Ananya Sharma | 95000.00 |
+| Rajat Bhatia | 78000.00 |
+| Meghna Iyer | 82000.00 |
+
 This happens to return the same three `rows` today, but it is fragile in a way the subquery version is not. The moment a new employee is hired, or anyone's salary changes, the true average shifts, and this hardcoded 73000.00 silently becomes wrong, with nothing in the `query` itself signaling that.
 
 The subquery version recalculates the average fresh every time the outer `query` runs, so it can never drift out of sync with the data it depends on.
@@ -94,6 +131,12 @@ WHERE salary > (
     SELECT AVG(salary) FROM employees WHERE department = 'Engineering'
 );
 ```
+
+Expected output:
+
+| employee_name | salary |
+| --- | --- |
+| Ananya Sharma | 95000.00 |
 
 Here the inner `query` adds its own `WHERE department = 'Engineering'`, computing the average salary within Engineering specifically, rather than across the whole company, and the outer `query` compares every employee's salary against that narrower figure instead.
 
@@ -141,6 +184,17 @@ Kabir wants to find every employee earning less than Ananya Sharma, the highest-
 ```
 
 If your `query` is `SELECT employee_name, salary FROM employees WHERE salary < (SELECT salary FROM employees WHERE employee_name = 'Ananya Sharma');`, it returns five employees, everyone except Ananya herself.
+
+Expected output:
+
+| employee_name | salary |
+| --- | --- |
+| Rajat Bhatia | 78000.00 |
+| Meghna Iyer | 82000.00 |
+| Sameer Khan | 65000.00 |
+| Pooja Reddy | 58000.00 |
+| Vikas Malhotra | 60000.00 |
+
 
 ## Conclusion
 

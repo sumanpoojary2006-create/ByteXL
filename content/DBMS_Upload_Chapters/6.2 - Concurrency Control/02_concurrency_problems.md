@@ -13,6 +13,20 @@ Naming each one clearly is what makes the next lessons, on `locking` and `isolat
 
 A `dirty read` happens when one `transaction` reads a change made by another `transaction` that has not yet committed, and might still be rolled back.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `inventory`
+
+| product_id | product_name | stock_count |
+| --- | --- | --- |
+| 1 | Wireless Mouse | 50 |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE inventory (
     product_id INTEGER PRIMARY KEY,
@@ -23,6 +37,8 @@ CREATE TABLE inventory (
 INSERT INTO inventory (product_id, product_name, stock_count) VALUES
 (1, 'Wireless Mouse', 50);
 ```
+
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
 ```postgresql with=init.sql
 -- Transaction A: adjusting stock, not yet committed
@@ -41,6 +57,14 @@ ROLLBACK;
 
 SELECT stock_count FROM inventory WHERE product_id = 1;
 ```
+
+Expected output:
+
+
+
+| stock_count |
+| --- |
+| 50 |
 
 - The final `SELECT` correctly shows 50, since PostgreSQL's default isolation level prevents `dirty reads` entirely, a concurrent `transaction` is never allowed to see this kind of in-progress, uncommitted change, exactly the isolation guarantee covered in the previous chapter.
 - `Dirty reads` are catalogued here because some `databases`, or some deliberately relaxed isolation levels, do allow them, and knowing the name of the problem is what makes a setting like "read uncommitted" understandable later in this chapter.
@@ -69,6 +93,22 @@ SELECT stock_count FROM inventory WHERE product_id = 1;
 COMMIT;
 ```
 
+Expected output 1:
+
+
+
+| stock_count |
+| --- |
+| 50 |
+
+Expected output 2:
+
+
+
+| stock_count |
+| --- |
+| 50 |
+
 Unlike a `dirty read`, the second read here would reflect genuinely committed data, so nothing incorrect was ever seen the issue is that a single `transaction`'s own `view` of the data changed mid-flight, which can be surprising or outright wrong for logic that assumes a value stays stable for the duration of a `transaction`.
 
 ## Phantom Reads: A Changing Set of Rows, Not Just a Changing Value
@@ -91,6 +131,22 @@ SELECT COUNT(*) FROM inventory WHERE stock_count < 50;
 COMMIT;
 ```
 
+Expected output 1:
+
+
+
+| COUNT(*) |
+| --- |
+| 0 |
+
+Expected output 2:
+
+
+
+| COUNT(*) |
+| --- |
+| 0 |
+
 The new `row` was not a value that changed underneath Transaction A, it is an entirely new `row` matching a condition Transaction A was relying on, which is why this gets its own name distinct from a `non-repeatable read`.
 
 ![Non-repeatable read changing one row and phantom read adding a new matching row](images/04_nonrepeatable_vs_phantom_read.png)
@@ -112,6 +168,14 @@ UPDATE inventory SET stock_count = 50 - 3 WHERE product_id = 1;
 
 SELECT stock_count FROM inventory WHERE product_id = 1;
 ```
+
+Expected output:
+
+
+
+| stock_count |
+| --- |
+| 47 |
 
 The final value here is 47, reflecting only the second `UPDATE`; the first sale's reduction of 5 units was computed correctly but never actually preserved, because both updates were based on the same stale reading of 50 rather than each other's results.
 
@@ -152,10 +216,10 @@ Using the `inventory` `table` above, write a `query` sequence that demonstrates 
 -- Write your queries below
 ```
 
+Expected result and verification:
+
 If both updates are written as `UPDATE inventory SET stock_count = 50 - 10 WHERE product_id = 1;` and `UPDATE inventory SET stock_count = 50 - 15 WHERE product_id = 1;`, run one after the other, the final stock count is 35, reflecting only the second deduction, with the first 10-unit sale's effect on stock lost entirely.
 
 ## Conclusion
 
-- `Dirty reads`, non-repeatable reads, phantom reads, and lost updates each name a specific way concurrent `transactions` can interfere with each other, giving a precise vocabulary for problems that would otherwise all just look like unpredictable bugs under load.
-- Recognizing which one is happening is the first step toward choosing the right fix.
-- The next lesson covers `locking`, the mechanism a `database` uses to prevent these problems from happening in the first place.
+`Dirty reads`, non-repeatable reads, phantom reads, and lost updates each name a specific way concurrent `transactions` can interfere with each other, giving a precise vocabulary for problems that would otherwise all just look like unpredictable bugs under load. Recognizing which one is happening is the first step toward choosing the right fix. The next lesson covers `locking`, the mechanism a `database` uses to prevent these problems from happening in the first place.

@@ -8,6 +8,21 @@ The fourth letter in ACID, **durability**, is the guarantee that once a `transac
 
 The `accounts` `table` is the same one used throughout this chapter.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `accounts`
+
+| account_id | owner_name | balance |
+| --- | --- | --- |
+| 1 | Meera Iyer | 50000.00 |
+| 2 | Sanjay Rathi | 12000.00 |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
@@ -20,6 +35,8 @@ INSERT INTO accounts (account_id, owner_name, balance) VALUES
 (2, 'Sanjay Rathi', 12000.00);
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 BEGIN;
 UPDATE accounts SET balance = balance - 5000.00 WHERE account_id = 1;
@@ -28,6 +45,15 @@ COMMIT;
 
 SELECT account_id, balance FROM accounts;
 ```
+
+Expected output:
+
+
+
+| account_id | balance |
+| --- | --- |
+| 1 | 45000.00 |
+| 2 | 17000.00 |
 
 Once `COMMIT` finishes here, durability guarantees this new balance is not sitting only in server memory, waiting to disappear the moment power is lost. The `database` has already made sure this change is recorded somewhere that survives a crash, before it ever reported success back to Rahul's application.
 
@@ -52,6 +78,8 @@ Durability is not free; forcing every commit to wait for a disk write takes real
 SHOW synchronous_commit;
 ```
 
+Expected observation: PostgreSQL returns one row containing the current server or transaction setting. The exact value depends on the OneCompiler PostgreSQL environment, so compare the setting name and meaning rather than memorizing a particular value.
+
 The default value, `on`, means every `COMMIT` waits until its change is safely recorded before reporting success, the full durability guarantee. Turning this off in a real system would make commits faster, but it would reopen exactly the risk durability exists to close: a very recent commit could theoretically be lost if the server crashed in the narrow window before its record was actually written to durable storage.
 
 This setting is not something a banking application should ever turn off, but it exists precisely because durability, like every guarantee in this chapter, is a deliberate engineering choice, not an automatic law of nature.
@@ -67,6 +95,8 @@ UPDATE accounts SET balance = balance - 1000.00 WHERE account_id = 1;
 -- Durability makes no promise about uncommitted work; atomicity already
 -- guarantees it should not survive in a half-applied state.
 ```
+
+Expected observation: PostgreSQL completes the transaction-control statements. Use the following explanation and any closing `SELECT` to verify whether the changes were committed or rolled back.
 
 Durability only ever protects a `transaction` once it has fully committed. A `transaction` that never reaches `COMMIT` is supposed to disappear on failure, whether that failure is an explicit `ROLLBACK` or a crash; durability's job begins exactly where atomicity's job for that `transaction` ends.
 
@@ -109,9 +139,18 @@ Check the current `synchronous_commit` setting, then run a committed `transactio
 -- Write your queries below
 ```
 
-- If you run `SHOW synchronous_commit;` followed by `BEGIN
-- `UPDATE` accounts SET balance = balance + 500.00 `WHERE` account_id = 2
-- `COMMIT`;` and then ``SELECT` balance FROM accounts `WHERE` account_id = 2;`, the balance shows 12500.00, and durability is the reason that value can be trusted to still be there even after an immediate crash, since `COMMIT` would not have returned successfully until the change was already recorded somewhere a crash cannot erase.
+Expected result and verification:
+
+If you run `SHOW synchronous_commit;` followed by:
+
+```sql
+BEGIN;
+UPDATE accounts SET balance = balance + 500.00 WHERE account_id = 2;
+COMMIT;
+SELECT balance FROM accounts WHERE account_id = 2;
+```
+
+the balance shows 12500.00, and durability is the reason that value can be trusted to still be there even after an immediate crash, since `COMMIT` would not have returned successfully until the change was already recorded somewhere a crash cannot erase.
 
 ## Conclusion
 

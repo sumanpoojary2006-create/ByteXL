@@ -6,7 +6,24 @@ Pulling the whole `table` and cutting it down to five `rows` in whatever code re
 
 ## Cutting a Result Down to N Rows
 
-The enrollments `table` links students to the courses they have taken, along with the date they enrolled and, once available, a grade.
+The enrollments `table` links students to the courses they have taken, along with the date they enrolled and, once available, a grade. It holds this data:
+
+| enrollment_id | student_id | course_id | enrolled_on | grade |
+| ------------- | ---------- | --------- | ---------- | ----- |
+| 1 | 1 | 101 | 2025-02-01 | A |
+| 2 | 1 | 103 | 2025-02-01 | B |
+| 3 | 2 | 105 | 2025-02-03 | A |
+| 4 | 3 | 101 | 2025-02-05 | *NULL* |
+| 5 | 4 | 102 | 2025-02-08 | B |
+| 6 | 5 | 104 | 2025-02-10 | A |
+| 7 | 6 | 101 | 2025-02-12 | *NULL* |
+| 8 | 7 | 105 | 2025-02-15 | C |
+| 9 | 8 | 103 | 2025-02-18 | B |
+| 10 | 2 | 102 | 2025-02-20 | *NULL* |
+
+Tanvi's widget needs only the five most recent enrollments, newest first. The query is `SELECT student_id, course_id, enrolled_on FROM enrollments ORDER BY enrolled_on DESC LIMIT 5;`.
+
+For hands-on practice, `init.sql` creates and populates the `students`, `courses`, and displayed `enrollments` tables:
 
 ```postgresql file=init.sql
 CREATE TABLE students (
@@ -63,12 +80,24 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 (10, 2, 102, '2025-02-20', NULL);
 ```
 
+The active query file contains the trimmed query being practised:
+
 ```postgresql with=init.sql
 SELECT student_id, course_id, enrolled_on
 FROM enrollments
 ORDER BY enrolled_on DESC
 LIMIT 5;
 ```
+
+Expected output:
+
+| student_id | course_id | enrolled_on |
+| ---------- | --------- | ---------- |
+| 2 | 102 | 2025-02-20 |
+| 8 | 103 | 2025-02-18 |
+| 7 | 105 | 2025-02-15 |
+| 6 | 101 | 2025-02-12 |
+| 5 | 104 | 2025-02-10 |
 
 The enrollments `table` has ten `rows` in it, but this `query` returns exactly five: the five most recently enrolled records, newest first. Two clauses divide the work:
 
@@ -83,7 +112,7 @@ This is precisely Tanvi's dashboard widget, in one `query`, with the `database` 
 
 - `LIMIT` on its own, with no `ORDER BY`, still runs and still returns some number of `rows`, but which `rows` it happens to return is not something a `query` should ever depend on.
 - Without a sort, "the first five `rows`" is just whatever order the `table` happens to be stored or scanned in internally, which can change between runs, after an update, or after PostgreSQL chooses a different way to fetch the data.
-- A "top 5" or "most recent 5" request only makes sense once the `rows` have been put into the order that "top" or "most recent" refers to, which is exactly why `LIMIT` is almost always paired with an `ORDER BY` that defines what that top actually means.
+- A "top 5" or "most recent 5" request only makes sense once the `rows` have been put into the order that "top" or "most recent" refers to, which is exactly why `LIMIT` is almost always paired with an `ORDER BY` that defines what that top actually means. The query is `SELECT student_id, course_id, enrolled_on FROM enrollments LIMIT 5;`.
 
 ```postgresql with=init.sql
 SELECT student_id, course_id, enrolled_on
@@ -91,12 +120,22 @@ FROM enrollments
 LIMIT 5;
 ```
 
-This still returns five `rows`, but nothing in the `query` says they are the five most recent, the five earliest, or anything meaningful at all. Compare that to the sorted version above, and the difference in what the result actually promises becomes clear.
+A typical output, reflecting whatever order the `table` happens to be stored in today:
+
+| student_id | course_id | enrolled_on |
+| ---------- | --------- | ---------- |
+| 1 | 101 | 2025-02-01 |
+| 1 | 103 | 2025-02-01 |
+| 2 | 105 | 2025-02-03 |
+| 3 | 101 | 2025-02-05 |
+| 4 | 102 | 2025-02-08 |
+
+This still returns five `rows`, but nothing in the `query` says they are the five most recent, the five earliest, or anything meaningful at all - PostgreSQL does not guarantee this exact order will repeat on every run. Compare that to the sorted version above, and the difference in what the result actually promises becomes clear.
 
 ## Skipping Ahead With OFFSET
 
 - A dashboard widget usually only needs the very front of a result, but a paginated list, like a "page 2 of enrollments" `view` in an admin screen, needs to skip past `rows` already shown on page 1.
-- `OFFSET`, placed after `LIMIT`, tells PostgreSQL how many `rows` to skip before it starts collecting the ones to return.
+- `OFFSET`, placed after `LIMIT`, tells PostgreSQL how many `rows` to skip before it starts collecting the ones to return. The query is `SELECT student_id, course_id, enrolled_on FROM enrollments ORDER BY enrolled_on DESC LIMIT 5 OFFSET 5;`.
 
 ```postgresql with=init.sql
 SELECT student_id, course_id, enrolled_on
@@ -104,6 +143,16 @@ FROM enrollments
 ORDER BY enrolled_on DESC
 LIMIT 5 OFFSET 5;
 ```
+
+Expected output:
+
+| student_id | course_id | enrolled_on |
+| ---------- | --------- | ---------- |
+| 4 | 102 | 2025-02-08 |
+| 3 | 101 | 2025-02-05 |
+| 2 | 105 | 2025-02-03 |
+| 1 | 101 | 2025-02-01 |
+| 1 | 103 | 2025-02-01 |
 
 This returns the next five most recent enrollments, the ones ranked sixth through tenth by enrollment date, since the first five were already shown on an earlier page and this `query` skips past them with `OFFSET 5`. A page 3 request, if the data were large enough, would simply change `OFFSET 5` to `OFFSET 10`, skipping the first ten `rows` before collecting the next batch of five.
 
@@ -140,17 +189,32 @@ This returns the next five most recent enrollments, the ones ranked sixth throug
 
 ## Your Turn
 
-The department office wants a "highest workload" preview: the three courses with the most credits, and among courses tied on credits, the ones whose title comes first alphabetically. Write a `query` against the courses `table` above that returns `title` and `credits`, sorted appropriately, and limited to 3 `rows`.
+The department office wants a "highest workload" preview: the three courses with the most credits, and among courses tied on credits, the ones whose title comes first alphabetically. The `courses` `table` holds this data:
+
+| course_id | title | department | credits |
+| --------- | -------------------- | ---------------- | ------: |
+| 101 | Database Systems | Computer Science | 4 |
+| 102 | Data Structures | Computer Science | 4 |
+| 103 | Linear Algebra | Mathematics | 3 |
+| 104 | Discrete Mathematics | Mathematics | 3 |
+| 105 | Microeconomics | Economics | 3 |
+
+Write a `query` against the courses `table` above that returns `title` and `credits`, sorted appropriately, and limited to 3 `rows`.
 
 ```postgresql with=init.sql
 -- Write your query below
 ```
 
-`SELECT title, credits FROM courses ORDER BY credits DESC, title LIMIT 3;` sorts by credits from highest to lowest, breaks any tie by title alphabetically, and keeps only the top three `rows`: Data Structures and Database Systems, both 4 credits and ordered alphabetically between themselves, followed by Discrete Mathematics, the alphabetically first of the three 3-credit courses.
+`SELECT title, credits FROM courses ORDER BY credits DESC, title LIMIT 3;` sorts by credits from highest to lowest, breaks any tie by title alphabetically, and keeps only the top three `rows`. Expected output:
+
+| title | credits |
+| ---------------- | ------: |
+| Data Structures | 4 |
+| Database Systems | 4 |
+| Discrete Mathematics | 3 |
+
+Data Structures and Database Systems are both 4 credits and ordered alphabetically between themselves, followed by Discrete Mathematics, the alphabetically first of the three 3-credit courses.
 
 ## Conclusion
 
-- `LIMIT` trims a result down to a manageable number of `rows`, and `OFFSET` lets a `query` skip past `rows` already handled, together making dashboard previews and paginated `views` practical without ever pulling more data than a screen can use.
-- Neither clause means much on its own, since "the first few `rows`" only becomes a meaningful promise once `ORDER BY` has decided what order those `rows` are actually in.
-- Tanvi's "Recent Enrollments" widget can now ask the `database` directly for just its five `rows`, sorted newest first, instead of dragging the entire growing enrollments `table` across the network to trim it down in code.
-- With the ability to choose `columns`, rename them, deduplicate them, compute new ones, sort them, and trim them all in place, the remaining piece of everyday querying is deciding which `rows` even qualify for a result in the first place, which is where a precise condition on the data itself comes in.
+`LIMIT` trims a result down to a manageable number of `rows`, and `OFFSET` lets a `query` skip past `rows` already handled, together making dashboard previews and paginated `views` practical without ever pulling more data than a screen can use. Neither clause means much on its own, since "the first few `rows`" only becomes a meaningful promise once `ORDER BY` has decided what order those `rows` are actually in. Tanvi's "Recent Enrollments" widget can now ask the `database` directly for just its five `rows`, sorted newest first, instead of dragging the entire growing enrollments `table` across the network to trim it down in code. With the ability to choose `columns`, rename them, deduplicate them, compute new ones, sort them, and trim them all in place, the remaining piece of everyday querying is deciding which `rows` even qualify for a result in the first place, which is where a precise condition on the data itself comes in.

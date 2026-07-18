@@ -80,6 +80,12 @@ What makes `tables` and SQL the sensible starting point is that they are the sha
 
 Farhan's manager makes her decision by the end of that conversation: the shipments system will be built as `tables`, queried with SQL. Not because the other proposal was wrong to consider, but because starting with the option that every future teammate can already read, `query`, and reason about correctly is simply the safer bet for a system meant to last.
 
+## Your Turn: Make the Case
+
+A junior teammate proposes building the shipments system on a brand-new storage product with its own custom query syntax, arguing it is faster for their specific use case. Write two sentences a mentor could use to push back, without simply saying "no."
+
+A working answer: "Speed on one benchmark is not the only cost here, every future hire will need to learn this product's syntax from scratch before they can safely touch production data, and none of that knowledge transfers to their next job or to any of our existing backup, reporting, and monitoring tools." That answer does exactly what Farhan's manager did: it does not dismiss the alternative outright, it weighs the one-time speed benefit against the ongoing cost of unfamiliarity, tooling, and hiring that a standardized relational system with SQL avoids by default.
+
 ## Conclusion
 
 Relational `databases` earn their place as the default starting point because `tables` are a shape people already understand, and SQL is a language that transfers across systems, jobs, and years instead of expiring the moment one particular product falls out of fashion. That combination of familiarity, standardization, and mature tooling is why this course, like most serious backend systems, begins here rather than with a less conventional alternative.

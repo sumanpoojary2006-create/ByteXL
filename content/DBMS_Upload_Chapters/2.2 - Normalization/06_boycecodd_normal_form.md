@@ -167,6 +167,12 @@ In InspectorSpecialty, Inspector is now the whole `primary key`, so Inspector ->
   </tbody>
 </table>
 
+## Your Turn: Check the Determinant
+
+A tuition center table is keyed by the pair (StudentID, Subject) and records TutorName, since each student is assigned one tutor per subject. The center also knows that every tutor teaches exactly one subject, no tutor crosses subjects. Check whether TutorName -> Subject violates BCNF, following Dev's inspector reasoning.
+
+A working answer: TutorName -> Subject is a genuine functional dependency, since knowing the tutor tells you the subject with no exceptions. But is TutorName, alone, a candidate key of this table? No, the same tutor appears across multiple students, so StudentID is still needed to pin a row down. TutorName determines Subject perfectly well without being a candidate key, exactly Dev's Inspector-ProductCategory violation, so the fix is the same: split off a TutorSubjects table keyed by TutorName alone.
+
 ## Conclusion
 
 Boyce-Codd `Normal Form` closes the one gap 3NF leaves open: a `table` can satisfy every earlier rule and still repeat data whenever a functional dependency's determinant is not itself a `candidate key`, especially when the dependent `column` happens to be part of the `primary key` rather than sitting outside it.

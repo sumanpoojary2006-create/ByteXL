@@ -8,6 +8,25 @@ SQL offers a cleaner way to write exactly the same logic: a **`Common Table Expr
 
 The `employees` `table` is the same one used throughout this chapter.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `employees`
+
+| employee_id | employee_name | department | salary | manager_id |
+| --- | --- | --- | --- | --- |
+| 1 | Ananya Sharma | Engineering | 95000.00 | NULL |
+| 2 | Rajat Bhatia | Engineering | 78000.00 | 1 |
+| 3 | Meghna Iyer | Engineering | 82000.00 | 1 |
+| 4 | Sameer Khan | Sales | 65000.00 | NULL |
+| 5 | Pooja Reddy | Sales | 58000.00 | 4 |
+| 6 | Vikas Malhotra | Marketing | 60000.00 | NULL |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE employees (
     employee_id INTEGER PRIMARY KEY,
@@ -26,6 +45,8 @@ INSERT INTO employees (employee_id, employee_name, department, salary, manager_i
 (6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 Here is the derived-`table` version from an earlier lesson, for comparison.
 
 ```postgresql with=init.sql
@@ -37,6 +58,12 @@ FROM (
 ) AS dept_averages
 WHERE department_avg > (SELECT AVG(salary) FROM employees);
 ```
+
+Expected output:
+
+| department | department_avg |
+| --- | --- |
+| Engineering | 85000.00 |
 
 And here is the same logic rewritten with a CTE.
 
@@ -50,6 +77,12 @@ SELECT department, department_avg
 FROM dept_averages
 WHERE department_avg > (SELECT AVG(salary) FROM employees);
 ```
+
+Expected output:
+
+| department | department_avg |
+| --- | --- |
+| Engineering | 85000.00 |
 
 - `WITH dept_averages AS (...)` names the inner `query` before the main `query` even begins, and the main `query` afterward simply reads `FROM dept_averages`, exactly as if it were a real `table`.
 - The two versions produce an identical result, Engineering as the only department above the company average, but the CTE version reads in the order a person would naturally explain it out loud: "first compute department averages, then find the ones above the company average."
@@ -73,6 +106,12 @@ SELECT dept_averages.department, dept_averages.department_avg, company_average.c
 FROM dept_averages, company_average
 WHERE dept_averages.department_avg > company_average.company_avg;
 ```
+
+Expected output:
+
+| department | department_avg | company_avg |
+| --- | --- | --- |
+| Engineering | 85000.00 | 73000.00 |
 
 `dept_averages` and `company_average` are each defined once, given clear names, and then both referenced in the final `SELECT`, which lists them side by side and compares their `columns` directly. Naming each step this way pays off in two ways:
 
@@ -101,6 +140,14 @@ SELECT employee_name, salary
 FROM high_earners
 ORDER BY salary DESC;
 ```
+
+Expected output:
+
+| employee_name | salary |
+| --- | --- |
+| Ananya Sharma | 95000.00 |
+| Meghna Iyer | 82000.00 |
+| Rajat Bhatia | 78000.00 |
 
 This is a small example, but the pattern scales: as soon as a `WHERE` subquery's own logic becomes complex enough to deserve a name, wrapping it in a CTE keeps the final `query` focused on what happens with the result, not how that result was derived.
 
@@ -142,6 +189,14 @@ Rewrite the `correlated subquery` from the previous lesson, finding employees wh
 ```
 
 One valid answer defines `WITH dept_averages AS (SELECT department, AVG(salary) AS department_avg FROM employees GROUP BY department)` and then `joins` `employees` to `dept_averages` on `department`, filtering with `WHERE employees.salary > dept_averages.department_avg`, returning Ananya Sharma, whose 95000.00 clears Engineering's 85000.00 average, and Sameer Khan, whose 65000.00 clears Sales's 61500.00 average.
+
+
+Expected output:
+
+| employee_name | department | salary | department_avg |
+| --- | --- | --- | --- |
+| Ananya Sharma | Engineering | 95000.00 | 85000.00 |
+| Sameer Khan | Sales | 65000.00 | 61500.00 |
 
 ## Conclusion
 

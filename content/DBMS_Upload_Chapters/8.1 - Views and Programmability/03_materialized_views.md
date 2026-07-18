@@ -8,6 +8,25 @@ A **`materialized view`** solves this by actually storing the `query`'s result o
 
 The setup mirrors the ordinary `view` from earlier in this chapter, but the underlying data here represents a much larger, slower-to-aggregate history.
 
+## Source Data Used in This Lesson
+
+Some lessons need a larger dataset to make execution plans or maintenance behavior visible. For those tables, `init.sql` generates the rows instead of listing every row manually.
+
+### Generated `shipments` dataset
+
+| Column | Definition in the setup |
+| --- | --- |
+| `shipment_id` | `INTEGER PRIMARY KEY` |
+| `driver_id` | `INTEGER` |
+| `status` | `TEXT` |
+| `shipped_month` | `DATE` |
+
+The setup generates 5,000 rows, numbered from 1 through 5000. This scale is intentional because performance behavior is difficult to observe on a tiny table.
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
@@ -23,6 +42,8 @@ SELECT i, (i % 20) + 1,
 FROM generate_series(1, 5000) AS i;
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 CREATE MATERIALIZED VIEW monthly_shipment_summary AS
 SELECT shipped_month, COUNT(*) AS total_shipments,
@@ -32,6 +53,23 @@ GROUP BY shipped_month;
 
 SELECT * FROM monthly_shipment_summary ORDER BY shipped_month;
 ```
+
+Expected output:
+
+| shipped_month | total_shipments | delayed_shipments |
+| --- | ---: | ---: |
+| 2025-01-01 | 416 | 83 |
+| 2025-02-01 | 417 | 0 |
+| 2025-03-01 | 417 | 0 |
+| 2025-04-01 | 417 | 84 |
+| 2025-05-01 | 417 | 0 |
+| 2025-06-01 | 417 | 0 |
+| 2025-07-01 | 417 | 83 |
+| 2025-08-01 | 417 | 0 |
+| 2025-09-01 | 417 | 0 |
+| 2025-10-01 | 416 | 83 |
+| 2025-11-01 | 416 | 0 |
+| 2025-12-01 | 416 | 0 |
 
 `CREATE MATERIALIZED VIEW` does two things, in order:
 
@@ -62,6 +100,12 @@ VALUES (5001, 5, 'delayed', '2025-06-01');
 SELECT * FROM monthly_shipment_summary WHERE shipped_month = '2025-06-01';
 ```
 
+Expected output:
+
+| shipped_month | total_shipments | delayed_shipments |
+| --- | ---: | ---: |
+| 2025-06-01 | 417 | 0 |
+
 This new delayed shipment for June does not appear in `monthly_shipment_summary`'s June `row`, because the `materialized view` is still showing its stored result from when it was created, before this insert ever happened.
 
 This staleness is not a bug; it is the entire point of a `materialized view`, avoiding the cost of recomputing the aggregate on every read, in exchange for accepting that reads may be out of date until a refresh runs.
@@ -86,6 +130,12 @@ REFRESH MATERIALIZED VIEW monthly_shipment_summary;
 SELECT * FROM monthly_shipment_summary WHERE shipped_month = '2025-06-01';
 ```
 
+Expected output:
+
+| shipped_month | total_shipments | delayed_shipments |
+| --- | ---: | ---: |
+| 2025-06-01 | 418 | 1 |
+
 After the refresh, June's `row` correctly reflects the newly inserted delayed shipment. In a real production system, this refresh is typically scheduled, run every hour, every night, or after a known batch of data loads, rather than run manually, which is a deliberate design decision about how stale the summary is allowed to get before it matters.
 
 ## Refreshing Without Blocking Reads
@@ -106,7 +156,24 @@ CREATE UNIQUE INDEX idx_monthly_summary_month ON monthly_shipment_summary (shipp
 REFRESH MATERIALIZED VIEW CONCURRENTLY monthly_shipment_summary;
 ```
 
-`REFRESH MATERIALIZED VIEW CONCURRENTLY` recomputes the result in the background while the existing stored data remains fully readable, only swapping over once the new computation is complete, at the cost of taking somewhat longer overall than a plain refresh, since it has to do extra work to keep the old version available throughout.
+Expected output (from the `SELECT` right after `CREATE MATERIALIZED VIEW`, before the index and concurrent refresh run):
+
+| shipped_month | total_shipments | delayed_shipments |
+| --- | ---: | ---: |
+| 2025-01-01 | 416 | 83 |
+| 2025-02-01 | 417 | 0 |
+| 2025-03-01 | 417 | 0 |
+| 2025-04-01 | 417 | 84 |
+| 2025-05-01 | 417 | 0 |
+| 2025-06-01 | 417 | 0 |
+| 2025-07-01 | 417 | 83 |
+| 2025-08-01 | 417 | 0 |
+| 2025-09-01 | 417 | 0 |
+| 2025-10-01 | 416 | 83 |
+| 2025-11-01 | 416 | 0 |
+| 2025-12-01 | 416 | 0 |
+
+`CREATE UNIQUE INDEX` and `REFRESH MATERIALIZED VIEW CONCURRENTLY` return no rows of their own; `REFRESH MATERIALIZED VIEW CONCURRENTLY` recomputes the result in the background while the existing stored data remains fully readable, only swapping over once the new computation is complete, at the cost of taking somewhat longer overall than a plain refresh, since it has to do extra work to keep the old version available throughout.
 
 ## Ordinary Views vs. Materialized Views at a Glance
 
@@ -157,6 +224,8 @@ SELECT * FROM monthly_shipment_summary ORDER BY shipped_month;
 
 -- Write your queries below
 ```
+
+Expected result and verification:
 
 If your `materialized view` is `CREATE MATERIALIZED VIEW driver_shipment_totals AS SELECT driver_id, COUNT(*) AS total FROM shipments GROUP BY driver_id;`, inserting a new shipment for `driver_id = 5` does not change `driver_shipment_totals`'s count for driver 5 until `REFRESH MATERIALIZED VIEW driver_shipment_totals;` is explicitly run.
 

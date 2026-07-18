@@ -14,6 +14,36 @@ None of these pieces are new on their own; what is new is seeing exactly how the
 
 Region information lives on a separate `customers` `table`, not on `orders` itself, which is a completely normal way for a real `schema` to be organized.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the data they will use. The tables below show the rows loaded by the setup file.
+
+### `customers`
+
+| customer_name | region |
+| --- | --- |
+| Ishita Rao | South |
+| Vivek Menon | West |
+| Aman Gupta | North |
+| Sonal Deshpande | West |
+
+### `orders`
+
+| order_id | customer_name | category | amount | order_date |
+| --- | --- | --- | --- | --- |
+| 1 | Ishita Rao | Fiction | 450 | 2025-04-02 |
+| 2 | Vivek Menon | Non-Fiction | 899 | 2025-04-03 |
+| 3 | Ishita Rao | Fiction | 320 | 2025-04-05 |
+| 4 | Aman Gupta | Children | 210 | 2025-04-06 |
+| 5 | Sonal Deshpande | Non-Fiction | 1450 | 2025-04-08 |
+| 6 | Vivek Menon | Fiction | 610 | 2025-04-10 |
+| 7 | Aman Gupta | Children | 175 | 2025-04-12 |
+| 8 | Ishita Rao | Non-Fiction | 990 | 2025-04-14 |
+
+The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
+
+## Hands-On Setup: Prepare the Data
+
 ```postgresql file=init.sql
 CREATE TABLE customers (
     customer_name TEXT PRIMARY KEY,
@@ -45,12 +75,22 @@ INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUE
 (8, 'Ishita Rao', 'Non-Fiction', 990.00, '2025-04-14');
 ```
 
+Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
+
 ```postgresql with=init.sql
 SELECT c.region, SUM(o.amount) AS region_revenue
 FROM orders o
 JOIN customers c ON o.customer_name = c.customer_name
 GROUP BY c.region;
 ```
+
+Expected output:
+
+| region | region_revenue |
+| --- | --- |
+| North | 385 |
+| South | 1760 |
+| West | 2959 |
 
 The `JOIN` attaches each order to its customer's region before grouping ever happens, so `GROUP BY c.region` can collapse `rows` by a `column` that was never on the `orders` `table` to begin with. Aggregation and `joins` combine naturally this way: the `join` widens each `row` with extra `columns`, and grouping then works with whichever of those `columns` it needs.
 
@@ -68,6 +108,14 @@ WHERE o.order_date > '2025-04-07'
 GROUP BY c.region;
 ```
 
+Expected output:
+
+| region | region_revenue |
+| --- | --- |
+| North | 175 |
+| South | 990 |
+| West | 2060 |
+
 Only orders 5 through 8 survive the `WHERE` clause, and grouping happens on that smaller set, so the West region's total here reflects just Sonal's 1450.00 order and Vivek's 610.00 order, not his earlier 899.00 order from April 3.
 
 ## Adding a Group-Level Filter and a Sort
@@ -83,6 +131,12 @@ GROUP BY c.region
 HAVING COUNT(DISTINCT o.customer_name) >= 2
 ORDER BY region_revenue DESC;
 ```
+
+Expected output:
+
+| region | region_revenue | customer_count |
+| --- | --- | --- |
+| West | 2060 | 2 |
 
 - `COUNT(DISTINCT o.customer_name)` counts unique customers per region rather than unique orders, which matters because one customer with many orders should not be mistaken for many customers.
 - `HAVING` then drops any region with fewer than two distinct customers in this filtered window, and `ORDER BY region_revenue DESC` puts the highest-earning surviving region first.
@@ -150,8 +204,18 @@ The founders want one more cut: total revenue and order count per category, but 
 - `Non-Fiction` should come out on top at 3339.00, ahead of `Fiction` at 1380.00.
 - That happens after Aman Gupta's North-region Children orders are filtered out and Vivek's, Sonal's, and Ishita's Non-Fiction orders are summed together.
 
+
+Expected output for the practice query:
+
+| category | total_revenue | order_count |
+| --- | --- | --- |
+| Non-Fiction | 3339 | 3 |
+| Fiction | 1380 | 3 |
+
 ## Conclusion
 
-- `Joins`, `row` filters, grouping, group filters, and sorting are not separate skills; they are stages of one pipeline that runs in a fixed order regardless of how the `query` is written, and understanding that order explains every rule about what each clause is and is not allowed to reference.
-- Priya can now answer any report the founders throw at her by reasoning through the same six steps every time.
-- `Joins` have been used here just to bring in a `column` to group by; the next chapter looks at `joins` in their own right, in much more depth.
+`Joins`, `row` filters, grouping, group filters, and sorting are not separate skills; they are stages of one pipeline that runs in a fixed order regardless of how the `query` is written, and understanding that order explains every rule about what each clause is and is not allowed to reference.
+
+Priya can now answer any report the founders throw at her by reasoning through the same six steps every time.
+
+`Joins` have been used here just to bring in a `column` to group by; the next chapter looks at `joins` in their own right, in much more depth.

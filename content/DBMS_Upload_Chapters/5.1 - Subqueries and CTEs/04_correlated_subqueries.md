@@ -10,6 +10,25 @@ A subquery that reaches back into the outer `query`'s current `row` like this is
 
 The `employees` `table` is the same one used throughout this chapter.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `employees`
+
+| employee_id | employee_name | department | salary | manager_id |
+| --- | --- | --- | --- | --- |
+| 1 | Ananya Sharma | Engineering | 95000.00 | NULL |
+| 2 | Rajat Bhatia | Engineering | 78000.00 | 1 |
+| 3 | Meghna Iyer | Engineering | 82000.00 | 1 |
+| 4 | Sameer Khan | Sales | 65000.00 | NULL |
+| 5 | Pooja Reddy | Sales | 58000.00 | 4 |
+| 6 | Vikas Malhotra | Marketing | 60000.00 | NULL |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE employees (
     employee_id INTEGER PRIMARY KEY,
@@ -28,6 +47,8 @@ INSERT INTO employees (employee_id, employee_name, department, salary, manager_i
 (6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 SELECT e1.employee_name, e1.department, e1.salary
 FROM employees e1
@@ -35,6 +56,13 @@ WHERE e1.salary > (
     SELECT AVG(e2.salary) FROM employees e2 WHERE e2.department = e1.department
 );
 ```
+
+Expected output:
+
+| employee_name | department | salary |
+| --- | --- | --- |
+| Ananya Sharma | Engineering | 95000.00 |
+| Sameer Khan | Sales | 65000.00 |
 
 Both `employees e1` and `employees e2` refer to the same `table`, aliased differently:
 
@@ -55,6 +83,17 @@ SELECT e1.employee_name,
 FROM employees e1;
 ```
 
+Expected output:
+
+| employee_name | dept_avg |
+| --- | --- |
+| Ananya Sharma | 85000.00 |
+| Rajat Bhatia | 85000.00 |
+| Meghna Iyer | 85000.00 |
+| Sameer Khan | 61500.00 |
+| Pooja Reddy | 61500.00 |
+| Vikas Malhotra | 60000.00 |
+
 Placed in the `SELECT` list instead of `WHERE`, the same `correlated subquery` now shows the department average directly as a `column` next to every employee, and it is visibly different for Engineering `rows` versus Sales versus Marketing `rows`, confirming that it really is recalculating per `row` rather than reusing one fixed number.
 
 ## Using EXISTS with a Correlation
@@ -68,6 +107,13 @@ WHERE EXISTS (
     SELECT 1 FROM employees e2 WHERE e2.manager_id = e1.employee_id
 );
 ```
+
+Expected output:
+
+| employee_name |
+| --- |
+| Ananya Sharma |
+| Sameer Khan |
 
 The inner `query` checks, for each candidate `row` `e1`, whether any other employee `e2` lists `e1`'s `employee_id` as their `manager_id`. This correlated `EXISTS` returns everyone who manages at least one other employee, Ananya and Sameer, without needing a self `join` or a `GROUP BY`, since it only asks a yes-or-no question per `row` rather than pulling in matching `columns`.
 
@@ -118,7 +164,12 @@ Kabir wants to find every employee who earns more than their own direct manager.
 
 If your `query` is `SELECT e1.employee_name FROM employees e1 WHERE e1.salary > (SELECT e2.salary FROM employees e2 WHERE e2.employee_id = e1.manager_id);`, it returns no `rows` at all in this data, since every manager here, Ananya Sharma at 95000.00 and Sameer Khan at 65000.00, out-earns their own direct reports.
 
+Expected output:
+
+*(no rows returned)*
+
 An empty result is still a correct one: it confirms nobody in the `table` currently out-earns their manager.
+
 
 ## Conclusion
 

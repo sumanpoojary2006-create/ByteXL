@@ -94,6 +94,12 @@ A handful of rule shapes cover most of what a real `table` needs, and every one 
 
 Take a moment, with any `table` you can picture, a college's Students `table`, a shop's Products `table`, and ask which of its `columns` genuinely needs which of these five rule shapes. Almost every `column` you can imagine will need at least one.
 
+## Your Turn: Name the Rule Shape
+
+Kiran's clinic also wants to add an Appointments `table`. For each of these requirements, identify which kind of `constraint` shape it needs: (1) every appointment must have a doctor assigned, (2) no two appointments can share the same Appointment ID, (3) an appointment's status must be "Scheduled," "Completed," or "Cancelled."
+
+The first requirement needs a "must never be missing" `constraint` on the doctor `column`, since an appointment with no doctor makes no sense. The second needs a "must be unique" `constraint` on Appointment ID, the same guarantee a `primary key` provides. The third needs a "must come from a fixed, allowed set" `constraint`, so a typo like "Cancled" or an invented status can never sneak into the `column`, exactly like Kiran's blood group rule.
+
 ## Conclusion
 
 A `constraint` is a promise the `database` itself keeps on every single `row`, automatically and without exception, so that the trustworthiness of a `table` never depends on how careful, or how tired, the person entering the data happens to be that day. Kiran's clinic did not become more reliable because its receptionists suddenly became more careful.

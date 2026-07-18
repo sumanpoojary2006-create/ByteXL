@@ -10,12 +10,29 @@ A **`database` migration** is a versioned, ordered, tracked script that applies 
 
 Without any tracking, it is easy to lose track of which environment has which `schema` changes already applied.
 
+## Source Data Used in This Lesson
+
+The setup also creates the following empty supporting tables. Later statements populate them as the operation runs.
+
+### Empty `shipments` table
+
+| Column | Definition in the setup |
+| --- | --- |
+| `shipment_id` | `INTEGER PRIMARY KEY` |
+| `status` | `TEXT` |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     status TEXT
 );
 ```
+
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
 ```postgresql with=init.sql
 -- A developer, working directly, might run this by hand on their laptop:
@@ -24,7 +41,13 @@ ALTER TABLE shipments ADD COLUMN priority TEXT DEFAULT 'normal';
 SELECT * FROM shipments;
 ```
 
-This works perfectly on this one `database`. The problem appears the moment there is more than one `database` involved: did this same `ALTER TABLE` get run against the testing environment.
+Expected output:
+
+| shipment_id | status | priority |
+| --- | --- | --- |
+| *(no rows)* | | |
+
+`shipments` was created empty by `init.sql`, so `ALTER TABLE ... ADD COLUMN priority` only changes the `table`'s structure, adding an empty `priority` `column` with a `'normal'` default for any future `row`; there is no data yet for the `SELECT` to return. This works perfectly on this one `database`. The problem appears the moment there is more than one `database` involved: did this same `ALTER TABLE` get run against the testing environment.
 
 Against production. In what order, if there were several changes made this week.
 
@@ -45,6 +68,13 @@ INSERT INTO schema_migrations (version) VALUES ('0002_add_priority_column');
 
 SELECT * FROM schema_migrations ORDER BY version;
 ```
+
+Expected output:
+
+| version | applied_at |
+| --- | --- |
+| 0001_create_shipments | *(timestamp of the `INSERT`)* |
+| 0002_add_priority_column | *(timestamp of the `INSERT`)* |
 
 Every migration gets a unique, ordered identifier, here `0001_create_shipments` and `0002_add_priority_column`, and a migration tool checks this `table` before running anything:
 
@@ -77,6 +107,22 @@ SELECT * FROM shipments;
 SELECT * FROM schema_migrations ORDER BY version;
 ```
 
+Expected output:
+
+`shipments` still has no rows, but now carries the `delivery_deadline` `column`:
+
+| shipment_id | status | priority | delivery_deadline |
+| --- | --- | --- | --- |
+| *(no rows)* | | | |
+
+`schema_migrations` now records all three migrations:
+
+| version | applied_at |
+| --- | --- |
+| 0001_create_shipments | *(timestamp of the `INSERT`)* |
+| 0002_add_priority_column | *(timestamp of the `INSERT`)* |
+| 0003_add_delivery_deadline | *(timestamp of the `INSERT`)* |
+
 Writing the `ALTER TABLE` and the corresponding insert into `schema_migrations` together, as one unit, keeps the `schema` change and its record of having happened tightly coupled, exactly the kind of pairing a `transaction`, covered in an earlier unit, is well suited to wrap, so that either both take effect or neither does, never leaving the `schema` changed without the tracking `table` reflecting it.
 
 ## Why Migrations Should Avoid Destructive Shortcuts
@@ -105,7 +151,14 @@ SELECT * FROM schema_migrations ORDER BY version;
 ALTER TABLE shipments ADD COLUMN new_notes TEXT;
 ```
 
-This distinction, preserving data versus discarding it, is the single most important discipline in writing a safe migration, and it is exactly why migrations against a production `database` always deserve careful review before being applied, the same caution this course has emphasized around any `DROP` or `DELETE` since the modifying-data chapter early on.
+Expected output (from the `SELECT` earlier in this block, before the structure-preserving `ALTER TABLE` runs):
+
+| version | applied_at |
+| --- | --- |
+| 0001_create_shipments | *(timestamp of the `INSERT`)* |
+| 0002_add_priority_column | *(timestamp of the `INSERT`)* |
+
+The final `ALTER TABLE shipments ADD COLUMN new_notes TEXT` returns no rows of its own; it just adds the `column` while leaving every existing `row` intact, in contrast with the commented-out `DROP TABLE` shortcut above it. This distinction, preserving data versus discarding it, is the single most important discipline in writing a safe migration, and it is exactly why migrations against a production `database` always deserve careful review before being applied, the same caution this course has emphasized around any `DROP` or `DELETE` since the modifying-data chapter early on.
 
 ![Safe migrations preserve existing data, while drop-and-recreate shortcuts destroy it](images/12_safe_migration_preserves_data.png)
 
@@ -155,6 +208,8 @@ SELECT * FROM schema_migrations ORDER BY version;
 
 -- Write your migration below
 ```
+
+Expected result and verification:
 
 A correct migration runs `ALTER TABLE shipments ADD COLUMN carrier TEXT;` followed by `INSERT INTO schema_migrations (version) VALUES ('0004_add_carrier_column');`, and a final `SELECT * FROM schema_migrations ORDER BY version;` confirms all four migrations are now recorded in order, with the underlying `shipments` `table`'s structure matching exactly what that history implies.
 

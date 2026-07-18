@@ -78,6 +78,12 @@ For Meera, the payoff of this week's reading is not that she will ever write a `
 
 ![Slow queries, disk reads, and double booking problems routed to the right DBMS component](images/06_component_responsibility_diagnostic_map.png)
 
+## Your Turn: Route the Complaint
+
+Three different reports land on Meera's desk in one afternoon: (1) a `query` for available seats is taking far longer than usual to return results, (2) a seat record that should exist on disk seems to have vanished after a server restart, (3) two customers both got confirmation for the same seat on the same flight. Which component, `query` processor, storage manager, or `transaction` manager, is most likely responsible for investigating each one?
+
+The slow `query` points to the `query` processor, since it is the component that decides how a request should be carried out, and a poor plan is the usual reason a `query` that should be quick suddenly crawls. The vanished seat record points to the storage manager, since reading and writing data to and from disk, and keeping it there reliably, is exactly its job. The double-booked seat points to the `transaction` manager, since preventing two simultaneous requests from both succeeding on the same seat is precisely the correctness guarantee it exists to enforce.
+
 ## Conclusion
 
 A DBMS is not one monolithic piece of software but a small society of specialists working together: a `query` processor that interprets and plans, a storage manager that reads and writes the physical data, and a `transaction` manager that keeps everything correct when many requests collide at once.

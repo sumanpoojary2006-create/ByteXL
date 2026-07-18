@@ -53,7 +53,47 @@ The opposite mistake is just as real, even if it feels safer. Reaching for the l
 
 A `column` meant to hold a two-letter country code but declared with room for an entire paragraph will happily accept garbage input that a narrower, well-chosen type would have rejected outright. The goal is not the biggest type or the smallest type, it is the type that honestly matches what the value is and how far it is realistically expected to grow.
 
-Putting these decisions together, Arjun's draft for the Products `table` starts to look like a considered design rather than a guess.
+Putting these decisions together, Arjun's draft for the Products `table` starts to look like a considered design rather than a guess. Here is that design as real, runnable PostgreSQL, showing TEXT versus a length-capped VARCHAR, a whole-number INTEGER versus an exact NUMERIC for money, a DATE for the catalog date, and a BOOLEAN for availability, all in one `CREATE TABLE`.
+
+```postgresql file=init.sql
+CREATE TABLE products (
+    product_id      INTEGER PRIMARY KEY,
+    sku             CHAR(8) NOT NULL,
+    name            VARCHAR(120) NOT NULL,
+    description     TEXT,
+    price           NUMERIC(10, 2) NOT NULL,
+    stock_quantity  INTEGER NOT NULL,
+    is_available    BOOLEAN NOT NULL,
+    added_on        DATE NOT NULL
+);
+
+INSERT INTO products
+    (product_id, sku, name, description, price, stock_quantity, is_available, added_on)
+VALUES
+    (1, 'SKU00001', 'Wireless Mouse', 'A compact wireless mouse with USB receiver.', 499.50, 120, TRUE, '2026-01-15'),
+    (2, 'SKU00002', 'Mechanical Keyboard', 'Full-size mechanical keyboard with blue switches.', 2999.00, 35, TRUE, '2026-02-02'),
+    (3, 'SKU00003', 'USB-C Cable 1m', 'A durable braided USB-C to USB-C cable.', 149.00, 0, FALSE, '2026-02-20');
+```
+
+The active query checks that each type held on to exactly what it was given, no rounding on the price, no truncation on the name, and a clean true/false on availability:
+
+```postgresql with=init.sql
+SELECT sku, name, price, stock_quantity, is_available, added_on
+FROM products
+ORDER BY product_id;
+```
+
+Expected output:
+
+| sku | name | price | stock_quantity | is_available | added_on |
+| -------- | -------------------- | ------: | --------------: | ------------ | ---------- |
+| SKU00001 | Wireless Mouse | 499.50 | 120 | t | 2026-01-15 |
+| SKU00002 | Mechanical Keyboard | 2999.00 | 35 | t | 2026-02-02 |
+| SKU00003 | USB-C Cable 1m | 149.00 | 0 | f | 2026-02-20 |
+
+- `price` keeps its exact two decimal digits because `NUMERIC(10, 2)` never approximates, unlike a floating-point type.
+- `sku` is declared `CHAR(8)`, matching the fixed 8-character policy, while `name` uses `VARCHAR(120)` so it can vary in length but never runs unbounded.
+- `is_available` prints as PostgreSQL's literal `t`/`f` for a true `BOOLEAN`, never a stray "yess" or a bare `1`.
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
   <thead>
@@ -145,6 +185,12 @@ Putting these decisions together, Arjun's draft for the Products `table` starts 
     </tr>
   </tbody>
 </table>
+
+## Your Turn: Pick the Types
+
+A ride-hailing app needs a Trips table recording a trip's fare, the number of passengers, whether the trip was cancelled, and the pickup timestamp. Choose a sensible type for each of these four facts, and name the one type you would actively avoid for fare.
+
+A working answer: fare needs a fixed-precision decimal type, exactly like Arjun's price column, since money must never drift from floating-point rounding; number of passengers is a plain whole-number type, since nobody rides as 2.5 passengers; whether the trip was cancelled is a boolean, a strict two-state question; and pickup timestamp needs a dedicated date-and-time type so the app can answer "how many trips started after 6 PM" without parsing text. The type to actively avoid for fare is floating-point, for the same reason Arjun's manager stopped him before he wrote it down.
 
 ## Conclusion
 

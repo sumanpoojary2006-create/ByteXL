@@ -73,6 +73,12 @@ The separation between how data is stored, how it is structurally organised, and
   </tbody>
 </table>
 
+## Your Turn: Physical or Logical?
+
+Ravi's team makes two more changes next quarter: (1) they switch the `indexing` strategy on the Orders `table` so that searches by restaurant name run faster, and (2) they add a new Delivery Instructions `column` that only a handful of screens will ever read. Which kind of data independence protects the checkout screen in each case, and why does the checkout screen never notice either change?
+
+The `indexing` switch is protected by physical data independence, since it only touches how order records are organised for fast retrieval on disk, never the logical definition of what an order is, so every application keeps asking its questions in terms of customer, items, and total exactly as before. The new column is protected by logical data independence, since the checkout screen was never written to demand every `column` of the Orders `table`, only the specific fields it actually uses, so an addition at the end of the `row` simply falls outside what it was ever looking for.
+
 ## Conclusion
 
 Data independence works because a `database` is not one flat structure but a set of separated levels, and a change confined to one level does not have to ripple through the others. Physical independence protects applications from decisions about disk and storage; logical independence protects them from the `schema` growing to meet new needs.

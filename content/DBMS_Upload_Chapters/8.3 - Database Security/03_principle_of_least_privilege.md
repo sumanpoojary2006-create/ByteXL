@@ -1,11 +1,33 @@
 ## Introduction
 
-- `GRANT` and `REVOKE`, covered in the previous lesson, are just tools; they say nothing about how much access any given `role` should actually have.
-- The **principle of `least privilege`** answers that question directly: every `role` should be granted exactly the access it needs to do its job, and nothing more, not "might need someday," not "it's easier to just grant everything." This lesson is less about new syntax and more about the judgment that should guide every `GRANT` statement written from here on.
+`GRANT` and `REVOKE`, covered in the previous lesson, are just tools; they say nothing about how much access any given `role` should actually have. The **principle of `least privilege`** answers that question directly: every `role` should be granted exactly the access it needs to do its job, and nothing more, not "might need someday," not "it's easier to just grant everything." This lesson is less about new syntax and more about the judgment that should guide every `GRANT` statement written from here on.
 
 ## The Tempting Shortcut, and Why It Is a Real Risk
 
 Granting broad, unrestricted access up front avoids the friction of figuring out exactly what a `role` needs, but it turns every `role` into a much larger liability than it needs to be.
+
+## Source Data Used in This Lesson
+
+The setup also creates the following empty supporting tables. Later statements populate them as the operation runs.
+
+### Empty `shipments` table
+
+| Column | Definition in the setup |
+| --- | --- |
+| `shipment_id` | `INTEGER PRIMARY KEY` |
+| `status` | `TEXT` |
+| `amount` | `NUMERIC(10, 2)` |
+
+### Empty `payroll` table
+
+| Column | Definition in the setup |
+| --- | --- |
+| `employee_id` | `INTEGER PRIMARY KEY` |
+| `salary` | `NUMERIC(10, 2)` |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
 
 ```postgresql file=init.sql
 CREATE TABLE shipments (
@@ -22,9 +44,13 @@ CREATE TABLE payroll (
 CREATE ROLE reporting_app WITH LOGIN PASSWORD 'change_this_in_real_use';
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO reporting_app;
 ```
+
+Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
 
 This single statement gives `reporting_app`, a service that only ever needs to read shipment data for dashboards, full read, write, and delete access to every `table` in the `schema`, including `payroll`, a `table` it has no legitimate business touching at all.
 
@@ -44,6 +70,8 @@ REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA public FROM reporting_app;
 GRANT SELECT ON shipments TO reporting_app;
 ```
 
+Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
+
 - `reporting_app` can now read `shipments`, exactly what a reporting dashboard needs, and nothing else; it has no access to `payroll` at all, and no ability to modify `shipments` either, since `INSERT`, `UPDATE`, and `DELETE` were never granted.
 - If this service's credentials were ever compromised, the worst an attacker could do through this specific account is read shipment data, not touch payroll, not delete anything, a dramatically smaller blast radius than the broad grant above.
 
@@ -57,6 +85,8 @@ The same discipline applies to individual developer accounts, not only automated
 CREATE ROLE dev_alia WITH LOGIN PASSWORD 'change_this_in_real_use';
 GRANT SELECT, UPDATE ON shipments TO dev_alia;
 ```
+
+Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
 
 - `dev_alia` gets exactly what her current debugging work requires, read and update access on `shipments`, and nothing on `payroll`.
 - If her `role`'s responsibilities later genuinely expand, the fix is an additional, deliberate `GRANT` at that point, not a blanket grant made in advance "just in case," which is precisely the shortcut `least privilege` exists to avoid.
@@ -75,7 +105,13 @@ FROM information_schema.role_table_grants
 WHERE grantee = 'reporting_app';
 ```
 
-`information_schema.role_table_grants` lists every privilege currently held by a given `role`, across every `table`, a direct way to check whether `reporting_app`'s actual granted permissions still match what it genuinely needs, or whether some stale grant from an earlier, now-irrelevant task is still sitting there, unnoticed, quietly widening that account's blast radius.
+Expected output:
+
+| grantee | table_name | privilege_type |
+| --- | --- | --- |
+| *(no rows)* | | |
+
+This block only grants `SELECT` and `UPDATE` to `dev_alia`; `reporting_app` was created by `init.sql` but was never granted anything in this fresh session, so filtering `role_table_grants` for `reporting_app` correctly comes back empty here. In a real, long-running `database`, this same `query` is exactly how a team would spot that `reporting_app` unexpectedly does, or does not, hold a grant it should. `information_schema.role_table_grants` lists every privilege currently held by a given `role`, across every `table`, a direct way to check whether `reporting_app`'s actual granted permissions still match what it genuinely needs, or whether some stale grant from an earlier, now-irrelevant task is still sitting there, unnoticed, quietly widening that account's blast radius.
 
 ![Periodic grant review compares current permissions with current need and removes stale access](images/06_review_grants_revoke_stale_access.png)
 
@@ -118,6 +154,8 @@ GRANT SELECT, UPDATE ON shipments TO dev_alia;
 
 -- Write your query, revoke, and comment below
 ```
+
+Expected result and verification:
 
 - `SELECT grantee, table_name, privilege_type FROM information_schema.role_table_grants WHERE grantee = 'dev_alia';` followed by `REVOKE UPDATE ON shipments FROM dev_alia;` leaves her with read-only access
 - a debugging task that only needs to inspect data, not change it, should indeed be granted `SELECT` alone, exactly the least-privilege judgment this lesson has been building toward.

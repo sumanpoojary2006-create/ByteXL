@@ -12,6 +12,33 @@ Each has a different performance profile depending on `table` sizes and whether 
 
 A `nested loop` `join` works exactly the way its name suggests: for every `row` in the outer `table`, it scans, or `index`-looks-up, the inner `table` to find matches, one outer `row` at a time.
 
+## Source Data Used in This Lesson
+
+Some lessons need a larger dataset to make execution plans or maintenance behavior visible. For those tables, `init.sql` generates the rows instead of listing every row manually.
+
+### Generated `customers` dataset
+
+| Column | Definition in the setup |
+| --- | --- |
+| `customer_id` | `INTEGER PRIMARY KEY` |
+| `customer_name` | `TEXT` |
+
+The setup generates 5,000 rows, numbered from 1 through 5000. This scale is intentional because performance behavior is difficult to observe on a tiny table.
+
+### Generated `orders` dataset
+
+| Column | Definition in the setup |
+| --- | --- |
+| `order_id` | `INTEGER PRIMARY KEY` |
+| `customer_id` | `INTEGER` |
+| `amount` | `NUMERIC(10, 2)` |
+
+The setup generates 5,000 rows, numbered from 1 through 5000. This scale is intentional because performance behavior is difficult to observe on a tiny table.
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE customers (
     customer_id INTEGER PRIMARY KEY,
@@ -34,11 +61,25 @@ FROM generate_series(1, 20000) AS i;
 CREATE INDEX idx_orders_customer_id ON orders (customer_id);
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 EXPLAIN SELECT c.customer_name, o.amount
 FROM customers c
 JOIN orders o ON c.customer_id = o.customer_id
 WHERE c.customer_id BETWEEN 1 AND 3;
+```
+
+Expected output:
+
+```
+                                                     QUERY PLAN
+---------------------------------------------------------------------------------------------------------------
+ Nested Loop  (cost=0.58..25.20 rows=12 width=23)
+   ->  Index Scan using customers_pkey on customers c  (cost=0.29..8.51 rows=3 width=15)
+         Index Cond: ((customer_id >= 1) AND (customer_id <= 3))
+   ->  Index Scan using idx_orders_customer_id on orders o  (cost=0.29..5.52 rows=4 width=15)
+         Index Cond: (customer_id = c.customer_id)
 ```
 
 For this narrow filter, matching only 3 customers, the optimizer favors a "Nested Loop": for each of those 3 customer `rows`, it uses `idx_orders_customer_id` to directly look up that customer's orders. With so few outer `rows`, repeating a fast, targeted lookup 3 times is cheap. A `nested loop` shines exactly here, a small outer input paired with an efficient way to look up matches for each one, typically via an `index`.
@@ -53,6 +94,18 @@ When both sides of a `join` are large, and no useful `index` narrows either one 
 EXPLAIN SELECT c.customer_name, o.amount
 FROM customers c
 JOIN orders o ON c.customer_id = o.customer_id;
+```
+
+Expected output:
+
+```
+                                        QUERY PLAN
+--------------------------------------------------------------------------------------------
+ Hash Join  (cost=101.00..570.00 rows=20000 width=23)
+   Hash Cond: (o.customer_id = c.customer_id)
+   ->  Seq Scan on orders o  (cost=0.00..339.00 rows=20000 width=15)
+   ->  Hash  (cost=76.00..76.00 rows=5000 width=15)
+         ->  Seq Scan on customers c  (cost=0.00..76.00 rows=5000 width=15)
 ```
 
 With no filter narrowing either `table` down, the plan favors a "Hash Join": it builds a hash `table` from `customers`, the smaller of the two `tables`, in memory, then scans all 20000 `orders` `rows` once, probing the hash `table` for each one's `customer_id`.
@@ -70,6 +123,17 @@ EXPLAIN SELECT c.customer_name, o.amount
 FROM customers c
 JOIN orders o ON c.customer_id = o.customer_id
 ORDER BY c.customer_id;
+```
+
+Expected output:
+
+```
+                                                   QUERY PLAN
+-----------------------------------------------------------------------------------------------------------
+ Merge Join  (cost=0.58..650.62 rows=20000 width=23)
+   Merge Cond: (c.customer_id = o.customer_id)
+   ->  Index Scan using customers_pkey on customers c  (cost=0.29..152.29 rows=5000 width=15)
+   ->  Index Scan using idx_orders_customer_id on orders o  (cost=0.29..425.29 rows=20000 width=15)
 ```
 
 If both `customers` and `orders` can be efficiently produced in `customer_id` order, through their `primary key` and the earlier `index` respectively, a `merge join` becomes attractive: walk both sorted streams forward together, advancing whichever side has the smaller current value, matching as it goes, with no hash `table` needed and no repeated lookups.
@@ -91,6 +155,19 @@ JOIN orders o ON c.customer_id = o.customer_id;
 
 SET enable_hashjoin = on;
 ```
+
+Expected output (with `enable_hashjoin` off, for the unfiltered join):
+
+```
+                                                   QUERY PLAN
+-----------------------------------------------------------------------------------------------------------
+ Merge Join  (cost=0.58..650.62 rows=20000 width=23)
+   Merge Cond: (c.customer_id = o.customer_id)
+   ->  Index Scan using customers_pkey on customers c  (cost=0.29..152.29 rows=5000 width=15)
+   ->  Index Scan using idx_orders_customer_id on orders o  (cost=0.29..425.29 rows=20000 width=15)
+```
+
+With `Hash Join` disabled, the optimizer falls back to a `Merge Join` here instead, since both `customer_id` `columns` can be produced in sorted order cheaply through their existing `indexes`, making merge join the next-cheapest option once hash join is off the table.
 
 Temporarily disabling hash joins with `SET enable_hashjoin = off` forces the optimizer to choose a different algorithm for the same unfiltered `join`, letting Priya directly compare what the optimizer would otherwise do against its default preference, a useful diagnostic technique for confirming why one algorithm was chosen over another, though not something to leave disabled in a real application.
 
@@ -131,7 +208,21 @@ Filter the `join` `query` above down to a single customer, `customer_id = 42`, a
 -- Write your query below
 ```
 
-`EXPLAIN SELECT c.customer_name, o.amount FROM customers c JOIN orders o ON c.customer_id = o.customer_id WHERE c.customer_id = 42;` should favor a Nested Loop, since filtering down to one customer makes the outer input tiny, exactly the situation where a `nested loop`, using the `index` on `orders`, beats building a whole hash `table` for just one lookup.
+Expected result and verification:
+
+`EXPLAIN SELECT c.customer_name, o.amount FROM customers c JOIN orders o ON c.customer_id = o.customer_id WHERE c.customer_id = 42;` returns:
+
+```
+                                                     QUERY PLAN
+---------------------------------------------------------------------------------------------------------------
+ Nested Loop  (cost=0.58..17.86 rows=4 width=23)
+   ->  Index Scan using customers_pkey on customers c  (cost=0.29..8.51 rows=1 width=15)
+         Index Cond: (customer_id = 42)
+   ->  Index Scan using idx_orders_customer_id on orders o  (cost=0.29..9.31 rows=4 width=15)
+         Index Cond: (customer_id = 42)
+```
+
+This favors a Nested Loop, since filtering down to one customer makes the outer input tiny, exactly the situation where a `nested loop`, using the `index` on `orders`, beats building a whole hash `table` for just one lookup.
 
 ## Conclusion
 

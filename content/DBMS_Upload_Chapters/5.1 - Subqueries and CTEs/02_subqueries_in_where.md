@@ -10,6 +10,25 @@ SQL provides different operators, **`IN`**, **`ANY`**, and **`ALL`**, specifical
 
 The `employees` `table` from the previous lesson is the setup here again.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `employees`
+
+| employee_id | employee_name | department | salary | manager_id |
+| --- | --- | --- | --- | --- |
+| 1 | Ananya Sharma | Engineering | 95000.00 | NULL |
+| 2 | Rajat Bhatia | Engineering | 78000.00 | 1 |
+| 3 | Meghna Iyer | Engineering | 82000.00 | 1 |
+| 4 | Sameer Khan | Sales | 65000.00 | NULL |
+| 5 | Pooja Reddy | Sales | 58000.00 | 4 |
+| 6 | Vikas Malhotra | Marketing | 60000.00 | NULL |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE employees (
     employee_id INTEGER PRIMARY KEY,
@@ -28,11 +47,19 @@ INSERT INTO employees (employee_id, employee_name, department, salary, manager_i
 (6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 SELECT employee_name, salary
 FROM employees
 WHERE salary = (SELECT MAX(salary) FROM employees);
 ```
+
+Expected output:
+
+| employee_name | salary |
+| --- | --- |
+| Ananya Sharma | 95000.00 |
 
 `MAX(salary)` always returns exactly one number, so this comparison with a plain `=` works without any special handling: it finds whichever employee earns the single highest salary in the `table`.
 
@@ -50,6 +77,15 @@ WHERE department IN (
 );
 ```
 
+Expected output:
+
+| employee_name | department |
+| --- | --- |
+| Ananya Sharma | Engineering |
+| Rajat Bhatia | Engineering |
+| Meghna Iyer | Engineering |
+| Vikas Malhotra | Marketing |
+
 The inner `query` returns two departments, Engineering and Marketing, and `IN` checks whether the outer `row`'s `department` matches any value in that returned list, exactly the same way `IN` works with a hand-typed list of literal values. This returns every Engineering and Marketing employee, four `rows` in total, without Kabir ever needing to know in advance which departments those two employees belonged to.
 
 ## Using ANY and ALL for Comparisons Against a List
@@ -62,6 +98,16 @@ FROM employees
 WHERE salary > ANY (SELECT salary FROM employees WHERE department = 'Sales');
 ```
 
+Expected output:
+
+| employee_name | salary |
+| --- | --- |
+| Ananya Sharma | 95000.00 |
+| Rajat Bhatia | 78000.00 |
+| Meghna Iyer | 82000.00 |
+| Sameer Khan | 65000.00 |
+| Vikas Malhotra | 60000.00 |
+
 `salary > ANY (subquery)` is true if the outer `row`'s salary beats at least one value returned by the subquery.
 
 The Sales department's salaries are 65000.00 and 58000.00, so this returns everyone earning more than the lower of those two figures, since beating just one of them is enough to satisfy `ANY`.
@@ -71,6 +117,14 @@ SELECT employee_name, salary
 FROM employees
 WHERE salary > ALL (SELECT salary FROM employees WHERE department = 'Sales');
 ```
+
+Expected output:
+
+| employee_name | salary |
+| --- | --- |
+| Ananya Sharma | 95000.00 |
+| Rajat Bhatia | 78000.00 |
+| Meghna Iyer | 82000.00 |
 
 - `salary > ALL (subquery)` is stricter: it is only true if the outer `row`'s salary beats every single value the subquery returns.
 - Here, that means beating both 65000.00 and 58000.00, so this returns only employees earning more than the higher Sales salary, a shorter list than the `ANY` version.
@@ -88,6 +142,15 @@ WHERE employee_id NOT IN (
     SELECT manager_id FROM employees WHERE manager_id IS NOT NULL
 );
 ```
+
+Expected output:
+
+| employee_name |
+| --- |
+| Rajat Bhatia |
+| Meghna Iyer |
+| Pooja Reddy |
+| Vikas Malhotra |
 
 The `WHERE manager_id IS NOT NULL` filter inside the subquery is not optional here:
 
@@ -144,6 +207,15 @@ Kabir wants every employee who earns less than the lowest salary in Engineering.
 ```
 
 If your `query` is `SELECT employee_name, salary FROM employees WHERE salary < ALL (SELECT salary FROM employees WHERE department = 'Engineering');`, it returns Sameer Khan, Pooja Reddy, and Vikas Malhotra, since all three earn less than every Engineering salary, including the lowest one at 78000.00.
+
+
+Expected output:
+
+| employee_name | salary |
+| --- | --- |
+| Sameer Khan | 65000.00 |
+| Pooja Reddy | 58000.00 |
+| Vikas Malhotra | 60000.00 |
 
 ## Conclusion
 

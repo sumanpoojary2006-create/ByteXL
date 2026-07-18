@@ -8,6 +8,21 @@ The only real defense against losing data entirely is having a separate copy of 
 
 A logical `backup` captures the actual data and `schema` as a set of SQL statements or a portable data format, independent of the specific server it came from. PostgreSQL's `pg_dump` is the standard tool for this, run from outside the `database` as a command-line utility rather than as SQL itself.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `shipments`
+
+| shipment_id | status |
+| --- | --- |
+| 1 | in_transit |
+| 2 | delivered |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
@@ -17,6 +32,8 @@ CREATE TABLE shipments (
 INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'delivered');
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 -- pg_dump runs outside of SQL itself, from a terminal, roughly like:
 -- pg_dump -U postgres -d shipments_prod -f backup_2025_06_15.sql
@@ -25,6 +42,14 @@ INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'deliv
 -- on a fresh server. A simplified illustration of the same idea, entirely
 -- within SQL, is the COPY command, exporting a table's data directly:
 COPY shipments TO STDOUT WITH (FORMAT csv, HEADER true);
+```
+
+Expected output (streamed as CSV text rather than a query result table):
+
+```
+shipment_id,status
+1,in_transit
+2,delivered
 ```
 
 `pg_dump` produces a file that is, at its core, a script: running it against an empty `database` recreates three things exactly as they existed at the moment the dump was taken:
@@ -52,6 +77,8 @@ It is generally faster to produce and `restore` for very large `databases`, sinc
 SELECT current_setting('data_directory') AS data_directory_location;
 ```
 
+Expected observation: PostgreSQL completes the statement, and the explanation below identifies the database object, permission, or operational effect to verify.
+
 `current_setting('data_directory')` reports where PostgreSQL's actual physical data files live on this server, the same files a physical `backup` would copy directly, in contrast to a logical `backup`'s portable, `database`-independent SQL text.
 
 ![Logical backups capture portable data, while physical backups copy the database files](images/03_logical_vs_physical_backups.png)
@@ -65,6 +92,8 @@ An incremental `backup` captures only what has changed since the last `backup`, 
 ```postgresql with=init.sql
 SELECT pg_current_wal_lsn() AS current_wal_position;
 ```
+
+Expected result: PostgreSQL returns the rows described below. Compare the visible columns and row-level effect with the explanation, since security and administration settings may make some values environment-dependent.
 
 The `write-ahead log` position, covered in depth in the `recovery` unit, is exactly what makes incremental, point-in-time `backup` strategies possible: rather than repeatedly copying the entire `database`, an incremental approach can archive just the log records generated since the last `backup`, later replaying them forward from a known full-`backup` starting point to reconstruct any specific moment in time.
 
@@ -142,6 +171,8 @@ Using the `shipments` `table` above, write the `COPY` command that would export 
 ```postgresql with=init.sql
 -- Write your COPY command and comment below
 ```
+
+Expected result and verification:
 
 `COPY shipments TO STDOUT WITH (FORMAT csv, HEADER true);` is a logical export, since it produces a portable representation of the data itself, in a format independent of PostgreSQL's own internal file structure, the same category `pg_dump` belongs to, as opposed to a physical `backup`, which would instead copy the actual underlying data files directly.
 

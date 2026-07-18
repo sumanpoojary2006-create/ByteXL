@@ -8,6 +8,23 @@ This helps teams respond before users are affected, instead of diagnosing the pr
 
 The `connection pooling` lesson introduced checking current `connections` against `max_connections` as a one-time check; monitoring turns that same check into something tracked continuously.
 
+## Source Data Used in This Lesson
+
+Some lessons need a larger dataset to make execution plans or maintenance behavior visible. For those tables, `init.sql` generates the rows instead of listing every row manually.
+
+### Generated `shipments` dataset
+
+| Column | Definition in the setup |
+| --- | --- |
+| `shipment_id` | `INTEGER PRIMARY KEY` |
+| `status` | `TEXT` |
+
+The setup generates 1,000 rows, numbered from 1 through 1000. This scale is intentional because performance behavior is difficult to observe on a tiny table.
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
@@ -18,12 +35,16 @@ INSERT INTO shipments (shipment_id, status)
 SELECT i, 'in_transit' FROM generate_series(1, 1000) AS i;
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 SELECT count(*) AS current_connections,
        (SELECT setting::int FROM pg_settings WHERE name = 'max_connections') AS max_connections,
        round(100.0 * count(*) / (SELECT setting::int FROM pg_settings WHERE name = 'max_connections'), 1) AS percent_used
 FROM pg_stat_activity;
 ```
+
+Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
 A monitoring system would run a `query` shaped like this on a regular interval, minutes or even seconds apart:
 
@@ -46,6 +67,8 @@ ORDER BY n_dead_tup DESC
 LIMIT 5;
 ```
 
+Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
+
 Tracking `dead_tuple_percent` and `last_autovacuum` across a `database`'s busiest `tables` over time reveals whether autovacuum is genuinely keeping pace with write activity, or whether a `table` is quietly accumulating bloat faster than it is being cleaned, a slow-building problem that gradually degrades `query` performance long before it becomes an obvious emergency.
 
 ## Watching Cache Hit Ratio
@@ -58,6 +81,8 @@ SELECT sum(heap_blks_hit) AS cache_hits,
        round(100.0 * sum(heap_blks_hit) / GREATEST(sum(heap_blks_hit) + sum(heap_blks_read), 1), 2) AS cache_hit_ratio
 FROM pg_statio_user_tables;
 ```
+
+Expected result: PostgreSQL returns the rows described below. Compare the visible columns and row-level effect with the explanation, since security and administration settings may make some values environment-dependent.
 
 A healthy, well-provisioned `database` typically sustains a cache hit ratio well above 90%, meaning the vast majority of reads are served from fast memory rather than slower disk access.
 
@@ -75,6 +100,8 @@ FROM pg_stat_activity
 WHERE state != 'idle' AND now() - query_start > INTERVAL '5 seconds'
 ORDER BY running_for DESC;
 ```
+
+Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
 - `wait_event_type` and `wait_event` reveal specifically what a `query` is stuck waiting on, if anything, such as a `lock` held by another `transaction`, exactly the kind of contention the concurrency control unit covered.
 - A monitoring system alerting on `queries` that exceed a reasonable running-time threshold, tuned to what "reasonable" actually means for a given application, catches runaway or blocked `queries` early, rather than letting them silently degrade the whole system's responsiveness.
@@ -122,6 +149,8 @@ Write a monitoring `query` that reports the five `tables` in `pg_stat_user_table
 ```postgresql with=init.sql
 -- Write your query below
 ```
+
+Expected result and verification:
 
 `SELECT relname, seq_scan, idx_scan, seq_scan - COALESCE(idx_scan, 0) AS scan_imbalance FROM pg_stat_user_tables ORDER BY scan_imbalance DESC LIMIT 5;` surfaces `tables` where sequential scans dominate over `index scans`, exactly the missing-`index` bottleneck covered in the performance unit, now framed as something to monitor continuously rather than diagnose only after a specific `query` is already reported as slow.
 

@@ -145,6 +145,12 @@ The fix Priya eventually reaches for is not a clever trick or a stricter data-en
 
 ![Normalization splitting the messy orders table into customers, products, orders, and order items](images/02_normalization_splits_facts_by_topic.png)
 
+## Your Turn: Spot the Anomaly
+
+A gym keeps one Membership table with columns MemberID, MemberName, MemberPhone, TrainerName, TrainerSpecialty, and SessionDate. Every row is one training session. A trainer named Kabir specializes in Strength Training, and he appears on twelve different session rows this month. Identify which anomaly would strike if Kabir's specialty changes to "Strength and Mobility," and which anomaly would strike if the gym wanted to record a brand-new trainer who has not been assigned a session yet.
+
+A working answer: changing Kabir's specialty means hunting down and editing all twelve rows where his name appears, an update anomaly, since missing even one leaves the table disagreeing with itself about what Kabir actually teaches. Recording a new trainer with no sessions yet is impossible in this table's current shape, since every row demands a session date and a member, an insert anomaly, the same problem Priya hit trying to add highlighters before anyone bought one.
+
 ## Conclusion
 
 An update anomaly, an insert anomaly, and a `delete anomaly` are three different symptoms of the same underlying disease: a `table` that mixes facts about several different real-world things into one set of `rows`, so that a single fact ends up copied wherever it is needed.

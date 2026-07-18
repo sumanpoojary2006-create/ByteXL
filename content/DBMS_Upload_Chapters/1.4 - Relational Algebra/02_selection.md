@@ -243,6 +243,12 @@ This chaining is exactly the "closure" idea put to work: because sigma's output 
   </tbody>
 </table>
 
+## Your Turn: Sigma or Pi?
+
+A new request lands on Rohan's desk: "list just the author and genre for every book priced above 250 rupees." Break this into its component operations against the Books relation, and say what the final result contains.
+
+This needs a selection first, sigma with the condition price greater than 250, which narrows the five `rows` down to Silent Hills, The Long Wait, and Coastal Roads. Then it needs a projection, pi onto just author and genre, which strips away book_id, title, and price from those three surviving `rows`. Silent Hills and The Long Wait both reduce to the identical pair A. Menon and Mystery, and because projection keeps its result as a proper set of distinct `rows`, that repeated pair collapses into one, leaving just two `rows` in the final answer: A. Menon with Mystery, and S. Iyer with Travel.
+
 ## Conclusion
 
 Selection and projection are the two simplest, most frequently used tools in `relational algebra`, and they solve two genuinely different problems. Selection, sigma, narrows a relation down to the `rows` that satisfy a condition. Projection, pi, narrows it down to the `columns` that were actually asked for, folding away any duplicate `rows` that survive.

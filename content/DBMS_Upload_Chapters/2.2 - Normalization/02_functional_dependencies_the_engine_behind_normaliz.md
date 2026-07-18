@@ -138,13 +138,18 @@ This two-hop chain, where a `column` depends on the key only indirectly, through
   </tbody>
 </table>
 
+## Your Turn: Write the Dependencies
+
+A college table stores RollNumber, StudentName, DepartmentCode, DepartmentName, and DepartmentHOD (head of department) together, keyed by RollNumber. Write out the functional dependencies you can find, and identify which one is transitive.
+
+A working answer: RollNumber -> StudentName, DepartmentCode holds directly since a roll number pins down exactly one student and one department code. DepartmentCode -> DepartmentName and DepartmentCode -> DepartmentHOD hold too, since every department has exactly one name and one head. The transitive one is RollNumber -> DepartmentName (and DepartmentHOD), reached only by first passing through DepartmentCode, a non-key column, meaning department facts are riding along on every student row rather than living where they truly belong.
+
 ## Conclusion
 
 A `functional dependency` turns "these `columns` seem related" into a precise, testable rule: given a value in one `column`, exactly one value in another `column` is guaranteed, every time. Meera's afternoon of writing down CustomerID -> CustomerName, ProductID -> ProductPrice, and OrderID -> CustomerID gave Sunrise Traders something Priya's instinct never could, an exact map of which facts belong to which real-world thing.
 
 Along the way, Meera also noticed two shapes worth watching for:
 
-- A dependency on only part of a `composite key`
-- A dependency reached only by a detour through another `column`
+The first is a dependency on only part of a `composite key`. The second is a dependency reached only by a detour through another `column`.
 
 Both turn out to be exactly the patterns that a disciplined, step-by-step process checks for, one refinement at a time, when it decides how a `table` ought to be split.

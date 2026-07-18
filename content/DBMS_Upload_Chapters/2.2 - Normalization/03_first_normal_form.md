@@ -159,6 +159,12 @@ A design that uses separate `columns` like Phone1, Phone2, Phone3 has the identi
   </tbody>
 </table>
 
+## Your Turn: Fix the Violation
+
+A bookstore's Authors table has a column called Genres that stores values like "Fiction, Mystery" for one author and "Non-fiction" for another. Explain why this fails 1NF, and sketch the two-table fix the way Tara split PhoneNumbers.
+
+A working answer: the Genres column fails 1NF because a single cell is quietly holding more than one fact, some authors write in two or three genres crammed into one comma-separated string, so a search for "every author who writes Mystery" would have to scan inside text rather than match a value directly. The fix mirrors Tara's CustomerPhones split: keep Authors holding only genuinely single-valued facts, and add an AuthorGenres table with one row per author-genre pair, so an author writing in three genres is simply three rows, not a longer string.
+
 ## Conclusion
 
 First `Normal Form` asks for the most basic kind of honesty a `table` can offer: every `column` holds exactly one value, never a hidden list dressed up as a single entry.

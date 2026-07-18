@@ -6,7 +6,22 @@ For her own work that is fine, but this sheet is going in front of people who ha
 
 ## Renaming a Column With AS
 
-Divya rewrites her `query`, adding `AS` after each `column` followed by the label she actually wants to appear in the result.
+The `students` `table` holds this data:
+
+| student_id | full_name | email | city | phone | joined_on |
+| ---------- | ----------------- | ------------------------------ | --------- | ---------- | ---------- |
+| 1 | Ishaan Verma | ishaan.verma@example.com | Bengaluru | 9845011111 | 2025-01-10 |
+| 2 | Meera Pillai | meera.pillai@example.com | Chennai | 9884022222 | 2025-01-12 |
+| 3 | Arjun Bhat | arjun.bhat@example.com | Bengaluru | *NULL* | 2025-01-15 |
+| 4 | Kavya Reddy | kavya.reddy@example.com | Pune | 9922033333 | 2025-01-18 |
+| 5 | Rohan Joshi | rohan.joshi@example.com | Hyderabad | 9640044444 | 2025-01-20 |
+| 6 | Sneha Gowda | sneha.gowda@example.com | Mysuru | *NULL* | 2025-01-22 |
+| 7 | Aditya Kulkarni | aditya.kulkarni@example.com | Pune | 9822055555 | 2025-01-25 |
+| 8 | Priya Subramaniam | priya.subramaniam@example.com | Chennai | 9884066666 | 2025-01-28 |
+
+Divya wants the `full_name` and `city` `columns`, but labelled "Student Name" and "Location" instead of their raw internal names. The query is `SELECT full_name AS student_name, city AS location FROM students;`, placing `AS` after each `column` followed by the label she wants in the result.
+
+For hands-on practice, `init.sql` creates and populates the displayed `students` table:
 
 ```postgresql file=init.sql
 CREATE TABLE students (
@@ -29,10 +44,25 @@ INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALU
 (8, 'Priya Subramaniam', 'priya.subramaniam@example.com', 'Chennai', '9884066666', '2025-01-28');
 ```
 
+The active query file contains the aliased statement being practised:
+
 ```postgresql with=init.sql
 SELECT full_name AS student_name, city AS location
 FROM students;
 ```
+
+Expected output:
+
+| student_name | location |
+| ----------------- | --------- |
+| Ishaan Verma | Bengaluru |
+| Meera Pillai | Chennai |
+| Arjun Bhat | Bengaluru |
+| Kavya Reddy | Pune |
+| Rohan Joshi | Hyderabad |
+| Sneha Gowda | Mysuru |
+| Aditya Kulkarni | Pune |
+| Priya Subramaniam | Chennai |
 
 - The data has not changed at all, still eight `rows` of the same names and cities, but the header `row` of the result now reads `student_name` and `location`.
 - `AS` sits between the real `column` and the label Divya wants in its place, and the label only exists for this one result, it never renames anything inside the actual `table`.
@@ -42,14 +72,14 @@ FROM students;
 
 ## AS Is Optional, But Worth Keeping
 
-SQL allows a shorter form: dropping the word `AS` entirely and just writing the alias right after the `column` name.
+SQL allows a shorter form: dropping the word `AS` entirely and just writing the alias right after the `column` name. The query is `SELECT full_name student_name, city location FROM students;`.
 
 ```postgresql with=init.sql
 SELECT full_name student_name, city location
 FROM students;
 ```
 
-This produces the exact same result as the version with `AS`. PostgreSQL is happy to accept either form, so why bother typing the extra word?
+This produces the exact same output table shown above, `student_name` and `location` headers included. PostgreSQL is happy to accept either form, so why bother typing the extra word?
 
 Without it, a reader scanning the `query` has to pause and work out whether `student_name` is a second `column` being selected or a rename of the one before it. With `AS` sitting in between, the intent is unambiguous at a glance: this word is a label, not another `column`.
 
@@ -57,14 +87,14 @@ The two extra characters buy real clarity, which is why it is worth the habit ev
 
 ## Giving a Table a Short Alias
 
-Aliases are not only for `columns`. A `table` can be given a short alias too, and once it has one, that alias can be used anywhere else in the same `query` in place of the full `table` name.
-
-It looks unnecessary on a `query` this small, but the habit pays off the moment a `query` starts pulling from more than one `table`, which is exactly where the students, courses, and enrollments `tables` are eventually headed together.
+Aliases are not only for `columns`. A `table` can be given a short alias too, and once it has one, that alias can be used anywhere else in the same `query` in place of the full `table` name. It looks unnecessary on a `query` this small, but the habit pays off the moment a `query` starts pulling from more than one `table`, which is exactly where the students, courses, and enrollments `tables` are eventually headed together. The query is `SELECT s.full_name AS student_name, s.city AS location FROM students AS s;`.
 
 ```postgresql with=init.sql
 SELECT s.full_name AS student_name, s.city AS location
 FROM students AS s;
 ```
+
+Expected output is identical to the two `queries` above, the same `student_name` and `location` `columns` for all eight students; only the `query` text changed, not the answer it produces.
 
 Here `students AS s` tells PostgreSQL that `s` now stands for the students `table` for the rest of this `query`, so `s.full_name` means "the `full_name` `column`, from the `table` aliased as `s`." The `AS` before a `table` alias is optional too, and it is common to see it dropped, `FROM students s`, which behaves identically.
 
@@ -114,12 +144,21 @@ Divya's next request from the Dean's office is a sheet with headers "Full Name" 
 -- Write your query below
 ```
 
-A working answer looks like `SELECT s.full_name AS "Full Name", s.email AS "Email Address" FROM students AS s;`. Notice the double quotes around aliases that contain a space, since PostgreSQL treats an unquoted alias as a single word and would otherwise misread "Full Name" as two separate tokens.
+A working answer looks like `SELECT s.full_name AS "Full Name", s.email AS "Email Address" FROM students AS s;`. Expected output:
+
+| Full Name | Email Address |
+| ----------------- | ------------------------------ |
+| Ishaan Verma | ishaan.verma@example.com |
+| Meera Pillai | meera.pillai@example.com |
+| Arjun Bhat | arjun.bhat@example.com |
+| Kavya Reddy | kavya.reddy@example.com |
+| Rohan Joshi | rohan.joshi@example.com |
+| Sneha Gowda | sneha.gowda@example.com |
+| Aditya Kulkarni | aditya.kulkarni@example.com |
+| Priya Subramaniam | priya.subramaniam@example.com |
+
+Notice the double quotes around aliases that contain a space, since PostgreSQL treats an unquoted alias as a single word and would otherwise misread "Full Name" as two separate tokens.
 
 ## Conclusion
 
-- Aliases let a `query` speak in whatever words are most useful to whoever is reading the result, without ever touching the underlying `table`.
-- `AS` renames a `column` for the duration of one `query`, and the same keyword, used right after a `table` name, gives that `table` a short handle the rest of the `query` can lean on.
-- Neither kind of alias changes what is stored, only how the answer is labelled and referred to on the way out.
-- Divya's Dean's office summary can now show "Student Name" and "Location" instead of raw `column` names like `full_name` and `city`, turning a `database` dump into something presentable without altering a single `row` of underlying data.
-- With friendlier headers now within reach, the next question is what to do when a `query` returns the same value over and over across many `rows`, and how to see only the distinct values hiding underneath the repetition.
+Aliases let a `query` speak in whatever words are most useful to whoever is reading the result, without ever touching the underlying `table`. `AS` renames a `column` for the duration of one `query`, and the same keyword, used right after a `table` name, gives that `table` a short handle the rest of the `query` can lean on. Neither kind of alias changes what is stored, only how the answer is labelled and referred to on the way out. Divya's Dean's office summary can now show "Student Name" and "Location" instead of raw `column` names like `full_name` and `city`, turning a `database` dump into something presentable without altering a single `row` of underlying data. With friendlier headers now within reach, the next question is what to do when a `query` returns the same value over and over across many `rows`, and how to see only the distinct values hiding underneath the repetition.

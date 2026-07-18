@@ -8,6 +8,22 @@ This is a genuine hazard, both for correctness and for security, and the fix is 
 
 The `shipments` `table` sets up a simple lookup that an application might naively build by string concatenation.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `shipments`
+
+| shipment_id | destination |
+| --- | --- |
+| 1 | Mumbai |
+| 2 | Pune |
+| 3 | Nagpur |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
@@ -17,6 +33,8 @@ CREATE TABLE shipments (
 INSERT INTO shipments (shipment_id, destination) VALUES
 (1, 'Mumbai'), (2, 'Pune'), (3, 'Nagpur');
 ```
+
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
 ```postgresql with=init.sql
 -- Imagine application code building this string directly:
@@ -33,6 +51,22 @@ SELECT * FROM shipments WHERE shipment_id = 1;
 SELECT * FROM shipments WHERE shipment_id = 1 OR 1=1;
 ```
 
+Expected output:
+
+The safe, single-value query returns only shipment 1:
+
+| shipment_id | destination |
+| --- | --- |
+| 1 | Mumbai |
+
+The tampered query, with `OR 1=1` appended, returns every row instead:
+
+| shipment_id | destination |
+| --- | --- |
+| 1 | Mumbai |
+| 2 | Pune |
+| 3 | Nagpur |
+
 The second `query` demonstrates exactly what happens once user-provided text is treated as part of the SQL itself rather than as a single, inert value: the `query`'s actual logic changes entirely, returning all three shipments instead of the one that was asked for.
 
 This category of problem, letting untrusted input change a `query`'s structure, is the foundation of SQL injection, covered in full in a later chapter of this unit; this lesson focuses on the mechanism, `prepared statements`, that prevents it as a natural side effect of how it works.
@@ -47,6 +81,12 @@ SELECT * FROM shipments WHERE shipment_id = $1;
 
 EXECUTE get_shipment(1);
 ```
+
+Expected output:
+
+| shipment_id | destination |
+| --- | --- |
+| 1 | Mumbai |
 
 This splits the `query` into two separate pieces:
 
@@ -71,6 +111,20 @@ EXECUTE get_shipment(2);
 EXECUTE get_shipment(3);
 ```
 
+Expected output, one result set per `EXECUTE`:
+
+| shipment_id | destination |
+| --- | --- |
+| 1 | Mumbai |
+
+| shipment_id | destination |
+| --- | --- |
+| 2 | Pune |
+
+| shipment_id | destination |
+| --- | --- |
+| 3 | Nagpur |
+
 Each `EXECUTE` reuses the exact same prepared `query` structure, only the value plugged into `$1` changes, exactly the pattern a real application follows when handling many different incoming requests for different shipment IDs, using the same underlying `prepared statement` each time.
 
 ![One prepared statement can be executed many times with different values](images/04_prepared_statement_reuse_many_values.png)
@@ -88,7 +142,13 @@ EXECUTE get_shipment(1);
 DEALLOCATE get_shipment;
 ```
 
-`DEALLOCATE` releases a `prepared statement` once it is no longer needed; in a real application, this typically happens automatically when a `connection` closes, or explicitly if the `query` is no longer needed for the lifetime of a long-running `connection`.
+Expected output (from `EXECUTE get_shipment(1)`, before `DEALLOCATE` runs):
+
+| shipment_id | destination |
+| --- | --- |
+| 1 | Mumbai |
+
+`DEALLOCATE` itself returns no rows; it just releases the prepared `query` plan. `DEALLOCATE` releases a `prepared statement` once it is no longer needed; in a real application, this typically happens automatically when a `connection` closes, or explicitly if the `query` is no longer needed for the lifetime of a long-running `connection`.
 
 ## Prepared Statements at a Glance
 
@@ -131,6 +191,8 @@ EXECUTE get_shipment(1);
 
 -- Write your prepared statement and execution below
 ```
+
+Expected result and verification:
 
 If your statement is `PREPARE get_by_destination (TEXT) AS SELECT * FROM shipments WHERE destination = $1;` followed by `EXECUTE get_by_destination('Pune');`, it returns exactly shipment 2, with the destination value passed safely as data, not pasted into the `query` text.
 

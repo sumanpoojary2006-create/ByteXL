@@ -32,6 +32,61 @@ The organizational benefit runs deeper than avoiding name clashes, too. When Kir
 
 A `schema` turns a `database`'s `table` list from a flat pile into something closer to a labeled set of drawers, each one holding what one team actually owns.
 
+Here is Kiran's fix as real PostgreSQL: two schemas, each holding its own `Orders`-style table, with no collision because a table's true identity is the schema-and-table pair together.
+
+```postgresql file=init.sql
+CREATE SCHEMA sales;
+CREATE SCHEMA inventory;
+
+CREATE TABLE sales.orders (
+    order_id     INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    customer_id  INTEGER NOT NULL,
+    order_total  NUMERIC(10, 2) NOT NULL
+);
+
+CREATE TABLE inventory.orders (
+    order_id     INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    supplier_id  INTEGER NOT NULL,
+    item_count   INTEGER NOT NULL
+);
+
+INSERT INTO sales.orders (customer_id, order_total) VALUES
+    (101, 4599.00),
+    (102, 1250.50);
+
+INSERT INTO inventory.orders (supplier_id, item_count) VALUES
+    (7, 500);
+```
+
+The active query reaches into each schema explicitly, proving `sales.orders` and `inventory.orders` coexist without ever being confused for one another:
+
+```postgresql with=init.sql
+SELECT order_id, customer_id, order_total
+FROM sales.orders
+ORDER BY order_id;
+```
+
+Expected output:
+
+| order_id | customer_id | order_total |
+| ---------: | ------------: | ------------: |
+| 1 | 101 | 4599.00 |
+| 2 | 102 | 1250.50 |
+
+```postgresql with=init.sql
+SELECT order_id, supplier_id, item_count
+FROM inventory.orders
+ORDER BY order_id;
+```
+
+Expected output:
+
+| order_id | supplier_id | item_count |
+| ---------: | ------------: | -----------: |
+| 1 | 7 | 500 |
+
+Both tables reuse the plain name `orders`, and PostgreSQL never confuses them because every query in this file spells out which schema it means, exactly the `sales.Orders` versus `inventory.Orders` distinction that solved Kiran's naming collision.
+
 ## Controlling Access at the Group Level
 
 - `Schemas` give Kiran one more lever that individual `table` names never could: access control that applies to an entire group of `tables` at once rather than one `table` at a time.
@@ -105,6 +160,12 @@ This is the same instinct behind giving each team its own labeled drawer rather 
     </tr>
   </tbody>
 </table>
+
+## Your Turn: Design the Schemas
+
+A university runs one physical database shared by an admissions office and a finance office, and both teams independently want a table called `applications`, admissions meaning student applications, finance meaning budget applications. Propose a schema layout that avoids the collision, and state the full identity of each resulting table.
+
+A working answer: create an `admissions` schema and a `finance` schema, letting each team keep the obvious name `applications` inside its own container, `admissions.applications` for student applications and `finance.applications` for budget applications. Neither team has to rename anything to satisfy the other, because a table's true identity is the schema name plus the table name together, the same fix that let Kiran's sales and inventory teams both keep tables called `Orders`.
 
 ## Conclusion
 

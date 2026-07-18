@@ -8,6 +8,21 @@ The third letter in ACID, **isolation**, is the guarantee that concurrently runn
 
 The `accounts` `table` is the familiar one from earlier in this chapter.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `accounts`
+
+| account_id | owner_name | balance |
+| --- | --- | --- |
+| 1 | Meera Iyer | 50000.00 |
+| 2 | Sanjay Rathi | 12000.00 |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
@@ -20,6 +35,8 @@ INSERT INTO accounts (account_id, owner_name, balance) VALUES
 (2, 'Sanjay Rathi', 12000.00);
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 BEGIN;
 
@@ -29,6 +46,14 @@ SELECT balance FROM accounts WHERE account_id = 1;
 
 COMMIT;
 ```
+
+Expected output:
+
+
+
+| balance |
+| --- |
+| 45000.00 |
 
 Within this single `transaction`, the `SELECT` after the `UPDATE` correctly shows 45000.00, the reduced balance, since a `transaction` always sees its own uncommitted changes. Two things are true at once here:
 
@@ -63,6 +88,14 @@ COMMIT;
 SELECT balance FROM accounts WHERE account_id = 1;
 ```
 
+Expected output:
+
+
+
+| balance |
+| --- |
+| 45000.00 |
+
 The final `SELECT` in this script, running after `COMMIT`, correctly shows 40000.00, confirming the change is now permanent and visible to any session, including a completely fresh one that started with no knowledge of the `transaction` at all.
 
 ## Checking the Current Isolation Level
@@ -72,6 +105,8 @@ Every `database` `connection` operates under an `isolation level`, a named setti
 ```postgresql with=init.sql
 SHOW transaction_isolation;
 ```
+
+Expected observation: PostgreSQL returns one row containing the current server or transaction setting. The exact value depends on the OneCompiler PostgreSQL environment, so compare the setting name and meaning rather than memorizing a particular value.
 
 This reports the `isolation level` the current session is using for its `transactions`, `read committed` by default in PostgreSQL, which already guarantees that a `transaction` never sees another `transaction`'s uncommitted changes, exactly the behavior demonstrated above.
 
@@ -120,9 +155,17 @@ Check the current `transaction` `isolation level` for this session, then run a `
 -- Write your queries below
 ```
 
-- If you run `SHOW transaction_isolation;` followed by `BEGIN
-- `UPDATE` accounts SET balance = balance + 1000.00 `WHERE` account_id = 2
-- `SELECT` balance FROM accounts `WHERE` account_id = 2;`, the `isolation level` reports as `read committed`, and the ``SELECT`` shows 13000.00, the updated balance, visible within this same transaction even before a `COMMIT` is issued.
+Expected result and verification:
+
+If you run `SHOW transaction_isolation;` followed by:
+
+```sql
+BEGIN;
+UPDATE accounts SET balance = balance + 1000.00 WHERE account_id = 2;
+SELECT balance FROM accounts WHERE account_id = 2;
+```
+
+the `isolation level` reports as `read committed`, and the `SELECT` shows 13000.00, the updated balance, visible within this same transaction even before a `COMMIT` is issued.
 
 ## Conclusion
 

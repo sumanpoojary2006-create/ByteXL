@@ -8,6 +8,32 @@ It means changing the shipment's status, and also inserting a `row` into a separ
 
 The `shipments` and `shipment_log` `tables` set up the two-statement operation a `procedure` will wrap.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `shipments`
+
+| shipment_id | status |
+| --- | --- |
+| 1 | in_transit |
+| 2 | in_transit |
+
+The setup also creates the following empty supporting tables. Later statements populate them as the operation runs.
+
+### Empty `shipment_log` table
+
+| Column | Definition in the setup |
+| --- | --- |
+| `log_id` | `SERIAL PRIMARY KEY` |
+| `shipment_id` | `INTEGER` |
+| `action` | `TEXT` |
+| `logged_at` | `TIMESTAMP DEFAULT NOW()` |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
@@ -24,6 +50,8 @@ CREATE TABLE shipment_log (
 INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'in_transit');
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 CREATE PROCEDURE mark_shipment_delivered(p_shipment_id INTEGER)
 LANGUAGE plpgsql
@@ -35,7 +63,7 @@ END;
 $$;
 ```
 
-`CREATE PROCEDURE mark_shipment_delivered(p_shipment_id INTEGER)` defines a named routine, written in `plpgsql`, PostgreSQL's own procedural extension of SQL:
+Expected result: `CREATE PROCEDURE` returns no rows; it registers `mark_shipment_delivered` so later statements in this lesson can `CALL` it. `CREATE PROCEDURE mark_shipment_delivered(p_shipment_id INTEGER)` defines a named routine, written in `plpgsql`, PostgreSQL's own procedural extension of SQL:
 
 - It accepts one parameter and runs both statements inside it every time it is called.
 - The `$$ ... $$` markers, called dollar-quoting, wrap the `procedure`'s body, letting it contain semicolons and even quoted strings of its own without confusing the outer `CREATE PROCEDURE` statement's own boundaries.
@@ -59,6 +87,21 @@ CALL mark_shipment_delivered(1);
 SELECT * FROM shipments;
 SELECT * FROM shipment_log;
 ```
+
+Expected output:
+
+`shipments`:
+
+| shipment_id | status |
+| --- | --- |
+| 1 | delivered |
+| 2 | in_transit |
+
+`shipment_log`:
+
+| log_id | shipment_id | action | logged_at |
+| --- | --- | --- | --- |
+| 1 | 1 | marked delivered | *(timestamp of the `CALL`)* |
 
 One call to `mark_shipment_delivered(1)` ran both the `UPDATE` and the `INSERT` from the `procedure`'s body, and both `tables` now reflect that single logical operation, exactly the two-statements-together guarantee Devraj wanted, now enforced automatically by the `procedure` itself rather than relying on every caller to remember both steps.
 
@@ -97,6 +140,13 @@ CALL mark_multiple_delivered(ARRAY[2]);
 
 SELECT * FROM shipments;
 ```
+
+Expected output:
+
+| shipment_id | status |
+| --- | --- |
+| 1 | in_transit |
+| 2 | delivered |
 
 - `FOREACH sid IN ARRAY shipment_ids LOOP ...
 - END LOOP` is `plpgsql`'s looping construct, iterating over every value passed in, and the `COMMIT` inside the loop saves each shipment's update independently, rather than risking the entire batch being rolled back together if one shipment far down the list ran into a problem.
@@ -174,6 +224,8 @@ SELECT * FROM shipments;
 
 -- Write your procedure and call below
 ```
+
+Expected result and verification:
 
 A correct `procedure` follows the same shape as `mark_shipment_delivered`, replacing the update value and the logged action text with `'cancelled'`; calling `CALL cancel_shipment(2);` afterward updates shipment 2's status and adds a matching log entry, confirmed by selecting from both `tables`.
 

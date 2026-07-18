@@ -8,6 +8,23 @@ PostgreSQL's **`row-level security`**, or RLS, makes exactly this possible, enfo
 
 The `shipments` `table` now includes a `branch` `column`, and two `role`s represent two different branch coordinators.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `shipments`
+
+| shipment_id | branch | status |
+| --- | --- | --- |
+| 1 | Mumbai | in_transit |
+| 2 | Pune | delivered |
+| 3 | Mumbai | delayed |
+| 4 | Pune | in_transit |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
@@ -25,6 +42,8 @@ CREATE ROLE mumbai_coordinator WITH LOGIN PASSWORD 'change_this_in_real_use';
 GRANT SELECT ON shipments TO mumbai_coordinator;
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 Without `row-level security`, `mumbai_coordinator`'s `GRANT SELECT` gives access to every `row` in `shipments`, Mumbai's and Pune's alike, relying entirely on every single application `query` remembering to add `WHERE branch = 'Mumbai'` by hand. Forgetting that filter even once, in one report, one script, one ad-hoc `query`, would leak Pune's shipment data to a `role` that should never see it.
 
 ## Enabling and Defining a Row-Level Security Policy
@@ -39,6 +58,8 @@ FOR SELECT
 TO mumbai_coordinator
 USING (branch = 'Mumbai');
 ```
+
+Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
 
 This sets up two things together:
 
@@ -58,6 +79,13 @@ SELECT * FROM shipments;
 
 RESET ROLE;
 ```
+
+Expected output:
+
+| shipment_id | branch | status |
+| --- | --- | --- |
+| 1 | Mumbai | in_transit |
+| 3 | Mumbai | delayed |
 
 - `SET ROLE mumbai_coordinator` switches the current session to act as that `role`, and the plain `SELECT * FROM shipments`, with no `WHERE` clause written at all, still returns only the two Mumbai `rows`.
 - The policy is enforced by the `database` itself, beneath the `query`, exactly the guarantee application-side filtering alone could never provide, since application-side filtering only protects against `queries` that remembered to include it.
@@ -88,6 +116,8 @@ USING (branch = 'Mumbai');
 
 GRANT SELECT (shipment_id, branch, status) ON shipments_with_cost TO mumbai_coordinator;
 ```
+
+Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
 
 `mumbai_coordinator` can now only see Mumbai's `rows`, through the `row`-level policy, and within those `rows`, only `shipment_id`, `branch`, and `status`, through the `column`-level grant, with `internal_cost` withheld entirely, both restrictions enforced together, automatically, on every `query` this `role` ever runs against the `table`.
 
@@ -130,15 +160,10 @@ Create a `role` `pune_coordinator`, enable a `row-level security` policy restric
 -- Write your role, policy, and test below
 ```
 
-- Following the pattern above, `CREATE ROLE pune_coordinator WITH LOGIN PASSWORD 'change_this_in_real_use'
-- `GRANT` `SELECT` ON shipments TO pune_coordinator
-- `CREATE POLICY` pune_only ON shipments FOR `SELECT` TO pune_coordinator USING (branch = 'Pune');` followed by `SET ROLE pune_coordinator
-- `SELECT` * FROM shipments
-- RESET ROLE;` returns only the two Pune rows, enforced automatically regardless of the query's own `WHERE` clause.
+Expected result and verification:
+
+Following the pattern above, create `pune_coordinator`, grant it `SELECT` on `shipments`, and define a policy with `USING (branch = 'Pune')`. After `SET ROLE pune_coordinator`, running `SELECT * FROM shipments;` returns only the two Pune rows. `RESET ROLE;` then restores the original session role. The restriction is enforced automatically, even though the test query has no `WHERE` clause.
 
 ## Conclusion
 
-- `Row-level security`, enabled with `ALTER TABLE ...
-- ENABLE ROW LEVEL SECURITY` and defined through ``CREATE POLICY``, restricts which specific rows a `role` can see, enforced automatically by the `database` on every `query` rather than trusted to application code remembering to filter correctly, and it combines naturally with `column`-level grants to restrict both dimensions of sensitive data at once.
-- Devraj's branch coordinators can now safely share the same `table` and the same `queries`, each seeing only their own branch's data.
-- The next lesson turns to a different, equally serious threat: an attacker manipulating a `query`'s structure directly.
+`Row-level security`, enabled with `ALTER TABLE ... ENABLE ROW LEVEL SECURITY` and defined through `CREATE POLICY`, restricts which specific rows a `role` can see. The `database` enforces the policy on every `query` instead of trusting application code to remember the correct filter, and it combines naturally with column-level grants to restrict both sensitive rows and sensitive columns. Devraj's branch coordinators can now safely share the same `table` and the same queries while each sees only their own branch's data. The next lesson turns to a different, equally serious threat: an attacker manipulating a query's structure directly.

@@ -8,6 +8,24 @@ This lesson connects those two facts directly to something Priya can actually se
 
 A larger `table` makes the cost of a full scan easy to observe directly.
 
+## Source Data Used in This Lesson
+
+Some lessons need a larger dataset to make execution plans or maintenance behavior visible. For those tables, `init.sql` generates the rows instead of listing every row manually.
+
+### Generated `orders` dataset
+
+| Column | Definition in the setup |
+| --- | --- |
+| `order_id` | `INTEGER PRIMARY KEY` |
+| `customer_name` | `TEXT` |
+| `amount` | `NUMERIC(10, 2)` |
+
+The setup generates 5,000 rows, numbered from 1 through 5000. This scale is intentional because performance behavior is difficult to observe on a tiny table.
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
@@ -20,8 +38,19 @@ SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
 FROM generate_series(1, 5000) AS i;
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 EXPLAIN SELECT * FROM orders WHERE customer_name = 'Customer 3000';
+```
+
+Expected output:
+
+```
+                        QUERY PLAN
+------------------------------------------------------------
+ Seq Scan on orders  (cost=0.00..97.50 rows=1 width=23)
+   Filter: (customer_name = 'Customer 3000'::text)
 ```
 
 - `EXPLAIN`, covered in full detail later in this unit, previews how the `database` plans to execute a `query` without actually running it.
@@ -33,6 +62,12 @@ SELECT COUNT(DISTINCT (ctid::text::point)[0]) AS pages_a_full_scan_must_read
 FROM orders;
 ```
 
+Expected output:
+
+| pages_a_full_scan_must_read |
+| --- |
+| 46 |
+
 Using the same page-number extraction from the first lesson, this counts how many distinct pages the `table` occupies a `sequential scan` has to read every single one of them, even for this single-`row` lookup, because a `sequential scan`'s cost scales with the size of the whole `table`, not with how many `rows` the `query` actually needs, whether that need is 1 `row` or 1000.
 
 ![A full table scan checks every page even when only one target row is needed](images/05_full_scan_checks_every_page.png)
@@ -43,6 +78,15 @@ Running the same shape of `query`, but filtering on `order_id`, the `table`'s `p
 
 ```postgresql with=init.sql
 EXPLAIN SELECT * FROM orders WHERE order_id = 3000;
+```
+
+Expected output:
+
+```
+                                   QUERY PLAN
+---------------------------------------------------------------------------------
+ Index Scan using orders_pkey on orders  (cost=0.29..8.31 rows=1 width=23)
+   Index Cond: (order_id = 3000)
 ```
 
 The plan now reports an "Index Scan using orders_pkey" instead of a `sequential scan`.
@@ -66,6 +110,16 @@ FROM generate_series(5001, 10000) AS i;
 
 SELECT pg_size_pretty(pg_relation_size('orders')) AS size_after_doubling_rows;
 ```
+
+Expected output:
+
+| current_size |
+| --- |
+| 368 kB |
+
+| size_after_doubling_rows |
+| --- |
+| 736 kB |
 
 Doubling the `row` count roughly doubles the reported `table` size, and a full scan against this larger `table` now has roughly twice as many pages to check for the exact same single-`row` lookup, even though the answer being searched for has not changed in any way.
 
@@ -116,6 +170,8 @@ Run `EXPLAIN` on a `query` filtering the `orders` `table` above for `amount > 12
 ```postgresql with=init.sql
 -- Write your query and comment below
 ```
+
+Expected result and verification:
 
 `EXPLAIN SELECT * FROM orders WHERE amount > 120000;` reports a `sequential scan`, exactly as expected, since `amount` has no supporting structure to help the `database` skip pages, meaning it must check every `row`'s `amount` value against the condition regardless of how few `rows` actually qualify.
 

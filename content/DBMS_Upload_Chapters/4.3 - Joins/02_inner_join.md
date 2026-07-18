@@ -9,6 +9,44 @@
 
 The same delivery `schema` from the previous lesson is the setup here, with one detail worth noticing: customer 5, Neha Bhatt, has never placed an order, and restaurant 4, Taco Town, has never received one.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the data they will use. The tables below show the rows loaded by the setup file.
+
+### `customers`
+
+| customer_id | customer_name | city |
+| --- | --- | --- |
+| 1 | Aditi Kulkarni | Pune |
+| 2 | Rohan Das | Kolkata |
+| 3 | Kavya Nair | Kochi |
+| 4 | Imran Sheikh | Hyderabad |
+| 5 | Neha Bhatt | Ahmedabad |
+
+### `restaurants`
+
+| restaurant_id | restaurant_name | city |
+| --- | --- | --- |
+| 1 | Pizza Palace | Pune |
+| 2 | Sushi Central | Kolkata |
+| 3 | Burger Barn | Pune |
+| 4 | Taco Town | Hyderabad |
+
+### `orders`
+
+| order_id | customer_id | restaurant_id | amount | order_date |
+| --- | --- | --- | --- | --- |
+| 1 | 1 | 1 | 450 | 2025-05-01 |
+| 2 | 2 | 2 | 620 | 2025-05-02 |
+| 3 | 1 | 3 | 300 | 2025-05-03 |
+| 4 | 3 | 1 | 500 | 2025-05-04 |
+| 5 | 4 | 2 | 275 | 2025-05-05 |
+| 6 | 2 | 3 | 180 | 2025-05-06 |
+
+The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
+
+## Hands-On Setup: Prepare the Data
+
 ```postgresql file=init.sql
 CREATE TABLE customers (
     customer_id INTEGER PRIMARY KEY,
@@ -52,11 +90,24 @@ INSERT INTO orders (order_id, customer_id, restaurant_id, amount, order_date) VA
 (6, 2, 3, 180.00, '2025-05-06');
 ```
 
+Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
+
 ```postgresql with=init.sql
 SELECT customers.customer_name, orders.order_id, orders.amount
 FROM customers
 INNER JOIN orders ON customers.customer_id = orders.customer_id;
 ```
+
+Expected output:
+
+| customer_name | order_id | amount |
+| --- | --- | --- |
+| Aditi Kulkarni | 1 | 450 |
+| Rohan Das | 2 | 620 |
+| Aditi Kulkarni | 3 | 300 |
+| Kavya Nair | 4 | 500 |
+| Imran Sheikh | 5 | 275 |
+| Rohan Das | 6 | 180 |
 
 This returns six `rows`, one per order, but Neha Bhatt never appears anywhere in the output, even though she is a perfectly valid `row` in `customers`. She has no matching `row` in `orders`, so the inner `join` excludes her entirely rather than showing her with blank order `columns`. This is the defining trait of `INNER JOIN`: no match means no `row` in the result, on either side.
 
@@ -70,11 +121,23 @@ It helps to compare the `row` count of a `table` alone against the `row` count a
 SELECT COUNT(*) AS total_customers FROM customers;
 ```
 
+Expected output:
+
+| total_customers |
+| --- |
+| 5 |
+
 ```postgresql with=init.sql
 SELECT COUNT(*) AS customers_with_orders
 FROM customers
 INNER JOIN orders ON customers.customer_id = orders.customer_id;
 ```
+
+Expected output:
+
+| customers_with_orders |
+| --- |
+| 6 |
 
 The `customers` `table` alone has 5 `rows`, but the joined `query` returns 6, not 5 and not fewer:
 
@@ -133,6 +196,14 @@ INNER JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id
 WHERE orders.amount > 400;
 ```
 
+Expected output:
+
+| customer_name | restaurant_name | amount |
+| --- | --- | --- |
+| Aditi Kulkarni | Pizza Palace | 450 |
+| Rohan Das | Sushi Central | 620 |
+| Kavya Nair | Pizza Palace | 500 |
+
 This `query` runs in two clear stages:
 
 1. The two `INNER JOIN` clauses first assemble the full combined `view` across all three `tables`.
@@ -184,8 +255,19 @@ Zoya wants a list of every restaurant that has actually received at least one or
 
 If your `query` is `SELECT DISTINCT restaurants.restaurant_name FROM orders INNER JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id;`, it returns Pizza Palace, Sushi Central, and Burger Barn, and Taco Town is correctly missing, since it has never matched an order.
 
+
+Expected output for the practice query:
+
+| restaurant_name |
+| --- |
+| Burger Barn |
+| Pizza Palace |
+| Sushi Central |
+
 ## Conclusion
 
-- `INNER JOIN`, and its shorthand `JOIN`, keeps only the `rows` where both sides of the `join` condition find a partner, quietly dropping everything else, which makes it the right choice whenever unmatched `rows` carry no useful information for the question at hand.
-- Zoya now knows precisely why Neha Bhatt and Taco Town never showed up in her earlier reports.
-- Sometimes, though, an unmatched `row` is exactly the information a report needs to surface, and that is where outer `joins` come in.
+`INNER JOIN`, and its shorthand `JOIN`, keeps only the `rows` where both sides of the `join` condition find a partner, quietly dropping everything else, which makes it the right choice whenever unmatched `rows` carry no useful information for the question at hand.
+
+Zoya now knows precisely why Neha Bhatt and Taco Town never showed up in her earlier reports.
+
+Sometimes, though, an unmatched `row` is exactly the information a report needs to surface, and that is where outer `joins` come in.

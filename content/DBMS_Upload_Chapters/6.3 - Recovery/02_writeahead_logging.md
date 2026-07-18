@@ -13,6 +13,20 @@ It might seem simpler for a `database` to just write a change straight to its da
 
 A separate, simpler, sequential log write is far cheaper and safer to make durable quickly than a full, scattered update to the actual data file structure.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `accounts`
+
+| account_id | balance |
+| --- | --- |
+| 1 | 5000.00 |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
@@ -22,9 +36,13 @@ CREATE TABLE accounts (
 INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00);
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 SELECT pg_current_wal_lsn();
 ```
+
+Expected observation: PostgreSQL returns a WAL location such as `0/16B6C50`. The exact value is server-specific; after a committed write, a later location should be equal to or ahead of the earlier one.
 
 - `pg_current_wal_lsn()` returns PostgreSQL's current position in its `write-ahead log`, a steadily advancing marker.
 - Every change made to the `database` advances this marker, since every change is first recorded in the log before it ever touches the actual `table`'s data files on disk.
@@ -40,6 +58,8 @@ COMMIT;
 
 SELECT pg_current_wal_lsn();
 ```
+
+Expected observation: PostgreSQL returns a WAL location such as `0/16B6C50`. The exact value is server-specific; after a committed write, a later location should be equal to or ahead of the earlier one.
 
 By the time this `COMMIT` returns success to the caller, PostgreSQL guarantees the log record describing "subtract 500.00 from account 1's balance" has already been durably written, even if the actual data file holding the `accounts` `table`'s page has not been updated on disk yet. The second `SELECT` shows the `WAL` position has advanced past where it was before, confirming a new record was appended.
 
@@ -69,6 +89,8 @@ DELETE FROM accounts WHERE account_id = 2;
 
 SELECT pg_current_wal_lsn();
 ```
+
+Expected observation: PostgreSQL returns a WAL location such as `0/16B6C50`. The exact value is server-specific; after a committed write, a later location should be equal to or ahead of the earlier one.
 
 Both the `INSERT` and the `DELETE` here each generate their own log entry, and the `WAL` position advances after each one, confirming that even a `row` inserted and then deleted moments later still passed through the log along the way, since the log records the sequence of changes, not just the final resulting state.
 
@@ -109,9 +131,10 @@ Check the current `WAL` position, run a `transaction` that inserts a new account
 -- Write your queries below
 ```
 
+Expected result and verification:
+
 If you run `SELECT pg_current_wal_lsn();`, then `BEGIN; INSERT INTO accounts (account_id, balance) VALUES (3, 7000.00); COMMIT;`, then `SELECT pg_current_wal_lsn();` again, the second position is further along than the first, confirming the `INSERT`'s log record was appended as part of the commit.
 
 ## Conclusion
 
-- `Write-ahead logging` guarantees that a durable record of every change exists before the change is considered complete, which is what allows a `database` to safely defer the slower work of updating actual data files while still guaranteeing that a crash can never lose a committed `transaction`'s effect.
-- The log itself would grow forever and take longer to replay with every passing day if nothing ever bounded it, which is exactly the problem the next lesson's mechanism, checkpoints, exists to solve.
+`Write-ahead logging` guarantees that a durable record of every change exists before the change is considered complete, which is what allows a `database` to safely defer the slower work of updating actual data files while still guaranteeing that a crash can never lose a committed `transaction`'s effect. The log itself would grow forever and take longer to replay with every passing day if nothing ever bounded it, which is exactly the problem the next lesson's mechanism, checkpoints, exists to solve.

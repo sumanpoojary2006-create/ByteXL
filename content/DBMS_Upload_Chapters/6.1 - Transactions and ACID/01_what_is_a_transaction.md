@@ -10,6 +10,21 @@ The `database`'s answer to this problem is the **`transaction`**: a group of one
 
 The `accounts` `table` holds a simple balance per account, the starting point for Rahul's transfer feature.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `accounts`
+
+| account_id | owner_name | balance |
+| --- | --- | --- |
+| 1 | Meera Iyer | 50000.00 |
+| 2 | Sanjay Rathi | 12000.00 |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
@@ -22,12 +37,23 @@ INSERT INTO accounts (account_id, owner_name, balance) VALUES
 (2, 'Sanjay Rathi', 12000.00);
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 UPDATE accounts SET balance = balance - 5000.00 WHERE account_id = 1;
 UPDATE accounts SET balance = balance + 5000.00 WHERE account_id = 2;
 
 SELECT account_id, owner_name, balance FROM accounts;
 ```
+
+Expected output:
+
+
+
+| account_id | owner_name | balance |
+| --- | --- | --- |
+| 1 | Meera Iyer | 45000.00 |
+| 2 | Sanjay Rathi | 17000.00 |
 
 Run on their own, these two statements move 5000.00 from Meera's account to Sanjay's, and the final balances look correct: 45000.00 and 17000.00. But nothing here tells the `database` that these two statements belong together as a single unit of work.
 
@@ -47,6 +73,15 @@ COMMIT;
 
 SELECT account_id, owner_name, balance FROM accounts;
 ```
+
+Expected output:
+
+
+
+| account_id | owner_name | balance |
+| --- | --- | --- |
+| 1 | Meera Iyer | 45000.00 |
+| 2 | Sanjay Rathi | 17000.00 |
 
 The two `UPDATE` statements are now bound together by `BEGIN` and `COMMIT`. If anything went wrong between them, a crash, a `constraint` violation, an explicit cancellation, the `database` guarantees that neither change takes effect, not just the first one, not just the second. Only once `COMMIT` runs successfully does either change become permanent and visible to anyone else looking at the `table`.
 
@@ -68,6 +103,24 @@ ROLLBACK;
 
 SELECT account_id, balance FROM accounts;
 ```
+
+Expected output 1:
+
+
+
+| account_id | balance |
+| --- | --- |
+| 1 | 45000.00 |
+| 2 | 17000.00 |
+
+Expected output 2:
+
+
+
+| account_id | balance |
+| --- | --- |
+| 1 | 50000.00 |
+| 2 | 12000.00 |
 
 The `SELECT` immediately after the two `UPDATE` statements, while still inside the `transaction`, shows the changed balances, 45000.00 and 17000.00, because within the same `transaction`, a `connection` can see its own uncommitted changes. But once `ROLLBACK` runs, those changes are discarded entirely, and the final `SELECT` shows both accounts back at their original values, 50000.00 and 12000.00, exactly as if the `transaction` had never happened.
 
@@ -119,6 +172,8 @@ Meera wants to send 2000.00 to Sanjay, but decides midway through to cancel the 
 ```postgresql with=init.sql
 -- Write your transaction below
 ```
+
+Expected result and verification:
 
 If your `transaction` runs `BEGIN`, the two `UPDATE` statements adjusting 2000.00 in opposite directions, then `ROLLBACK`, the closing `SELECT` shows Meera still at 50000.00 and Sanjay still at 12000.00, confirming the cancelled transfer left no trace.
 

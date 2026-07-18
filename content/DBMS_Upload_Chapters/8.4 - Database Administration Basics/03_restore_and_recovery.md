@@ -5,11 +5,25 @@
 - That is the worst possible time to discover a problem.
 - **Restore and `recovery`** is the practice of reconstructing a working `database` from a `backup`.
 - It should be rehearsed deliberately, not attempted for the first time during a real emergency.
-- not something to attempt for the very first time during a real emergency
 
 ## Restoring from a Logical Backup
 
 A logical `backup`, produced with `pg_dump` as covered in the previous lesson, is restored by running its contents against a target `database`, recreating `tables` and reloading data.
+
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `shipments_backup_source`
+
+| shipment_id | status |
+| --- | --- |
+| 1 | in_transit |
+| 2 | delivered |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
 
 ```postgresql file=init.sql
 CREATE TABLE shipments_backup_source (
@@ -19,6 +33,8 @@ CREATE TABLE shipments_backup_source (
 
 INSERT INTO shipments_backup_source (shipment_id, status) VALUES (1, 'in_transit'), (2, 'delivered');
 ```
+
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
 ```postgresql with=init.sql
 -- A real logical restore, run from a terminal, looks roughly like:
@@ -39,6 +55,13 @@ INSERT INTO shipments_restored (shipment_id, status) VALUES
 SELECT * FROM shipments_restored;
 ```
 
+Expected output:
+
+| shipment_id | status |
+| --- | --- |
+| 1 | in_transit |
+| 2 | delivered |
+
 - The `INSERT INTO shipments_restored` statement reloads data into the freshly created `table`, standing in for the data-loading statements a full `pg_dump`-produced `restore` script runs at scale, across every `table` in a `database`, in one automated pass.
 - The restored `table`'s contents exactly match the original, confirming the `restore` succeeded.
 
@@ -54,6 +77,8 @@ Point-in-time `recovery`, or PITR, combines a full `backup` with the `write-ahea
 SELECT pg_current_wal_lsn() AS wal_position_now;
 ```
 
+Expected result: PostgreSQL returns the rows described below. Compare the visible columns and row-level effect with the explanation, since security and administration settings may make some values environment-dependent.
+
 ```postgresql with=init.sql
 -- A real point-in-time recovery is configured roughly like:
 -- restore the most recent full backup taken before the incident
@@ -62,6 +87,12 @@ SELECT pg_current_wal_lsn() AS wal_position_now;
 -- stopping exactly at the specified target time, just before the mistake
 SELECT 'Point-in-time recovery replays WAL up to a specific timestamp, not just to the last full backup' AS pitr_summary;
 ```
+
+Expected output:
+
+| pitr_summary |
+| --- |
+| Point-in-time recovery replays WAL up to a specific timestamp, not just to the last full backup |
 
 This is precisely why the `write-ahead logging` covered earlier in this course matters beyond crash `recovery`: the same log that lets a `database` recover from a power loss is what makes it possible to recover to an arbitrary moment in time, as long as the relevant log segments were archived somewhere durable rather than discarded once no longer needed for ordinary crash `recovery`.
 
@@ -81,6 +112,12 @@ INSERT INTO shipments_restored (shipment_id, status) VALUES
 
 SELECT COUNT(*) AS row_count_after_restore FROM shipments_restored;
 ```
+
+Expected output:
+
+| row_count_after_restore |
+| ---: |
+| 2 |
 
 A disciplined operations practice periodically performs a real, full `restore`, into a separate, isolated environment, and then verifies the result:
 
@@ -128,6 +165,8 @@ Simulate a `restore` by creating a new `table` `shipments_restored_v2`, loading 
 ```postgresql with=init.sql
 -- Write your restore and verification below
 ```
+
+Expected result and verification:
 
 Creating `shipments_restored_v2` with the same structure, loading it with `INSERT INTO shipments_restored_v2 (shipment_id, status) VALUES (1, 'in_transit'), (2, 'delivered');`, and then running `SELECT COUNT(*) FROM shipments_restored_v2;` alongside a direct comparison against `shipments_backup_source` is exactly the verification discipline this lesson has been building toward: never trust a `restore` without checking it.
 

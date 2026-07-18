@@ -84,6 +84,16 @@ For three files and two coordinators, that rule might survive a week. It will no
 
 The moment shared data is written to and read from by more than one person, at any real scale, these three symptoms stop being rare accidents and become a routine, predictable cost of using plain files for something they were never designed to do: coordinate simultaneous, shared access to the same facts.
 
+## Your Turn: Name the Symptom
+
+A hostel warden keeps three spreadsheets: `residents.xlsx` (room assignments), `fees.xlsx` (who has paid), and `complaints.xlsx` (maintenance requests). A student's phone number is retyped into all three. Read each scenario below and name which of the three symptoms, redundancy, inconsistency, or a lost update, it illustrates.
+
+1. The warden updates a student's phone number in `residents.xlsx` after she changes her number, but `fees.xlsx` and `complaints.xlsx` still show the old one.
+2. Two wardens both open `fees.xlsx` on Monday morning; one marks Room 12 as paid, the other marks Room 14 as paid, and only the second save survives.
+3. Every one of the three files stores the same student's phone number in its own column.
+
+Scenario 1 is inconsistency: the same fact now disagrees across files because only one copy was updated. Scenario 2 is a lost update: two genuine, simultaneous edits collide, and one vanishes without warning. Scenario 3 is redundancy itself, the root cause sitting quietly before either of the other two symptoms even has a chance to appear: the same phone number typed three times is what makes disagreement and overwritten edits possible in the first place.
+
 ## Conclusion
 
 Redundancy creeps in because the same fact has to be retyped wherever it is needed, inconsistency follows because updating one copy never guarantees the others get updated too, and `lost updates` happen because a plain file cannot merge two people's honest changes into one. None of this is a character flaw in Kabir's team, it is what plain files do, reliably, once real numbers and real deadlines arrive.

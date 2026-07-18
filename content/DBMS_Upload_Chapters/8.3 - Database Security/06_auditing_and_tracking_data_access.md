@@ -1,13 +1,38 @@
 ## Introduction
 
-- `Role`s, privileges, `least privilege`, `row-level security`.
-- The security mechanisms covered so far, including `roles`, privileges, `least privilege`, row-level security, and injection prevention, work to prevent unwanted access before it happens.
-- **Auditing** is the complementary discipline for after the fact: recording who did what and when.
-- If something goes wrong, or simply needs reviewing later, auditing gives the team an actual trail to examine instead of forcing everyone to guess.
+The security mechanisms covered so far, `roles`, privileges, `least privilege`, `row-level security`, and injection prevention, all work to prevent unwanted access before it happens. **Auditing** is the complementary discipline for after the fact: recording who did what and when, so that if something goes wrong, or simply needs reviewing later, the team has an actual trail to examine instead of forcing everyone to guess.
 
 ## Recording Who Changed a Row, Using a Trigger
 
 The `trigger` mechanism from earlier in this course is the natural building block for an audit trail, extended here to capture which `role` made a change, not just what changed.
+
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `shipments`
+
+| shipment_id | status |
+| --- | --- |
+| 1 | in_transit |
+
+The setup also creates the following empty supporting tables. Later statements populate them as the operation runs.
+
+### Empty `audit_log` table
+
+| Column | Definition in the setup |
+| --- | --- |
+| `audit_id` | `SERIAL PRIMARY KEY` |
+| `table_name` | `TEXT` |
+| `action` | `TEXT` |
+| `changed_by` | `TEXT` |
+| `changed_at` | `TIMESTAMP DEFAULT NOW()` |
+| `old_data` | `JSONB` |
+| `new_data` | `JSONB` |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
 
 ```postgresql file=init.sql
 CREATE TABLE shipments (
@@ -27,6 +52,8 @@ CREATE TABLE audit_log (
 
 INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit');
 ```
+
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
 ```postgresql with=init.sql
 CREATE FUNCTION audit_shipments_change()
@@ -51,6 +78,8 @@ AFTER INSERT OR UPDATE OR DELETE ON shipments
 FOR EACH ROW
 EXECUTE FUNCTION audit_shipments_change();
 ```
+
+Expected result: `CREATE FUNCTION` and `CREATE TRIGGER` return no rows; they arm the audit mechanism on `shipments` without touching any data yet. The next section fires the `trigger` for real and shows the row it writes into `audit_log`.
 
 - `TG_OP` is a special variable automatically available inside a `trigger` `function`, holding the operation that fired it, `'INSERT'`, `'UPDATE'`, or `'DELETE'`. `current_user` captures exactly which `role`'s `connection` made the change, tying every audit entry back to a specific, accountable identity.
 - This preserves the accountability that shared logins destroy.
@@ -89,6 +118,12 @@ UPDATE shipments SET status = 'delivered' WHERE shipment_id = 1;
 SELECT table_name, action, changed_by, old_data, new_data FROM audit_log;
 ```
 
+Expected output:
+
+| table_name | action | changed_by | old_data | new_data |
+| --- | --- | --- | --- | --- |
+| shipments | UPDATE | postgres | {"status": "in_transit", "shipment_id": 1} | {"status": "delivered", "shipment_id": 1} |
+
 The audit entry shows `action = 'UPDATE'`, `changed_by` recording exactly which `role` made the change, and both the `row`'s state before, `status: in_transit`, and after, `status: delivered`, preserved in `old_data` and `new_data`. This is a complete, precise record: not just that something changed, but exactly what changed, who changed it, and when.
 
 ![A trigger-based audit log records who changed a row and the old and new values](images/11_audit_trigger_records_who_old_new.png)
@@ -122,6 +157,8 @@ EXECUTE FUNCTION audit_shipments_change();
 
 SHOW log_statement;
 ```
+
+Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
 - `log_statement` controls what PostgreSQL writes to its own server log, with settings ranging from logging nothing extra, to logging every data-modifying statement, to logging genuinely every statement including plain reads.
 - Enabling comprehensive read-level auditing has a real performance cost, since every single `query` then incurs additional logging overhead, which is why it is typically reserved for `tables` holding especially sensitive data, rather than applied `database`-wide by default.
@@ -199,8 +236,16 @@ EXECUTE FUNCTION audit_shipments_change();
 -- Write your insert, delete, and query below
 ```
 
-- Running `INSERT INTO shipments (shipment_id, status) VALUES (2, 'in_transit')
-- `DELETE` FROM shipments `WHERE` shipment_id = 2;` followed by ``SELECT` action, changed_by, old_data, new_data FROM audit_log `WHERE` (old_data->>'shipment_id')::int = 2 OR (new_data->>'shipment_id')::int = 2;` shows two entries: an ``INSERT`` with `new_data` populated and `old_data` null, and a ``DELETE`` with `old_data` populated and `new_data` null, exactly mirroring what genuinely happened to that `row`.
+Expected result and verification:
+
+Running `INSERT INTO shipments (shipment_id, status) VALUES (2, 'in_transit');` followed by `DELETE FROM shipments WHERE shipment_id = 2;` and then `SELECT action, changed_by, old_data, new_data FROM audit_log WHERE (old_data->>'shipment_id')::int = 2 OR (new_data->>'shipment_id')::int = 2;` gives:
+
+| action | changed_by | old_data | new_data |
+| --- | --- | --- | --- |
+| INSERT | postgres | *NULL* | {"status": "in_transit", "shipment_id": 2} |
+| DELETE | postgres | {"status": "in_transit", "shipment_id": 2} | *NULL* |
+
+Two entries come back: an `INSERT` with `new_data` populated and `old_data` null, and a `DELETE` with `old_data` populated and `new_data` null, exactly mirroring what genuinely happened to that `row`.
 
 ## Conclusion
 

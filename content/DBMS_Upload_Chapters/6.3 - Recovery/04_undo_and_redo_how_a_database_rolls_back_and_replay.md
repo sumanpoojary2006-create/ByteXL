@@ -14,6 +14,20 @@ Redo handles this in two steps:
 
 2. It reapplies every change belonging to a `transaction` that committed, bringing the data files up to date with everything the log promised had already succeeded.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `accounts`
+
+| account_id | balance |
+| --- | --- |
+| 1 | 5000.00 |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
@@ -22,6 +36,8 @@ CREATE TABLE accounts (
 
 INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00);
 ```
+
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
 ```postgresql with=init.sql
 BEGIN;
@@ -32,6 +48,12 @@ COMMIT;
 
 SELECT balance FROM accounts WHERE account_id = 1;
 ```
+
+Expected output:
+
+| balance |
+| --- |
+| 4000.00 |
 
 The `SELECT` here shows 4000.00, because in this running session nothing actually crashed.
 
@@ -54,7 +76,13 @@ ROLLBACK;
 SELECT balance FROM accounts WHERE account_id = 1;
 ```
 
-The explicit `ROLLBACK` here demonstrates the same outcome undo would achieve automatically after a crash: the balance remains 4000.00, as if the 2000.00 deduction never happened.
+Expected output:
+
+| balance |
+| --- |
+| 5000.00 |
+
+The explicit `ROLLBACK` here demonstrates the same outcome undo would achieve automatically after a crash: the balance remains 5000.00, as if the 2000.00 deduction never happened.
 
 In a genuine crash scenario, no `ROLLBACK` would ever be issued by anyone, since the whole application vanished along with the server, but PostgreSQL's undo pass performs the identical reversal automatically during `recovery`, simply by recognizing that this `transaction`'s log entries have no corresponding commit record.
 
@@ -102,6 +130,8 @@ Using the `accounts` `table` above, run one `transaction` that commits a balance
 ```postgresql with=init.sql
 -- Write your transactions and comment below
 ```
+
+Expected result and verification:
 
 The committed `transaction`'s effect would be guaranteed by the redo pass on restart, reapplying its logged change if it had not yet reached the data file, while the rolled-back `transaction`'s effect would be reversed by the undo pass, which recognizes it has no matching commit record in the log and discards whatever partial changes it made.
 

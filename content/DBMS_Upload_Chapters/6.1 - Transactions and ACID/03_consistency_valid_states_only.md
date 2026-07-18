@@ -8,6 +8,21 @@ The second letter in ACID, **consistency**, is the guarantee that a `transaction
 
 The `accounts` `table`, with a `constraint` restored from the previous lesson, defines exactly what counts as valid.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `accounts`
+
+| account_id | owner_name | balance |
+| --- | --- | --- |
+| 1 | Meera Iyer | 50000.00 |
+| 2 | Sanjay Rathi | 12000.00 |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
@@ -20,6 +35,8 @@ INSERT INTO accounts (account_id, owner_name, balance) VALUES
 (2, 'Sanjay Rathi', 12000.00);
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 -- This transaction would fail because the CHECK constraint
 -- prevents account 1 from becoming negative:
@@ -29,6 +46,15 @@ INSERT INTO accounts (account_id, owner_name, balance) VALUES
 
 SELECT account_id, balance FROM accounts;
 ```
+
+Expected output:
+
+
+
+| account_id | balance |
+| --- | --- |
+| 1 | 50000.00 |
+| 2 | 12000.00 |
 
 - The `CHECK (balance >= 0)` `constraint` is the `database`'s own definition of a valid account `row`.
 - This `transaction` tries to push Meera's balance to -10000.00, and the `database` refuses to let that become the committed state, rejecting the statement and, through atomicity, rolling back the whole `transaction` along with it.
@@ -88,6 +114,14 @@ COMMIT;
 
 SELECT SUM(balance) AS total_money_in_bank FROM accounts;
 ```
+
+Expected output:
+
+
+
+| total_money_in_bank |
+| --- |
+| 57000 |
 
 - This `transaction` commits successfully, since it violates no `constraint` the `database` knows about, `balance >= 0` still holds.
 - But 5000.00 has vanished from the total across the bank, a business-level inconsistency the `database` had no way to detect, since that particular rule was never declared as a `constraint`.

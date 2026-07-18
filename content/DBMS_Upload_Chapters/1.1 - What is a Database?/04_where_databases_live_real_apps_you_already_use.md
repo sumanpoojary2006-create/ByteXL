@@ -80,6 +80,15 @@ Tara starts keeping a mental list on her walk back from collecting her order: th
 
 None of these felt like "`database` moments" while she was using them, which is precisely the point: the best-run `databases` are the ones nobody notices at all.
 
+## Your Turn: Spot the Database Behind the App
+
+A movie ticket booking app lets Tara pick a seat, pay, and get a confirmation, all within thirty seconds. Answer these two questions:
+
+1. Name at least three distinct pieces of data the app must read or write during that thirty seconds.
+2. What would go wrong if two people tapped "confirm" on the same seat within the same second, and plain unsynchronized files were handling the booking instead of a real `database`?
+
+A working answer: the app reads the showtime and screen layout, reads which seats are already booked, writes the new booking against the seat Tara chose, and writes the payment confirmation, at minimum. Without a real `database` coordinating that write, two customers tapping "confirm" on the same seat within the same second is exactly the last-biryani problem from earlier in this lesson: both bookings could save, both people could receive a ticket for one physical seat, and the conflict would only surface when two strangers arrive at the same row expecting to sit in it.
+
 ## Conclusion
 
 Databases are not machinery reserved for banks or large corporations, they sit invisibly behind almost every app that remembers anything from one visit to the next, from a plate of biryani to a bank transfer to a set of exam marks. Every one of those examples is really the same coordination problem, solved at the scale of millions of users instead of a handful of office coordinators.

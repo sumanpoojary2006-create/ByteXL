@@ -161,6 +161,12 @@ This same three-question habit, what are the things, what do we know about each 
 
 The domain changes every time; the discipline of naming entities, attributes, and relationships before reaching for a `table` does not.
 
+## Your Turn: Sort the Candidates
+
+A ride-hailing app needs a system covering Rider, Driver, Vehicle, and "a trip." For each of these four nouns, decide whether it deserves to be its own entity, and if you land on "trip," name at least one fact that belongs to the trip itself rather than to the rider or the driver alone.
+
+A working answer: Rider, Driver, and Vehicle each pass Kabir's test easily, the app needs to remember details about each independently of anything else, a rider's saved addresses, a driver's licence number, a vehicle's plate and model. "Trip" also earns its own entity rather than collapsing into an attribute, because a single trip has facts that belong to neither person alone: pickup time, drop-off location, fare, and route, all of which exist only because a specific rider and a specific driver came together for that one journey.
+
 ## Conclusion
 
 An entity is a distinct real-world thing a system needs to remember facts about, an attribute is one of those facts, and a relationship is a meaningful `connection` between two entities. Modelling a domain means walking through it the way Kabir walked through the library: naming the things first, describing each thing's properties second, and only then mapping out how the things relate to one another.

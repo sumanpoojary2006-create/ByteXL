@@ -8,6 +8,26 @@ Ranking `functions` alone cannot filter, since `window functions` are not allowe
 
 The `sales` `table` now includes a `region` `column` so rankings can be scoped per region.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `sales`
+
+| salesperson | region | total_amount |
+| --- | --- | --- |
+| Nikhil Rao | North | 29700.00 |
+| Aarav Singh | North | 24000.00 |
+| Devika Rao | North | 18500.00 |
+| Sana Fatima | South | 21000.00 |
+| Tarun Bakshi | South | 21000.00 |
+| Reema Ghosh | South | 15000.00 |
+| Kunal Verma | East | 11000.00 |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE sales (
     salesperson TEXT,
@@ -25,11 +45,25 @@ INSERT INTO sales (salesperson, region, total_amount) VALUES
 ('Kunal Verma', 'East', 11000.00);
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 SELECT salesperson, region, total_amount,
        RANK() OVER (PARTITION BY region ORDER BY total_amount DESC) AS region_rank
 FROM sales;
 ```
+
+Expected output:
+
+| salesperson | region | total_amount | region_rank |
+| --- | --- | --- | --- |
+| Kunal Verma | East | 11000.00 | 1 |
+| Nikhil Rao | North | 29700.00 | 1 |
+| Aarav Singh | North | 24000.00 | 2 |
+| Devika Rao | North | 18500.00 | 3 |
+| Sana Fatima | South | 21000.00 | 1 |
+| Tarun Bakshi | South | 21000.00 | 1 |
+| Reema Ghosh | South | 15000.00 | 3 |
 
 `PARTITION BY region` resets the ranking separately within North, South, and East:
 
@@ -56,6 +90,16 @@ WHERE region_rank <= 2
 ORDER BY region, region_rank;
 ```
 
+Expected output:
+
+| salesperson | region | total_amount | region_rank |
+| --- | --- | --- | --- |
+| Kunal Verma | East | 11000.00 | 1 |
+| Nikhil Rao | North | 29700.00 | 1 |
+| Aarav Singh | North | 24000.00 | 2 |
+| Sana Fatima | South | 21000.00 | 1 |
+| Tarun Bakshi | South | 21000.00 | 1 |
+
 The CTE `ranked_sales` computes the ranking exactly as before, and the outer `query` then treats `region_rank` as an ordinary `column`, filterable with a plain `WHERE`. This returns 5 `rows` in total, not 6: North and South each contribute their expected 2 `rows`, but East has only one salesperson to begin with, Kunal Verma, so its entire top 2 is just that single `row`.
 
 South's tie is handled cleanly too, Sana Fatima and Tarun Bakshi both hold rank 1 and both survive the `region_rank <= 2` filter, while Reema Ghosh, in third place by value, lands on rank 3 thanks to `RANK`'s skip-ahead behavior and is correctly excluded.
@@ -79,6 +123,16 @@ FROM ranked_sales
 WHERE row_num <= 2
 ORDER BY region, row_num;
 ```
+
+Expected output:
+
+| salesperson | region | total_amount |
+| --- | --- | --- |
+| Kunal Verma | East | 11000.00 |
+| Nikhil Rao | North | 29700.00 |
+| Aarav Singh | North | 24000.00 |
+| Sana Fatima | South | 21000.00 |
+| Tarun Bakshi | South | 21000.00 |
 
 This returns at most 2 `rows` per region, 5 total here, since `ROW_NUMBER` never produces a tie in its numbering even when the underlying values tie, so North and South each contribute their full 2, while East, with only one salesperson on record, can only ever contribute the 1 `row` it actually has.
 
@@ -120,6 +174,15 @@ Find the single lowest-selling salesperson in each region, using `RANK`. Write t
 ```
 
 One valid answer wraps `RANK() OVER (PARTITION BY region ORDER BY total_amount ASC) AS region_rank` in a CTE and filters with `WHERE region_rank = 1`, returning Devika Rao for North, Reema Ghosh for South, and Kunal Verma for East, since ordering ascending instead of descending flips the ranking to find the smallest value first.
+
+
+Expected output:
+
+| salesperson | region | total_amount |
+| --- | --- | --- |
+| Kunal Verma | East | 11000.00 |
+| Devika Rao | North | 18500.00 |
+| Reema Ghosh | South | 15000.00 |
 
 ## Conclusion
 

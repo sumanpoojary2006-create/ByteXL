@@ -8,6 +8,20 @@ This standard has a name, **serializability**, and understanding it precisely is
 
 The `accounts` `table` sets up two `transactions` whose combined effect depends entirely on execution order.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `accounts`
+
+| account_id | balance |
+| --- | --- |
+| 1 | 1000.00 |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
@@ -16,6 +30,8 @@ CREATE TABLE accounts (
 
 INSERT INTO accounts (account_id, balance) VALUES (1, 1000.00);
 ```
+
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
 ```postgresql with=init.sql
 -- Transaction A: apply a 10% bonus
@@ -30,6 +46,14 @@ COMMIT;
 
 SELECT balance FROM accounts WHERE account_id = 1;
 ```
+
+Expected output:
+
+
+
+| balance |
+| --- |
+| 1050.00 |
 
 Running Transaction A completely, then Transaction B completely, as this script does, produces 1050.00:
 
@@ -65,6 +89,8 @@ SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 SELECT balance FROM accounts WHERE account_id = 1;
 COMMIT;
 ```
+
+Expected observation: the isolation-level command completes inside the transaction. Its effect becomes visible when the same read is tested from two concurrent sessions, as explained below.
 
 Running a `transaction` under `SERIALIZABLE` guarantees, for every `transaction` that also runs under `SERIALIZABLE` concurrently with it, that the combined result will always be equivalent to some serial ordering of them, at the cost of the `database` sometimes forcibly aborting one of the `transactions` and requiring a retry, exactly the trade-off discussed when `isolation levels` were first introduced.
 
@@ -106,6 +132,8 @@ Using the `accounts` `table` above, reset the balance to 1000.00, then run Trans
 ```postgresql with=init.sql
 -- Write your queries below
 ```
+
+Expected result and verification:
 
 First, reset the balance with `UPDATE accounts SET balance = 1000.00 WHERE account_id = 1;`. Next, run the flat deduction first: `UPDATE accounts SET balance = balance - 50.00 ...`.
 

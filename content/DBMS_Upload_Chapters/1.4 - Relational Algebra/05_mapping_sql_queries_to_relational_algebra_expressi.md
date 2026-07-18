@@ -225,6 +225,12 @@ Once the underlying moves are familiar, learning the exact wording and punctuati
   </tbody>
 </table>
 
+## Your Turn: Decompose the Request
+
+Arjun's manager now asks for a second report: "the names of restaurants in the Healthy category, along with their zone names." Break this request into its component `relational algebra` operations, in the order they would actually run, and name which clause of a structured `query` each one corresponds to.
+
+This decomposes into the same three-step chain as the fast food report: a selection first, filtering Restaurants down to only the `row` where category equals Healthy, which corresponds to a WHERE clause; then a `join` against Zones on zone_id, pulling in the matching zone_name, which corresponds to a JOIN clause; and finally a projection keeping only name and zone_name, which corresponds to the SELECT clause naming the desired `columns`. Running it against Arjun's data leaves exactly one `row`, Green Bowl paired with Riverside, the only restaurant in the Healthy category.
+
 ## Conclusion
 
 Every structured `query` a person writes against a relational `database` is, underneath its wording, a short chain of the same handful of operations: selection to narrow `rows`, projection to narrow `columns`, `join` to combine relations on a shared value, and set operations to combine or compare relations of the same shape.

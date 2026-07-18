@@ -125,6 +125,12 @@ This same uniformity is what makes a `table` something a computer can process qu
 
 Once you can look at any everyday list, a class register, a hostel occupancy sheet, a cricket team's scorecard, and instantly ask "what would the `table`, the `rows`, and the `columns` be here?", you already possess the relational way of thinking that every `database` design decision in this course builds on.
 
+## Your Turn: Design the Table
+
+A cricket coach keeps a scorecard for every match: player name, runs scored, balls faced, and whether they were out or not out. Sketch what the `table`, its `rows`, and its `columns` would be, and name one thing that would break the uniformity rule if a scorer got sloppy.
+
+A working answer: the `table` would be named something like "Innings," with one `row` per player per match, and `columns` for Player, Runs, Balls Faced, and Out/Not Out, every `row` sharing exactly those same four `columns`. Uniformity would break if a scorer added a note like "retired hurt" only in the margin next to one player's `row` instead of giving every `row` a proper Out/Not Out `column` value, the same "Sports Quota" mistake Meera's grid resisted, just wearing a scorer's pencil instead of a teacher's.
+
 ## Conclusion
 
 A relational `database` is, at its heart, nothing more mysterious than Meera's ruled grid: a named `table` holding `rows` of the same kind of thing, with `columns` that describe one consistent fact about every single `row`. That simple discipline of uniform `rows` and named `columns` is what turns a pile of scattered facts into something a person, or a program, can search, sort, and trust.
