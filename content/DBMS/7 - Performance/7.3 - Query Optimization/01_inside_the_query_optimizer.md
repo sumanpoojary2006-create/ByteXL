@@ -8,6 +8,33 @@ Given a SQL `query`, there is often more than one valid way to actually execute 
 
 A `join` between two `tables` can be executed by starting with either `table` first, and the optimizer has to pick one.
 
+## Source Data Used in This Lesson
+
+Some lessons need a larger dataset to make execution plans or maintenance behavior visible. For those tables, `init.sql` generates the rows instead of listing every row manually.
+
+### Generated `customers` dataset
+
+| Column | Definition in the setup |
+| --- | --- |
+| `customer_id` | `INTEGER PRIMARY KEY` |
+| `customer_name` | `TEXT` |
+
+The setup generates 100 rows, numbered from 1 through 100. This scale is intentional because performance behavior is difficult to observe on a tiny table.
+
+### Generated `orders` dataset
+
+| Column | Definition in the setup |
+| --- | --- |
+| `order_id` | `INTEGER PRIMARY KEY` |
+| `customer_id` | `INTEGER REFERENCES customers(customer_id)` |
+| `amount` | `NUMERIC(10, 2)` |
+
+The setup generates 100 rows, numbered from 1 through 100. This scale is intentional because performance behavior is difficult to observe on a tiny table.
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE customers (
     customer_id INTEGER PRIMARY KEY,
@@ -28,12 +55,16 @@ SELECT i, (i % 100) + 1, (i * 10.5)::NUMERIC(10,2)
 FROM generate_series(1, 20000) AS i;
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 EXPLAIN SELECT c.customer_name, o.amount
 FROM customers c
 JOIN orders o ON c.customer_id = o.customer_id
 WHERE c.customer_id = 5;
 ```
+
+Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
 
 Logically, `customers JOIN orders` and `orders JOIN customers` would produce an identical result, `joining` is not order-dependent for correctness, but they are not necessarily equally fast to execute. Filtering `customers` down to a single `row` first, then finding that one customer's orders, is a very different amount of work from scanning all 20000 orders first and matching each one against customers.
 
@@ -54,6 +85,8 @@ From these statistics it estimates roughly how many `rows` each step of a candid
 SELECT relname, n_live_tup FROM pg_stat_user_tables WHERE relname IN ('customers', 'orders');
 ```
 
+Expected result: the query returns the rows or aggregate described below. In this performance lesson, also note the access method and timing rather than judging the query only by its returned values.
+
 - `n_live_tup` shows PostgreSQL's tracked estimate of how many `rows` each `table` currently holds, one of the statistics the optimizer consults when comparing candidate plans.
 - These statistics are not always perfectly up to date; they are refreshed by a background process, and a `table` that has changed dramatically without a fresh statistics update can occasionally mislead the optimizer into a worse choice than it would otherwise make, a detail worth remembering when a plan looks surprising.
 
@@ -66,6 +99,8 @@ CREATE INDEX idx_orders_customer_id ON orders (customer_id);
 
 EXPLAIN SELECT * FROM orders WHERE customer_id > 0;
 ```
+
+Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
 
 Since every `row` in `orders` satisfies `customer_id > 0`, using the `index` would mean reading almost every `index` entry and then fetching almost every `row` from the `table` anyway, extra work compared to just scanning the `table` directly in one pass. The optimizer correctly recognizes this and chooses a `sequential scan` instead, despite a usable `index` existing, because for this particular condition, the `index` would actually be slower, not faster.
 
@@ -107,6 +142,8 @@ Run `EXPLAIN` on a `query` filtering `orders` for `customer_id = 5`, a highly se
 ```postgresql with=init.sql
 -- Write your query and comment below
 ```
+
+Expected result and verification:
 
 - `EXPLAIN SELECT * FROM orders WHERE customer_id = 5;` uses the `index`, since only a small, precise fraction of `rows` match, while `customer_id > 0` matches nearly the whole `table`, making a `sequential scan` the genuinely cheaper estimated choice
 - the optimizer is reasoning about estimated `rows` touched, not simply "an `index` exists, so use it."

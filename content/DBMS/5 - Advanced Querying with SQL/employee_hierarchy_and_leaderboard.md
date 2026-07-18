@@ -10,7 +10,32 @@ A set of SQL queries over an `employees` and `sales` schema that surfaces above-
 
 ## Dataset
 
-```sql
+Before writing project queries, inspect the starting data so every task has a visible source to reason from.
+
+### Starting `employees` rows
+
+| full_name | manager_id | department |
+| --- | --- | --- |
+| Meera Iyer | NULL | Leadership |
+| Naveen Kumar | 1 | Sales |
+| Asha Gupta | 1 | Sales |
+| Rohit Verma | 2 | Sales |
+| Kiran Das | 2 | Sales |
+| Fatima Sheikh | 3 | Sales |
+
+### Starting `sales` rows
+
+| employee_id | sale_month | amount |
+| --- | --- | --- |
+| 4 | 2026-01-01 | 40000 |
+| 4 | 2026-02-01 | 55000 |
+| 5 | 2026-01-01 | 30000 |
+| 5 | 2026-02-01 | 30000 |
+| 6 | 2026-01-01 | 60000 |
+| 6 | 2026-02-01 | 20000 |
+Use two files in OneCompiler. Keep all `CREATE TABLE` and `INSERT` statements in `init.sql`; keep only the current task query in the active SQL file. The `with=init.sql` attribute connects the two files.
+
+```postgresql file=init.sql
 CREATE TABLE employees (
     employee_id  INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     full_name    TEXT NOT NULL,
@@ -39,6 +64,20 @@ INSERT INTO sales (employee_id, sale_month, amount) VALUES
 (6, '2026-01-01', 60000), (6, '2026-02-01', 20000);
 ```
 
+### Confirm the Setup
+
+Run this in the active SQL file before starting the tasks. It confirms that `init.sql` loaded the expected number of rows.
+
+```postgresql with=init.sql
+SELECT COUNT(*) AS loaded_rows FROM employees;
+```
+
+Expected output:
+
+| loaded_rows |
+| --- |
+| 6 |
+
 Meera is the CEO. Naveen and Asha report to her. Rohit and Kiran report to Naveen. Fatima reports to Asha.
 
 ## Tasks
@@ -54,7 +93,7 @@ Meera is the CEO. Naveen and Asha report to her. Rohit and Kiran report to Navee
 1. Write a plain CTE that first computes each employee's total sales, then joins it back to `employees` to show name, department, and total side by side, purely to keep the main query readable.
 2. Write a recursive CTE that starts from Meera (the row with `manager_id IS NULL`) and walks down the `manager_id` chain, producing every employee along with their depth level (Meera at level 1, Naveen and Asha at level 2, and so on).
 
-   ```sql
+   ```postgresql with=init.sql
    WITH RECURSIVE org_chart AS (
        SELECT employee_id, full_name, manager_id, 1 AS level
        FROM employees
@@ -68,6 +107,8 @@ Meera is the CEO. Naveen and Asha report to her. Rohit and Kiran report to Navee
    )
    SELECT * FROM org_chart ORDER BY level, full_name;
    ```
+
+Expected result: the query returns the complete six-person hierarchy, with Meera at level 1, Naveen and Asha at level 2, and Rohit, Kiran, and Fatima at level 3.
 
 ### Task 3: The Leaderboard
 

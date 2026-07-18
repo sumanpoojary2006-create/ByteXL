@@ -8,6 +8,24 @@ This lesson connects those two facts directly to something Priya can actually se
 
 A larger `table` makes the cost of a full scan easy to observe directly.
 
+## Source Data Used in This Lesson
+
+Some lessons need a larger dataset to make execution plans or maintenance behavior visible. For those tables, `init.sql` generates the rows instead of listing every row manually.
+
+### Generated `orders` dataset
+
+| Column | Definition in the setup |
+| --- | --- |
+| `order_id` | `INTEGER PRIMARY KEY` |
+| `customer_name` | `TEXT` |
+| `amount` | `NUMERIC(10, 2)` |
+
+The setup generates 5,000 rows, numbered from 1 through 5000. This scale is intentional because performance behavior is difficult to observe on a tiny table.
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
@@ -20,9 +38,13 @@ SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
 FROM generate_series(1, 5000) AS i;
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 EXPLAIN SELECT * FROM orders WHERE customer_name = 'Customer 3000';
 ```
+
+Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
 
 - `EXPLAIN`, covered in full detail later in this unit, previews how the `database` plans to execute a `query` without actually running it.
 - The plan here reports a "Seq Scan," short for `sequential scan`, meaning the `database` intends to read the `table` page by page, from the beginning, checking every `row`'s `customer_name` against 'Customer 3000' until it reaches the end.
@@ -32,6 +54,8 @@ EXPLAIN SELECT * FROM orders WHERE customer_name = 'Customer 3000';
 SELECT COUNT(DISTINCT (ctid::text::point)[0]) AS pages_a_full_scan_must_read
 FROM orders;
 ```
+
+Expected result: the query returns the rows or aggregate described below. In this performance lesson, also note the access method and timing rather than judging the query only by its returned values.
 
 Using the same page-number extraction from the first lesson, this counts how many distinct pages the `table` occupies a `sequential scan` has to read every single one of them, even for this single-`row` lookup, because a `sequential scan`'s cost scales with the size of the whole `table`, not with how many `rows` the `query` actually needs, whether that need is 1 `row` or 1000.
 
@@ -44,6 +68,8 @@ Running the same shape of `query`, but filtering on `order_id`, the `table`'s `p
 ```postgresql with=init.sql
 EXPLAIN SELECT * FROM orders WHERE order_id = 3000;
 ```
+
+Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
 
 The plan now reports an "Index Scan using orders_pkey" instead of a `sequential scan`.
 
@@ -66,6 +92,8 @@ FROM generate_series(5001, 10000) AS i;
 
 SELECT pg_size_pretty(pg_relation_size('orders')) AS size_after_doubling_rows;
 ```
+
+Expected result: the query returns the rows or aggregate described below. In this performance lesson, also note the access method and timing rather than judging the query only by its returned values.
 
 Doubling the `row` count roughly doubles the reported `table` size, and a full scan against this larger `table` now has roughly twice as many pages to check for the exact same single-`row` lookup, even though the answer being searched for has not changed in any way.
 
@@ -116,6 +144,8 @@ Run `EXPLAIN` on a `query` filtering the `orders` `table` above for `amount > 12
 ```postgresql with=init.sql
 -- Write your query and comment below
 ```
+
+Expected result and verification:
 
 `EXPLAIN SELECT * FROM orders WHERE amount > 120000;` reports a `sequential scan`, exactly as expected, since `amount` has no supporting structure to help the `database` skip pages, meaning it must check every `row`'s `amount` value against the condition regardless of how few `rows` actually qualify.
 

@@ -8,6 +8,44 @@ There is also a third option, a **`FULL OUTER JOIN`**, for the rarer case where 
 
 The same delivery `schema` applies here, with Neha Bhatt having no orders and Taco Town having no orders.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the data they will use. The tables below show the rows loaded by the setup file.
+
+### `customers`
+
+| customer_id | customer_name | city |
+| --- | --- | --- |
+| 1 | Aditi Kulkarni | Pune |
+| 2 | Rohan Das | Kolkata |
+| 3 | Kavya Nair | Kochi |
+| 4 | Imran Sheikh | Hyderabad |
+| 5 | Neha Bhatt | Ahmedabad |
+
+### `restaurants`
+
+| restaurant_id | restaurant_name | city |
+| --- | --- | --- |
+| 1 | Pizza Palace | Pune |
+| 2 | Sushi Central | Kolkata |
+| 3 | Burger Barn | Pune |
+| 4 | Taco Town | Hyderabad |
+
+### `orders`
+
+| order_id | customer_id | restaurant_id | amount | order_date |
+| --- | --- | --- | --- | --- |
+| 1 | 1 | 1 | 450 | 2025-05-01 |
+| 2 | 2 | 2 | 620 | 2025-05-02 |
+| 3 | 1 | 3 | 300 | 2025-05-03 |
+| 4 | 3 | 1 | 500 | 2025-05-04 |
+| 5 | 4 | 2 | 275 | 2025-05-05 |
+| 6 | 2 | 3 | 180 | 2025-05-06 |
+
+The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
+
+## Hands-On Setup: Prepare the Data
+
 ```postgresql file=init.sql
 CREATE TABLE customers (
     customer_id INTEGER PRIMARY KEY,
@@ -51,11 +89,25 @@ INSERT INTO orders (order_id, customer_id, restaurant_id, amount, order_date) VA
 (6, 2, 3, 180.00, '2025-05-06');
 ```
 
+Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
+
 ```postgresql with=init.sql
 SELECT orders.order_id, restaurants.restaurant_name
 FROM orders
 RIGHT JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id;
 ```
+
+Expected output:
+
+| order_id | restaurant_name |
+| --- | --- |
+| 1 | Pizza Palace |
+| 2 | Sushi Central |
+| 3 | Burger Barn |
+| 4 | Pizza Palace |
+| 5 | Sushi Central |
+| 6 | Burger Barn |
+| *NULL* | Taco Town |
 
 Every one of the 4 restaurants appears here, including Taco Town, whose `row` shows `NULL` for `order_id` since it has never received an order. This is exactly the same result the previous lesson's `restaurants LEFT JOIN orders` produced, just written with the `table` order reversed and the `join` keyword swapped.
 
@@ -77,6 +129,18 @@ FROM restaurants
 LEFT JOIN orders ON restaurants.restaurant_id = orders.restaurant_id;
 ```
 
+Expected output:
+
+| order_id | restaurant_name |
+| --- | --- |
+| 1 | Pizza Palace |
+| 4 | Pizza Palace |
+| 2 | Sushi Central |
+| 5 | Sushi Central |
+| 3 | Burger Barn |
+| 6 | Burger Barn |
+| *NULL* | Taco Town |
+
 This produces the identical result to the `RIGHT JOIN` version above. Since `LEFT JOIN` is far more commonly used across real codebases, being able to mentally convert a `RIGHT JOIN` into an equivalent `LEFT JOIN` makes it easier to read `queries` written by other people without keeping two separate mental models.
 
 ## Protecting Both Sides at Once with FULL OUTER JOIN
@@ -88,6 +152,18 @@ SELECT customers.customer_name, orders.order_id
 FROM customers
 FULL OUTER JOIN orders ON customers.customer_id = orders.customer_id;
 ```
+
+Expected output:
+
+| customer_name | order_id |
+| --- | --- |
+| Aditi Kulkarni | 1 |
+| Aditi Kulkarni | 3 |
+| Rohan Das | 2 |
+| Rohan Das | 6 |
+| Kavya Nair | 4 |
+| Imran Sheikh | 5 |
+| Neha Bhatt | *NULL* |
 
 This result includes Neha Bhatt with `NULL` order `columns`, exactly as a `LEFT JOIN` would, and it would also include any order `row` with no matching customer, exactly as a `RIGHT JOIN` would, though in this particular data every order does have a valid customer. A `FULL OUTER JOIN` is essentially a `LEFT JOIN` and a `RIGHT JOIN` combined into a single result, with no `row` from either side left out.
 
@@ -103,6 +179,12 @@ FROM customers
 FULL OUTER JOIN orders ON customers.customer_id = orders.customer_id
 WHERE customers.customer_id IS NULL OR orders.order_id IS NULL;
 ```
+
+Expected output:
+
+| customer_name | order_id |
+| --- | --- |
+| Neha Bhatt | *NULL* |
 
 This surfaces every `row` that is missing a partner on either side, in one `query`. With the data used across this chapter, only Neha Bhatt qualifies, since every order in this dataset does have a matching customer, but the pattern itself is what generalizes to any dataset where mismatches could appear on both sides.
 
@@ -150,8 +232,23 @@ Zoya wants a single audit report showing every restaurant and every order, with 
 
 If your `query` uses `restaurants LEFT JOIN orders ON restaurants.restaurant_id = orders.restaurant_id ORDER BY restaurants.restaurant_name`, all four restaurants appear, with Taco Town showing `NULL` order details since it has none.
 
+
+Expected output for the practice query:
+
+| restaurant_name | order_id |
+| --- | --- |
+| Burger Barn | 3 |
+| Burger Barn | 6 |
+| Pizza Palace | 1 |
+| Pizza Palace | 4 |
+| Sushi Central | 2 |
+| Sushi Central | 5 |
+| Taco Town | *NULL* |
+
 ## Conclusion
 
-- `RIGHT JOIN` mirrors `LEFT JOIN` from the opposite `table`, and `FULL OUTER JOIN` protects both sides of a `join` at once, together completing the full family of ways two `tables` can be combined based on whether unmatched `rows` should be kept or dropped, and on which side.
-- Zoya's audit report can now guarantee every restaurant appears regardless of which side of the `join` it sits on.
-- With `INNER`, `LEFT`, `RIGHT`, and `FULL OUTER` all covered, the next lesson looks at a `join` where a `table` is matched not against a different `table`, but against itself.
+`RIGHT JOIN` mirrors `LEFT JOIN` from the opposite `table`, and `FULL OUTER JOIN` protects both sides of a `join` at once, together completing the full family of ways two `tables` can be combined based on whether unmatched `rows` should be kept or dropped, and on which side.
+
+Zoya's audit report can now guarantee every restaurant appears regardless of which side of the `join` it sits on.
+
+With `INNER`, `LEFT`, `RIGHT`, and `FULL OUTER` all covered, the next lesson looks at a `join` where a `table` is matched not against a different `table`, but against itself.

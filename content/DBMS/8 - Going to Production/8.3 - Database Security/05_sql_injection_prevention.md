@@ -8,6 +8,21 @@ This attack has a name, **SQL injection**, and it remains one of the most common
 
 The earlier example returned extra `rows`; a real injection can go much further, touching data the `query` was never meant to involve at all.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `shipments`
+
+| shipment_id | status |
+| --- | --- |
+| 1 | in_transit |
+| 2 | delivered |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
@@ -16,6 +31,8 @@ CREATE TABLE shipments (
 
 INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'delivered');
 ```
+
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
 ```postgresql with=init.sql
 -- Imagine application code building a query like this:
@@ -28,6 +45,8 @@ INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'deliv
 -- whatever trailing text the original query template had left over.
 SELECT * FROM shipments WHERE shipment_id = 1;
 ```
+
+Expected result: PostgreSQL applies the requested change. Use the follow-up query and the explanation below to confirm the affected rows or refreshed data.
 
 This is the severity that makes SQL injection so dangerous in practice. It is not limited to reading extra `rows`:
 
@@ -46,6 +65,8 @@ SELECT * FROM shipments WHERE shipment_id = $1;
 
 EXECUTE get_shipment(1);
 ```
+
+Expected observation: PostgreSQL completes the statement, and the explanation below identifies the database object, permission, or operational effect to verify.
 
 - Because `$1` is a genuine parameter, not text pasted into a string, there is no possible value that could be supplied for it that would change the `query`'s structure.
 - Since `get_shipment` declares `$1` as `INTEGER`, a value like `1; DROP TABLE shipments; --` would actually be rejected outright with a type error before the `query` ever ran, PostgreSQL refusing to treat that text as a valid integer in the first place; for a `TEXT`-typed parameter instead, the same malicious string would be accepted as data and compared literally, simply matching no `row`, but either way it is never interpreted as additional SQL syntax.
@@ -72,6 +93,8 @@ EXECUTE get_shipment(1);
 SELECT * FROM shipments WHERE shipment_id = 1;
 ```
 
+Expected observation: PostgreSQL completes the statement, and the explanation below identifies the database object, permission, or operational effect to verify.
+
 Input validation still has real value, rejecting obviously malformed input early, improving error messages, catching genuine mistakes, but it should never be relied upon as the sole defense against injection; that `role` belongs to `prepared statements`.
 
 ## Least Privilege as a Defense-in-Depth Layer
@@ -87,6 +110,8 @@ EXECUTE get_shipment(1);
 CREATE ROLE web_app WITH LOGIN PASSWORD 'change_this_in_real_use';
 GRANT SELECT, INSERT ON shipments TO web_app;
 ```
+
+Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
 
 A `web_app` `role` granted only `SELECT` and `INSERT` on `shipments`, with no `DELETE`, no `DROP` privilege, and no access to any other `table`, could not have actually executed the destructive `DROP TABLE shipments` attempted in the earlier example, even in a world where the injection itself had somehow succeeded, since that `role` was never granted the privilege to drop anything at all.
 
@@ -138,6 +163,8 @@ GRANT SELECT, INSERT ON shipments TO web_app;
 
 -- Write your prepared statement, execution, and comment below
 ```
+
+Expected result and verification:
 
 - `PREPARE safe_lookup (INTEGER) AS SELECT * FROM shipments WHERE shipment_id = $1;` followed by `EXECUTE safe_lookup(1);` is the safe rewrite
 - Because `$1` is a typed parameter position, not a place where raw text is spliced into SQL, any supplied value is compared purely as data against `shipment_id`.

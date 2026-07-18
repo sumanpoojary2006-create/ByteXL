@@ -19,30 +19,9 @@ The `students` `table` holds this data:
 | 7 | Aditya Kulkarni | aditya.kulkarni@example.com | Pune | 9822055555 | 2025-01-25 |
 | 8 | Priya Subramaniam | priya.subramaniam@example.com | Chennai | 9884066666 | 2025-01-28 |
 
-To build this `table` with this data, a `CREATE TABLE` statement defines the six `columns` shown above, and an `INSERT INTO` statement loads the eight `rows` into it.
+Divya wants the `full_name` and `city` `columns`, but labelled "Student Name" and "Location" instead of their raw internal names. The query is `SELECT full_name AS student_name, city AS location FROM students;`, placing `AS` after each `column` followed by the label she wants in the result.
 
-Divya wants the `full_name` and `city` `columns`, but labelled "Student Name" and "Location" instead of their raw internal names. She rewrites her `query`, adding `AS` after each `column` followed by the label she actually wants to appear in the result: `SELECT full_name AS student_name, city AS location FROM students;`.
-
-Expected output:
-
-| student_name | location |
-| ----------------- | --------- |
-| Ishaan Verma | Bengaluru |
-| Meera Pillai | Chennai |
-| Arjun Bhat | Bengaluru |
-| Kavya Reddy | Pune |
-| Rohan Joshi | Hyderabad |
-| Sneha Gowda | Mysuru |
-| Aditya Kulkarni | Pune |
-| Priya Subramaniam | Chennai |
-
-- The data has not changed at all, still eight `rows` of the same names and cities, but the header `row` of the result now reads `student_name` and `location`.
-- `AS` sits between the real `column` and the label Divya wants in its place, and the label only exists for this one result, it never renames anything inside the actual `table`.
-- Run `SELECT * FROM students;` again separately and the `column` is still called `full_name` there, untouched.
-
-![Column aliases changing raw headers into friendlier output names using AS](images/03_column_alias_as_output_headers.png)
-
-Try it yourself:
+For hands-on practice, `init.sql` creates and populates the displayed `students` table:
 
 ```postgresql file=init.sql
 CREATE TABLE students (
@@ -65,14 +44,40 @@ INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALU
 (8, 'Priya Subramaniam', 'priya.subramaniam@example.com', 'Chennai', '9884066666', '2025-01-28');
 ```
 
+The active query file contains the aliased statement being practised:
+
 ```postgresql with=init.sql
 SELECT full_name AS student_name, city AS location
 FROM students;
 ```
 
+Expected output:
+
+| student_name | location |
+| ----------------- | --------- |
+| Ishaan Verma | Bengaluru |
+| Meera Pillai | Chennai |
+| Arjun Bhat | Bengaluru |
+| Kavya Reddy | Pune |
+| Rohan Joshi | Hyderabad |
+| Sneha Gowda | Mysuru |
+| Aditya Kulkarni | Pune |
+| Priya Subramaniam | Chennai |
+
+- The data has not changed at all, still eight `rows` of the same names and cities, but the header `row` of the result now reads `student_name` and `location`.
+- `AS` sits between the real `column` and the label Divya wants in its place, and the label only exists for this one result, it never renames anything inside the actual `table`.
+- Run `SELECT * FROM students;` again separately and the `column` is still called `full_name` there, untouched.
+
+![Column aliases changing raw headers into friendlier output names using AS](images/03_column_alias_as_output_headers.png)
+
 ## AS Is Optional, But Worth Keeping
 
-SQL allows a shorter form: dropping the word `AS` entirely and just writing the alias right after the `column` name: `SELECT full_name student_name, city location FROM students;`.
+SQL allows a shorter form: dropping the word `AS` entirely and just writing the alias right after the `column` name. The query is `SELECT full_name student_name, city location FROM students;`.
+
+```postgresql with=init.sql
+SELECT full_name student_name, city location
+FROM students;
+```
 
 This produces the exact same output table shown above, `student_name` and `location` headers included. PostgreSQL is happy to accept either form, so why bother typing the extra word?
 
@@ -80,18 +85,14 @@ Without it, a reader scanning the `query` has to pause and work out whether `stu
 
 The two extra characters buy real clarity, which is why it is worth the habit even though PostgreSQL will not force it on you.
 
-Try it yourself:
-
-```postgresql with=init.sql
-SELECT full_name student_name, city location
-FROM students;
-```
-
 ## Giving a Table a Short Alias
 
-Aliases are not only for `columns`. A `table` can be given a short alias too, and once it has one, that alias can be used anywhere else in the same `query` in place of the full `table` name.
+Aliases are not only for `columns`. A `table` can be given a short alias too, and once it has one, that alias can be used anywhere else in the same `query` in place of the full `table` name. It looks unnecessary on a `query` this small, but the habit pays off the moment a `query` starts pulling from more than one `table`, which is exactly where the students, courses, and enrollments `tables` are eventually headed together. The query is `SELECT s.full_name AS student_name, s.city AS location FROM students AS s;`.
 
-It looks unnecessary on a `query` this small, but the habit pays off the moment a `query` starts pulling from more than one `table`, which is exactly where the students, courses, and enrollments `tables` are eventually headed together: `SELECT s.full_name AS student_name, s.city AS location FROM students AS s;`.
+```postgresql with=init.sql
+SELECT s.full_name AS student_name, s.city AS location
+FROM students AS s;
+```
 
 Expected output is identical to the two `queries` above, the same `student_name` and `location` `columns` for all eight students; only the `query` text changed, not the answer it produces.
 
@@ -100,13 +101,6 @@ Here `students AS s` tells PostgreSQL that `s` now stands for the students `tabl
 Divya keeps it in her own `queries` because it reads more clearly to anyone who has not seen the `query` before.
 
 ![A students table receiving the short table alias s for use in one query](images/04_table_alias_short_name.png)
-
-Try it yourself:
-
-```postgresql with=init.sql
-SELECT s.full_name AS student_name, s.city AS location
-FROM students AS s;
-```
 
 ## Aliases and Table Aliases at a Glance
 
@@ -167,8 +161,4 @@ Notice the double quotes around aliases that contain a space, since PostgreSQL t
 
 ## Conclusion
 
-- Aliases let a `query` speak in whatever words are most useful to whoever is reading the result, without ever touching the underlying `table`.
-- `AS` renames a `column` for the duration of one `query`, and the same keyword, used right after a `table` name, gives that `table` a short handle the rest of the `query` can lean on.
-- Neither kind of alias changes what is stored, only how the answer is labelled and referred to on the way out.
-- Divya's Dean's office summary can now show "Student Name" and "Location" instead of raw `column` names like `full_name` and `city`, turning a `database` dump into something presentable without altering a single `row` of underlying data.
-- With friendlier headers now within reach, the next question is what to do when a `query` returns the same value over and over across many `rows`, and how to see only the distinct values hiding underneath the repetition.
+Aliases let a `query` speak in whatever words are most useful to whoever is reading the result, without ever touching the underlying `table`. `AS` renames a `column` for the duration of one `query`, and the same keyword, used right after a `table` name, gives that `table` a short handle the rest of the `query` can lean on. Neither kind of alias changes what is stored, only how the answer is labelled and referred to on the way out. Divya's Dean's office summary can now show "Student Name" and "Location" instead of raw `column` names like `full_name` and `city`, turning a `database` dump into something presentable without altering a single `row` of underlying data. With friendlier headers now within reach, the next question is what to do when a `query` returns the same value over and over across many `rows`, and how to see only the distinct values hiding underneath the repetition.

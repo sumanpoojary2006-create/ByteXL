@@ -12,6 +12,26 @@ A timestamp is a single value, but the questions above need it pulled apart, com
 
 Every date calculation eventually needs to know what "now" is, so that is the natural starting point.
 
+The query `SELECT NOW() AS current_timestamp_value, CURRENT_DATE AS current_date_value;` returns the database server's current timestamp and its current calendar date. Because both values are evaluated when the query runs, they naturally change over time.
+
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the data they will use. The tables below show the rows loaded by the setup file.
+
+### `appointments`
+
+| appointment_id | patient_name | visit_time |
+| --- | --- | --- |
+| 1 | Rohit Nair | 2025-01-10 09:15:00 |
+| 2 | Sanya Kapoor | 2025-02-03 14:30:00 |
+| 3 | Faisal Ahmed | 2025-02-20 11:00:00 |
+| 4 | Lakshmi Iyer | 2025-03-05 16:45:00 |
+| 5 | Devika Menon | 2025-03-18 10:00:00 |
+
+The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
+
+## Hands-On Setup: Prepare the Data
+
 ```postgresql file=init.sql
 CREATE TABLE appointments (
     appointment_id INTEGER PRIMARY KEY,
@@ -27,9 +47,17 @@ INSERT INTO appointments (appointment_id, patient_name, visit_time) VALUES
 (5, 'Devika Menon', '2025-03-18 10:00:00');
 ```
 
+Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
+
 ```postgresql with=init.sql
 SELECT NOW() AS current_timestamp_value, CURRENT_DATE AS current_date_value;
 ```
+
+Expected output shape:
+
+| current_timestamp_value | current_date_value |
+| --- | --- |
+| Current timestamp at execution time | Current date at execution time |
 
 `NOW()` returns the exact current timestamp the `database` sees at `query` time, down to the second, while `CURRENT_DATE` returns just today's date with no time component. Divya will use `NOW()` as the anchor point for every "how long ago" question the clinic asks.
 
@@ -39,12 +67,24 @@ SELECT NOW() AS current_timestamp_value, CURRENT_DATE AS current_date_value;
 
 With a reference point available, Divya can measure how far in the past each appointment falls, or shift a date forward to schedule a follow-up.
 
+The query below calculates a readable age from `NOW()` and adds a seven-day interval to every stored visit. The age changes with the execution date, but the suggested follow-up is always exactly seven days after the visit.
+
 ```postgresql with=init.sql
 SELECT patient_name, visit_time,
        AGE(NOW(), visit_time) AS time_since_visit,
        visit_time + INTERVAL '7 days' AS suggested_followup
 FROM appointments;
 ```
+
+Expected output:
+
+| patient_name | visit_time | time_since_visit | suggested_followup |
+| --- | --- | --- | --- |
+| Rohit Nair | 2025-01-10 09:15:00 | Calculated from current time | 2025-01-17 09:15:00 |
+| Sanya Kapoor | 2025-02-03 14:30:00 | Calculated from current time | 2025-02-10 14:30:00 |
+| Faisal Ahmed | 2025-02-20 11:00:00 | Calculated from current time | 2025-02-27 11:00:00 |
+| Lakshmi Iyer | 2025-03-05 16:45:00 | Calculated from current time | 2025-03-12 16:45:00 |
+| Devika Menon | 2025-03-18 10:00:00 | Calculated from current time | 2025-03-25 10:00:00 |
 
 - `AGE(later, earlier)` returns a readable span, such as "11 months 2 days," which is friendlier for a doctor to scan than a raw number of seconds.
 - Adding an `INTERVAL` directly to a timestamp, like `+ INTERVAL '7 days'`, produces a new timestamp shifted forward by exactly that span, which is how Divya generates a suggested follow-up date for every patient in one `query`.
@@ -53,12 +93,24 @@ FROM appointments;
 
 Sometimes the full timestamp is more detail than the question needs. Divya wants to know which weekday and which hour patients tend to book, without caring about the specific date at all.
 
+Her query uses `EXTRACT(DOW FROM visit_time)` for PostgreSQL's Sunday-to-Saturday number and `EXTRACT(HOUR FROM visit_time)` for the 24-hour clock value.
+
 ```postgresql with=init.sql
 SELECT patient_name, visit_time,
        EXTRACT(DOW FROM visit_time) AS day_of_week_number,
        EXTRACT(HOUR FROM visit_time) AS hour_of_day
 FROM appointments;
 ```
+
+Expected output:
+
+| patient_name | visit_time | day_of_week_number | hour_of_day |
+| --- | --- | ---: | ---: |
+| Rohit Nair | 2025-01-10 09:15:00 | 5 | 9 |
+| Sanya Kapoor | 2025-02-03 14:30:00 | 1 | 14 |
+| Faisal Ahmed | 2025-02-20 11:00:00 | 4 | 11 |
+| Lakshmi Iyer | 2025-03-05 16:45:00 | 3 | 16 |
+| Devika Menon | 2025-03-18 10:00:00 | 2 | 10 |
 
 - `EXTRACT(field FROM timestamp)` pulls a single component out of a date or timestamp.
 - `DOW` (day of week) returns 0 for Sunday through 6 for Saturday, and `HOUR` returns the hour in 24-hour format.
@@ -70,12 +122,24 @@ FROM appointments;
 
 Divya also wants a simple flag: was a given appointment booked in the last 30 days from today, or is it older than that? Subtracting two dates in most `databases` returns the number of days between them as a plain number.
 
+The query converts each timestamp to a date, subtracts it from `CURRENT_DATE`, and orders the calculated day counts from smallest to largest. The exact numbers increase as time passes.
+
 ```postgresql with=init.sql
 SELECT patient_name, visit_time,
        CURRENT_DATE - visit_time::DATE AS days_since_visit
 FROM appointments
 ORDER BY days_since_visit;
 ```
+
+Expected output shape:
+
+| patient_name | visit_time | days_since_visit |
+| --- | --- | ---: |
+| Devika Menon | 2025-03-18 10:00:00 | Calculated from current date |
+| Lakshmi Iyer | 2025-03-05 16:45:00 | Calculated from current date |
+| Faisal Ahmed | 2025-02-20 11:00:00 | Calculated from current date |
+| Sanya Kapoor | 2025-02-03 14:30:00 | Calculated from current date |
+| Rohit Nair | 2025-01-10 09:15:00 | Calculated from current date |
 
 - `visit_time::DATE` converts the timestamp to a plain date first, dropping the time-of-day portion so the subtraction returns a clean whole number of days rather than a mixed interval.
 - Ordering by that computed `column` puts the most recent visits first, which is exactly the list the front desk checks each morning.
@@ -169,6 +233,16 @@ The clinic wants a simple recall list: patient name and visit date for every app
 ```
 
 If your `query` filters with `WHERE CURRENT_DATE - visit_time::DATE > 60` and orders by `visit_time`, the earliest visits in the `table` surface first, which is exactly who the clinic should be calling back.
+
+Expected output depends on the date the query is run. Once all five sample visits are more than 60 days old, the ordered result is:
+
+| patient_name | visit_time |
+| --- | --- |
+| Rohit Nair | 2025-01-10 09:15:00 |
+| Sanya Kapoor | 2025-02-03 14:30:00 |
+| Faisal Ahmed | 2025-02-20 11:00:00 |
+| Lakshmi Iyer | 2025-03-05 16:45:00 |
+| Devika Menon | 2025-03-18 10:00:00 |
 
 ## Conclusion
 

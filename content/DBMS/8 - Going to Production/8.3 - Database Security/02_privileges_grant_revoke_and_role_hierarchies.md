@@ -10,6 +10,21 @@
 
 The `shipments` `table` sets up a concrete case: `reporting_app` needs to read shipment data, but should never be able to change it.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `shipments`
+
+| shipment_id | status | amount |
+| --- | --- | --- |
+| 1 | in_transit | 450.00 |
+| 2 | delivered | 620.00 |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
@@ -23,9 +38,13 @@ INSERT INTO shipments (shipment_id, status, amount) VALUES
 CREATE ROLE reporting_app WITH LOGIN PASSWORD 'change_this_in_real_use';
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 GRANT SELECT ON shipments TO reporting_app;
 ```
+
+Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
 
 `GRANT SELECT ON shipments TO reporting_app` grants exactly one privilege, the ability to read, on exactly one `table`, to exactly one `role`. `reporting_app` can now run `SELECT` `queries` against `shipments`, but it still has no ability to:
 
@@ -45,6 +64,8 @@ GRANT SELECT, INSERT, UPDATE ON shipments TO reporting_app;
 REVOKE UPDATE ON shipments FROM reporting_app;
 ```
 
+Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
+
 - After these two statements, `reporting_app` can read and insert new shipment `rows`, but the specific `UPDATE` privilege, granted a moment earlier, has been removed again, leaving `SELECT` and `INSERT` intact.
 - `REVOKE` is precise in exactly this way: it removes only the named privilege, never accidentally sweeping away other permissions the `role` was separately granted.
 
@@ -61,6 +82,8 @@ GRANT SELECT ON shipments TO shipment_readers;
 CREATE ROLE dev_alia WITH LOGIN PASSWORD 'change_this_in_real_use';
 GRANT shipment_readers TO dev_alia;
 ```
+
+Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
 
 - `dev_alia` was never directly granted `SELECT` on `shipments`; the privilege exists only on `shipment_readers`, and `dev_alia` inherits it purely through membership.
 - This is the payoff of the group-`role` pattern: granting a new privilege to `shipment_readers` in the future instantly applies to every current and future member, without needing to remember and repeat the grant individually for each one.
@@ -81,6 +104,8 @@ GRANT shipment_readers TO dev_alia;
 CREATE ROLE support_staff WITH LOGIN PASSWORD 'change_this_in_real_use';
 GRANT SELECT (shipment_id, status) ON shipments TO support_staff;
 ```
+
+Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
 
 - `support_staff` can now select `shipment_id` and `status`, but attempting to select `amount` as well would be rejected, since the grant explicitly named only those two `columns`.
 - This finer-grained control previews the `column-level security` covered in more depth later in this chapter, but the mechanism is the same `GRANT` command already introduced here, just applied more narrowly.
@@ -131,12 +156,12 @@ GRANT SELECT (shipment_id, status) ON shipments TO support_staff;
 -- Write your grant and revoke below
 ```
 
+Expected result and verification:
+
 Running `GRANT INSERT ON shipments TO support_staff; REVOKE INSERT ON shipments FROM support_staff;` leaves `support_staff` able to read only `shipment_id` and `status`, exactly the `column` restriction granted earlier in this lesson, but unable to insert new `rows`, exactly the precise, additive-then-subtractive control `GRANT` and `REVOKE` are designed to offer.
 
 Granting a fresh, unrestricted `SELECT` on the whole `table` here instead would have quietly widened `support_staff`'s access to every `column`, `amount` included, overriding the earlier `column`-level grant rather than coexisting with it.
 
 ## Conclusion
 
-- `GRANT` adds a specific privilege for a specific `role` on a specific object, `REVOKE` removes one without disturbing others, and granting privileges to a group `role` rather than individual login `role`s lets an entire team's permissions be managed in one place, changes that propagate automatically to every member.
-- Every one of Devraj's `role`s from the previous lesson can now be given exactly the access it needs and nothing more.
-- The next lesson names the principle that should guide every one of these grants: giving a `role` only what it genuinely needs, and no more.
+`GRANT` adds a specific privilege for a specific `role` on a specific object, `REVOKE` removes one without disturbing others, and granting privileges to a group `role` rather than individual login `role`s lets an entire team's permissions be managed in one place, changes that propagate automatically to every member. Every one of Devraj's `role`s from the previous lesson can now be given exactly the access it needs and nothing more. The next lesson names the principle that should guide every one of these grants: giving a `role` only what it genuinely needs, and no more.

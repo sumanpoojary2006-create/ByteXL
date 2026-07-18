@@ -8,6 +8,12 @@ College libraries track thousands of books, hundreds of members, and constant bo
 
 An ER diagram and a normalized PostgreSQL schema for a college library system tracking books, authors, members, and loans, plus the `CREATE TABLE` statements that bring it to life.
 
+## Project Workspace
+
+Use two files when you move from the design work to OneCompiler. Keep the completed schema in `init.sql`, including every `CREATE TABLE` statement and constraint. Use the active SQL file for one verification query at a time, such as checking the tables in `information_schema` or inserting a sample author, book, member, and loan. This separation lets you rebuild the schema from a clean state without mixing setup statements into every test.
+
+The spreadsheet in Task 2 is the source data to inspect before writing any schema. The SQL shown in Task 3 is only a starting example; extend it with `members` and `loans`, then run your verification queries against the completed `init.sql` file.
+
 ## Tasks
 
 ### Task 1: Model the Entities

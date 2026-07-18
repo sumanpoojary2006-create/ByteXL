@@ -217,8 +217,7 @@ Since Omkar had never registered for course 103 before, this returns enrollment_
 
 `ON CONFLICT` turns a two-step, race-prone guess into a single statement that always does the right thing, updating a `row` that is already there or inserting one that is not, decided by the `database` itself rather than by a program hoping nothing changes in between its own check and its own write:
 
-- `DO UPDATE SET` is for when a repeat submission should correct something.
-- `DO NOTHING` is for when a repeat submission should simply be ignored.
+`DO UPDATE SET` is for when a repeat submission should correct something. `DO NOTHING` is for when a repeat submission should simply be ignored.
 
 Aditya can now run his whole batch of enrollment submissions through a single `ON CONFLICT` statement without first sorting new pairings from corrections by hand, trusting the `database` to insert or update each `row` correctly even if two clerks process overlapping paper forms at the same time.
 

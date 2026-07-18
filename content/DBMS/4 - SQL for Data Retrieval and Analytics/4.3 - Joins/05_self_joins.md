@@ -8,6 +8,25 @@ There is only one `table` involved, `riders`, but the report still needs two nam
 
 The `riders` `table` stores every rider once, with a `mentor_id` `column` that is `NULL` for riders who have no assigned mentor.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the data they will use. The tables below show the rows loaded by the setup file.
+
+### `riders`
+
+| rider_id | rider_name | mentor_id |
+| --- | --- | --- |
+| 1 | Suresh Pillai | *NULL* |
+| 2 | Arjun Verma | *NULL* |
+| 3 | Deepa Krishnan | 1 |
+| 4 | Farhan Iqbal | 1 |
+| 5 | Nikita Rao | 2 |
+| 6 | Om Prakash | 3 |
+
+The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
+
+## Hands-On Setup: Prepare the Data
+
 ```postgresql file=init.sql
 CREATE TABLE riders (
     rider_id INTEGER PRIMARY KEY,
@@ -24,9 +43,22 @@ INSERT INTO riders (rider_id, rider_name, mentor_id) VALUES
 (6, 'Om Prakash', 3);
 ```
 
+Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
+
 ```postgresql with=init.sql
 SELECT * FROM riders;
 ```
+
+Expected output:
+
+| rider_id | rider_name | mentor_id |
+| --- | --- | --- |
+| 1 | Suresh Pillai | *NULL* |
+| 2 | Arjun Verma | *NULL* |
+| 3 | Deepa Krishnan | 1 |
+| 4 | Farhan Iqbal | 1 |
+| 5 | Nikita Rao | 2 |
+| 6 | Om Prakash | 3 |
 
 Reading this `table` `row` by `row` is already possible, since a human can trace `mentor_id = 1` back up to Suresh Pillai's `row` by eye. A `query` cannot do that kind of visual tracing; it needs the mentor's `row` and the mentee's `row` joined together as two separate `table` references, even though both `rows` live in the exact same `table`.
 
@@ -39,6 +71,15 @@ SELECT mentee.rider_name AS rider, mentor.rider_name AS mentor
 FROM riders mentee
 JOIN riders mentor ON mentee.mentor_id = mentor.rider_id;
 ```
+
+Expected output:
+
+| rider | mentor |
+| --- | --- |
+| Deepa Krishnan | Suresh Pillai |
+| Farhan Iqbal | Suresh Pillai |
+| Nikita Rao | Arjun Verma |
+| Om Prakash | Deepa Krishnan |
 
 `riders mentee` and `riders mentor` are the same `table`, `riders`, referenced twice with two different aliases:
 
@@ -60,6 +101,17 @@ SELECT mentee.rider_name AS rider, mentor.rider_name AS mentor
 FROM riders mentee
 LEFT JOIN riders mentor ON mentee.mentor_id = mentor.rider_id;
 ```
+
+Expected output:
+
+| rider | mentor |
+| --- | --- |
+| Suresh Pillai | *NULL* |
+| Arjun Verma | *NULL* |
+| Deepa Krishnan | Suresh Pillai |
+| Farhan Iqbal | Suresh Pillai |
+| Nikita Rao | Arjun Verma |
+| Om Prakash | Deepa Krishnan |
 
 Now all 6 riders appear, and Suresh and Arjun show `NULL` in the `mentor` `column`, correctly reflecting that they are the senior riders at the top of the mentorship chain with no one assigned above them:
 
@@ -108,6 +160,14 @@ FROM riders mentee
 JOIN riders mentor ON mentee.mentor_id = mentor.rider_id;
 ```
 
+Expected output:
+
+| is_a_mentor |
+| --- |
+| Suresh Pillai |
+| Arjun Verma |
+| Deepa Krishnan |
+
 - `DISTINCT` collapses duplicates here, since Suresh mentors two people, Deepa and Farhan, and without `DISTINCT` his name would appear twice.
 - This returns Suresh, Arjun, and Deepa, since Deepa herself mentors Om Prakash even though she is also mentored by Suresh, showing that a rider can be both a mentee and a mentor at once.
 
@@ -153,6 +213,13 @@ Zoya wants to know which riders share the same mentor as Farhan Iqbal, not inclu
 ```
 
 If your `query` `joins` `riders` to itself on matching `mentor_id` values, filtering for `rows` where one side's name is 'Farhan Iqbal' and excluding that same name from the result, it returns Deepa Krishnan, since both she and Farhan are mentored by Suresh Pillai.
+
+
+Expected output for the practice query:
+
+| rider_name |
+| --- |
+| Deepa Krishnan |
 
 ## Conclusion
 

@@ -156,7 +156,7 @@ WHERE student_id IN (10, 11);
 | 104 | Discrete Mathematics | Mathematics | 3 |
 | 105 | Microeconomics | Economics | 2 |
 
-Writing `INSERT INTO courses VALUES (106, 'Operating Systems', 'Computer Science', 4);` — with no `column` list — and confirming with `SELECT course_id, title, department, credits FROM courses WHERE course_id = 106;` gives the expected output:
+Writing `INSERT INTO courses VALUES (106, 'Operating Systems', 'Computer Science', 4);` - with no `column` list - and confirming with `SELECT course_id, title, department, credits FROM courses WHERE course_id = 106;` gives the expected output:
 
 | course_id | title | department | credits |
 | --------- | ------------------ | ---------------- | ------: |
@@ -228,7 +228,4 @@ Farhan now shows up with his city recorded and his phone left as `NULL`, exactly
 
 ## Conclusion
 
-- `INSERT` is how a `table` stops being a fixed list and starts being something a real system can grow, one new student, one new course, one new enrollment at a time.
-- Naming the `columns` you are filling in is a small habit that costs almost nothing to type and protects the statement from a `table`'s `column` order ever quietly working against you.
-- Alia can now get her newly paid student into the system the moment fees clear, typing a single `INSERT` instead of waiting on someone else to add the `row`, and the same statement scales to the whole batch of registrations still to come this week.
-- Adding a `row` safely is only half of keeping data honest, though. Sooner or later something already on file turns out to be wrong, and that calls for a different kind of statement, one that changes a `row` that already exists rather than creating a new one.
+`INSERT` is how a `table` stops being a fixed list and starts being something a real system can grow, one new student, one new course, one new enrollment at a time. Naming the `columns` you are filling in is a small habit that costs almost nothing to type and protects the statement from a `table`'s `column` order ever quietly working against you. Alia can now get her newly paid student into the system the moment fees clear, typing a single `INSERT` instead of waiting on someone else to add the `row`, and the same statement scales to the whole batch of registrations still to come this week. Adding a `row` safely is only half of keeping data honest, though. Sooner or later something already on file turns out to be wrong, and that calls for a different kind of statement, one that changes a `row` that already exists rather than creating a new one.

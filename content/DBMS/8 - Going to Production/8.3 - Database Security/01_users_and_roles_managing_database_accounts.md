@@ -8,14 +8,31 @@ PostgreSQL's answer to this is **`role`s**, the unified mechanism it uses to rep
 
 A `role` can represent a login-capable user or a non-login group, and the same `CREATE ROLE` command handles both, differing only in the options supplied.
 
+## Source Data Used in This Lesson
+
+This lesson works with database accounts rather than business rows. Before running the examples, inspect the roles created by the setup file.
+
+| Role | Purpose in the activity |
+| --- | --- |
+| `reporting_app` | Account used to demonstrate role membership or privileges |
+| `dev_alia` | Account used to demonstrate role membership or privileges |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE ROLE reporting_app WITH LOGIN PASSWORD 'change_this_in_real_use';
 CREATE ROLE dev_alia WITH LOGIN PASSWORD 'change_this_in_real_use';
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 SELECT rolname, rolcanlogin FROM pg_roles WHERE rolname IN ('reporting_app', 'dev_alia');
 ```
+
+Expected result: PostgreSQL returns the rows described below. Compare the visible columns and row-level effect with the explanation, since security and administration settings may make some values environment-dependent.
 
 `WITH LOGIN` marks a `role` as one that can actually authenticate and open a `connection`, exactly the two `role`s created here:
 
@@ -34,6 +51,8 @@ CREATE ROLE shipment_readers;
 GRANT shipment_readers TO reporting_app;
 GRANT shipment_readers TO dev_alia;
 ```
+
+Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
 
 - `shipment_readers` here has no `LOGIN` option, meaning nothing can connect to the `database` directly as `shipment_readers`; it exists purely as a named group.
 - `GRANT shipment_readers TO reporting_app` adds `reporting_app` as a member of that group, and any permission granted to `shipment_readers` as a whole, covered in the next lesson, automatically applies to every member.
@@ -56,6 +75,8 @@ FROM pg_stat_activity
 WHERE usename = 'reporting_app';
 ```
 
+Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
+
 - `pg_stat_activity`, introduced in the previous chapter, records which `role` issued each active `query`, which is exactly the accountability a shared login destroys.
 - If every developer and every application connected as one single, shared account, there would be no way to answer "who ran this slow `query`" or "which service made this change" after the fact, since the log would show only the one shared name for every single action, regardless of who or what actually took it.
 - Separate `role`s per person and per service are what make that kind of accountability possible at all.
@@ -76,6 +97,8 @@ ALTER ROLE dev_alia WITH PASSWORD 'a_new_stronger_password';
 
 DROP ROLE shipment_readers;
 ```
+
+Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
 
 Dropping `shipment_readers` succeeds here since nothing else in this example still references it structurally beyond the membership grants already made in a real system with actual permissions and dependent objects attached to a `role`, PostgreSQL would refuse to drop it until those dependencies were resolved first, a safeguard against silently breaking access for every account that depended on that `role`'s permissions.
 
@@ -120,6 +143,8 @@ GRANT shipment_readers TO dev_alia;
 
 -- Write your role creation and grant below
 ```
+
+Expected result and verification:
 
 If you run `CREATE ROLE dev_farah WITH LOGIN PASSWORD 'change_this_in_real_use'; CREATE ROLE shipment_writers; GRANT shipment_writers TO dev_farah;`, querying `pg_roles` and the membership catalog confirms `dev_farah` now inherits whatever permissions get granted to `shipment_writers` as a group.
 

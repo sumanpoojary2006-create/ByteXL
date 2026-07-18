@@ -8,6 +8,25 @@ That extra jump, from `index` entry to `table` page, is called a heap fetch, and
 
 The `orders` `table` sets up a `query` that needs more than just the `indexed` `column`. Only 20 of its 10000 orders are still active, the selective situation an `index` is best at, and the closing `VACUUM ANALYZE` both refreshes the planner's statistics and marks the `table`'s pages as stable, something `index`-only scans, this lesson's subject, specifically depend on.
 
+## Source Data Used in This Lesson
+
+Some lessons need a larger dataset to make execution plans or maintenance behavior visible. For those tables, `init.sql` generates the rows instead of listing every row manually.
+
+### Generated `orders` dataset
+
+| Column | Definition in the setup |
+| --- | --- |
+| `order_id` | `INTEGER PRIMARY KEY` |
+| `customer_name` | `TEXT` |
+| `status` | `TEXT` |
+| `amount` | `NUMERIC(10, 2)` |
+
+The setup generates 10,000 rows, numbered from 1 through 10000. This scale is intentional because performance behavior is difficult to observe on a tiny table.
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
@@ -25,9 +44,13 @@ CREATE INDEX idx_orders_status ON orders (status);
 VACUUM ANALYZE orders;
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 EXPLAIN SELECT order_id, amount FROM orders WHERE status = 'active';
 ```
+
+Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
 
 The plan shows `idx_orders_status` finding the 20 matching `rows`, but that is not the whole story: `idx_orders_status` only stores `status` values and pointers back to matching `rows`, so for every match, the `database` still has to fetch that `row` from the actual `table`'s heap to retrieve `order_id` and `amount`, `columns` the `index` itself does not contain. This heap fetch step is exactly the extra cost a `covering index` is built to remove.
 
@@ -42,6 +65,8 @@ CREATE INDEX idx_orders_status_covering ON orders (status) INCLUDE (order_id, am
 
 EXPLAIN SELECT order_id, amount FROM orders WHERE status = 'active';
 ```
+
+Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
 
 The plan now reports an "Index Only Scan" instead of a scan that visits the heap, confirming that `order_id` and `amount`, both included in the `covering index`, are read directly from the `index` itself, with no need to visit the `table`'s heap at all.
 
@@ -59,6 +84,8 @@ CREATE INDEX idx_orders_status_covering ON orders (status) INCLUDE (order_id, am
 EXPLAIN SELECT order_id, amount, customer_name FROM orders WHERE status = 'active';
 ```
 
+Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
+
 Adding `customer_name` to the `SELECT` list, a `column` not included in `idx_orders_status_covering`, means the plan is no longer an Index Only Scan: the `database` is back to fetching every matching `row` from the heap, since the `covering index` cannot answer this broader request on its own. This is a direct, practical illustration of why a `covering index` has to be designed around the specific `columns` a specific `query` actually needs.
 
 ## The Trade-off a Covering Index Represents
@@ -74,6 +101,8 @@ CREATE INDEX idx_orders_status_covering ON orders (status) INCLUDE (order_id, am
 SELECT pg_size_pretty(pg_relation_size('idx_orders_status')) AS plain_index_size,
        pg_size_pretty(pg_relation_size('idx_orders_status_covering')) AS covering_index_size;
 ```
+
+Expected observation: PostgreSQL confirms that the index was created. The command does not return business rows; its effect is verified by rerunning the related query or `EXPLAIN` statement.
 
 - The `covering index` is noticeably larger than the plain one, since it duplicates `order_id` and `amount` alongside every entry, storage that exists purely to avoid heap fetches for a specific, known `query` pattern.
 - `Covering indexes` are worth building for genuinely hot, frequently run `queries` where the read-speed benefit clearly outweighs the extra storage and write cost, not applied indiscriminately to every `index` in a `schema`.
@@ -116,6 +145,8 @@ Create a `covering index` on `customer_name` that includes `status`, then confir
 ```postgresql with=init.sql
 -- Write your queries below
 ```
+
+Expected result and verification:
 
 If you run `CREATE INDEX idx_orders_name_covering ON orders (customer_name) INCLUDE (status);` followed by `EXPLAIN SELECT customer_name, status FROM orders WHERE customer_name = 'Customer 5000';`, the plan reports an Index Only Scan, since both the filtered `column` and the selected `column` are fully available from the `covering index` alone.
 

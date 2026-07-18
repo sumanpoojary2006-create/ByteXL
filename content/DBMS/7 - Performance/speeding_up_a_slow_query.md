@@ -10,7 +10,13 @@ A synthetic `orders` table with hundreds of thousands of rows, a baseline measur
 
 ## Dataset
 
-```sql
+Before writing project queries, inspect the starting data so every task has a visible source to reason from.
+
+This project generates a larger dataset in `init.sql`. Inspect the schema and generation rule below before evaluating its execution plans.
+
+Use two files in OneCompiler. Keep all `CREATE TABLE` and `INSERT` statements in `init.sql`; keep only the current task query in the active SQL file. The `with=init.sql` attribute connects the two files.
+
+```postgresql file=init.sql
 CREATE TABLE orders (
     order_id        INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     customer_email  TEXT NOT NULL,
@@ -28,26 +34,44 @@ SELECT
 FROM generate_series(1, 300000);
 ```
 
+### Confirm the Setup
+
+Run this in the active SQL file before starting the tasks. It confirms that `init.sql` loaded the expected number of rows.
+
+```postgresql with=init.sql
+SELECT COUNT(*) AS loaded_rows FROM orders;
+```
+
+Expected output:
+
+| loaded_rows |
+| --- |
+| 300000 |
+
 ## Tasks
 
 ### Task 1: Establish a Baseline
 
 1. Run this query and record the execution time and plan using `EXPLAIN ANALYZE`:
 
-   ```sql
+   ```postgresql with=init.sql
    EXPLAIN ANALYZE
    SELECT * FROM orders WHERE customer_email = 'customer4213@example.com';
    ```
 
+Expected observation: PostgreSQL returns a measured execution plan. The exact timing and cost values vary, so record the scan type, estimated rows, actual rows, and execution time for comparison.
+
 2. Run a second query for a common reporting pattern, and capture its plan too:
 
-   ```sql
+   ```postgresql with=init.sql
    EXPLAIN ANALYZE
    SELECT * FROM orders
    WHERE status = 'pending'
    ORDER BY order_date DESC
    LIMIT 20;
    ```
+
+Expected observation: PostgreSQL returns a measured execution plan. The exact timing and cost values vary, so record the scan type, estimated rows, actual rows, and execution time for comparison.
 
 3. In both plans, find the line that says `Seq Scan on orders`. Note the reported number of rows scanned and the execution time.
 
@@ -57,13 +81,15 @@ FROM generate_series(1, 300000);
 2. Create a composite index on `(status, order_date)` to match the filter-then-sort pattern in Task 1.2, then re-run that query and compare its plan.
 3. Since `pending` orders are a small fraction of the 300000 rows, create a partial index instead, indexing only rows where `status = 'pending'`, and compare its size against the full composite index from step 2.
 
-   ```sql
+   ```postgresql with=init.sql
    CREATE INDEX idx_orders_customer_email ON orders (customer_email);
 
    CREATE INDEX idx_orders_status_date ON orders (status, order_date);
 
    CREATE INDEX idx_orders_pending ON orders (order_date) WHERE status = 'pending';
    ```
+
+Expected result: PostgreSQL creates both indexes successfully. Re-run the earlier `EXPLAIN ANALYZE` statements to verify whether the access path and execution time improve.
 
 ### Task 3: Iterate
 

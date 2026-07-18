@@ -10,6 +10,30 @@ The short version is that `joins` combine `columns` from two `tables` side by si
 
 A `join` widens a `row`, pulling in extra `columns` from a second `table` for each match. A set operation never adds `columns`; it only ever stacks, filters, or intersects whole `rows` that already have the same shape.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the data they will use. The tables below show the rows loaded by the setup file.
+
+### `online_customers`
+
+| customer_name | email |
+| --- | --- |
+| Aditi Kulkarni | aditi.k@example.com |
+| Rohan Das | rohan.das@example.com |
+| Kavya Nair | kavya.nair@example.com |
+
+### `store_customers`
+
+| customer_name | email |
+| --- | --- |
+| Kavya Nair | kavya.nair@example.com |
+| Imran Sheikh | imran.s@example.com |
+| Neha Bhatt | neha.bhatt@example.com |
+
+The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
+
+## Hands-On Setup: Prepare the Data
+
 ```postgresql file=init.sql
 CREATE TABLE online_customers (
     customer_name TEXT,
@@ -32,11 +56,19 @@ INSERT INTO store_customers (customer_name, email) VALUES
 ('Neha Bhatt', 'neha.bhatt@example.com');
 ```
 
+Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
+
 ```postgresql with=init.sql
 SELECT o.customer_name, o.email, s.customer_name AS store_side_name
 FROM online_customers o
 JOIN store_customers s ON o.email = s.email;
 ```
+
+Expected output:
+
+| customer_name | email | store_side_name |
+| --- | --- | --- |
+| Kavya Nair | kavya.nair@example.com | Kavya Nair |
 
 This `join` produces a `row` with `columns` from both `tables` side by side, `customer_name` and `email` from `online_customers`, plus `store_side_name` from `store_customers`, even though in this data they happen to hold the same value. Compare that to the `INTERSECT` version from the previous lesson, which returns exactly the same two matching people but as a single set of `columns`, not a widened `row`.
 
@@ -55,11 +87,25 @@ WHERE NOT EXISTS (
 );
 ```
 
+Expected output:
+
+| customer_name | email |
+| --- | --- |
+| Aditi Kulkarni | aditi.k@example.com |
+| Rohan Das | rohan.das@example.com |
+
 ```postgresql with=init.sql
 SELECT customer_name, email FROM online_customers
 EXCEPT
 SELECT customer_name, email FROM store_customers;
 ```
+
+Expected output:
+
+| customer_name | email |
+| --- | --- |
+| Aditi Kulkarni | aditi.k@example.com |
+| Rohan Das | rohan.das@example.com |
 
 Both return Aditi Kulkarni and Rohan Das. The two read differently, and that difference is a useful guide for which to reach for:
 
@@ -125,8 +171,20 @@ Using the `online_customers` and `store_customers` `tables` above, find every cu
 
 One valid answer is `(SELECT customer_name FROM online_customers EXCEPT SELECT customer_name FROM store_customers) UNION ALL (SELECT customer_name FROM store_customers EXCEPT SELECT customer_name FROM online_customers);`, which returns Aditi Kulkarni, Rohan Das, Imran Sheikh, and Neha Bhatt, everyone who shops through exactly one channel.
 
+
+Expected output for the practice query:
+
+| customer_name |
+| --- |
+| Aditi Kulkarni |
+| Rohan Das |
+| Imran Sheikh |
+| Neha Bhatt |
+
 ## Conclusion
 
-- `Joins` widen `rows` by attaching `columns` from a matching `table`, set operations stack or compare whole `rows` across similarly shaped `queries`, and `EXISTS` checks for a match without pulling in any `columns` at all, and recognizing which shape a question actually needs is what decides between them.
-- Tanvi can now choose confidently between a `join`, a set operation, and an existence check depending on what her marketing questions actually require.
-- With retrieval, transformation, aggregation, `joins`, and set operations all covered, more advanced ways of structuring a `query`, including subqueries and `window functions`, are next.
+`Joins` widen `rows` by attaching `columns` from a matching `table`, set operations stack or compare whole `rows` across similarly shaped `queries`, and `EXISTS` checks for a match without pulling in any `columns` at all, and recognizing which shape a question actually needs is what decides between them.
+
+Tanvi can now choose confidently between a `join`, a set operation, and an existence check depending on what her marketing questions actually require.
+
+With retrieval, transformation, aggregation, `joins`, and set operations all covered, more advanced ways of structuring a `query`, including subqueries and `window functions`, are next.

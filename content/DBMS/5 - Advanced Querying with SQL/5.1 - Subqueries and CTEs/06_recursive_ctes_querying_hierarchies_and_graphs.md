@@ -10,6 +10,25 @@ A **`recursive CTE`** solves this by repeating its own logic against its own gro
 
 The `employees` `table` now includes a few more reporting levels to make the hierarchy worth walking.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `employees`
+
+| employee_id | employee_name | manager_id |
+| --- | --- | --- |
+| 1 | Ananya Sharma | NULL |
+| 2 | Rajat Bhatia | 1 |
+| 3 | Meghna Iyer | 1 |
+| 4 | Karan Oberoi | 2 |
+| 5 | Divya Nambiar | 2 |
+| 6 | Farhan Sheikh | 4 |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE employees (
     employee_id INTEGER PRIMARY KEY,
@@ -25,6 +44,8 @@ INSERT INTO employees (employee_id, employee_name, manager_id) VALUES
 (5, 'Divya Nambiar', 2),
 (6, 'Farhan Sheikh', 4);
 ```
+
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
 Ananya sits at the top with no manager, Rajat and Meghna report to her, Karan and Divya report to Rajat, and Farhan reports to Karan, four levels deep in one branch. A single self `join` could find Farhan's direct manager, Karan, but not Karan's manager, Rajat, in the same `query` without another `join` added on top, and not Ananya above that without yet another.
 
@@ -50,6 +71,8 @@ ORDER BY level;
 ```
 
 The base case, `WHERE employee_id = 6`, starts with just Farhan Sheikh, at level 1. The recursive case then `joins` `employees` back to `reporting_chain` itself, `e.employee_id = reporting_chain.manager_id`, finding whoever manages the person just added, and that newly found manager becomes part of `reporting_chain` for the next round:
+
+Expected output:
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
   <thead>
@@ -110,6 +133,17 @@ FROM team_below
 ORDER BY level;
 ```
 
+Expected output:
+
+| employee_name | level |
+| --- | --- |
+| Ananya Sharma | 1 |
+| Meghna Iyer | 2 |
+| Rajat Bhatia | 2 |
+| Divya Nambiar | 3 |
+| Karan Oberoi | 3 |
+| Farhan Sheikh | 4 |
+
 Starting from Ananya at level 1, the recursive case now matches `e.manager_id = team_below.employee_id`, finding everyone who reports to whoever was just added, which walks down the org chart instead of up it. This returns all six employees, since every person in the `table` eventually traces back to Ananya, with `level` showing how many steps down from her each one sits.
 
 ![A recursive CTE walking downward through the team tree from a manager](images/12_recursive_cte_walks_down_team_tree.png)
@@ -157,6 +191,15 @@ Find every employee who reports, directly or indirectly, to Rajat Bhatia, includ
 
 If your `query` bases the recursion on `WHERE employee_id = 2` and recurses with `e.manager_id = team_below.employee_id`, it returns Rajat himself at level 1, Karan and Divya at level 2, and Farhan at level 3, correctly walking down every branch under Rajat regardless of depth.
 
+
+Expected output:
+
+| employee_name | level |
+| --- | --- |
+| Rajat Bhatia | 1 |
+| Karan Oberoi | 2 |
+| Divya Nambiar | 2 |
+| Farhan Sheikh | 3 |
 ## Conclusion
 
 A `recursive CTE` repeats its own logic against a growing result set until no new `rows` appear, which is exactly the tool needed for hierarchies and graphs whose depth is not known in advance, whether that means walking up an org chart to find every manager above a person or walking down to find every report beneath one.

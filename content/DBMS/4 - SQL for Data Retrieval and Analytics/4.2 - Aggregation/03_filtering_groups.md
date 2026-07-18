@@ -9,6 +9,27 @@
 
 The `orders` `table` is the same one used for grouping.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the data they will use. The tables below show the rows loaded by the setup file.
+
+### `orders`
+
+| order_id | customer_name | category | amount | order_date |
+| --- | --- | --- | --- | --- |
+| 1 | Ishita Rao | Fiction | 450 | 2025-04-02 |
+| 2 | Vivek Menon | Non-Fiction | 899 | 2025-04-03 |
+| 3 | Ishita Rao | Fiction | 320 | 2025-04-05 |
+| 4 | Aman Gupta | Children | 210 | 2025-04-06 |
+| 5 | Sonal Deshpande | Non-Fiction | 1450 | 2025-04-08 |
+| 6 | Vivek Menon | Fiction | 610 | 2025-04-10 |
+| 7 | Aman Gupta | Children | 175 | 2025-04-12 |
+| 8 | Ishita Rao | Non-Fiction | 990 | 2025-04-14 |
+
+The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
+
+## Hands-On Setup: Prepare the Data
+
 ```postgresql file=init.sql
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
@@ -36,12 +57,22 @@ INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUE
 
 `HAVING` runs after `GROUP BY` has already collapsed `rows` into groups and the `aggregate functions` have already produced their results, so it can filter directly on those aggregate values.
 
+Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
+
 ```postgresql with=init.sql
 SELECT customer_name, SUM(amount) AS total_spent
 FROM orders
 GROUP BY customer_name
 HAVING SUM(amount) > 1000;
 ```
+
+Expected output:
+
+| customer_name | total_spent |
+| --- | --- |
+| Ishita Rao | 1760 |
+| Sonal Deshpande | 1450 |
+| Vivek Menon | 1509 |
 
 This groups every order by `customer_name`, computes each customer's total, and only then discards the groups whose total does not exceed 1000:
 
@@ -93,6 +124,14 @@ GROUP BY customer_name
 HAVING SUM(amount) > 500;
 ```
 
+Expected output:
+
+| customer_name | total_spent |
+| --- | --- |
+| Ishita Rao | 1760 |
+| Sonal Deshpande | 1450 |
+| Vivek Menon | 1509 |
+
 This `query` runs in three clean stages:
 
 1. `WHERE category != 'Children'` removes Aman Gupta's two children's-book orders before any grouping starts, so his `rows` never even reach the grouping stage.
@@ -115,6 +154,12 @@ FROM orders
 GROUP BY customer_name
 HAVING COUNT(*) >= 3;
 ```
+
+Expected output:
+
+| customer_name | orders_placed |
+| --- | --- |
+| Ishita Rao | 3 |
 
 This surfaces only the customers who placed 3 or more orders, which is a different, and for a loyalty program, often more useful, cut of the same data than filtering on total spend.
 
@@ -152,8 +197,17 @@ The founders want to see only the product categories that generated less than 10
 
 If your `query` groups by `category` with `SUM(amount) AS total_revenue` and filters with `HAVING SUM(amount) < 1000`, only the Children's category appears, with a combined total of 385.00.
 
+
+Expected output for the practice query:
+
+| category | total_revenue |
+| --- | --- |
+| Children | 385 |
+
 ## Conclusion
 
-- `HAVING` fills the exact gap `WHERE` cannot: filtering on values that only exist after grouping and aggregation have already run.
-- Used together, `WHERE` trims `rows` before grouping and `HAVING` trims groups after, giving Priya precise control over both stages of a report.
-- With grouping, aggregating, and filtering groups all in hand, the next step is seeing how these pieces sit relative to sorting, `row`-level filtering, and `joins` in a single, more complete `query`.
+`HAVING` fills the exact gap `WHERE` cannot: filtering on values that only exist after grouping and aggregation have already run.
+
+Used together, `WHERE` trims `rows` before grouping and `HAVING` trims groups after, giving Priya precise control over both stages of a report.
+
+With grouping, aggregating, and filtering groups all in hand, the next step is seeing how these pieces sit relative to sorting, `row`-level filtering, and `joins` in a single, more complete `query`.

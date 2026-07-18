@@ -8,6 +8,24 @@ Finding "Rathi, Sanjay" in a phone book does not mean reading every entry from t
 
 The `orders` `table` from the storage chapter, large enough for the cost difference to be visible, sets up the comparison. The closing `ANALYZE` statement refreshes the statistics the `query planner` uses to estimate how many `rows` a condition will match; every setup in this chapter runs it after loading data, and it returns in full detail alongside `EXPLAIN` in the next chapter.
 
+## Source Data Used in This Lesson
+
+Some lessons need a larger dataset to make execution plans or maintenance behavior visible. For those tables, `init.sql` generates the rows instead of listing every row manually.
+
+### Generated `orders` dataset
+
+| Column | Definition in the setup |
+| --- | --- |
+| `order_id` | `INTEGER PRIMARY KEY` |
+| `customer_name` | `TEXT` |
+| `amount` | `NUMERIC(10, 2)` |
+
+The setup generates 10,000 rows, numbered from 1 through 10000. This scale is intentional because performance behavior is difficult to observe on a tiny table.
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
@@ -22,9 +40,13 @@ FROM generate_series(1, 10000) AS i;
 ANALYZE orders;
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 EXPLAIN SELECT * FROM orders WHERE customer_name = 'Customer 7500';
 ```
+
+Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
 
 There is no structure supporting a search on `customer_name`, so the plan reports a `sequential scan`, checking all 10000 `rows` to find the one whose name matches, exactly the phone-book equivalent of reading every page from the beginning because nothing is organized to help.
 
@@ -39,6 +61,8 @@ CREATE INDEX idx_orders_customer_name ON orders (customer_name);
 
 EXPLAIN SELECT * FROM orders WHERE customer_name = 'Customer 7500';
 ```
+
+Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
 
 The plan changes to an "`Index Scan`," using `idx_orders_customer_name` to jump almost directly to the matching `row`, rather than checking all 10000. The `index` itself is sorted by `customer_name`, the same way a phone book is sorted by last name, so the `database` can narrow down to the matching entries the same way a reader flips to the right section of a phone book instead of starting from page one.
 
@@ -60,6 +84,8 @@ SELECT pg_size_pretty(pg_relation_size('orders')) AS table_size,
        pg_size_pretty(pg_relation_size('idx_orders_customer_name')) AS index_size;
 ```
 
+Expected observation: PostgreSQL confirms that the index was created. The command does not return business rows; its effect is verified by rerunning the related query or `EXPLAIN` statement.
+
 The `index` takes up its own disk space, separate from the `table`, since it is a genuinely separate structure that has to be built and stored. This is the fundamental trade-off every `index` represents: extra storage and extra maintenance work, in exchange for dramatically faster lookups on the `indexed` `column`.
 
 ## An Index Speeds Up Reads, But Costs Something on Writes
@@ -77,6 +103,8 @@ FROM generate_series(10001, 20000) AS i;
 
 SELECT pg_size_pretty(pg_relation_size('idx_orders_customer_name')) AS index_size_after;
 ```
+
+Expected observation: PostgreSQL confirms that the index was created. The command does not return business rows; its effect is verified by rerunning the related query or `EXPLAIN` statement.
 
 The `index` visibly grows after the insert, which is the proof that every one of those 10000 new `rows` did double work:
 
@@ -122,6 +150,8 @@ Create an `index` on the `amount` `column` of the `orders` `table` above, then r
 ```postgresql with=init.sql
 -- Write your queries below
 ```
+
+Expected result and verification:
 
 If you run `CREATE INDEX idx_orders_amount ON orders (amount);` followed by `EXPLAIN SELECT * FROM orders WHERE amount = 5000.00;`, the plan reports an `index scan` using `idx_orders_amount`, since the `database` can now look up matching `rows` through the sorted `index` instead of checking all 10000 `rows` directly.
 

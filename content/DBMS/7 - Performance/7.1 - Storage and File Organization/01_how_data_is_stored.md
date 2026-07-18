@@ -10,6 +10,24 @@ Priya, the finance analyst from earlier reporting lessons, has started noticing 
 
 A `database` does not read or write one `row` at a time from disk; it reads and writes in fixed-size blocks called pages, typically 8 kilobytes each in PostgreSQL, with many `rows` packed into each page.
 
+## Source Data Used in This Lesson
+
+Some lessons need a larger dataset to make execution plans or maintenance behavior visible. For those tables, `init.sql` generates the rows instead of listing every row manually.
+
+### Generated `orders` dataset
+
+| Column | Definition in the setup |
+| --- | --- |
+| `order_id` | `INTEGER PRIMARY KEY` |
+| `customer_name` | `TEXT` |
+| `amount` | `NUMERIC(10, 2)` |
+
+The setup generates 500 rows, numbered from 1 through 500. This scale is intentional because performance behavior is difficult to observe on a tiny table.
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
@@ -22,9 +40,13 @@ SELECT i, 'Customer ' || i, (i * 37.5)::NUMERIC(10,2)
 FROM generate_series(1, 500) AS i;
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 SELECT pg_size_pretty(pg_relation_size('orders')) AS table_size_on_disk;
 ```
+
+Expected result: the query returns the rows or aggregate described below. In this performance lesson, also note the access method and timing rather than judging the query only by its returned values.
 
 - `pg_relation_size` reports how many bytes the `orders` `table` actually occupies on disk.
 - `pg_size_pretty` formats that into a readable size like "48 kB."
@@ -44,6 +66,8 @@ WHERE order_id IN (1, 2, 250, 500)
 ORDER BY order_id;
 ```
 
+Expected result: the query returns the rows or aggregate described below. In this performance lesson, also note the access method and timing rather than judging the query only by its returned values.
+
 The `ctid` values here look like `(0,1)`, meaning page 0, position 1 within that page, and `rows` with nearby `order_id` values, having been inserted around the same time, tend to land on the same or nearby pages, while `order_id = 500`, inserted much later in the same batch, sits on a later page.
 
 This is the physical reality behind every `query`: reading a `row` means finding its page and reading that whole page off disk, not teleporting directly to one `row`'s bytes.
@@ -61,6 +85,8 @@ FROM orders
 GROUP BY page_number
 ORDER BY page_number;
 ```
+
+Expected result: the query returns the rows or aggregate described below. In this performance lesson, also note the access method and timing rather than judging the query only by its returned values.
 
 - `ctid::text::point` is a small casting trick that turns the `(page, position)` pair into a value whose first component, the page number, can be pulled out with `[0]`.
 - Grouping by page number shows exactly how the 500 `rows` are packed into just a handful of pages.
@@ -108,6 +134,8 @@ Check the total disk size of the `orders` `table` above, then look up the `ctid`
 ```postgresql with=init.sql
 -- Write your queries and comment below
 ```
+
+Expected result and verification:
 
 If you run `SELECT pg_size_pretty(pg_relation_size('orders'));` followed by `SELECT ctid, order_id FROM orders WHERE order_id IN (100, 101);`, both `rows` are very likely to show the same page number in their `ctid`, since they were inserted back to back in the same batch and packed onto the same page.
 

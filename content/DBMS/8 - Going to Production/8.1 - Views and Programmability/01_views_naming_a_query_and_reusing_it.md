@@ -8,6 +8,31 @@ A **`view`** solves this by giving a `query` a permanent name in the `database` 
 
 The `shipments` and `drivers` `tables` set up the recurring `query` Devraj's team keeps duplicating.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `drivers`
+
+| driver_id | driver_name |
+| --- | --- |
+| 1 | Manoj Yadav |
+| 2 | Farah Ali |
+| 3 | Sunil Chauhan |
+
+### `shipments`
+
+| shipment_id | driver_id | status | destination |
+| --- | --- | --- | --- |
+| 1 | 1 | in_transit | Mumbai |
+| 2 | 2 | delivered | Pune |
+| 3 | 1 | in_transit | Nagpur |
+| 4 | 3 | delayed | Nashik |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE drivers (
     driver_id INTEGER PRIMARY KEY,
@@ -31,6 +56,8 @@ INSERT INTO shipments (shipment_id, driver_id, status, destination) VALUES
 (4, 3, 'delayed', 'Nashik');
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 CREATE VIEW active_shipments AS
 SELECT s.shipment_id, d.driver_name, s.destination
@@ -40,6 +67,8 @@ WHERE s.status = 'in_transit';
 
 SELECT * FROM active_shipments;
 ```
+
+Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
 
 `CREATE VIEW active_shipments AS` saves the `join` and filter as a named object in the `database`. From that point on:
 
@@ -66,6 +95,8 @@ UPDATE shipments SET status = 'delivered' WHERE shipment_id = 1;
 SELECT * FROM active_shipments;
 ```
 
+Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
+
 After Manoj's Mumbai shipment is marked delivered, querying `active_shipments` again immediately reflects that change, showing only the one remaining in-transit shipment, even though nothing about the `view` itself was touched. This is the core behavior that distinguishes a plain `view` from the `materialized view` covered later in this chapter: a plain `view` has no storage of its own and is always exactly as current as the underlying `tables`.
 
 ![An ordinary view stores no data and always reflects the current base tables](images/02_ordinary_view_no_storage_always_current.png)
@@ -87,6 +118,8 @@ SELECT driver_name, COUNT(*) AS active_shipment_count
 FROM active_shipments
 GROUP BY driver_name;
 ```
+
+Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
 
 This groups directly on top of `active_shipments`, without ever repeating the underlying `join` or filter condition, demonstrating exactly the reuse a `view` is meant to provide: the complexity of "what counts as an active shipment" is defined once, in the `view`, and every downstream `query` simply builds on top of that single, agreed-upon definition.
 
@@ -111,6 +144,8 @@ WHERE s.status IN ('in_transit', 'delayed');
 
 SELECT * FROM active_shipments;
 ```
+
+Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
 
 Redefining the `view` to also include delayed shipments changes what every downstream `query` built on top of `active_shipments` sees, immediately and consistently, without anyone needing to hunt down and update every copy-pasted version of the original `query` scattered across scripts and dashboards, exactly the maintenance problem a `view` exists to solve.
 
@@ -170,6 +205,8 @@ SELECT * FROM active_shipments;
 
 -- Write your view below
 ```
+
+Expected result and verification:
 
 If your `view` is `CREATE VIEW driver_shipment_summary AS SELECT d.driver_name, COUNT(s.shipment_id) AS total_shipments FROM drivers d LEFT JOIN shipments s ON d.driver_id = s.driver_id GROUP BY d.driver_name;`, selecting from it returns every driver, including any with zero shipments, thanks to the `LEFT JOIN` covered earlier in this course.
 

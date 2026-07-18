@@ -8,6 +8,23 @@ There are a few standard strategies for how a `table`'s file can be organized, a
 
 By default, PostgreSQL stores a `table` as a heap, meaning new `rows` are simply placed wherever there happens to be free space, with no guaranteed ordering by any `column` at all.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `orders`
+
+| order_id | customer_name | amount |
+| --- | --- | --- |
+| 5 | Rohan Das | 450.00 |
+| 2 | Aditi Kulkarni | 620.00 |
+| 8 | Kavya Nair | 300.00 |
+| 1 | Imran Sheikh | 900.00 |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
@@ -22,9 +39,13 @@ INSERT INTO orders (order_id, customer_name, amount) VALUES
 (1, 'Imran Sheikh', 900.00);
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 SELECT ctid, order_id, customer_name FROM orders;
 ```
+
+Expected result: the query returns the rows or aggregate described below. In this performance lesson, also note the access method and timing rather than judging the query only by its returned values.
 
 Even though these `rows` were inserted with `order_id` values 5, 2, 8, then 1, their `ctid` values still reflect insertion order, not sorted `order_id` order, since a heap makes no attempt to keep `rows` physically sorted by any `column`.
 
@@ -42,6 +63,8 @@ CLUSTER orders USING idx_orders_id;
 
 SELECT ctid, order_id, customer_name FROM orders;
 ```
+
+Expected observation: PostgreSQL confirms that the index was created. The command does not return business rows; its effect is verified by rerunning the related query or `EXPLAIN` statement.
 
 After `CLUSTER`, the `ctid` values now increase in the same order as `order_id`, confirming the `rows` have been physically rewritten on disk to sit in sorted order.
 
@@ -65,6 +88,8 @@ FROM orders
 ORDER BY customer_name;
 ```
 
+Expected result: the query returns the rows or aggregate described below. In this performance lesson, also note the access method and timing rather than judging the query only by its returned values.
+
 With the names listed alphabetically, the bucket numbers jump around with no pattern at all: names that sit next to each other in alphabetical order land in completely unrelated buckets, and that is not a flaw but the entire design. A hash `function` deliberately scatters values evenly so that no bucket gets overloaded, and the unavoidable price is that any notion of "nearby" or "in between" is destroyed on the way in.
 
 PostgreSQL does not organize whole `tables` this way, but it offers `hash indexes`, which apply exactly this idea to speed up equality lookups specifically, at the cost of being unable to help at all with range `queries` like "greater than" or "between."
@@ -78,6 +103,8 @@ SELECT order_id, customer_name, amount
 FROM orders
 WHERE customer_name = 'Kavya Nair';
 ```
+
+Expected observation: PostgreSQL confirms that the index was created. The command does not return business rows; its effect is verified by rerunning the related query or `EXPLAIN` statement.
 
 This creates a hash-organized structure specifically for looking up an exact `customer_name` quickly, and the equality lookup that follows is precisely the kind of `query` it exists to serve: one specific value, found by computing its bucket. What it cannot help with is "find every customer whose name comes after Kavya alphabetically," a limitation directly explained by how hashing scrambles order on purpose.
 
@@ -121,6 +148,8 @@ Using the `idx_orders_id` `index` and clustered layout already set up earlier in
 ```postgresql with=init.sql
 -- Write your queries and comment below
 ```
+
+Expected result and verification:
 
 New `rows` inserted after a `CLUSTER` operation are placed wherever free space is available, heap-style, not necessarily in sorted position, since `CLUSTER` only reorganizes the `table` at the moment it runs the `ctid` values for these new `rows` will likely appear after the already-clustered block rather than interleaved into perfectly sorted position.
 

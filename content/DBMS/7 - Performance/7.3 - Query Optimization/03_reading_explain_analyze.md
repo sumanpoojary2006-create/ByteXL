@@ -8,6 +8,24 @@
 
 The same `orders` `table`, with a deliberately skewed distribution, sets up a case where an estimate and reality can diverge.
 
+## Source Data Used in This Lesson
+
+Some lessons need a larger dataset to make execution plans or maintenance behavior visible. For those tables, `init.sql` generates the rows instead of listing every row manually.
+
+### Generated `orders` dataset
+
+| Column | Definition in the setup |
+| --- | --- |
+| `order_id` | `INTEGER PRIMARY KEY` |
+| `customer_id` | `INTEGER` |
+| `amount` | `NUMERIC(10, 2)` |
+
+The setup generates 20,000 rows, numbered from 1 through 20000. This scale is intentional because performance behavior is difficult to observe on a tiny table.
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
@@ -23,9 +41,13 @@ CREATE INDEX idx_orders_customer_id ON orders (customer_id);
 ANALYZE orders;
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 EXPLAIN ANALYZE SELECT * FROM orders WHERE customer_id = 1;
 ```
+
+Expected observation: PostgreSQL returns an execution-plan tree with estimated costs and measured values such as actual time, rows, and loops. Exact numbers vary by server, so identify the scan or join nodes and compare them with the explanation below.
 
 The output now includes both the familiar `cost=` and `rows=` estimates from plain `EXPLAIN`, and a second set of numbers: `actual time=startup..total rows=N loops=N`.
 
@@ -41,6 +63,8 @@ In this deliberately skewed dataset, three quarters of all `rows` belong to `cus
 ```postgresql with=init.sql
 EXPLAIN ANALYZE SELECT * FROM orders WHERE customer_id = 1;
 ```
+
+Expected observation: PostgreSQL returns an execution-plan tree with estimated costs and measured values such as actual time, rows, and loops. Exact numbers vary by server, so identify the scan or join nodes and compare them with the explanation below.
 
 If the estimated `rows=` figure and the actual `rows=` figure from this same run differ substantially, that gap is a direct, measurable sign that the optimizer's assumptions about this data did not match reality. That mismatch can lead PostgreSQL to choose a plan that looked cheap on paper but performs worse in practice.
 
@@ -66,6 +90,8 @@ JOIN orders o ON c.customer_id = o.customer_id
 WHERE c.customer_id BETWEEN 1 AND 5;
 ```
 
+Expected observation: PostgreSQL returns an execution-plan tree with estimated costs and measured values such as actual time, rows, and loops. Exact numbers vary by server, so identify the scan or join nodes and compare them with the explanation below.
+
 If this plan runs its inner scan of `orders` once per matching customer, `loops=5` would appear on that inner step, and the true total time contributed by that step is its reported `actual time` multiplied by 5, not the number shown alone. Missing this detail is a common way to misread `EXPLAIN ANALYZE` output, understating how expensive a repeatedly executed inner step actually was in total.
 
 ![loops=N means an inner plan step repeats and the total work adds up](images/06_explain_analyze_loops_repeat_inner_step.png)
@@ -79,6 +105,8 @@ BEGIN;
 EXPLAIN ANALYZE UPDATE orders SET amount = amount * 1.05 WHERE customer_id = 1;
 ROLLBACK;
 ```
+
+Expected observation: PostgreSQL returns an execution-plan tree with estimated costs and measured values such as actual time, rows, and loops. Exact numbers vary by server, so identify the scan or join nodes and compare them with the explanation below.
 
 Wrapping the `EXPLAIN ANALYZE UPDATE` in a `transaction` that ends with `ROLLBACK` instead of `COMMIT` is the standard, safe way to measure a write statement's real `execution plan` and timing without letting its actual changes persist, exactly the transactional safety net covered in the previous unit.
 
@@ -124,10 +152,10 @@ Run `EXPLAIN ANALYZE` on a `query` filtering `orders` for `customer_id = 50`, a 
 -- Write your query and comment below
 ```
 
+Expected result and verification:
+
 `EXPLAIN ANALYZE SELECT * FROM orders WHERE customer_id = 50;` should show estimated and actual `row` counts much closer together than the `customer_id = 1` case, since customer 50's share of the data follows the more evenly distributed pattern the optimizer's statistics model more accurately.
 
 ## Conclusion
 
-- `EXPLAIN ANALYZE` actually runs a `query` and reports real measured time and real `row` counts alongside the optimizer's original estimates, making it possible to see exactly where a plan's assumptions matched reality and where they did not, with `loops=N` and a `ROLLBACK`-wrapped `transaction` as two details worth remembering when reading or running it.
-- Priya can now diagnose not just what plan ran, but whether it was actually a good plan once real execution is accounted for.
-- Behind many of these plans sits a specific choice this unit has not yet examined directly: which algorithm the `database` uses to actually perform a `join`.
+`EXPLAIN ANALYZE` actually runs a `query` and reports real measured time and real `row` counts alongside the optimizer's original estimates, making it possible to see exactly where a plan's assumptions matched reality and where they did not, with `loops=N` and a `ROLLBACK`-wrapped `transaction` as two details worth remembering when reading or running it. Priya can now diagnose not just what plan ran, but whether it was actually a good plan once real execution is accounted for. Behind many of these plans sits a specific choice this unit has not yet examined directly: which algorithm the `database` uses to actually perform a `join`.

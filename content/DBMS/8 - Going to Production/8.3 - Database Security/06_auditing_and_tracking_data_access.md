@@ -9,6 +9,34 @@
 
 The `trigger` mechanism from earlier in this course is the natural building block for an audit trail, extended here to capture which `role` made a change, not just what changed.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `shipments`
+
+| shipment_id | status |
+| --- | --- |
+| 1 | in_transit |
+
+The setup also creates the following empty supporting tables. Later statements populate them as the operation runs.
+
+### Empty `audit_log` table
+
+| Column | Definition in the setup |
+| --- | --- |
+| `audit_id` | `SERIAL PRIMARY KEY` |
+| `table_name` | `TEXT` |
+| `action` | `TEXT` |
+| `changed_by` | `TEXT` |
+| `changed_at` | `TIMESTAMP DEFAULT NOW()` |
+| `old_data` | `JSONB` |
+| `new_data` | `JSONB` |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
@@ -27,6 +55,8 @@ CREATE TABLE audit_log (
 
 INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit');
 ```
+
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
 ```postgresql with=init.sql
 CREATE FUNCTION audit_shipments_change()
@@ -51,6 +81,8 @@ AFTER INSERT OR UPDATE OR DELETE ON shipments
 FOR EACH ROW
 EXECUTE FUNCTION audit_shipments_change();
 ```
+
+Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
 
 - `TG_OP` is a special variable automatically available inside a `trigger` `function`, holding the operation that fired it, `'INSERT'`, `'UPDATE'`, or `'DELETE'`. `current_user` captures exactly which `role`'s `connection` made the change, tying every audit entry back to a specific, accountable identity.
 - This preserves the accountability that shared logins destroy.
@@ -89,6 +121,8 @@ UPDATE shipments SET status = 'delivered' WHERE shipment_id = 1;
 SELECT table_name, action, changed_by, old_data, new_data FROM audit_log;
 ```
 
+Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
+
 The audit entry shows `action = 'UPDATE'`, `changed_by` recording exactly which `role` made the change, and both the `row`'s state before, `status: in_transit`, and after, `status: delivered`, preserved in `old_data` and `new_data`. This is a complete, precise record: not just that something changed, but exactly what changed, who changed it, and when.
 
 ![A trigger-based audit log records who changed a row and the old and new values](images/11_audit_trigger_records_who_old_new.png)
@@ -122,6 +156,8 @@ EXECUTE FUNCTION audit_shipments_change();
 
 SHOW log_statement;
 ```
+
+Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
 - `log_statement` controls what PostgreSQL writes to its own server log, with settings ranging from logging nothing extra, to logging every data-modifying statement, to logging genuinely every statement including plain reads.
 - Enabling comprehensive read-level auditing has a real performance cost, since every single `query` then incurs additional logging overhead, which is why it is typically reserved for `tables` holding especially sensitive data, rather than applied `database`-wide by default.
@@ -198,6 +234,8 @@ EXECUTE FUNCTION audit_shipments_change();
 
 -- Write your insert, delete, and query below
 ```
+
+Expected result and verification:
 
 - Running `INSERT INTO shipments (shipment_id, status) VALUES (2, 'in_transit')
 - `DELETE` FROM shipments `WHERE` shipment_id = 2;` followed by ``SELECT` action, changed_by, old_data, new_data FROM audit_log `WHERE` (old_data->>'shipment_id')::int = 2 OR (new_data->>'shipment_id')::int = 2;` shows two entries: an ``INSERT`` with `new_data` populated and `old_data` null, and a ``DELETE`` with `old_data` populated and `new_data` null, exactly mirroring what genuinely happened to that `row`.

@@ -8,6 +8,34 @@ Priya's team, excited after seeing `indexes` fix several slow reports, wants to 
 
 Each `index` on a `table` means each `INSERT` has to do that much more work, updating every one of them, not just writing the `row` itself.
 
+## Source Data Used in This Lesson
+
+Some lessons need a larger dataset to make execution plans or maintenance behavior visible. For those tables, `init.sql` generates the rows instead of listing every row manually.
+
+### Generated `orders_few_indexes` dataset
+
+| Column | Definition in the setup |
+| --- | --- |
+| `order_id` | `INTEGER PRIMARY KEY` |
+| `customer_name` | `TEXT` |
+| `amount` | `NUMERIC(10, 2)` |
+
+The setup generates 5,000 rows, numbered from 1 through 5000. This scale is intentional because performance behavior is difficult to observe on a tiny table.
+
+### Generated `orders_many_indexes` dataset
+
+| Column | Definition in the setup |
+| --- | --- |
+| `order_id` | `INTEGER PRIMARY KEY` |
+| `customer_name` | `TEXT` |
+| `amount` | `NUMERIC(10, 2)` |
+
+The setup generates 5,000 rows, numbered from 1 through 5000. This scale is intentional because performance behavior is difficult to observe on a tiny table.
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE orders_few_indexes (
     order_id INTEGER PRIMARY KEY,
@@ -37,6 +65,8 @@ ANALYZE orders_few_indexes;
 ANALYZE orders_many_indexes;
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 EXPLAIN ANALYZE
 INSERT INTO orders_few_indexes (order_id, customer_name, amount)
@@ -44,12 +74,16 @@ SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
 FROM generate_series(5001, 10000) AS i;
 ```
 
+Expected observation: PostgreSQL returns an execution-plan tree with estimated costs and measured values such as actual time, rows, and loops. Exact numbers vary by server, so identify the scan or join nodes and compare them with the explanation below.
+
 ```postgresql with=init.sql
 EXPLAIN ANALYZE
 INSERT INTO orders_many_indexes (order_id, customer_name, amount)
 SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
 FROM generate_series(5001, 10000) AS i;
 ```
+
+Expected observation: PostgreSQL returns an execution-plan tree with estimated costs and measured values such as actual time, rows, and loops. Exact numbers vary by server, so identify the scan or join nodes and compare them with the explanation below.
 
 - `EXPLAIN ANALYZE`, unlike plain `EXPLAIN`, actually executes the statement and reports real measured timings.
 - The same 5000 `rows`, inserted into two identically shaped `tables`, take measurably longer against `orders_many_indexes`, visible by comparing the Execution Time reported at the bottom of each plan, since that insert has to additionally update three separate `index` structures for every single `row`, on top of writing the `row` itself. `orders_few_indexes` only has its `primary key`'s automatic `index` to maintain, and finishes with noticeably less total work.
@@ -63,6 +97,8 @@ The `composite index` `idx_many_name_amount` in the setup above already sorts by
 ```postgresql with=init.sql
 EXPLAIN SELECT * FROM orders_many_indexes WHERE customer_name = 'Customer 2500';
 ```
+
+Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
 
 The `query planner` is free to choose either `idx_many_name` or the leading portion of `idx_many_name_amount` to satisfy this filter, since both can serve it; the plan names just one of them, typically the smaller `idx_many_name`, which means the other overlapping structure contributed nothing to this `query` while still being paid for on every write.
 
@@ -82,6 +118,8 @@ SELECT indexname, pg_size_pretty(pg_relation_size(indexname::regclass)) AS index
 FROM pg_indexes
 WHERE tablename = 'orders_many_indexes';
 ```
+
+Expected result: the query returns the rows or aggregate described below. In this performance lesson, also note the access method and timing rather than judging the query only by its returned values.
 
 This lists every `index` on the `table` along with its disk footprint, a useful habit for periodically checking whether an `index` is actually earning its keep. In a real system, this kind of check would be paired with the `database`'s own usage statistics, which track how often each `index` has actually been used to satisfy a `query`, making it possible to identify `indexes` that are pure overhead with no real-world benefit.
 
@@ -127,6 +165,8 @@ Compare the total `index` storage on `orders_many_indexes` against `orders_few_i
 ```postgresql with=init.sql
 -- Write your query and comment below
 ```
+
+Expected result and verification:
 
 - `SELECT tablename, pg_size_pretty(SUM(pg_relation_size(indexname::regclass))) FROM pg_indexes WHERE tablename IN ('orders_few_indexes', 'orders_many_indexes') GROUP BY tablename;` shows `orders_many_indexes` using noticeably more `index` storage
 - `idx_many_name` is the most redundant of the three, since `idx_many_name_amount`'s leading `column` already serves most of what it alone would provide.

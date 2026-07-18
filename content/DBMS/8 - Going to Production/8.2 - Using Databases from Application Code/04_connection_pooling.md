@@ -133,5 +133,4 @@ Running `SHOW max_connections;` alongside `SELECT count(*) FROM pg_stat_activity
 
 ## Conclusion
 
-- `Connection pooling` reuses a fixed set of already-open `connections` across many requests instead of opening and closing one per request, avoiding both the repeated `connection` cost and the risk of exhausting the `database`'s shared `max_connections` limit, with careful attention needed to ensure a `connection` is always returned to the pool in a clean, `transaction`-free state.
-- The next lesson steps back to compare two fundamentally different styles of writing the `database`-facing code that actually runs on top of these `connections`: raw SQL and an object-relational mapper.
+`Connection pooling` reuses a fixed set of already-open `connections` across many requests instead of opening and closing one per request, avoiding both the repeated `connection` cost and the risk of exhausting the `database`'s shared `max_connections` limit, with careful attention needed to ensure a `connection` is always returned to the pool in a clean, `transaction`-free state. The next lesson steps back to compare two fundamentally different styles of writing the `database`-facing code that actually runs on top of these `connections`: raw SQL and an object-relational mapper.

@@ -165,7 +165,7 @@ This snippet runs against the original `enrollments` data again, since each snip
 
 Confirming with `SELECT enrollment_id, student_id, course_id FROM enrollments;` shows the damage. Expected output, after the `DELETE` with no `WHERE` clause:
 
-*(no rows returned — the table is now empty)*
+*(no rows returned - the table is now empty)*
 
 The second `SELECT` returns nothing at all, because every single enrollment `row`, all ten of them, has been removed, not just Rahul's. Two failure modes look nearly identical here:
 
@@ -289,7 +289,4 @@ The first `SELECT` isolates enrollment 3, Neha's `row` in course 101. The `DELET
 
 ## Conclusion
 
-- `DELETE` is the shortest of the modification statements to type and, without a `WHERE` clause, the fastest way to empty a `table` by accident.
-- The exact discipline that keeps `UPDATE` safe applies here without any real change: know which `rows` a condition selects before running it, confirm with a `SELECT` first, and treat the absence of a `WHERE` clause as a decision that removes everything rather than a shortcut.
-- Priyanka closed out add-drop week having removed exactly Rahul Verma's dropped Linear Algebra enrollment, and nothing else, because she checked with a `SELECT` before she ever typed `DELETE`.
-- Sometimes, though, the safest thing is not just checking before a change but getting the `database` to confirm, immediately and in the same breath, exactly what a statement just did.
+`DELETE` is the shortest of the modification statements to type and, without a `WHERE` clause, the fastest way to empty a `table` by accident. The exact discipline that keeps `UPDATE` safe applies here without any real change: know which `rows` a condition selects before running it, confirm with a `SELECT` first, and treat the absence of a `WHERE` clause as a decision that removes everything rather than a shortcut. Priyanka closed out add-drop week having removed exactly Rahul Verma's dropped Linear Algebra enrollment, and nothing else, because she checked with a `SELECT` before she ever typed `DELETE`. Sometimes, though, the safest thing is not just checking before a change but getting the `database` to confirm, immediately and in the same breath, exactly what a statement just did.

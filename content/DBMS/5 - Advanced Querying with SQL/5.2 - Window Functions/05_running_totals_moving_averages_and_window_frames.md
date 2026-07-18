@@ -8,6 +8,25 @@ The sales director's newest request needs a genuinely different range, a 3-month
 
 The `monthly_sales` `table` tracks one `row` per salesperson per month.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `monthly_sales`
+
+| salesperson | sale_month | total_amount |
+| --- | --- | --- |
+| Nikhil Rao | 2025-01-01 | 18000.00 |
+| Nikhil Rao | 2025-02-01 | 20000.00 |
+| Nikhil Rao | 2025-03-01 | 22000.00 |
+| Nikhil Rao | 2025-04-01 | 25500.00 |
+| Nikhil Rao | 2025-05-01 | 21000.00 |
+| Nikhil Rao | 2025-06-01 | 29700.00 |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE monthly_sales (
     salesperson TEXT,
@@ -24,12 +43,25 @@ INSERT INTO monthly_sales (salesperson, sale_month, total_amount) VALUES
 ('Nikhil Rao', '2025-06-01', 29700.00);
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 SELECT sale_month, total_amount,
        SUM(total_amount) OVER (ORDER BY sale_month) AS running_total
 FROM monthly_sales
 ORDER BY sale_month;
 ```
+
+Expected output:
+
+| sale_month | total_amount | running_total |
+| --- | --- | --- |
+| 2025-01-01 | 18000.00 | 18000.00 |
+| 2025-02-01 | 20000.00 | 38000.00 |
+| 2025-03-01 | 22000.00 | 60000.00 |
+| 2025-04-01 | 25500.00 | 85500.00 |
+| 2025-05-01 | 21000.00 | 106500.00 |
+| 2025-06-01 | 29700.00 | 136200.00 |
 
 This is the same running-total pattern from earlier in the chapter, and its exact frame, though never written out, is `RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW`, meaning "everything from the very first `row` in the window up to and including the current one." That default frame is what makes a plain `ORDER BY` inside `OVER` produce a cumulative total in the first place.
 
@@ -46,6 +78,17 @@ SELECT sale_month, total_amount,
 FROM monthly_sales
 ORDER BY sale_month;
 ```
+
+Expected output:
+
+| sale_month | total_amount | running_total |
+| --- | --- | --- |
+| 2025-01-01 | 18000.00 | 18000.00 |
+| 2025-02-01 | 20000.00 | 38000.00 |
+| 2025-03-01 | 22000.00 | 60000.00 |
+| 2025-04-01 | 25500.00 | 85500.00 |
+| 2025-05-01 | 21000.00 | 106500.00 |
+| 2025-06-01 | 29700.00 | 136200.00 |
 
 - `ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW` names the frame directly: start from the first `row` available (`UNBOUNDED PRECEDING`) and end at the current `row` (`CURRENT ROW`).
 - This produces an identical result to the shorthand version, but writing it explicitly is what makes it possible to change the frame to something other than the default.
@@ -66,6 +109,17 @@ FROM monthly_sales
 ORDER BY sale_month;
 ```
 
+Expected output:
+
+| sale_month | total_amount | moving_avg_3month |
+| --- | --- | --- |
+| 2025-01-01 | 18000.00 | 18000.00 |
+| 2025-02-01 | 20000.00 | 19000.00 |
+| 2025-03-01 | 22000.00 | 20000.00 |
+| 2025-04-01 | 25500.00 | 22500.00 |
+| 2025-05-01 | 21000.00 | 22833.33 |
+| 2025-06-01 | 29700.00 | 25400.00 |
+
 January's moving average is just 18000.00, its own value, since only zero `rows` precede it. February's is the average of January and February, two `rows`. From March onward, every `row`'s moving average is built from exactly three months: itself and the two immediately before it, sliding forward one month at a time as `sale_month` increases, which is exactly the smoothing effect a moving average is meant to produce.
 
 ![A three-row moving average frame sliding across monthly rows](images/10_moving_average_three_row_frame.png)
@@ -83,6 +137,17 @@ SELECT sale_month, total_amount,
 FROM monthly_sales
 ORDER BY sale_month;
 ```
+
+Expected output:
+
+| sale_month | total_amount | centered_avg |
+| --- | --- | --- |
+| 2025-01-01 | 18000.00 | 19000.00 |
+| 2025-02-01 | 20000.00 | 20000.00 |
+| 2025-03-01 | 22000.00 | 22500.00 |
+| 2025-04-01 | 25500.00 | 22833.33 |
+| 2025-05-01 | 21000.00 | 25400.00 |
+| 2025-06-01 | 29700.00 | 25350.00 |
 
 `ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING` centers the frame on the current `row`, including one `row` before and one `row` after, which is a common way to smooth out noisy data symmetrically rather than only looking backward.
 
@@ -125,6 +190,17 @@ Leela wants a 2-month moving total, the current month plus the one before it, fo
 
 If your `query` uses `SUM(total_amount) OVER (ORDER BY sale_month ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS moving_total_2month`, February shows 38000.00, January plus February combined, and March shows 42000.00, February plus March.
 
+
+Expected output:
+
+| sale_month | total_amount | moving_total_2month |
+| --- | --- | --- |
+| 2025-01-01 | 18000.00 | 18000.00 |
+| 2025-02-01 | 20000.00 | 38000.00 |
+| 2025-03-01 | 22000.00 | 42000.00 |
+| 2025-04-01 | 25500.00 | 47500.00 |
+| 2025-05-01 | 21000.00 | 46500.00 |
+| 2025-06-01 | 29700.00 | 50700.00 |
 ## Conclusion
 
 A window frame, written with `ROWS BETWEEN, AND ...`, controls exactly which rows a `window `function`` considers for each calculation, and changing it turns the same `SUM` or `AVG` from a full running total into a fixed-size moving calculation or a centered average. Leela can now build the exact 3-month moving average the director asked for, with full control over how wide that window actually is.

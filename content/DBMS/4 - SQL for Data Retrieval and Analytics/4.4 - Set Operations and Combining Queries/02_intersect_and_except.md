@@ -12,6 +12,30 @@ Tanvi's next request from the marketing team is more specific than a merged mail
 
 The same two customer `tables` from the `UNION` lesson apply here.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the data they will use. The tables below show the rows loaded by the setup file.
+
+### `online_customers`
+
+| customer_name | email |
+| --- | --- |
+| Aditi Kulkarni | aditi.k@example.com |
+| Rohan Das | rohan.das@example.com |
+| Kavya Nair | kavya.nair@example.com |
+
+### `store_customers`
+
+| customer_name | email |
+| --- | --- |
+| Kavya Nair | kavya.nair@example.com |
+| Imran Sheikh | imran.s@example.com |
+| Neha Bhatt | neha.bhatt@example.com |
+
+The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
+
+## Hands-On Setup: Prepare the Data
+
 ```postgresql file=init.sql
 CREATE TABLE online_customers (
     customer_name TEXT,
@@ -34,11 +58,19 @@ INSERT INTO store_customers (customer_name, email) VALUES
 ('Neha Bhatt', 'neha.bhatt@example.com');
 ```
 
+Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
+
 ```postgresql with=init.sql
 SELECT customer_name, email FROM online_customers
 INTERSECT
 SELECT customer_name, email FROM store_customers;
 ```
+
+Expected output:
+
+| customer_name | email |
+| --- | --- |
+| Kavya Nair | kavya.nair@example.com |
 
 - `INTERSECT` compares the two result sets and keeps only the `rows` that appear in both, matching on every selected `column` at once.
 - Here, that means a `row` must have the exact same `customer_name` and `email` in both `online_customers` and `store_customers` to survive.
@@ -56,6 +88,13 @@ EXCEPT
 SELECT customer_name, email FROM store_customers;
 ```
 
+Expected output:
+
+| customer_name | email |
+| --- | --- |
+| Aditi Kulkarni | aditi.k@example.com |
+| Rohan Das | rohan.das@example.com |
+
 This returns Aditi Kulkarni and Rohan Das, the two online customers who do not appear anywhere in `store_customers`, exactly the list the "visit us in person" campaign needs. Order matters with `EXCEPT`: this `query` starts from `online_customers` and subtracts `store_customers`, which is a different question from starting with `store_customers` and subtracting `online_customers`.
 
 ![EXCEPT returning rows from the first customer list after subtracting the second list](images/04_except_first_minus_second.png)
@@ -70,6 +109,13 @@ EXCEPT
 SELECT customer_name, email FROM online_customers;
 ```
 
+Expected output:
+
+| customer_name | email |
+| --- | --- |
+| Imran Sheikh | imran.s@example.com |
+| Neha Bhatt | neha.bhatt@example.com |
+
 This returns Imran Sheikh and Neha Bhatt instead, the store customers who have never shopped online. Unlike `UNION` and `INTERSECT`, where the order of the two `queries` does not change the final set of `rows` returned, `EXCEPT` is directional, much like regular subtraction: 5 minus 2 is not the same as 2 minus 5.
 
 ## The Same Column Rules Apply
@@ -81,6 +127,12 @@ SELECT customer_name FROM online_customers
 INTERSECT
 SELECT customer_name FROM store_customers;
 ```
+
+Expected output:
+
+| customer_name |
+| --- |
+| Kavya Nair |
 
 - Dropping down to just the `customer_name` `column` changes what counts as a match.
 - If two different customers happened to share the exact same name across the two `tables` but had different emails, this narrower `query` would treat them as the same person, while the earlier two-`column` version would correctly keep them apart.
@@ -120,8 +172,17 @@ Tanvi wants to confirm the loyalty reward list a different way: find every store
 
 If your `query` is `SELECT customer_name, email FROM store_customers INTERSECT SELECT customer_name, email FROM online_customers;`, it still returns just Kavya Nair, confirming that unlike `EXCEPT`, swapping the order of the two `queries` in an `INTERSECT` does not change which `rows` come back.
 
+
+Expected output for the practice query:
+
+| customer_name | email |
+| --- | --- |
+| Kavya Nair | kavya.nair@example.com |
+
 ## Conclusion
 
-- `INTERSECT` isolates exactly the `rows` two `queries` have in common, and `EXCEPT` isolates the `rows` one `query` has that the other does not, with `EXCEPT` alone being sensitive to which `query` is written first.
-- Tanvi now has a precise cross-channel shopper list and two direction-specific single-channel lists, all built from the same two source `tables`.
-- Set operations and `joins` can sometimes answer overlapping questions, and knowing which one fits a given situation is worth examining directly.
+`INTERSECT` isolates exactly the `rows` two `queries` have in common, and `EXCEPT` isolates the `rows` one `query` has that the other does not, with `EXCEPT` alone being sensitive to which `query` is written first.
+
+Tanvi now has a precise cross-channel shopper list and two direction-specific single-channel lists, all built from the same two source `tables`.
+
+Set operations and `joins` can sometimes answer overlapping questions, and knowing which one fits a given situation is worth examining directly.

@@ -12,6 +12,21 @@ This is the problem **concurrency control** exists to solve: coordinating multip
 
 The `seats` `table` tracks one `row` per seat, with a simple availability flag.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `seats`
+
+| seat_id | flight_number | is_available |
+| --- | --- | --- |
+| 14C | AI202 | TRUE |
+| 14D | AI202 | TRUE |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE seats (
     seat_id TEXT PRIMARY KEY,
@@ -23,6 +38,8 @@ INSERT INTO seats (seat_id, flight_number, is_available) VALUES
 ('14C', 'AI202', TRUE),
 ('14D', 'AI202', TRUE);
 ```
+
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
 ```postgresql with=init.sql
 -- Passenger A's booking transaction:
@@ -41,6 +58,22 @@ COMMIT;
 
 SELECT * FROM seats WHERE seat_id = '14C';
 ```
+
+Expected output 1:
+
+
+
+| is_available |
+| --- |
+| 1 |
+
+Expected output 2:
+
+
+
+| seat_id | flight_number | is_available |
+| --- | --- | --- |
+| 14C | AI202 | 0 |
 
 - The `SELECT` step, on its own, is not a mistake, and isolation was never violated, since neither passenger read the other's uncommitted work.
 - The problem is the gap in time between reading "available" and acting on that reading with an `UPDATE`.
@@ -106,6 +139,8 @@ Reason through the seats scenario above for a different flight number, imagining
 ```postgresql with=init.sql
 -- Write your queries below, plus a comment describing what protects the second booking
 ```
+
+Expected result and verification:
 
 A safe outcome requires the second passenger's `transaction` to either wait until the first one has committed and then see `is_available = FALSE`, or be blocked from proceeding at all until the first `transaction` finishes, which is exactly the kind of coordination the next few lessons in this chapter cover.
 

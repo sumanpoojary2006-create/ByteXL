@@ -292,7 +292,4 @@ The first `SELECT` shows Siddharth in Hyderabad, the `UPDATE` reuses that same `
 
 ## Conclusion
 
-- `UPDATE` looks like a small statement, a `table` name, a `SET`, sometimes a `WHERE`, but it is the first statement in this material that can silently damage far more than intended if that `WHERE` clause is missing or too loose.
-- The habit that keeps it safe is not clever, it is simply checking with a `SELECT` under the same condition before the change and again right after, so that what was touched is always known rather than assumed.
-- Rohit can now correct Varun Nair's city from Chennai to Bengaluru with total confidence that his `UPDATE` touched that one `row` and nothing else in the students `table`.
-- Correcting a `row` that is wrong is only one kind of change a real system needs; sometimes a `row` needs to disappear entirely, and that calls for a statement with the very same discipline required around it.
+`UPDATE` looks like a small statement, a `table` name, a `SET`, sometimes a `WHERE`, but it is the first statement in this material that can silently damage far more than intended if that `WHERE` clause is missing or too loose. The habit that keeps it safe is not clever, it is simply checking with a `SELECT` under the same condition before the change and again right after, so that what was touched is always known rather than assumed. Rohit can now correct Varun Nair's city from Chennai to Bengaluru with total confidence that his `UPDATE` touched that one `row` and nothing else in the students `table`. Correcting a `row` that is wrong is only one kind of change a real system needs; sometimes a `row` needs to disappear entirely, and that calls for a statement with the very same discipline required around it.

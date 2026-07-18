@@ -6,6 +6,12 @@ RetailRx is a small online store selling electronics, stationery, and accessorie
 
 This project draws on everything from Units 2 through 8: design and normalization, core SQL, retrieval and analytics, advanced querying, transactions, performance tuning, and production security. You will build it in seven stages, each one adding a layer on top of the last, using PostgreSQL throughout.
 
+## Project Workspace
+
+Maintain two PostgreSQL files throughout the capstone. Use `init.sql` as the reproducible source of truth for schema definitions, constraints, seed data, views, functions, triggers, roles, and indexes. Use the active SQL file for the query or test belonging to the stage you are currently completing. When a stage changes the permanent design, move the verified definition into `init.sql` before beginning the next stage.
+
+Before running any query, display or sketch the source tables involved and predict the rows that should be returned or changed. After running it, save the result or execution plan with a short explanation of why it proves the requirement. Performance plans, WAL values, and live server statistics are environment-dependent, so record the operator or trend you observed instead of expecting identical numbers on every run.
+
 ## Stages
 
 ### Stage 1: Design the Schema
@@ -119,3 +125,5 @@ When all seven stages are complete, the RetailRx database:
 - Places orders as all-or-nothing transactions that cannot oversell stock, even under concurrent access
 - Serves order history quickly at real-world data volumes, backed by indexes chosen from measured evidence, not guesswork
 - Hands off a reporting layer that never exposes internal cost data, enforces least privilege, and keeps its own audit trail automatically
+
+Submit the ER diagram, the final `init.sql`, the task-query file, before-and-after execution plans for the performance stage, and evidence for the rollback, concurrency, role, and row-level security tests. A capstone is complete only when the database can be rebuilt from an empty PostgreSQL instance and every saved verification query still demonstrates the stated result.

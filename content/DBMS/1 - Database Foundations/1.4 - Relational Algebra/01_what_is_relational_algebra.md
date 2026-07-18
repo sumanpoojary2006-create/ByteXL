@@ -122,8 +122,6 @@ A dashboard listing "mystery books under 400 rupees, sorted by title" and a repo
 
 ## Conclusion
 
-- `Relational algebra` is the formal, mathematical toolkit underneath every question a relational `database` answers: a small set of operations, each one taking relations in and producing a relation out, that together give a `database` a precise language for expressing and comparing ways of finding an answer.
-- It is not a programming language a person types directly, but the theoretical bedrock that lets `query` planning, and eventually SQL itself, exist on solid ground rather than guesswork.
-- Devika's reporting tool is no longer a mystery box that magically understands "mystery novels under 400 rupees"; she can now see it as a short chain of `relational algebra` operations working on the bookstore's Books relation, the same handful of moves every other request reduces to as well.
+`Relational algebra` is the formal, mathematical toolkit underneath every question a relational `database` answers: a small set of operations, each one taking relations in and producing a relation out, that together give a `database` a precise language for expressing and comparing ways of finding an answer. It is not a programming language a person types directly, but the theoretical bedrock that lets `query` planning, and eventually SQL itself, exist on solid ground rather than guesswork. Devika's reporting tool is no longer a mystery box that magically understands "mystery novels under 400 rupees"; she can now see it as a short chain of `relational algebra` operations working on the bookstore's Books relation, the same handful of moves every other request reduces to as well.
 
 With that foundation in place, the natural next step is to meet the two simplest and most frequently used operations in the toolkit: the one that keeps only the `rows` worth keeping, and the one that keeps only the `columns` worth keeping.

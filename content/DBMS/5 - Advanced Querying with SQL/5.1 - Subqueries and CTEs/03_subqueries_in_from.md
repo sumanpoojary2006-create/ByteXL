@@ -8,6 +8,25 @@ A subquery does not have to sit inside `WHERE` producing a single value or a lis
 
 The `employees` `table` is the same one used throughout this chapter.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `employees`
+
+| employee_id | employee_name | department | salary | manager_id |
+| --- | --- | --- | --- | --- |
+| 1 | Ananya Sharma | Engineering | 95000.00 | NULL |
+| 2 | Rajat Bhatia | Engineering | 78000.00 | 1 |
+| 3 | Meghna Iyer | Engineering | 82000.00 | 1 |
+| 4 | Sameer Khan | Sales | 65000.00 | NULL |
+| 5 | Pooja Reddy | Sales | 58000.00 | 4 |
+| 6 | Vikas Malhotra | Marketing | 60000.00 | NULL |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE employees (
     employee_id INTEGER PRIMARY KEY,
@@ -26,11 +45,21 @@ INSERT INTO employees (employee_id, employee_name, department, salary, manager_i
 (6, 'Vikas Malhotra', 'Marketing', 60000.00, NULL);
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 SELECT department, AVG(salary) AS department_avg
 FROM employees
 GROUP BY department;
 ```
+
+Expected output:
+
+| department | department_avg |
+| --- | --- |
+| Engineering | 85000.00 |
+| Marketing | 60000.00 |
+| Sales | 61500.00 |
 
 This is the first step on its own: three `rows`, one average per department. Now that same `query` becomes the `FROM` clause of an outer `query`, wrapped in parentheses and given an alias.
 
@@ -45,6 +74,8 @@ WHERE department_avg > (SELECT AVG(salary) FROM employees);
 ```
 
 The subquery in `FROM`, aliased here as `dept_averages`, runs first and produces a small three-`row` result:
+
+Expected output:
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
   <thead>
@@ -86,6 +117,14 @@ FROM (
 ) AS dept_averages;
 ```
 
+Expected output:
+
+| department | department_avg |
+| --- | --- |
+| Engineering | 85000.00 |
+| Marketing | 60000.00 |
+| Sales | 61500.00 |
+
 Leaving off `AS dept_averages` here would cause an error in most `databases`; a derived `table` without a name is not something the outer `query` can reference, even implicitly. This is one clear difference from a `WHERE` subquery, which never needs a name since it is only ever compared against, never selected from.
 
 ![A derived table needing an alias name before the outer query can use it](images/06_from_subquery_requires_alias.png)
@@ -104,6 +143,17 @@ JOIN (
     GROUP BY department
 ) AS dept_averages ON e.department = dept_averages.department;
 ```
+
+Expected output:
+
+| employee_name | salary | department_avg | diff_from_dept_avg |
+| --- | --- | --- | --- |
+| Ananya Sharma | 95000.00 | 85000.00 | 10000.00 |
+| Rajat Bhatia | 78000.00 | 85000.00 | -7000.00 |
+| Meghna Iyer | 82000.00 | 85000.00 | -3000.00 |
+| Sameer Khan | 65000.00 | 61500.00 | 3500.00 |
+| Pooja Reddy | 58000.00 | 61500.00 | -3500.00 |
+| Vikas Malhotra | 60000.00 | 60000.00 | 0.00 |
 
 Here, `dept_averages` is `joined` to `employees` on the shared `department` `column`, letting every individual employee `row` see their own department's average sitting right next to their own salary, and a computed `column` shows exactly how far above or below that average each person falls:
 
@@ -149,6 +199,12 @@ Kabir wants to find the single department with the highest average salary, showi
 
 If your `query` wraps `SELECT department, AVG(salary) AS department_avg FROM employees GROUP BY department` as a derived `table`, then applies `ORDER BY department_avg DESC LIMIT 1` on the outer `query`, it returns Engineering as the top-paying department.
 
+
+Expected output:
+
+| department | department_avg |
+| --- | --- |
+| Engineering | 85000.00 |
 ## Conclusion
 
 A subquery in `FROM`, or derived `table`, lets a `query` treat an intermediate result, especially a grouped or aggregated one, as if it were a real `table`, complete with the ability to filter, `join`, or select from it further.

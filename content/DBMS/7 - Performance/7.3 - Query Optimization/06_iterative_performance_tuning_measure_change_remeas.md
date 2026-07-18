@@ -8,6 +8,26 @@ This final lesson walks through that full loop, start to finish, on one `query`.
 
 Before changing anything, the first step is always establishing an honest baseline with `EXPLAIN ANALYZE`, the actual-execution tool covered earlier in this chapter.
 
+## Source Data Used in This Lesson
+
+Some lessons need a larger dataset to make execution plans or maintenance behavior visible. For those tables, `init.sql` generates the rows instead of listing every row manually.
+
+### Generated `orders` dataset
+
+| Column | Definition in the setup |
+| --- | --- |
+| `order_id` | `INTEGER PRIMARY KEY` |
+| `customer_id` | `INTEGER` |
+| `status` | `TEXT` |
+| `amount` | `NUMERIC(10, 2)` |
+| `order_date` | `DATE` |
+
+The setup generates 60,000 rows, numbered from 1 through 60000. This scale is intentional because performance behavior is difficult to observe on a tiny table.
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
@@ -25,6 +45,8 @@ SELECT i, (i % 8000) + 1,
 FROM generate_series(1, 60000) AS i;
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 EXPLAIN ANALYZE
 SELECT customer_id, SUM(amount) AS total_refunded
@@ -33,6 +55,8 @@ WHERE status = 'refunded' AND order_date > '2025-06-01'
 GROUP BY customer_id
 ORDER BY total_refunded DESC;
 ```
+
+Expected observation: PostgreSQL returns an execution-plan tree with estimated costs and measured values such as actual time, rows, and loops. Exact numbers vary by server, so identify the scan or join nodes and compare them with the explanation below.
 
 This baseline plan, with no supporting `index` on either `status` or `order_date`, is expected to show a `sequential scan` across all 60000 `rows` before filtering down to the small refunded, recent subset the `query` actually cares about. Recording this baseline's actual time is essential, since without it, there is no way to later confirm whether a change genuinely helped or made no real difference.
 
@@ -46,6 +70,8 @@ Rather than adding several `indexes` at once, the disciplined approach is one ch
 CREATE INDEX idx_orders_status_date ON orders (status, order_date);
 ```
 
+Expected observation: PostgreSQL confirms that the index was created. The command does not return business rows; its effect is verified by rerunning the related query or `EXPLAIN` statement.
+
 This single, targeted change is the entire first iteration, nothing else about the `query` or the `schema` is touched yet, keeping the next measurement a clean, isolated comparison against the baseline.
 
 ## Step Three: Re-measure and Compare
@@ -58,6 +84,8 @@ WHERE status = 'refunded' AND order_date > '2025-06-01'
 GROUP BY customer_id
 ORDER BY total_refunded DESC;
 ```
+
+Expected observation: PostgreSQL returns an execution-plan tree with estimated costs and measured values such as actual time, rows, and loops. Exact numbers vary by server, so identify the scan or join nodes and compare them with the explanation below.
 
 Comparing this plan's actual time directly against the baseline's is the entire point of the exercise:
 
@@ -79,6 +107,8 @@ GROUP BY customer_id
 ORDER BY total_refunded DESC
 LIMIT 10;
 ```
+
+Expected observation: PostgreSQL returns an execution-plan tree with estimated costs and measured values such as actual time, rows, and loops. Exact numbers vary by server, so identify the scan or join nodes and compare them with the explanation below.
 
 If the actual business need only ever wants the top 10 customers by refund total, adding `LIMIT 10` is itself a legitimate next iteration, changing the `query` rather than the `schema`, and it is worth re-measuring separately from the `indexing` change to see how much it alone contributes, keeping each iteration's effect distinct and attributable.
 
@@ -124,6 +154,8 @@ Using the `orders` `table` above, measure the baseline for a `query` filtering `
 ```postgresql with=init.sql
 -- Write your queries below
 ```
+
+Expected result and verification:
 
 Running `EXPLAIN ANALYZE SELECT * FROM orders WHERE customer_id = 4000;` first establishes a sequential-scan baseline, then `CREATE INDEX idx_orders_customer_id ON orders (customer_id);` followed by the same `EXPLAIN ANALYZE` a second time confirms the switch to an `index scan` and a measurably lower actual time, the complete loop applied end to end.
 

@@ -224,11 +224,6 @@ None of the six mistakes Meenal found were exotic or hard to explain once named;
 
 A `schema` review exists precisely to catch these shortcuts before real students, real bookings, and real money start depending on a design that quietly cannot be trusted to stay accurate or safe as it grows. Meenal's corrected Students and Bookings `tables` are not clever or unusual, they are simply careful, built from the same handful of habits:
 
-- A real `primary key`
-- Consistent names
-- Exact money
-- A visible history
-- No duplicated facts
-- An identifier suited to how it will actually be used
+Those habits are straightforward: choose a real `primary key`, use consistent names, store money exactly, preserve a visible history, avoid duplicated facts, and select an identifier that suits how it will actually be used.
 
 With a design this solid finally in place, the last piece left is learning the language that actually reaches into these `tables` and pulls answers back out of them, which is where the real, hands-on work of asking a `database` questions begins.

@@ -14,6 +14,20 @@ A `database`'s `recovery` system exists to survive all of these, but each one de
 
 The narrowest kind of failure affects a single `transaction`, without touching the rest of the system at all. A `CHECK` `constraint` violation, a deadlock that forces one `transaction` to abort, or an application explicitly calling `ROLLBACK`, all fall into this category.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `accounts`
+
+| account_id | balance |
+| --- | --- |
+| 1 | 5000.00 |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
@@ -22,6 +36,8 @@ CREATE TABLE accounts (
 
 INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00);
 ```
+
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
 ```postgresql with=init.sql
 -- This transaction would fail because the CHECK constraint
@@ -32,6 +48,14 @@ INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00);
 
 SELECT balance FROM accounts WHERE account_id = 1;
 ```
+
+Expected output:
+
+
+
+| balance |
+| --- |
+| 5000.00 |
 
 This `transaction` fails because it would push the balance negative, violating the `CHECK` `constraint`. The `database` rejects it, and atomicity, already covered in this unit, guarantees the `transaction` leaves no partial trace. Every other `transaction`, and the rest of the server, is completely unaffected; this is the mildest, most routine kind of failure a `database` handles, essentially just a rejected statement.
 
@@ -45,6 +69,8 @@ UPDATE accounts SET balance = balance - 1000.00 WHERE account_id = 1;
 -- Imagine a total power loss right here, before COMMIT.
 ```
 
+Expected observation: PostgreSQL completes the transaction-control statements. Use the following explanation and any closing `SELECT` to verify whether the changes were committed or rolled back.
+
 A `transaction` caught uncommitted at the moment of a crash is expected to simply vanish once the system restarts, which is exactly what atomicity already promises; the `database`'s `recovery` process, covered later in this chapter, is what makes sure of that automatically on startup, without a human needing to manually clean anything up.
 
 The harder question a system crash raises is about the other side of the coin: `transactions` that had already committed right before the crash. Durability, covered earlier in this unit, is the guarantee that those survive, and `recovery` is the mechanism that actually delivers on that guarantee after a restart.
@@ -56,6 +82,14 @@ The most serious kind of failure is a media failure: the physical storage itself
 ```postgresql with=init.sql
 SELECT balance FROM accounts WHERE account_id = 1;
 ```
+
+Expected output:
+
+
+
+| balance |
+| --- |
+| 5000.00 |
 
 If the physical disk holding this `table` failed entirely, this `query` would find nothing to read at all, not even a stale value, since there would be no data files left to read from.
 
@@ -107,6 +141,8 @@ Using the `accounts` `table` above, write a `transaction` that intentionally vio
 ```postgresql with=init.sql
 -- Write your transaction and comment below
 ```
+
+Expected result and verification:
 
 - A `transaction` like `BEGIN
 - `UPDATE` accounts SET balance = -1.00 `WHERE` account_id = 1

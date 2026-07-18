@@ -9,6 +9,21 @@ An earlier unit covered the discipline of wrapping related statements in `BEGIN`
 
 A `transaction` is tied entirely to the specific `connection` it was started on; it is not a general, `database`-wide state, and no other `connection` can see, join, or affect it.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `shipments`
+
+| shipment_id | status |
+| --- | --- |
+| 1 | in_transit |
+| 2 | in_transit |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
@@ -17,6 +32,8 @@ CREATE TABLE shipments (
 
 INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'in_transit');
 ```
+
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
 ```postgresql with=init.sql
 SELECT pid, state FROM pg_stat_activity WHERE pid = pg_backend_pid();
@@ -28,6 +45,8 @@ SELECT pid, state FROM pg_stat_activity WHERE pid = pg_backend_pid();
 
 COMMIT;
 ```
+
+Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
 The `state` `column` changes from `idle` to `active` (or briefly `idle in transaction` between statements) once `BEGIN` runs, and this state belongs specifically to this one `connection`'s process id, `pg_backend_pid()`.
 
@@ -47,6 +66,8 @@ UPDATE shipments SET status = 'cancelled' WHERE shipment_id = 2;
 SELECT pid, state, query FROM pg_stat_activity WHERE state = 'idle in transaction';
 ```
 
+Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
+
 A `connection` stuck like this continues holding its `lock` on shipment 2's `row` for as long as the `connection` stays open, potentially blocking every other `transaction` that needs that same `row`, exactly the kind of contention the concurrency control unit covered.
 
 This is precisely why well-written application code always wraps its `transaction` logic in a structure that guarantees `COMMIT` or `ROLLBACK` runs no matter what, even when an unexpected error occurs, the same discipline covered when `transactions` in application code were first introduced.
@@ -54,6 +75,8 @@ This is precisely why well-written application code always wraps its `transactio
 ```postgresql with=init.sql
 ROLLBACK;
 ```
+
+Expected observation: PostgreSQL completes the statement, and the explanation below identifies the database object, permission, or operational effect to verify.
 
 ## Savepoints: Partial Rollback Within a Larger Transaction
 
@@ -74,6 +97,8 @@ SELECT * FROM shipments;
 
 COMMIT;
 ```
+
+Expected result: PostgreSQL applies the requested change. Use the follow-up query and the explanation below to confirm the affected rows or refreshed data.
 
 - `SAVEPOINT before_risky_step` marks a checkpoint partway through the `transaction`.
 - `ROLLBACK TO SAVEPOINT before_risky_step` undoes only the changes made after that point, shipment 2's incorrect update, while keeping everything before it, shipment 1's valid update, fully intact and still part of the `transaction`.
@@ -123,6 +148,8 @@ Start a `transaction`, update shipment 1's status to `'delivered'`, set a savepo
 ```postgresql with=init.sql
 -- Write your transaction below
 ```
+
+Expected result and verification:
 
 Following the pattern demonstrated above, `BEGIN; UPDATE shipments SET status = 'delivered' WHERE shipment_id = 1; SAVEPOINT sp1; UPDATE shipments SET status = 'oops' WHERE shipment_id = 2; ROLLBACK TO SAVEPOINT sp1; COMMIT;` leaves shipment 1 delivered and shipment 2 unchanged from its original status.
 

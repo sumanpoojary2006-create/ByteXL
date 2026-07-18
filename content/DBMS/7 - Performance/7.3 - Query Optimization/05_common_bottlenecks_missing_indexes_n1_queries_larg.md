@@ -10,6 +10,25 @@ Most real-world performance problems trace back to a small handful of recurring 
 
 The clearest, most mechanical bottleneck is a filter condition on a `column` with no supporting `index`, forcing a `sequential scan` even when very few `rows` actually match.
 
+## Source Data Used in This Lesson
+
+Some lessons need a larger dataset to make execution plans or maintenance behavior visible. For those tables, `init.sql` generates the rows instead of listing every row manually.
+
+### Generated `orders` dataset
+
+| Column | Definition in the setup |
+| --- | --- |
+| `order_id` | `INTEGER PRIMARY KEY` |
+| `customer_id` | `INTEGER` |
+| `status` | `TEXT` |
+| `amount` | `NUMERIC(10, 2)` |
+
+The setup generates 50,000 rows, numbered from 1 through 50000. This scale is intentional because performance behavior is difficult to observe on a tiny table.
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
@@ -25,9 +44,13 @@ SELECT i, (i % 5000) + 1,
 FROM generate_series(1, 50000) AS i;
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 EXPLAIN ANALYZE SELECT * FROM orders WHERE status = 'flagged';
 ```
+
+Expected observation: PostgreSQL returns an execution-plan tree with estimated costs and measured values such as actual time, rows, and loops. Exact numbers vary by server, so identify the scan or join nodes and compare them with the explanation below.
 
 Only about 1 in 1000 `rows` are flagged, a highly selective condition, but with no `index` on `status`, the plan is forced into a `sequential scan` of all 50000 `rows` to find the roughly 50 that match. This is the most straightforward bottleneck to diagnose, `EXPLAIN` clearly shows a `sequential scan`, and the fix, an `index`, is exactly what the previous chapter covered.
 
@@ -36,6 +59,8 @@ CREATE INDEX idx_orders_status ON orders (status);
 
 EXPLAIN ANALYZE SELECT * FROM orders WHERE status = 'flagged';
 ```
+
+Expected observation: PostgreSQL returns an execution-plan tree with estimated costs and measured values such as actual time, rows, and loops. Exact numbers vary by server, so identify the scan or join nodes and compare them with the explanation below.
 
 The plan switches to an `index scan`, and the actual measured time drops accordingly, precisely the diagnostic workflow, run `EXPLAIN ANALYZE`, spot a `sequential scan` on a selective filter, add an `index`, confirm the plan changes.
 
@@ -59,6 +84,8 @@ SELECT customer_id FROM orders GROUP BY customer_id LIMIT 5;
 -- total amount of data needed is the same either way.
 ```
 
+Expected result: the query returns the rows or aggregate described below. In this performance lesson, also note the access method and timing rather than judging the query only by its returned values.
+
 The fix is almost always the same one covered throughout the `joins` chapter: replace the loop of individual `queries` with a single `query` that `joins` or filters for everything needed at once.
 
 ```postgresql with=init.sql
@@ -68,6 +95,8 @@ WHERE customer_id IN (
     SELECT customer_id FROM orders GROUP BY customer_id LIMIT 5
 );
 ```
+
+Expected result: the query returns the rows or aggregate described below. In this performance lesson, also note the access method and timing rather than judging the query only by its returned values.
 
 This single `query` retrieves the exact same data the 6-`query` loop above would have gathered. It does that as one round trip instead of six. The gap between the two approaches only widens as the number of parent `rows` grows.
 
@@ -85,11 +114,15 @@ CREATE INDEX idx_orders_amount ON orders (amount);
 EXPLAIN SELECT * FROM orders WHERE amount::TEXT = '525.00';
 ```
 
+Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
+
 Casting `amount` to text before comparing defeats `idx_orders_amount`, since the `index` is built on the numeric `column`'s own sorted values, not on a text-converted version of them, forcing a `sequential scan` despite an `index` technically existing on the underlying `column`. This is a subtle bottleneck precisely because the `query` author may not realize the cast is even happening, especially if it was introduced indirectly through application code building the condition dynamically.
 
 ```postgresql with=init.sql
 EXPLAIN SELECT * FROM orders WHERE amount = 525.00;
 ```
+
+Expected observation: PostgreSQL returns an estimated execution-plan tree. Costs and row estimates vary by environment; focus on whether the plan uses a sequential scan, index scan, sort, hash, or join node.
 
 Removing the cast and comparing directly against the numeric value restores the `index scan`, confirming the cast, not the `index` itself, was the actual bottleneck.
 
@@ -131,6 +164,8 @@ Check whether filtering `orders` on `customer_id = 42` uses an `index`, given th
 ```postgresql with=init.sql
 -- Write your queries below
 ```
+
+Expected result and verification:
 
 `EXPLAIN SELECT * FROM orders WHERE customer_id = 42;` shows a `sequential scan` before an `index` exists; after running `CREATE INDEX idx_orders_customer_id ON orders (customer_id);`, the same `EXPLAIN` shows an `index scan` instead, the same missing-`index` bottleneck pattern from earlier in this lesson.
 

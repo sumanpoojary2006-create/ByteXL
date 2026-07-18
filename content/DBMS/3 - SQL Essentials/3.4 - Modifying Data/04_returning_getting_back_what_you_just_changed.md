@@ -205,7 +205,4 @@ The result shows student_id 6, full_name Kabir Sethi, city Chennai, all confirme
 
 ## Conclusion
 
-- `RETURNING` turns a modification into its own confirmation, handing back exactly the `row` an `INSERT` just created, an `UPDATE` just changed, or a `DELETE` just removed, without a second statement needed to check the result.
-- It is a small addition to type but a genuine improvement in certainty, since what comes back is guaranteed to reflect that one statement's effect and nothing that happened in between.
-- Zara no longer needs a separate `SELECT` just to learn the enrollment_id the `database` assigned her new `row`; `RETURNING` hands it back in the very same statement that created it.
-- There remains one more common situation these statements alone do not cleanly handle: not knowing in advance whether a `row` already exists, and needing to insert it if it does not or update it if it does, in a single dependable step.
+`RETURNING` turns a modification into its own confirmation, handing back exactly the `row` an `INSERT` just created, an `UPDATE` just changed, or a `DELETE` just removed, without a second statement needed to check the result. It is a small addition to type but a genuine improvement in certainty, since what comes back is guaranteed to reflect that one statement's effect and nothing that happened in between. Zara no longer needs a separate `SELECT` just to learn the enrollment_id the `database` assigned her new `row`; `RETURNING` hands it back in the very same statement that created it. There remains one more common situation these statements alone do not cleanly handle: not knowing in advance whether a `row` already exists, and needing to insert it if it does not or update it if it does, in a single dependable step.

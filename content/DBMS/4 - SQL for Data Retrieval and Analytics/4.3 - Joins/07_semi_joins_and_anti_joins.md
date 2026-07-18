@@ -8,6 +8,44 @@ There is a more direct way to ask "does a matching `row` exist" or "does no matc
 
 The same delivery `schema` applies here, with Neha Bhatt having no orders and Taco Town having no orders.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the data they will use. The tables below show the rows loaded by the setup file.
+
+### `customers`
+
+| customer_id | customer_name | city |
+| --- | --- | --- |
+| 1 | Aditi Kulkarni | Pune |
+| 2 | Rohan Das | Kolkata |
+| 3 | Kavya Nair | Kochi |
+| 4 | Imran Sheikh | Hyderabad |
+| 5 | Neha Bhatt | Ahmedabad |
+
+### `restaurants`
+
+| restaurant_id | restaurant_name | city |
+| --- | --- | --- |
+| 1 | Pizza Palace | Pune |
+| 2 | Sushi Central | Kolkata |
+| 3 | Burger Barn | Pune |
+| 4 | Taco Town | Hyderabad |
+
+### `orders`
+
+| order_id | customer_id | restaurant_id | amount | order_date |
+| --- | --- | --- | --- | --- |
+| 1 | 1 | 1 | 450 | 2025-05-01 |
+| 2 | 2 | 2 | 620 | 2025-05-02 |
+| 3 | 1 | 3 | 300 | 2025-05-03 |
+| 4 | 3 | 1 | 500 | 2025-05-04 |
+| 5 | 4 | 2 | 275 | 2025-05-05 |
+| 6 | 2 | 3 | 180 | 2025-05-06 |
+
+The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
+
+## Hands-On Setup: Prepare the Data
+
 ```postgresql file=init.sql
 CREATE TABLE customers (
     customer_id INTEGER PRIMARY KEY,
@@ -51,6 +89,8 @@ INSERT INTO orders (order_id, customer_id, restaurant_id, amount, order_date) VA
 (6, 2, 3, 180.00, '2025-05-06');
 ```
 
+Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
+
 ```postgresql with=init.sql
 SELECT customer_name
 FROM customers c
@@ -58,6 +98,15 @@ WHERE EXISTS (
     SELECT 1 FROM orders o WHERE o.customer_id = c.customer_id
 );
 ```
+
+Expected output:
+
+| customer_name |
+| --- |
+| Aditi Kulkarni |
+| Rohan Das |
+| Kavya Nair |
+| Imran Sheikh |
 
 - `EXISTS` checks whether the inner `query` returns at least one `row` for the current customer, and if it does, that customer is kept.
 - The inner `query`, `SELECT 1 FROM orders o WHERE o.customer_id = c.customer_id`, never actually needs the value 1 for anything; it exists purely to test for a matching `row`, so the `database` can stop looking the moment it finds one match, without ever needing to return an order's actual `columns`.
@@ -83,6 +132,12 @@ WHERE NOT EXISTS (
 );
 ```
 
+Expected output:
+
+| customer_name |
+| --- |
+| Neha Bhatt |
+
 - This returns exactly one `row`, Neha Bhatt, the same answer the `LEFT `JOIN` ...
 - `WHERE` order_id IS NULL` pattern produced earlier, but arrived at without ever `joining` a single column from `orders` into the result.
 - For a pure existence check like this one, `NOT EXISTS` states the intent more directly: "keep this customer only if no order references them," rather than "`join` every order, then throw away everything except the empty matches."
@@ -99,11 +154,26 @@ FROM customers
 WHERE customer_id IN (SELECT customer_id FROM orders);
 ```
 
+Expected output:
+
+| customer_name |
+| --- |
+| Aditi Kulkarni |
+| Rohan Das |
+| Kavya Nair |
+| Imran Sheikh |
+
 ```postgresql with=init.sql
 SELECT customer_name
 FROM customers
 WHERE customer_id NOT IN (SELECT customer_id FROM orders WHERE customer_id IS NOT NULL);
 ```
+
+Expected output:
+
+| customer_name |
+| --- |
+| Neha Bhatt |
 
 The first `query` is a semi `join` written with `IN`, returning customers whose id appears anywhere in the `orders.customer_id` `column`.
 
@@ -158,6 +228,13 @@ Zoya wants to find every restaurant that has never received an order, using an e
 ```
 
 If your `query` is `SELECT restaurant_name FROM restaurants r WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.restaurant_id = r.restaurant_id);`, it returns Taco Town, the one restaurant with no matching orders.
+
+
+Expected output for the practice query:
+
+| restaurant_name |
+| --- |
+| Taco Town |
 
 ## Conclusion
 

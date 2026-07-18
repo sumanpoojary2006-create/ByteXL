@@ -10,7 +10,50 @@ A set of analytical SQL queries over a small `customers`, `products`, and `order
 
 ## Dataset
 
-```sql
+Before writing project queries, inspect the starting data so every task has a visible source to reason from.
+
+### Starting `customers` rows
+
+| full_name | email | city | referred_by |
+| --- | --- | --- | --- |
+| ananya rao | ananya@mail.com | Bengaluru | NULL |
+| RAHUL NAIR | rahul@mail.com | NULL | 1 |
+| Priya Menon | NULL | Kochi | 1 |
+| Karan Shah | karan@mail.com | Mumbai | NULL |
+| Divya Iyer | divya@mail.com | Bengaluru | 4 |
+
+### Starting `products` rows
+
+| name | category | price |
+| --- | --- | --- |
+| Notebook | Stationery | 45.00 |
+| Pen | Stationery | 10.00 |
+| Wireless Mouse | Electronics | 599.00 |
+| Desk Lamp | Electronics | 350.00 |
+| Backpack | Accessories | 899.00 |
+
+### Starting `orders` rows
+
+| customer_id | order_date |
+| --- | --- |
+| 1 | 2026-01-05 |
+| 1 | 2026-02-14 |
+| 2 | 2026-01-20 |
+| 4 | 2026-02-02 |
+
+### Starting `order_items` rows
+
+| order_id | product_id | quantity |
+| --- | --- | --- |
+| 1 | 1 | 5 |
+| 1 | 3 | 1 |
+| 2 | 4 | 2 |
+| 3 | 2 | 10 |
+| 4 | 5 | 1 |
+| 4 | 3 | 2 |
+Use two files in OneCompiler. Keep all `CREATE TABLE` and `INSERT` statements in `init.sql`; keep only the current task query in the active SQL file. The `with=init.sql` attribute connects the two files.
+
+```postgresql file=init.sql
 CREATE TABLE customers (
     customer_id  INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     full_name    TEXT NOT NULL,
@@ -59,6 +102,20 @@ INSERT INTO orders (customer_id, order_date) VALUES
 INSERT INTO order_items (order_id, product_id, quantity) VALUES
 (1, 1, 5), (1, 3, 1), (2, 4, 2), (3, 2, 10), (4, 5, 1), (4, 3, 2);
 ```
+
+### Confirm the Setup
+
+Run this in the active SQL file before starting the tasks. It confirms that `init.sql` loaded the expected number of rows.
+
+```postgresql with=init.sql
+SELECT COUNT(*) AS loaded_rows FROM customers;
+```
+
+Expected output:
+
+| loaded_rows |
+| --- |
+| 5 |
 
 ## Tasks
 

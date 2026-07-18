@@ -8,6 +8,22 @@ A `view` built simply enough can be genuinely **updatable**, passing writes stra
 
 A `view` built from a single `table`, with a straightforward `SELECT` and no aggregation, is updatable without any special setup.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `shipments`
+
+| shipment_id | driver_id | status | destination |
+| --- | --- | --- | --- |
+| 1 | 1 | in_transit | Mumbai |
+| 2 | 2 | delivered | Pune |
+| 3 | 1 | in_transit | Nagpur |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
@@ -27,11 +43,15 @@ FROM shipments
 WHERE status = 'in_transit';
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 UPDATE in_transit_shipments SET destination = 'Thane' WHERE shipment_id = 1;
 
 SELECT * FROM shipments WHERE shipment_id = 1;
 ```
+
+Expected result: PostgreSQL applies the requested change. Use the follow-up query and the explanation below to confirm the affected rows or refreshed data.
 
 The `UPDATE` was issued against `in_transit_shipments`, the `view`, not `shipments` directly, and the underlying `table`'s `row` genuinely changed, confirmed by the final `SELECT` against `shipments` itself. PostgreSQL is able to translate this write for two reasons:
 
@@ -63,6 +83,8 @@ JOIN drivers d ON s.driver_id = d.driver_id;
 
 SELECT * FROM shipments_with_driver;
 ```
+
+Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
 
 This `UPDATE` fails, since PostgreSQL refuses to guess how to translate a write against a `join`ed `view` back into the correct underlying `table` and `row`. The rule is not about the `view` being "too complicated" in a vague sense; it is specifically about whether the mapping from a `view` `row` back to exactly one underlying `table` `row` is unambiguous, and a `join` between two `tables` inherently breaks that guarantee.
 
@@ -98,6 +120,8 @@ GROUP BY driver_id;
 
 SELECT * FROM driver_shipment_counts;
 ```
+
+Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
 
 This fails for a more fundamental reason than the `join` case: `shipment_count` is not a stored value at all, it is calculated fresh from however many `rows` currently match, so "setting" it to 5 is not a meaningful operation the `database` could even attempt to translate into a real change.
 
@@ -172,6 +196,8 @@ SELECT * FROM driver_shipment_counts;
 
 -- Write your view and update below
 ```
+
+Expected result and verification:
 
 If your `view` is `CREATE VIEW delivered_shipments AS SELECT shipment_id, destination FROM shipments WHERE status = 'delivered';` followed by `UPDATE delivered_shipments SET destination = 'Kothrud' WHERE shipment_id = 2;`, a `SELECT * FROM shipments WHERE shipment_id = 2;` confirms the underlying `row`'s destination genuinely changed to Kothrud.
 

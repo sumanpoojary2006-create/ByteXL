@@ -8,6 +8,48 @@ Zoya's dispatch manager wants exactly that: one line per order showing the custo
 
 `orders` now references three other `tables` at once: `customers`, `restaurants`, and `riders`.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the data they will use. The tables below show the rows loaded by the setup file.
+
+### `customers`
+
+| customer_id | customer_name |
+| --- | --- |
+| 1 | Aditi Kulkarni |
+| 2 | Rohan Das |
+| 3 | Kavya Nair |
+
+### `restaurants`
+
+| restaurant_id | restaurant_name |
+| --- | --- |
+| 1 | Pizza Palace |
+| 2 | Sushi Central |
+| 3 | Burger Barn |
+
+### `riders`
+
+| rider_id | rider_name |
+| --- | --- |
+| 1 | Suresh Pillai |
+| 2 | Deepa Krishnan |
+| 3 | Om Prakash |
+
+### `orders`
+
+| order_id | customer_id | restaurant_id | rider_id | amount |
+| --- | --- | --- | --- | --- |
+| 1 | 1 | 1 | 2 | 450 |
+| 2 | 2 | 2 | 1 | 620 |
+| 3 | 1 | 3 | 3 | 300 |
+| 4 | 3 | 1 | 2 | 500 |
+| 5 | 2 | 3 | 1 | 180 |
+
+The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
+
+## Hands-On Setup: Prepare the Data
+
 ```postgresql file=init.sql
 CREATE TABLE customers (
     customer_id INTEGER PRIMARY KEY,
@@ -49,6 +91,8 @@ INSERT INTO orders (order_id, customer_id, restaurant_id, rider_id, amount) VALU
 (5, 2, 3, 1, 180.00);
 ```
 
+Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
+
 ```postgresql with=init.sql
 SELECT orders.order_id,
        customers.customer_name,
@@ -60,6 +104,16 @@ JOIN customers ON orders.customer_id = customers.customer_id
 JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id
 JOIN riders ON orders.rider_id = riders.rider_id;
 ```
+
+Expected output:
+
+| order_id | customer_name | restaurant_name | rider_name | amount |
+| --- | --- | --- | --- | --- |
+| 1 | Aditi Kulkarni | Pizza Palace | Deepa Krishnan | 450 |
+| 2 | Rohan Das | Sushi Central | Suresh Pillai | 620 |
+| 3 | Aditi Kulkarni | Burger Barn | Om Prakash | 300 |
+| 4 | Kavya Nair | Pizza Palace | Deepa Krishnan | 500 |
+| 5 | Rohan Das | Burger Barn | Suresh Pillai | 180 |
 
 Each `JOIN` clause attaches one more `table` to the result, and the `database` processes them in sequence:
 
@@ -85,6 +139,16 @@ JOIN restaurants r ON o.restaurant_id = r.restaurant_id
 JOIN riders d ON o.rider_id = d.rider_id;
 ```
 
+Expected output:
+
+| order_id | customer_name | restaurant_name | rider_name | amount |
+| --- | --- | --- | --- | --- |
+| 1 | Aditi Kulkarni | Pizza Palace | Deepa Krishnan | 450 |
+| 2 | Rohan Das | Sushi Central | Suresh Pillai | 620 |
+| 3 | Aditi Kulkarni | Burger Barn | Om Prakash | 300 |
+| 4 | Kavya Nair | Pizza Palace | Deepa Krishnan | 500 |
+| 5 | Rohan Das | Burger Barn | Suresh Pillai | 180 |
+
 - `orders o`, `customers c`, `restaurants r`, and `riders d` give each `table` a short alias immediately after naming it, and every `column` reference afterward uses that alias instead of the full `table` name.
 - This produces the identical result to the previous `query`, just noticeably shorter to type and easier to scan, especially once `WHERE`, `GROUP BY`, or `ORDER BY` clauses are added on top.
 
@@ -100,6 +164,16 @@ JOIN customers c ON o.customer_id = c.customer_id
 JOIN restaurants r ON o.restaurant_id = r.restaurant_id
 LEFT JOIN riders d ON o.rider_id = d.rider_id;
 ```
+
+Expected output:
+
+| order_id | customer_name | restaurant_name | rider_name |
+| --- | --- | --- | --- |
+| 1 | Aditi Kulkarni | Pizza Palace | Deepa Krishnan |
+| 2 | Rohan Das | Sushi Central | Suresh Pillai |
+| 3 | Aditi Kulkarni | Burger Barn | Om Prakash |
+| 4 | Kavya Nair | Pizza Palace | Deepa Krishnan |
+| 5 | Rohan Das | Burger Barn | Suresh Pillai |
 
 - Every order still requires a valid customer and a valid restaurant to appear, since those two `joins` stay as strict `INNER JOIN`, but an order would still show up even with a `NULL` rider name if its `rider_id` did not match anything in `riders`.
 - Mixing `join` types like this lets a `query` express exactly which relationships are mandatory and which are optional, all in one statement.
@@ -117,6 +191,14 @@ JOIN riders d ON o.rider_id = d.rider_id
 GROUP BY d.rider_name
 ORDER BY deliveries DESC;
 ```
+
+Expected output:
+
+| rider_name | deliveries | total_delivered_value |
+| --- | --- | --- |
+| Suresh Pillai | 2 | 800 |
+| Deepa Krishnan | 2 | 950 |
+| Om Prakash | 1 | 300 |
 
 This groups by rider name after the `join` has already attached each order to its rider, giving a per-rider delivery count and total value in one `query`, built from data spread across two `tables`.
 
@@ -159,8 +241,19 @@ The dispatch manager wants a report showing, for every order over 300 in amount,
 
 If your `query` `joins` `orders` to `customers` and `riders`, filters with `WHERE o.amount > 300`, and orders by `o.amount DESC`, Rohan Das's order delivered by Suresh Pillai comes out on top at 620.00.
 
+
+Expected output for the practice query:
+
+| customer_name | rider_name |
+| --- | --- |
+| Rohan Das | Suresh Pillai |
+| Kavya Nair | Deepa Krishnan |
+| Aditi Kulkarni | Deepa Krishnan |
+
 ## Conclusion
 
-- `Joining` three or more `tables` is just the same `JOIN` clause repeated once per additional `table`, each one widening the working result before the next `join`, filter, or grouping step runs, with aliases keeping the `query` readable as the `table` count grows.
-- Zoya can now build a single `query` that reaches across customers, restaurants, riders, and orders at once.
-- Every `join` covered so far has matched `rows` that share a value; the last two lessons in this chapter cover `joins` built to check for existence or absence instead.
+`Joining` three or more `tables` is just the same `JOIN` clause repeated once per additional `table`, each one widening the working result before the next `join`, filter, or grouping step runs, with aliases keeping the `query` readable as the `table` count grows.
+
+Zoya can now build a single `query` that reaches across customers, restaurants, riders, and orders at once.
+
+Every `join` covered so far has matched `rows` that share a value; the last two lessons in this chapter cover `joins` built to check for existence or absence instead.

@@ -12,7 +12,21 @@ A PostgreSQL `club_members` table for a college coding club, queried and modifie
 
 Create the table and load it with this data:
 
-```sql
+Before writing project queries, inspect the starting data so every task has a visible source to reason from.
+
+### Starting `club_members` rows
+
+| full_name | branch | year_of_study | email | membership_status | joined_on |
+| --- | --- | --- | --- | --- | --- |
+| Ananya Rao | CSE | 2 | ananya.rao@college.edu | active | 2025-08-14 |
+| Rahul Nair | ECE | 3 | rahul.nair@college.edu | active | 2025-08-15 |
+| Priya Menon | CSE | 1 | NULL | active | 2026-01-10 |
+| Karan Shah | MECH | 4 | karan.shah@college.edu | inactive | 2024-08-20 |
+| Divya Iyer | IT | 2 | divya.iyer@college.edu | active | 2025-08-14 |
+| Arjun Verma | CSE | 3 | arjun.verma@college.edu | active | 2025-08-18 |
+Use two files in OneCompiler. Keep all `CREATE TABLE` and `INSERT` statements in `init.sql`; keep only the current task query in the active SQL file. The `with=init.sql` attribute connects the two files.
+
+```postgresql file=init.sql
 CREATE TABLE club_members (
     member_id         INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     full_name         TEXT NOT NULL,
@@ -31,6 +45,20 @@ INSERT INTO club_members (full_name, branch, year_of_study, email, membership_st
 ('Divya Iyer', 'IT', 2, 'divya.iyer@college.edu', 'active', '2025-08-14'),
 ('Arjun Verma', 'CSE', 3, 'arjun.verma@college.edu', 'active', '2025-08-18');
 ```
+
+### Confirm the Setup
+
+Run this in the active SQL file before starting the tasks. It confirms that `init.sql` loaded the expected number of rows.
+
+```postgresql with=init.sql
+SELECT COUNT(*) AS loaded_rows FROM club_members;
+```
+
+Expected output:
+
+| loaded_rows |
+| --- |
+| 6 |
 
 ## Tasks
 
@@ -56,12 +84,14 @@ INSERT INTO club_members (full_name, branch, year_of_study, email, membership_st
 3. Karan Shah has left the club. Instead of deleting his row, update his `membership_status` to `'inactive'`. Add a SQL comment explaining why a soft status change is usually safer than a hard `DELETE` for membership data.
 4. Use `INSERT ... ON CONFLICT` so that re-inserting a member with an email that already exists updates their `membership_status` to `'active'` instead of failing or creating a duplicate row.
 
-   ```sql
+   ```postgresql with=init.sql
    INSERT INTO club_members (full_name, branch, year_of_study, email, membership_status)
    VALUES ('Ananya Rao', 'CSE', 2, 'ananya.rao@college.edu', 'active')
    ON CONFLICT (email)
    DO UPDATE SET membership_status = EXCLUDED.membership_status;
    ```
+
+Expected result: Ananya's existing row remains unique and its `membership_status` is `active`; no duplicate email row is created.
 
 **Answer these questions after completing all tasks:**
 - Task 2.5 asked you to filter for emails that are not missing. Did you write `email != NULL` or `email IS NOT NULL`? Try the first version in your SQL client: what actually happens, and why do the usual comparison operators break down around `NULL`?

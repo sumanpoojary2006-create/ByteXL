@@ -144,7 +144,6 @@ A `functional dependency` turns "these `columns` seem related" into a precise, t
 
 Along the way, Meera also noticed two shapes worth watching for:
 
-- A dependency on only part of a `composite key`
-- A dependency reached only by a detour through another `column`
+The first is a dependency on only part of a `composite key`. The second is a dependency reached only by a detour through another `column`.
 
 Both turn out to be exactly the patterns that a disciplined, step-by-step process checks for, one refinement at a time, when it decides how a `table` ought to be split.

@@ -8,6 +8,20 @@ The fix is not clever application logic checking timestamps after the fact; it i
 
 The `inventory` `table` from the previous lesson is the setup again.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `inventory`
+
+| product_id | product_name | stock_count |
+| --- | --- | --- |
+| 1 | Wireless Mouse | 50 |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE inventory (
     product_id INTEGER PRIMARY KEY,
@@ -18,6 +32,8 @@ CREATE TABLE inventory (
 INSERT INTO inventory (product_id, product_name, stock_count) VALUES
 (1, 'Wireless Mouse', 50);
 ```
+
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
 ```postgresql with=init.sql
 BEGIN;
@@ -30,6 +46,22 @@ COMMIT;
 
 SELECT stock_count FROM inventory WHERE product_id = 1;
 ```
+
+Expected output 1:
+
+
+
+| stock_count |
+| --- |
+| 50 |
+
+Expected output 2:
+
+
+
+| stock_count |
+| --- |
+| 45 |
 
 - `FOR UPDATE`, added to the end of a `SELECT`, tells the `database` that this `transaction` intends to modify the `row` it just read, and claims a `lock` on that `row` immediately.
 - Any other `transaction` that also tries one of these is forced to wait until this `transaction` either commits or rolls back and releases the `lock`:
@@ -60,6 +92,14 @@ SELECT stock_count FROM inventory WHERE product_id = 1;
 COMMIT;
 ```
 
+Expected output:
+
+
+
+| stock_count |
+| --- |
+| 50 |
+
 An ordinary `SELECT`, without `FOR UPDATE`, does not block other readers or even other writers under PostgreSQL's default `isolation level`, which is why `FOR UPDATE` has to be requested explicitly the moment a `transaction` plans to act on what it just read.
 
 ## Locking Only Locks What It Needs To
@@ -75,6 +115,14 @@ SELECT stock_count FROM inventory WHERE product_id = 1 FOR UPDATE;
 -- A separate transaction working with product_id = 2 is never blocked by this lock.
 COMMIT;
 ```
+
+Expected output:
+
+
+
+| stock_count |
+| --- |
+| 50 |
 
 This `row`-level scope is what makes `locking` practical at real-world scale: a busy inventory system can have thousands of concurrent `transactions`, each safely `locking` only the specific `rows` it touches, without the whole `table` grinding to a halt waiting on unrelated updates.
 
@@ -121,6 +169,8 @@ Write a `transaction` that `locks` product 1's `row` with `FOR UPDATE`, deducts 
 -- Write your transaction below
 ```
 
+Expected result and verification:
+
 - If your `transaction` runs `BEGIN
 - `SELECT` stock_count FROM inventory `WHERE` product_id = 1 FOR `UPDATE`
 - `UPDATE` inventory SET stock_count = stock_count - 8 `WHERE` product_id = 1
@@ -128,6 +178,4 @@ Write a `transaction` that `locks` product 1's `row` with `FOR UPDATE`, deducts 
 
 ## Conclusion
 
-- `Locking` gives a `transaction` exclusive claim over a `row` it intends to change, forcing other `transactions` that want to touch the same `row` to wait until the `lock` is released, which is what actually prevents `lost updates` and similar conflicts rather than just naming them.
-- Rahul's inventory system can now safely handle two sales of the same product arriving at nearly the same instant.
-- `Locking` is not applied uniformly everywhere; how much of it happens automatically depends on a per-`transaction` setting, isolation levels, which the next lesson examines directly.
+`Locking` gives a `transaction` exclusive claim over a `row` it intends to change, forcing other `transactions` that want to touch the same `row` to wait until the `lock` is released, which is what actually prevents `lost updates` and similar conflicts rather than just naming them. Rahul's inventory system can now safely handle two sales of the same product arriving at nearly the same instant. `Locking` is not applied uniformly everywhere; how much of it happens automatically depends on a per-`transaction` setting, isolation levels, which the next lesson examines directly.

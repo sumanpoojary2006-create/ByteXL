@@ -8,6 +8,23 @@ A real application never gets that convenience for free; before it can run a sin
 
 An application typically opens a `connection` using a `connection string`, a compact format bundling everything the `database` needs to know: where the server is, which `database` to use, and who is connecting.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `app_config`
+
+| config_key | config_value |
+| --- | --- |
+| host | db.internal.example.com |
+| port | 5432 |
+| database | shipments_prod |
+| user | app_service_account |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE app_config (
     config_key TEXT PRIMARY KEY,
@@ -21,9 +38,13 @@ INSERT INTO app_config (config_key, config_value) VALUES
 ('user', 'app_service_account');
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 SELECT * FROM app_config;
 ```
+
+Expected result: PostgreSQL returns the rows described below. Compare the visible columns and row-level effect with the explanation, since security and administration settings may make some values environment-dependent.
 
 A real `connection string` built from values like these would look something like `postgresql://app_service_account:password@db.internal.example.com:5432/shipments_prod`, bundling four pieces into one string most `database` client libraries accept directly:
 
@@ -47,6 +68,8 @@ Opening a `connection` is not free: it typically means a network round trip to t
 SELECT count(*) AS active_connections FROM pg_stat_activity;
 ```
 
+Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
+
 `pg_stat_activity` is a real, queryable `view` showing every `connection` currently open to the `database`, a useful way to see this cost made concrete: each `row` represents a live `connection` the server is actively tracking and maintaining resources for, not a free, weightless link.
 
 ## Closing a Connection Matters as Much as Opening One
@@ -58,6 +81,8 @@ SELECT pid, state, query, now() - query_start AS running_for
 FROM pg_stat_activity
 WHERE state = 'idle';
 ```
+
+Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
 A `connection` sitting in the `idle` state, especially one that has been idle for a long time, is exactly this kind of leak: application code that opened it, ran a `query`, and then never closed it, leaving the server holding onto that `connection`'s resources for no active purpose.
 
@@ -111,6 +136,8 @@ Query `pg_stat_activity` for the current `database`, filtering to just this sess
 ```postgresql with=init.sql
 -- Write your query below
 ```
+
+Expected result and verification:
 
 - `SELECT pid, usename, datname, state, query FROM pg_stat_activity WHERE pid = pg_backend_pid();` isolates this exact session's own `row`
 - `pid`, `usename`, and `datname` describe the `connection` itself, while `state` and `query` describe what that `connection` is currently doing, a distinction worth keeping clear when reasoning about `connection` versus `query` behavior.

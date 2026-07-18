@@ -10,6 +10,21 @@ A **`database` migration** is a versioned, ordered, tracked script that applies 
 
 Without any tracking, it is easy to lose track of which environment has which `schema` changes already applied.
 
+## Source Data Used in This Lesson
+
+The setup also creates the following empty supporting tables. Later statements populate them as the operation runs.
+
+### Empty `shipments` table
+
+| Column | Definition in the setup |
+| --- | --- |
+| `shipment_id` | `INTEGER PRIMARY KEY` |
+| `status` | `TEXT` |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
@@ -17,12 +32,16 @@ CREATE TABLE shipments (
 );
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 -- A developer, working directly, might run this by hand on their laptop:
 ALTER TABLE shipments ADD COLUMN priority TEXT DEFAULT 'normal';
 
 SELECT * FROM shipments;
 ```
+
+Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
 
 This works perfectly on this one `database`. The problem appears the moment there is more than one `database` involved: did this same `ALTER TABLE` get run against the testing environment.
 
@@ -45,6 +64,8 @@ INSERT INTO schema_migrations (version) VALUES ('0002_add_priority_column');
 
 SELECT * FROM schema_migrations ORDER BY version;
 ```
+
+Expected result: PostgreSQL applies the requested change. Use the follow-up query and the explanation below to confirm the affected rows or refreshed data.
 
 Every migration gets a unique, ordered identifier, here `0001_create_shipments` and `0002_add_priority_column`, and a migration tool checks this `table` before running anything:
 
@@ -77,6 +98,8 @@ SELECT * FROM shipments;
 SELECT * FROM schema_migrations ORDER BY version;
 ```
 
+Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
+
 Writing the `ALTER TABLE` and the corresponding insert into `schema_migrations` together, as one unit, keeps the `schema` change and its record of having happened tightly coupled, exactly the kind of pairing a `transaction`, covered in an earlier unit, is well suited to wrap, so that either both take effect or neither does, never leaving the `schema` changed without the tracking `table` reflecting it.
 
 ## Why Migrations Should Avoid Destructive Shortcuts
@@ -104,6 +127,8 @@ SELECT * FROM schema_migrations ORDER BY version;
 -- The safe, structure-preserving alternative, already demonstrated above:
 ALTER TABLE shipments ADD COLUMN new_notes TEXT;
 ```
+
+Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
 
 This distinction, preserving data versus discarding it, is the single most important discipline in writing a safe migration, and it is exactly why migrations against a production `database` always deserve careful review before being applied, the same caution this course has emphasized around any `DROP` or `DELETE` since the modifying-data chapter early on.
 
@@ -155,6 +180,8 @@ SELECT * FROM schema_migrations ORDER BY version;
 
 -- Write your migration below
 ```
+
+Expected result and verification:
 
 A correct migration runs `ALTER TABLE shipments ADD COLUMN carrier TEXT;` followed by `INSERT INTO schema_migrations (version) VALUES ('0004_add_carrier_column');`, and a final `SELECT * FROM schema_migrations ORDER BY version;` confirms all four migrations are now recorded in order, with the underlying `shipments` `table`'s structure matching exactly what that history implies.
 

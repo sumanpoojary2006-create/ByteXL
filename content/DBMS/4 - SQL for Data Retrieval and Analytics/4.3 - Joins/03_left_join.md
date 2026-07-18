@@ -8,6 +8,44 @@ What Zoya needs is a `join` that keeps every `row` from `customers` regardless o
 
 The same delivery `schema` is used again, including Neha Bhatt, who has never placed an order.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the data they will use. The tables below show the rows loaded by the setup file.
+
+### `customers`
+
+| customer_id | customer_name | city |
+| --- | --- | --- |
+| 1 | Aditi Kulkarni | Pune |
+| 2 | Rohan Das | Kolkata |
+| 3 | Kavya Nair | Kochi |
+| 4 | Imran Sheikh | Hyderabad |
+| 5 | Neha Bhatt | Ahmedabad |
+
+### `restaurants`
+
+| restaurant_id | restaurant_name | city |
+| --- | --- | --- |
+| 1 | Pizza Palace | Pune |
+| 2 | Sushi Central | Kolkata |
+| 3 | Burger Barn | Pune |
+| 4 | Taco Town | Hyderabad |
+
+### `orders`
+
+| order_id | customer_id | restaurant_id | amount | order_date |
+| --- | --- | --- | --- | --- |
+| 1 | 1 | 1 | 450 | 2025-05-01 |
+| 2 | 2 | 2 | 620 | 2025-05-02 |
+| 3 | 1 | 3 | 300 | 2025-05-03 |
+| 4 | 3 | 1 | 500 | 2025-05-04 |
+| 5 | 4 | 2 | 275 | 2025-05-05 |
+| 6 | 2 | 3 | 180 | 2025-05-06 |
+
+The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
+
+## Hands-On Setup: Prepare the Data
+
 ```postgresql file=init.sql
 CREATE TABLE customers (
     customer_id INTEGER PRIMARY KEY,
@@ -51,11 +89,25 @@ INSERT INTO orders (order_id, customer_id, restaurant_id, amount, order_date) VA
 (6, 2, 3, 180.00, '2025-05-06');
 ```
 
+Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
+
 ```postgresql with=init.sql
 SELECT customers.customer_name, orders.order_id, orders.amount
 FROM customers
 LEFT JOIN orders ON customers.customer_id = orders.customer_id;
 ```
+
+Expected output:
+
+| customer_name | order_id | amount |
+| --- | --- | --- |
+| Aditi Kulkarni | 3 | 300 |
+| Aditi Kulkarni | 1 | 450 |
+| Rohan Das | 6 | 180 |
+| Rohan Das | 2 | 620 |
+| Kavya Nair | 4 | 500 |
+| Imran Sheikh | 5 | 275 |
+| Neha Bhatt | *NULL* | *NULL* |
 
 Every one of the 5 customers appears in this result, including Neha Bhatt, whose `row` now shows `NULL` for `order_id` and `amount` instead of being dropped. "Left" refers to `customers`, the `table` named first, right after `FROM`:
 
@@ -75,6 +127,12 @@ LEFT JOIN orders ON customers.customer_id = orders.customer_id
 WHERE orders.order_id IS NULL;
 ```
 
+Expected output:
+
+| customer_name |
+| --- |
+| Neha Bhatt |
+
 - `WHERE orders.order_id IS NULL` only keeps `rows` where the `join` found nothing to attach, and since `order_id` is the `primary key` of `orders`, it can only be `NULL` in the result when no matching order `row` existed in the first place.
 - This returns exactly one name, Neha Bhatt, the customer the discount campaign needs to reach.
 
@@ -90,6 +148,12 @@ FROM restaurants
 LEFT JOIN orders ON restaurants.restaurant_id = orders.restaurant_id
 WHERE orders.order_id IS NULL;
 ```
+
+Expected output:
+
+| restaurant_name | order_id |
+| --- | --- |
+| Taco Town | *NULL* |
 
 - Here `restaurants` is on the left, so every restaurant is guaranteed to appear, and filtering for `orders.order_id IS NULL` now finds restaurants with no orders instead of customers with no orders.
 - This returns Taco Town, the one restaurant from earlier lessons that has never received a single order.
@@ -108,6 +172,16 @@ LEFT JOIN orders ON customers.customer_id = orders.customer_id
 GROUP BY customers.customer_name
 ORDER BY order_count DESC;
 ```
+
+Expected output:
+
+| customer_name | order_count |
+| --- | --- |
+| Rohan Das | 2 |
+| Aditi Kulkarni | 2 |
+| Kavya Nair | 1 |
+| Imran Sheikh | 1 |
+| Neha Bhatt | 0 |
 
 `COUNT(orders.order_id)` counts only non-`NULL` values, as covered when `aggregate functions` were introduced, so Neha's `row` correctly shows 0 instead of being counted as 1 or omitted from the report entirely:
 
@@ -183,8 +257,15 @@ The manager also wants to know which restaurants in Pune have never received an 
 
 If your `query` left-`joins` `restaurants` to `orders` and filters with `WHERE restaurants.city = 'Pune' AND orders.order_id IS NULL`, the result is empty, correctly showing that both Pune restaurants, Pizza Palace and Burger Barn, have received at least one order each.
 
+
+Expected output for the practice query:
+
+*(no rows returned)*
+
 ## Conclusion
 
-- `LEFT JOIN` guarantees every `row` from the first-named `table` survives the `join`, filling in `NULL` for the other side when no match exists, which makes it the right tool whenever "customers with no orders" or "restaurants with no orders" is itself the question.
-- Zoya answered a question the inner `join` structurally could not answer, just by changing one keyword.
-- A `RIGHT JOIN` mirrors this same idea from the opposite side, and a `FULL OUTER JOIN` protects both sides at once.
+`LEFT JOIN` guarantees every `row` from the first-named `table` survives the `join`, filling in `NULL` for the other side when no match exists, which makes it the right tool whenever "customers with no orders" or "restaurants with no orders" is itself the question.
+
+Zoya answered a question the inner `join` structurally could not answer, just by changing one keyword.
+
+A `RIGHT JOIN` mirrors this same idea from the opposite side, and a `FULL OUTER JOIN` protects both sides at once.

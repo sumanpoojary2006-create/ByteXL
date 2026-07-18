@@ -21,32 +21,9 @@ The `students` `table` holds this data, in no particular order:
 | 7 | Aditya Kulkarni | aditya.kulkarni@example.com | Pune | 9822055555 | 2025-01-25 |
 | 8 | Priya Subramaniam | priya.subramaniam@example.com | Chennai | 9884066666 | 2025-01-28 |
 
-To build this `table` with this data, a `CREATE TABLE` statement defines the six `columns` shown above, and an `INSERT INTO` statement loads the eight `rows` into it.
+Rhea's first fix is simple: add `ORDER BY` followed by the `column` she wants to sort on. The query is `SELECT full_name, city FROM students ORDER BY full_name;`.
 
-Rhea's first fix is simple: add `ORDER BY` followed by the `column` she wants to sort on: `SELECT full_name, city FROM students ORDER BY full_name;`.
-
-Expected output:
-
-| full_name | city |
-| ----------------- | --------- |
-| Aditya Kulkarni | Pune |
-| Arjun Bhat | Bengaluru |
-| Ishaan Verma | Bengaluru |
-| Kavya Reddy | Pune |
-| Meera Pillai | Chennai |
-| Priya Subramaniam | Chennai |
-| Rohan Joshi | Hyderabad |
-| Sneha Gowda | Mysuru |
-
-The result now starts with Aditya Kulkarni and ends with Sneha Gowda, running alphabetically A to Z the whole way through. This is ascending order, and it is what PostgreSQL uses whenever `ORDER BY` is given a `column` with no further instruction:
-
-- For text, ascending means alphabetical.
-- For numbers, it means smallest to largest.
-- For dates, it means earliest to latest.
-
-![ORDER BY arranging unordered student names alphabetically from A to Z](images/09_order_by_ascending.png)
-
-Try it yourself:
+For hands-on practice, `init.sql` creates and populates the displayed `students` table:
 
 ```postgresql file=init.sql
 CREATE TABLE students (
@@ -69,15 +46,44 @@ INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALU
 (8, 'Priya Subramaniam', 'priya.subramaniam@example.com', 'Chennai', '9884066666', '2025-01-28');
 ```
 
+The active query file contains the sort being practised:
+
 ```postgresql with=init.sql
 SELECT full_name, city
 FROM students
 ORDER BY full_name;
 ```
 
+Expected output:
+
+| full_name | city |
+| ----------------- | --------- |
+| Aditya Kulkarni | Pune |
+| Arjun Bhat | Bengaluru |
+| Ishaan Verma | Bengaluru |
+| Kavya Reddy | Pune |
+| Meera Pillai | Chennai |
+| Priya Subramaniam | Chennai |
+| Rohan Joshi | Hyderabad |
+| Sneha Gowda | Mysuru |
+
+The result now starts with Aditya Kulkarni and ends with Sneha Gowda, running alphabetically A to Z the whole way through. This is ascending order, and it is what PostgreSQL uses whenever `ORDER BY` is given a `column` with no further instruction:
+
+- For text, ascending means alphabetical.
+- For numbers, it means smallest to largest.
+- For dates, it means earliest to latest.
+
+![ORDER BY arranging unordered student names alphabetically from A to Z](images/09_order_by_ascending.png)
+
 ## Sorting Descending
 
-Sometimes the useful order runs the other way. If Rhea instead wants the newest joiners at the top of a "welcome our latest students" notice, ascending order on the join date would put the oldest joiners first, exactly backwards from what she needs. Adding `DESC` after the `column` reverses the direction: `SELECT full_name, joined_on FROM students ORDER BY joined_on DESC;`.
+Sometimes the useful order runs the other way. If Rhea instead wants the newest joiners at the top of a "welcome our latest students" notice, ascending order on the join date would put the oldest joiners first, exactly backwards from what she needs. Adding `DESC` after the `column` reverses the direction. The query is `SELECT full_name, joined_on FROM students ORDER BY joined_on DESC;`.
+
+```postgresql with=init.sql
+SELECT full_name, joined_on
+FROM students
+ORDER BY joined_on DESC;
+```
 
 Expected output:
 
@@ -94,19 +100,17 @@ Expected output:
 
 Now Priya Subramaniam, who joined on 2025-01-28, appears first, and Ishaan Verma, who joined on 2025-01-10, appears last. Writing `ASC` explicitly is also allowed for ascending order, but since ascending is the default, most people leave it out and only write `DESC` when they actually need the reverse.
 
-Try it yourself:
-
-```postgresql with=init.sql
-SELECT full_name, joined_on
-FROM students
-ORDER BY joined_on DESC;
-```
-
 ## Sorting by More Than One Column
 
 - A single sort key is not always enough.
 - Suppose Rhea wants students grouped by city, and within each city, listed alphabetically by name, so a volunteer working the Bengaluru desk can find their group's names in order without scrolling past every other city first.
-- `ORDER BY` accepts a list of `columns`, and it sorts by the first one, then uses the second one only to break ties within groups that share the same first value: `SELECT full_name, city FROM students ORDER BY city, full_name;`.
+- `ORDER BY` accepts a list of `columns`, and it sorts by the first one, then uses the second one only to break ties within groups that share the same first value. The query is `SELECT full_name, city FROM students ORDER BY city, full_name;`.
+
+```postgresql with=init.sql
+SELECT full_name, city
+FROM students
+ORDER BY city, full_name;
+```
 
 Expected output:
 
@@ -126,14 +130,6 @@ The result groups all of Bengaluru's students together, sorted alphabetically wi
 Each `column` in the list can carry its own direction too, so `ORDER BY city, full_name DESC` would keep cities grouped in ascending order while listing names within each city from Z to A.
 
 ![ORDER BY city first and full_name second grouping rows by city and sorting names inside each group](images/10_order_by_multiple_columns.png)
-
-Try it yourself:
-
-```postgresql with=init.sql
-SELECT full_name, city
-FROM students
-ORDER BY city, full_name;
-```
 
 ## Sorting Results at a Glance
 
@@ -189,7 +185,4 @@ Cities still run alphabetically overall, but inside each city's block the most r
 
 ## Conclusion
 
-- `ORDER BY` replaces an unpredictable `row` order with one you actually chose, ascending by default or reversed with DESC, and it can chain several `columns` together so later ones only settle ties left by earlier ones.
-- None of this changes how `rows` are stored, it only shapes the sequence a particular `query` hands back.
-- Rhea's orientation roster can now print alphabetically by name, or grouped by city with each group internally sorted, so her volunteers can find any student in seconds instead of scanning an unpredictable list.
-- Once a result can be put into a meaningful order, the natural next question is how to show only the first handful of `rows` from a large, sorted result, which is exactly the kind of trimming a dashboard preview needs.
+`ORDER BY` replaces an unpredictable `row` order with one you actually chose, ascending by default or reversed with DESC, and it can chain several `columns` together so later ones only settle ties left by earlier ones. None of this changes how `rows` are stored, it only shapes the sequence a particular `query` hands back. Rhea's orientation roster can now print alphabetically by name, or grouped by city with each group internally sorted, so her volunteers can find any student in seconds instead of scanning an unpredictable list. Once a result can be put into a meaningful order, the natural next question is how to show only the first handful of `rows` from a large, sorted result, which is exactly the kind of trimming a dashboard preview needs.

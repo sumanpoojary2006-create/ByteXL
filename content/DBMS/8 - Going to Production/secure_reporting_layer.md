@@ -10,7 +10,24 @@ A `customers` and `orders` schema fronted by a reporting view, a materialized vi
 
 ## Dataset
 
-```sql
+Before writing project queries, inspect the starting data so every task has a visible source to reason from.
+
+### Starting `customers` rows
+
+| full_name | email |
+| --- | --- |
+| Ananya Rao | ananya@mail.com |
+| Rahul Nair | rahul@mail.com |
+
+### Starting `orders` rows
+
+| customer_id | total_amount | cost_price | order_date |
+| --- | --- | --- | --- |
+| 1 | 1200.00 | 700.00 | 2026-01-10 |
+| 2 | 500.00 | 300.00 | 2026-02-02 |
+Use two files in OneCompiler. Keep all `CREATE TABLE` and `INSERT` statements in `init.sql`; keep only the current task query in the active SQL file. The `with=init.sql` attribute connects the two files.
+
+```postgresql file=init.sql
 CREATE TABLE customers (
     customer_id  INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     full_name    TEXT NOT NULL,
@@ -35,6 +52,20 @@ INSERT INTO orders (customer_id, total_amount, cost_price, order_date) VALUES
 (2, 500.00, 300.00, '2026-02-02');
 ```
 
+### Confirm the Setup
+
+Run this in the active SQL file before starting the tasks. It confirms that `init.sql` loaded the expected number of rows.
+
+```postgresql with=init.sql
+SELECT COUNT(*) AS loaded_rows FROM customers;
+```
+
+Expected output:
+
+| loaded_rows |
+| --- |
+| 2 |
+
 `cost_price` is internal margin data that support staff and customers should never see directly.
 
 ## Tasks
@@ -51,7 +82,7 @@ INSERT INTO orders (customer_id, total_amount, cost_price, order_date) VALUES
 2. Create a role `app_role` that can `SELECT`, `INSERT`, and `UPDATE` on `orders` and `customers`, but cannot `DELETE` from either, reflecting the principle of least privilege.
 3. Enable row-level security on `orders` so that a policy restricts visibility to rows where `customer_id` matches a session variable, simulating a customer-facing portal where each customer can only see their own orders.
 
-   ```sql
+   ```postgresql with=init.sql
    ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 
    CREATE POLICY customer_sees_own_orders
@@ -60,13 +91,15 @@ INSERT INTO orders (customer_id, total_amount, cost_price, order_date) VALUES
        USING (customer_id = current_setting('app.current_customer_id')::int);
    ```
 
+Expected result: the policy is created successfully. Test it with the intended role and confirm that rows belonging to other customers are absent even when the query has no customer filter.
+
 4. Write one vulnerable query that builds a `WHERE` clause by concatenating a customer's raw email input directly into a SQL string, and one safe version using a parameterized query instead. Explain what an attacker could enter in the vulnerable version to read every customer's data.
 
 ### Task 3: Automate the Audit Trail
 
 1. Write a trigger function that sets `updated_at = now()` automatically whenever a row in `orders` is updated, and attach it as a `BEFORE UPDATE` trigger.
 
-   ```sql
+   ```postgresql with=init.sql
    CREATE OR REPLACE FUNCTION set_updated_at()
    RETURNS TRIGGER AS $$
    BEGIN
@@ -80,6 +113,8 @@ INSERT INTO orders (customer_id, total_amount, cost_price, order_date) VALUES
    FOR EACH ROW
    EXECUTE FUNCTION set_updated_at();
    ```
+
+Expected result: PostgreSQL creates the trigger function and trigger. Updating a row should then change `updated_at` automatically without the `UPDATE` statement assigning that column.
 
 2. Test it: update an order's `total_amount` without touching `updated_at` yourself, then confirm `updated_at` changed anyway.
 3. In one sentence, describe what a database migration tool would need to record about this trigger and function so that a teammate setting up the database from scratch gets the identical audit behaviour.

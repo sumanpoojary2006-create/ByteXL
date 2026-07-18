@@ -8,6 +8,30 @@ This is not a `join`, since she is not trying to match `rows` between the two `t
 
 Both customer `tables` share the same shape, a name and an email, which is a requirement for combining them this way.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the data they will use. The tables below show the rows loaded by the setup file.
+
+### `online_customers`
+
+| customer_name | email |
+| --- | --- |
+| Aditi Kulkarni | aditi.k@example.com |
+| Rohan Das | rohan.das@example.com |
+| Kavya Nair | kavya.nair@example.com |
+
+### `store_customers`
+
+| customer_name | email |
+| --- | --- |
+| Kavya Nair | kavya.nair@example.com |
+| Imran Sheikh | imran.s@example.com |
+| Neha Bhatt | neha.bhatt@example.com |
+
+The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
+
+## Hands-On Setup: Prepare the Data
+
 ```postgresql file=init.sql
 CREATE TABLE online_customers (
     customer_name TEXT,
@@ -30,11 +54,23 @@ INSERT INTO store_customers (customer_name, email) VALUES
 ('Neha Bhatt', 'neha.bhatt@example.com');
 ```
 
+Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
+
 ```postgresql with=init.sql
 SELECT customer_name, email FROM online_customers
 UNION
 SELECT customer_name, email FROM store_customers;
 ```
+
+Expected output:
+
+| customer_name | email |
+| --- | --- |
+| Aditi Kulkarni | aditi.k@example.com |
+| Imran Sheikh | imran.s@example.com |
+| Kavya Nair | kavya.nair@example.com |
+| Neha Bhatt | neha.bhatt@example.com |
+| Rohan Das | rohan.das@example.com |
 
 `UNION` takes the result of the first `SELECT`, the result of the second `SELECT`, and stacks them into one combined result set:
 
@@ -84,6 +120,17 @@ UNION ALL
 SELECT customer_name, email FROM store_customers;
 ```
 
+Expected output:
+
+| customer_name | email |
+| --- | --- |
+| Aditi Kulkarni | aditi.k@example.com |
+| Rohan Das | rohan.das@example.com |
+| Kavya Nair | kavya.nair@example.com |
+| Kavya Nair | kavya.nair@example.com |
+| Imran Sheikh | imran.s@example.com |
+| Neha Bhatt | neha.bhatt@example.com |
+
 This returns 6 `rows` instead of 5, with Kavya Nair listed twice, once from each source `table`. `UNION ALL` is also faster than plain `UNION` in most `databases`, since checking for and removing duplicates takes real work. Two things follow from that:
 
 - When duplicates genuinely do not matter for the question being asked, `UNION ALL` is the more accurate choice.
@@ -102,6 +149,17 @@ UNION ALL
 SELECT customer_name, email, 'store' FROM store_customers;
 ```
 
+Expected output:
+
+| person | contact_email | source |
+| --- | --- | --- |
+| Aditi Kulkarni | aditi.k@example.com | online |
+| Rohan Das | rohan.das@example.com | online |
+| Kavya Nair | kavya.nair@example.com | online |
+| Kavya Nair | kavya.nair@example.com | store |
+| Imran Sheikh | imran.s@example.com | store |
+| Neha Bhatt | neha.bhatt@example.com | store |
+
 - Here, a literal string, `'online'` or `'store'`, is added as a third `column` to each `query`, letting Tanvi see which channel every `row` originally came from, even after the two result sets are combined.
 - This is a common pattern for tagging the origin of each `row` once separate sources get merged into one list.
 - Note that the final `column` headers, `person` and `contact_email`, come from the first `SELECT`'s aliases; the second `SELECT`'s `column` names are ignored entirely for labeling purposes, though the values themselves still combine correctly, since only the position and type of each `column` matters, not its name.
@@ -116,6 +174,16 @@ UNION
 SELECT customer_name, email FROM store_customers
 ORDER BY customer_name;
 ```
+
+Expected output:
+
+| customer_name | email |
+| --- | --- |
+| Aditi Kulkarni | aditi.k@example.com |
+| Imran Sheikh | imran.s@example.com |
+| Kavya Nair | kavya.nair@example.com |
+| Neha Bhatt | neha.bhatt@example.com |
+| Rohan Das | rohan.das@example.com |
 
 Placing `ORDER BY` after both `SELECT` statements sorts the entire combined list of 5 unique customers alphabetically by name, which is the standard way to present a merged mailing list for review before it goes out.
 
@@ -153,8 +221,21 @@ Tanvi wants a single list of every unique email address across both channels, wi
 
 If your `query` is `SELECT email FROM online_customers UNION SELECT email FROM store_customers ORDER BY email;`, it returns 5 unique email addresses, with `kavya.nair@example.com` appearing only once despite being present in both source `tables`.
 
+
+Expected output for the practice query:
+
+| email |
+| --- |
+| aditi.k@example.com |
+| imran.s@example.com |
+| kavya.nair@example.com |
+| neha.bhatt@example.com |
+| rohan.das@example.com |
+
 ## Conclusion
 
-- `UNION` and `UNION ALL` combine the results of two or more `queries` vertically into one result set, with `UNION` removing exact duplicates and `UNION ALL` keeping every `row`, both requiring the same number and type of `columns` from each `query` involved.
-- Tanvi can now build a single clean mailing list or a full record count across two separate customer `tables`.
-- `UNION` finds everything from either source; the next lesson covers finding only what two result sets have in common, or only what one has that the other does not.
+`UNION` and `UNION ALL` combine the results of two or more `queries` vertically into one result set, with `UNION` removing exact duplicates and `UNION ALL` keeping every `row`, both requiring the same number and type of `columns` from each `query` involved.
+
+Tanvi can now build a single clean mailing list or a full record count across two separate customer `tables`.
+
+`UNION` finds everything from either source; the next lesson covers finding only what two result sets have in common, or only what one has that the other does not.

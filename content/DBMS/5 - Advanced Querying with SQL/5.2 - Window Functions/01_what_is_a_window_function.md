@@ -9,6 +9,25 @@
 
 The `sales` `table` records individual sales made by three team members.
 
+## Source Data Used in This Lesson
+
+Before running the lesson queries, inspect the starting data. The tables below show the rows loaded by the setup file.
+
+### `sales`
+
+| sale_id | salesperson | region | amount | sale_date |
+| --- | --- | --- | --- | --- |
+| 1 | Nikhil Rao | North | 12000.00 | 2025-06-01 |
+| 2 | Nikhil Rao | North | 8500.00 | 2025-06-05 |
+| 3 | Sana Fatima | South | 15000.00 | 2025-06-02 |
+| 4 | Nikhil Rao | North | 9200.00 | 2025-06-10 |
+| 5 | Sana Fatima | South | 6000.00 | 2025-06-11 |
+| 6 | Tarun Bakshi | East | 11000.00 | 2025-06-03 |
+
+The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
+
+## Hands-On Setup: Prepare the Database
+
 ```postgresql file=init.sql
 CREATE TABLE sales (
     sale_id INTEGER PRIMARY KEY,
@@ -27,11 +46,21 @@ INSERT INTO sales (sale_id, salesperson, region, amount, sale_date) VALUES
 (6, 'Tarun Bakshi', 'East', 11000.00, '2025-06-03');
 ```
 
+Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
+
 ```postgresql with=init.sql
 SELECT salesperson, SUM(amount) AS total_sales
 FROM sales
 GROUP BY salesperson;
 ```
+
+Expected output:
+
+| salesperson | total_sales |
+| --- | --- |
+| Nikhil Rao | 29700.00 |
+| Sana Fatima | 21000.00 |
+| Tarun Bakshi | 11000.00 |
 
 This gives Leela three `rows`, one total per salesperson, but the individual sales that made up each total are gone from the result. There is no way to see, in this same output, that Nikhil's 8500.00 sale on June 5 contributed to a running total of 20500.00 at that point.
 
@@ -46,6 +75,8 @@ FROM sales;
 ```
 
 Every one of the 6 original sale `rows` is still present in the output, but each one now carries an extra `column`, `salesperson_total`, showing that salesperson's overall total, repeated on every one of their `rows`:
+
+Expected output:
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
   <thead>
@@ -107,6 +138,17 @@ SELECT salesperson, sale_id, amount,
 FROM sales;
 ```
 
+Expected output:
+
+| salesperson | sale_id | amount | company_total |
+| --- | --- | --- | --- |
+| Nikhil Rao | 1 | 12000.00 | 61700.00 |
+| Nikhil Rao | 2 | 8500.00 | 61700.00 |
+| Sana Fatima | 3 | 15000.00 | 61700.00 |
+| Nikhil Rao | 4 | 9200.00 | 61700.00 |
+| Sana Fatima | 5 | 6000.00 | 61700.00 |
+| Tarun Bakshi | 6 | 11000.00 | 61700.00 |
+
 Leaving the parentheses after `OVER` completely empty means the window is the entire result set, with no partitioning at all, so every `row` shows the same company-wide total, 61700.00, alongside its own individual sale amount. This is the simplest possible window: one big window covering everything.
 
 ![GROUP BY collapsing rows while OVER keeps detail rows and adds a calculation](images/02_group_by_collapses_over_keeps_rows.png)
@@ -121,6 +163,16 @@ SELECT salesperson, sale_id, amount,
 FROM sales
 WHERE region != 'East';
 ```
+
+Expected output:
+
+| salesperson | sale_id | amount | salesperson_total |
+| --- | --- | --- | --- |
+| Nikhil Rao | 1 | 12000.00 | 29700.00 |
+| Nikhil Rao | 2 | 8500.00 | 29700.00 |
+| Nikhil Rao | 4 | 9200.00 | 29700.00 |
+| Sana Fatima | 3 | 15000.00 | 21000.00 |
+| Sana Fatima | 5 | 6000.00 | 21000.00 |
 
 Tarun Bakshi's East-region `row` is filtered out by `WHERE` before the `window function` ever runs, so it never factors into anyone's partitioned total, and it does not appear in the output at all. The window calculation only ever sees the `rows` that make it past filtering, same as any other part of the `SELECT` list.
 
@@ -162,6 +214,17 @@ Leela wants to see every sale alongside the total sales for that sale's region, 
 ```
 
 If your `query` is `SELECT salesperson, region, amount, SUM(amount) OVER (PARTITION BY region) AS region_total FROM sales;`, all 6 `rows` remain, and every South-region `row` shows 21000.00 as its region total, Sana's two sales combined.
+
+Expected output:
+
+| salesperson | region | amount | region_total |
+| --- | --- | --- | --- |
+| Tarun Bakshi | East | 11000.00 | 11000.00 |
+| Nikhil Rao | North | 12000.00 | 29700.00 |
+| Nikhil Rao | North | 8500.00 | 29700.00 |
+| Nikhil Rao | North | 9200.00 | 29700.00 |
+| Sana Fatima | South | 15000.00 | 21000.00 |
+| Sana Fatima | South | 6000.00 | 21000.00 |
 
 ## Conclusion
 

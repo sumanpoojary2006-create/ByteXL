@@ -10,7 +10,17 @@ A PostgreSQL `accounts` table and a transfer routine that moves money between tw
 
 ## Dataset
 
-```sql
+Before writing project queries, inspect the starting data so every task has a visible source to reason from.
+
+### Starting `accounts` rows
+
+| owner_name | balance |
+| --- | --- |
+| Ananya Rao | 5000.00 |
+| Rahul Nair | 1200.00 |
+Use two files in OneCompiler. Keep all `CREATE TABLE` and `INSERT` statements in `init.sql`; keep only the current task query in the active SQL file. The `with=init.sql` attribute connects the two files.
+
+```postgresql file=init.sql
 CREATE TABLE accounts (
     account_id   INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     owner_name   TEXT NOT NULL,
@@ -30,18 +40,34 @@ INSERT INTO accounts (owner_name, balance) VALUES
 ('Rahul Nair', 1200.00);
 ```
 
+### Confirm the Setup
+
+Run this in the active SQL file before starting the tasks. It confirms that `init.sql` loaded the expected number of rows.
+
+```postgresql with=init.sql
+SELECT COUNT(*) AS loaded_rows FROM accounts;
+```
+
+Expected output:
+
+| loaded_rows |
+| --- |
+| 2 |
+
 ## Tasks
 
 ### Task 1: A Safe Transfer
 
 1. Write the transfer as an explicit transaction: `BEGIN`, deduct the amount from the sender, add it to the receiver, then `COMMIT`.
 
-   ```sql
+   ```postgresql with=init.sql
    BEGIN;
    UPDATE accounts SET balance = balance - 2000 WHERE account_id = 1;
    UPDATE accounts SET balance = balance + 2000 WHERE account_id = 2;
    COMMIT;
    ```
+
+Expected result: both balance changes commit together. The total balance across the two accounts remains unchanged, which confirms that the transfer moved money rather than creating or losing it.
 
 2. Now try to transfer 10000 out of Rahul's account, an amount larger than his current balance can cover. The debit step (the first `UPDATE`, on Rahul's own row) would take his balance negative, so the `CHECK (balance >= 0)` constraint rejects it immediately and the whole transaction fails before the credit step ever runs. Confirm that Rahul's balance is completely unchanged afterward, not partially deducted, and explain which ACID property this demonstrates.
 3. Run the same failing transfer again, but this time issue `ROLLBACK` explicitly after the error instead of letting the session hang. What state is the transaction left in if you try to run another statement before rolling back?
