@@ -10,6 +10,10 @@ Now there are two." What Devika is being asked to solve is a **`primary key` str
 
 ![Auto-increment primary keys from one database compared with UUIDs created safely by many systems](images/03_auto_increment_vs_uuid_primary_keys.png)
 
+## Definition
+
+**Definition:** An auto-incrementing integer and a UUID both satisfy the basic requirement of a `primary key`: a value that is unique for every `row`.
+
 ## Auto-Incrementing Integers: Simple, Compact, and Fast
 
 The counting-number approach Vaanam has used from day one is called an auto-incrementing integer, a whole number that the `database` itself hands out automatically, one higher than the last one it gave away, every time a new `row` is inserted. Its appeal is hard to overstate for a single-`database` system:

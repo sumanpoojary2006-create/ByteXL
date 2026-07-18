@@ -4,6 +4,10 @@ Asha orders dinner through a food delivery app on a Tuesday evening, a small, un
 
 Most people, Asha included, never think about what happens to their data once the food arrives. Following her one order from start to finish reveals a pattern every piece of data in every `database` eventually goes through, called its **lifecycle**.
 
+## Definition
+
+**Definition:** Every piece of data in a `database` moves through the same rough arc: it is created once, read far more often than it is changed, updated as circumstances shift, and eventually deleted or set aside once it stops earning its place among the actively used records.
+
 ## Creation: The Order Is Born
 
 The moment Asha taps "confirm order," a new record is created, holding:

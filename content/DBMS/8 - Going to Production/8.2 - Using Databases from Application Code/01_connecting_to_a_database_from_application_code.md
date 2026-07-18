@@ -4,6 +4,10 @@ Every `query` in this course so far has run inside an editor already connected t
 
 A real application never gets that convenience for free; before it can run a single `SELECT`, it has to establish a **`connection`**, a live, authenticated link between the application process and the `database` server, and that `connection` has its own setup cost, its own configuration, and its own failure modes worth understanding before writing a line of `query` code.
 
+## Definition
+
+**Definition:** A `connection` is a real, costly, stateful link between an application and a `database`, requiring a `connection string` to establish, real server-side resources to maintain, and deliberate closing to avoid leaking those resources, with `connection` failures and `query` failures representing genuinely different problems that call for different handling in application code.
+
 ## What a Connection String Actually Contains
 
 An application typically opens a `connection` using a `connection string`, a compact format bundling everything the `database` needs to know: where the server is, which `database` to use, and who is connecting.

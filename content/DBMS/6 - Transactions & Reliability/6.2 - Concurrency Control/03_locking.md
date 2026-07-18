@@ -4,6 +4,10 @@ The `lost update` from the previous lesson happened because two `transactions` b
 
 The fix is not clever application logic checking timestamps after the fact; it is stopping the second `transaction` from reading and acting on that value until the first `transaction` has finished with it entirely. This is what **locking** does: a `transaction` can claim a `lock` on a `row`, blocking other `transactions` from making conflicting changes to that same `row` until the `lock` is released.
 
+## Definition
+
+**Definition:** `Locking` gives a `transaction` exclusive claim over a `row` it intends to change, forcing other `transactions` that want to touch the same `row` to wait until the `lock` is released, which is what actually prevents `lost updates` and similar conflicts rather than just naming them.
+
 ## Locking a Row for Update
 
 The `inventory` `table` from the previous lesson is the setup again.

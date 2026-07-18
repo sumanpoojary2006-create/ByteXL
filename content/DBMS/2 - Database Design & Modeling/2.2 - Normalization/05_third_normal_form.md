@@ -45,6 +45,10 @@ CustomerCity is repeated three times for CustomerID C12, once for every order th
 
 The problem here is not partial dependency at all, it is a different, sneakier pattern, and untangling it is the job of **Third `Normal Form`**, or 3NF.
 
+## Definition
+
+**Definition:** Third `Normal Form` closes a gap that Second `Normal Form` cannot reach on its own: a `table` can have the simplest possible key, a single `column`, and still repeat data endlessly if some non-key `column` is really describing a different non-key `column` instead of the key itself.
+
 ## A Dependency With a Detour
 
 Naina traces exactly how CustomerCity connects back to the `primary key`, OrderID, in two hops:

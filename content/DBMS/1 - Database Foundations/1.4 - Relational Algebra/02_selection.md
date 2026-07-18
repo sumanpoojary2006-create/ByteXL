@@ -9,6 +9,10 @@ Both requests sound like they want "a version of the catalogue," but they want c
 - The librarian wants fewer `rows`, all of the `columns`, but only the ones that meet her price condition.
 - The volunteer wants every `row`, but only two of the `columns`. `Relational algebra` gives each of these two needs its own dedicated operation. Picking out `rows` that satisfy a condition is called **selection**, written with the Greek letter sigma, and picking out certain `columns` is called **projection**, written with the Greek letter pi. Learning to tell these two apart cleanly is the first real skill worth building here.
 
+## Definition
+
+**Definition:** **Selection** chooses the rows of a relation that satisfy a condition, while **projection** chooses which columns appear in the result.
+
 ## The Catalogue Rohan Is Working With
 
 Everything that follows works off one small relation, a simplified slice of Rohan's Books `table`:

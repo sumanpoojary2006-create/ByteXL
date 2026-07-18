@@ -4,6 +4,10 @@ Kabir's next report needs a two-step calculation: first, find the average salary
 
 A subquery does not have to sit inside `WHERE` producing a single value or a list; it can also sit inside `FROM`, standing in for an entire `table`. This kind of subquery is often called a **derived `table`**.
 
+## Definition
+
+**Definition:** A subquery in `FROM`, or derived `table`, lets a `query` treat an intermediate result, especially a grouped or aggregated one, as if it were a real `table`, complete with the ability to filter, `join`, or select from it further.
+
 ## Treating a Query's Result as a Table
 
 The `employees` `table` is the same one used throughout this chapter.

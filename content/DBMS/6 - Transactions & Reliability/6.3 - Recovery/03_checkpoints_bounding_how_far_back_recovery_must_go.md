@@ -3,6 +3,10 @@
 - `Write-ahead logging` guarantees that every change is recorded before it is applied, but it leaves an obvious question unanswered: if the log records every change forever, a `database` that has been running for months would have to replay months of log entries after every single crash, which would make `recovery` take longer and longer the older the system got.
 - This is the problem a **checkpoint** solves: a periodic marker that says "everything up to this point has definitely been written to the actual data files," so `recovery` only ever has to replay the log starting from the most recent checkpoint, not from the very beginning of time.
 
+## Definition
+
+**Definition:** A checkpoint marks a point where every previously logged change is guaranteed to already be written to the actual data files, giving `recovery` a recent, known starting point instead of forcing it to replay a `database`'s entire history after every crash, at the cost of periodic disk activity that has to be balanced against how quickly the system needs to recover.
+
 ## What a Checkpoint Actually Does
 
 A checkpoint is a point in time where the `database` guarantees that every change logged before that point has also been fully written out to the real data files on disk, not just recorded in the log.

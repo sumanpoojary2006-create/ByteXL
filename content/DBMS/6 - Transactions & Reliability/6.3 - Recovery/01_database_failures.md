@@ -10,6 +10,10 @@ A `database`'s `recovery` system exists to survive all of these, but each one de
 
 ![Three database failure scopes: transaction failure, system crash, and media failure](images/01_database_failure_types_scope.png)
 
+## Definition
+
+**Definition:** Transaction failures, system crashes, and media failures each affect a different scope of the system and call for a different defense, from a simple rollback to `write-ahead log` replay to physical redundancy, and recognizing which kind of failure is in play is the first step toward understanding how a `database` actually recovers from it.
+
 ## Transaction Failure: The Smallest Kind of Failure
 
 The narrowest kind of failure affects a single `transaction`, without touching the rest of the system at all. A `CHECK` `constraint` violation, a deadlock that forces one `transaction` to abort, or an application explicitly calling `ROLLBACK`, all fall into this category.

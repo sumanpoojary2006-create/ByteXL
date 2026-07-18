@@ -4,6 +4,10 @@ Knowing that `rows` live in pages raises a natural next question: in what order 
 
 There are a few standard strategies for how a `table`'s file can be organized, and PostgreSQL's default, called a heap, is deliberately the simplest and least structured of them. Understanding what a heap is, and the alternatives to it, explains why some `queries` that seem like they should be fast are not, without an `index` in the picture at all.
 
+## Definition
+
+**Definition:** A heap places `rows` wherever space is free, with no ordering guarantee, sorted or clustered organization keeps `rows` physically near others with similar values in a chosen `column`, and hashed organization groups `rows` by a computed bucket for fast exact-match lookups, each with a different trade-off between write simplicity and read speed for a particular kind of `query`.
+
 ## Heap Organization: Rows Land Wherever There Is Room
 
 By default, PostgreSQL stores a `table` as a heap, meaning new `rows` are simply placed wherever there happens to be free space, with no guaranteed ordering by any `column` at all.

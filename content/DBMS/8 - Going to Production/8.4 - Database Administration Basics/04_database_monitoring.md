@@ -4,6 +4,10 @@ Every diagnostic tool used across this course, `EXPLAIN ANALYZE`, `pg_stat_activ
 
 This helps teams respond before users are affected, instead of diagnosing the problem only after an outage has already begun.
 
+## Definition
+
+**Definition:** Continuous monitoring of `connection` usage, `table` bloat, cache hit ratio, and long-running or blocked `queries` turns the diagnostic tools used reactively throughout this course into an early-warning system, catching degrading health before it becomes a full outage, rather than only after users are already affected.
+
 ## Watching Connection Usage Over Time
 
 The `connection pooling` lesson introduced checking current `connections` against `max_connections` as a one-time check; monitoring turns that same check into something tracked continuously.

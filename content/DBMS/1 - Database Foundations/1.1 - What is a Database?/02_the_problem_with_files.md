@@ -12,6 +12,10 @@ Whichever file lands last on the server simply overwrites the other, and one coo
 
 None of this happened because Kabir or his colleagues were careless. It happened because plain files were never built to hold shared, growing data safely, and the failure has three distinct, well-known faces: **redundancy, inconsistency, and `lost updates`**.
 
+## Definition
+
+**Definition:** Redundancy creeps in because the same fact has to be retyped wherever it is needed, inconsistency follows because updating one copy never guarantees the others get updated too, and `lost updates` happen because a plain file cannot merge two people's honest changes into one.
+
 ## Redundancy: The Same Fact, Typed More Than Once
 
 Redundancy means a single fact gets stored in more than one place. Rohan's phone number is retyped into every file that needs to be read on its own, without anyone flipping between three tabs:

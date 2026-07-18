@@ -6,6 +6,10 @@ What he needs is a way to match a partial shape of text rather than an exact val
 
 ![LIKE with percent wildcard matching any email that ends in campusmail.edu](images/07_like_percent_email_pattern.png)
 
+## Definition
+
+**Definition:** `LIKE` turns `WHERE` from a tool that only recognises exact values into one that can recognise the shape of text.
+
 ## Matching Part of a String with LIKE
 
 `LIKE` compares a text `column` against a pattern instead of a fixed value. The pattern can include two special wildcard characters:

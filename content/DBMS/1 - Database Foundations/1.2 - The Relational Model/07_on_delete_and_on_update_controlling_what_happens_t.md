@@ -12,6 +12,10 @@ Sanjay realises this is not a question the Orders `table` can answer by accident
 
 This is exactly the dilemma every relational `database` has to face wherever a `foreign key` exists, and it is a decision the `database` lets a designer make in advance, rather than leaving it to chance the day a real customer actually asks to be deleted.
 
+## Definition
+
+**Definition:** Every `foreign key` eventually forces the same honest question: if the `row` being pointed at disappears or changes, what should happen to the `rows` depending on it, and a relational `database` lets that answer be blocking, cascading, or clearing the link, chosen deliberately for each relationship rather than left to chance.
+
 ## The Dilemma, In Plain Terms
 
 Whenever a `foreign key` connects a child `row` to a parent `row`, as an order connects to the customer who placed it, two kinds of change to the parent can leave the child stranded:

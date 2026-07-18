@@ -10,6 +10,10 @@ SQL's built-in **numeric `functions`** handle exactly this kind of cleanup, righ
 
 ![ROUND turning an over-precise selling price into a customer-ready price](images/03_round_price_display_precision.png)
 
+## Definition
+
+**Definition:** Numeric `functions` turn raw, over-precise, or oddly signed numbers into values fit for a report or a receipt: `ROUND` for display precision, `CEIL` and `FLOOR` for deliberate rounding direction, `ABS` for magnitude regardless of sign, and `MOD` for remainders.
+
 ## Rounding to a Sensible Precision
 
 The `products` `table` stores prices with more decimal precision than any customer needs to see.

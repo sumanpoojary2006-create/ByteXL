@@ -11,6 +11,10 @@ The tool she reaches for is called a **`functional dependency`**, and it says so
 
 ![Functional dependency shown as X determining Y with CustomerID and RollNumber examples](images/03_functional_dependency_x_determines_y.png)
 
+## Definition
+
+**Definition:** A `functional dependency` turns "these `columns` seem related" into a precise, testable rule: given a value in one `column`, exactly one value in another `column` is guaranteed, every time.
+
 ## What "X Determines Y" Actually Means
 
 A `functional dependency` is usually written as X determines Y, meaning that for any two `rows` that share the same value of X, they must also share the same value of Y. It is not enough for X and Y to usually match up, the rule has to hold with certainty, for every `row`, always.

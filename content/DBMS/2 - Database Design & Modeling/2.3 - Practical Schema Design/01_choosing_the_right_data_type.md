@@ -11,6 +11,10 @@ Two `columns` stop him cold:
 
 ![Column cards being matched to suitable data types such as decimal, integer, boolean, and datetime](images/01_data_type_column_matching.png)
 
+## Definition
+
+**Definition:** Choosing a data type is really choosing a promise: what a `column` will and will not accept, and how precisely it will hold on to the values it is given.
+
 ## Whole Numbers, Decimals, and the Trap of Storing Money as a Float
 
 Arjun's first instinct for the price `column` is to reach for whatever type his programming courses used for "numbers with decimals," a floating-point type. His manager stops him before he writes it down. Floating-point types store numbers as an approximation in binary, fine for scientific measurements where a tiny rounding error does not matter, but quietly dangerous for money.

@@ -6,6 +6,10 @@ The second engineer wants to store each shipment as a flexible bundle of key-val
 
 Which one could literally any developer at this company sit down and `query` correctly on their very first day, without asking you a single question?" That question is really about the **relational model**, and specifically about why `tables` and a shared, standard `query` language remain the default starting point for building a serious `database` system, even when other shapes of storage exist.
 
+## Definition
+
+**Definition:** Relational `databases` earn their place as the default starting point because `tables` are a shape people already understand, and SQL is a language that transfers across systems, jobs, and years instead of expiring the moment one particular product falls out of fashion.
+
 ## Tables Are Something Everyone Already Understands
 
 A relational `table` is not a clever invention that requires special training to read. It is a grid, `rows` and `columns`, the same shape as a spreadsheet, an attendance register, or a printed timetable. Anyone who has ever glanced at a class list with names down the side and subjects across the top already has the right mental model for a relational `table` before they write a single line of code.

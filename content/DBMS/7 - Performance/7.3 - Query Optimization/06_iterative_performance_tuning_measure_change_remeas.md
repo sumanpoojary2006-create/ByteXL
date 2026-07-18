@@ -4,6 +4,10 @@ Every technique covered in this unit, storage layout, `indexes`, `EXPLAIN`, `joi
 
 This final lesson walks through that full loop, start to finish, on one `query`.
 
+## Definition
+
+**Definition:** Iterative tuning, measure with `EXPLAIN ANALYZE`, make one deliberate change, re-measure to confirm it actually helped, and repeat, is the discipline that ties every technique in this unit together into a real, evidence-based process, rather than a collection of tricks applied on faith.
+
 ## Step One: Measure the Starting Point
 
 Before changing anything, the first step is always establishing an honest baseline with `EXPLAIN ANALYZE`, the actual-execution tool covered earlier in this chapter.

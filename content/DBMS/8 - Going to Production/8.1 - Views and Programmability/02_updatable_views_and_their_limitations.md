@@ -4,6 +4,10 @@ Devraj's `active_shipments` `view` has been used for `SELECT` `queries` so far, 
 
 A `view` built simply enough can be genuinely **updatable**, passing writes straight through to its underlying `table`, while a `view` involving a `join`, an aggregate, or certain other constructs cannot be written to directly at all.
 
+## Definition
+
+**Definition:** A `view` built from a single `table` with no aggregation is updatable automatically, since a `row` in the `view` maps unambiguously to one `row` in one underlying `table`, while a `view` involving a `join` or an aggregate cannot be written to directly, since that mapping becomes ambiguous or nonexistent, though `INSTEAD OF` `trigger`s exist as a deliberate way to bridge that gap when genuinely needed.
+
 ## A Simple View Is Updatable by Default
 
 A `view` built from a single `table`, with a straightforward `SELECT` and no aggregation, is updatable without any special setup.

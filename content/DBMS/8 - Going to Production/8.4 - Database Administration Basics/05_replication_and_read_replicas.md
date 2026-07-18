@@ -4,6 +4,10 @@ Every lesson in this course has run against a single `database` server.
 
 A production system serving real, sustained traffic eventually outgrows what one server can comfortably handle, and it also cannot afford for that one server to be a single point of total failure. **Replication** addresses both concerns: continuously copying a `database`'s changes to one or more additional servers, called `replicas`, which can take over if the primary fails, and can also absorb read traffic that would otherwise all fall on a single machine.
 
+## Definition
+
+**Definition:** Replication streams a primary `database`'s `write-ahead log` to one or more `replicas`, which replay it to stay continuously in sync, enabling both read scaling, directing tolerant read traffic away from the primary, and availability, standing ready to take over if the primary fails, at the cost of a small, measurable lag that every application using a `replica` has to account for.
+
 ## How Streaming Replication Works, Conceptually
 
 PostgreSQL's standard replication approach relies on exactly the mechanism covered in the `recovery` unit: the `write-ahead log`. A `replica` continuously receives the same `WAL` records the primary server generates, and replays them, effectively performing the same redo process `recovery` uses after a crash, except continuously, in near real time, against a running, healthy primary.

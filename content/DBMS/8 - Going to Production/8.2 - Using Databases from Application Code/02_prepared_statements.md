@@ -4,6 +4,10 @@ Once a `connection` is open, an application still has to decide exactly how to s
 
 This is a genuine hazard, both for correctness and for security, and the fix is a mechanism nearly every `database` and client library supports directly: a **`prepared statement`**, which sends the `query` structure and its runtime values as two separate things, rather than one combined string.
 
+## Definition
+
+**Definition:** A `prepared statement` separates a `query`'s fixed structure from the runtime values it operates on, letting an application safely handle untrusted input as pure data that can never alter what the `query` actually does, while also allowing the `database` to reuse a parsed and planned `query` across repeated executions.
+
 ## The Problem with Building SQL by Pasting in Values
 
 The `shipments` `table` sets up a simple lookup that an application might naively build by string concatenation.

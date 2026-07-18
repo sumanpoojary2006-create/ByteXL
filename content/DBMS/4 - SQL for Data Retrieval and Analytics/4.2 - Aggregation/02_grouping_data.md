@@ -4,6 +4,10 @@ Priya's one-number summaries answered the founders' first round of questions, bu
 
 What Priya actually needs is the `table` split into separate buckets, one per category, with the `aggregate functions` run separately inside each bucket. SQL's **`GROUP BY`** clause does exactly this: it partitions `rows` into groups before the `aggregate functions` ever run.
 
+## Definition
+
+**Definition:** `GROUP BY` is what turns a single flat summary into a per-category, per-customer, or per-combination breakdown, by partitioning `rows` before the `aggregate functions` run over them.
+
 ## Splitting Rows Into Groups
 
 The `orders` `table` from `aggregate functions` is the starting point again.

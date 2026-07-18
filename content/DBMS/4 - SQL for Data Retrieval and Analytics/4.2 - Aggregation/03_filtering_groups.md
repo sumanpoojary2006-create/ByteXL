@@ -5,6 +5,10 @@
 - The reason is about timing: `WHERE` filters individual `rows` before grouping happens, but Priya's condition depends on a sum that only exists after grouping happens.
 - SQL has a separate clause for exactly this situation, **`HAVING`**, which filters groups after they have already been summarized.
 
+## Definition
+
+**Definition:** `HAVING` fills the exact gap `WHERE` cannot: filtering on values that only exist after grouping and aggregation have already run.
+
 ## Why WHERE Cannot Filter on an Aggregate
 
 The `orders` `table` is the same one used for grouping.

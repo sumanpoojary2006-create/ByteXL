@@ -9,6 +9,10 @@ Neither of these exists as a `column`. Nothing needs to be added to the `table` 
 
 A value built this way, out of `columns` and operators rather than read directly off disk, is called an **expression**, and when it is given a name in the output, it behaves exactly like a calculated `column`.
 
+## Definition
+
+**Definition:** Expressions turn a `SELECT` list from a plain menu of stored `columns` into a small calculator that runs once per `row`: arithmetic operators combine numbers, `||` combines text, and `AS` gives the result a name worth keeping.
+
 ## Doing Arithmetic in a SELECT List
 
 The `courses` `table` holds this data:

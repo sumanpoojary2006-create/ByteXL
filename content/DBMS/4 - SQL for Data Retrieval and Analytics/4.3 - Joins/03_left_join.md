@@ -4,6 +4,10 @@ Zoya's manager asks a question the inner `join` from the last lesson cannot answ
 
 What Zoya needs is a `join` that keeps every `row` from `customers` regardless of whether a matching order exists, filling in the order `columns` with `NULL` when nothing matches. That is exactly what a **`LEFT JOIN`** does.
 
+## Definition
+
+**Definition:** `LEFT JOIN` guarantees every `row` from the first-named `table` survives the `join`, filling in `NULL` for the other side when no match exists, which makes it the right tool whenever "customers with no orders" or "restaurants with no orders" is itself the question.
+
 ## Keeping Every Row From the Left Table
 
 The same delivery `schema` is used again, including Neha Bhatt, who has never placed an order.

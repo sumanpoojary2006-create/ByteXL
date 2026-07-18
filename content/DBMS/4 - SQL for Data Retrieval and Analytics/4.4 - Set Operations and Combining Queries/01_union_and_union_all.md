@@ -4,6 +4,10 @@ Tanvi runs marketing for a retail brand that sells both through its website and 
 
 This is not a `join`, since she is not trying to match `rows` between the two `tables` and widen them with extra `columns`; she wants to stack the `rows` from both `tables` on top of each other into one combined list. SQL's **`UNION`** and **`UNION ALL`** are built for exactly that: combining the results of two `queries` vertically.
 
+## Definition
+
+**Definition:** `UNION` and `UNION ALL` combine the results of two or more `queries` vertically into one result set, with `UNION` removing exact duplicates and `UNION ALL` keeping every `row`, both requiring the same number and type of `columns` from each `query` involved.
+
 ## Stacking Two Result Sets Into One
 
 Both customer `tables` share the same shape, a name and an email, which is a requirement for combining them this way.

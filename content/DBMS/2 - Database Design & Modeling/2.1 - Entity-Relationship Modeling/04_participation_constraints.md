@@ -13,6 +13,10 @@ Both of these are true at once, and the relationship's cardinality alone never t
 
 ![Orders requiring customers while customers may validly have zero orders](images/07_total_vs_partial_participation.png)
 
+## Definition
+
+**Definition:** Participation `constraint` asks a question cardinality never answers on its own: whether every instance of an entity is required to take part in a relationship, called total participation, or whether some instances are free to exist outside it, called partial participation.
+
 ## Total Participation: Every Instance Must Take Part
 
 When every single instance of an entity is required to participate in a relationship, that entity has **total participation** in the relationship. Orders is the clean example here: an order that exists in the store's system, by definition, was placed by a customer. There is no such thing as an orphaned order sitting in the `database` with no customer behind it.

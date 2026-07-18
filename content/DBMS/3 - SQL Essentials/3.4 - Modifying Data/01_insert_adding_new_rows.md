@@ -4,6 +4,10 @@ Alia handles admissions for a small college, and it is the first week of term. A
 
 Alia has spent the last few weeks only ever looking at data on screen, running `SELECT` statements to check who is already enrolled, who has paid, who still owes a phone number on file. Today is different. Today she has to put a brand new `row` into the `table` herself, and the tool for that job is **`INSERT`**, the statement that adds new `rows` to a `table`.
 
+## Definition
+
+**Definition:** The **`INSERT` statement** adds one or more new rows to a table by supplying values for the table's columns.
+
 ## The Anatomy of INSERT INTO
 
 Before the `INSERT`, the `students` `table` holds these eight `rows`, with no Diya Kulkarni yet:

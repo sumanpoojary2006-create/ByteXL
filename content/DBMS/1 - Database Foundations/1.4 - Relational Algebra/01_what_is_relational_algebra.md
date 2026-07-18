@@ -8,6 +8,10 @@ Her manager walks her through it. Underneath every dashboard, every report, and 
 
 This formal toolkit, the mathematical foundation beneath every question a relational `database` can answer, is called **`relational algebra`**, and understanding it is what finally lets Devika see the machinery behind the dashboard instead of just trusting it blindly.
 
+## Definition
+
+**Definition:** `Relational algebra` is the formal, mathematical toolkit underneath every question a relational `database` answers: a small set of operations, each one taking relations in and producing a relation out, that together give a `database` a precise language for expressing and comparing ways of finding an answer.
+
 ## A Relation In, A Relation Out
 
 Start with what a "relation" actually is in this context: it is simply the formal name for a `table`, a set of `rows` sharing the same `columns`. Suppose the bookstore's system stores a relation called Books, looking something like this:

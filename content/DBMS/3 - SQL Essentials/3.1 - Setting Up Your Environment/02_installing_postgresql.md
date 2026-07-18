@@ -10,6 +10,10 @@ Understanding that one idea makes the rest of installing it far less mysterious,
 
 ![PostgreSQL installed as a background server process with port 5432 and a postgres role](images/03_postgresql_server_process_port_role.png)
 
+## Definition
+
+**Definition:** Installing PostgreSQL, stripped of wizard screens and package-manager syntax, comes down to the same few ideas everywhere: get the server software onto the machine, set up a default administrative account to manage it, agree on a port for tools to connect through, and confirm the whole thing actually worked with a quick version check.
+
 ## What an Install Actually Sets Up
 
 Regardless of which operating system Ananya is on, a PostgreSQL install accomplishes the same handful of things underneath whatever wizard or command happens to drive it.

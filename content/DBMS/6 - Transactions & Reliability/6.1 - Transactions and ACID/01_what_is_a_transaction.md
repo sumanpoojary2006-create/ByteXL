@@ -6,6 +6,10 @@ If the first `UPDATE` completes and the second never runs, money has vanished fr
 
 The `database`'s answer to this problem is the **`transaction`**: a group of one or more statements that the `database` guarantees will either all succeed together or all fail together, with no in-between state ever left visible.
 
+## Definition
+
+**Definition:** A `transaction` groups one or more statements into a single unit that either commits entirely or rolls back entirely, closing the gap where a partial failure could otherwise leave data in a broken, half-changed state.
+
 ## Two Statements That Need to Move as One
 
 The `accounts` `table` holds a simple balance per account, the starting point for Rahul's transfer feature.

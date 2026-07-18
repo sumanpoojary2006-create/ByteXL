@@ -6,6 +6,10 @@ She runs a plain `SELECT full_name, city FROM students;` and the `rows` come bac
 
 The clause that asks for one is **`ORDER BY`**, and it is what turns an unpredictable pile of `rows` into a sequence a person can actually use.
 
+## Definition
+
+**Definition:** `ORDER BY` replaces an unpredictable `row` order with one you actually chose, ascending by default or reversed with DESC, and it can chain several `columns` together so later ones only settle ties left by earlier ones.
+
 ## Sorting Ascending, the Default
 
 The `students` `table` holds this data, in no particular order:

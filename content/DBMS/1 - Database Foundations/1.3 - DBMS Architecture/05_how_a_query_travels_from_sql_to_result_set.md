@@ -8,6 +8,10 @@ Aisha had assumed, before this week, that a `query` is basically answered the mo
 
 Tracing **how a `query` travels from SQL to a result set** is what finally makes the whole architecture of a `database` click into place for her, all the pieces she had studied separately now moving together in one continuous story.
 
+## Definition
+
+**Definition:** The **query-processing pipeline** is the sequence through which a DBMS parses SQL, validates it, chooses an execution plan, reads the required data, and returns the final result set.
+
 ## Step One: The Request Arrives as Plain SQL
 
 The moment Tara taps "View Result," the portal's backend sends a `query` to the `database` asking, in effect, for the marks belonging to her roll number. At this stage, the `query` is nothing more than text, a precisely structured sentence written in SQL. The `database` has not yet decided whether this request even makes sense, and it has certainly not gone anywhere near the actual stored marks.

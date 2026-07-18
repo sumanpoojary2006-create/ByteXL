@@ -5,6 +5,10 @@ An earlier unit covered the discipline of wrapping related statements in `BEGIN`
 - How a `transaction` relates to the `connection` it runs on
 - A tool this course has not yet introduced, the savepoint, for handling a partial failure inside an otherwise successful `transaction`, a situation application code runs into constantly
 
+## Definition
+
+**Definition:** A `transaction` belongs to exactly one `connection` and must always reach a `COMMIT` or `ROLLBACK`, since a `connection` left "idle in `transaction`" holds its `lock`s indefinitely and can block other work, and savepoints give application code a way to discard just one problematic step inside a larger `transaction` without losing everything else already done.
+
 ## A Transaction Belongs to Exactly One Connection
 
 A `transaction` is tied entirely to the specific `connection` it was started on; it is not a general, `database`-wide state, and no other `connection` can see, join, or affect it.

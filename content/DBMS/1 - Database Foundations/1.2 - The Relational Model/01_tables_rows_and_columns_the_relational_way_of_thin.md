@@ -16,6 +16,10 @@ What changed is the shape she put them in. A grid where every `row` describes on
 
 Learning to think in `tables`, `rows`, and `columns`, rather than in loose freeform notes, is the very first habit a `database` designer builds, and it is the idea this entire course rests on.
 
+## Definition
+
+**Definition:** A relational `database` is, at its heart, nothing more mysterious than Meera's ruled grid: a named `table` holding `rows` of the same kind of thing, with `columns` that describe one consistent fact about every single `row`.
+
 ## From a Pile of Sheets to a Table
 
 Here is roughly what Meera's grid looks like once she has ruled it out properly.

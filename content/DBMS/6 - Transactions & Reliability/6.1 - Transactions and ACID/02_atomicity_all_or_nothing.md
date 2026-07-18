@@ -7,6 +7,10 @@
 - The answer is yes, and that guarantee has a name: **atomicity**, the first letter in ACID.
 - Atomicity is the promise that a `transaction`'s changes are indivisible, either every one of them takes effect, or none of them do, regardless of how or why the `transaction` failed to finish.
 
+## Definition
+
+**Definition:** Atomicity guarantees that every statement inside a `transaction` commits together or fails together, whether the failure comes from an explicit `ROLLBACK` or an unplanned error like a `constraint` violation, though it is still up to the application to decide which statements belong grouped together in the first place.
+
 ## Atomicity Protects Against More Than Explicit Rollbacks
 
 The `accounts` `table` from the previous lesson is the setup here again.

@@ -35,6 +35,10 @@ Getting this right is the very first checkpoint in redesigning any `table`, and 
 
 ![First Normal Form requiring one atomic value per cell instead of comma-separated phone numbers](images/05_first_normal_form_atomic_cells.png)
 
+## Definition
+
+**Definition:** First `Normal Form` asks for the most basic kind of honesty a `table` can offer: every `column` holds exactly one value, never a hidden list dressed up as a single entry.
+
 ## Why a Comma-Separated Cell Is Not Actually One Value
 
 It is tempting to think "9845012233, 9900112244" is just a slightly long piece of text, no different from a long address. But an address, however long, is genuinely one fact, the shop's location. A cell holding two phone numbers is secretly holding two separate facts squeezed into one box, and that causes real damage the moment anyone tries to use the data properly.

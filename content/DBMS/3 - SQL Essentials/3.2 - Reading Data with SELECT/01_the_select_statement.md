@@ -4,6 +4,10 @@ Karthik has just been given read access to his college's student records `databa
 
 He is not filtering anything, not searching for one particular person, not doing any arithmetic. He just wants everything a `table` is holding, laid out as `rows` and `columns` he can read. That plain request, "show me what is in this `table`," is exactly what the **`SELECT` statement** answers, and it is the single most used piece of SQL a person will ever type.
 
+## Definition
+
+**Definition:** The `SELECT` statement is the starting point of nearly every piece of SQL anyone writes: name the `columns` you want, name the `table` they live in, and the `database` hands back exactly that slice of data.
+
 ## Asking For Everything in a Table
 
 The students `table` already exists in the college's `database`, with one `row` per student and `columns` for their ID, name, email, city, phone number, and the date they joined. This is the data Karthik is working with:

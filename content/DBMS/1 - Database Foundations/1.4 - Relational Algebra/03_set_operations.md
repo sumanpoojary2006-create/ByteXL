@@ -13,6 +13,10 @@ What Meera is really asking for are three classic comparisons between two relati
 - `Relational algebra` has a dedicated operation for each of these, borrowed directly from set theory, and together they are simply called **set operations**.
 - Before any of the three can be applied, though, the two relations being compared have to satisfy one important condition, and that condition comes first.
 
+## Definition
+
+**Definition:** Union, intersection, and difference let a `database` compare two relations the way set theory compares two collections, but only once those relations are union-compatible, meaning they agree on the number of `columns` and the domain each `column` draws from.
+
 ## The Two Club Relations
 
 Here are Meera's two relations, trimmed down to just the `column` that matters:

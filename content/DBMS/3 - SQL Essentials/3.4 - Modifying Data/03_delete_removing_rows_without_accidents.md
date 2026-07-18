@@ -4,6 +4,10 @@ Priyanka is closing out add-drop week. One student, Rahul Verma, registered for 
 
 The statement for this is **`DELETE`**, and Priyanka already knows, from watching Rohit's `UPDATE` go sideways for a moment during his own address corrections, that a statement which removes `rows` deserves exactly the same caution as one that changes them.
 
+## Definition
+
+**Definition:** The **`DELETE` statement** removes existing rows from a table, with the `WHERE` clause determining which rows are removed.
+
 ## Finding the Row Before Removing It
 
 The `enrollments` `table` holds this data:

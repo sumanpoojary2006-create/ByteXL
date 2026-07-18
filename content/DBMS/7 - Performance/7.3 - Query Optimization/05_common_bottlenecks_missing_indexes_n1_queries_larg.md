@@ -6,6 +6,10 @@ Most real-world performance problems trace back to a small handful of recurring 
 - An application pattern called the `N+1 query` problem
 - Large, unnecessary scans hiding inside an otherwise reasonable-looking `query`
 
+## Definition
+
+**Definition:** A missing `index` on a selective `column`, the `N+1 query` pattern hiding in application code, and a `function` or cast silently defeating an otherwise-useful `index` are three of the most common ways a real system slows down, and all three are diagnosable with the same tools covered across this unit: `EXPLAIN`, `EXPLAIN ANALYZE`, and a clear understanding of what each plan node actually means.
+
 ## Bottleneck One: A Missing Index on a Selective Column
 
 The clearest, most mechanical bottleneck is a filter condition on a `column` with no supporting `index`, forcing a `sequential scan` even when very few `rows` actually match.

@@ -4,6 +4,10 @@ Every `join` so far has combined exactly two `table` references at a time, but a
 
 Zoya's dispatch manager wants exactly that: one line per order showing the customer's name, the restaurant's name, and the rider's name, side by side. This does not need a new kind of `join`, just more of the same `JOIN` clauses chained one after another, each one attaching another `table` to the growing result.
 
+## Definition
+
+**Definition:** `Joining` three or more `tables` is just the same `JOIN` clause repeated once per additional `table`, each one widening the working result before the next `join`, filter, or grouping step runs, with aliases keeping the `query` readable as the `table` count grows.
+
 ## Setting Up Four Related Tables
 
 `orders` now references three other `tables` at once: `customers`, `restaurants`, and `riders`.

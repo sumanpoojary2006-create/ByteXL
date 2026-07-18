@@ -14,6 +14,10 @@ What Ishaan actually needs is not a ranking of which `database` is "best" in som
 
 He needs to understand what a **relational `database` management system**, a piece of software that stores data in structured `tables` and lets him ask precise questions of it using a shared `query` language, is built to do well, and which of the several relational systems on offer make the most sense for someone learning the craft from scratch. That question has a much calmer answer than the forum threads suggest.
 
+## Definition
+
+**Definition:** Choosing a `database` system is not about finding one flawless option and discarding the rest, it is about matching a system's actual design to the shape of the problem in front of you.
+
 ## The Relational Family Ishaan Keeps Running Into
 
 Almost every name Ishaan encountered belongs to one of two broad families. The first is the relational family: PostgreSQL, MySQL, SQLite, Oracle, and SQL Server all organize data into `rows` and `columns` inside named `tables`, and all of them understand the same general `query` language, with small dialect differences between them.

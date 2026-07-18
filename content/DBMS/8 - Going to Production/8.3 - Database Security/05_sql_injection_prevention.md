@@ -4,6 +4,10 @@ The `prepared statements` lesson, back in the application-code chapter, briefly 
 
 This attack has a name, **SQL injection**, and it remains one of the most common, most damaging vulnerabilities in real software, precisely because the mistake that causes it, building SQL by string concatenation, is so easy to write without realizing the danger. This lesson revisits the mechanism in more depth and lays out the full set of defenses, `prepared statements` as the primary one, backed by everything covered earlier in this chapter.
 
+## Definition
+
+**Definition:** SQL injection happens when untrusted input is allowed to become part of a `query`'s structure rather than staying confined to a value being compared or inserted, and `prepared statements` prevent this by construction, keeping structure and data permanently separate, with input validation and `least privilege` serving as valuable additional layers rather than substitutes for that primary defense.
+
 ## A More Damaging Injection Example
 
 The earlier example returned extra `rows`; a real injection can go much further, touching data the `query` was never meant to involve at all.

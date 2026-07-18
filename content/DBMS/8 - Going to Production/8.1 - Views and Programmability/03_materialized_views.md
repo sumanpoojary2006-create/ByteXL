@@ -4,6 +4,10 @@ Devraj's ordinary `view`s, covered so far in this chapter, always re-run their u
 
 A **`materialized view`** solves this by actually storing the `query`'s result on disk, like a real `table`, and only recomputing it when explicitly refreshed, trading perfect freshness for dramatically faster reads.
 
+## Definition
+
+**Definition:** A `materialized view` stores its `query`'s result physically rather than recomputing it on every read, dramatically speeding up expensive aggregate or summary `queries`, at the cost of only being as current as its most recent explicit refresh, with `REFRESH MATERIALIZED VIEW CONCURRENTLY` available when the `view` needs to stay readable during that refresh.
+
 ## Creating a Materialized View
 
 The setup mirrors the ordinary `view` from earlier in this chapter, but the underlying data here represents a much larger, slower-to-aggregate history.

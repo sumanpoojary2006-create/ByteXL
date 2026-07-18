@@ -8,6 +8,10 @@ The report that used to take a few seconds against the old, messy, single `table
 
 Vivek is not seeing a bug. He is running into the honest cost of the very discipline the team just finished applying, and it forces a question every real system eventually has to answer: when, if ever, does it make sense to deliberately reintroduce some redundancy, a practice called **denormalization**, in exchange for a faster answer.
 
+## Definition
+
+**Definition:** Normalization and denormalization are not rival philosophies where one side is simply right, they are two ends of a genuine trade-off between safe, anomaly-free writes and fast, uncombined reads, and a mature `schema` uses each where it earns its keep.
+
 ## What Normalization Cost Sunrise Traders, in Exchange for What It Fixed
 
 Every split Priya's team performed traded one thing for another. The old combined Orders `table` was fast to read from, because everything needed for a report sat in a single `table` with no combining required, but it was dangerous to write to, because the same fact was repeated everywhere and could quietly fall out of sync.

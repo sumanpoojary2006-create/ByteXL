@@ -4,6 +4,10 @@ Zoya now understands `LEFT JOIN` well enough to solve it a different way: instea
 
 There is also a third option, a **`FULL OUTER JOIN`**, for the rarer case where unmatched `rows` on both sides need to stay visible at the same time, not just one side or the other.
 
+## Definition
+
+**Definition:** `RIGHT JOIN` mirrors `LEFT JOIN` from the opposite `table`, and `FULL OUTER JOIN` protects both sides of a `join` at once, together completing the full family of ways two `tables` can be combined based on whether unmatched `rows` should be kept or dropped, and on which side.
+
 ## RIGHT JOIN as the Mirror of LEFT JOIN
 
 The same delivery `schema` applies here, with Neha Bhatt having no orders and Taco Town having no orders.

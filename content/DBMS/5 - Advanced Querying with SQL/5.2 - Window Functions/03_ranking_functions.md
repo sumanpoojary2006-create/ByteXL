@@ -4,6 +4,10 @@
 - `ORDER BY` alone can sort a result, but it cannot label each `row` with its rank, and it has no built-in way to decide what should happen to the rank numbers that follow a tie.
 - SQL provides three dedicated **ranking `functions`**, `ROW_NUMBER`, `RANK`, and `DENSE_RANK`, each a `window function` used with `OVER (ORDER BY ...)`, and each with a different, precise rule for handling ties.
 
+## Definition
+
+**Definition:** `ROW_NUMBER`, `RANK`, and `DENSE_RANK` each turn an ordered set of `rows` into rank numbers, differing only in how they handle ties, strict sequencing with no ties, ranking with gaps after a tie, or ranking with no gaps at all.
+
 ## Numbering Rows with ROW_NUMBER
 
 The `sales` `table` again holds individual sales, this time including a tie for illustration.

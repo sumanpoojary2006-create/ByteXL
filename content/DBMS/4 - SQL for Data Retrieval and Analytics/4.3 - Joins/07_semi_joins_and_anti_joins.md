@@ -4,6 +4,10 @@ Back in the `LEFT JOIN` lesson, Zoya found customers with no orders by joining `
 
 There is a more direct way to ask "does a matching `row` exist" or "does no matching `row` exist," using `EXISTS` and `NOT EXISTS`. These patterns are known as a **semi `join`**, which returns `rows` from one `table` where a match exists elsewhere without pulling in any `columns` from that other `table`, and an **anti `join`**, which returns `rows` where no match exists.
 
+## Definition
+
+**Definition:** Semi `joins` and anti `joins` answer "does a match exist" and "does no match exist" directly, using `EXISTS`, `NOT EXISTS`, `IN`, or `NOT IN`, without pulling in `columns` from the other `table` or risking duplicated `rows` the way an `INNER JOIN` or `LEFT JOIN` can.
+
 ## Finding Rows That Have a Match, Without Pulling in Columns
 
 The same delivery `schema` applies here, with Neha Bhatt having no orders and Taco Town having no orders.

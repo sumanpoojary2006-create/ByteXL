@@ -4,6 +4,10 @@ The lost interview slots are the final straw, and Priya's admissions office gets
 
 The vendor's proposal document lands on Meera's desk, she is the office manager, and two words appear side by side throughout it: "`database`" and "DBMS." Meera had always treated them as interchangeable, the way people say "PDF" when they mean "document." One sentence in the proposal refuses to let that slide: "PostgreSQL is the DBMS that will manage your admissions `database`." If PostgreSQL and the admissions `database` are described as two separate things, then they must actually be two separate things, and Meera cannot sign off on a purchase she does not understand.
 
+## Definition
+
+**Definition:** A `database` is the organized data, and a DBMS is the separate software built specifically to manage that data safely on its behalf, and the two words are never interchangeable no matter how often vendors blur them together.
+
 ## A Database Is the Organized Data Itself
 
 A **`database`** is an organized collection of related data, structured so it can be stored, retrieved, and updated reliably. For Meera's office, that means the actual facts, held together as one coordinated collection instead of scattered across `applicants.xlsx`, `documents.xlsx`, and `interviews.xlsx` with nothing enforcing how they relate to each other:

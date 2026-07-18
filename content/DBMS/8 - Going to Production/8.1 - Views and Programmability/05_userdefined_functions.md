@@ -4,6 +4,10 @@ Devraj's shipping cost calculation has grown complicated: a base rate depending 
 
 Unlike marking a shipment delivered, this is not a "run these statements together" problem; it is a "compute one value from some inputs" problem, meant to be used inside a `SELECT`, not called on its own as an action. A **user-defined `function`** fits this shape exactly: a named routine that takes inputs and returns a single computed value, usable anywhere a `query` expects a value.
 
+## Definition
+
+**Definition:** A user-defined `function` computes and returns a value, or a set of `rows`, and is called from within a `query` rather than as a standalone action, always running as part of the caller's own `transaction` rather than managing one of its own, which is the defining difference from the `procedures` covered in the previous lesson.
+
 ## Creating a Simple Function
 
 The `shipments` `table` holds the raw data a shipping-cost calculation depends on.

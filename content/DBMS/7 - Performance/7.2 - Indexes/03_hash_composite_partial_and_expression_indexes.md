@@ -9,6 +9,10 @@ A B-tree is an excellent default, but it is not the only shape an `index` can ta
 
 Each of these has a dedicated `index` type suited to it.
 
+## Definition
+
+**Definition:** `Hash indexes` optimize equality at the cost of range support, `composite indexes` serve `queries` that filter on the same multiple `columns` together, `partial indexes` shrink an `index` down to only the `rows` a `query` actually cares about, and `expression indexes` make a computed or transformed value searchable, each one a deliberate specialization beyond what a plain B-tree offers.
+
 ## A Table Large Enough to Need Them
 
 Demonstrating these variants takes a `table` with more `columns` and enough `rows` that the planner genuinely prefers an `index` over a `sequential scan`: 10000 orders with unique customer names, four regions, and a `status` where only 1 order in 100 is still active and another 1 in 100 is cancelled.

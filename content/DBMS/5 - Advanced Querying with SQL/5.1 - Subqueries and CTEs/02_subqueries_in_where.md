@@ -6,6 +6,10 @@ His next question does not have that shape: "which employees work in the same de
 
 SQL provides different operators, **`IN`**, **`ANY`**, and **`ALL`**, specifically for subqueries that return more than one `row`.
 
+## Definition
+
+**Definition:** A subquery inside `WHERE` can compare against a single value directly, or against a whole list of values using `IN`, `NOT IN`, `ANY`, or `ALL`, each suited to a different shape of question, with `NOT IN` needing an explicit guard against `NULL` that `NOT EXISTS` does not.
+
 ## A Subquery Returning Exactly One Value
 
 The `employees` `table` from the previous lesson is the setup here again.

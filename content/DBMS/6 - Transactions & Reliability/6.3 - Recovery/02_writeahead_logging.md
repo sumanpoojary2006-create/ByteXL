@@ -4,6 +4,10 @@ Durability, covered earlier in this unit, promised that a committed `transaction
 
 This ordering, log first, data files second, is the entire foundation of how a `database` recovers correctly after a crash, and it is worth understanding exactly why the order matters.
 
+## Definition
+
+**Definition:** `Write-ahead logging` guarantees that a durable record of every change exists before the change is considered complete, which is what allows a `database` to safely defer the slower work of updating actual data files while still guaranteeing that a crash can never lose a committed `transaction`'s effect.
+
 ## Why Writing Directly to Data Files Is Not Enough
 
 It might seem simpler for a `database` to just write a change straight to its data files the moment a `transaction` commits. The problem is that updating a data file on disk is not instantaneous or atomic at the hardware level:

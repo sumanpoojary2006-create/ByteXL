@@ -4,6 +4,10 @@ Marking a shipment delivered, in Devraj's system, is never just one `UPDATE`.
 
 It means changing the shipment's status, and also inserting a `row` into a separate audit log recording who marked it and when, two statements that always need to run together, the exact kind of grouped operation the `transactions` unit covered in depth, Rather than trusting every script and every developer to remember both statements and wrap them correctly, a **`stored procedure`** lets Devraj define this logic once, inside the `database` itself, as a named, callable unit.
 
+## Definition
+
+**Definition:** A `stored procedure`, invoked with `CALL`, wraps multiple statements into a single, named, reusable routine defined once inside the `database`, capable of managing its own `transaction` boundaries including mid-`procedure` commits, which guarantees every caller gets identical, correct behavior without reimplementing the same logic client by client.
+
 ## Creating a Simple Procedure
 
 The `shipments` and `shipment_log` `tables` set up the two-statement operation a `procedure` will wrap.

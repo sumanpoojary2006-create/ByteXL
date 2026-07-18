@@ -5,6 +5,10 @@
 - What Leela actually wants is both at once: every individual sale, shown next to that salesperson's running total, without collapsing anything away.
 - This is precisely the gap a **`window function`** fills: it calculates something across a group of related `rows`, the way an aggregate does, but returns a value for every original `row` instead of collapsing them.
 
+## Definition
+
+**Definition:** A **window function** in SQL **performs a calculation across a specific set of table rows that are related to the current row, without collapsing the result set into a single row.** The related rows form a *window*, and SQL returns the calculated value alongside each original row.
+
 ## The Problem GROUP BY Cannot Solve Alone
 
 The `sales` `table` records individual sales made by three team members.

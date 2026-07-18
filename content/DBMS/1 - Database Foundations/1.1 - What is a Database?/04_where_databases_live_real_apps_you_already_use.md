@@ -6,6 +6,10 @@ Curious, Tara opens her banking app to check her balance, then the same college 
 
 ![Food, banking, and college apps each reading and writing their own database behind the visible screen](images/07_databases_behind_everyday_apps.png)
 
+## Definition
+
+**Definition:** Databases are not machinery reserved for banks or large corporations, they sit invisibly behind almost every app that remembers anything from one visit to the next, from a plate of biryani to a bank transfer to a set of exam marks.
+
 ## The Food Delivery App: A Race Against Itself
 
 The instant Tara taps "confirm order," several related pieces of data are read and written almost simultaneously:

@@ -10,6 +10,10 @@ Priya's reports so far have all come from one `table`, but the founders' latest 
 
 None of these pieces are new on their own; what is new is seeing exactly how they fit together and in what order the `database` actually applies them.
 
+## Definition
+
+**Definition:** `Joins`, `row` filters, grouping, group filters, and sorting are not separate skills; they are stages of one pipeline that runs in a fixed order regardless of how the `query` is written, and understanding that order explains every rule about what each clause is and is not allowed to reference.
+
 ## Setting Up a Second Table to Join
 
 Region information lives on a separate `customers` `table`, not on `orders` itself, which is a completely normal way for a real `schema` to be organized.

@@ -6,6 +6,10 @@ That is not a mistake; it is the relational model working exactly as intended, s
 
 This is precisely the problem a **`join`** solves: combining `rows` from two or more `tables` based on a matching `column` between them.
 
+## Definition
+
+**Definition:** `Joins` exist because normalized `tables` intentionally keep related facts apart, one customer stored once, one restaurant stored once, and a `query` is what pulls those separated facts back together into a single readable result.
+
 ## Seeing the Problem Without a Join
 
 Three small `tables` model the food delivery system: customers who place orders, restaurants that fulfill them, and the orders that connect the two.

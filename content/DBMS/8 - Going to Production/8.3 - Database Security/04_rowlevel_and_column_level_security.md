@@ -4,6 +4,10 @@ Column-level privileges, previewed briefly in the `GRANT` lesson, restrict acces
 
 PostgreSQL's **`row-level security`**, or RLS, makes exactly this possible, enforced automatically by the `database` itself, rather than trusted to every application `query` remembering to add the right filter.
 
+## Definition
+
+**Definition:** `Row-level security`, enabled with `ALTER TABLE ... ENABLE ROW LEVEL SECURITY` and defined through `CREATE POLICY`, restricts which specific rows a `role` can see.
+
 ## The Problem Without Row-Level Security
 
 The `shipments` `table` now includes a `branch` `column`, and two `role`s represent two different branch coordinators.

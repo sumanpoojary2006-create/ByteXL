@@ -4,6 +4,10 @@ Zara has been running her `INSERT`, `UPDATE`, and `DELETE` statements the way Al
 
 A senior developer reviewing her work points out that PostgreSQL can hand that confirmation back immediately, as part of the very same statement, using a clause called **`RETURNING`**.
 
+## Definition
+
+**Definition:** `RETURNING` turns a modification into its own confirmation, handing back exactly the `row` an `INSERT` just created, an `UPDATE` just changed, or a `DELETE` just removed, without a second statement needed to check the result.
+
 ## RETURNING After INSERT
 
 The `enrollments` `table` holds this data:

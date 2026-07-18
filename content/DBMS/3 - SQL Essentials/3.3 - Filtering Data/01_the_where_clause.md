@@ -6,6 +6,10 @@ What he actually needs is a way to tell the `database` "only hand me back the `r
 
 ![WHERE acting as a filter gate that keeps matching Computer Science rows and blocks other rows](images/01_where_filter_keeps_matching_rows.png)
 
+## Definition
+
+**Definition:** The `WHERE` clause is what turns a `table` dump into an actual answer: it sits between `FROM` and `ORDER BY`, and it tests every `row` against a condition before deciding what makes it into the result.
+
 ## Filtering Rows Instead of Reading All of Them
 
 A `SELECT` without a `WHERE` clause returns every `row` a `table` has. Add a `WHERE` clause and the `database` tests each `row` against a condition, keeping only the `rows` where that condition is true and discarding the rest before the result ever reaches Omkar's screen.

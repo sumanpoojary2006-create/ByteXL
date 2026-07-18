@@ -16,6 +16,10 @@ Server, then `database`, then `schema`, then `table`, each level nested inside t
 
 ![Server, database, schema, and table shown as nested containers where rows finally live](images/07_server_database_schema_table_nesting.png)
 
+## Definition
+
+**Definition:** The nesting Pooja set out to understand turned out to be exactly as tidy as it sounded: a server holds `databases`, a `database` holds `schemas`, and a `schema` holds the `tables` where `rows` of real data actually live.
+
 ## Why a Fresh Database Is Usually a Manual, Local Step
 
 Creating a brand-new `database` is normally the very first move in any real project, done once, before anything else. It looks like this on a machine you control directly:

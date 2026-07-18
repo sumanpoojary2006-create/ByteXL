@@ -12,6 +12,10 @@ The trouble starts small and grows fast. The sales team creates a `table` called
 
 The two `Orders` `tables` collide, and nobody notices until a report quietly pulls the wrong one. Kiran's fix is not a naming trick or a stricter review process, it is an organizational tool built into the `database` itself, called a **`schema`**, or **namespace**, a named grouping that lets related `tables` live together under one label while staying cleanly separated from `tables` owned by a different team.
 
+## Definition
+
+**Definition:** A `schema`, in this sense, is less about how any single `table` is shaped and more about how a whole `database` full of `tables` is kept organized once more than one team is building on top of it.
+
 ## A Schema Is a Folder, Not a Table Design
 
 The word "`schema`" is used two different ways in `database` work, and Kiran is careful to keep them apart when she explains this to new hires. One meaning, the one usually covered first, refers to the structure of a single `table`, its `columns`, types, and keys, the blueprint for what a `row` looks like.

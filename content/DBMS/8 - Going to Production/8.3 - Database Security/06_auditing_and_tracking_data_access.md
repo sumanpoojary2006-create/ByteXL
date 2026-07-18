@@ -2,6 +2,10 @@
 
 The security mechanisms covered so far, `roles`, privileges, `least privilege`, `row-level security`, and injection prevention, all work to prevent unwanted access before it happens. **Auditing** is the complementary discipline for after the fact: recording who did what and when, so that if something goes wrong, or simply needs reviewing later, the team has an actual trail to examine instead of forcing everyone to guess.
 
+## Definition
+
+**Definition:** Auditing, typically built on the `trigger` mechanism for writes and server-level logging for reads, records who did what and when, providing the after-the-fact trail that prevention mechanisms like `row-level security` and `least privilege` cannot offer on their own, valuable for detecting misuse, investigating incidents, and meeting compliance requirements.
+
 ## Recording Who Changed a Row, Using a Trigger
 
 The `trigger` mechanism from earlier in this course is the natural building block for an audit trail, extended here to capture which `role` made a change, not just what changed.

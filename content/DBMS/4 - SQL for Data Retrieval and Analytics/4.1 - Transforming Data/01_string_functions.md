@@ -10,6 +10,10 @@ None of this needs a new `column` or a data-entry fix from head office. It needs
 
 ![CONCAT joining branch name and locality into one restaurant display name](images/01_concat_branch_locality_display_name.png)
 
+## Definition
+
+**Definition:** String `functions` let a `query` reshape text as it leaves the `table`, joining `columns` together, normalizing case, stripping stray whitespace, and pulling out just the substring that matters, all without ever editing the stored data.
+
 ## Joining Text Together
 
 The `restaurants` `table` stores a branch name and a locality in separate `columns`, but the delivery app wants them shown as one combined string.

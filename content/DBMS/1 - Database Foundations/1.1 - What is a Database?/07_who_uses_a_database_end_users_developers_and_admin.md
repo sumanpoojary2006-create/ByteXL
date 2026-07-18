@@ -6,6 +6,10 @@ That same afternoon, Kiran, the developer who built the portal, spends an hour w
 
 Same `database`, same single day, three completely different relationships to it.
 
+## Definition
+
+**Definition:** **Database users** include end users who work through applications, developers who write the software and queries that access the data, and database administrators who manage security, availability, backups, and performance.
+
 ## End Users: People Who Never See the Data Directly
 
 An **end user** interacts with a `database` only through an application's screen, never through the `database` itself. Ravi typed a professor's name into a search box and read a result, he has no idea, and no need to have any idea, whether that search ran against a relational `database` or something else entirely.

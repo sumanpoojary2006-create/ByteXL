@@ -14,6 +14,10 @@ These three situations turn out to be common enough that the relational model gi
 - A key that only becomes unique once two or more `columns` are combined together is a **`composite key`**.
 - An artificial, invented `column` added purely to give a `table` a reliable identity, when nothing natural exists, is a **`surrogate key`**.
 
+## Definition
+
+**Definition:** Candidate keys widen the lens from "the one `primary key`" to every `column` that honestly could have filled that `role`.
+
 ## Candidate Keys: The Ones That Could Have Been Chosen
 
 Look at Aisha's Books `table`.

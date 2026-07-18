@@ -15,6 +15,10 @@ That difference is the whole idea behind this lesson. The raw numbers on the for
 
 ![Raw marks becoming meaningful subject results after a database organizes them](images/01_data_to_information.png)
 
+## Definition
+
+**Definition:** Data is the raw fact; information is that fact once it has been organised, labelled, and connected to something a person can use.
+
 ## Data: Raw and Unopinionated
 
 Data is any raw fact recorded about the world: a number, a word, a date, a temperature reading, a photograph, a click on a button. On its own, a single piece of data rarely tells a complete story.

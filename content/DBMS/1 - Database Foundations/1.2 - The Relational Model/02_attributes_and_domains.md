@@ -12,6 +12,10 @@ An "Email" `column`'s domain is the set of text values shaped like a valid email
 
 ![Kabir adding domain gates so only valid age, phone, and email values enter the Members table](images/03_attribute_domain_entry_gates.png)
 
+## Definition
+
+**Definition:** An attribute is a `column`'s name, but its domain is the promise behind that name, the exact boundary of values the `column` will ever legitimately hold.
+
 ## An Attribute Is More Than Just a Label
 
 A `column` is a named attribute every `row` has, but that name alone is only half the story. Consider Kabir's Members `table`.

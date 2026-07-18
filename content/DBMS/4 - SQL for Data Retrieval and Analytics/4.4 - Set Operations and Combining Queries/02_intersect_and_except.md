@@ -8,6 +8,10 @@ Tanvi's next request from the marketing team is more specific than a merged mail
 - `UNION` cannot answer either question, since it only combines everything from both sides.
 - What Tanvi needs now are two more set operations: **`INTERSECT`**, which returns only the `rows` common to both `queries`, and **`EXCEPT`**, which returns `rows` from the first `query` that do not appear in the second.
 
+## Definition
+
+**Definition:** `INTERSECT` isolates exactly the `rows` two `queries` have in common, and `EXCEPT` isolates the `rows` one `query` has that the other does not, with `EXCEPT` alone being sensitive to which `query` is written first.
+
 ## Finding Rows Common to Both Queries
 
 The same two customer `tables` from the `UNION` lesson apply here.

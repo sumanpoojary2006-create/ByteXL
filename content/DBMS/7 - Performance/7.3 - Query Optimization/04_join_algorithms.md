@@ -8,6 +8,10 @@ Every `join` covered earlier in this course, `INNER JOIN`, `LEFT JOIN`, and the 
 
 Each has a different performance profile depending on `table` sizes and whether a useful `index` or sort order is available.
 
+## Definition
+
+**Definition:** Nested loop, `hash join`, and `merge join` are three genuinely different strategies for finding matching `rows` between two `tables`, each favored by the optimizer under different conditions, small filtered inputs with a good `index`, large unsorted inputs on both sides, or already-sorted inputs respectively, and none of them is a fixed rule so much as the outcome of the same cost-based reasoning covered earlier in this chapter.
+
 ## Nested Loop: Simple, Best for Small Inputs
 
 A `nested loop` `join` works exactly the way its name suggests: for every `row` in the outer `table`, it scans, or `index`-looks-up, the inner `table` to find matches, one outer `row` at a time.

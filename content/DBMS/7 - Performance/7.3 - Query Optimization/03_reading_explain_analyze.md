@@ -4,6 +4,10 @@
 - Those estimates can be wrong, sometimes significantly, when the `database`'s statistics are stale or when a condition's true selectivity is harder to predict than usual.
 - `EXPLAIN ANALYZE` closes that gap: it actually executes the `query`, for real, and reports the plan alongside the actual measured time and actual `row` counts observed, letting Priya compare what the optimizer expected against what genuinely happened.
 
+## Definition
+
+**Definition:** `EXPLAIN ANALYZE` actually runs a `query` and reports real measured time and real `row` counts alongside the optimizer's original estimates, making it possible to see exactly where a plan's assumptions matched reality and where they did not, with `loops=N` and a `ROLLBACK`-wrapped `transaction` as two details worth remembering when reading or running it.
+
 ## Estimated vs. Actual, Side by Side
 
 The same `orders` `table`, with a deliberately skewed distribution, sets up a case where an estimate and reality can diverge.

@@ -6,6 +6,10 @@ Underneath that abstraction, though, a `table` is physically stored as files on 
 
 Priya, the finance analyst from earlier reporting lessons, has started noticing that some of her `queries` run instantly while others crawl, and the difference traces directly back to how data is actually laid out on disk.
 
+## Definition
+
+**Definition:** A `table` is physically stored as a sequence of fixed-size pages, each holding many `rows`, and every read has to fetch a whole page at a time rather than a single `row` in isolation, which is the physical fact underneath every performance question this unit is about to explore.
+
 ## Rows Live Inside Pages, Not Loose on Disk
 
 A `database` does not read or write one `row` at a time from disk; it reads and writes in fixed-size blocks called pages, typically 8 kilobytes each in PostgreSQL, with many `rows` packed into each page.

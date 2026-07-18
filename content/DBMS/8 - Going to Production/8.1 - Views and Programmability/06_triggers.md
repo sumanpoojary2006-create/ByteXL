@@ -8,6 +8,10 @@ The `mark_shipment_delivered` `procedure` from earlier in this chapter guarantee
 
 A **`trigger`** delivers exactly this: a piece of logic the `database` runs automatically whenever a specified event, an insert, update, or delete, happens on a `table`, with no possibility of a caller forgetting to invoke it.
 
+## Definition
+
+**Definition:** A `trigger` runs automatically in response to an insert, update, or delete, with `BEFORE` `trigger`s able to validate or reject a change before it happens, `AFTER` `trigger`s able to react once a change has completed, and `INSTEAD OF` `trigger`s able to make an otherwise non-writable `view` accept writes, all without requiring any cooperation from whoever issues the original statement.
+
 ## Creating a Trigger Function and Attaching It
 
 A `trigger` is built from two pieces: a special kind of `function` describing what to do, and a `CREATE TRIGGER` statement attaching that `function` to a specific `table` and event.

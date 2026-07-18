@@ -10,6 +10,10 @@ The morning after the migration, orders load exactly as before, the checkout scr
 
 A few months later, the product team asks for something different: every order `row` now needs a new `column` recording whether the customer tipped the delivery partner. Ravi adds it. Once again, the dozens of existing screens and reports that never asked about tips keep working exactly as they did before, untouched by a change that, on paper, altered the very shape of the data they depend on.
 
+## Definition
+
+**Definition:** Data independence works because a `database` is not one flat structure but a set of separated levels, and a change confined to one level does not have to ripple through the others.
+
 ## Physical Data Independence: Changing the Storage Without Touching the Apps
 
 The first kind of independence is the one Ravi relied on during the hardware migration. **Physical data independence** means the internal, physical level of the `database`, how data is actually stored on disk, can be changed without requiring any change to the conceptual `schema` or to the applications built on top of it.
