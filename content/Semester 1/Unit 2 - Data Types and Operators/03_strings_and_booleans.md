@@ -2,7 +2,9 @@
 
 Numbers are only half the story. Programs also handle words and decisions. The message "Welcome, Asha", a city name, a password: all of these are text. And every time a program asks a yes or no question, like "is this user old enough?", the answer is a special value that is either true or false.
 
-Python calls text a **string** and calls a true-or-false value a **boolean**. The two might look unrelated at first, but they share a job: numbers measure the world, while strings and booleans describe and judge it. A string carries what something is called; a boolean carries whether something holds true. Almost every program you will ever write ends up combining all three kinds of value in the same handful of lines. You will give strings a full unit of their own later. For now, this lesson introduces both so you can use them comfortably alongside numbers.
+Python calls text a `string` and calls a true-or-false value a `boolean`. The two might look unrelated at first, but they share a job: numbers measure the world, while strings and booleans describe and judge it. A string carries what something is called; a boolean carries whether something holds true. Almost every program you will ever write ends up combining all three kinds of value in the same handful of lines. You will give strings a full unit of their own later. For now, this lesson introduces both so you can use them comfortably alongside numbers.
+
+**Definition:** A string carries what something is called; a `boolean` carries whether something holds true.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44t82w7y6/03_string_concatenation_icing.png)
 

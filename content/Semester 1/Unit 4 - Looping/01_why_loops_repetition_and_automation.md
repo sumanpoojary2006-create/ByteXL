@@ -2,7 +2,9 @@
 
 Kabir, the class representative, needs to send the same fest reminder to everyone in his class. He starts thumb-typing it out and sending it one person at a time: first classmate, second, third. Then he remembers there are sixty of them, and his thumb already aches just thinking about it. Sending it by hand worked fine for three friends, but sixty identical messages, one after another, is a different problem entirely.
 
-Computers face this same moment constantly, except they never get bored or tired, which makes them extraordinary at one particular thing: doing the same task over and over, quickly and without mistakes. That ability is called repetition, and the tool that unlocks it is the **loop**. Loops are what turn a program from something that does one thing once into something that can process a thousand students, send a hundred messages, or keep a game running until you decide to quit. Where the previous unit taught your programs to choose a path, this one teaches them to walk that path as many times as the job actually needs.
+Computers face this same moment constantly, except they never get bored or tired, which makes them extraordinary at one particular thing: doing the same task over and over, quickly and without mistakes. That ability is called repetition, and the tool that unlocks it is the `loop`. Loops are what turn a program from something that does one thing once into something that can process a thousand students, send a hundred messages, or keep a game running until you decide to quit. Where the previous unit taught your programs to choose a path, this one teaches them to walk that path as many times as the job actually needs.
+
+**Definition:** Loops exist because computers are brilliant at `repetition` and humans are not.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44tb5j2kk/01_why_loops_by_hand_vs_loop.png)
 

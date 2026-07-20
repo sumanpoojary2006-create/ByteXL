@@ -4,11 +4,13 @@ Dev's `Book` class needs a factory function that creates a `Book` from a diction
 
 Python provides three kinds of callable objects you can define inside a class body. Understanding when to use each one is what separates well-organized class code from code that technically works but is confusing to read.
 
+**Definition:** `Static` methods are utility functions logically associated with the class but needing neither `self` nor `cls`.
+
 ![](images/09_class_static_instance_methods.png)
 
 ## Instance Methods: The Default
 
-An **instance method** receives `self` as its first argument, giving it access to the specific object it was called on. Everything you have written so far in this unit falls into this category. Instance methods can read and modify the instance's attributes.
+An `instance method` receives `self` as its first argument, giving it access to the specific object it was called on. Everything you have written so far in this unit falls into this category. Instance methods can read and modify the instance's attributes.
 
 ```python
 class Book:
@@ -34,9 +36,9 @@ When you call `b.check_out()`, Python passes `b` as `self` automatically.
 
 ## Class Methods: Receiving the Class, Not an Instance
 
-A **class method** receives `cls` (the class itself) as its first argument rather than `self`. It is defined with the `@classmethod` decorator. Class methods have access to the class and all its class attributes, but not to any specific instance.
+A `class method` receives `cls` (the class itself) as its first argument rather than `self`. It is defined with the `@classmethod` decorator. Class methods have access to the class and all its class attributes, but not to any specific instance.
 
-The most common use is as an **alternative constructor**: a factory method that creates instances from a different input format.
+The most common use is as an `alternative constructor`: a factory method that creates instances from a different input format.
 
 ```python
 class Book:
@@ -72,7 +74,7 @@ Using `cls(...)` rather than `Book(...)` inside the class method is important: i
 
 ## Static Methods: Utilities That Belong to the Class
 
-A **static method** receives neither `self` nor `cls`. It has no access to the instance or the class at all. It is defined with `@staticmethod` and is essentially a regular function that lives inside the class namespace because it is conceptually related to the class.
+A `static method` receives neither `self` nor `cls`. It has no access to the instance or the class at all. It is defined with `@staticmethod` and is essentially a regular function that lives inside the class namespace because it is conceptually related to the class.
 
 ```python
 class Book:

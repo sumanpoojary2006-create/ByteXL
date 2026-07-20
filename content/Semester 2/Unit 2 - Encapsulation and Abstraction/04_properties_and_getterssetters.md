@@ -4,6 +4,8 @@ Priya's team has a dilemma. Half the codebase already accesses `book.copies` as 
 
 Python's `@property` decorator solves this exactly. It is one of the most useful tools in Python's object-oriented toolkit, and it is the reason you will almost never see explicit "getter" and "setter" methods in well-designed Python code.
 
+**Definition:** A `property` exposes method-controlled access through ordinary attribute syntax, with a getter handling reads and an optional setter validating or transforming writes.
+
 ![](images/04_properties_getters_setters.png)
 
 ## The Simplest Property: A Computed Read-Only Value
@@ -30,7 +32,7 @@ The `@property` decorator tells Python: "when someone reads `obj.is_available`, 
 
 ## Adding a Setter: Validation on Write
 
-The real power of properties appears when you add a **setter**. A setter runs code whenever someone writes to the attribute, which is exactly where Priya needs to add her validation.
+The real power of properties appears when you add a `setter`. A setter runs code whenever someone writes to the attribute, which is exactly where Priya needs to add her validation.
 
 ```python
 class Book:

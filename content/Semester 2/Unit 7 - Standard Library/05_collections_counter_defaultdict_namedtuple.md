@@ -4,6 +4,8 @@ Nadia keeps writing the same boilerplate: a `{}` dictionary with a check for mis
 
 The `collections` module is the better way. It provides four data structures -- `Counter`, `defaultdict`, `namedtuple`, and `OrderedDict` -- that solve exactly these patterns with less code and more clarity.
 
+**Definition:** The `collections` module provides specialised containers such as `Counter`, `defaultdict`, and `namedtuple` for common data-handling patterns.
+
 ![Four drawers in a filing cabinet labeled Counter, defaultdict, namedtuple, and OrderedDict, each with a brief description of when to use it](images/05_collections.png)
 
 ## Counter: Count Occurrences

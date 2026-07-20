@@ -4,7 +4,9 @@ It is almost midnight and you walk up to an ATM. You slide in your card, type yo
 
 Strip away the metal box and you find a pattern so simple it is almost disappointing. The ATM took something in (your card, PIN, and amount), did something with it (checked your PIN, verified your balance, decided to approve), and gave something out (cash, and an updated balance). In, then through, then out.
 
-That pattern has a name you will never un-see once you spot it: the **IPO model**, short for **Input, Processing, Output**. Every program ever written, from a tiny calculator to a search engine serving billions, is built on this same shape.
+That pattern has a name you will never un-see once you spot it: the `IPO model`, short for `Input, Processing, Output`. Every program ever written, from a tiny calculator to a search engine serving billions, is built on this same shape.
+
+**Definition:** The `IPO model` describes every program as three connected stages: it receives `input`, transforms it through `processing`, and produces `output`.
 
 ## Three Stages Hiding in Plain Sight
 

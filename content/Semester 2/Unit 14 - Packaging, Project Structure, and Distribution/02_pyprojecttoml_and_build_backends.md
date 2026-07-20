@@ -4,6 +4,8 @@ Nia's `metric-utils` folder now has the right shape. What it does not have is a 
 
 This lesson writes that file from scratch and explains the one part every author gets wrong at least once: the build backend.
 
+**Definition:** A `build backend` is the program that reads `pyproject.toml`, packages the code in `src/`, and produces the two file formats pip understands: a wheel (`.whl`) and a source distribution (`.tar.gz`).
+
 ![A pyproject.toml file at the root of the metric-utils project, with arrows pointing to sections for build-system, project metadata, and tool configuration](images/02_pyprojecttoml_and_build_backends.png)
 
 ## What `pyproject.toml` Replaces
@@ -56,7 +58,7 @@ Three blocks matter here: `[build-system]` picks a build backend, `[project]` de
 
 ## What a Build Backend Actually Does
 
-A **build backend** is the program that reads `pyproject.toml`, packages the code in `src/`, and produces the two file formats pip understands: a wheel (`.whl`) and a source distribution (`.tar.gz`). Pip itself is not a build backend. It calls whichever backend the file names in `[build-system]`.
+A `build backend` is the program that reads `pyproject.toml`, packages the code in `src/`, and produces the two file formats pip understands: a wheel (`.whl`) and a source distribution (`.tar.gz`). Pip itself is not a build backend. It calls whichever backend the file names in `[build-system]`.
 
 ```python
 backends = {

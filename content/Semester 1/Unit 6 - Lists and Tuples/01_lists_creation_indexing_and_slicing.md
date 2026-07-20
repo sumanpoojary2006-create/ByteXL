@@ -2,7 +2,9 @@
 
 Dev is the one everyone in class trusts to make sure nothing gets left behind on the annual college trip, so the night before departure he opens a fresh note on his phone and types out the master packing checklist exactly in the order he thinks of it: water bottle, charger, ID card, raincoat, snacks. He does not want five separate notes for five separate items. He wants one single note that holds all of them together, in the order he listed them, so he can glance at item three or skim the last two without rereading the whole thing from the top.
 
-That is exactly the job Python's **list** does. A list is an ordered collection of values, written inside square brackets, and it is about to become the single most useful container in your entire toolkit.
+That is exactly the job Python's `list` does. A list is an ordered collection of values, written inside square brackets, and it is about to become the single most useful container in your entire toolkit.
+
+**Definition:** A `list` is an ordered collection of values, written inside square brackets, and it is about to become the single most useful container in your entire toolkit.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-6-lists-and-tuples/01_packing_list_lineup.png)
 

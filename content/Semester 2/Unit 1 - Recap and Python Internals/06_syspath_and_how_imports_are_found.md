@@ -4,6 +4,8 @@ Asel runs the internship project from the terminal and everything imports fine. 
 
 This lesson explains what `sys.path` is, how Python populates it when a script starts, and the correct ways to make your modules findable without breaking other things.
 
+**Definition:** `sys.path` is an ordinary Python list of strings.
+
 ![](images/06_syspath_and_imports.png)
 
 ## What sys.path Is
@@ -27,17 +29,17 @@ A typical output looks like:
 /home/asel/.venv/lib/python3.11/site-packages   # installed packages
 ```
 
-The ordering is significant: the first matching directory wins. If you have a local file called `random.py` and you import `random`, Python will find your file before the standard library's `random` module. This is called **shadowing**, and it is almost always a bug.
+The ordering is significant: the first matching directory wins. If you have a local file called `random.py` and you import `random`, Python will find your file before the standard library's `random` module. This is called `shadowing`, and it is almost always a bug.
 
 ## How Python Builds sys.path at Startup
 
 Python builds `sys.path` from three sources, in this order:
 
-1. **The script's own directory** (or `""` for an empty string, representing the current working directory) is prepended automatically. This is why importing a file in the same directory as your script usually works without any configuration.
+1. `The script's own directory` (or `""` for an empty string, representing the current working directory) is prepended automatically. This is why importing a file in the same directory as your script usually works without any configuration.
 
 2. **The `PYTHONPATH` environment variable**, if set, lists additional directories that are inserted after the script's directory.
 
-3. **Installation defaults**: the standard library and site-packages directories for the active Python environment are appended during interpreter startup.
+3. `Installation defaults`: the standard library and site-packages directories for the active Python environment are appended during interpreter startup.
 
 ```python
 import sys
@@ -56,7 +58,7 @@ There are three correct approaches for production code, and one that is tempting
 
 **Use a virtual environment and install your package.** This is the best approach for anything beyond a quick experiment. When your project has a `pyproject.toml` (covered in Unit 14), you can install it into a virtual environment with `pip install -e .`, after which it is importable from anywhere without touching `sys.path` at all.
 
-**Use the PYTHONPATH environment variable** for development, not production. Setting `PYTHONPATH=/path/to/my/project python main.py` adds your project root to the search path for that single invocation. It is fine for local development but should not appear in deployment configuration.
+`Use the PYTHONPATH environment variable` for development, not production. Setting `PYTHONPATH=/path/to/my/project python main.py` adds your project root to the search path for that single invocation. It is fine for local development but should not appear in deployment configuration.
 
 **Structure your code as a package** (a directory with `__init__.py`). Python finds packages the same way it finds modules: by searching `sys.path` for a directory with that name.
 

@@ -4,6 +4,8 @@ Tara's file-handling code from Semester 1 always used `with open(...)` without r
 
 Her tech lead tells her the fix is the same pattern as `with open(...)`, but for her database. The `with` statement is not limited to files. It is a general mechanism for managing *any* resource that needs guaranteed cleanup, and this unit explains exactly how it works and how to build your own.
 
+**Definition:** The `with` statement runs setup before a block and guarantees teardown afterward by delegating resource management to a context manager.
+
 ![A resource shown inside a with-block: a door opens (enter) when the with block starts, the body runs, and the door closes (exit) whether the body succeeded or raised an exception](images/01_with_statement_revisited.png)
 
 ## What the with Statement Guarantees

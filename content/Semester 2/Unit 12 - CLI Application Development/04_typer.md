@@ -4,6 +4,8 @@ Priya shows her `argparse` CLI to a colleague who works with FastAPI. He notices
 
 `typer` is built on top of Click (another popular CLI library) and uses Python type annotations to automatically infer argument types, defaults, and help text.
 
+**Definition:** `typer` is built on top of Click (another popular CLI library) and uses Python type annotations to automatically infer argument types, defaults, and help text.
+
 ![A side-by-side showing the argparse version (add_argument + type= + args.limit) versus the typer version (def import_books(limit: int = None)), where the annotation replaces all the boilerplate](images/04_typer.png)
 
 ## Installing typer

@@ -4,6 +4,8 @@ Asha's registration script needs two more refinements that `try` and `except` al
 
 Python's `try` structure has two more optional parts built exactly for this: `else`, which runs only if the `try` block succeeded, and `finally`, which runs no matter what happened.
 
+**Definition:** `else`, attached to a `try`, runs only when the `try` block completed with no exception, keeping success-only code visually separate from the risky code itself, while `finally` runs unconditionally, success or failure, making it the right place for cleanup that must always happen regardless of outcome.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-12-exception-handling/05_else_and_finally_blocks.png)
 
 ## else: Only on Success

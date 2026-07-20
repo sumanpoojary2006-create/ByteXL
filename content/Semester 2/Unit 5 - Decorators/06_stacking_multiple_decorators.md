@@ -45,11 +45,13 @@ print(f"get_book(5) ->", result)
 
 It works. But the next morning she reads a bug report: the timing is measuring not just the function, but also the auth check. She realizes she does not fully know in which order the decorators applied, and whether that order matches her intent. This lesson makes it precise.
 
+**Definition:** Stacking `decorators` applies them bottom-up at definition time, creating a nesting of wrappers where the topmost decorator is the outermost layer at call time.
+
 ![Three decorator layers shown as nested boxes: log_call on the inside, require_auth around it, add_timing around that, with an arrow showing the execution order outward](images/06_stacking_multiple_decorators.png)
 
 ## Decorators Apply Bottom-Up at Definition Time
 
-When Python processes a stacked decorator block, it applies the decorators **from bottom to top**: the decorator closest to the `def` runs first, its result is passed to the next decorator above, and so on.
+When Python processes a stacked decorator block, it applies the decorators `from bottom to top`: the decorator closest to the `def` runs first, its result is passed to the next decorator above, and so on.
 
 ```python
 def first(fn):

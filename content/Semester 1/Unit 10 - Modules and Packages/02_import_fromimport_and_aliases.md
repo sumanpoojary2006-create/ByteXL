@@ -4,6 +4,8 @@ Naveen has used `import` casually for units now, typing `import random` or `impo
 
 This lesson covers the three forms of `import` you will use constantly: a plain `import`, a `from ... import` that reaches directly inside a module, and an alias with `as` that gives an imported name a shorter or clearer label.
 
+**Definition:** `import` loads a module, `from ... import` brings selected names into the current file, and `as` assigns a shorter or clearer alias.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-10-modules-and-packages/02_three_import_styles.png)
 
 ## Plain import: Bringing in the Whole Module

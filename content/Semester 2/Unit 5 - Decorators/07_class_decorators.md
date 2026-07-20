@@ -4,6 +4,8 @@ Kiran has been thinking of decorators as tools that apply to functions. But Pyth
 
 This lesson introduces class decorators: decorators that receive a class object and return a modified class (or a replacement class). It also shows how a class itself can act as a decorator for functions, by implementing `__call__`.
 
+**Definition:** A class with a `__call__` method can act as a `decorator` for functions.
+
 ![A class definition being passed into a decorator that adds class-level attributes or modifies methods, returning the modified class](images/07_class_decorators.png)
 
 ## Decorating a Class Definition

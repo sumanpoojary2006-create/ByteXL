@@ -2,7 +2,9 @@
 
 With the panic gone, Zara still has a real bug: somewhere between reading her RSVP file and printing the final total, one attendee's count is arriving as the text `"three"` instead of the number `3`. The traceback names the line that crashed, but not the earlier line that actually caused the bad value to exist in the first place. To find that, she needs to watch the data as it moves through her program, step by step, and the simplest tool for that job is one she already knows: `print()`, used deliberately as an investigation tool rather than just a way to show final output.
 
-This is called **print debugging**, and despite being almost embarrassingly simple, it remains one of the most useful techniques in any programmer's toolkit, beginner or expert.
+This is called `print debugging`, and despite being almost embarrassingly simple, it remains one of the most useful techniques in any programmer's toolkit, beginner or expert.
+
+**Definition:** `Print debugging` places temporary output at strategic points so a programmer can observe values and execution order while tracking a bug.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-13-debugging/02_print_debugging_tracing_values.png)
 

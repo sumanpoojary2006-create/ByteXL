@@ -2,15 +2,17 @@
 
 Asel types `python app.py` and her script runs. She has done this hundreds of times without thinking twice about it. But Rahul's question from the previous lesson is still sitting with her: what is actually happening in those few milliseconds between the command and the first line of output?
 
-The answer involves a piece of software called an **interpreter**, and understanding it changes the way you read error messages, think about performance, and reason about code that behaves in unexpected ways. This lesson pulls back the curtain.
+The answer involves a piece of software called an `interpreter`, and understanding it changes the way you read error messages, think about performance, and reason about code that behaves in unexpected ways. This lesson pulls back the curtain.
+
+**Definition:** `Python` computes `1 + 2` as `3` at compile time rather than adding at runtime, which is why simple arithmetic in tight loops is faster than it looks.
 
 ![](images/02_interpreter_pipeline.png)
 
 ## Python Is Not Compiled the Way C Is
 
-When you run a C program, a compiler translates your source code into machine instructions once, producing a binary that the CPU executes directly. Python works differently: a program called the **interpreter** reads your source file, translates it internally, and executes it, all in one process, every time you run it.
+When you run a C program, a compiler translates your source code into machine instructions once, producing a binary that the CPU executes directly. Python works differently: a program called the `interpreter` reads your source file, translates it internally, and executes it, all in one process, every time you run it.
 
-The most widely used Python interpreter is called **CPython** (it is written in C), and it is almost certainly what you have installed. There are others, such as PyPy and Jython, but CPython is the reference implementation and the one this unit focuses on.
+The most widely used Python interpreter is called `CPython` (it is written in C), and it is almost certainly what you have installed. There are others, such as PyPy and Jython, but CPython is the reference implementation and the one this unit focuses on.
 
 ```python
 import sys
@@ -26,9 +28,9 @@ When CPython runs `python app.py`, it works through four stages before any of yo
 
 **1. Lexing** (tokenization) reads your source file character by character and groups characters into meaningful tokens: keywords like `def`, names like `my_function`, operators like `+`, and literals like `"hello"`.
 
-**2. Parsing** takes those tokens and builds an **Abstract Syntax Tree** (AST), a tree-shaped data structure that represents the grammatical structure of your program. At this stage Python catches `SyntaxError`.
+**2. Parsing** takes those tokens and builds an `Abstract Syntax Tree` (AST), a tree-shaped data structure that represents the grammatical structure of your program. At this stage Python catches `SyntaxError`.
 
-**3. Compilation** walks the AST and produces **bytecode**, a compact sequence of simple instructions designed for CPython's virtual machine to execute efficiently. This step is fast and happens automatically; you never call it manually.
+**3. Compilation** walks the AST and produces `bytecode`, a compact sequence of simple instructions designed for CPython's virtual machine to execute efficiently. This step is fast and happens automatically; you never call it manually.
 
 **4. Execution** runs the bytecode instruction by instruction in CPython's evaluation loop. This is the stage where your variables are created, your functions are called, and your `print()` output appears.
 

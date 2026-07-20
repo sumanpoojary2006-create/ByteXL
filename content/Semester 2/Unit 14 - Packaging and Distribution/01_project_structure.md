@@ -4,6 +4,8 @@ The library system now has eleven Python files scattered across a single folder.
 
 This unit is about turning that collection of files into a proper Python package: one that installs cleanly, exposes a CLI command, and can be shared with anyone using `pip install`.
 
+**Definition:** A Python `project structure` separates package code, tests, documentation, configuration, and build metadata so the project remains understandable and installable.
+
 ![A messy folder of Python files on the left transforming into a structured src-layout package on the right, with pyproject.toml at the root](images/01_project_structure.png)
 
 ## The src Layout

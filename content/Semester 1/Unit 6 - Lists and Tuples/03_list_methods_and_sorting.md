@@ -4,6 +4,8 @@ The bus playlist for the trip has ballooned into forty songs by the time everyon
 
 Beyond adding and removing items, lists come with a set of methods for exactly this kind of organising: reversing, counting, locating, and sorting. This lesson is about putting an already-built list into the shape you actually want.
 
+**Definition:** `Lists` carry built-in organising tools: `reverse()` and `sort()` rearrange in place and return nothing, `reversed()` and `sorted()` hand back a new view while leaving the original untouched, and `count()` and `index()` answer "how many" and "where".
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-6-lists-and-tuples/03_playlist_sorting.png)
 
 ## Reversing in Place: reverse()

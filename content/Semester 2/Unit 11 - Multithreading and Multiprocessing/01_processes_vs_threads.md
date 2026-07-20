@@ -4,6 +4,8 @@ Yuna runs a nightly catalog indexing job for the library consortium. It processe
 
 The answer depends on what is actually happening in the code -- whether it is waiting for I/O or doing computation -- and on a Python-specific constraint called the GIL. This lesson explains what processes and threads are, and why Python's threading model behaves differently from what you might expect in other languages.
 
+**Definition:** A `thread` is a unit of execution within a process.
+
 ![A diagram showing a process as a box with its own memory, and threads within that process sharing the same memory space, versus multiple processes each with completely separate memory](images/01_processes_vs_threads.png)
 
 ## What a Process Is

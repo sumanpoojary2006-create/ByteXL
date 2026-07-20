@@ -4,6 +4,8 @@ Nadia is three months into her data analyst role at the library consortium. She 
 
 It does. Every single one of them. Python ships with a standard library of more than 200 modules that cover randomness, cryptography, dates, data structures, file-system operations, serialization, testing, and much more. Learning the stdlib means knowing which tools already exist before writing your own.
 
+**Definition:** Python's `standard library` is the collection of modules included with Python for common tasks such as files, dates, data formats, iteration, and security.
+
 ![A toolbox labeled "Python Standard Library" with drawers: random, datetime, collections, pathlib, json, csv, hashlib, os, and itertools](images/01_why_stdlib_matters.png)
 
 ## What the Standard Library Is
@@ -72,7 +74,7 @@ The stdlib version is not just shorter. It is readable to anyone who knows Pytho
 
 Three approaches work well:
 
-1. **Python documentation**: docs.python.org/3/library/ has every module with examples.
+1. `Python documentation`: docs.python.org/3/library/ has every module with examples.
 2. **`help()` in the REPL**: `help(random)` prints the module's documentation inline.
 3. **`dir()` in the REPL**: `dir(collections)` lists everything in the module.
 

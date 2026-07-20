@@ -2,6 +2,8 @@
 
 Meera is putting together a price list to post for her handmade shop, but the numbers will not sit still: one price crowds right up against its item name, another trails off at a different distance, and one shows three decimal places where it should show two. She reworks it so every item name lines up on the left and every price sits in a neat column on the right, each rounded to exactly two decimals, and the list suddenly looks like a proper menu instead of a jumble. Back in the data-types unit you met f-strings as a clean way to drop variables into text, but they can do much more than that. With a little extra notation, an f-string can round a number to two decimals, line figures up into neat columns, and turn raw values into output that looks like a real report rather than a jumble. This lesson takes the f-string from useful to genuinely polished. None of the methods from earlier lessons can line up a column of prices on their own; formatting is the missing piece that turns correct numbers into a readable list.
 
+**Definition:** `String formatting` builds readable text from values, and an `f-string` embeds variables or expressions inside a string by placing them in braces.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-5-strings/07_formatting_aligned_table.png)
 
 ## A Quick Recap

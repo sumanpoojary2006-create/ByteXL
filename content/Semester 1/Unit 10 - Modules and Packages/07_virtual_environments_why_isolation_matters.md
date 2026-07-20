@@ -2,7 +2,9 @@
 
 Naveen's hostel project needs version 2 of a package he installed with `pip install`. A different project he is helping a friend with, on the very same laptop, depends on version 1 of that exact same package, and upgrading it for one project quietly breaks the other. Both projects share the one Python installation on his machine, and `pip install` by default installs into that one shared place, which means every project on his laptop is fighting over the same set of package versions whether they want to or not.
 
-The fix is to give each project its own private, isolated set of installed packages, so installing or upgrading something for one project can never affect any other. That isolated space is called a **virtual environment**, and Python's built-in tool for creating one is `venv`.
+The fix is to give each project its own private, isolated set of installed packages, so installing or upgrading something for one project can never affect any other. That isolated space is called a `virtual environment`, and Python's built-in tool for creating one is `venv`.
+
+**Definition:** A `virtual environment` gives one project an isolated set of packages so its dependencies cannot conflict with those of another project.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-10-modules-and-packages/07_isolated_virtual_environments.png)
 
@@ -28,7 +30,7 @@ This creates a new folder named `.venv` inside your project, containing everythi
 
 ## Activating an Environment
 
-Creating the environment is not enough on its own; you need to **activate** it, which tells your terminal to use that environment's Python and packages instead of the global ones, for the rest of that terminal session.
+Creating the environment is not enough on its own; you need to `activate` it, which tells your terminal to use that environment's Python and packages instead of the global ones, for the rest of that terminal session.
 
 ```console
 # On macOS or Linux

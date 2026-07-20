@@ -4,6 +4,8 @@ A volunteer installs the library system package and opens Python. She types `hel
 
 Documentation is not an afterthought. For a package that others will install, it is the first thing they encounter and the primary reason they will succeed or give up.
 
+**Definition:** Docstrings are `documentation` that lives with the code and is accessible through `help()`, IDE tooltips, and documentation generators.
+
 ![Three documentation layers: docstrings inside the code, a README at the project root for quick-start, and a hosted docs site for full reference](images/05_documentation.png)
 
 ## Docstrings: Documentation That Lives in Code

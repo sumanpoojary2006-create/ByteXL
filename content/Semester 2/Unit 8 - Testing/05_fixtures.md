@@ -4,6 +4,8 @@ Every one of Sam's catalog tests starts with the same three lines: create a `Cat
 
 `pytest` fixtures are the solution. A fixture is a function that provides a pre-built, reusable piece of setup to any test that requests it. Change the fixture once, and every test that uses it is updated automatically.
 
+**Definition:** A `fixture` is a function that provides a pre-built, reusable piece of setup to any test that requests it.
+
 ![A diagram showing three test functions each previously containing identical setup code, transformed into three slim tests each receiving the same fixture via a parameter named catalog](images/05_fixtures.png)
 
 ## Defining and Using a Fixture

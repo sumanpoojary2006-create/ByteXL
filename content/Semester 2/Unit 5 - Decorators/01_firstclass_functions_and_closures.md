@@ -4,6 +4,8 @@ Kiran is building the library management system's API. She has twelve endpoint h
 
 She knows Python treats functions as first-class values, and she has a vague sense that this is related to the solution. This lesson makes that vague sense precise: it covers what first-class functions actually mean in practice and introduces the related concept of closures, which is the foundation that makes decorators work.
 
+**Definition:** Closures are most useful as `behavior factories`: `functions` that return customized functions without inheritance or classes.
+
 ![A function shown as a value being stored in a variable, passed to another function, and returned from a function, like an ordinary object](images/01_firstclass_functions_closures.png)
 
 ## Functions Are Just Objects
@@ -43,7 +45,7 @@ The name `greet` and the function object it points to are separate things. `say_
 
 ## Functions Defined Inside Other Functions
 
-A function can be defined inside another function's body. The inner function has access to the outer function's variables, even after the outer function has returned. This combination of an inner function plus the surrounding variables it can see is called a **closure**.
+A function can be defined inside another function's body. The inner function has access to the outer function's variables, even after the outer function has returned. This combination of an inner function plus the surrounding variables it can see is called a `closure`.
 
 ```python
 def make_greeter(greeting):
@@ -86,7 +88,7 @@ The `cell_contents` shows exactly what value each closure is holding. This is th
 
 ## The Closure Pattern: Behavior Factories
 
-Closures are most useful as **behavior factories**: functions that return customized functions without inheritance or classes.
+Closures are most useful as `behavior factories`: functions that return customized functions without inheritance or classes.
 
 ```python
 def make_validator(min_val, max_val):

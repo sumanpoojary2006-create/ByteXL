@@ -4,11 +4,13 @@ Asel's first real task at the internship is to add a route to a Flask applicatio
 
 This lesson answers those questions by explaining which intermediate files Python web frameworks generate, why they exist, and what the correct policy is for each. The internals are an extension of what you already know about bytecode and the import system.
 
+**Definition:** `Intermediate files` are generated artefacts that frameworks create from source files to improve execution, caching, or delivery, and they are usually safe to regenerate.
+
 ![](images/07_framework_intermediate_files.png)
 
 ## What Happens When a Framework Starts Up
 
-When you run `flask run` or `uvicorn main:app` (for FastAPI), the framework does not just execute your `main.py`. It performs a **startup sequence** that involves importing a large number of Python files, yours and the framework's own.
+When you run `flask run` or `uvicorn main:app` (for FastAPI), the framework does not just execute your `main.py`. It performs a `startup sequence` that involves importing a large number of Python files, yours and the framework's own.
 
 Because every import compiles and caches bytecode, the first `flask run` on a clean installation generates `__pycache__` folders:
 - In your project's source directories

@@ -4,6 +4,8 @@ Naveen has a list of pending dues and three quick jobs to do with it before the 
 
 `map`, `filter`, and `reduce` each take a function and a sequence, and each does one very specific thing with that pairing.
 
+**Definition:** `map`, `filter`, and `reduce` each take a function and a sequence, and each does one very specific thing with that pairing.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-8-functions/07_map_filter_reduce_pipeline.png)
 
 ## map: Apply a Function to Every Item

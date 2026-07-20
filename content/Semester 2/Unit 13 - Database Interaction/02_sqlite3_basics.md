@@ -4,6 +4,8 @@ Dev opens a terminal and types `python -c "import sqlite3; print('ready')"`. The
 
 This lesson covers the three objects that every `sqlite3` program uses: `Connection`, `Cursor`, and the two-step commit model.
 
+**Definition:** Python's `sqlite3` module connects code to a lightweight SQLite database, where a connection manages the database and a cursor executes SQL statements.
+
 ![The three-object model: Connection owns the file, Cursor executes SQL and returns rows, commit() flushes changes to disk](images/02_sqlite3_basics.png)
 
 ## Connecting to a Database

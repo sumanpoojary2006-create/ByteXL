@@ -4,6 +4,8 @@ The fest has closed for the day, and Tara needs to write up a quick stall report
 
 You already know the `for` loop walks through lists and tuples directly. Dictionaries can be looped over too, but because every entry is actually a pair, Python gives you three related ways to do it, depending on whether you want the keys, the values, or both together.
 
+**Definition:** `Dictionaries` can be looped over too, but because every entry is actually a pair, Python gives you three related ways to do it, depending on whether you want the keys, the values, or both together.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-7-sets-and-dictionaries/05_end_of_day_report_loop.png)
 
 ## Looping Over Keys

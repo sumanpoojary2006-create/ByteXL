@@ -2,7 +2,9 @@
 
 Priya's library system needs to notify patrons when a reserved book becomes available. The notification can arrive as an email, an SMS, or a push notification, depending on the patron's preferences. She starts writing the notification code and realizes she is facing a different kind of design problem from the one encapsulation solved. Encapsulation was about protecting state. This problem is about defining a consistent behavior that multiple different systems need to provide, without the calling code caring which system it is talking to.
 
-She needs a reservation manager that can trigger a notification without knowing whether it is sending an email or an SMS. She needs to hide the complexity of each notification method behind a single, consistent interface. This idea has a name: **abstraction**.
+She needs a reservation manager that can trigger a notification without knowing whether it is sending an email or an SMS. She needs to hide the complexity of each notification method behind a single, consistent interface. This idea has a name: `abstraction`.
+
+**Definition:** `Abstraction` means exposing what something *does* while hiding how it does it.
 
 ![](images/05_abstraction_hiding_complexity.png)
 
@@ -76,7 +78,7 @@ This works perfectly, but there is a gap: Python does not enforce that every not
 
 ## Duck Typing and the "Trust the Contract" Model
 
-Python's approach to abstraction relies on **duck typing**: if an object behaves like the thing you need (has the right methods and attributes), you can use it as that thing, regardless of its actual type. The name comes from "if it walks like a duck and quacks like a duck, it is a duck."
+Python's approach to abstraction relies on `duck typing`: if an object behaves like the thing you need (has the right methods and attributes), you can use it as that thing, regardless of its actual type. The name comes from "if it walks like a duck and quacks like a duck, it is a duck."
 
 This gives Python great flexibility: any class can implement a `send` method and immediately work with `notify_patron`. There is no registration, no declaration, no import. The cost is that contracts are invisible: a developer reading the code has to infer what interface `notifier` must provide.
 

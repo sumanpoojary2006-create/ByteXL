@@ -4,6 +4,8 @@ In Unit 4, Nadia learned `islice`, `chain`, `groupby`, and `zip_longest` as buil
 
 This lesson goes deeper into `itertools`, covering the combinatoric functions and two additional patterns from the "infinite iterators" and "terminating iterators" categories that are most useful in data work.
 
+**Definition:** `itertools` builds memory-efficient iterator pipelines for combining, grouping, slicing, accumulating, and arranging values.
+
 ![A pipeline diagram showing itertools functions as connectors between a data source and a result: chain connects multiple catalogs, groupby groups them, product generates pairs, and accumulate produces running totals](images/06_itertools_advanced.png)
 
 ## Recap: chain, islice, groupby

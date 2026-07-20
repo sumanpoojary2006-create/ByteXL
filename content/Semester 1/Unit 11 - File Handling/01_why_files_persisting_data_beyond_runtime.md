@@ -2,7 +2,9 @@
 
 Tara built a genuinely useful attendee set and a tidy stall report in the last unit, sets and dictionaries that correctly deduplicated wristband scans and summarised an entire day of sales. Then she closed her laptop, opened it again the next morning, ran the exact same script, and found absolutely nothing left over: no attendee set, no stall report, nothing. Every value her program ever held existed only in the computer's memory while the script was running, and the moment that script finished, all of it vanished as if it had never been calculated at all.
 
-Memory is fast, but it is also temporary. To make data outlive a single run of a program, you need to write it somewhere that survives after the program stops, a process called **persistence**, and the most fundamental tool for it is the **file**.
+Memory is fast, but it is also temporary. To make data outlive a single run of a program, you need to write it somewhere that survives after the program stops, a process called `persistence`, and the most fundamental tool for it is the `file`.
+
+**Definition:** `File persistence` stores data outside a running program so the information remains available after the program exits.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-11-file-handling/01_memory_vanishes_file_persists.png)
 

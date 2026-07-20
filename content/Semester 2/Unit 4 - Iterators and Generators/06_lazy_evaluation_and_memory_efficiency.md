@@ -4,13 +4,15 @@ Leila's million-record import is now running on generators, and it uses a fracti
 
 This lesson addresses that question directly. Lazy evaluation is not "slower than eager." It is a different trade-off: you pay less upfront to avoid computing things you might never use, and you pay close to nothing in memory regardless of dataset size. Understanding when laziness helps and when it hurts is the practical skill this lesson builds.
 
+**Definition:** Lazy `evaluation` defers computation until values are actually needed, which has three concrete benefits: memory is constant regardless of dataset size, early stopping costs nothing for unprocessed items, and pipelines of generators compose naturally without intermediate collections.
+
 ![](images/06_lazy_evaluation_memory.png)
 
 ## Eager vs. Lazy: A Concrete Comparison
 
-**Eager evaluation** means computing all values immediately and storing them. A list comprehension is eager. `map()` in Python 2 was eager. You pay the full memory cost upfront, but you can revisit any value instantly afterward.
+`Eager evaluation` means computing all values immediately and storing them. A list comprehension is eager. `map()` in Python 2 was eager. You pay the full memory cost upfront, but you can revisit any value instantly afterward.
 
-**Lazy evaluation** means computing values only when requested. Generator functions and expressions are lazy. You pay almost no memory, but once a value is used, it is gone unless you saved it elsewhere.
+`Lazy evaluation` means computing values only when requested. Generator functions and expressions are lazy. You pay almost no memory, but once a value is used, it is gone unless you saved it elsewhere.
 
 ```python
 import sys

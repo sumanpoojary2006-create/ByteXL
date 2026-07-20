@@ -4,6 +4,8 @@ Tara's connection leak was simple: one connection, one leak. As she builds out t
 
 These situations all have one thing in common: they make resource management harder to get right by hand. This lesson covers the patterns that keep resources safe even when the code grows complicated.
 
+**Definition:** A `context manager` acquires a resource for a controlled block and guarantees its release even when the block raises an exception.
+
 ![A library system with connections, file handles, and locks shown as a stack of colored cards, each labeled with a resource type and held inside a single ExitStack](images/05_managing_resources_safely.png)
 
 ## The Golden Rule: Open Resources Inside With Blocks

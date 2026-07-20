@@ -4,6 +4,8 @@ Print debugging works well once Zara has a specific suspicion about where things
 
 That is exactly what Python's built-in debugger, `pdb`, is for.
 
+**Definition:** Python's built-in `debugger`, started with `breakpoint()`, pauses a running program at an exact line and lets you inspect any variable or expression interactively, step forward one line at a time with `n`, and resume freely with `c`, replacing slow rounds of print-edit-rerun with a single live conversation with the running program.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-13-debugging/04_python_debugger_paused_execution.png)
 
 ## Pausing a Program with breakpoint()

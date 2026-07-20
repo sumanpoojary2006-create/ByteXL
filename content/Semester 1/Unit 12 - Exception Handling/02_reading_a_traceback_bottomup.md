@@ -2,7 +2,9 @@
 
 Asha's script crashes, and her terminal fills with a wall of text she used to find genuinely intimidating: several lines of file names and line numbers, arrows, and a final line in red. Her first instinct, for a long time, was to scroll past all of it looking for something that simply said "the problem is here." That something has actually been there the entire time, at the very bottom, and the rest of the wall of text is not noise at all, it is a precise map of exactly how the program reached that failure.
 
-This lesson teaches you to read that wall of text, called a **traceback**, correctly: from the bottom up, not the top down.
+This lesson teaches you to read that wall of text, called a `traceback`, correctly: from the bottom up, not the top down.
+
+**Definition:** A `traceback` records the chain of function calls that led to an exception, with the final line naming the error and the lines above showing where it travelled through the program.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-12-exception-handling/02_traceback_bottom_up.png)
 

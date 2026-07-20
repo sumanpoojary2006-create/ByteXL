@@ -4,6 +4,8 @@ The trip fund split used to involve four people, reliably, every time, until one
 
 Python provides exactly this with `*args`, which gathers any number of extra positional arguments into a single tuple, and its cousin `**kwargs`, which gathers any number of extra named arguments into a dictionary.
 
+**Definition:** Python provides exactly this with `*args`, which gathers any number of extra positional arguments into a single tuple, and its cousin `**kwargs`, which gathers any number of extra named arguments into a dictionary.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-8-functions/05_variable_args_gathering.png)
 
 ## *args: Any Number of Positional Arguments

@@ -2,6 +2,8 @@
 
 Kiran's unit is being deployed, and her team asks for three things: timing on every endpoint so they can identify slow calls, caching on expensive database lookups so the same query is not repeated hundreds of times a minute, and structured logging so they can trace what happened when something goes wrong. She has all the pieces from the previous lessons. This final lesson assembles them into production-quality versions of all three, the kind you would actually use in a real codebase.
 
+**Definition:** Real-world `decorators` add reusable behaviour such as timing, caching, and logging around a function without changing the function's core logic.
+
 ![Three decorator cards labeled Timer, Cache, and Logger, each shown as a transparent layer wrapping a function body, preserving the original name and signature](images/08_realworld_decorators.png)
 
 ## A Production-Grade Timing Decorator

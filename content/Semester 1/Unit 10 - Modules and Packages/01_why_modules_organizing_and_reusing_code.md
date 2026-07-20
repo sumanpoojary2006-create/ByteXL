@@ -2,7 +2,9 @@
 
 Naveen's single script file has quietly grown to over 300 lines. The bill-splitting functions from a few months ago live somewhere near the top, a batch of trip-planning helpers sit in the middle, and a handful of small functions for formatting receipts are scattered wherever he happened to be typing when he wrote them. Scrolling to find one function among dozens of unrelated ones has become its own small chore, and when a friend in a different club asks for just the bill-splitting logic, Naveen is back to copy-pasting a chunk of one giant file into a brand new one, the exact problem functions were supposed to have solved for him already.
 
-Functions stopped him from repeating logic within one file. What he needs now is a way to organise logic across files, and to reuse a whole file's worth of functions without copying a single line. That is exactly what a **module** is for: a separate Python file whose functions, and other code, can be brought into any other file with a single line.
+Functions stopped him from repeating logic within one file. What he needs now is a way to organise logic across files, and to reuse a whole file's worth of functions without copying a single line. That is exactly what a `module` is for: a separate Python file whose functions, and other code, can be brought into any other file with a single line.
+
+**Definition:** A `module` is simply a `.py` file, and any function or other code inside it becomes reusable from any other file through a single import, with no copy-pasting required.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-10-modules-and-packages/01_one_giant_file_vs_modules.png)
 
@@ -56,7 +58,7 @@ print(billing.split_cost(1200, 4))    # 300.0
 
 ## The Standard Library Is Already Full of Modules
 
-Every time you have written `import random` or `import math` in passing, you were already importing a module, just one that ships with Python itself rather than one you wrote. The entire **standard library**, the large collection of ready-made modules Python includes automatically, works on exactly this same idea: someone organised useful, reusable code into focused files, and you import whichever ones you need.
+Every time you have written `import random` or `import math` in passing, you were already importing a module, just one that ships with Python itself rather than one you wrote. The entire `standard library`, the large collection of ready-made modules Python includes automatically, works on exactly this same idea: someone organised useful, reusable code into focused files, and you import whichever ones you need.
 
 ## Your Turn: Identify the Natural Modules
 

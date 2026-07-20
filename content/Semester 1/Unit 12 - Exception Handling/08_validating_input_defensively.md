@@ -2,7 +2,9 @@
 
 Asha's signup form, all the way back in the control flow unit, could check input with conditions, but it could not re-ask after a bad entry; that lesson explicitly said loops would be needed to complete the picture. The looping unit then gave her exactly that, a way to keep asking until an entry passed. What was still missing was a clean way to handle the kind of failure conditions alone could never anticipate, like text where a number was expected, which is exactly what this entire unit has now supplied.
 
-This lesson combines all three: a loop to keep asking, conditions to check the rules that matter, and `try`/`except` to survive the conversions that conditions alone cannot protect against. Together, they form **defensive input validation**, the complete pattern real, user-facing programs depend on.
+This lesson combines all three: a loop to keep asking, conditions to check the rules that matter, and `try`/`except` to survive the conversions that conditions alone cannot protect against. Together, they form `defensive input validation`, the complete pattern real, user-facing programs depend on.
+
+**Definition:** Defensive `input` validation combines a loop to keep asking after a rejected attempt, `try`/`except` to survive conversions that cannot be fully anticipated with conditions alone, and plain `if` checks to enforce the business rules that matter once a value has successfully converted.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-12-exception-handling/08_defensive_validation_loop.png)
 

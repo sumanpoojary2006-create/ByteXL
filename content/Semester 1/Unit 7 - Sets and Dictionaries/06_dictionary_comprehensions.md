@@ -2,7 +2,9 @@
 
 The fest committee announces a closing-day sale: every item at the merch stall gets a flat 20 percent discount for the last hour. Tara could loop through her price dictionary, build a brand new empty dictionary, and add a discounted entry for each item one at a time, the same setup-loop-store pattern you have now seen for lists. It would work, but you already know there is usually a shorter way to say "build a new collection from an existing one by a simple rule."
 
-Just as list comprehensions built a new list from an old one in a single line, a **dictionary comprehension** builds a new dictionary from an existing one, transforming or filtering its entries as it goes.
+Just as list comprehensions built a new list from an old one in a single line, a `dictionary comprehension` builds a new dictionary from an existing one, transforming or filtering its entries as it goes.
+
+**Definition:** A dictionary `comprehension` is also a clean way to pair up two related lists into key-value form, often combined with `zip` from the previous unit.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-7-sets-and-dictionaries/06_discounted_price_comprehension.png)
 

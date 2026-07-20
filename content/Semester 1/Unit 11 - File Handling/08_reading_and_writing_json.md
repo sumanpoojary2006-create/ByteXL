@@ -2,7 +2,9 @@
 
 Tara's combined fest report, from the sets and dictionaries unit, was a nested dictionary: stall names mapping to their own dictionaries of items and prices. CSV cannot represent that shape at all; it only knows flat rows and columns, with no natural way to say "this value is itself a whole group of other values." She needs a file format that preserves real structure, nesting included, exactly as Python's own dictionaries and lists already do.
 
-That format is **JSON**, short for JavaScript Object Notation, and despite the name, it has become the standard way nearly every modern programming language saves and exchanges structured data, with Python's built-in `json` module translating directly between it and Python's own dictionaries and lists.
+That format is `JSON`, short for JavaScript Object Notation, and despite the name, it has become the standard way nearly every modern programming language saves and exchanges structured data, with Python's built-in `json` module translating directly between it and Python's own dictionaries and lists.
+
+**Definition:** `JSON` represents structured data with objects, arrays, strings, numbers, booleans, and null values, while Python's `json` module converts between JSON text and Python objects.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-11-file-handling/08_nested_dict_to_json_file.png)
 

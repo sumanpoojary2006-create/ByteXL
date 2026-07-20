@@ -4,6 +4,8 @@ Asel types `from catalog import Book` and Python finds the right file. She has d
 
 Understanding the import system is not an academic exercise: it explains why two files with the same name do not always import the same module, why circular imports sometimes fail, why installing a package with `pip` makes it importable everywhere, and how frameworks like Flask and Django hook into your project layout. This lesson covers how Python finds what you ask it to import.
 
+**Definition:** Understanding the `import` system is not an academic exercise: it explains why two files with the same name do not always import the same module, why circular imports sometimes fail, why installing a package with `pip` makes it importable everywhere, and how frameworks like Flask and Django hook into your project layout.
+
 ![](images/05_import_system_module_resolution.png)
 
 ## What import Actually Does
@@ -12,8 +14,8 @@ When Python encounters `import math`, it does not simply read a file. It follows
 
 1. Check `sys.modules` (the module cache) for a previously-imported module with that name.
 2. If found, return it immediately without reading anything from disk.
-3. If not found, search for the module using a series of **finders** registered in `sys.meta_path`.
-4. The matching finder returns a **loader** that reads and executes the module source.
+3. If not found, search for the module using a series of `finders` registered in `sys.meta_path`.
+4. The matching finder returns a `loader` that reads and executes the module source.
 5. The resulting module object is stored in `sys.modules` before the caller receives it.
 
 The module cache in step 1 is why importing the same module twice is fast: the second call returns the already-built object without any disk access or compilation.
@@ -32,11 +34,11 @@ print(id(sys.modules["math"]))  # same object both times
 
 Python searches for a module in one of three places, in order:
 
-**Built-in modules** are compiled directly into the CPython binary. `sys`, `builtins`, and a handful of others live here. They do not have source files at all.
+`Built-in modules` are compiled directly into the CPython binary. `sys`, `builtins`, and a handful of others live here. They do not have source files at all.
 
-**Frozen modules** are modules whose bytecode is frozen into the CPython binary at build time. The `importlib` bootstrap code uses this mechanism.
+`Frozen modules` are modules whose bytecode is frozen into the CPython binary at build time. The `importlib` bootstrap code uses this mechanism.
 
-**Path-based modules** are the ones you work with almost exclusively: `.py` files found on the file system using the list of directories in `sys.path`. This is where your own code lives, where third-party packages installed by `pip` live, and where the standard library lives.
+`Path-based modules` are the ones you work with almost exclusively: `.py` files found on the file system using the list of directories in `sys.path`. This is where your own code lives, where third-party packages installed by `pip` live, and where the standard library lives.
 
 ```python
 import sys

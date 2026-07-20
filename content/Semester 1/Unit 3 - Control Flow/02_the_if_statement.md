@@ -4,6 +4,8 @@ Asha glances at her phone and a single yellow banner slides down from the top of
 
 Notice how unremarkable this feels from Asha's side. She never asked for a warning; the phone simply decided, on its own, whether one was needed at all. That quiet ability to sometimes act and sometimes do absolutely nothing is the job of the `if` statement, the most fundamental tool in all of control flow.
 
+**Definition:** The `if` `statement` runs a block of code only when its condition is true, and skips it otherwise.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44t8hdc6u/02_if_single_door.png)
 
 ## Do Something Only If

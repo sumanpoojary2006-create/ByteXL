@@ -4,15 +4,17 @@ Kiran's timing decorator is working well. But now she wants a retry decorator: o
 
 This requires a slightly different pattern: instead of a two-level function (decorator wraps function), she needs three levels: a function that takes the arguments, returns a decorator, which in turn wraps the function.
 
+**Definition:** A `decorator with arguments` uses an outer factory function to accept configuration and return the actual decorator that wraps the target function.
+
 ![Three nested levels: outer factory receives arguments, middle decorator receives the function, inner wrapper calls the function and handles retries](images/04_decorators_with_arguments.png)
 
 ## The Three-Level Pattern
 
 A decorator with arguments needs three levels of function nesting:
 
-1. The **decorator factory** accepts the arguments (like `max_attempts=3`) and returns a decorator.
-2. The **decorator** accepts the function and returns a wrapper.
-3. The **wrapper** contains the actual behavior.
+1. The `decorator factory` accepts the arguments (like `max_attempts=3`) and returns a decorator.
+2. The `decorator` accepts the function and returns a wrapper.
+3. The `wrapper` contains the actual behavior.
 
 ```python
 def retry(max_attempts=3):          # level 1: factory

@@ -4,6 +4,8 @@ Asha's signup form now raises a plain `ValueError` for several genuinely differe
 
 Python lets you define your own exception types, just like the classes from the OOP unit, giving each distinct kind of problem its own clearly named identity that calling code can catch specifically, instead of every custom failure looking like generic, indistinguishable noise.
 
+**Definition:** A custom exception is a class, defined exactly like the classes from the object-oriented programming unit, except it inherits from Python's built-in `Exception` class, which is what makes it usable with `raise` and `except` at all.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-12-exception-handling/07_custom_exception_types.png)
 
 ## Defining a Custom Exception

@@ -2,7 +2,9 @@
 
 Dev's manager asks him to generate a checkout summary: for every item in the library catalog, print the title and its checkout policy. Dev has books, ebooks, reference books, and magazines, all stored in one flat list. He writes a loop that calls `item.checkout_policy()` on each one. It just works. He does not need an `if isinstance(item, Book):` branch or a separate function per type.
 
-His manager asks how that works. Dev pauses, because he has been doing it instinctively without being able to name it. The answer is **polymorphism**: the ability to call the same method on objects of different types and get the behavior that is correct for each object's actual type, without the calling code knowing what that type is.
+His manager asks how that works. Dev pauses, because he has been doing it instinctively without being able to name it. The answer is `polymorphism`: the ability to call the same method on objects of different types and get the behavior that is correct for each object's actual type, without the calling code knowing what that type is.
+
+**Definition:** `Polymorphism` means the calling code uses a single, stable method name and lets each object's class determine what the method actually does.
 
 ![](images/04_polymorphism_in_practice.png)
 

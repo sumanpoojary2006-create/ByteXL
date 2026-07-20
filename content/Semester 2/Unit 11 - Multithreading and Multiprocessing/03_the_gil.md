@@ -4,6 +4,8 @@ Yuna tried threading for the CPU-intensive part of her indexing job (computing T
 
 Understanding the GIL helps you avoid a common mistake: reaching for threads when you need processes, and wasting days debugging a performance regression.
 
+**Definition:** The `GIL` is released whenever a thread performs I/O (network, disk, `time.sleep`).
+
 ![A diagram showing two CPU cores: with the GIL, one is always blocked (gray) while the other runs Python code (green), resulting in only one core ever active at a time despite having two threads](images/03_the_gil.png)
 
 ## What the GIL Is

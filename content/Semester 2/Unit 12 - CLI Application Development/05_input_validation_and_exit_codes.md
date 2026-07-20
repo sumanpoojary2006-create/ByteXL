@@ -4,6 +4,8 @@ Priya's import command accepts a `--date` option. A librarian passes `2026-13-45
 
 The principle: validate early, exit cleanly. Check all user-provided values at the start of the command, before doing any real work. If anything is invalid, print a clear error message and exit with a non-zero code.
 
+**Definition:** CLI `input validation` rejects unusable arguments before work begins, while `exit codes` communicate success or failure to shells, scripts, and CI systems.
+
 ![Two timelines: top shows late validation where processing starts and fails mid-way; bottom shows early validation where all checks happen before any work starts, with a clean error message at the top](images/05_input_validation_exit_codes.png)
 
 ## Validate Early

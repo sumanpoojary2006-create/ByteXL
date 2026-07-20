@@ -2,7 +2,9 @@
 
 Tara's script works perfectly on her own laptop, then crashes the instant a teammate runs it on theirs: a file that was supposed to be there simply is not, because they cloned the project folder but never received the data files Tara kept locally. Months later, a different crash appears, this time from a file that does exist, but contains a rupee symbol her script cannot quite read correctly, displaying as a strange, mangled character instead.
 
-These are two of the most common real-world file problems: a **missing file**, and a **mismatched encoding**. Neither is exotic, and both are worth recognising on sight, because nearly every program that touches files eventually runs into one or the other.
+These are two of the most common real-world file problems: a `missing file`, and a `mismatched encoding`. Neither is exotic, and both are worth recognising on sight, because nearly every program that touches files eventually runs into one or the other.
+
+**Definition:** A `missing` file raises `FileNotFoundError` the instant you try to open it for reading, and checking with `Path.exists()` first is a simple, immediate defence, though the next unit's exception handling gives you a more complete tool for the same problem.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-11-file-handling/09_missing_file_and_encoding_pitfalls.png)
 
@@ -40,7 +42,7 @@ This is the same guard-clause instinct from the control flow unit, checking a co
 
 ## The Encoding Problem
 
-Text files are not stored as the letters you see; they are stored as numbers, following an agreed-upon scheme called an **encoding**, that maps numbers back to characters. `UTF-8` is the overwhelmingly common, modern standard, and it correctly handles virtually every character from virtually every language, including symbols like the rupee sign, ₹. Older or different encodings do not always agree on what a given number means, and opening a file with the wrong assumption produces exactly the mangled, wrong-looking text Tara ran into.
+Text files are not stored as the letters you see; they are stored as numbers, following an agreed-upon scheme called an `encoding`, that maps numbers back to characters. `UTF-8` is the overwhelmingly common, modern standard, and it correctly handles virtually every character from virtually every language, including symbols like the rupee sign, ₹. Older or different encodings do not always agree on what a given number means, and opening a file with the wrong assumption produces exactly the mangled, wrong-looking text Tara ran into.
 
 ```python
 with open("receipt.txt", "w", encoding="utf-8") as file:

@@ -2,7 +2,9 @@
 
 The merch stall was never the only stall at the fest. There is also the food stall and the games stall, and the committee wants one combined report covering all three: every stall, every item it sells, and that item's price. A single flat dictionary cannot hold this on its own, because "T-shirt" might mean one thing at the merch stall and nothing at all at the food stall. Tara needs to say "food stall, then within that, samosa" and land on one exact price, the same row-then-column shape you met with nested lists.
 
-The structure that captures this is a **nested dictionary**: a dictionary whose values are themselves dictionaries. It is the natural way to represent anything organised into named groups, each holding its own key-value data.
+The structure that captures this is a `nested dictionary`: a dictionary whose values are themselves dictionaries. It is the natural way to represent anything organised into named groups, each holding its own key-value data.
+
+**Definition:** A nested dictionary is a dictionary whose values are themselves `dictionaries`, the natural shape for data organised into named groups, reached with two key lookups: `data[group][item]`.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-7-sets-and-dictionaries/07_fest_stalls_nested_report.png)
 

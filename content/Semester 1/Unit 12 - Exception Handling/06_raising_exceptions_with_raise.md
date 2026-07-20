@@ -4,6 +4,8 @@ Asha writes a function that calculates each person's share of a trip cost, and s
 
 Python's `raise` statement lets your own code deliberately trigger an exception, on purpose, the moment it detects a problem it knows about.
 
+**Definition:** `raise` is followed by an `exception` type, called like a function, usually with a message describing exactly what went wrong.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-12-exception-handling/06_raise_deliberate_exception.png)
 
 ## Raising a Built-in Exception

@@ -2,7 +2,9 @@
 
 Naveen's `greet_member` function from the last lesson always says exactly the same thing, to no one in particular, and his bill-splitting calculation still has no function home at all, because every function he has written so far refuses to take any information in. He wants to write `split_cost` once and feed it a different total and a different headcount every time he calls it, and he wants the function to hand back the actual number so he can use it, not just print it and move on.
 
-Two ideas unlock this: **parameters**, the named placeholders a function declares it needs, and **return values**, the result a function hands back to whoever called it.
+Two ideas unlock this: `parameters`, the named placeholders a function declares it needs, and `return values`, the result a function hands back to whoever called it.
+
+**Definition:** `Parameters` are the named placeholders a function declares in its definition, and arguments are the actual values you supply at each call.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-8-functions/03_parameters_in_value_out.png)
 
@@ -25,7 +27,7 @@ Welcome, Asha!
 Welcome, Ravi!
 ```
 
-Here `name` is the parameter, the placeholder declared in the definition. "Asha" and "Ravi" are the **arguments**, the actual values supplied at each call. The distinction matters: a parameter is part of the recipe, written once; an argument is the specific ingredient handed over on a particular call.
+Here `name` is the parameter, the placeholder declared in the definition. "Asha" and "Ravi" are the `arguments`, the actual values supplied at each call. The distinction matters: a parameter is part of the recipe, written once; an argument is the specific ingredient handed over on a particular call.
 
 ## Several Parameters at Once
 

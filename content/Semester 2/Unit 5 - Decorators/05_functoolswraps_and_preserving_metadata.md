@@ -4,6 +4,8 @@ Kiran's timing decorator is in production. A new developer on the team opens the
 
 This is a real and irritating problem. The fix is a single import and one additional line: `functools.wraps`.
 
+**Definition:** `functools.wraps` copies a decorated function's metadata onto its wrapper so its name, documentation, annotations, and introspection remain accurate.
+
 ![A decorated function shown with __name__ pointing to wrapper on the left, and after @wraps the __name__ pointing to the original function name on the right](images/05_functoolswraps_metadata.png)
 
 ## The Problem: Wrappers Hide the Original's Identity

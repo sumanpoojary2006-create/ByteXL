@@ -4,6 +4,8 @@ Raj's library system had a bug last month: a function that expected an integer n
 
 Type hints would have caught this at analysis time. `mypy` would have flagged the function call as incorrect before the code ever ran.
 
+**Definition:** `Type hints` document expected value types, and `mypy` checks those annotations before runtime to catch incompatible uses early.
+
 ![A function signature with and without type hints: without hints, a wrong type is passed silently; with hints and mypy, a red underline appears at the call site before the code runs](images/02_type_hints_mypy.png)
 
 ## What Type Hints Are

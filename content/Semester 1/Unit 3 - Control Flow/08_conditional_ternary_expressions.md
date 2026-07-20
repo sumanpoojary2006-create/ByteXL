@@ -13,6 +13,8 @@ print(marks)
 
 Four lines to make a single choice between two words. For a status that is only ever going to be set once and printed once, that much ceremony feels heavier than the decision deserves. Python offers a tidy shortcut for exactly this situation, called the conditional expression, often nicknamed the ternary operator. It folds that whole decision into one readable line.
 
+**Definition:** A `conditional expression` chooses between two values in one expression using the form `value_if_true if condition else value_if_false`.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44t8hnwp7/08_ternary_one_line.png)
 
 ## A Decision in a Single Line

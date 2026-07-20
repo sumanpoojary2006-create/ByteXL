@@ -4,6 +4,8 @@ Naveen is finally ready to do what the first lesson of this unit only previewed:
 
 This lesson walks through that, file by file, exactly the way Naveen would do it on his own laptop.
 
+**Definition:** A Python `module` is a `.py` file whose functions, classes, and variables can be imported and reused by other files.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-10-modules-and-packages/04_two_files_same_folder.png)
 
 ## Step One: Write the Module File

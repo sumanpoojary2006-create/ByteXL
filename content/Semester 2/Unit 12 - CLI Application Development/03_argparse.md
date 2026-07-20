@@ -2,6 +2,8 @@
 
 Priya's `import_books.py` script needs three things `sys.argv` makes difficult: optional arguments with defaults, a `--help` flag that explains how to use the tool, and automatic type conversion (the `--limit` option should be an integer, not a string). `argparse` provides all of these in about ten lines.
 
+**Definition:** `argparse` turns command-line text into validated arguments and automatically provides usage messages, help output, defaults, and clear error reporting.
+
 ![An argparse-powered command shown with --help output: usage line, positional arguments, optional arguments with types and defaults, all automatically generated from the parser definition](images/03_argparse.png)
 
 ## Basic argparse Structure

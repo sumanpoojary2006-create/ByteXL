@@ -4,6 +4,8 @@ Kabir is scrolling his feed looking for one particular post a friend told him ab
 
 By default a loop runs to completion, taking every value in turn, but real problems often need finer control like this. You want to stop the moment you find what you are looking for, rather than checking the rest pointlessly, or you want to skip a particular item and carry on with the others. Kabir's feed never paused on every single ad just because it kept scrolling, and it never kept scrolling past the post he wanted either. Python gives you two precise commands for this, `break` and `continue`, and a lesser known but useful partner, the loop `else`.
 
+**Definition:** `break` ends a loop, `continue` skips to its next iteration, and a loop's `else` block runs only when the loop finishes without `break`.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44tb5mm6y/05_break_continue.png)
 ## break: Stop the Loop Early
 

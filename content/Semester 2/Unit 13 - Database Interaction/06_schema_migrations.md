@@ -4,6 +4,8 @@ The library system has been running for a month with a `books` table. Dev needs 
 
 Schema migration is the process of modifying a live database schema without destroying its data. Every production database eventually needs it.
 
+**Definition:** Schema `migration` is the process of modifying a live database schema without destroying its data.
+
 ![A timeline showing a books table evolving: v1 has 4 columns, an ALTER TABLE adds genre in v2, another adds a series table in v3, each step tracked by a migrations log](images/06_schema_migrations.png)
 
 ## Checking What the Schema Looks Like

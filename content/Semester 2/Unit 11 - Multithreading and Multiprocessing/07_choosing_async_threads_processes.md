@@ -2,6 +2,8 @@
 
 Yuna now has three concurrency tools in her toolkit: `asyncio`, `threading`, and `multiprocessing`. Each solves a different problem. In this final lesson, she builds the complete mental model: which tool for which job, how to profile to confirm the bottleneck, and how to combine tools for programs that have both I/O and CPU work.
 
+**Definition:** `asyncio` is the right choice for I/O-bound code with `async`-compatible libraries.
+
 ![A flowchart decision tree: start with 'what is the bottleneck?' leading to I/O or CPU, then branching to async/threads/processes based on library availability and workload type](images/07_choosing_async_threads_processes.png)
 
 ## The Core Question: What Is the Bottleneck?

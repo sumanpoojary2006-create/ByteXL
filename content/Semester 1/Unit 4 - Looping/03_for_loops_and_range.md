@@ -4,6 +4,8 @@ Kabir is at the hostel gym working through his daily set of ten push-ups, counti
 
 That is the situation a `while` loop is clumsy for and a different tool handles cleanly. A `while` loop would technically work for ten push-ups too, but it would force Kabir's program to manage its own counter and remember to update it, extra bookkeeping for a job where the count was never really in doubt. Very often you know the repetitions in advance: print each of the 12 months, repeat a calculation 10 times, step through the numbers 1 to 100. For these counted repetitions, the `for` loop is cleaner and safer, because the counting is handled for you. Its constant companion is `range()`, a tool that produces sequences of numbers to loop over.
 
+**Definition:** A `for` loop processes each item in an iterable, and `range()` supplies predictable integer sequences when a loop needs a fixed count.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44tb5kfd6/03_for_range_stepping_stones.png)
 ## The for Loop
 

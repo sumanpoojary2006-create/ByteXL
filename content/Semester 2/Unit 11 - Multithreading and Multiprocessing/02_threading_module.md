@@ -4,6 +4,8 @@ Yuna's indexing job is not just CPU work -- it also reads book records from the 
 
 This lesson covers the `threading` module: creating threads, passing arguments, joining (waiting for completion), and using daemon threads.
 
+**Definition:** `threading.Thread` creates threads; `start()` launches them; `join()` waits for them.
+
 ![A diagram showing five threads created from the main thread, each running an I/O operation concurrently, and the main thread calling join to wait for all of them to complete](images/02_threading_module.png)
 
 ## Creating and Starting a Thread

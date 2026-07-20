@@ -4,6 +4,8 @@ Leila's import pipeline is running efficiently, but she keeps writing the same s
 
 This lesson covers the most useful `itertools` functions, focusing on the ones that appear most often in real data pipelines. All of them work lazily, consuming input one item at a time rather than loading everything into memory.
 
+**Definition:** `itertools.tee(iterable, n)` creates n independent iterators from one source.
+
 ![A library catalog pipeline passing through itertools stations labeled islice, chain, groupby, and zip_longest, each shown as a small efficient machine](images/07_itertools_essentials.png)
 
 ## islice: Take a Slice of a Generator

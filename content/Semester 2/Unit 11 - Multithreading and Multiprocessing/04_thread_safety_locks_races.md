@@ -4,6 +4,8 @@ Yuna's I/O phase uses threads to download records concurrently. Each thread upda
 
 This is the fundamental problem with shared mutable state in concurrent code, and the solution is synchronization using locks.
 
+**Definition:** `threading.Event` allows one `thread` to signal another: `queue.Queue` is the recommended way to pass data between threads.
+
 ![Two threads shown reading the same counter value (5), both incrementing to 6, and both writing 6 -- so one increment is lost. Next to it: the lock-protected version where one thread waits before reading, preventing the lost update](images/04_thread_safety_locks_races.png)
 
 ## The Race Condition

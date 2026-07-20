@@ -2,6 +2,8 @@
 
 Meera ran a small giveaway on her page, and now her inbox is full of entry messages, each one a jumble of stray spaces, random capitals, and extra commas. She needs a clean summary by evening: how many entries came in, how many words on average, and whether a particular keyword appears anywhere. She does not reach for one tool alone. She trims the spaces, lowers the case, splits each message into its pieces, and counts and checks as the tidy summary takes shape. You now have a full toolkit for text: creating, indexing, slicing, transforming with methods, splitting and joining, searching, and formatting. Real work almost never uses just one of these in isolation. Instead you combine them to clean messy input, pull apart structured data, and analyse content. This final lesson of the unit ties the threads together into the kind of practical text processing you will do constantly. Meera reaching for trim, then lowercase, then split in one breath is not a special trick; it is simply several lessons of this unit chained together on one messy real inbox.
 
+**Definition:** Practical text `processing` is the art of combining the unit's tools: clean messy input by chaining methods like `strip`, `lower`, and `replace`; parse structured lines with `split`; and analyse content with loops, `len`, and searching.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-5-strings/09_text_processing_analyst.png)
 
 ## Cleaning Messy Text

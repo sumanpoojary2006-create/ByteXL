@@ -2,7 +2,9 @@
 
 Walk up to any shop counter and numbers are everywhere, but they are not all the same kind. You buy 3 packets of biscuits, never 3.5 of them, so a quantity is a whole number. The price, though, might be 12.50 rupees, which needs a decimal point. And in an engineering lab you may meet numbers that a school calculator cannot show.
 
-Python gives you three built in number types for these situations: **int** for whole numbers, **float** for numbers with a decimal point, and **complex** for advanced mathematics. Each one is built differently under the hood, which is exactly why mixing them up causes trouble. A count of biscuit packets can never sensibly be 3.5, so forcing it into a decimal type would let your program accept nonsense it should refuse. A price, on the other hand, genuinely needs that decimal point, so squeezing it into a whole number would silently throw away real money. Knowing which is which saves you from a whole class of confusing bugs.
+Python gives you three built in number types for these situations: `int` for whole numbers, `float` for numbers with a decimal point, and `complex` for advanced mathematics. Each one is built differently under the hood, which is exactly why mixing them up causes trouble. A count of biscuit packets can never sensibly be 3.5, so forcing it into a decimal type would let your program accept nonsense it should refuse. A price, on the other hand, genuinely needs that decimal point, so squeezing it into a whole number would silently throw away real money. Knowing which is which saves you from a whole class of confusing bugs.
+
+**Definition:** A floating point `number`, written `float`, carries a decimal point and is used for measurements, money, averages, and anything that can be a fraction.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44t82usgz/02_int_vs_float_scale.png)
 

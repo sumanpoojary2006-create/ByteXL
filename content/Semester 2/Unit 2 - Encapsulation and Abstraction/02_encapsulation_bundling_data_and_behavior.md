@@ -4,15 +4,17 @@ After the negative-copies incident, Priya explains the problem to her tech lead.
 
 This is the first and most fundamental principle of object-oriented design in production code, and this lesson makes it concrete.
 
+**Definition:** `Encapsulation` keeps related data and behaviour inside one class and controls how outside code interacts with that state.
+
 ![](images/02_encapsulation_data_and_behavior.png)
 
 ## What Encapsulation Actually Means
 
 Encapsulation has two parts:
 
-**Bundling**: the data (attributes) and the operations that work on that data (methods) live together in one class. A `Book` knows how to check itself out rather than requiring an external function to manipulate its attributes.
+`Bundling`: the data (attributes) and the operations that work on that data (methods) live together in one class. A `Book` knows how to check itself out rather than requiring an external function to manipulate its attributes.
 
-**Protection**: the internal representation is hidden from the outside world. Code that uses `Book` objects should not know or care whether copies are stored as an `int`, a list, or a dictionary. The class makes that decision and exposes only a clean interface.
+`Protection`: the internal representation is hidden from the outside world. Code that uses `Book` objects should not know or care whether copies are stored as an `int`, a list, or a dictionary. The class makes that decision and exposes only a clean interface.
 
 ```python
 class Book:
@@ -106,7 +108,7 @@ The `ValueError` is raised at object creation, not somewhere later when the nega
 
 ## Encapsulation Is Not Just About Hiding
 
-A common misconception is that encapsulation is mainly about making things private. It is actually about **keeping related things together**. The `check_out` logic belongs in `Book` because it is intimately tied to what `_copies` means. Spreading that logic across multiple files or modules means changes to the copy-counting mechanism require hunting down every place copies are manipulated.
+A common misconception is that encapsulation is mainly about making things private. It is actually about `keeping related things together`. The `check_out` logic belongs in `Book` because it is intimately tied to what `_copies` means. Spreading that logic across multiple files or modules means changes to the copy-counting mechanism require hunting down every place copies are manipulated.
 
 ```python
 # Fragmented (not encapsulated):

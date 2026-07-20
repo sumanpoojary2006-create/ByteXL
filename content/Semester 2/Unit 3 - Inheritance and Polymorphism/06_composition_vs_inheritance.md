@@ -4,13 +4,15 @@ Dev is adding an inventory management feature. He wonders whether `Inventory` sh
 
 This lesson covers the most common design decision in object-oriented programming: whether two concepts should be connected by inheritance or by composition. Getting this choice right produces code that is easy to extend; getting it wrong produces class hierarchies that become rigid and fragile.
 
+**Definition:** `Inheritance` models "is-a" relationships, where the child genuinely substitutes for the parent.
+
 ![](images/06_composition_vs_inheritance.png)
 
 ## The Two Relationships
 
-**Inheritance** models the "is-a" relationship. A `Book` *is a* `LibraryItem`. An `EBook` *is a* `LibraryItem`. These relationships mean `Book` should share and extend the interface of `LibraryItem`, and code that works with `LibraryItem` objects should also work with `Book` objects.
+`Inheritance` models the "is-a" relationship. A `Book` *is a* `LibraryItem`. An `EBook` *is a* `LibraryItem`. These relationships mean `Book` should share and extend the interface of `LibraryItem`, and code that works with `LibraryItem` objects should also work with `Book` objects.
 
-**Composition** models the "has-a" relationship. A `Library` *has* `LibraryItem` objects. An `Inventory` *has* a list of items. A `Checkout` *has* a patron and a book. These relationships mean one object holds a reference to another as an attribute, delegating behavior to it without claiming to be that thing.
+`Composition` models the "has-a" relationship. A `Library` *has* `LibraryItem` objects. An `Inventory` *has* a list of items. A `Checkout` *has* a patron and a book. These relationships mean one object holds a reference to another as an attribute, delegating behavior to it without claiming to be that thing.
 
 ```python
 class LibraryItem:

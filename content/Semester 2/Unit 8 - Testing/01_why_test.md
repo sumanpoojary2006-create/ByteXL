@@ -4,6 +4,8 @@ Sam pushed a small change to the library system on a Friday afternoon: a one-lin
 
 His team lead's response was not a reprimand but a question: "What would have caught this before it reached production?" The answer is tests. This unit explains what tests are, why they matter, and how to write them with Python's `pytest` framework.
 
+**Definition:** `Tests` are code that calls your code and checks the result.
+
 ![A timeline showing code written, then a bug introduced, with two branches: one where tests catch it before production (highlighted in green) and one where it reaches users (highlighted in red)](images/01_why_test.png)
 
 ## What Testing Is
@@ -67,19 +69,19 @@ After Sam adds these four tests, any future change that breaks the fine calculat
 
 ## The Three Values of Testing
 
-**Safety to change**: tests let you refactor and add features with confidence. If all tests pass after a change, the previously verified behavior still works.
+`Safety to change`: tests let you refactor and add features with confidence. If all tests pass after a change, the previously verified behavior still works.
 
-**Documentation**: tests describe what the code is supposed to do. A new developer reading `test_fine_zero_days` learns that the function accepts zero and returns zero, without reading the implementation.
+`Documentation`: tests describe what the code is supposed to do. A new developer reading `test_fine_zero_days` learns that the function accepts zero and returns zero, without reading the implementation.
 
-**Design pressure**: writing tests often reveals when code is hard to test, which usually means it is also hard to use. Functions with too many responsibilities, hidden side effects, or hard-coded dependencies are all harder to test. Testing pressure is a signal to improve the design.
+`Design pressure`: writing tests often reveals when code is hard to test, which usually means it is also hard to use. Functions with too many responsibilities, hidden side effects, or hard-coded dependencies are all harder to test. Testing pressure is a signal to improve the design.
 
 ## What to Test
 
 The most valuable tests cover:
 
-- **Normal cases**: the expected, common inputs
-- **Edge cases**: the boundaries (zero, empty, maximum value, first and last day of a period)
-- **Error cases**: what happens when invalid input is passed
+- `Normal cases`: the expected, common inputs
+- `Edge cases`: the boundaries (zero, empty, maximum value, first and last day of a period)
+- `Error cases`: what happens when invalid input is passed
 
 ```python
 def calculate_fine(days_overdue, daily_rate=0.50):

@@ -1,8 +1,10 @@
 ## Introduction
 
-There are hundreds of programming languages in the world. So when a course like this one picks **Python**, the same language trusted by Google, Netflix, Instagram, and NASA, it is worth pausing to ask why. Why this language, especially for someone about to write their very first program?
+There are hundreds of programming languages in the world. So when a course like this one picks `Python`, the same language trusted by Google, Netflix, Instagram, and NASA, it is worth pausing to ask why. Why this language, especially for someone about to write their very first program?
 
 Let us answer not with a sales pitch, but with a small thought experiment.
+
+**Definition:** `Python` is a readable, general-purpose programming language whose approachable syntax makes it well suited to learning and real-world development.
 
 ## A Tiny Thought Experiment
 

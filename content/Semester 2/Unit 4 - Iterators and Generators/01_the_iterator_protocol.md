@@ -6,11 +6,13 @@ Her senior colleague Nadia looks at the crash report and says: "You do not need 
 
 This lesson starts at the foundation: what Python's iterator protocol actually is, and how the familiar `for` loop is secretly using it every time.
 
+**Definition:** The `iterator` protocol involves two related but different concepts: An `iterable` is any object that has an `__iter__` method.
+
 ![](images/01_iterator_protocol.png)
 
 ## How a for Loop Actually Works
 
-When you write `for item in collection:`, Python does not simply index through a list. It calls two dunder methods: first `__iter__()` to get an **iterator object**, then `__next__()` on that iterator repeatedly to get items one at a time until a `StopIteration` exception is raised.
+When you write `for item in collection:`, Python does not simply index through a list. It calls two dunder methods: first `__iter__()` to get an `iterator object`, then `__next__()` on that iterator repeatedly to get items one at a time until a `StopIteration` exception is raised.
 
 ```python
 numbers = [10, 20, 30]
@@ -29,9 +31,9 @@ The `for` loop catches `StopIteration` automatically and exits cleanly. The `ite
 
 The iterator protocol involves two related but different concepts:
 
-An **iterable** is any object that has an `__iter__` method. Lists, tuples, strings, dicts, sets, and files are all iterables. Calling `iter(some_iterable)` returns an **iterator**.
+An `iterable` is any object that has an `__iter__` method. Lists, tuples, strings, dicts, sets, and files are all iterables. Calling `iter(some_iterable)` returns an `iterator`.
 
-An **iterator** is an object that has both `__iter__` and `__next__`. It remembers where it is in the sequence and returns the next item each time `__next__` is called. Once exhausted, it raises `StopIteration` permanently.
+An `iterator` is an object that has both `__iter__` and `__next__`. It remembers where it is in the sequence and returns the next item each time `__next__` is called. Once exhausted, it raises `StopIteration` permanently.
 
 ```python
 numbers = [1, 2, 3]    # a list is an iterable, not an iterator
@@ -72,7 +74,7 @@ Each `for` iteration calls `f.__next__()`, which reads one line from disk. No li
 
 ## Separation: Iterables That Return Fresh Iterators
 
-Most collections (lists, tuples, strings) are **iterables** that return a *new* iterator object each time `iter()` is called. This means you can iterate over a list multiple times without resetting anything manually.
+Most collections (lists, tuples, strings) are `iterables` that return a *new* iterator object each time `iter()` is called. This means you can iterate over a list multiple times without resetting anything manually.
 
 A file, by contrast, is its own iterator: the same object is returned by `iter(f)`. Calling `iter(f)` twice gives you the same object at the same position, not a fresh start.
 

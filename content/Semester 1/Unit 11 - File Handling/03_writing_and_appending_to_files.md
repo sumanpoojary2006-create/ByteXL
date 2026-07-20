@@ -4,6 +4,8 @@ Reading `attendees.txt` solved half of Tara's problem; the other half is that he
 
 This lesson covers `"w"` mode, which creates a file fresh or completely overwrites an existing one, and `"a"` mode, which adds new content onto the end of whatever is already there.
 
+**Definition:** Writing in `w` mode replaces a file's existing contents, while appending in `a` mode adds new data at the end without erasing what is already stored.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-11-file-handling/03_write_mode_vs_append_mode.png)
 
 ## Write Mode: Create or Overwrite

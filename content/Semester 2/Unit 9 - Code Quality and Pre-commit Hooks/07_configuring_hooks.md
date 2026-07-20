@@ -4,6 +4,8 @@ Raj's basic `pre-commit` configuration catches style issues, but his team also n
 
 This lesson covers configuring existing hooks in detail, adding mypy to the pre-commit pipeline, writing a custom local hook, and tuning the configuration so the pipeline is fast enough that developers do not disable it out of frustration.
 
+**Definition:** A `pre-commit hook` configuration defines which automated checks run, which files they inspect, and when they run in the Git workflow.
+
 ![A .pre-commit-config.yaml file with three sections highlighted: hook-level configuration (args, exclude), mypy as a local hook, and a custom shell-based secret-detection hook](images/07_configuring_hooks.png)
 
 ## Hook-Level Configuration

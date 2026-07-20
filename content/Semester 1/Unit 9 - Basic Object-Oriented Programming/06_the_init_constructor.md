@@ -4,6 +4,8 @@ Priya has been creating a `Student` object and then immediately writing three or
 
 Python's answer is the **`__init__` constructor**, a special method that runs automatically the moment an object is instantiated, exactly the right place to guarantee every object starts out fully formed.
 
+**Definition:** Python's answer is the `__init__` `constructor`, a special method that runs automatically the moment an object is instantiated, exactly the right place to guarantee every object starts out fully formed.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-9-basic-object-oriented-programming/06_init_builds_complete_object.png)
 
 ## The __init__ Method Runs Automatically

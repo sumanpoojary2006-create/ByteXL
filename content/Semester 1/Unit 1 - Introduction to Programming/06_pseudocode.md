@@ -2,7 +2,7 @@
 
 You are standing at a whiteboard with a teammate, working out how a program should behave. Do you start writing perfect, exact code, worrying about every symbol and spelling? Of course not. You scribble something like "if it is raining, take an umbrella, otherwise leave it", half English and half code, and you both understand it instantly.
 
-That scribble has a proper name: **pseudocode**. It is the language programmers use to capture an idea's logic before wrestling with the strict rules of any real programming language. It is fast to write, easy to read, and works no matter which language you eventually use.
+That scribble has a proper name: `pseudocode`. It is the language programmers use to capture an idea's logic before wrestling with the strict rules of any real programming language. It is fast to write, easy to read, and works no matter which language you eventually use.
 
 Here is that umbrella thought, tidied into pseudocode:
 
@@ -15,6 +15,8 @@ END IF
 ```
 
 It is still perfectly readable by any human, yet now it has structure: a condition, two branches, and a clear ending.
+
+**Definition:** `Pseudocode` is one of three tools you now have for capturing logic before it becomes a running program, and each suits a different moment.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44t2hjg29/06_whiteboard_umbrella_pseudocode.png)
 

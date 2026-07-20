@@ -2,6 +2,8 @@
 
 Meera is filling in some details on her phone and needs only small pieces of text, not whole values. For a friend's initial she wants just the first letter of their name, and to confirm a payment she needs only the last four digits of a long phone number, not the entire thing. She taps to grab the single character she wants, then selects a short run of characters near the end, without retyping anything. That is exactly what a string lets you do once you know that it is an ordered sequence, where every character sits at a known position. Two powerful abilities open up: reaching in to grab a single character, called indexing, and pulling out a whole run of characters, called slicing, and they follow rules you have already half-met with `range()`. Without that known position for every character, there would be no way to say "give me the first letter" or "give me the last four digits" at all; you would be stuck describing pieces of text in words instead of grabbing them directly.
 
+**Definition:** `Indexing` gives one character; slicing gives a piece.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-5-strings/02_indexing_slicing_beads.png)
 
 ## Indexing: Reaching One Character

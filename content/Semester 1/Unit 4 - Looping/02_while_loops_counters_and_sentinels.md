@@ -4,6 +4,8 @@ Kabir is back in his hostel room trying to get onto the wifi, typing the passwor
 
 That is exactly the shape of plenty of real tasks: you keep asking for a password until the user gets it right, a game keeps running until the player chooses to quit, you keep adding items to a cart until the customer is done. In all of these, you cannot say in advance how many times to loop; you only know the condition that should keep it going. Kabir does not know if the wifi will connect on attempt two or attempt twelve, and a program in his position would face the same uncertainty. This is exactly what the `while` loop is for.
 
+**Definition:** A `while` loop repeats a block while its condition remains true, often controlled by a changing counter or a special sentinel value.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44tb5k4ef/02_while_until_correct.png)
 ## Repeat While a Condition Holds
 

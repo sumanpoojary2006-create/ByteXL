@@ -4,6 +4,8 @@ Leila's `CatalogReader` class works correctly, but writing eighteen lines to do 
 
 The answer is `yield`, and understanding what it does transforms the way you think about functions that produce sequences.
 
+**Definition:** A `generator` function uses `yield` to pause execution and return a value, then resumes from where it left off when the next item is requested.
+
 ![](images/04_generators_yield.png)
 
 ## A Regular Function Returns Once
@@ -27,7 +29,7 @@ This builds the entire list before the caller receives anything. For a million r
 
 ## A Generator Function Yields Many Times
 
-A **generator function** looks like a regular function but uses `yield` instead of `return`. When called, it does not run immediately. It returns a **generator object**. Advancing that generator (via `next()` or a `for` loop) resumes the function from where it last `yield`-ed, runs until the next `yield`, and pauses again with its local state fully preserved.
+A `generator function` looks like a regular function but uses `yield` instead of `return`. When called, it does not run immediately. It returns a `generator object`. Advancing that generator (via `next()` or a `for` loop) resumes the function from where it last `yield`-ed, runs until the next `yield`, and pauses again with its local state fully preserved.
 
 ```python
 def approved_records(records):

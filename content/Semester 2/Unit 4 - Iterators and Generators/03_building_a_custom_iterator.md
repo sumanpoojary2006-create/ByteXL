@@ -4,6 +4,8 @@ Leila wants to build a `CatalogReader` that iterates over a list of raw records 
 
 The right tool is a class that implements `__iter__` and `__next__` directly. Building one makes the protocol concrete: there is no magic, just two methods and a `StopIteration`.
 
+**Definition:** A custom `iterator` implements `__iter__()` and `__next__()` to produce one value at a time and raises `StopIteration` when no values remain.
+
 ![](images/03_building_a_custom_iterator.png)
 
 ## The Minimal Iterator Class

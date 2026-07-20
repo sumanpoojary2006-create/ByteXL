@@ -2,7 +2,9 @@
 
 Naveen has a list of pending dues he wants sorted by amount, just this once, for a single report he is printing right now. Writing a full `def` block, naming it something like `get_amount`, and never using that name again anywhere else in the script feels like a lot of ceremony for a function that exists for exactly one line of work. He just wants to tell Python, right there in the sorting call, "use the amount to compare these."
 
-Python's answer is the **lambda**, a small, anonymous function written in a single expression, used exactly where it is needed and then forgotten.
+Python's answer is the `lambda`, a small, anonymous function written in a single expression, used exactly where it is needed and then forgotten.
+
+**Definition:** A lambda is written as the keyword `lambda`, followed by its parameters, a colon, and a single expression whose result it returns automatically.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-8-functions/06_lambda_inline_function.png)
 

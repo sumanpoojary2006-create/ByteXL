@@ -12,7 +12,9 @@ START -> [Insert ticket] -> < Ticket valid? > -- yes --> [Open gate] -> END
                              [Show error] -> back to insert ticket
 ```
 
-Suddenly anyone, technical or not, can trace the arrows and understand it in seconds. That is the entire point of a **flowchart**: it turns logic into a picture, making the flow of a program, especially its decisions and loops, instantly visible. If pseudocode describes logic in words, a flowchart draws it as a map.
+Suddenly anyone, technical or not, can trace the arrows and understand it in seconds. That is the entire point of a `flowchart`: it turns logic into a picture, making the flow of a program, especially its decisions and loops, instantly visible. If pseudocode describes logic in words, a flowchart draws it as a map.
+
+**Definition:** A `flowchart` turns your logic into something you can see: ovals to start and stop, rectangles to do work, parallelograms for input and output, and diamonds where the path makes a choice, all joined by arrows, with loops drawn as arrows pointing back.
 
 ## A Shape for Every Kind of Step
 

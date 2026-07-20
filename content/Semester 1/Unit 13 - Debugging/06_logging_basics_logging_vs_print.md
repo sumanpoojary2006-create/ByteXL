@@ -4,6 +4,8 @@ Zara's RSVP tracker is almost ready to hand in, and she has been leaving informa
 
 Python's built-in `logging` module is built exactly for this, and it solves problems plain `print()` was never designed to solve.
 
+**Definition:** `Logging` records structured, level-based diagnostic messages that can be filtered, preserved, and routed more reliably than temporary `print()` calls.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-13-debugging/06_logging_vs_print.png)
 
 ## A First Log Message

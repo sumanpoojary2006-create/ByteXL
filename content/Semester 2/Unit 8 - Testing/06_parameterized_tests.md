@@ -4,6 +4,8 @@ Sam needs to test `calculate_fine` for many different inputs: 0 days, 1 day, 7 d
 
 `pytest.mark.parametrize` solves this: write the test logic once, and provide a table of inputs and expected outputs. `pytest` generates a separate test case for each row in the table.
 
+**Definition:** A `parameterized test` runs the same test logic against multiple input and expected-output combinations, removing repetitive test functions.
+
 ![A test function shown once on the left, with an arrow pointing right to a grid of five separate test cases, each showing a different (input, expected) pair from the parametrize table](images/06_parameterized_tests.png)
 
 ## Basic Parametrize

@@ -2,6 +2,8 @@
 
 Miguel's availability checker `await`s three coroutines in sequence. They run one after the other, not concurrently. He needs to start all three at the same time so the event loop can run them concurrently while each waits for its I/O. The difference is between `await`ing a coroutine directly and wrapping it in a `Task`.
 
+**Definition:** A `Task` wraps a `coroutine` and schedules it to run on the event loop immediately, concurrently with the current coroutine.
+
 ![Two execution diagrams: awaiting three coroutines in sequence (each waits for the previous), versus creating three tasks and gathering them (all three run concurrently)](images/05_coroutines_tasks.png)
 
 ## Coroutines vs Tasks
@@ -76,10 +78,10 @@ asyncio.run(main())
 
 A task can be in one of four states:
 
-- **Pending**: created, not yet done
-- **Running**: currently executing on the event loop
-- **Done**: completed (success or exception)
-- **Cancelled**: explicitly cancelled
+- `Pending`: created, not yet done
+- `Running`: currently executing on the event loop
+- `Done`: completed (success or exception)
+- `Cancelled`: explicitly cancelled
 
 ```python
 import asyncio

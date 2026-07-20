@@ -2,6 +2,8 @@
 
 Miguel knows he needs non-blocking I/O and async-compatible libraries. Now he needs to understand the syntax: `async def`, `await`, and `asyncio.run`. These are three keywords and one function call, and they are the entire surface area of Python's async system from a developer's perspective. Everything else builds on them.
 
+**Definition:** `await` does two things: it runs the coroutine and it suspends the current function at that point until the awaited thing is done, allowing the event loop to run other tasks.
+
 ![A coroutine defined with async def, called with await inside another async function, and launched from synchronous code with asyncio.run(), shown as three nested frames](images/03_async_await.png)
 
 ## async def: Declaring a Coroutine

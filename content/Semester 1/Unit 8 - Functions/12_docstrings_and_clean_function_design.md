@@ -2,13 +2,15 @@
 
 Naveen is finally handing his collection of scripts over to next year's committee, and he opens `split_cost` for the first time in months to check it still does what he remembers. The parameters are named `a`, `b`, and `c`. There is no note anywhere explaining what they mean, whether `c` is a percentage or a flat amount, whether it even expects a whole number or a decimal, or what the function actually hands back. He wrote this code, and even he has to guess.
 
-This final lesson of the unit is not about a new piece of syntax alone. It is about the habits, **docstrings** that explain what a function does and **type hints** that state what kind of values it expects and returns, that turn a function from something that merely works into something a stranger, or you in six months, can trust and use without re-reading every line.
+This final lesson of the unit is not about a new piece of syntax alone. It is about the habits, `docstrings` that explain what a function does and `type hints` that state what kind of values it expects and returns, that turn a function from something that merely works into something a stranger, or you in six months, can trust and use without re-reading every line.
+
+**Definition:** A `docstring` is a string, almost always triple-quoted, placed as the very first line inside a function's body, describing what the function does.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-8-functions/12_docstring_explains_the_function.png)
 
 ## The Docstring: Documentation Built Into the Function
 
-A **docstring** is a string, almost always triple-quoted, placed as the very first line inside a function's body, describing what the function does.
+A `docstring` is a string, almost always triple-quoted, placed as the very first line inside a function's body, describing what the function does.
 
 ```python
 def split_cost(total, people, service_charge=0):
@@ -55,7 +57,7 @@ The goal is always the same question, answered without making the reader trace t
 
 ## Type Hints: Stating What Kind of Value, Not Just What It Means
 
-A docstring can say "total: the amount to be split," but it cannot say, in a way Python or an editor actually checks, whether that amount has to be an `int`, a `float`, or something else entirely. **Type hints** fill exactly that gap: written directly in the function's signature, they name the expected type of each parameter and, after an arrow, the type of whatever the function returns.
+A docstring can say "total: the amount to be split," but it cannot say, in a way Python or an editor actually checks, whether that amount has to be an `int`, a `float`, or something else entirely. `Type hints` fill exactly that gap: written directly in the function's signature, they name the expected type of each parameter and, after an arrow, the type of whatever the function returns.
 
 ```python
 def split_cost(total: float, people: int, service_charge: float = 0) -> float:

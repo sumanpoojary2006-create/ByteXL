@@ -4,6 +4,8 @@ Dev wants to share the library system with other libraries in the region. He cou
 
 This lesson covers building a wheel, testing the installation locally, and publishing to PyPI.
 
+**Definition:** `Building` converts a Python project into distributable package files, and `publishing` uploads those files to a package index so others can install them.
+
 ![The packaging pipeline: source code -> build creates a .whl file -> test install from local file -> publish to PyPI -> anyone can pip install](images/04_building_and_publishing.png)
 
 ## What a Wheel Is

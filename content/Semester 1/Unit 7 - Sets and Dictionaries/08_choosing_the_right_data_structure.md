@@ -4,6 +4,8 @@ The fest is over, and Tara is writing notes for next year's coordinator, the sam
 
 This final lesson is a direct comparison across all four, so that choice becomes fast and confident rather than a guess.
 
+**Definition:** Choosing a data `structure` is really just answering four questions in sequence: does it need a name-based lookup, does it only need presence checking, will it change, and does each item carry extra attached detail.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-7-sets-and-dictionaries/08_four_structures_decision_board.png)
 
 ## The Four Structures, Side by Side

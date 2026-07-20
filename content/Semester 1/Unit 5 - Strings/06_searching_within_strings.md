@@ -2,6 +2,8 @@
 
 Meera is collecting email addresses from customers who want order updates, and one of them just typed "asha gmail.com" with no at sign anywhere in it. She scans down her list checking each one for the at sign, noting where it sits when it is there, and while she is at it she searches a caption for a particular word and counts how many times a hashtag shows up. Working with text constantly means asking questions like this. Does this email contain an at sign? Where does the area code end in this phone number? How many times does a word appear in a caption? Does this filename end in ".jpg"? Python gives you a small, friendly set of tools for searching inside strings, and they turn these everyday questions into single, readable lines. Splitting and joining, from the last lesson, would be a clumsy way to answer "is the at sign in here somewhere"; searching directly is the far more natural fit.
 
+**Definition:** String `searching` checks whether text is present and locates its position using membership tests or methods such as `find()`, `index()`, `startswith()`, and `endswith()`.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-5-strings/06_searching_magnifier.png)
 
 ## Does It Contain? The in Operator

@@ -2,7 +2,9 @@
 
 Zara's RSVP tracker now spans four files: `attendee.py`, `event.py`, a CSV loader, and `main.py`, and somewhere in that web of imports, one specific event's attendee count comes out wrong. Stepping through the entire program with the debugger from the file the CSV is loaded all the way to the final printed summary works, but it is slow, and most of what she steps through is completely fine. What she actually wants is to strip away everything that is not part of the problem, until only the smallest possible piece of code that still reproduces the bug remains.
 
-This is called finding a **minimal failing case**, and it is one of the most powerful debugging strategies precisely because it works alongside every tool from this entire unit, making each of them faster and clearer to use.
+This is called finding a `minimal failing case`, and it is one of the most powerful debugging strategies precisely because it works alongside every tool from this entire unit, making each of them faster and clearer to use.
+
+**Definition:** `Isolating` a minimal failing case means stripping away everything not actually required to trigger a bug, one piece at a time, until a small, self-contained reproduction remains, turning a vague "something is wrong somewhere in this project" into a specific, answerable question.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-13-debugging/07_minimal_failing_case.png)
 

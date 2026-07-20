@@ -4,6 +4,8 @@ Naveen keeps reinventing small pieces of logic that Python actually already hand
 
 This lesson is a tour of the built-ins worth knowing cold: `all`, `any`, `len`, `sum`, `sorted`, `min`, and `max`.
 
+**Definition:** `all` and `any` answer "does everyone" and "does anyone" without a hand-written loop, `len` and `sum` count and total a sequence, and `sorted`, `min`, and `max` order and extract extremes, all accepting an optional `key` for custom comparisons.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-8-functions/08_builtin_functions_toolbox.png)
 
 ## all(): Is Everything True?

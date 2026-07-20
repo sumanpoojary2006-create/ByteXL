@@ -4,6 +4,8 @@ Dev has been running the library system for three months. The catalog lives in a
 
 That storage is a relational database.
 
+**Definition:** SQL (Structured Query Language) is the standard way to talk to a relational `database`.
+
 ![A Python dictionary on the left losing its data when the process dies; a database on the right persisting data to disk and surviving restarts](images/01_why_databases.png)
 
 ## What a Relational Database Is

@@ -2,7 +2,9 @@
 
 Tara has moved from the gate to the merchandise stall, selling fest T-shirts, mugs, and badges. A customer asks the price of a mug, and Tara could keep two separate lists, one of item names and one of matching prices, then search the names list for "mug" and read off whatever price sits at the same position. It would work, but it is a clumsy, error-prone way to ask a question that should be instant: "what does a mug cost?"
 
-What Tara actually wants is to ask for "mug" directly and get 150 back immediately, with no searching at all. That is exactly what a **dictionary** gives you: a collection of key-value pairs, where you look a value up by its key instead of by its position.
+What Tara actually wants is to ask for "mug" directly and get 150 back immediately, with no searching at all. That is exactly what a `dictionary` gives you: a collection of key-value pairs, where you look a value up by its key instead of by its position.
+
+**Definition:** `Keys` are usually strings or numbers, and within one dictionary every key must be unique.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-7-sets-and-dictionaries/03_merch_price_lookup.png)
 

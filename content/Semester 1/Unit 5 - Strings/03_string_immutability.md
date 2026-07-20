@@ -2,6 +2,8 @@
 
 Meera spots a typo in the username she just locked in for her page: the first letter should be an "M", not an "N". She taps right on that one wrong letter to fix it, but the field will not let her change a single character in place. In the end she clears the whole thing and types a fresh, corrected username from scratch, leaving the original untouched until she replaces it. That little surprise is a fact about strings that catches almost every beginner, and explains a whole family of confusing errors: a string cannot be changed once it is created. You can read any part of it, slice it, and inspect it freely, but you cannot reach in and alter a character in place. Programmers call this property immutability, and understanding it now will save you real frustration later. Indexing and slicing from the last lesson only ever let you look, never touch, and that one-way nature was a quiet hint of what this lesson now makes explicit.
 
+**Definition:** `String immutability` means a string cannot be changed in place; every apparent modification creates a new string value.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-5-strings/03_immutability_locked.png)
 
 ## You Cannot Edit a Character in Place

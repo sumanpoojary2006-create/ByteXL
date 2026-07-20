@@ -2,6 +2,8 @@
 
 Meera is setting up a username for her new handmade-craft page, typing it into the box on her phone one letter at a time while a little character counter ticks upward beside it. A friend watching asks what the app is actually storing as she types. Meera explains that every letter, every space, even a dot or an underscore, is just one piece of a single ordered string of text, the same kind of thing a computer stores for names, messages, captions, and passwords. You have already met strings in passing, storing a name or printing a greeting, but now it is time to understand what a string really is. So much of real programming, from web pages to chat apps to the posts on your phone, is really just the careful handling of text. That little character counter ticking beside Meera's username box is not doing anything mysterious; it is simply watching the string grow, one character at a time, and reporting its length back to her.
 
+**Definition:** A `string` is any sequence of characters wrapped in quotation marks.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-5-strings/01_string_beads.png)
 
 ## Text Lives Between Quotes

@@ -2,7 +2,9 @@
 
 The fest runs for two days, and Tara has a clean set of unique attendee IDs for each one. Now the questions get more interesting. How many people came on both days? How many came only on day one, and never showed up again? How many distinct people attended across the whole fest, counted just once each even if they came twice? Scanning through two separate lists by eye to answer these would be slow and error-prone.
 
-Sets answer all three questions in a single line each, because comparing sets is something Python builds in directly. These comparisons are called **set operations**, and they read almost exactly like the questions Tara is actually asking.
+Sets answer all three questions in a single line each, because comparing sets is something Python builds in directly. These comparisons are called `set operations`, and they read almost exactly like the questions Tara is actually asking.
+
+**Definition:** Set `operations` compare collections through union, intersection, difference, and symmetric difference while automatically preserving uniqueness.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-7-sets-and-dictionaries/02_two_day_attendee_overlap.png)
 

@@ -2,6 +2,8 @@
 
 Meera has typed all her tags into one box as a single line, "handmade,gifts,pune", crammed together with commas, but the app needs them as three separate tags. She splits the line apart at each comma to get them. A moment later she has the opposite problem: a few separate words she wants to fuse into one neat hashtag with no spaces, so she joins them back together into a single piece of text. Real-world text rarely comes in the exact shape you need, and these two opposite jobs, breaking apart and joining together, are handled by two partner methods: `split` and `join`. The single comma-separated line Meera typed her tags into looked like one piece of text to her, but the app needed it treated as three separate pieces, which is precisely the gap these two methods close.
 
+**Definition:** `split()` divides one string into a list of pieces, while `join()` combines an iterable of strings using a chosen separator.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-5-strings/05_split_join.png)
 
 ## Meera's Tags, Split Apart

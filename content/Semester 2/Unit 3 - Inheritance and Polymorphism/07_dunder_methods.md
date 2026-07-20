@@ -4,6 +4,8 @@ Dev has a working `Book` class, but using it in daily development keeps feeling 
 
 These are not fundamental limitations of the language. They are gaps in the class's data model contract. The previous units defined the concept of dunder methods; this lesson implements the most useful ones on a real domain object and shows exactly how each one changes the way Python interacts with the class.
 
+**Definition:** `Dunder` methods let your objects integrate naturally into Python's syntax and built-ins.
+
 ![](images/07_dunder_methods.png)
 
 ## __repr__ and __str__: Making Objects Readable

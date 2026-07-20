@@ -2,7 +2,9 @@
 
 Naveen has quietly become the hostel's go-to "script guy." First he wrote a few lines to split the mess bill evenly across however many people showed up that month. The cricket league asked him for the same split-the-cost logic for umpire fees. Then the trip fund needed it too. Each time, Naveen copy-pasted the same handful of lines into a new chat, changed the numbers, and moved on. It worked, right up until the mess committee decided a 5 percent service charge should be added to every split from now on. Naveen had to hunt down all three copies of his logic and fix each one by hand, and he still is not sure he caught every place it was pasted.
 
-That sinking feeling, the same logic scattered across many places, each copy one missed edit away from being wrong, is the exact problem this unit solves. A **function** is a named, reusable block of logic that you write once and run as many times as you like, from as many places as you like, by simply calling its name.
+That sinking feeling, the same logic scattered across many places, each copy one missed edit away from being wrong, is the exact problem this unit solves. A `function` is a named, reusable block of logic that you write once and run as many times as you like, from as many places as you like, by simply calling its name.
+
+**Definition:** A `function` is a named, reusable block of logic that you write once and run as many times as you like, from as many places as you like, by simply calling its name.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-8-functions/01_copy_pasted_calculation.png)
 
@@ -40,9 +42,9 @@ You have not seen the full rules for writing a function yet, that is the very ne
 
 Functions are not just about avoiding retyping. They encourage two habits that make your whole program easier to reason about.
 
-The first is **reuse**: write the logic once, trust it everywhere it is called, rather than hoping every copy was pasted correctly.
+The first is `reuse`: write the logic once, trust it everywhere it is called, rather than hoping every copy was pasted correctly.
 
-The second is **decomposition**, the very skill from the start of this course: breaking a big problem into smaller, named pieces. A program that calculates an entire trip's budget is overwhelming as one giant block, but broken into `split_cost`, `add_service_charge`, and `format_receipt`, each piece is small enough to write, test, and trust on its own.
+The second is `decomposition`, the very skill from the start of this course: breaking a big problem into smaller, named pieces. A program that calculates an entire trip's budget is overwhelming as one giant block, but broken into `split_cost`, `add_service_charge`, and `format_receipt`, each piece is small enough to write, test, and trust on its own.
 
 ## Before and After at a Glance
 

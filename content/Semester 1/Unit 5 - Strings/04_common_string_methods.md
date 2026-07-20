@@ -2,6 +2,8 @@
 
 Meera is about to post a photo, but the caption she drafted is a mess: half of it is in lowercase, there are stray spaces at both ends, and it still has the old name of her page in it that she has since changed. Rather than retyping the whole thing, she fixes it in a few quick taps, one to set the capitalisation right, one to trim the stray spaces, one to swap the old name for the new one. Strings come with exactly this kind of built-in toolbox of actions, called methods, for transforming text. Want everything in capitals? There is a method. Need to trim stray spaces from an entry? There is a method. Want to swap one word for another? There is a method. Because strings are immutable, every one of these methods leaves the original alone and hands you a brand new string instead, just as Meera's corrected username from the last lesson was always a freshly built replacement, never an edit to the old one.
 
+**Definition:** `String` methods are built-in actions called with a dot, such as `upper`, `lower`, `title`, `strip`, and `replace`, and because strings are immutable they always return a new string rather than changing the original.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-5-strings/04_string_methods_toolbox.png)
 
 ## Calling a Method With the Dot

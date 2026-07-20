@@ -4,6 +4,8 @@ Dev shows a junior volunteer the search feature. The volunteer types `'; DROP TA
 
 Parameterized queries close this vulnerability completely. They are not a nice-to-have; they are the minimum bar for any code that touches a database.
 
+**Definition:** `Parameterized` queries separate SQL syntax from data values at the protocol level.
+
 ![Two code paths: string concatenation building a query with malicious input injected; parameterized query with the placeholder keeping user input and SQL syntax completely separate](images/03_parameterized_queries.png)
 
 ## The Injection Vulnerability

@@ -4,6 +4,8 @@ Tara's fest files are starting to spread across folders: a `logs` folder, a `rep
 
 Python's `pathlib` module represents file paths as proper objects instead of fragile strings, building them correctly for whatever operating system the script actually runs on, with no manual slash-guessing required at all.
 
+**Definition:** `pathlib`'s `Path` represents a file location as a proper object rather than a fragile string, joined correctly across operating systems with the `/` operator, and capable of checking existence, reading and writing text directly, inspecting its own name and extension, and creating folders safely.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-11-file-handling/05_pathlib_cross_platform_paths.png)
 
 ## Creating a Path

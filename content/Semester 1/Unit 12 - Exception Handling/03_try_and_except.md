@@ -4,6 +4,8 @@ Back in the control flow unit, Asha's signup form learned to reject obviously ba
 
 Python's `try` and `except` let you run risky code, watch for it to fail, and respond on your own terms instead of letting the whole program crash.
 
+**Definition:** `try` wraps code that might fail, and a matching `except` runs only if that failure actually happens, letting your program respond deliberately and keep running afterward, instead of crashing outright the way an unprotected operation would.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-12-exception-handling/03_try_except_safety_net.png)
 
 ## The Shape of try and except

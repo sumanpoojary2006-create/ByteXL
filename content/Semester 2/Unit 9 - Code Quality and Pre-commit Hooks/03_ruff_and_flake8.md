@@ -4,6 +4,8 @@ Raj's team has agreed on PEP 8, but enforcing it manually in code reviews is ted
 
 That tool is a linter. `ruff` is the modern choice: it is written in Rust and is 10-100x faster than its predecessor `flake8`, while covering a superset of `flake8`'s rules. This lesson covers how to use `ruff` to find and fix style issues automatically.
 
+**Definition:** `ruff` is the modern choice: it is written in Rust and is 10-100x faster than its predecessor `flake8`, while covering a superset of `flake8`'s rules.
+
 ![A terminal showing ruff output: a list of files with line numbers, rule codes (E501, W291, F401), and one-line descriptions of each violation, followed by a fix command](images/03_ruff_flake8.png)
 
 ## Installing and Running ruff

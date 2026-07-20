@@ -4,6 +4,8 @@ Miguel converts his sequential code to use `async def` but keeps using the `requ
 
 This lesson clarifies what blocking and non-blocking mean, why blocking code inside an async function breaks the event loop, and how to recognize the difference.
 
+**Definition:** A `blocking` function does not return until its work is complete.
+
 ![A timeline showing blocking code in an async function: the event loop stops completely during the blocking call, unable to run other tasks, versus non-blocking: the event loop continues running other tasks while waiting for I/O](images/02_blocking_vs_nonblocking_io.png)
 
 ## Blocking I/O: The Default

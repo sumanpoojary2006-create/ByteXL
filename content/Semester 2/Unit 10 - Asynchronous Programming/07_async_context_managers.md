@@ -4,6 +4,8 @@ Miguel's async code opens an `aiohttp.ClientSession()` without using a `with` st
 
 The reason is straightforward: in an async program, both acquiring and releasing a resource may require waiting for I/O. Regular `with` calls `__enter__` and `__exit__` synchronously. `async with` calls `__aenter__` and `__aexit__` as coroutines, allowing them to `await` I/O during setup and teardown.
 
+**Definition:** `async with` calls `__aenter__` and `__aexit__` as coroutines, allowing them to `await` I/O during setup and teardown.
+
 ![A comparison of with vs async with: the synchronous version calls __enter__ and __exit__ directly, while the async version awaits __aenter__ and __aexit__ as coroutines](images/07_async_context_managers.png)
 
 ## async with: The Async Context Manager

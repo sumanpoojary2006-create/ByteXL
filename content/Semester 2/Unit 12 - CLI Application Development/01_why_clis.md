@@ -4,6 +4,8 @@ Priya built a web interface for the library catalog, but the librarians at the c
 
 Priya's team lead asks her to build CLI tools: command-line programs that librarians can run directly, script in cron jobs, and compose with shell utilities like `grep` and `sort`. This unit covers the tools Python provides.
 
+**Definition:** Python provides three layers of increasing abstraction for building `CLIs`: The rest of this unit covers all three, from simplest to most powerful, so you understand what each layer is doing.
+
 ![A terminal showing three commands piped together: a library CLI generating a list of overdue books, piped through grep to filter by branch, piped through sort to order by days overdue](images/01_why_clis.png)
 
 ## What a CLI Is
@@ -49,10 +51,10 @@ The rest of this unit covers all three, from simplest to most powerful, so you u
 ## The Unix Philosophy
 
 Well-designed CLIs follow the Unix philosophy:
-- **Do one thing well**: each command has a clear, narrow purpose
-- **Write to stdout**: output can be redirected or piped
-- **Write errors to stderr**: errors go to a separate stream, not mixed with output
-- **Exit codes**: 0 means success; non-zero means failure
+- `Do one thing well`: each command has a clear, narrow purpose
+- `Write to stdout`: output can be redirected or piped
+- `Write errors to stderr`: errors go to a separate stream, not mixed with output
+- `Exit codes`: 0 means success; non-zero means failure
 
 ```python
 import sys

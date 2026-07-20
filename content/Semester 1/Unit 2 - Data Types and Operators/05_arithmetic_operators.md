@@ -2,6 +2,8 @@
 
 Once a program holds numbers, the next thing it does is calculate with them. Totalling a bill, working out an average, splitting a cost among friends, checking whether a number is even: all of these are arithmetic, and all of them were once tasks you did slowly by hand, with a pen, a calculator, or a careful bit of mental maths. A program just does the same arithmetic at a speed and scale a person never could, which is one of the simplest reasons computers were built in the first place. Python uses the familiar symbols you already know from school, and adds a couple of genuinely useful ones that you may not have seen before.
 
+**Definition:** `Arithmetic operators` perform calculations such as addition, subtraction, multiplication, division, floor division, remainder, and exponentiation.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44t82yggj/05_basic_arithmetic_prep.png)
 
 

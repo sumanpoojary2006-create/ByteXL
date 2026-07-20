@@ -4,6 +4,8 @@ Raj can now run `ruff`, `black`, and `mypy` individually. The problem is that de
 
 Git hooks solve this: they are scripts that Git runs automatically at specific points in the workflow. A `pre-commit` hook runs before every commit. If the hook fails (exits with a non-zero code), Git cancels the commit. The developer sees the failure immediately, fixes it, and commits again.
 
+**Definition:** Git `hooks` solve this: they are scripts that Git runs automatically at specific points in the workflow.
+
 ![A git commit timeline with a hook shown as a gate between staging and the commit: if the hook passes, the commit happens; if it fails, the commit is aborted and the developer sees an error](images/05_git_hooks_intro.png)
 
 ## Where Git Hooks Live

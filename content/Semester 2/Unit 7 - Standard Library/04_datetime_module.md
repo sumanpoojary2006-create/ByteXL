@@ -2,6 +2,8 @@
 
 Nadia's library system tracks when books are borrowed and when they are due back. Her homegrown date arithmetic subtracted integers from day numbers and crashed on the first day of a month (subtracting 14 days from March 1 does not give February 15 by simple subtraction). Her manager pointed her to the `datetime` module, which handles all calendar arithmetic correctly, including leap years, month boundaries, and time zones.
 
+**Definition:** The `datetime` module represents dates and times, parses and formats them, and performs calendar arithmetic with `timedelta`.
+
 ![A timeline showing date, datetime, timedelta, and timezone as building blocks: date for calendar days, datetime for exact moments, timedelta for durations, and timezone for offsets](images/04_datetime_module.png)
 
 ## The Three Core Types

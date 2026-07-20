@@ -4,6 +4,8 @@ Miguel is building a book availability checker for the library portal. For each 
 
 His teammate asks why he is not calling all three at once. Miguel does not know how, and he is confused by two terms his teammate uses interchangeably: "async" and "parallel." They sound similar but mean different things.
 
+**Definition:** `Parallelism` means two things actually happen at the same moment.
+
 ![A timeline showing sequential API calls on the top row -- three calls in series with each wait following the previous -- and concurrent async calls on the bottom -- all three calls started at the same time, overlapping, finishing faster](images/01_concurrency_vs_parallelism.png)
 
 ## The Waiting Problem
@@ -37,9 +39,9 @@ The program could be doing something useful (like sending the next request) whil
 
 ## Concurrency vs Parallelism
 
-**Parallelism** means two things actually happen at the same moment. Two CPU cores each execute a line of Python code at the same instant. This requires multiple CPU cores.
+`Parallelism` means two things actually happen at the same moment. Two CPU cores each execute a line of Python code at the same instant. This requires multiple CPU cores.
 
-**Concurrency** means multiple things are *in progress* at the same time, but not necessarily executing at the same instant. One thing pauses while waiting (e.g., for a network response), and another thing runs while the first is paused. A single CPU handles both, switching between them.
+`Concurrency` means multiple things are *in progress* at the same time, but not necessarily executing at the same instant. One thing pauses while waiting (e.g., for a network response), and another thing runs while the first is paused. A single CPU handles both, switching between them.
 
 ```
 Parallelism (requires multiple CPUs):
@@ -53,15 +55,15 @@ Task 2:      [=======done]
 Task 2 runs during Task 1's wait period
 ```
 
-Async programming in Python is about **concurrency**, not parallelism. A single Python thread handles many operations by switching between them whenever one is waiting for I/O.
+Async programming in Python is about `concurrency`, not parallelism. A single Python thread handles many operations by switching between them whenever one is waiting for I/O.
 
 ## I/O-Bound vs CPU-Bound Work
 
 The distinction matters for choosing the right tool:
 
-**I/O-bound**: the bottleneck is waiting for input/output (network, disk, database). The CPU is fast but idle, waiting. Async and threading are both effective here.
+`I/O-bound`: the bottleneck is waiting for input/output (network, disk, database). The CPU is fast but idle, waiting. Async and threading are both effective here.
 
-**CPU-bound**: the bottleneck is computation. The CPU is busy. Async does not help because there is no waiting to overlap. Multiprocessing is needed.
+`CPU-bound`: the bottleneck is computation. The CPU is busy. Async does not help because there is no waiting to overlap. Multiprocessing is needed.
 
 ```
 I/O-bound (async helps):
@@ -126,9 +128,9 @@ Three calls, one wait period (the longest of the three), total time reduced from
 
 Draw a timeline for these two scenarios:
 
-**Sequential**: three HTTP requests, each taking 200ms, called one after the other. How long does the total take?
+`Sequential`: three HTTP requests, each taking 200ms, called one after the other. How long does the total take?
 
-**Concurrent**: the same three requests, started at the same time. How long does the total take if they all take 200ms?
+`Concurrent`: the same three requests, started at the same time. How long does the total take if they all take 200ms?
 
 Now imagine one request takes 500ms and the other two take 100ms each. What is the total time in each approach? Which one benefits more from concurrency when request times are unequal?
 

@@ -4,6 +4,8 @@ Sam's manual test file works but has a problem: when test 2 fails, tests 3 throu
 
 `pytest` solves this. It discovers all test functions in a project, runs them all regardless of which ones fail, and prints a clear report of every failure with the line, the expected value, and the actual value. Installing it is one command; using it is just naming your functions `test_`.
 
+**Definition:** `pytest` is not part of the standard library, but it is the de facto standard Python testing tool.
+
 ![A terminal showing pytest output: green dots for passing tests, red Fs for failing tests, and a final summary showing 5 passed, 2 failed with detailed diffs for each failure](images/03_pytest_intro.png)
 
 ## Installing pytest

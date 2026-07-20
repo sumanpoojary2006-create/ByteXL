@@ -4,11 +4,13 @@ You have learned what programming is, how to think in steps, and why Python is a
 
 But first, a small story that explains a choice you will make constantly.
 
+**Definition:** A first Python program needs a `Python interpreter` to execute the code, a code editor to write it, and a `.py` file to store it.
+
 ## Two Doors Into the Same Language
 
-Imagine you have a quick, throwaway question: what is 1234 times 5678? You do not want to create a file, name it, and save it. You just want the answer now. For that, you open Python's interactive shell, called the **REPL**, type the calculation, and the answer appears instantly.
+Imagine you have a quick, throwaway question: what is 1234 times 5678? You do not want to create a file, name it, and save it. You just want the answer now. For that, you open Python's interactive shell, called the `REPL`, type the calculation, and the answer appears instantly.
 
-Now imagine something different: a fee calculator you will want to run again next week, and the week after. You do not want to retype it every time. For that, you write your instructions in a **script file**, a saved file you can run whenever you like.
+Now imagine something different: a fee calculator you will want to run again next week, and the week after. You do not want to retype it every time. For that, you write your instructions in a `script file`, a saved file you can run whenever you like.
 
 Same Python, two different doors.
 
@@ -25,9 +27,9 @@ Knowing which door to open for the moment is a small but genuinely professional 
 
 Setting up need not be intimidating. Three pieces, and you are ready:
 
-- **The Python interpreter**, the program that runs your code. Install Python version 3 (3.10 or newer) from python.org.
+- `The Python interpreter`, the program that runs your code. Install Python version 3 (3.10 or newer) from python.org.
 - **A place to write code.** Thonny is perfect for beginners because it is simple and includes a visual debugger. VS Code and PyCharm are professional editors you can grow into later.
-- **A way to run it**, which is the REPL for quick tries, or a Run button for scripts.
+- `A way to run it`, which is the REPL for quick tries, or a Run button for scripts.
 
 And if even installing feels like too much on day one, there is a shortcut. Browser based runners let you write and run real Python instantly, with nothing to install. Start there if you like, and set up your own machine once the ideas feel comfortable.
 

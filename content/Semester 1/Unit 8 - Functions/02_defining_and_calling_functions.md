@@ -2,7 +2,9 @@
 
 Naveen is ready to stop copy-pasting and actually write his bill-splitting logic as a proper, reusable function, the way the last lesson previewed. Before he can do that comfortably, he needs the exact rules: what keyword starts a function, what makes Python treat a block as belonging to that function, and how do you actually run it once it exists. None of this is new machinery. It is the same `def`-a-block, indent-the-body pattern you already trust from `if` statements and loops, just with a new keyword at the front.
 
-This lesson is entirely about those rules: **defining** a function once, and **calling** it as many times as you like afterward.
+This lesson is entirely about those rules: `defining` a function once, and `calling` it as many times as you like afterward.
+
+**Definition:** A `function` is defined with `def name():` and an indented body, but that body only runs once the function is actually called by writing its name followed by parentheses: `name()`.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-8-functions/02_define_once_call_many.png)
 

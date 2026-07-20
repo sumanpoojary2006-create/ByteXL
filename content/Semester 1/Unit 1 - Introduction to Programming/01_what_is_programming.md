@@ -4,7 +4,9 @@ It is the first day of college admissions. A single clerk sits at a desk while a
 
 Now picture a second clerk who works differently. This clerk writes the rules down only once (take the fee, add the tax, subtract the scholarship, print the receipt), hands them to a computer, and walks away. In under a second all 5,000 receipts are printed, and every one of them is correct.
 
-What changed between the two scenes? The second clerk stopped *doing* the work and started *describing* it. Capturing a task as a precise set of instructions that a machine can carry out is the whole idea behind **programming**.
+What changed between the two scenes? The second clerk stopped *doing* the work and started *describing* it. Capturing a task as a precise set of instructions that a machine can carry out is the whole idea behind `programming`.
+
+**Definition:** `Programming` is the process of expressing a task as a clear, ordered set of instructions that a computer can execute.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44t2h5tak/01_fee_receipts_manual_vs_program.png)
 
@@ -20,7 +22,7 @@ Now, what happens if you forget the step "open the butter jar"?
 
 The helper cheerfully tries to spread butter straight through a closed lid, because you never told it to open one. It is not being difficult. It is being literal. A computer behaves in exactly the same way. It follows your instructions precisely as written, in the exact order written, and never quietly fills in a step you left out.
 
-That is why useful instructions must be three things: **unambiguous** (each step has only one meaning), **ordered** (the sequence matters), and **complete** (no required step is missing).
+That is why useful instructions must be three things: `unambiguous` (each step has only one meaning), `ordered` (the sequence matters), and `complete` (no required step is missing).
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44t2h5tak/01_literal_helper_butter_jar.png)
 

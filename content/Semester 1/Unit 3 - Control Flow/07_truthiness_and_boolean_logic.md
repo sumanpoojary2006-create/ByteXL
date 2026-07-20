@@ -4,6 +4,8 @@ Asha is chatting on her phone and notices something simple about the message box
 
 Python is more flexible than that. It is willing to treat almost any value as if it were true or false when it appears in a condition, an idea called truthiness, and once you understand it, your conditions become shorter and more natural to read. The send button never needed an explicit comparison to know the box was empty; it simply asked whether anything was there at all, and that is precisely the question truthiness lets your own conditions ask.
 
+**Definition:** `Truthiness` is a small idea that quietly makes a great deal of Python read more like English.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44t8hn4ng/07_truthiness_boxes.png)
 
 ## Any Value Can Act as a Condition

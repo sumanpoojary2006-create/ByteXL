@@ -2,13 +2,15 @@
 
 Dev is building the library catalog system and has written three classes: `Book`, `EBook`, and `Audiobook`. All three have a `title`, an `isbn`, and a method called `display_info()`. All three implement `is_available()` with identical logic. He is copying and pasting the same code into each class, and every time he finds a bug in `display_info()`, he has to fix it in three places.
 
-There is a better way. If all three share common structure and behavior, that structure should live in one place and the three classes should share it. The mechanism is **inheritance**, and this lesson covers how it works and why it exists.
+There is a better way. If all three share common structure and behavior, that structure should live in one place and the three classes should share it. The mechanism is `inheritance`, and this lesson covers how it works and why it exists.
+
+**Definition:** `Inheritance` is a relationship between two classes: a `parent class` (also called a base class or superclass) defines shared attributes and methods, and a `child class` (subclass) inherits all of them, adding or changing only what is specific to the child.
 
 ![](images/01_inheritance_fundamentals.png)
 
 ## What Inheritance Is
 
-Inheritance is a relationship between two classes: a **parent class** (also called a base class or superclass) defines shared attributes and methods, and a **child class** (subclass) inherits all of them, adding or changing only what is specific to the child.
+Inheritance is a relationship between two classes: a `parent class` (also called a base class or superclass) defines shared attributes and methods, and a `child class` (subclass) inherits all of them, adding or changing only what is specific to the child.
 
 ```python
 class LibraryItem:

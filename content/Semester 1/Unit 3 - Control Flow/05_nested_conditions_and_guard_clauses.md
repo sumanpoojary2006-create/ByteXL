@@ -4,6 +4,8 @@ Asha taps a movie in a streaming app on her phone, and the app makes two checks 
 
 Notice that the subscription check was never even reached when the login check failed; one decision was genuinely sitting inside the protection of another. This lesson shows how to keep such logic flat and readable.
 
+**Definition:** Nested `conditions` let one decision depend on another, which is natural when a later check only matters after an earlier one passes.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44t8hhawj/05_pyramid_of_doom.png)
 
 ## A Decision Inside a Decision

@@ -2,7 +2,9 @@
 
 Tara is on gate duty for the college fest, scanning each attendee's wristband as they walk in. The scanner logs an ID every single time it beeps, and people being people, a few wander out for a smoke and scan back in, while one nervous fresher scans the same wristband three times just to be sure it worked. By the end of the day Tara does not want a log of every beep. She wants to know one thing: how many different people actually came in.
 
-A list would dutifully keep every duplicate beep, because a list remembers everything exactly as it happened. What Tara actually needs is a collection that automatically throws away repeats and only ever keeps one copy of each value. That is exactly what Python's **set** is for.
+A list would dutifully keep every duplicate beep, because a list remembers everything exactly as it happened. What Tara actually needs is a collection that automatically throws away repeats and only ever keeps one copy of each value. That is exactly what Python's `set` is for.
+
+**Definition:** A `set` is an unordered collection of unique values, created with braces or `set()`, that supports fast membership checks and automatically removes duplicates.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-7-sets-and-dictionaries/01_unique_attendee_scans.png)
 

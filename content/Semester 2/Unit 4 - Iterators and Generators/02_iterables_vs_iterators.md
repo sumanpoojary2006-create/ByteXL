@@ -4,6 +4,8 @@ Leila is reading more about the iterator protocol and keeps getting confused by 
 
 Nadia draws a simple diagram: an iterable is like a bookshelf, it knows where the books are. An iterator is like a reading finger moving along that shelf, it remembers which book you are currently on. The shelf can produce a fresh finger at any time, but the finger itself is always somewhere specific. This lesson makes that distinction precise and shows how to test it in code.
 
+**Definition:** An `iterable` is any object that can produce an iterator via `__iter__`.
+
 ![](images/02_iterables_vs_iterators.png)
 
 ## Testing Membership: iter() and next()

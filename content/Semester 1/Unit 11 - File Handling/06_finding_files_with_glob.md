@@ -4,6 +4,8 @@ The fest ran for three days, and Tara's `reports` folder now holds `day1_sales.t
 
 This is exactly what pattern matching against filenames is for, using wildcard characters to describe a shape a filename should match, rather than naming every file individually. Python's `glob` module, and `pathlib`'s own built-in `.glob()` method, both do exactly this.
 
+**Definition:** A glob pattern describes the shape of filenames you want, using `*` to match any sequence of characters within one folder level and `**` to also reach into subfolders, letting you gather exactly the `files` you need without knowing their exact names or count in advance.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-11-file-handling/06_glob_pattern_matching_files.png)
 
 ## The Wildcard: *

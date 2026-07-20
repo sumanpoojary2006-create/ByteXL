@@ -2,6 +2,8 @@
 
 A program becomes genuinely useful the moment it can make a decision: pass or fail, in stock or sold out, old enough or not. Every one of those decisions starts with a comparison between two values. Up to now your programs have simply calculated and reported; from here, they start to judge. Comparison operators are how you ask Python a yes or no question, and the answer always comes back as a boolean, `True` or `False`, the type you met a few lessons ago, which is no coincidence: comparisons are the single biggest source of boolean values in any real program.
 
+**Definition:** `Comparison` operators are how you ask Python a yes or no question, and the answer always comes back as a boolean, `True` or `False`, the type you met a few lessons ago, which is no coincidence: comparisons are the single biggest source of boolean values in any real program.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44t82zdka/06_comparison_balance_scale.png)
 
 

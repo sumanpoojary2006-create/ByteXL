@@ -4,6 +4,8 @@ Nia's `pyproject.toml` promises numpy will be installed with the package. On her
 
 What the project needs is a single tool that creates the virtual environment, installs the exact dependency versions declared, and locks those versions so every machine agrees. That tool is `uv`.
 
+**Definition:** `uv` manages a project's virtual environment, declared dependencies, and locked versions so every machine can reproduce the same installation.
+
 ![Three developer machines each running uv sync from the same pyproject.toml and uv.lock, all ending with identical environments](images/03_managing_dependencies_and_environments_with_uv.png)
 
 ## What `uv` Is

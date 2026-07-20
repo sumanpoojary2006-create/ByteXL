@@ -1,6 +1,8 @@
 ## Introduction
 
-Real decisions are rarely about a single condition. A bank approves a withdrawal if the card is valid and the balance is sufficient. A shop offers a discount if you are a member or it is the festive season. A form rejects you if you are not old enough. The previous lesson taught you how to ask a single yes or no question with a comparison; real rules almost always stack several of those questions together before reaching one final verdict. These little words, and, or, and not, are how we combine yes or no answers into a final verdict, and Python uses them as **logical operators**.
+Real decisions are rarely about a single condition. A bank approves a withdrawal if the card is valid and the balance is sufficient. A shop offers a discount if you are a member or it is the festive season. A form rejects you if you are not old enough. The previous lesson taught you how to ask a single yes or no question with a comparison; real rules almost always stack several of those questions together before reaching one final verdict. These little words, and, or, and not, are how we combine yes or no answers into a final verdict, and Python uses them as `logical operators`.
+
+**Definition:** Logical `operators` take boolean values, the `True` and `False` results of comparisons, and combine them into a single boolean.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44t8334sg/07_and_gate_two_knobs.png)
 

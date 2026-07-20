@@ -4,11 +4,13 @@ Your college hands you an impossible sounding job: organise a tech fest for 1,00
 
 Now watch how an experienced organiser thinks. They do not try to hold all 1,000 students in their head at once. They quietly split the monster into smaller jobs (registration, venue, food, certificates). They notice that registration, food coupons, and certificates all follow the same "one record per student" rhythm, so the same solution can be reused. And they happily ignore the things that do not matter, such as the colour of the banner, while keeping the things that do, such as the headcount.
 
-In a few minutes a terrifying problem has become a tidy list of small, doable tasks. That mental toolkit is the real skill behind programming, far more than memorising syntax, and it has a name: **computational thinking**. It rests on three pillars.
+In a few minutes a terrifying problem has become a tidy list of small, doable tasks. That mental toolkit is the real skill behind programming, far more than memorising syntax, and it has a name: `computational thinking`. It rests on three pillars.
+
+**Definition:** `Computational thinking` breaks a complex problem into smaller parts, finds useful patterns, removes irrelevant detail, and turns the result into precise steps.
 
 ## Breaking the Mountain into Pebbles
 
-The first pillar is **decomposition**: breaking a big, overwhelming problem into smaller, manageable sub-problems that you can solve one at a time.
+The first pillar is `decomposition`: breaking a big, overwhelming problem into smaller, manageable sub-problems that you can solve one at a time.
 
 This is how real software gets built. Nobody writes "a banking app" in one go. They break it into login, balance, transfer, and statements, and then break each of those into smaller pieces still, until every piece is small enough to actually write. The instinct you are building is to ask, "what are the smaller problems hiding inside this big one?"
 
@@ -16,7 +18,7 @@ This is how real software gets built. Nobody writes "a banking app" in one go. T
 
 ## "Have I Seen This Before?"
 
-The second pillar is **pattern recognition**, and it usually arrives as a question.
+The second pillar is `pattern recognition`, and it usually arrives as a question.
 
 Halfway through planning the fest you catch yourself thinking: printing certificates, printing fee receipts, printing ID cards, are these not all basically the same task? The moment you notice that repetition, you have done something powerful. You no longer need three separate solutions. You need one solution applied three times.
 
@@ -24,7 +26,7 @@ In programming, spotting a repeating pattern is exactly what later tells you to 
 
 ## Ignoring the Noise
 
-The third pillar is **abstraction**: deciding what matters and deliberately ignoring what does not.
+The third pillar is `abstraction`: deciding what matters and deliberately ignoring what does not.
 
 When you design the registration desk, do you care what shirt each student wears? Of course not. You care about their name and their ticket number. Abstraction is the discipline of keeping the essential details and dropping the rest, so the problem becomes clear enough to reason about. One caution, though: abstraction removes irrelevant detail, never important detail. Drop the wrong thing and your solution quietly breaks.
 
@@ -55,7 +57,7 @@ The same three pillars look identical the moment you step outside a classroom. A
 
 ## A Fourth Pillar Waiting in the Wings
 
-Many computer science courses name a fourth pillar alongside these three: **algorithmic thinking**, the step of turning your decomposed, pattern-spotted, abstracted problem into a precise, ordered sequence of steps. You already brushed against it just now in the "highest marks" routine. That precise sequence of steps is exactly what the next lesson gives a proper name to: the **algorithm**.
+Many computer science courses name a fourth pillar alongside these three: `algorithmic thinking`, the step of turning your decomposed, pattern-spotted, abstracted problem into a precise, ordered sequence of steps. You already brushed against it just now in the "highest marks" routine. That precise sequence of steps is exactly what the next lesson gives a proper name to: the `algorithm`.
 
 ## Conclusion
 

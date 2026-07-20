@@ -2,7 +2,9 @@
 
 Priya's three empty `Student` objects from the last lesson are, right now, just as blank as her photocopied registration forms before anyone fills them in. She needs to actually write Asha's name onto Asha's object, Ravi's name onto Ravi's object, and have each one remember its own details independently, the same way a filled-in form holds one specific student's information without affecting any other form.
 
-The pieces of data that belong to a specific object are called its **attributes**, also known as **instance variables**, and this lesson covers how to attach them, read them, and trust that each object keeps its own separate copy.
+The pieces of data that belong to a specific object are called its `attributes`, also known as `instance variables`, and this lesson covers how to attach them, read them, and trust that each object keeps its own separate copy.
+
+**Definition:** An attribute is a piece of data attached to one specific object using dot notation, `obj.attribute = value`, and every object of a class keeps its own independent set of attributes, so changing one never affects another.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-9-basic-object-oriented-programming/04_each_object_own_attributes.png)
 

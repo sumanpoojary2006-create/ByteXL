@@ -2,6 +2,8 @@
 
 Miguel has been creating tasks manually and then `await`ing them one by one. His teammate shows him `asyncio.gather`, which starts multiple coroutines concurrently and collects all their results in a single `await`. It is the most common pattern in async Python and the cleanest way to write fan-out operations: send many requests, wait for all, return all results.
 
+**Definition:** `asyncio.gather` takes a list of coroutines or tasks, runs them concurrently, waits for all of them to finish, and returns their results in the same order as the inputs.
+
 ![A funnel diagram: many coroutines fan out from a single gather call, run concurrently, and their results fan back in to a single list when all are done](images/06_gather.png)
 
 ## asyncio.gather: Run Many, Collect All

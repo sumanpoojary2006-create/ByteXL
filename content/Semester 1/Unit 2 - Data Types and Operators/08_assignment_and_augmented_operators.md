@@ -2,6 +2,8 @@
 
 You already know that a single equals sign stores a value in a variable. Very often, though, you do not want a brand new value, you want to update the one you already have. A shopping cart total grows as you add items. A game score climbs as you win points. A countdown shrinks each second. None of those examples replace the old value with something unrelated; each one nudges the existing value a little further in some direction. This pattern, taking a variable and adjusting it, is so common that Python gives it a neat shorthand called augmented assignment.
 
+**Definition:** Augmented `assignment` operators like `+=`, `-=`, `*=`, and `//=` update a variable using its own current value, so `total += 50` is a tidy way of writing `total = total + 50`.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44t8348fj/08_running_total_jar.png)
 
 

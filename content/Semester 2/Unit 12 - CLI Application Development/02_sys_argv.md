@@ -2,6 +2,8 @@
 
 Priya's simplest CLI tool needs to accept one argument: a file path. Before using `argparse`, she wants to understand how Python receives command-line arguments at the lowest level: `sys.argv`. This foundation makes everything in the higher-level tools more intuitive.
 
+**Definition:** `sys.argv` is a list of strings containing the script name and all command-line arguments.
+
 ![sys.argv shown as a list with index 0 being the script name and indices 1+ being the command-line arguments in order](images/02_sys_argv.png)
 
 ## What sys.argv Contains

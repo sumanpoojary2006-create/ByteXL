@@ -4,6 +4,8 @@ Asha opens the canteen ordering app on her phone and sees a short menu: press 1 
 
 An `elif` chain would work here too, but it would mean repeating "choice equals" on every single line just to compare the same variable against one fixed option after another. Python offers exactly that: the `match`/`case` statement, available in Python 3.10 and newer.
 
+**Definition:** The `match`/`case` statement is Python's clean way to compare one value against several fixed options, stating the value once and listing each possibility as a `case`, with `case _` acting as the catch-all.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44t8hm2bs/06_match_case_menu.png)
 
 ## Choosing From a Menu of Options

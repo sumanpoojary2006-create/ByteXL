@@ -4,7 +4,9 @@ Give two students the same assignment, "write a program that tells a student whe
 
 The first student's fingers hit the keyboard immediately. They type a bit, get confused, delete it, try again, and twenty minutes later they are surrounded by half finished work and rising frustration. The second student does something that looks almost lazy: they sit back, stare at the ceiling, and think. They jot a few notes on paper. Then, calmly, they solve the whole thing in one clean pass.
 
-The difference between them is not talent or typing speed. It is that the second student had a **plan** before they had a single instruction. And here is the uncomfortable truth this lesson is built on: most bugs are not coding errors at all. They are thinking errors that a few minutes of planning would have caught.
+The difference between them is not talent or typing speed. It is that the second student had a `plan` before they had a single instruction. And here is the uncomfortable truth this lesson is built on: most bugs are not coding errors at all. They are thinking errors that a few minutes of planning would have caught.
+
+**Definition:** A `problem-solving approach` separates understanding, planning, implementation, and review so mistakes can be caught before they become code.
 
 ## The Question Most Beginners Skip
 

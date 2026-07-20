@@ -4,6 +4,8 @@ Asha checks her marks on the college app, and this time it shows a full grade ta
 
 An `if`/`else` only ever splits the world in two, but a grade table splits it into four. Python's answer is `elif`, short for "else if", which lets you line up several conditions and pick the first that fits.
 
+**Definition:** An `elif` chain checks one condition after another until one is true.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44t8hgejq/04_elif_grade_staircase.png)
 
 ## More Than Two Choices

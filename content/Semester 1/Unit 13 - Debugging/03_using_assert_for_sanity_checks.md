@@ -4,6 +4,8 @@ Print debugging found Zara's bad RSVP value, but only because she happened to lo
 
 That is exactly what Python's `assert` statement is for.
 
+**Definition:** `assert` checks an assumption that should always be true and raises `AssertionError` immediately when the program violates it.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-13-debugging/03_assert_sanity_checks.png)
 
 ## The Basic Shape of assert

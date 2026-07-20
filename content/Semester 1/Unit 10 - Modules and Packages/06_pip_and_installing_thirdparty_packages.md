@@ -2,7 +2,9 @@
 
 Naveen wants his receipts to print with a little color and a clean border in the terminal, the kind of polish the standard library's plain `print()` was never designed to give him. Somewhere out there, someone has almost certainly already written and shared exactly this kind of tool. He does not need to build it from scratch, and he does not need to copy code from a webpage into his own files by hand either. He needs a way to download someone else's finished package and use it in his own project, exactly the way he uses `math` or `random`.
 
-That is exactly what `pip`, Python's package installer, is for, pulling ready-made packages from **PyPI**, the Python Package Index, the public library where the wider Python community shares its work.
+That is exactly what `pip`, Python's package installer, is for, pulling ready-made packages from `PyPI`, the Python Package Index, the public library where the wider Python community shares its work.
+
+**Definition:** `pip` is run from your terminal, not from inside a Python script, and the basic command is `pip install` followed by the `package`'s name.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-10-modules-and-packages/06_pip_install_from_pypi.png)
 

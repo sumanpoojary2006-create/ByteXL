@@ -4,11 +4,13 @@ Kiran is looking at the timing problem from a new angle. She wants a function th
 
 This lesson bridges the gap between "functions can be passed around" and "functions can be wrapped." By the end, Kiran will have written something that looks almost exactly like a decorator, without yet using the `@` syntax.
 
+**Definition:** A `higher-order function` is any function that takes a function as an argument or returns a function as a result.
+
 ![A timing function receiving an original function and a clock, wrapping both together, and returning the elapsed time alongside the result](images/02_functions_as_arguments_return_values.png)
 
 ## Higher-Order Functions
 
-A **higher-order function** is any function that takes a function as an argument or returns a function as a result. Python has many built-in ones:
+A `higher-order function` is any function that takes a function as an argument or returns a function as a result. Python has many built-in ones:
 
 ```python
 books = [

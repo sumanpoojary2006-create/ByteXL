@@ -4,6 +4,8 @@ Raj shares the `pre-commit` hook script with his team. Two weeks later, a collea
 
 The `pre-commit` framework solves this with a single committed configuration file: `.pre-commit-config.yaml`. It defines which hooks to run, where to download them from, and which version to use. Any developer who runs `pre-commit install` gets the exact same hooks.
 
+**Definition:** The `pre-commit` `framework` solves this with a single committed configuration file: `.pre-commit-config.yaml`.
+
 ![A repository with .pre-commit-config.yaml checked in, and three developers each running pre-commit install to get identical hooks on their machines](images/06_precommit_framework.png)
 
 ## Installing the pre-commit Framework

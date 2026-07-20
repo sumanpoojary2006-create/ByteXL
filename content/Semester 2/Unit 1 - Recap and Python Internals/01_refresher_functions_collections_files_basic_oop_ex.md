@@ -4,6 +4,8 @@ Asel has been writing Python for almost a year. She can define functions, loop o
 
 Asel realizes she knows how to *use* Python, but has never seriously asked how it *works*. This unit answers that question from the inside out. Before going deeper, though, a fast lap around what you already know is worth taking, because every internal mechanism Semester 2 explores is built on top of the fundamentals you built in Semester 1.
 
+**Definition:** `File` handling, context managers, and exceptions are closely related: reading or writing a file can fail, and the `with` statement guarantees cleanup even when it does.
+
 ![](images/01_semester1_recap_bridge.png)
 
 ## Functions Are First-Class Citizens
@@ -110,7 +112,7 @@ print(c())
 print(c())
 ```
 
-Run this, then explain in one sentence why `count` keeps its value between calls to `increment()`. Your answer will be the exact mental model decorators (Unit 5) rely on. This pattern has a name: a **closure**. Notice it but do not worry about it yet.
+Run this, then explain in one sentence why `count` keeps its value between calls to `increment()`. Your answer will be the exact mental model decorators (Unit 5) rely on. This pattern has a name: a `closure`. Notice it but do not worry about it yet.
 
 ## Conclusion
 

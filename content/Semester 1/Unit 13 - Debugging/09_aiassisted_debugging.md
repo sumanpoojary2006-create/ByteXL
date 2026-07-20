@@ -4,6 +4,8 @@ It is well past midnight, Zara's bug is finally understood, the CSV loader reall
 
 This closing lesson is about using an AI assistant the way Zara used the rubber duck and the strong question from the last lesson: as a genuine collaborator in a process she still leads and understands, not as a replacement for understanding it at all.
 
+**Definition:** `AI-assisted debugging` uses an AI coding assistant to investigate a bug while the programmer remains responsible for supplying context, verifying the reasoning, and understanding the fix.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-13-debugging/09_ai_assisted_debugging_responsibly.png)
 
 ## Give It the Strong Question, Not the Weak One

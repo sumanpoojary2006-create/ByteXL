@@ -1,8 +1,10 @@
 ## Introduction
 
-Zara's deepest bug yet lives across three functions: `main` calls `summarize_event`, which calls `total_rsvps`, which calls `attendee.rsvp_count` on each attendee in a loop. The final summary is wrong, but `c` and a single `breakpoint()` only show her one function's local variables at a time. What she actually needs is to step **into** a function call, follow execution as it moves between functions, and see the full chain of who-called-whom, called the **call stack**, so she can find exactly which function along that chain first introduces the wrong value.
+Zara's deepest bug yet lives across three functions: `main` calls `summarize_event`, which calls `total_rsvps`, which calls `attendee.rsvp_count` on each attendee in a loop. The final summary is wrong, but `c` and a single `breakpoint()` only show her one function's local variables at a time. What she actually needs is to step `into` a function call, follow execution as it moves between functions, and see the full chain of who-called-whom, called the `call stack`, so she can find exactly which function along that chain first introduces the wrong value.
 
 `pdb` supports exactly this, with two commands beyond the `n` and `c` from the last lesson.
+
+**Definition:** Debugger `stepping` follows execution one operation at a time, while the `call stack` shows the chain of active function calls that led to the current line.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-13-debugging/05_stepping_call_stack.png)
 

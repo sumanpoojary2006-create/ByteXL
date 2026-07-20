@@ -2,7 +2,9 @@
 
 Dev is tracking trip payments in a list of amounts, and the treasurer asks him for just the names of students who have actually paid the full fee, leaving out everyone who still owes money. The long way is familiar by now: make an empty list, loop through every student, check a condition, and append the ones that pass. It works, but it is four lines of scaffolding to express one simple idea: "give me the ones that qualify."
 
-Python offers a shorter, more direct way to say exactly that, called a **list comprehension**. It builds a new list from an existing one, in a single readable line, by describing what you want rather than spelling out every step of how to get it.
+Python offers a shorter, more direct way to say exactly that, called a `list comprehension`. It builds a new list from an existing one, in a single readable line, by describing what you want rather than spelling out every step of how to get it.
+
+**Definition:** A list `comprehension` is a tool for clarity, not a badge of cleverness.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-6-lists-and-tuples/04_paid_students_filter.png)
 

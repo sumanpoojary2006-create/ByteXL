@@ -2,13 +2,15 @@
 
 Naveen writes a function that calculates a `total` inside it, and right after calling that function, he tries to print `total` at the top level of his script, expecting to see the number the function just worked out. Python tells him `total` does not exist at all. He is certain he saw it being calculated; the function printed it just fine from inside. So why does the very same name vanish the moment the function finishes?
 
-The answer is **scope**: the region of a program where a particular variable name is actually visible. A variable created inside a function belongs to that function alone, and Python decides what a name refers to by checking a small, fixed sequence of places, known as the **LEGB rule**.
+The answer is `scope`: the region of a program where a particular variable name is actually visible. A variable created inside a function belongs to that function alone, and Python decides what a name refers to by checking a small, fixed sequence of places, known as the `LEGB rule`.
+
+**Definition:** A `variable` created inside a function belongs to that function alone, and Python decides what a name refers to by checking a small, fixed sequence of places, known as the `LEGB rule`.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-8-functions/10_local_scope_boundary.png)
 
 ## Local Scope: Variables Belong to Their Function
 
-A variable assigned inside a function is **local** to that function. It is created when the function runs and disappears the moment the function finishes.
+A variable assigned inside a function is `local` to that function. It is created when the function runs and disappears the moment the function finishes.
 
 ```python
 def calculate_total(prices):
@@ -29,7 +31,7 @@ The function's own `print` works fine, because `total` exists while the function
 
 ## Global Scope: Variables Belong to the Whole File
 
-A variable assigned at the top level of your script, outside any function, is **global**, and it is visible everywhere, including inside every function that comes after it.
+A variable assigned at the top level of your script, outside any function, is `global`, and it is visible everywhere, including inside every function that comes after it.
 
 ```python
 tax_rate = 0.05
@@ -81,7 +83,7 @@ This works now, but treat `global` as a tool to reach for rarely and deliberatel
 
 ## The LEGB Rule: How Python Finds a Name
 
-When your code refers to a name, Python searches four scopes, in this exact order, and stops at the first match: **L**ocal (inside the current function), **E**nclosing (an outer function, if this one is nested inside it), **G**lobal (the top level of the file), and **B**uilt-in (names Python itself provides, like `len` or `print`).
+When your code refers to a name, Python searches four scopes, in this exact order, and stops at the first match: `L`ocal (inside the current function), `E`nclosing (an outer function, if this one is nested inside it), `G`lobal (the top level of the file), and `B`uilt-in (names Python itself provides, like `len` or `print`).
 
 ```python
 value = "global"

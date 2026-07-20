@@ -4,6 +4,8 @@ Nadia's catalog export script runs fine on her MacBook but fails on the Windows 
 
 The fix is to stop constructing file paths as strings and start using Python's path objects, which handle separators, relative vs absolute paths, and home-directory expansion automatically.
 
+**Definition:** `os`, `sys`, and `pathlib` expose operating-system services, interpreter state, command-line information, and object-oriented path handling.
+
 ![Two paths shown side by side: a fragile string path built with + and "/" operators, and a safe pathlib.Path built with / operator, annotated with methods: .exists(), .mkdir(), .glob()](images/07_os_sys_pathlib.png)
 
 ## pathlib.Path: The Modern Way

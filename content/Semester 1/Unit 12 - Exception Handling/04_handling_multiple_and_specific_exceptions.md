@@ -4,6 +4,8 @@ Asha's bill-splitting protection from the last lesson already caught two differe
 
 Different operations fail in different, specifically named ways, and catching each kind separately lets your program respond to each one with exactly the right message, rather than one generic, less helpful catch-all.
 
+**Definition:** `Exception` is broad enough to catch almost anything; `ValueError` and `ZeroDivisionError` are specific.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-12-exception-handling/04_multiple_specific_exceptions.png)
 
 ## Naming Each Exception Type Separately

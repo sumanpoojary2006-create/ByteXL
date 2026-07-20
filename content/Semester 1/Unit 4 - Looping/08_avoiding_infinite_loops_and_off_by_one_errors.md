@@ -4,6 +4,8 @@ Kabir leaves a song playing while he studies, but he has accidentally left it on
 
 Loops are powerful, but those two particular bugs catch almost every beginner, and you will certainly meet them. The first is the infinite loop, which never stops and leaves your program frozen, exactly like Kabir's song looping forever because the player never moved on to the next track. The second is the off-by-one error, where a loop runs one time too many or one time too few, the same single missing chair Kabir miscounted by exactly one. Both are easy to create by accident and easy to fix once you know what to look for. Naming them is the first step to defeating them.
 
+**Definition:** An off-by-one `error` is being wrong by exactly one, usually at the boundary of a loop.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44tb5nv3h/08_infinite_loop_repeat.png)
 
 ## The Infinite Loop

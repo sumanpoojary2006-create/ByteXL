@@ -2,6 +2,8 @@
 
 Sam now has eleven test functions spread across two files. Some of them share a common setup: they all create a sample catalog and a few borrow records before running. He is copying the setup code into each test function, which means when the data model changes, he has to update every copy. His team lead shows him how to organize tests so that setup lives in one place and each test focuses only on what it is actually testing.
 
+**Definition:** Well-organised `tests` isolate one behaviour at a time and follow predictable naming and folder conventions so failures are easy to locate.
+
 ![A test file diagram showing three test functions that each previously duplicated their setup, transformed into three slim test functions sharing one fixture at the top of the file](images/04_writing_organizing_tests.png)
 
 ## The Four-Phase Test Pattern

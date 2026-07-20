@@ -4,6 +4,8 @@ Priya has fully working `Student` and `BankAccount` classes now, but on her way 
 
 This final lesson of the unit is a direct, practical comparison, so that choosing between a class and a plain dictionary or tuple becomes a quick, confident decision rather than a reflex to use whichever tool you learned most recently.
 
+**Definition:** A class keeps the rule and the `data` it protects locked together, in one place, every single time.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-9-basic-object-oriented-programming/08_plain_data_vs_class_decision.png)
 
 ## The Question Underneath the Decision

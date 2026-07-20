@@ -4,6 +4,8 @@ Tara has just written a full class-based context manager. It works perfectly, bu
 
 Python does. The `contextlib` module includes a decorator called `@contextmanager` that lets you write a context manager using a generator function with a single `yield`. No class required.
 
+**Definition:** The `contextlib` module includes a decorator called `@contextmanager` that lets you write a context manager using a generator function with a single `yield`.
+
 ![A before and after: a class with __enter__ and __exit__ on the left, a generator function with yield on the right, both producing identical behavior](images/04_contextlib_contextmanager.png)
 
 ## @contextmanager: the Generator Shortcut

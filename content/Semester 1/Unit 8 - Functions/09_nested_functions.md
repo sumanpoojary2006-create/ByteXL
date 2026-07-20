@@ -2,7 +2,9 @@
 
 Naveen's receipt-printing function needs a small helper that formats a number as currency, padding it with a rupee symbol and two decimal places. That formatting logic is only ever useful inside the receipt function itself; no other part of his script has any business calling it directly, and he would rather not clutter the top level of his file with a tiny helper that only makes sense in one specific context.
 
-Python lets you define a function inside another function, called a **nested function**, which exists only for as long as, and only inside, the function that contains it.
+Python lets you define a function inside another function, called a `nested function`, which exists only for as long as, and only inside, the function that contains it.
+
+**Definition:** A nested `function` is written with `def`, exactly like any other function, simply indented one level inside another function's body.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-8-functions/09_nested_helper_function.png)
 

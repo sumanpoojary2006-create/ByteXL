@@ -4,6 +4,8 @@ A library member returns a book and immediately borrows another. Dev's code upda
 
 Transactions prevent this class of bug. A transaction groups multiple SQL statements into a single atomic unit: either every statement succeeds and the changes are committed, or a failure rolls back all of them as if none ran.
 
+**Definition:** A `transaction` groups multiple SQL statements into a single atomic unit: either every statement succeeds and the changes are committed, or a failure rolls back all of them as if none ran.
+
 ![Two operations (return book, borrow book) wrapped in a transaction: if step 2 fails, step 1 is also undone, leaving the database in its original clean state](images/04_transactions.md.png)
 
 ## The ACID Properties

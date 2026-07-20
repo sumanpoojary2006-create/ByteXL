@@ -4,6 +4,8 @@ The trip is two days away, and Dev has the full itinerary sitting in front of hi
 
 You already know the `for` loop from the looping unit, and you have been quietly using it on lists and tuples throughout this one. This final lesson pulls those threads together properly, showing the small set of patterns that make looping over lists and tuples clean, readable, and complete.
 
+**Definition:** Lists and `tuples`, together with the loops you already knew, are the backbone of almost every real program you will write from here on.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-6-lists-and-tuples/08_itinerary_walkthrough.png)
 
 ## The Basic Walk-Through

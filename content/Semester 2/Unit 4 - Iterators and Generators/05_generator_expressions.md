@@ -4,6 +4,8 @@ Leila is now comfortable writing generator functions. But she notices that many 
 
 There is. Generator expressions are to generators what list comprehensions are to lists: a compact, one-line way to describe a lazy sequence. The only visual difference from a list comprehension is the brackets: parentheses instead of square brackets.
 
+**Definition:** Generator `expressions` are to generators what list comprehensions are to lists: a compact, one-line way to describe a lazy sequence.
+
 ![](images/05_generator_expressions.png)
 
 ## Generator Expression Syntax
@@ -96,7 +98,7 @@ Each generator in the chain produces items only when the next one requests them.
 
 ## When to Choose a Generator Expression vs. a List Comprehension
 
-Use a **list comprehension** when you need to iterate over the result more than once, need to know the length, or need to index into specific positions. Use a **generator expression** when you process results once in a pipeline, the sequence could be very large, or you pass it directly to a function like `sum()`, `max()`, or `any()`.
+Use a `list comprehension` when you need to iterate over the result more than once, need to know the length, or need to index into specific positions. Use a `generator expression` when you process results once in a pipeline, the sequence could be very large, or you pass it directly to a function like `sum()`, `max()`, or `any()`.
 
 ```python
 records = [

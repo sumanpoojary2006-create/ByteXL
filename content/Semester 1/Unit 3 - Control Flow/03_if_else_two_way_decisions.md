@@ -4,6 +4,8 @@ Asha opens the college app on her phone and taps to see her exam result. The scr
 
 A plain `if` on its own, the kind from the last lesson, could show the PASS message but would leave the screen blank on a fail, which is clearly not what the result app does. For these two-way decisions Python gives you `else`, the partner of `if` that handles the "otherwise" case.
 
+**Definition:** The `if`/`else` structure handles a two-way `decision`: the `if` block runs when the condition is true, and the `else` block runs in every other case.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44t8he64e/03_if_else_two_doors.png)
 
 ## When There Are Exactly Two Paths

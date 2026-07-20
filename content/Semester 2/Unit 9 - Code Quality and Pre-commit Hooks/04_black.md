@@ -4,6 +4,8 @@ Even with `ruff` checking style, Raj's team still argues about formatting in cod
 
 `black` is "The Uncompromising Code Formatter." It makes exactly one formatting choice for each situation and applies it consistently. You do not configure it (much). You just run it. Code review debates about formatting become impossible because `black` has already decided.
 
+**Definition:** `Black` is an opinionated Python formatter that rewrites code into one consistent style and can check formatting without changing files.
+
 ![A before-and-after showing inconsistently formatted code with mixed quotes and varied spacing on the left, and uniformly black-formatted code on the right](images/04_black.png)
 
 ## Installing and Running black

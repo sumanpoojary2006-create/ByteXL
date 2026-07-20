@@ -2,7 +2,9 @@
 
 Zara has isolated her bug down to five lines, but she still cannot see why it is happening, and it is now well past midnight. She is tempted to message a friend with "my code is broken, please help," but some part of her suspects that message will not actually get her very far. Before reaching out to anyone, there is a strange but genuinely effective technique worth trying first: explaining the problem out loud, in complete sentences, to something that cannot answer back, like a rubber duck sitting on the desk.
 
-This is called **rubber-duck debugging**, and it works far more often than its silly name suggests, for a specific and explainable reason.
+This is called `rubber-duck debugging`, and it works far more often than its silly name suggests, for a specific and explainable reason.
+
+**Definition:** `Rubber-duck debugging` exposes gaps in reasoning by making a programmer explain the code line by line, while a good debugging question supplies a minimal example, expected result, actual result, and exact error.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-13-debugging/08_rubber_duck_debugging.png)
 

@@ -4,6 +4,8 @@ Priya is ready to put everything in this unit together. She has encapsulated sta
 
 This lesson synthesizes the unit into concrete design principles, shows the full shape of a well-designed component, and highlights the most common mistakes that make interfaces harder rather than easier to use.
 
+**Definition:** A clean `interface` has no public methods or properties that callers are not supposed to use.
+
 ![](images/07_designing_clean_interfaces.png)
 
 ## Principle 1: Expose What Callers Need, Nothing More

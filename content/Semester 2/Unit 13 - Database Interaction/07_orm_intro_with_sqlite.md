@@ -4,6 +4,8 @@ Dev's repository class works, but every time the schema changes he has to update
 
 An ORM (Object-Relational Mapper) bridges this gap. It lets you define tables as Python classes. The ORM generates the SQL. The Python class gives full type information and IDE support.
 
+**Definition:** An `ORM` bridges Python classes and database tables, placing schema definitions in one location and generating SQL automatically.
+
 ![A Book Python class on one side; a books database table on the other; the ORM arrow in the middle translating between them automatically](images/07_orm_intro_with_sqlite.png)
 
 ## What an ORM Does

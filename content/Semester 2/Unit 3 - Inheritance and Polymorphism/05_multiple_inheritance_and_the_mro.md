@@ -1,8 +1,10 @@
 ## Introduction
 
-Dev needs an `AudioBook` that is simultaneously a `LibraryItem` (with a title and ISBN) and also a `DigitalMedia` object (with a file size and download capability). It is naturally both things at once. Python allows a class to inherit from more than one parent, and this is called **multiple inheritance**.
+Dev needs an `AudioBook` that is simultaneously a `LibraryItem` (with a title and ISBN) and also a `DigitalMedia` object (with a file size and download capability). It is naturally both things at once. Python allows a class to inherit from more than one parent, and this is called `multiple inheritance`.
 
-Multiple inheritance is powerful but introduces a question that simpler inheritance does not have: if both parent classes define the same method, which version does Python use? The answer depends on a rule called the **Method Resolution Order** (MRO), and understanding it prevents a whole category of subtle bugs.
+Multiple inheritance is powerful but introduces a question that simpler inheritance does not have: if both parent classes define the same method, which version does Python use? The answer depends on a rule called the `Method Resolution Order` (MRO), and understanding it prevents a whole category of subtle bugs.
+
+**Definition:** Multiple `inheritance` is powerful but introduces a question that simpler inheritance does not have: if both parent classes define the same method, which version does Python use?
 
 ![](images/05_multiple_inheritance_mro.png)
 
@@ -42,7 +44,7 @@ Here the two parents have no methods in common, so there is no conflict. The rea
 
 ## The Diamond Problem and the MRO
 
-The classic conflict in multiple inheritance is called the **diamond problem**. Imagine this hierarchy:
+The classic conflict in multiple inheritance is called the `diamond problem`. Imagine this hierarchy:
 
 ```
      Base
@@ -54,7 +56,7 @@ The classic conflict in multiple inheritance is called the **diamond problem**. 
 
 Both `Left` and `Right` inherit from `Base` and override a method. When `Child` calls that method, which version runs: `Left`'s or `Right`'s?
 
-Python's answer is the **Method Resolution Order** (MRO): a deterministic, linearized ordering of the class hierarchy calculated using the **C3 linearization algorithm**. In simple terms, Python checks classes in the order: the class itself, then left-to-right through parents, following a rule that ensures no class appears before another class it inherits from.
+Python's answer is the `Method Resolution Order` (MRO): a deterministic, linearized ordering of the class hierarchy calculated using the `C3 linearization algorithm`. In simple terms, Python checks classes in the order: the class itself, then left-to-right through parents, following a rule that ensures no class appears before another class it inherits from.
 
 ```python
 class Base:

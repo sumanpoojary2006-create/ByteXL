@@ -2,7 +2,9 @@
 
 Dev's `LibraryItem` base class has a `checkout_policy()` method that returns a standard 21-day loan period. Physical books follow this rule. Ebooks do not need it at all since they are always available. Reference books can only be used in the library and cannot be checked out. Dev needs each item type to answer the question "what is the checkout policy for this item?" differently, but the calling code should not have to know which type it is talking to.
 
-This is **method overriding**: a child class provides its own implementation of a method that already exists in the parent. It is the mechanism that makes the same method call behave differently depending on which class the object actually belongs to.
+This is `method overriding`: a child class provides its own implementation of a method that already exists in the parent. It is the mechanism that makes the same method call behave differently depending on which class the object actually belongs to.
+
+**Definition:** Method `overriding` lets a child class replace or extend a parent method.
 
 ![](images/03_method_overriding.png)
 

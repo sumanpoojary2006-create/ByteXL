@@ -4,6 +4,8 @@ Kabir is going down the member list of the class WhatsApp group on his phone, re
 
 So far your `for` loops have walked through numbers made by `range()`. But the `for` loop is far more general than that. It can step through any sequence of items, one at a time: every character in a piece of text, every name in a list, every item in a collection. The natural way to read a `for` loop is "for each item in this group, do something." Kabir never once converted the member list into position numbers in his head; he simply moved from name to name, and his hashtag in the same way letter to letter. This lesson shows that wider power.
 
+**Definition:** A string is really a `sequence` of characters, so a `for` loop can visit each character in turn, with no `range()` required.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44tb5m6t8/04_iterating_letters.png)
 ## Looping Straight Through a String
 

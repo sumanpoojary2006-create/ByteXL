@@ -4,6 +4,8 @@ Priya is proud of the `Book` class she wrote last semester. It stores a title, a
 
 The class works. The objects are wrong. Priya realizes the problem: her class is a container with no guard on the door. This unit is about building the guard. Before doing that, a brief review of what you already know about classes is worth taking, because everything in this unit grows directly from that foundation.
 
+**Definition:** A `class` defines shared structure and behaviour, while an `object` is one independent instance carrying its own attribute values.
+
 ![](images/01_classes_and_objects_recap.png)
 
 ## A Class Is a Blueprint; an Object Is a Built Thing
@@ -34,7 +36,7 @@ print(b2)                  # Book('Shogun', copies=1)
 
 ## Instance Attributes, Class Attributes, and the Difference
 
-Attributes set on `self` in `__init__` are **instance attributes**: each object gets its own copy. Attributes set directly on the class body are **class attributes**: all instances share one copy.
+Attributes set on `self` in `__init__` are `instance attributes`: each object gets its own copy. Attributes set directly on the class body are `class attributes`: all instances share one copy.
 
 ```python
 class Book:
@@ -139,4 +141,4 @@ Create two `LibraryCard` objects, borrow one book on each, then print `LibraryCa
 
 ## Conclusion
 
-A class defines attributes and methods; an object holds its own copy of the instance attributes and shares method definitions with all other instances of the same class. The `check_out` method illustrated a real problem: an object's internal state can be modified from outside the class, bypassing any logic the class has in place to keep it valid. The next lesson gives this problem a name, **encapsulation**, and shows the techniques Python provides to address it.
+A class defines attributes and methods; an object holds its own copy of the instance attributes and shares method definitions with all other instances of the same class. The `check_out` method illustrated a real problem: an object's internal state can be modified from outside the class, bypassing any logic the class has in place to keep it valid. The next lesson gives this problem a name, `encapsulation`, and shows the techniques Python provides to address it.

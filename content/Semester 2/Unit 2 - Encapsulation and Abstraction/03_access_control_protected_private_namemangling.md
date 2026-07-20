@@ -4,6 +4,8 @@ Priya has been using single underscores consistently, and her team has been resp
 
 She wonders: is there a stronger mechanism? There is, and it uses a double underscore. But it comes with a twist that surprises almost every developer the first time they see it. This lesson explains the difference between one underscore and two, and what name mangling actually does.
 
+**Definition:** A double leading underscore (`__copies`) triggers a Python feature called `name mangling`.
+
 ![](images/03_access_control_name_mangling.png)
 
 ## One Underscore: Convention, Not Enforcement
@@ -24,7 +26,7 @@ This is actually intentional in Python's design philosophy. Python prefers clari
 
 ## Two Underscores: Name Mangling
 
-A double leading underscore (`__copies`) triggers a Python feature called **name mangling**. When Python compiles a class that contains an attribute or method starting with `__`, it renames it to `_ClassName__attributename` before the class body runs. This makes it genuinely harder to access from outside the class, because the attribute's name has changed.
+A double leading underscore (`__copies`) triggers a Python feature called `name mangling`. When Python compiles a class that contains an attribute or method starting with `__`, it renames it to `_ClassName__attributename` before the class body runs. This makes it genuinely harder to access from outside the class, because the attribute's name has changed.
 
 ```python
 class Book:
@@ -103,7 +105,7 @@ Using `__` everywhere is actually a minor anti-pattern: it makes introspection a
 It is easy to confuse `__name__` (double underscore on both sides) with `__name` (double underscore only at the start). They are completely different:
 
 - `__copies`: name mangling applies, attribute renamed to `_Book__copies`
-- `__repr__`: a **dunder method** (double on both sides), recognized by Python as part of the data model, no mangling
+- `__repr__`: a `dunder method` (double on both sides), recognized by Python as part of the data model, no mangling
 
 Never create your own attributes or methods with the `__name__` double-double-underscore pattern. Those names are reserved for Python's own protocols.
 

@@ -2,7 +2,9 @@
 
 Think about a kitchen shelf lined with jars. One is labelled "sugar", another "salt", another "tea". The label is not the contents; it is how you find the contents. When a recipe says "add two spoons of sugar", you do not care which exact grains you use. You just reach for the jar named "sugar".
 
-A **variable** in Python is exactly that: a label attached to a piece of data. You already met one in the last unit, when a program asked for your name and remembered it. That remembered value lived in a variable. Without that labelled drawer, the computer would have nowhere to keep what you typed, and the very next line of the program would have no idea what you meant by "your name". Variables are the reason a program can hold a thought from one line to the next instead of forgetting everything the instant it moves on. In this lesson we look at how to create variables, how to give them values, and how to name them well.
+A `variable` in Python is exactly that: a label attached to a piece of data. You already met one in the last unit, when a program asked for your name and remembered it. That remembered value lived in a variable. Without that labelled drawer, the computer would have nowhere to keep what you typed, and the very next line of the program would have no idea what you meant by "your name". Variables are the reason a program can hold a thought from one line to the next instead of forgetting everything the instant it moves on. In this lesson we look at how to create variables, how to give them values, and how to name them well.
+
+**Definition:** A `variable` in Python is exactly that: a label attached to a piece of data.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44t7vzund/01_variables_assignment_naming.png)
 

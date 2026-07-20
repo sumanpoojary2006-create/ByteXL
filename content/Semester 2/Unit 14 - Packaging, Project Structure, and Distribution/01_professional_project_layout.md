@@ -4,11 +4,13 @@ Nia has spent six months building a small library at work called `metric-utils`.
 
 The issue is not the code. The issue is layout. Before a project can be installed, published, or trusted, its files must sit in a shape that Python and its tools recognize. This lesson gives that shape a name and shows why professionals use it.
 
+**Definition:** The most reliable structure for an installable Python `project` is called the `src layout`.
+
 ![A messy flat folder of Python files on the left, transformed into a clean src-layout project on the right with pyproject.toml at the root](images/01_professional_project_layout.png)
 
 ## The src Layout
 
-The most reliable structure for an installable Python project is called the **src layout**. Source code lives inside a folder called `src/`, tests live in a sibling `tests/`, and configuration files sit at the top:
+The most reliable structure for an installable Python project is called the `src layout`. Source code lives inside a folder called `src/`, tests live in a sibling `tests/`, and configuration files sit at the top:
 
 ```python
 # Recommended project layout for metric-utils
@@ -88,7 +90,7 @@ Because the `src` folder is not on `sys.path` by default, tests only pass if the
 
 ## The Role of `__init__.py`
 
-A folder becomes a Python **package** the moment it contains an `__init__.py` file. Without it, you have a folder of scripts. With it, you have something importable:
+A folder becomes a Python `package` the moment it contains an `__init__.py` file. Without it, you have a folder of scripts. With it, you have something importable:
 
 ```python
 # src/metric_utils/__init__.py

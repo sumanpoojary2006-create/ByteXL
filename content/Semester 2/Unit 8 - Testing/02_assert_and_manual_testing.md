@@ -2,6 +2,8 @@
 
 Before Sam learns about any testing framework, his team lead wants him to understand the single building block that all Python tests are built on: the `assert` statement. It is already in the language and requires no installation. Understanding it well makes everything in the testing framework more intuitive.
 
+**Definition:** `assert` is the foundation of Python `testing`: it checks a condition and raises `AssertionError` with a message if it fails.
+
 ![The word assert followed by an expression and an optional message, shown as a gate: if the expression is True, execution passes through; if False, an AssertionError is raised with the message](images/02_assert_manual_testing.png)
 
 ## The assert Statement

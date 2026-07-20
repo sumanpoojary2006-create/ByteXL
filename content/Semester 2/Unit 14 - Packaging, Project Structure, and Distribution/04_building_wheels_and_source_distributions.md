@@ -1,8 +1,10 @@
 ## Introduction
 
-Nia's `metric-utils` project installs cleanly with `uv sync`. Her teammate can install it from the git clone. What she cannot yet do is send a single file to a colleague in another team and say "install this." For that, the project needs to be **built** into distribution artifacts: a wheel and a source distribution. These are the two file formats pip and PyPI understand, and every published Python package on the planet ships in at least one of them.
+Nia's `metric-utils` project installs cleanly with `uv sync`. Her teammate can install it from the git clone. What she cannot yet do is send a single file to a colleague in another team and say "install this." For that, the project needs to be `built` into distribution artifacts: a wheel and a source distribution. These are the two file formats pip and PyPI understand, and every published Python package on the planet ships in at least one of them.
 
 This lesson builds both, opens them, and shows what each contains.
+
+**Definition:** Building a package produces two files: a wheel for fast installs and a source `distribution` as a safety net.
 
 ![A pyproject.toml source project on the left, a build tool in the middle, and two output files on the right: a .whl wheel and a .tar.gz source distribution](images/04_building_wheels_and_source_distributions.png)
 

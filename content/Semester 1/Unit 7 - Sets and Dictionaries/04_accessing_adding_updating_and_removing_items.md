@@ -4,6 +4,8 @@ The merch stall is never still for long. A new shipment of caps arrives partway 
 
 Dictionaries are mutable just like lists, and this lesson covers the small set of operations that add, change, and remove key-value pairs without ever needing to rebuild the whole dictionary from scratch.
 
+**Definition:** A new shipment of caps arrives partway through the day, so a brand new item needs `adding` to the price list.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-7-sets-and-dictionaries/04_stall_dictionary_editing.png)
 
 ## Adding a New Key

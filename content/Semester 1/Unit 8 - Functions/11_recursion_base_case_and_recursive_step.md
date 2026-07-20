@@ -2,13 +2,15 @@
 
 Naveen is asked for the total number of ways the prize committee could rank the top entries in a contest, which turns out to need a factorial: 5 entries means 5 times 4 times 3 times 2 times 1. He could write that out as a loop easily enough, multiplying a running total down from 5 to 1. But the way he first explains it to a junior committee member out loud is different: "5 factorial is just 5 times 4 factorial, and 4 factorial is just 4 times 3 factorial," and so on, down to the obvious case that 1 factorial is simply 1.
 
-That explanation, defining a problem in terms of a smaller version of itself, is exactly the idea behind **recursion**: a function that calls itself, narrowing the problem down each time, until it reaches a case simple enough to answer directly.
+That explanation, defining a problem in terms of a smaller version of itself, is exactly the idea behind `recursion`: a function that calls itself, narrowing the problem down each time, until it reaches a case simple enough to answer directly.
+
+**Definition:** A recursive function needs a `base case`, the simplest version of the problem, answered directly with no further calls, and a `recursive step`, where the function calls itself on a smaller version of the same problem.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-8-functions/11_recursion_self_call_chain.png)
 
 ## The Two Things Every Recursive Function Needs
 
-A recursive function needs a **base case**, the simplest version of the problem, answered directly with no further calls, and a **recursive step**, where the function calls itself on a smaller version of the same problem. Without a base case, a recursive function would call itself forever, exactly the way a `while` loop with no way to become false runs forever.
+A recursive function needs a `base case`, the simplest version of the problem, answered directly with no further calls, and a `recursive step`, where the function calls itself on a smaller version of the same problem. Without a base case, a recursive function would call itself forever, exactly the way a `while` loop with no way to become false runs forever.
 
 ```python
 def factorial(n):

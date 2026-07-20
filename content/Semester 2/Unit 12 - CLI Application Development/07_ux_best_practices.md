@@ -2,6 +2,8 @@
 
 Priya's CLI works correctly, but librarians complain that they cannot remember the options, the error messages do not explain what is wrong, and the import command gives no feedback during a 20-minute run. A CLI that works is not the same as a CLI that is enjoyable to use. This lesson covers the UX principles that separate professional tools from fragile scripts.
 
+**Definition:** Good CLI `user experience` combines clear help, useful progress feedback, readable errors, safe defaults, and confirmation before destructive actions.
+
 ![A terminal window showing four UX improvements: a progress bar during a long operation, colored output distinguishing success (green) and error (red), a --dry-run option, and a friendly --help message with examples](images/07_ux_best_practices.png)
 
 ## Principle 1: Give Feedback for Long Operations

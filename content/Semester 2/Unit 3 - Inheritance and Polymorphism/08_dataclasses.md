@@ -4,6 +4,8 @@ Dev notices something tedious about his `Book` and `LibraryItem` classes: almost
 
 Python 3.7 introduced `dataclasses` to solve exactly this problem. A `dataclass` is an ordinary Python class with `__init__`, `__repr__`, and `__eq__` generated automatically from field declarations. It does not add new behavior to Python; it removes repetitive boilerplate while keeping the class model completely familiar.
 
+**Definition:** Frozen `dataclasses` are excellent for value objects: things that represent a value rather than an entity with changing state, like an ISBN, a coordinate, a date range, or a configuration snapshot.
+
 ![](images/08_dataclasses.png)
 
 ## The Basic dataclass

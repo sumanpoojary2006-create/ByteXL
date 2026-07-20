@@ -2,6 +2,8 @@
 
 Miguel's availability checker is now three times faster, and he is enthusiastic about async. He wants to rewrite the entire library system with `async def`. His tech lead slows him down: async is not always better. Converting synchronous code to async has a cost, and for the wrong type of work, the cost yields no benefit. This final lesson provides a decision framework: when does async help, when does it not, and what to use instead?
 
+**Definition:** `Async` provides a speedup when: Async does not help when the bottleneck is computation.
+
 ![A decision tree: Is the code I/O-bound? Yes -> Is it concurrent requests or streams? Yes -> async. No -> threads. If CPU-bound -> multiprocessing.](images/08_when_async_helps.png)
 
 ## When async Helps: I/O-Bound Concurrent Operations

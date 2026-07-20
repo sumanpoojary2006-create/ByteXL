@@ -4,6 +4,8 @@ Nadia's book recommendation feature picks a random title from the catalog every 
 
 Her mentor points her to `random.choice()`, which does this correctly in one line. The `random` module is the right place for all randomness in Python that does not involve security.
 
+**Definition:** The `random` module is the right place for all randomness in Python that does not involve security.
+
 ![A diagram showing the random module's main functions: choice (picks one), sample (picks k unique), shuffle (reorders in place), and randint (picks an integer in a range)](images/02_random_module.png)
 
 ## Basic Random Choices

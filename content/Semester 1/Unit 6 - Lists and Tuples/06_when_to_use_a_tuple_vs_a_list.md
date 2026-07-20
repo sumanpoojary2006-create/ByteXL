@@ -4,6 +4,8 @@ Dev now has both tools in hand: the list, which bent and reshaped itself through
 
 This lesson does not introduce anything new. It is a direct comparison, so the choice between a list and a tuple becomes an instant, confident decision rather than a guess.
 
+**Definition:** `Tuples` are also slightly lighter and faster for Python to work with than lists, because Python does not need to keep room available for future growth that will never happen.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-6-lists-and-tuples/06_list_vs_tuple_scale.png)
 
 ## The One Question That Decides It

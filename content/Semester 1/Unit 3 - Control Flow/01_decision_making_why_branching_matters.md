@@ -4,6 +4,8 @@ Asha taps her PIN into her phone's lock screen without even thinking about it. I
 
 Should the phone unlock? Only if the PIN is correct. Should an app show "Welcome back"? Only if she is already logged in. Each of these is a fork in the road, a point where the program looks at a situation and chooses what to do next. Without that fork, the phone would have to do the same thing every single time it is touched, which is clearly not how any real device behaves. Teaching a program to make those choices is what this unit, control flow, is all about.
 
+**Definition:** `Branching` lets a program choose different paths at runtime according to whether a condition evaluates to true or false.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44t8h2g6c/01_branching_two_paths.png)
 
 ## Programs That Only Go Straight
@@ -27,7 +29,7 @@ Now think about how often a small decision changes what should happen:
 - A traffic signal either says go or says stop.
 - A game either adds to your score or ends your turn.
 
-In every case there is a **condition**, a yes or no question, and the answer decides the path. "Is the PIN correct?" "Is the cart total above 500?" "Is the light green?" The program checks the condition, then branches one way or the other.
+In every case there is a `condition`, a yes or no question, and the answer decides the path. "Is the PIN correct?" "Is the cart total above 500?" "Is the light green?" The program checks the condition, then branches one way or the other.
 
 ## Forks at a Glance
 

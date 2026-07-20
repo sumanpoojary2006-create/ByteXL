@@ -4,6 +4,8 @@ Two projects on Dev's machine need different versions of the same library. The l
 
 Virtual environments solve it by giving each project its own isolated Python installation. The `uv` tool manages them far faster than `pip` and adds lockfile-based reproducibility that makes "works on my machine" a thing of the past.
 
+**Definition:** Virtual `environments` solve it by giving each project its own isolated Python installation.
+
 ![Three isolated circles (projects) each containing their own Python version and dependency set, with arrows showing no overlap between them](images/03_virtual_environments_and_uv.png)
 
 ## What a Virtual Environment Is

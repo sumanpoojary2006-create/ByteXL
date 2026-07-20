@@ -4,6 +4,8 @@ Raj joined the library consortium's engineering team six months ago. In every co
 
 His proposal: agree on a style standard, enforce it automatically, and stop discussing it in reviews. The starting point is PEP 8, Python's official style guide, and the first question is: what does it actually say and why?
 
+**Definition:** PEP 8 is the Style Guide for Python `Code`, written by Guido van Rossum and published as a Python Enhancement Proposal.
+
 ![A code snippet shown before and after PEP 8: unclear variable names, crowded spacing, and long lines on the left; clean names, breathing room, and consistent indentation on the right](images/01_clean_code_pep8.png)
 
 ## What PEP 8 Is

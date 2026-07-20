@@ -2,6 +2,8 @@
 
 Dev has all the pieces: a table, parameterized queries, transactions, a row factory, and migrations. This lesson assembles them into a complete `LibraryDatabase` module that the CLI tool from Unit 12 can import and use. It is the first component of the library system that persists data reliably across restarts.
 
+**Definition:** A complete `database layer` combines schema setup, parameterized queries, transactions, row mapping, migrations, and clear separation between persistence code and application logic.
+
 ![The complete system: LibraryDatabase module in the center, CLI calling it on the left, the SQLite file persisting data on the right, unit tests talking to an in-memory database at the bottom](images/08_putting_it_together.png)
 
 ## The Complete LibraryDatabase Module

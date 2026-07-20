@@ -2,7 +2,9 @@
 
 Dev is plotting the trip's fixed stops onto a map: the resort's GPS coordinates, the waterfall's coordinates, the fort's coordinates, each pair of latitude and longitude locked the moment he enters it. These are not values anyone should be editing later. A coordinate is a coordinate; if someone "fixes" the latitude by mistake, the whole bus could end up at the wrong resort. He wants the convenience of grouping two related values together, exactly like a list, but with a guarantee that nobody, including his own code, can quietly change one number and break the pair.
 
-Python's answer is the **tuple**, written with parentheses instead of square brackets, an ordered collection just like a list, but locked the moment it is created.
+Python's answer is the `tuple`, written with parentheses instead of square brackets, an ordered collection just like a list, but locked the moment it is created.
+
+**Definition:** Packing builds a tuple from comma-separated values, and `unpacking` spreads a tuple straight into matching variables.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-6-lists-and-tuples/05_gps_coordinate_lock.png)
 

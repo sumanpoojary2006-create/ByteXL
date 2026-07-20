@@ -2,7 +2,9 @@
 
 Priya keeps writing the same little calculation by hand outside her `Student` objects: comparing `marks` to 40 to decide pass or fail, for every single student, every time. A real student does not just passively hold a mark; in a sense, a student "knows" whether they have passed, and Priya would like to simply ask the object that question directly, the way you would ask a real person, rather than recomputing it herself from outside every time.
 
-A **method** is a function defined inside a class, an action that belongs to its objects and can use their attributes directly. This lesson introduces methods, and the special first parameter, `self`, that every method needs in order to know exactly which object it is working on.
+A `method` is a function defined inside a class, an action that belongs to its objects and can use their attributes directly. This lesson introduces methods, and the special first parameter, `self`, that every method needs in order to know exactly which object it is working on.
+
+**Definition:** A method is a function defined inside a class, and its first `parameter`, always named `self` by convention, automatically refers to whichever object the method was called on, letting the same method's logic correctly use each object's own attributes.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-9-basic-object-oriented-programming/05_method_asks_object_directly.png)
 

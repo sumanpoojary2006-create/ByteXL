@@ -2,7 +2,9 @@
 
 Priya's office has a printed registration form template: blank lines for a name, a roll number, a department. The blank template itself is not any particular student; nobody named "Name: ___________" ever walked through the door. The moment Priya fills one in with "Asha, 101, Computer Science," it becomes a real, specific record. The same template gets photocopied and filled in differently for Ravi, for Meera, and for every student who registers.
 
-That blank template and its many filled-in copies are exactly the relationship between Python's two central OOP ideas: the **class**, a blueprint describing what a kind of thing looks like, and the **object**, one specific, filled-in instance built from that blueprint.
+That blank template and its many filled-in copies are exactly the relationship between Python's two central OOP ideas: the `class`, a blueprint describing what a kind of thing looks like, and the `object`, one specific, filled-in instance built from that blueprint.
+
+**Definition:** An `object`, also called an instance, is one particular thing built from a class's blueprint, with its own actual values filled in.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-9-basic-object-oriented-programming/02_class_blueprint_object_copies.png)
 

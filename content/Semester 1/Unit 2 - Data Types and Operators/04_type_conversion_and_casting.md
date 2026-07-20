@@ -1,8 +1,10 @@
 ## Introduction
 
-In the last few lessons you met numbers, strings, and booleans. Real programs constantly move between them. A user types their age, which arrives as text, but you want to do arithmetic with it. A price is a number, but you want to print it inside a sentence. Each type is excellent at its own job and stubborn about doing anyone else's, so the moment two different types need to work together, something has to bend. Turning a value from one type into another is called **type conversion**, or casting, and it is one of the most practical skills in this unit, precisely because keyboards, files, and the internet hand you almost everything as plain text, even when the text is clearly a number to your eyes.
+In the last few lessons you met numbers, strings, and booleans. Real programs constantly move between them. A user types their age, which arrives as text, but you want to do arithmetic with it. A price is a number, but you want to print it inside a sentence. Each type is excellent at its own job and stubborn about doing anyone else's, so the moment two different types need to work together, something has to bend. Turning a value from one type into another is called `type conversion`, or casting, and it is one of the most practical skills in this unit, precisely because keyboards, files, and the internet hand you almost everything as plain text, even when the text is clearly a number to your eyes.
 
 There is also a built in tool, `type()`, that tells you exactly what type a value is, which is invaluable when something behaves unexpectedly.
+
+**Definition:** `Type conversion` creates a value of one data type from a compatible value of another type using tools such as `int()`, `float()`, `str()`, and `bool()`.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44t82xext/04_input_trap_text_not_number.png)
 

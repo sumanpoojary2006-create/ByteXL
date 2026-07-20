@@ -2,7 +2,9 @@
 
 Priya works in the college's student affairs office, and she has been keeping student records the way the last few units taught her to: a list of names, a separate list of roll numbers in the same order, and a dictionary mapping roll numbers to attendance percentages. It worked, until a student transferred sections and her name had to be found and moved in three different places at once, in the right order, without ever letting the lists drift out of sync with each other. One slip, and roll number 14's attendance quietly attaches itself to the wrong name.
 
-The real problem is that a single student is not really three separate pieces of data living in three separate containers. A student is one thing, with a name, a roll number, and an attendance record that all belong together and move together. **Object-oriented programming**, OOP for short, is a way of writing code that matches this reality directly: instead of scattering related data across parallel lists, you model each real-world thing as a single, self-contained unit.
+The real problem is that a single student is not really three separate pieces of data living in three separate containers. A student is one thing, with a name, a roll number, and an attendance record that all belong together and move together. `Object-oriented programming`, OOP for short, is a way of writing code that matches this reality directly: instead of scattering related data across parallel lists, you model each real-world thing as a single, self-contained unit.
+
+**Definition:** OOP is built around exactly this instinct: identify the real "`things`" your program deals with, students, bank accounts, books, orders, and give each one a definition that bundles its data and its behaviour together.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-9-basic-object-oriented-programming/01_scattered_vs_bundled_student_data.png)
 

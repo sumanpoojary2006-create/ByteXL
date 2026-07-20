@@ -4,6 +4,8 @@ Tara is ready to fix the leaking database connection. She knows `__enter__` open
 
 This lesson builds the full class-based context manager she needs, handling both the success path and the exception path correctly.
 
+**Definition:** A class-based `context` manager implements `__enter__` for setup and `__exit__` for teardown, with the exception arguments in `__exit__` allowing different behavior on success versus failure.
+
 ![A DBConnection context manager with __enter__ opening the connection and __exit__ closing it with a rollback path for exceptions and a commit path for success](images/03_class_based_context_manager.png)
 
 ## A Database Connection Context Manager

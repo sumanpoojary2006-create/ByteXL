@@ -4,11 +4,13 @@ Three months into the project, Priya has four different notifier classes: `Email
 
 Priya wants Python to tell her at class-definition time if a notifier is missing the method the rest of the system expects. She does not want to wait until runtime to discover the omission. Python's `abc` module (Abstract Base Classes) exists precisely for this situation.
 
+**Definition:** `Abstract` Base Classes define a formal interface that concrete subclasses are required to implement, with Python raising a `TypeError` at instantiation time rather than at call time if a method is missing.
+
 ![](images/06_abstract_base_classes.png)
 
 ## What an Abstract Base Class Is
 
-An **Abstract Base Class** (ABC) is a class that defines an interface without providing implementations for all of it. It declares which methods every concrete subclass *must* define, and Python raises a `TypeError` if you try to instantiate a subclass that forgot one.
+An `Abstract Base Class` (ABC) is a class that defines an interface without providing implementations for all of it. It declares which methods every concrete subclass *must* define, and Python raises a `TypeError` if you try to instantiate a subclass that forgot one.
 
 ```python
 from abc import ABC, abstractmethod
@@ -83,7 +85,7 @@ sms.send_batch(["+91-999", "+91-888"], "Book available")
 # SMS to +91-888: Book available
 ```
 
-`send_batch` is a concrete method defined on the abstract class. It works correctly for every concrete subclass, regardless of how `send` is implemented, because it delegates to `self.send()`. This is the **template method pattern**: the abstract class defines the structure, concrete subclasses fill in the variable part.
+`send_batch` is a concrete method defined on the abstract class. It works correctly for every concrete subclass, regardless of how `send` is implemented, because it delegates to `self.send()`. This is the `template method pattern`: the abstract class defines the structure, concrete subclasses fill in the variable part.
 
 ## Abstract Properties
 

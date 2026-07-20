@@ -2,7 +2,9 @@
 
 Dev's snack list was never going to stay still for long. The moment he shares it in the class group, replies start pouring in: someone wants to add chips, someone else says scrap the biscuits because two people are bringing their own, and one friend insists his snack be the very first thing in the bag so it does not get crushed. Dev keeps editing the same list, again and again, right up until the bus leaves.
 
-With a string, this constant back-and-forth would be impossible, because strings are immutable and every small change forces you to build an entirely new one. A list is different. A list is **mutable**, which means you can add, remove, and rearrange its contents in place, without ever having to rebuild it from scratch. This lesson is about exactly that power.
+With a string, this constant back-and-forth would be impossible, because strings are immutable and every small change forces you to build an entirely new one. A list is different. A list is `mutable`, which means you can add, remove, and rearrange its contents in place, without ever having to rebuild it from scratch. This lesson is about exactly that power.
+
+**Definition:** A `list` is `mutable`, which means you can add, remove, and rearrange its contents in place, without ever having to rebuild it from scratch.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-6-lists-and-tuples/02_snack_list_editing.png)
 

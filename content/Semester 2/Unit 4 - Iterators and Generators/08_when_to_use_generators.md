@@ -4,19 +4,21 @@ Leila's import pipeline is shipping. But Arjun, watching it go live, asks the qu
 
 This final lesson of the unit draws a practical line: when generators are clearly the right choice, when lists are, and how to recognize which situation you are in.
 
+**Definition:** A `generator` is most useful when values can be produced one at a time, especially for large, streaming, or potentially unbounded data.
+
 ![A decision tree showing large stream or single-pass on one branch leading to generator, and small data or multiple passes on the other leading to list](images/08_when_to_use_generators.png)
 
 ## When Generators Are the Right Choice
 
 Generators excel in four situations:
 
-**Processing large or unbounded data**: when your data source is a file, a network stream, a database cursor, or anything that might be too large to hold in memory, a generator is always correct. A `for line in file:` loop is a generator-based pattern that works for a 100-byte file and a 100-gigabyte file identically.
+`Processing large or unbounded data`: when your data source is a file, a network stream, a database cursor, or anything that might be too large to hold in memory, a generator is always correct. A `for line in file:` loop is a generator-based pattern that works for a 100-byte file and a 100-gigabyte file identically.
 
-**Early termination**: when you expect to stop before reaching the end, a lazy generator is efficient regardless of how much data exists after the stopping point. `next(gen for gen in huge_dataset if condition)` reads nothing after the first match.
+`Early termination`: when you expect to stop before reaching the end, a lazy generator is efficient regardless of how much data exists after the stopping point. `next(gen for gen in huge_dataset if condition)` reads nothing after the first match.
 
-**Pipelining**: chaining a series of transformations and filters through multiple generators, as Leila did, avoids all intermediate collections. Data flows through the entire pipeline one item at a time.
+`Pipelining`: chaining a series of transformations and filters through multiple generators, as Leila did, avoids all intermediate collections. Data flows through the entire pipeline one item at a time.
 
-**Infinite sequences**: generators can represent sequences that have no end: counting integers, generating Fibonacci numbers, producing heartbeat timestamps. Lists cannot hold an infinite sequence; generators can represent one trivially.
+`Infinite sequences`: generators can represent sequences that have no end: counting integers, generating Fibonacci numbers, producing heartbeat timestamps. Lists cannot hold an infinite sequence; generators can represent one trivially.
 
 ```python
 def integers_from(n):

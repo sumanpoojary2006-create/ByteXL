@@ -4,6 +4,8 @@ Kiran has `load_catalog = add_timing(load_catalog)` working. But applying it to 
 
 This lesson introduces the `@` syntax, confirms it is exactly what she has already been doing, and applies it to build a real timing decorator.
 
+**Definition:** The `decorator` syntax `@name` placed above a function definition is exactly equivalent to `fn = name(fn)` placed immediately after the definition.
+
 ![A function definition with @add_timing above it, shown as equivalent to writing add_timing(fn) = fn below the definition, with the function card being handed into the decorator box](images/03_writing_a_simple_decorator.png)
 
 ## The @ Syntax Is Syntactic Sugar

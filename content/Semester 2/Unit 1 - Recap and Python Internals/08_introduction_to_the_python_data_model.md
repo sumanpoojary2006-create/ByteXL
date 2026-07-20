@@ -2,7 +2,9 @@
 
 At the end of Asel's first week, Rahul shows her something that surprises her. He writes a custom class, and then uses `len()` on it, adds two instances together with `+`, and loops over it with `for`. None of these behaviors are methods she wrote; they just work. When she asks how, he says: "Because everything in Python follows a contract. Your class tells Python how to behave in each situation by defining special methods. The `for` loop does not care what your object is; it just calls a specific method on it."
 
-That contract is called the **Python data model**, and the special methods that implement it are called **dunder methods** (short for double-underscore). This lesson introduces the model; Units 2 and 3 go much deeper.
+That contract is called the `Python data model`, and the special methods that implement it are called `dunder methods` (short for double-underscore). This lesson introduces the model; Units 2 and 3 go much deeper.
+
+**Definition:** The `Python` data model is a uniform contract that every object participates in by defining dunder methods.
 
 ![](images/08_python_data_model_contract.png)
 

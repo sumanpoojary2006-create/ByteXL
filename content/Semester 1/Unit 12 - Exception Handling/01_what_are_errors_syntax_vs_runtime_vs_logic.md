@@ -2,7 +2,9 @@
 
 Asha's college event signup form, the one she kept hardening with conditions back in the control flow unit, has grown into a small but genuinely used script. Over one busy week she hits three completely different kinds of "wrong." One afternoon, her script will not even start, and Python refuses before a single line runs. Another time, it starts fine, runs for a while, and then stops abruptly partway through, complaining loudly. A third time, it runs perfectly, prints a result with total confidence, and the result is simply incorrect, with no complaint from Python at all.
 
-These are three genuinely different categories of error, and learning to tell them apart on sight is the first real skill this unit builds: **syntax errors**, **runtime errors**, and **logic errors**.
+These are three genuinely different categories of error, and learning to tell them apart on sight is the first real skill this unit builds: `syntax errors`, `runtime errors`, and `logic errors`.
+
+**Definition:** A syntax error stops Python before any code runs, caught by Python's own grammar check; a `runtime` error lets valid code start running and then fails partway through, when a specific operation cannot proceed; and a logic error produces no error message at all, simply the wrong answer, discoverable only by checking the result.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-12-exception-handling/01_three_kinds_of_errors.png)
 

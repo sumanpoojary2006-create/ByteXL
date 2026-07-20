@@ -4,6 +4,8 @@ Tara's library system runs a background task that exports a daily catalog backup
 
 This final lesson in the unit covers exception suppression, the `contextlib.suppress` shortcut, and the guarantee that cleanup code runs even in the worst cases.
 
+**Definition:** A context manager guarantees `cleanup` after its block and may deliberately `suppress` an exception only when it can fully and safely handle that failure.
+
 ![A diagram showing two exit paths from __exit__: return False leading to the exception propagating up the call stack, and return True leading to exception suppressed and execution continuing normally after the with block](images/06_suppressing_exceptions.png)
 
 ## Suppressing an Exception in __exit__

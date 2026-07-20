@@ -4,6 +4,8 @@ Nadia's library system communicates with three external services: a catalog API 
 
 This lesson covers `json` and `csv` properly: not just how to read and write them, but how to handle the edge cases that break naive implementations.
 
+**Definition:** `json` and `csv` are Python's built-in formats for structured data exchange.
+
 ![Two file icons side by side: a JSON file with nested braces and an arrow showing json.loads/dumps converting it to and from a Python dict; a CSV file with a row grid and an arrow showing csv.reader/writer converting it to and from Python lists](images/08_json_csv.png)
 
 ## json: Reading and Writing JSON

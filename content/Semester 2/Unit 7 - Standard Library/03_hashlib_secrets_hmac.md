@@ -4,6 +4,8 @@ Nadia's library system needs a patron login feature. She wants to store password
 
 This lesson covers hashing (turning data into a fixed-length fingerprint), secure random token generation, and HMAC (verifying that a message has not been tampered with).
 
+**Definition:** HMAC verifies that a message was created by someone who knows the `secret` key and has not been modified in transit.
+
 ![Three modules shown side by side: hashlib for hashing passwords and files, secrets for generating unpredictable tokens, and hmac for verifying message integrity](images/03_hashlib_secrets_hmac.png)
 
 ## hashlib: Cryptographic Hashing

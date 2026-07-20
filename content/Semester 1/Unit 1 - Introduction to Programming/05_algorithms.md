@@ -2,7 +2,9 @@
 
 Picture this: a friend asks you to find a contact named "Ravi" in their phone. You do not scroll randomly, squinting at every name in a panic. Without even thinking, you follow a precise routine. You jump to the letter R, scan downward, and stop the instant you spot "Ravi", or you say "not found" once you have passed the R names.
 
-You just ran an **algorithm**, a clear, ordered, finite set of steps that solves a problem. You do this dozens of times a day, whether following a recipe, withdrawing cash, or giving someone directions to your house. The only new idea in programming is learning to design these step sequences deliberately and precisely, so that a literal minded machine can follow them. And that is no small thing, because every program you will ever write is, at its core, one or more algorithms.
+You just ran an `algorithm`, a clear, ordered, finite set of steps that solves a problem. You do this dozens of times a day, whether following a recipe, withdrawing cash, or giving someone directions to your house. The only new idea in programming is learning to design these step sequences deliberately and precisely, so that a literal minded machine can follow them. And that is no small thing, because every program you will ever write is, at its core, one or more algorithms.
+
+**Definition:** An `algorithm` is the language independent plan, the idea written in plain steps.
 
 ## What Turns "Some Steps" into a Real Algorithm
 
@@ -20,15 +22,15 @@ Two of these trip up beginners constantly, so they are worth a closer look.
 
 ## The Two Rules That Catch Beginners Out
 
-First, **definiteness**. Imagine you write the step "sort the list somehow". A human might shrug and figure it out, but a computer cannot act on "somehow". Compare that with "compare each pair of neighbours and swap them if they are out of order". The second is a real algorithmic step because there is exactly one way to read it. So ask yourself of every step: could two people interpret this differently? If yes, it is not definite enough yet.
+First, `definiteness`. Imagine you write the step "sort the list somehow". A human might shrug and figure it out, but a computer cannot act on "somehow". Compare that with "compare each pair of neighbours and swap them if they are out of order". The second is a real algorithmic step because there is exactly one way to read it. So ask yourself of every step: could two people interpret this differently? If yes, it is not definite enough yet.
 
-Second, **finiteness**. What happens if your steps can loop forever and never stop? Then, by definition, you do not have an algorithm. You have a trap. Every algorithm must have a guaranteed way to end, which is exactly why "infinite loops", which you will meet later, are treated as bugs.
+Second, `finiteness`. What happens if your steps can loop forever and never stop? Then, by definition, you do not have an algorithm. You have a trap. Every algorithm must have a guaranteed way to end, which is exactly why "infinite loops", which you will meet later, are treated as bugs.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44t2hhpwk/05_definite_and_finite_steps.png)
 
 ## Algorithm vs. Program: Not the Same Thing
 
-It is worth separating two words people often use interchangeably. An **algorithm** is the language independent plan, the idea written in plain steps. A **program** is that same plan written out in the strict grammar of one specific language, such as Python. The same algorithm for finding the largest of three numbers could become a Python program, a Java program, or even a careful paragraph of English instructions for a human to follow, and all of them would be correct, because they all implement the same underlying algorithm. You design the algorithm once. You can express it in many languages.
+It is worth separating two words people often use interchangeably. An `algorithm` is the language independent plan, the idea written in plain steps. A `program` is that same plan written out in the strict grammar of one specific language, such as Python. The same algorithm for finding the largest of three numbers could become a Python program, a Java program, or even a careful paragraph of English instructions for a human to follow, and all of them would be correct, because they all implement the same underlying algorithm. You design the algorithm once. You can express it in many languages.
 
 ## Designing an Algorithm in Plain Steps
 

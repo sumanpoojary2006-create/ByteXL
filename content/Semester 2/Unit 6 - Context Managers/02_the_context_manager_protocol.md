@@ -4,6 +4,8 @@ Tara now knows that `with open(...)` works because Python calls two methods on t
 
 This lesson answers those questions precisely. The context manager protocol is two methods: `__enter__` and `__exit__`. Once you know what each one receives and returns, building your own context manager is mechanical.
 
+**Definition:** The context manager `protocol` is two methods: `__enter__` and `__exit__`.
+
 ![A with statement shown as a timeline: __enter__ fires at the left edge, the body runs in the middle, __exit__ fires at the right edge whether the body succeeded or raised](images/02_context_manager_protocol.png)
 
 ## __enter__: Setting Up the Resource

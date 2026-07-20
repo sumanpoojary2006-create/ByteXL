@@ -2,6 +2,8 @@
 
 The moment an expression contains more than one operator, a question arises: which part runs first? You already know the answer from school maths, where multiplication happens before addition. Python follows the same kind of rulebook, called operator precedence, and getting it wrong is one of the sneakiest sources of bugs, because the program does not crash. It simply gives you the wrong number with complete confidence, and confident wrong numbers are far more dangerous than a loud error, because nothing on screen tells you to go back and check.
 
+**Definition:** `Operator precedence` decides which operation Python performs first, while `associativity` decides the evaluation direction when operators share the same precedence.
+
 ## Which Operator Goes First?
 
 Consider a simple expression:
@@ -58,7 +60,7 @@ Even when parentheses are not strictly necessary, adding them often makes an exp
 
 ## When Operators Are Equal: Associativity
 
-What if two operators have the same precedence, as in `100 - 30 - 20`? Python resolves these from left to right, so it computes `100 - 30` first, then subtracts 20, giving 50. This left-to-right rule is called associativity, and it applies to most operators. The main exception is the power operator, which works right to left, so `2 ** 3 ** 2` is `2 ** 9`, not `8 ** 2`.
+What if two operators have the same precedence, as in `100 - 30 - 20`? Python resolves these from left to right, so it computes `100 - 30` first, then subtracts 20, giving 50. This left-to-right rule is called associativity, and it applies to most operators. The main exception is the power operator, which works right to left, so `2 `3` 2` is `2 ** 9`, not `8 ** 2`.
 
 ## Your Turn: Spot the Silent Bug
 

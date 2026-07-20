@@ -4,6 +4,8 @@ Asha used to treat every error message as a sign that something had gone wrong w
 
 This final lesson steps back from any single pattern to ask the broader design question this whole unit has been building toward: how do you decide, deliberately, when to handle an error and when to let it surface?
 
+**Definition:** Robust `program` design treats errors as an expected, plannable part of how software meets the real world, not as evidence of failure, and the real skill is not catching everything, it is deciding deliberately, for each specific risk, whether graceful recovery or a loud, honest crash actually serves the program better.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-12-exception-handling/09_robust_design_expects_errors.png)
 
 ## Not Every Error Should Be Caught

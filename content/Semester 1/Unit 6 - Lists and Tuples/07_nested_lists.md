@@ -2,7 +2,9 @@
 
 The bus seating chart is the one piece of trip logistics Dev cannot flatten into a single list. It is not just forty names in a row; it is four rows of ten seats each, and a name belongs to a row and a position within that row. He needs to say "the student in row 2, seat 5" and get a single, exact answer, not search through forty names hoping he counted correctly.
 
-A single list cannot capture that shape on its own, because it only has one level of position. What Dev actually needs is a list whose items are themselves lists, a structure called a **nested list**, and it turns out to be the natural way to represent anything with rows and columns, just like the grids you built with nested loops in the looping unit.
+A single list cannot capture that shape on its own, because it only has one level of position. What Dev actually needs is a list whose items are themselves lists, a structure called a `nested list`, and it turns out to be the natural way to represent anything with rows and columns, just like the grids you built with nested loops in the looping unit.
+
+**Definition:** A `nested` list is a list containing other lists, the natural shape for anything with rows and columns, and reaching one value takes two indices: `data[row][column]`.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-6-lists-and-tuples/07_bus_seating_grid.png)
 

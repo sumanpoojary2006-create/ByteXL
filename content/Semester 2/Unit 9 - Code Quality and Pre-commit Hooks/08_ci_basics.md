@@ -4,6 +4,8 @@ Raj's `pre-commit` hooks catch most issues locally. But two developers worked on
 
 This lesson introduces the concept of CI and shows how to configure a simple GitHub Actions workflow that runs `ruff`, `black --check`, `mypy`, and `pytest` automatically on every push.
 
+**Definition:** `Continuous integration` automatically runs checks such as tests, linting, formatting, and type analysis whenever code changes are pushed or proposed for merging.
+
 ![A pull request timeline: developer pushes code, GitHub triggers a CI workflow, the workflow runs ruff/black/mypy/pytest, and the result (green checkmark or red X) appears on the pull request before any merge](images/08_ci_basics.png)
 
 ## What CI Is

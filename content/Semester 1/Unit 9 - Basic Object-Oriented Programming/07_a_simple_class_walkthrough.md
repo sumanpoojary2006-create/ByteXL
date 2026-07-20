@@ -4,6 +4,8 @@ Priya has all the pieces now: a class is a blueprint, an object is a specific in
 
 This lesson walks through two full classes from scratch: a `Student`, finishing the example this unit has been building all along, and a `BankAccount`, modeling something that changes meaningfully over time rather than just sitting there.
 
+**Definition:** A `class` combines attributes and methods into a reusable blueprint, and each `object` created from it receives its own state.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-9-basic-object-oriented-programming/07_two_complete_classes_walkthrough.png)
 
 ## Building the Student Class, Start to Finish

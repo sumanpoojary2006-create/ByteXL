@@ -2,7 +2,9 @@
 
 Naveen finally hands his hostel project over to next year's committee, the same handover the functions unit left him preparing for, except this time the problem is not unclear code, it is missing packages. The new committee clones his project folder, tries to run it, and Python immediately complains that `requests` is not installed. Naveen remembers installing it himself, months ago, into his own `venv`, a folder he never shared because virtual environments, as the earlier lesson explained, are not meant to be passed around directly. The new committee has no way of knowing what to install, or which versions, just by looking at his code.
 
-What Naveen actually needed to hand over was not the environment itself, but a clear, exact list of what it contained, so anyone, anywhere, could rebuild an identical environment in moments. That list is conventionally called a **requirements file**, and it is the key to a genuinely **reproducible setup**.
+What Naveen actually needed to hand over was not the environment itself, but a clear, exact list of what it contained, so anyone, anywhere, could rebuild an identical environment in moments. That list is conventionally called a `requirements file`, and it is the key to a genuinely `reproducible setup`.
+
+**Definition:** A `requirements.txt` file, generated with `pip freeze` and consumed with `pip install -r requirements.txt`, turns "it works on my machine" into "it works on any machine," by recording the exact packages and versions a project depends on, separately from the project's actual code.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-10-modules-and-packages/09_requirements_file_reproducibility.png)
 

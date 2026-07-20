@@ -4,21 +4,23 @@ Sam's team lead makes a suggestion that sounds backwards: "Write the test before
 
 This practice is called test-driven development (TDD). The workflow is three steps, run in a tight loop: Red (write a failing test), Green (write the minimum code to make it pass), Refactor (clean up the code while keeping the test green).
 
+**Definition:** `Test-driven development` repeats a short cycle: write a failing test, implement the smallest passing change, and refactor while the tests remain green.
+
 ![A cycle diagram showing three phases: Red (test fails, shown with a red indicator), Green (test passes with minimal code, shown in green), and Refactor (code is cleaned up, test stays green)](images/09_tdd_workflow.png)
 
 ## The Red-Green-Refactor Cycle
 
-**Red**: write a test for the function you want to build. Run it. It fails because the function does not exist yet. The failure is not a problem -- it is the goal of this step. A test that fails for the right reason confirms your test is correct.
+`Red`: write a test for the function you want to build. Run it. It fails because the function does not exist yet. The failure is not a problem -- it is the goal of this step. A test that fails for the right reason confirms your test is correct.
 
-**Green**: write the simplest code that makes the test pass. Do not optimize. Do not handle edge cases that are not yet tested. Just make it green.
+`Green`: write the simplest code that makes the test pass. Do not optimize. Do not handle edge cases that are not yet tested. Just make it green.
 
-**Refactor**: now that you have a passing test as a safety net, clean up the implementation. Extract duplication, rename variables, simplify logic. The test confirms you have not broken anything.
+`Refactor`: now that you have a passing test as a safety net, clean up the implementation. Extract duplication, rename variables, simplify logic. The test confirms you have not broken anything.
 
 Repeat.
 
 ## A TDD Session: Building a Reservation System
 
-**Step 1 -- Red**: Write a test for a function that does not yet exist.
+`Step 1 -- Red`: Write a test for a function that does not yet exist.
 
 ```python
 # tests/test_reservations.py
@@ -39,7 +41,7 @@ except AssertionError as e:
 
 Run `pytest`. It fails with `ModuleNotFoundError: No module named 'library.reservations'`. That is the expected red state.
 
-**Step 2 -- Green**: Write the minimum code to pass the test.
+`Step 2 -- Green`: Write the minimum code to pass the test.
 
 ```python
 # library/reservations.py
@@ -57,11 +59,11 @@ print(obj)
 
 Run `pytest`. The test passes. Green.
 
-**Step 3 -- Refactor**: Nothing to clean up yet. Move to the next test.
+`Step 3 -- Refactor`: Nothing to clean up yet. Move to the next test.
 
 ---
 
-**Step 4 -- Red**: Add a test for enqueuing a reservation.
+`Step 4 -- Red`: Add a test for enqueuing a reservation.
 
 ```python
 def test_add_reservation_increases_length():
@@ -103,7 +105,7 @@ Run `pytest`. Both tests now pass.
 
 ---
 
-**Step 5 -- Red**: Test next-in-queue retrieval.
+`Step 5 -- Red`: Test next-in-queue retrieval.
 
 ```python
 def test_next_patron_is_first_added():
@@ -130,7 +132,7 @@ except AssertionError as e:
     print("FAIL:", e)
 ```
 
-**Step 6 -- Green**:
+`Step 6 -- Green`:
 
 ```python
 def next_patron(self):
@@ -145,7 +147,7 @@ print(f"next_patron() ->", result)
 
 Tests pass.
 
-**Step 7 -- Refactor**: Change `self._queue` to a `collections.deque` for O(1) access from both ends, then verify all tests still pass.
+`Step 7 -- Refactor`: Change `self._queue` to a `collections.deque` for O(1) access from both ends, then verify all tests still pass.
 
 ## Why TDD Helps Design
 

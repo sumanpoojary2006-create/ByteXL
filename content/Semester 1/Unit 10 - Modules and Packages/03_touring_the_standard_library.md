@@ -1,8 +1,10 @@
 ## Introduction
 
-Naveen keeps almost reinventing things Python already ships with, simply because he has not yet been formally introduced to where they live. He once wrote his own little loop to guess a random number between 1 and 6 for a hostel dice game, never realising a ready-made tool already existed. He needed today's date stamped onto a report and typed it in by hand instead. Python's **standard library** is the large collection of modules that ships with every Python installation, with no separate install step at all, and a handful of them are worth knowing on sight.
+Naveen keeps almost reinventing things Python already ships with, simply because he has not yet been formally introduced to where they live. He once wrote his own little loop to guess a random number between 1 and 6 for a hostel dice game, never realising a ready-made tool already existed. He needed today's date stamped onto a report and typed it in by hand instead. Python's `standard library` is the large collection of modules that ships with every Python installation, with no separate install step at all, and a handful of them are worth knowing on sight.
 
 This lesson is a guided tour of four of the most useful ones: `math`, `random`, `datetime`, and `os`.
+
+**Definition:** Python's `standard library` is the large collection of modules that ships with every Python installation, with no separate install step at all, and a handful of them are worth knowing on sight.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-10-modules-and-packages/03_standard_library_toolboxes.png)
 

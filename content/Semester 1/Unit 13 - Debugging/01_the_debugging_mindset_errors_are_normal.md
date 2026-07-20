@@ -4,6 +4,8 @@ It is eleven at night, and Zara's first multi-file class project, a small RSVP t
 
 This unit is about what comes after an error appears: the deliberate, learnable skill of debugging, finding exactly why the program is not doing what you expected, and fixing it with confidence instead of guesswork.
 
+**Definition:** `Debugging` is a deliberate, learnable skill built on treating every error as information about a specific gap between expectation and reality, not as a verdict on your ability, and a calm, structured look at what actually happened almost always beats panicked, random changes.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-13-debugging/01_debugging_mindset_errors_are_normal.png)
 
 ## A Crash Is Information, Not a Verdict

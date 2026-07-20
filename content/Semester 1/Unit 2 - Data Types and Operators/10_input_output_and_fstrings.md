@@ -2,6 +2,8 @@
 
 Everything in this unit comes together the moment a program holds a conversation with the person using it. It asks a question, the user answers, and it responds with a clear, well-formatted message. Variables gave you a place to keep that answer, types told Python what kind of thing it was, and operators let you calculate with it. Output is the final, visible step, where all of that quiet internal work finally becomes a message a real person can read and trust. You have already used the two tools for this, `input()` to receive and `print()` to display. This lesson sharpens them, and introduces f-strings, the modern and far tidier way to build the text your program shows.
 
+**Definition:** `input()` collects text from the user and `print()` displays results, while f-strings, written as `f"...{value}..."`, are the clean, readable way to weave variables and calculations into your `output`.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44t836kc7/10_order_window_conversation.png)
 
 

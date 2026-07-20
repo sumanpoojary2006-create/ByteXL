@@ -4,6 +4,8 @@ Dev noticed the problem from the last lesson immediately: every subclass (`Book`
 
 The solution is `super()`, which lets a child class delegate part of its `__init__` to the parent's `__init__`. This is one of the most important patterns in object-oriented Python, and understanding it correctly removes a large class of common bugs.
 
+**Definition:** `super()` delegates to the parent class's method without hardcoding the parent's name, making inheritance chains clean and maintainable.
+
 ![](images/02_super_constructor_chain.png)
 
 ## super() Calls the Parent's Method

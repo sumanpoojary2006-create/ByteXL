@@ -4,6 +4,8 @@ Asel notices something odd in the project folder at the internship: a directory 
 
 She figures they must be related to the compilation step from the previous lesson, since Python compiles to bytecode before running. She is right. This lesson explains exactly what `__pycache__` contains, why it exists, when Python uses it versus recompiling, and when you should care about it.
 
+**Definition:** The `__pycache__` folder stores compiled `.pyc` bytecode files that Python can reuse to speed up future imports.
+
 ![](images/04_pycache_and_pyc_files.png)
 
 ## What a .pyc File Contains
@@ -16,7 +18,7 @@ __pycache__/
     utils.cpython-311.pyc
 ```
 
-The `.pyc` file has three parts: a **magic number** that encodes the Python version (so Python 3.11 will not accidentally use bytecode compiled by Python 3.10), a **timestamp** or hash of the original source file, and the **bytecode** itself in Python's `marshal` binary format.
+The `.pyc` file has three parts: a `magic number` that encodes the Python version (so Python 3.11 will not accidentally use bytecode compiled by Python 3.10), a `timestamp` or hash of the original source file, and the `bytecode` itself in Python's `marshal` binary format.
 
 The next time you run the program, Python checks whether the `.pyc` is still valid before recompiling.
 

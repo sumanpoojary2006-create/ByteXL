@@ -4,6 +4,8 @@ Sam's team lead asks a question he cannot answer: "What percentage of the code i
 
 Coverage analysis answers the question by running the test suite and tracking which lines of code were executed. Any line not executed by any test is a gap that could hide a bug.
 
+**Definition:** `Test coverage` measures which statements or branches execute during a test run, revealing untested code without proving that the existing tests are correct.
+
 ![A file shown with lines color-coded: green lines were executed during tests, red lines were never reached, creating a visual map of what the test suite does and does not cover](images/08_coverage.png)
 
 ## Installing pytest-cov

@@ -2,6 +2,8 @@
 
 Miguel can write `async def` functions and `await` them, but he does not have a mental model for what is actually happening. When three tasks are running "concurrently," what is doing the scheduling? What decides which task runs next when one pauses? The answer is the event loop, and understanding it makes async programs much easier to reason about.
 
+**Definition:** The `event` loop is a loop that runs in a single thread.
+
 ![A circular diagram showing the event loop cycling through ready tasks: run task A until it awaits, suspend A, run task B until it awaits, suspend B, check for completed I/O, wake up A, repeat](images/04_event_loop.png)
 
 ## What the Event Loop Is

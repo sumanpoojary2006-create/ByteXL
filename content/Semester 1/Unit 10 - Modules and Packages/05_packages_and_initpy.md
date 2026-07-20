@@ -2,7 +2,9 @@
 
 Naveen's one `billing.py` module has been joined by `formatting.py`, `trip_planner.py`, and `raffle.py`, and his project folder now has four loose module files sitting side by side at the top level, alongside `main.py`. Four feels manageable, but he can already see where this is going: a dozen modules scattered flat in one folder is really just last lesson's "one giant file" problem, one level up. He wants to group his related modules the same way folders on a computer group related files, with `billing.py` and `formatting.py` living together inside something like a `tools` folder.
 
-That grouping of related modules into a folder is called a **package**, and Python needs exactly one small extra file inside that folder to recognise it as one.
+That grouping of related modules into a folder is called a `package`, and Python needs exactly one small extra file inside that folder to recognise it as one.
+
+**Definition:** A Python `package` groups related modules inside a directory, conventionally using `__init__.py` to mark and initialise the package.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-10-modules-and-packages/05_modules_grouping_into_package.png)
 

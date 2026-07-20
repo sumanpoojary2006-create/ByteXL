@@ -4,6 +4,8 @@ Yuna has two pipelines: one that uses threads for I/O-bound work (downloading re
 
 `concurrent.futures` provides exactly this: a unified executor API that works the same way for threads and processes, with a cleaner pattern for collecting results.
 
+**Definition:** `concurrent.futures` provides exactly this: a unified executor API that works the same way for threads and processes, with a cleaner pattern for collecting results.
+
 ![Two executors shown side by side with identical API calls: ThreadPoolExecutor for I/O work and ProcessPoolExecutor for CPU work, both using submit() and as_completed()](images/06_concurrent_futures.png)
 
 ## The Executor Interface

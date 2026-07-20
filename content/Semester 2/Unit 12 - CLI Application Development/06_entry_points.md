@@ -4,6 +4,8 @@ Priya's colleagues run her tools as `python import_books.py`. She wants them to 
 
 Entry points are defined in `pyproject.toml`. When a package is installed with `pip install`, pip reads the entry points and creates a script in the environment's `bin/` directory that calls the CLI function directly.
 
+**Definition:** `Entry` points in `pyproject.toml` register CLI commands so that `pip install` creates runnable executables.
+
 ![A diagram showing pyproject.toml defining a [project.scripts] entry point, pip install creating a script in bin/, and the user running the command directly by name](images/06_entry_points.png)
 
 ## The [project.scripts] Section

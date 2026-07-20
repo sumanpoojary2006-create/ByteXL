@@ -4,6 +4,8 @@ Kabir is arranging the photo grid on his Instagram profile, and he fills it the 
 
 A single loop walks through one sequence, but many problems are built from rows and columns just like that wall: a multiplication grid, a seating chart, a pattern of stars, comparing every item with every other item. A single loop could place every photo in one long strip, but it has no natural way to start a new row once the current one is full; that decision needs a second loop watching over it. For these you place one loop inside another, creating a nested loop. The outer loop handles the rows, and the inner loop handles the columns within each row.
 
+**Definition:** A nested loop is a loop inside another loop, ideal for anything shaped like rows and columns: grids, tables, and `patterns`.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44tb5n423/06_nested_loops_grid.png)
 ## A Loop Inside a Loop
 

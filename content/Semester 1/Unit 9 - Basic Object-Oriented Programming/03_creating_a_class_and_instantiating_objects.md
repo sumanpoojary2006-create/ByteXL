@@ -4,6 +4,8 @@ Priya now has the vocabulary, class and object, but she still cannot write eithe
 
 This is the moment OOP stops being an analogy and starts being code you can run.
 
+**Definition:** A class is defined with `class Name:` and an indented body, following the CapitalisedWords naming convention, and an `object` is created from it by calling the class name with parentheses, a process called instantiation.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-9-basic-object-oriented-programming/03_class_definition_three_objects.png)
 
 ## Defining a Class
@@ -34,7 +36,7 @@ print(asha)             # <__main__.Student object at 0x...>
 print(type(asha))       # <class '__main__.Student'>
 ```
 
-This process is called **instantiation**, and `asha` is now an **instance** of the `Student` class, a real object built from that blueprint. The exact text after `object at` will differ every time you run this, since it is a memory address Python assigned, but the important part, `<__main__.Student object`, confirms `asha` really is a `Student`.
+This process is called `instantiation`, and `asha` is now an `instance` of the `Student` class, a real object built from that blueprint. The exact text after `object at` will differ every time you run this, since it is a memory address Python assigned, but the important part, `<__main__.Student object`, confirms `asha` really is a `Student`.
 
 ## Many Independent Objects From One Class
 

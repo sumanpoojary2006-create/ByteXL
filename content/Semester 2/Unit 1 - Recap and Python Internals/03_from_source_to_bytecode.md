@@ -1,8 +1,10 @@
 ## Introduction
 
-Asel spent ten minutes staring at the output of `ast.dump()` from the last lesson, and she finds it genuinely fascinating. But Rahul tells her the AST is only a halfway point. After the AST comes a translation step that produces something much closer to what actually runs, something called **bytecode**, and it turns out Python lets you read it.
+Asel spent ten minutes staring at the output of `ast.dump()` from the last lesson, and she finds it genuinely fascinating. But Rahul tells her the AST is only a halfway point. After the AST comes a translation step that produces something much closer to what actually runs, something called `bytecode`, and it turns out Python lets you read it.
 
 This lesson cracks open bytecode with Python's `dis` module (short for "disassembler"), which shows exactly what instructions CPython executes for any function or block of code. Reading bytecode is not something you will do every day, but doing it once changes how precisely you think about what Python is doing on your behalf.
+
+**Definition:** Python compiles source code into `bytecode`, a lower-level instruction format that the Python virtual machine executes.
 
 ![](images/03_source_to_bytecode_pipeline.png)
 
@@ -75,7 +77,7 @@ The leading `None` in `co_consts` is not a mistake in the output; every function
 
 ## Constant Folding: One Compile-Time Optimization
 
-CPython can compute certain expressions at compile time rather than at runtime. This is called **constant folding**.
+CPython can compute certain expressions at compile time rather than at runtime. This is called `constant folding`.
 
 ```python
 import dis

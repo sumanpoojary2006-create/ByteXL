@@ -2,6 +2,8 @@
 
 Meera is writing the bio for her page, and she wants it laid out nicely: the greeting on its own line, the next line indented a little, and a short quoted phrase from a happy customer included with its quotation marks intact. She presses Enter to drop text onto a new line and Tab to indent, and types the quote carefully so the quotation marks sit inside the text without ending it early. How do you put a line break inside a string, when pressing Enter would just end your line of code? How do you include a quotation mark when quotes already mark the start and end of the string? Python solves these with escape sequences, special codes that begin with a backslash, and with triple-quoted strings for text that spans many lines. These are the tools for shaping how text is laid out. Formatting in the last lesson controlled how a single value looked; this lesson controls the structure of the text around it, the line breaks, the indents, and the quote marks Meera needs sitting safely inside her bio.
 
+**Definition:** Escape `sequences` are backslash codes that shape text, with `\n` for a new line, `\t` for a tab, `\"` for a quote inside quotes, and `\\` for a literal backslash.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-5-strings/08_escape_multiline.png)
 
 ## The Backslash and Escape Sequences

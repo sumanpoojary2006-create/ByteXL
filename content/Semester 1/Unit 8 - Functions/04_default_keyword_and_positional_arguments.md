@@ -2,7 +2,9 @@
 
 The mess committee finally adds that service charge, but only sometimes, for special dinners, not the everyday split. If Naveen makes the service charge a required parameter, every single call to `split_cost` now needs a number for it, even the ordinary splits that never had one before, and every old call across his scripts suddenly breaks. What he actually wants is a parameter that is usually 0 and only needs to be mentioned on the rare calls where it matters.
 
-Python lets a parameter carry a **default value**, used automatically whenever a call leaves it out. Paired with that, **keyword arguments** let you name which parameter you are supplying, instead of relying purely on position, which turns out to be just as useful.
+Python lets a parameter carry a `default value`, used automatically whenever a call leaves it out. Paired with that, `keyword arguments` let you name which parameter you are supplying, instead of relying purely on position, which turns out to be just as useful.
+
+**Definition:** A keyword `argument` names the parameter it is filling, directly in the call, removing any dependence on order.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-8-functions/04_default_argument_fallback.png)
 

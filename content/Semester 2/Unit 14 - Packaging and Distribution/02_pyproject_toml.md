@@ -4,6 +4,8 @@ Dev types `pip install .` in the project root. pip looks for a file named `pypro
 
 `pyproject.toml` replaced the older `setup.py` and `setup.cfg` files. It is the single source of truth for every tool in the project: the package manager, the linter, the formatter, and the test runner all read from it.
 
+**Definition:** `pyproject.toml` is the single configuration file for a modern Python project: package metadata, dependencies, extras groups, and tool configuration all live here.
+
 ![A pyproject.toml file in the center with arrows pointing outward to pip, ruff, black, mypy, and pytest -- all reading their configuration from the same file](images/02_pyproject_toml.png)
 
 ## Minimal pyproject.toml

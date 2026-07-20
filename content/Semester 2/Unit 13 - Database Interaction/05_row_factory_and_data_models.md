@@ -4,6 +4,8 @@ Dev's query results look like this: `(1, '978-0-13-235088-4', 'Clean Code', 'Rob
 
 The `row_factory` setting changes what `fetchall` returns. With one line, tuples become dictionaries. With another line, they become custom objects. Database code stops depending on column order.
 
+**Definition:** A custom `factory` function converts rows to dataclasses, which carry type information and IDE completion.
+
 ![A fetchall result transforming from tuple (row[2]) to dictionary (row["title"]) to dataclass (row.title) as the row_factory changes](images/05_row_factory_and_data_models.png)
 
 ## The Default: Tuples

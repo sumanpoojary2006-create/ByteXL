@@ -4,6 +4,8 @@ Sam's `notify_patron` function sends an email through an external SMTP server. W
 
 The solution is mocking: replacing the real external dependency with a controlled fake during testing. The fake behaves exactly as the real thing when told to, and records what calls were made to it, allowing the test to verify behavior without touching the external system.
 
+**Definition:** The solution is `mocking`: replacing the real external dependency with a controlled fake during testing.
+
 ![A test shown with two paths from notify_patron: one path going to the real SMTP server (crossed out), and one path going to a mock that records calls and returns a fake response](images/07_mocking_patching.png)
 
 ## unittest.mock.MagicMock

@@ -2,7 +2,9 @@
 
 Tara's merch stall sales would be perfect in a spreadsheet: item name in one column, quantity sold in the next, price in the next, one row per sale. Plain text files do not naturally have columns at all, only lines, so she has been separating values with commas inside each line by hand, "T-shirt,2,350", and splitting them back apart with `.split(",")` whenever she reads them, exactly the string technique from several units ago. It works, but every comma inside an item name, or every tiny formatting slip, breaks the split in a way that is easy to get wrong.
 
-This comma-separated layout is common enough to have its own standard format, called **CSV**, short for comma-separated values, and Python's built-in `csv` module handles its real-world quirks far more reliably than splitting strings by hand ever could.
+This comma-separated layout is common enough to have its own standard format, called `CSV`, short for comma-separated values, and Python's built-in `csv` module handles its real-world quirks far more reliably than splitting strings by hand ever could.
+
+**Definition:** A CSV `file` is plain text, where each line is a row, and commas separate that row's columns.
 
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-11-file-handling/07_csv_rows_and_columns.png)
 
@@ -17,7 +19,7 @@ Mug,1,150
 Badge,5,50
 ```
 
-The very first line is conventionally a **header**, naming each column, though nothing about the file format strictly requires one.
+The very first line is conventionally a `header`, naming each column, though nothing about the file format strictly requires one.
 
 ## Writing a CSV File
 

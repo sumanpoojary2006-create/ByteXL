@@ -2,6 +2,8 @@
 
 After fixing the threading race conditions, Yuna still needs to speed up the CPU-intensive TF-IDF computation. She has confirmed with profiling that this step uses 100% CPU and no I/O. Threads cannot help. She needs `multiprocessing`: each worker runs in a separate process with its own GIL, enabling genuine parallel execution on multiple CPU cores.
 
+**Definition:** `multiprocessing.Process` works like `threading.Thread` but creates a new process instead: The `if __name__ == "__main__":` guard is required when using `multiprocessing` on Windows and macOS (which use the `spawn` start method).
+
 ![Four separate processes shown running on four CPU cores simultaneously, each with its own GIL and memory space, all processing a different slice of the catalog](images/05_multiprocessing.png)
 
 ## multiprocessing.Process
@@ -104,11 +106,11 @@ if __name__ == "__main__":
 
 ## Caveats of Multiprocessing
 
-**Pickling**: data passed between processes is serialized using `pickle`. Functions, classes, and arguments must all be picklable. Lambda functions and closures often cannot be pickled.
+`Pickling`: data passed between processes is serialized using `pickle`. Functions, classes, and arguments must all be picklable. Lambda functions and closures often cannot be pickled.
 
-**Startup overhead**: creating a process is much slower than creating a thread. For short-running tasks, the startup overhead dominates and multiprocessing may be slower than single-threaded.
+`Startup overhead`: creating a process is much slower than creating a thread. For short-running tasks, the startup overhead dominates and multiprocessing may be slower than single-threaded.
 
-**Memory**: each process has its own copy of the data. If you pass 1 GB of records to 8 processes, you use 8 GB of memory.
+`Memory`: each process has its own copy of the data. If you pass 1 GB of records to 8 processes, you use 8 GB of memory.
 
 ```python
 # CORRECT: use a named function (lambdas cannot be pickled across processes)

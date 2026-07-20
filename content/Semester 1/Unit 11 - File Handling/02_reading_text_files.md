@@ -4,6 +4,8 @@ Last year's fest coordinator left behind a text file, `attendees.txt`, one wrist
 
 This lesson covers reading: `open()` to access a file, and `read()`, `readlines()`, and a `for` loop directly over the file, the three ways to actually pull its contents into your program.
 
+**Definition:** Reading a text `file` loads stored characters into a program, either all at once or incrementally, so the code can inspect and process them.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/unit-11-file-handling/02_three_ways_to_read_a_file.png)
 
 ## The File This Lesson Reads
@@ -26,7 +28,7 @@ print(file)    # a file object, ready to read from
 file.close()
 ```
 
-The `"r"` means **read mode**, and it is actually the default if you leave the mode out entirely, but writing it explicitly states your intent clearly to anyone reading the code. Opening a file in read mode requires that file to already exist; if `attendees.txt` is not actually present in the same folder as your script, this line raises a `FileNotFoundError`, a pitfall the final lesson of this unit covers properly.
+The `"r"` means `read mode`, and it is actually the default if you leave the mode out entirely, but writing it explicitly states your intent clearly to anyone reading the code. Opening a file in read mode requires that file to already exist; if `attendees.txt` is not actually present in the same folder as your script, this line raises a `FileNotFoundError`, a pitfall the final lesson of this unit covers properly.
 
 ## read(): The Whole File as One String
 

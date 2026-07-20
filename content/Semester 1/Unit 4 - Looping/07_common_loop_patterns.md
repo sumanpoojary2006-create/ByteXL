@@ -4,6 +4,8 @@ After the class fest, Kabir sits down with the sign-up sheet and notices that ev
 
 Once you have written a handful of loops, you start to notice that the same few shapes keep returning: counting how many things match, adding values up, finding the largest or smallest, searching for a particular item. These are the common loop patterns, and they are worth learning by name, because almost every loop problem you meet is one of them, or a small combination of them. Kabir did not invent four separate strategies for his sign-up sheet; he reused the same handful of moves on four different questions, which is precisely the habit this lesson wants to build in you. Recognise the pattern and the code almost writes itself.
 
+**Definition:** Most loops are one of a few familiar `patterns`: counting matches, summing values, tracking a running minimum or maximum, and searching with a flag and a `break`.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44tb5ngqj/07_count_and_sum_sheet.png)
 ## The Counting Pattern
 

@@ -4,6 +4,8 @@ Asha is filling a college event signup form on her phone, and it keeps stopping 
 
 The form on Asha's screen was not being difficult for its own sake; it was refusing to move forward with data it could not trust, exactly the discipline a well-written program needs. Input validation is the habit of checking input before you rely on it, and it brings together every idea in this unit: conditions, comparisons, truthiness, and clear branching.
 
+**Definition:** Input `validation` is the habit of checking input before you rely on it, and it brings together every idea in this unit: conditions, comparisons, truthiness, and clear branching.
+
 ![](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44t8hpwft/09_input_validation_gatekeeper.png)
 
 ## Never Trust Raw Input
