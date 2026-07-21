@@ -5,20 +5,6 @@
 
 **Definition:** A checkpoint marks a point where every previously logged change is guaranteed to already be written to the actual data files, giving `recovery` a recent, known starting point instead of forcing it to replay a `database`'s entire history after every crash, at the cost of periodic disk activity that has to be balanced against how quickly the system needs to recover.
 
-<!--
-IMAGE PROMPT  ->  generate as images/03_intro_checkpoints_bounding_how_far_back_recovery_must.png   (16:9 cinematic hero image, place here, right after the Introduction)
-
-CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
-
-STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
-
-SCENE: A simple visual of the Introduction: - Write-ahead logging guarantees that every change is recorded before it is applied, but it leaves an obvious question unanswered: if the log records every change forever, a database that has been running for months would have to replay months of log entries.
-
-ON-IMAGE TEXT: show a short bold title "Checkpoints Bounding How Far Back Recovery Must Go" plus only these few labels, large and legible: Checkpoints, Bounding, Recovery. Keep text minimal, no sentences.
-
-GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
--->
-
 ![Intro visual for checkpoints bounding how far back recovery must go](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_checkpoints_bounding_how_far_back_recovery_must_go_actual3d_a0599dd7.png)
 
 ## What a Checkpoint Actually Does

@@ -6,20 +6,6 @@ Committed work must be preserved, durability demands it. Uncommitted work must b
 
 **Definition:** Redo reapplies every committed `transaction`'s changes to guarantee durability, and undo reverses every uncommitted `transaction`'s changes to guarantee atomicity, and together the two passes are what actually turn a crashed, potentially inconsistent set of data files back into an exact, correct reflection of every `transaction` that had genuinely finished before the crash.
 
-<!--
-IMAGE PROMPT  ->  generate as images/04_intro_undo_and_redo_how_a_database_rolls_back_and_repl.png   (16:9 cinematic hero image, place here, right after the Introduction)
-
-CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
-
-STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
-
-SCENE: A simple visual of the Introduction: When a database restarts after a crash, the log holds a record of everything that happened since the last checkpoint, but that log contains two very different kinds of entries mixed together: changes from transactions that had already committed before the.
-
-ON-IMAGE TEXT: show a short bold title "Undo And Redo How A Database Rolls Back" plus only these few labels, large and legible: Rolls, Restarts, After. Keep text minimal, no sentences.
-
-GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
--->
-
 ![Intro visual for undo and redo how a database rolls back](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_undo_and_redo_how_a_database_rolls_back_and_replay_actual3d_b1af3dde.png)
 
 ## Redo: Replaying Committed Work That Never Made It to Disk
