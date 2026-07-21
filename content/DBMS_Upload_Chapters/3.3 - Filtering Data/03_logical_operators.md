@@ -10,8 +10,8 @@ The problem is that SQL read his conditions in an order he did not intend, and f
 
 ## Combining Conditions with AND and OR
 
-- `AND` keeps a `row` only when every condition attached to it is true.
-- `OR` keeps a `row` when at least one condition is true.
+- `AND` keeps a row only when every condition attached to it is true.
+- `OR` keeps a row when at least one condition is true.
 
 Both let a single `WHERE` clause test more than one thing at a time.
 
@@ -80,11 +80,11 @@ Expected output:
 | Discrete Mathematics | Mathematics |
 | Microeconomics | Economics |
 
-This returns three `rows`: `Linear Algebra`, `Discrete Mathematics`, and `Microeconomics`. `OR` only needs one side of the condition to be true, so every course in either department qualifies.
+This returns three rows: `Linear Algebra`, `Discrete Mathematics`, and `Microeconomics`. `OR` only needs one side of the condition to be true, so every course in either department qualifies.
 
 ## Where Parentheses Actually Matter
 
-Here is the `query` Varun originally wrote for his shortlist, exactly as he typed it.
+Here is the query Varun originally wrote for his shortlist, exactly as he typed it.
 
 <iframe
  frameBorder="0"
@@ -122,14 +122,14 @@ Expected output:
 | Data Structures | Computer Science | 4 |
 
 - Now only `Database Systems` and `Data Structures` come back.
-- `Microeconomics` is correctly dropped, since it fails the `credits > 3` test once that test is applied to the right group of `rows`.
+- `Microeconomics` is correctly dropped, since it fails the `credits > 3` test once that test is applied to the right group of rows.
 - The SQL text barely changed, four characters, but the meaning changed completely, which is exactly why relying on operator precedence to do the right thing by accident is worth avoiding whenever `AND` and `OR` appear in the same `WHERE` clause.
 
 ![Parentheses grouping department choices before applying the credits greater than 3 condition](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_parentheses_group_conditions.png)
 
 ## NOT Reverses a Condition
 
-`NOT` flips a condition's truth value: `rows` that would have matched are excluded, and `rows` that would not have matched are included instead.
+`NOT` flips a condition's truth value: rows that would have matched are excluded, and rows that would not have matched are included instead.
 
 <iframe
  frameBorder="0"
@@ -184,7 +184,7 @@ This returns `Linear Algebra`, `Discrete Mathematics`, and `Microeconomics`, the
 
 ## Your Turn
 
-Write a `query` against `courses` for departments that are Mathematics or Computer Science, restricted to courses worth at least four credits, and use parentheses so the grouping is unambiguous.
+Write a query against `courses` for departments that are Mathematics or Computer Science, restricted to courses worth at least four credits, and use parentheses so the grouping is unambiguous.
 
 <iframe
  frameBorder="0"
@@ -206,4 +206,4 @@ This should return exactly `Database Systems` and `Data Structures`. Both Mathem
 
 `AND`, `OR`, and `NOT` let a single `WHERE` clause weigh several conditions at once. Because `AND` binds more tightly than `OR`, parentheses matter whenever the intended grouping is not obvious. Varun's correctly grouped condition, `(department = 'Computer Science' OR department = 'Economics') AND credits > 3`, now returns only the two qualifying Computer Science courses instead of allowing Microeconomics to slip through.
 
-With numeric, date, and combined conditions covered, the next gap is text that is not an exact match at all. Pattern matching provides the tools for finding `rows` from only part of a stored value.
+With numeric, date, and combined conditions covered, the next gap is text that is not an exact match at all. Pattern matching provides the tools for finding rows from only part of a stored value.

@@ -2,9 +2,9 @@
 
 Kabir's average-salary subquery worked because it returned exactly one value, a single number that could sit on the right side of a `>` comparison.
 
-His next question does not have that shape: "which employees work in the same department as Rajat Bhatia or Vikas Malhotra?" Finding the departments those two employees belong to could return more than one department, which means the subquery behind it would return more than one `row`, and a plain `=` or `>` comparison cannot compare a single value against a list.
+His next question does not have that shape: "which employees work in the same department as Rajat Bhatia or Vikas Malhotra?" Finding the departments those two employees belong to could return more than one department, which means the subquery behind it would return more than one row, and a plain `=` or `>` comparison cannot compare a single value against a list.
 
-SQL provides different operators, **`IN`**, **`ANY`**, and **`ALL`**, specifically for subqueries that return more than one `row`.
+SQL provides different operators, **`IN`**, **`ANY`**, and **`ALL`**, specifically for subqueries that return more than one row.
 
 **Definition:** A subquery inside `WHERE` can compare against a single value directly, or against a whole list of values using `IN`, `NOT IN`, `ANY`, or `ALL`, each suited to a different shape of question, with `NOT IN` needing an explicit guard against `NULL` that `NOT EXISTS` does not.
 
@@ -12,7 +12,7 @@ SQL provides different operators, **`IN`**, **`ANY`**, and **`ALL`**, specifical
 
 ## A Subquery Returning Exactly One Value
 
-The `employees` `table` from the previous lesson is the setup here again.
+The `employees` table from the previous lesson is the setup here again.
 
 ## Source Data Used in This Lesson
 
@@ -66,7 +66,7 @@ Expected output:
 | --- | --- |
 | Ananya Sharma | 95000.00 |
 
-`MAX(salary)` always returns exactly one number, so this comparison with a plain `=` works without any special handling: it finds whichever employee earns the single highest salary in the `table`.
+`MAX(salary)` always returns exactly one number, so this comparison with a plain `=` works without any special handling: it finds whichever employee earns the single highest salary in the table.
 
 ![WHERE subqueries using one scalar value or many values with IN](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_where_scalar_vs_in_list_subquery.png)
 
@@ -90,7 +90,7 @@ Expected output:
 | Meghna Iyer | Engineering |
 | Vikas Malhotra | Marketing |
 
-The inner `query` returns two departments, Engineering and Marketing, and `IN` checks whether the outer `row`'s `department` matches any value in that returned list, exactly the same way `IN` works with a hand-typed list of literal values. This returns every Engineering and Marketing employee, four `rows` in total, without Kabir ever needing to know in advance which departments those two employees belonged to.
+The inner query returns two departments, Engineering and Marketing, and `IN` checks whether the outer row's `department` matches any value in that returned list, exactly the same way `IN` works with a hand-typed list of literal values. This returns every Engineering and Marketing employee, four rows in total, without Kabir ever needing to know in advance which departments those two employees belonged to.
 
 ## Using ANY and ALL for Comparisons Against a List
 
@@ -113,7 +113,7 @@ Expected output:
 | Sameer Khan | 65000.00 |
 | Vikas Malhotra | 60000.00 |
 
-`salary > ANY (subquery)` is true if the outer `row`'s salary beats at least one value returned by the subquery.
+`salary > ANY (subquery)` is true if the outer row's salary beats at least one value returned by the subquery.
 
 The Sales department's salaries are 65000.00 and 58000.00, so this returns everyone earning more than the lower of those two figures, since beating just one of them is enough to satisfy `ANY`.
 
@@ -132,14 +132,14 @@ Expected output:
 | Rajat Bhatia | 78000.00 |
 | Meghna Iyer | 82000.00 |
 
-- `salary > ALL (subquery)` is stricter: it is only true if the outer `row`'s salary beats every single value the subquery returns.
+- `salary > ALL (subquery)` is stricter: it is only true if the outer row's salary beats every single value the subquery returns.
 - Here, that means beating both 65000.00 and 58000.00, so this returns only employees earning more than the higher Sales salary, a shorter list than the `ANY` version.
 
 ![ANY checking at least one returned value while ALL checks every returned value](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_any_vs_all_subquery_comparison.png)
 
 ## Why NOT IN Needs Extra Care
 
-`NOT IN` is the negated form of `IN`, but it carries the same risk covered when anti `joins` were introduced: if the subquery can return a `NULL`, `NOT IN` silently returns no `rows` at all, for every outer `row`, with no error to signal the problem.
+`NOT IN` is the negated form of `IN`, but it carries the same risk covered when anti joins were introduced: if the subquery can return a `NULL`, `NOT IN` silently returns no rows at all, for every outer row, with no error to signal the problem.
 
 <iframe
  frameBorder="0"
@@ -160,9 +160,9 @@ Expected output:
 The `WHERE manager_id IS NOT NULL` filter inside the subquery is not optional here:
 
 - Without it, the subquery's result would include a `NULL` for every employee who has no manager.
-- That single `NULL` in the list would silently break the entire `NOT IN` comparison for every `row` in the outer `query`.
+- That single `NULL` in the list would silently break the entire `NOT IN` comparison for every row in the outer query.
 
-`NOT EXISTS`, covered earlier as part of anti `joins`, avoids this trap entirely and is generally the safer choice whenever the compared `column` might contain `NULL`.
+`NOT EXISTS`, covered earlier as part of anti joins, avoids this trap entirely and is generally the safer choice whenever the compared column might contain `NULL`.
 
 ## Subquery Operators in WHERE at a Glance
 
@@ -205,7 +205,7 @@ The `WHERE manager_id IS NOT NULL` filter inside the subquery is not optional he
 
 ## Your Turn
 
-Kabir wants every employee who earns less than the lowest salary in Engineering. Write a `query` against `employees` above using `ALL` to express this.
+Kabir wants every employee who earns less than the lowest salary in Engineering. Write a query against `employees` above using `ALL` to express this.
 
 <iframe
  frameBorder="0"
@@ -214,7 +214,7 @@ Kabir wants every employee who earns less than the lowest salary in Engineering.
  width="100%"
 ></iframe>
 
-If your `query` is `SELECT employee_name, salary FROM employees WHERE salary < ALL (SELECT salary FROM employees WHERE department = 'Engineering');`, it returns Sameer Khan, Pooja Reddy, and Vikas Malhotra, since all three earn less than every Engineering salary, including the lowest one at 78000.00.
+If your query is `SELECT employee_name, salary FROM employees WHERE salary < ALL (SELECT salary FROM employees WHERE department = 'Engineering');`, it returns Sameer Khan, Pooja Reddy, and Vikas Malhotra, since all three earn less than every Engineering salary, including the lowest one at 78000.00.
 
 
 Expected output:
@@ -229,4 +229,4 @@ Expected output:
 
 A subquery inside `WHERE` can compare against a single value directly, or against a whole list of values using `IN`, `NOT IN`, `ANY`, or `ALL`, each suited to a different shape of question, with `NOT IN` needing an explicit guard against `NULL` that `NOT EXISTS` does not. Kabir can now compare an employee against a computed department, or against every value in an entire salary list, all in a single statement.
 
-Subqueries do not have to live only inside `WHERE`; the next lesson puts one in place of an entire `table`.
+Subqueries do not have to live only inside `WHERE`; the next lesson puts one in place of an entire table.

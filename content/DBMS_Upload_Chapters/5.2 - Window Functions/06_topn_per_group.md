@@ -1,16 +1,16 @@
 ## Introduction
 
-The sales director's final request ties together nearly everything in this chapter: "show me the top 2 salespeople by revenue, within each region." This is a genuinely common business question, a top-N-per-group report, and it needs partitioned ranking, since "top 2" has to reset for every region rather than apply once across the whole company, combined with a way to filter down to just those top-ranked `rows`.
+The sales director's final request ties together nearly everything in this chapter: "show me the top 2 salespeople by revenue, within each region." This is a genuinely common business question, a top-N-per-group report, and it needs partitioned ranking, since "top 2" has to reset for every region rather than apply once across the whole company, combined with a way to filter down to just those top-ranked rows.
 
-Ranking `functions` alone cannot filter, since `window functions` are not allowed inside `WHERE`, the same restriction noted when ranking `functions` were first introduced. Solving this cleanly needs a ranking `function` wrapped in a CTE.
+Ranking functions alone cannot filter, since `window functions` are not allowed inside `WHERE`, the same restriction noted when ranking functions were first introduced. Solving this cleanly needs a ranking function wrapped in a CTE.
 
-**Definition:** A top-N-per-group report combines a ranking `function` partitioned by the grouping `column` with a CTE that makes the rank filterable, and the choice between `ROW_NUMBER`, `RANK`, and `DENSE_RANK` decides exactly how ties are handled in the result.
+**Definition:** A top-N-per-group report combines a ranking function partitioned by the grouping column with a CTE that makes the rank filterable, and the choice between `ROW_NUMBER`, `RANK`, and `DENSE_RANK` decides exactly how ties are handled in the result.
 
 ![Intro visual for topn per group](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_topn_per_group.png)
 
 ## Ranking Within Each Region
 
-The `sales` `table` now includes a `region` `column` so rankings can be scoped per region.
+The `sales` table now includes a `region` column so rankings can be scoped per region.
 
 ## Source Data Used in This Lesson
 
@@ -81,7 +81,7 @@ Every region starts its own count from 1, which is exactly the "within each regi
 
 ## Filtering to the Top N Using a CTE
 
-Since `region_rank` cannot be referenced directly in `WHERE` within the same `query` that defines it, the ranked result needs to be named with a CTE first, then filtered from there.
+Since `region_rank` cannot be referenced directly in `WHERE` within the same query that defines it, the ranked result needs to be named with a CTE first, then filtered from there.
 
 <iframe
  frameBorder="0"
@@ -100,11 +100,11 @@ Expected output:
 | Sana Fatima | South | 21000.00 | 1 |
 | Tarun Bakshi | South | 21000.00 | 1 |
 
-The CTE `ranked_sales` computes the ranking exactly as before, and the outer `query` then treats `region_rank` as an ordinary `column`, filterable with a plain `WHERE`. This returns 5 `rows` in total, not 6: North and South each contribute their expected 2 `rows`, but East has only one salesperson to begin with, Kunal Verma, so its entire top 2 is just that single `row`.
+The CTE `ranked_sales` computes the ranking exactly as before, and the outer query then treats `region_rank` as an ordinary column, filterable with a plain `WHERE`. This returns 5 rows in total, not 6: North and South each contribute their expected 2 rows, but East has only one salesperson to begin with, Kunal Verma, so its entire top 2 is just that single row.
 
 South's tie is handled cleanly too, Sana Fatima and Tarun Bakshi both hold rank 1 and both survive the `region_rank <= 2` filter, while Reema Ghosh, in third place by value, lands on rank 3 thanks to `RANK`'s skip-ahead behavior and is correctly excluded.
 
-Had South instead had a three-way tie for first place, all three tied `rows` would have survived the same filter, since every one of them would hold rank 1, which is worth knowing before assuming a top-N `query` always returns exactly N `rows` per group.
+Had South instead had a three-way tie for first place, all three tied rows would have survived the same filter, since every one of them would hold rank 1, which is worth knowing before assuming a top-N query always returns exactly N rows per group.
 
 ![A CTE computing window ranks before an outer query filters to top rows](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_cte_filtering_window_rank.png)
 
@@ -129,7 +129,7 @@ Expected output:
 | Sana Fatima | South | 21000.00 |
 | Tarun Bakshi | South | 21000.00 |
 
-This returns at most 2 `rows` per region, 5 total here, since `ROW_NUMBER` never produces a tie in its numbering even when the underlying values tie, so North and South each contribute their full 2, while East, with only one salesperson on record, can only ever contribute the 1 `row` it actually has.
+This returns at most 2 rows per region, 5 total here, since `ROW_NUMBER` never produces a tie in its numbering even when the underlying values tie, so North and South each contribute their full 2, while East, with only one salesperson on record, can only ever contribute the 1 row it actually has.
 
 Whether `RANK`, `DENSE_RANK`, or `ROW_NUMBER` is the right choice for a top-N report depends entirely on how the business wants ties handled, a decision worth confirming explicitly rather than guessing.
 
@@ -162,7 +162,7 @@ This CTE-plus-ranking-plus-filter shape generalizes far beyond sales regions: to
 
 ## Your Turn
 
-Find the single lowest-selling salesperson in each region, using `RANK`. Write that `query` against the `sales` `table` above.
+Find the single lowest-selling salesperson in each region, using `RANK`. Write that query against the `sales` table above.
 
 <iframe
  frameBorder="0"
@@ -184,6 +184,6 @@ Expected output:
 
 ## Conclusion
 
-A top-N-per-group report combines a ranking `function` partitioned by the grouping `column` with a CTE that makes the rank filterable, and the choice between `ROW_NUMBER`, `RANK`, and `DENSE_RANK` decides exactly how ties are handled in the result. This pattern closes out the chapter by combining partitioning, ordering, ranking, and CTEs into a single, genuinely useful report shape.
+A top-N-per-group report combines a ranking function partitioned by the grouping column with a CTE that makes the rank filterable, and the choice between `ROW_NUMBER`, `RANK`, and `DENSE_RANK` decides exactly how ties are handled in the result. This pattern closes out the chapter by combining partitioning, ordering, ranking, and CTEs into a single, genuinely useful report shape.
 
 With subqueries, CTEs, and `window functions` all in place, the course moves next into keeping data correct and consistent as multiple changes happen at once.

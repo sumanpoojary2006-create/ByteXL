@@ -1,18 +1,18 @@
 ## Introduction
 
-- A `backup` that has never been tested by actually restoring it is, in a very real sense, unverified: it might be corrupted, incomplete, or simply fail to apply cleanly.
+- A backup that has never been tested by actually restoring it is, in a very real sense, unverified: it might be corrupted, incomplete, or simply fail to apply cleanly.
 - If nobody tests it, nobody knows whether it works until the moment it is genuinely needed.
 - That is the worst possible time to discover a problem.
-- **Restore and `recovery`** is the practice of reconstructing a working `database` from a `backup`.
+- **Restore and recovery** is the practice of reconstructing a working database from a backup.
 - It should be rehearsed deliberately, not attempted for the first time during a real emergency.
 
-**Definition:** Restoring a `backup`, whether a logical `restore` reapplying a dump script or a `point-in-time recovery` replaying archived write-ahead logs to an exact moment, is only genuinely useful if it has actually been tested and verified ahead of time, since an unverified `backup` offers only the appearance of safety rather than the real thing.
+**Definition:** Restoring a backup, whether a logical `restore` reapplying a dump script or a `point-in-time recovery` replaying archived write-ahead logs to an exact moment, is only genuinely useful if it has actually been tested and verified ahead of time, since an unverified backup offers only the appearance of safety rather than the real thing.
 
 ![Intro visual for restore and recovery](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_restore_and_recovery.png)
 
 ## Restoring from a Logical Backup
 
-A logical `backup`, produced with `pg_dump` as covered in the previous lesson, is restored by running its contents against a target `database`, recreating `tables` and reloading data.
+A logical backup, produced with `pg_dump` as covered in the previous lesson, is restored by running its contents against a target database, recreating tables and reloading data.
 
 ## Source Data Used in This Lesson
 
@@ -54,16 +54,16 @@ Expected output:
 | 1 | in_transit |
 | 2 | delivered |
 
-- The `INSERT INTO shipments_restored` statement reloads data into the freshly created `table`, standing in for the data-loading statements a full `pg_dump`-produced `restore` script runs at scale, across every `table` in a `database`, in one automated pass.
-- The restored `table`'s contents exactly match the original, confirming the `restore` succeeded.
+- The `INSERT INTO shipments_restored` statement reloads data into the freshly created table, standing in for the data-loading statements a full `pg_dump`-produced `restore` script runs at scale, across every table in a database, in one automated pass.
+- The restored table's contents exactly match the original, confirming the `restore` succeeded.
 
 ![A logical restore rebuilds tables and reloads rows into a fresh database](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_logical_restore_rebuilds_database.png)
 
 ## Point-in-Time Recovery: Restoring to an Exact Moment
 
-A full `backup` alone only restores a `database` to the exact moment that `backup` was taken, but a real incident, an accidental `DELETE` with no `WHERE` clause, for example, often needs `recovery` to a specific moment just before the mistake happened, not all the way back to last night's full `backup`, which would also lose every legitimate change made since then.
+A full backup alone only restores a database to the exact moment that backup was taken, but a real incident, an accidental `DELETE` with no `WHERE` clause, for example, often needs recovery to a specific moment just before the mistake happened, not all the way back to last night's full backup, which would also lose every legitimate change made since then.
 
-Point-in-time `recovery`, or PITR, combines a full `backup` with the `write-ahead log` archive covered in the `recovery` unit, replaying logged changes forward from that `backup` up to, but not including, the moment of the mistake.
+Point-in-time recovery, or PITR, combines a full backup with the `write-ahead log` archive covered in the recovery unit, replaying logged changes forward from that backup up to, but not including, the moment of the mistake.
 
 <iframe
  frameBorder="0"
@@ -87,11 +87,11 @@ Expected output:
 | --- |
 | Point-in-time recovery replays WAL up to a specific timestamp, not just to the last full backup |
 
-This is precisely why the `write-ahead logging` covered earlier in this course matters beyond crash `recovery`: the same log that lets a `database` recover from a power loss is what makes it possible to recover to an arbitrary moment in time, as long as the relevant log segments were archived somewhere durable rather than discarded once no longer needed for ordinary crash `recovery`.
+This is precisely why the `write-ahead logging` covered earlier in this course matters beyond crash recovery: the same log that lets a database recover from a power loss is what makes it possible to recover to an arbitrary moment in time, as long as the relevant log segments were archived somewhere durable rather than discarded once no longer needed for ordinary crash recovery.
 
 ## Why Restores Must Be Tested, Not Just Backups Taken
 
-A `backup` file that exists is not proof that a `restore` will actually work; corruption, an incomplete transfer, or a subtly incompatible `database` version can all silently break a `backup`'s usefulness without ever showing an obvious error at `backup` time.
+A backup file that exists is not proof that a `restore` will actually work; corruption, an incomplete transfer, or a subtly incompatible database version can all silently break a backup's usefulness without ever showing an obvious error at backup time.
 
 <iframe
  frameBorder="0"
@@ -108,11 +108,11 @@ Expected output:
 
 A disciplined operations practice periodically performs a real, full `restore`, into a separate, isolated environment, and then verifies the result:
 
-- Checking `row` counts
+- Checking row counts
 - Spot-checking specific known values
-- Confirming `constraint`s and `index`es rebuilt correctly
+- Confirming constraints and indexes rebuilt correctly
 
-This is exactly the kind of check the single `query` above represents in miniature. Skipping this verification step is one of the most common, and most costly, gaps in a team's `backup` strategy: the `backups` exist, but nobody actually knows whether they work until the day they are desperately needed and turn out not to.
+This is exactly the kind of check the single query above represents in miniature. Skipping this verification step is one of the most common, and most costly, gaps in a team's backup strategy: the backups exist, but nobody actually knows whether they work until the day they are desperately needed and turn out not to.
 
 ![A backup is only trusted after a test restore verifies the restored data](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_test_restore_verify_backup.png)
 
@@ -147,7 +147,7 @@ This is exactly the kind of check the single `query` above represents in miniatu
 
 ## Your Turn
 
-Simulate a `restore` by creating a new `table` `shipments_restored_v2`, loading it with the same two `rows` from `shipments_backup_source`, and then writing a verification `query` confirming the `row` count and contents match the original exactly.
+Simulate a `restore` by creating a new table `shipments_restored_v2`, loading it with the same two rows from `shipments_backup_source`, and then writing a verification query confirming the row count and contents match the original exactly.
 
 <iframe
  frameBorder="0"
@@ -162,6 +162,6 @@ Creating `shipments_restored_v2` with the same structure, loading it with `INSER
 
 ## Conclusion
 
-Restoring a `backup`, whether a logical `restore` reapplying a dump script or a `point-in-time recovery` replaying archived write-ahead logs to an exact moment, is only genuinely useful if it has actually been tested and verified ahead of time, since an unverified `backup` offers only the appearance of safety rather than the real thing.
+Restoring a backup, whether a logical `restore` reapplying a dump script or a `point-in-time recovery` replaying archived write-ahead logs to an exact moment, is only genuinely useful if it has actually been tested and verified ahead of time, since an unverified backup offers only the appearance of safety rather than the real thing.
 
-With maintenance, `backups`, and restores all covered, the next lesson turns to watching a live `database`'s health continuously, catching problems before a `restore` is ever needed at all.
+With maintenance, backups, and restores all covered, the next lesson turns to watching a live database's health continuously, catching problems before a `restore` is ever needed at all.

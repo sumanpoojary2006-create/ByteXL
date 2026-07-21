@@ -4,7 +4,7 @@ Kabir joined Priya's admissions office as a scholarship coordinator three weeks 
 
 The trouble starts small. A candidate named Rohan Verma submits a corrected category certificate, moving him from the SC scholarship pool to the General merit pool.
 
-Kabir updates `applicants.xlsx` the moment the certificate arrives. Nobody remembers to open `interviews.xlsx`, where Rohan's `row` still lists him under the SC panel three weeks later, on the day of his interview.
+Kabir updates `applicants.xlsx` the moment the certificate arrives. Nobody remembers to open `interviews.xlsx`, where Rohan's row still lists him under the SC panel three weeks later, on the day of his interview.
 
 Then, on the morning the shortlist is finalized, two coordinators open `interviews.xlsx` at the same time from two different laptops, one adding a new interview slot, the other marking three candidates as confirmed. Both save their copies to the shared drive within a minute of each other.
 

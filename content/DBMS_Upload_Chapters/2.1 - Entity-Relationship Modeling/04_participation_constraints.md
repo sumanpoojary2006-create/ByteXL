@@ -9,17 +9,17 @@ Aisha thinks about it and realises the two answers are completely different:
 - Every single order in the system absolutely must belong to some customer; the store has no concept of an order that simply floats free with no one to bill or ship it to.
 - A customer can absolutely exist without ever having placed an order, someone who created an account, browsed a little, and never checked out.
 
-Both of these are true at once, and the relationship's cardinality alone never told Aisha that. What she has just worked out is called **participation `constraint`**, the question of whether every instance of an entity is required to take part in a relationship, or whether some instances are allowed to sit outside it.
+Both of these are true at once, and the relationship's cardinality alone never told Aisha that. What she has just worked out is called **participation constraint**, the question of whether every instance of an entity is required to take part in a relationship, or whether some instances are allowed to sit outside it.
 
 ![Orders requiring customers while customers may validly have zero orders](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_total_vs_partial_participation.png)
 
-**Definition:** Participation `constraint` asks a question cardinality never answers on its own: whether every instance of an entity is required to take part in a relationship, called total participation, or whether some instances are free to exist outside it, called partial participation.
+**Definition:** Participation constraint asks a question cardinality never answers on its own: whether every instance of an entity is required to take part in a relationship, called total participation, or whether some instances are free to exist outside it, called partial participation.
 
 ## Total Participation: Every Instance Must Take Part
 
-When every single instance of an entity is required to participate in a relationship, that entity has **total participation** in the relationship. Orders is the clean example here: an order that exists in the store's system, by definition, was placed by a customer. There is no such thing as an orphaned order sitting in the `database` with no customer behind it.
+When every single instance of an entity is required to participate in a relationship, that entity has **total participation** in the relationship. Orders is the clean example here: an order that exists in the store's system, by definition, was placed by a customer. There is no such thing as an orphaned order sitting in the database with no customer behind it.
 
-Every `row` in the Orders `table`, without exception, must be tied to a `row` in the Customers `table`.
+Every row in the Orders table, without exception, must be tied to a row in the Customers table.
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
   <thead>
@@ -48,7 +48,7 @@ Every `row` in the Orders `table`, without exception, must be tied to a `row` in
   </tbody>
 </table>
 
-Every `row` here has a customer filled in, and that is not a coincidence of this particular sample, it is a rule the store enforces for every order that will ever be created. Total participation means the relationship is not optional from that entity's side; it is a mandatory part of what it even means for an instance of that entity to exist in the system.
+Every row here has a customer filled in, and that is not a coincidence of this particular sample, it is a rule the store enforces for every order that will ever be created. Total participation means the relationship is not optional from that entity's side; it is a mandatory part of what it even means for an instance of that entity to exist in the system.
 
 ## Partial Participation: Some Instances May Sit Out
 
@@ -77,7 +77,7 @@ The opposite case is **partial participation**, where an entity's instances are 
   </tbody>
 </table>
 
-Kiran Shah's `row` is exactly what partial participation allows for: a legitimate customer record with zero linked orders, causing no error, no missing data, nothing broken about the design. If the store had instead insisted that every customer must have at least one order, it would be forcing every new signup to place an order the instant they register, which does not match how the business actually works.
+Kiran Shah's row is exactly what partial participation allows for: a legitimate customer record with zero linked orders, causing no error, no missing data, nothing broken about the design. If the store had instead insisted that every customer must have at least one order, it would be forcing every new signup to place an order the instant they register, which does not match how the business actually works.
 
 ## Reading Participation From Each Side of a Relationship
 
@@ -163,8 +163,8 @@ A working answer: Trip has total participation, since a trip that exists in the 
 
 ## Conclusion
 
-Participation `constraint` asks a question cardinality never answers on its own: whether every instance of an entity is required to take part in a relationship, called total participation, or whether some instances are free to exist outside it, called partial participation.
+Participation constraint asks a question cardinality never answers on its own: whether every instance of an entity is required to take part in a relationship, called total participation, or whether some instances are free to exist outside it, called partial participation.
 
 Reading participation separately for each side of a relationship, the way Aisha learned to check both "must every order have a customer" and "must every customer have an order," catches rules a design would otherwise get quietly wrong.
 
-With entities, attributes, cardinality, and participation all worked out in words, the only piece left is a shared visual language for writing all of this down clearly, so that anyone looking at the finished picture, not just the person who drew it, can read off exactly which things exist, how they connect, and which `connections` are required.
+With entities, attributes, cardinality, and participation all worked out in words, the only piece left is a shared visual language for writing all of this down clearly, so that anyone looking at the finished picture, not just the person who drew it, can read off exactly which things exist, how they connect, and which connections are required.

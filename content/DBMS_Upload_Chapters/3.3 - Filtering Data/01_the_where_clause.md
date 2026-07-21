@@ -1,18 +1,18 @@
 ## Introduction
 
-Omkar is pulling together a report of Computer Science offerings for his advisor. His first attempt retrieves the entire course catalogue. The result includes Mathematics and Economics courses, so he has to scroll past `rows` that have nothing to do with what his advisor asked for.
+Omkar is pulling together a report of Computer Science offerings for his advisor. His first attempt retrieves the entire course catalogue. The result includes Mathematics and Economics courses, so he has to scroll past rows that have nothing to do with what his advisor asked for.
 
-What he actually needs is a way to tell the `database` "only hand me back the `rows` where this is true," and that instruction has a name: the **`WHERE` clause**.
+What he actually needs is a way to tell the database "only hand me back the rows where this is true," and that instruction has a name: the **`WHERE` clause**.
 
 ![WHERE acting as a filter gate that keeps matching Computer Science rows and blocks other rows](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_where_filter_keeps_matching_rows.png)
 
-**Definition:** The `WHERE` clause is what turns a `table` dump into an actual answer: it sits between `FROM` and `ORDER BY`, and it tests every `row` against a condition before deciding what makes it into the result.
+**Definition:** The `WHERE` clause is what turns a table dump into an actual answer: it sits between `FROM` and `ORDER BY`, and it tests every row against a condition before deciding what makes it into the result.
 
 ## Filtering Rows Instead of Reading All of Them
 
-A `SELECT` without a `WHERE` clause returns every `row` a `table` has. Add a `WHERE` clause and the `database` tests each `row` against a condition, keeping only the `rows` where that condition is true and discarding the rest before the result ever reaches Omkar's screen.
+A `SELECT` without a `WHERE` clause returns every row a table has. Add a `WHERE` clause and the database tests each row against a condition, keeping only the rows where that condition is true and discarding the rest before the result ever reaches Omkar's screen.
 
-The `courses` `table` is the only dataset needed for this lesson. Before looking at the filtering query, inspect all five stored `rows`:
+The `courses` table is the only dataset needed for this lesson. Before looking at the filtering query, inspect all five stored rows:
 
 | course_id | title | department | credits |
 | --------- | -------------------- | ---------------- | ------: |
@@ -22,13 +22,13 @@ The `courses` `table` is the only dataset needed for this lesson. Before looking
 | 104 | Discrete Mathematics | Mathematics | 3 |
 | 105 | Microeconomics | Economics | 2 |
 
-To create this dataset for practice, `CREATE TABLE` defines the four `columns`, and `INSERT INTO` adds the five displayed `rows`. Those statements belong in the OneCompiler setup file. They prepare the data but do not explain filtering, so the lesson first focuses on the `WHERE` query itself.
+To create this dataset for practice, `CREATE TABLE` defines the four columns, and `INSERT INTO` adds the five displayed rows. Those statements belong in the OneCompiler setup file. They prepare the data but do not explain filtering, so the lesson first focuses on the `WHERE` query itself.
 
 Omkar needs only the Computer Science courses. The query is `SELECT title, department, credits FROM courses WHERE department = 'Computer Science';`.
 
-- `SELECT title, department, credits` chooses the `columns` that will appear.
-- `FROM courses` identifies the source `table`.
-- `WHERE department = 'Computer Science'` tests each `row` and keeps it only when its department matches the required value.
+- `SELECT title, department, credits` chooses the columns that will appear.
+- `FROM courses` identifies the source table.
+- `WHERE department = 'Computer Science'` tests each row and keeps it only when its department matches the required value.
 
 Expected output:
 
@@ -37,11 +37,11 @@ Expected output:
 | Database Systems | Computer Science | 4 |
 | Data Structures | Computer Science | 4 |
 
-Only `Database Systems` and `Data Structures` come back. The `database` evaluated the condition `department = 'Computer Science'` against every `row` in `courses`, kept the two `rows` where it held true, and dropped the mathematics and economics `rows` entirely. Omkar's advisor never even sees the `rows` that did not qualify.
+Only `Database Systems` and `Data Structures` come back. The database evaluated the condition `department = 'Computer Science'` against every row in `courses`, kept the two rows where it held true, and dropped the mathematics and economics rows entirely. Omkar's advisor never even sees the rows that did not qualify.
 
 ## Hands-On Practice: Filter the Courses Table
 
-The OneCompiler exercise uses two files. `init.sql` creates and populates only the `courses` `table`. The active query file contains the `SELECT` statement with its `WHERE` clause. This separation lets you experiment with the filter without mixing setup SQL into the query being studied.
+The OneCompiler exercise uses two files. `init.sql` creates and populates only the `courses` table. The active query file contains the `SELECT` statement with its `WHERE` clause. This separation lets you experiment with the filter without mixing setup SQL into the query being studied.
 
 First, `init.sql` prepares the dataset:
 
@@ -74,9 +74,9 @@ Run the active query file. OneCompiler loads `init.sql` beside it, and the resul
 
 ## Where WHERE Sits in a Query
 
-The clause has a fixed position: it comes right after `FROM` and before `ORDER BY` or `LIMIT`. That ordering reflects the work the `database` performs: choose a source `table`, keep the matching `rows`, sort those survivors, and finally limit the result if required.
+The clause has a fixed position: it comes right after `FROM` and before `ORDER BY` or `LIMIT`. That ordering reflects the work the database performs: choose a source table, keep the matching rows, sort those survivors, and finally limit the result if required.
 
-Suppose Omkar wants the Mathematics courses arranged alphabetically. The query is `SELECT title, department FROM courses WHERE department = 'Mathematics' ORDER BY title;`. `WHERE` first keeps the Mathematics `rows`, and `ORDER BY` then sorts only those matching `rows` by title.
+Suppose Omkar wants the Mathematics courses arranged alphabetically. The query is `SELECT title, department FROM courses WHERE department = 'Mathematics' ORDER BY title;`. `WHERE` first keeps the Mathematics rows, and `ORDER BY` then sorts only those matching rows by title.
 
 Expected output:
 
@@ -85,7 +85,7 @@ Expected output:
 | Discrete Mathematics | Mathematics |
 | Linear Algebra | Mathematics |
 
-Both Mathematics courses survive the filter. `Discrete Mathematics` appears first because the surviving `rows` are then sorted alphabetically by `title`. Writing `ORDER BY` before `WHERE` is invalid because SQL requires the clauses in their defined order.
+Both Mathematics courses survive the filter. `Discrete Mathematics` appears first because the surviving rows are then sorted alphabetically by `title`. Writing `ORDER BY` before `WHERE` is invalid because SQL requires the clauses in their defined order.
 
 Try the explained query in the active file while keeping the same `init.sql` setup:
 
@@ -146,7 +146,7 @@ Try the explained query in the active file while keeping the same `init.sql` set
 - Match partial text patterns
 - Handle missing values
 
-Every one of those is really the same idea underneath, a test that a `row` either passes or fails, and what follows is simply a tour of the different kinds of tests you can write.
+Every one of those is really the same idea underneath, a test that a row either passes or fails, and what follows is simply a tour of the different kinds of tests you can write.
 
 ## Your Turn
 
@@ -165,10 +165,10 @@ Expected output:
 | -------------- | ---------- | ------: |
 | Microeconomics | Economics | 2 |
 
-The result contains only `Microeconomics` because it is the only `row` whose `department` value is `Economics`. If other courses appear, check that the `WHERE` clause is present and that the text value is enclosed in single quotes.
+The result contains only `Microeconomics` because it is the only row whose `department` value is `Economics`. If other courses appear, check that the `WHERE` clause is present and that the text value is enclosed in single quotes.
 
 ## Conclusion
 
-The `WHERE` clause is what turns a `table` dump into an actual answer: it sits between `FROM` and `ORDER BY`, and it tests every `row` against a condition before deciding what makes it into the result.
+The `WHERE` clause is what turns a table dump into an actual answer: it sits between `FROM` and `ORDER BY`, and it tests every row against a condition before deciding what makes it into the result.
 
-Equality, the condition Omkar reached for first, is only the simplest member of a much larger toolkit for describing exactly which `rows` a `query` should return, from comparing numbers and dates to matching text and handling missing data, and that toolkit is what comes next.
+Equality, the condition Omkar reached for first, is only the simplest member of a much larger toolkit for describing exactly which rows a query should return, from comparing numbers and dates to matching text and handling missing data, and that toolkit is what comes next.

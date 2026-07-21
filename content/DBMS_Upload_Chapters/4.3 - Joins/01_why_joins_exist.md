@@ -1,18 +1,18 @@
 ## Introduction
 
-Zoya is building order reports for a food delivery startup, and her very first attempt at a report exposes a problem the earlier chapters never had to deal with. The `orders` `table` stores a `customer_id` and a `restaurant_id` on every `row`, but not a single customer name or restaurant name.
+Zoya is building order reports for a food delivery startup, and her very first attempt at a report exposes a problem the earlier chapters never had to deal with. The `orders` table stores a `customer_id` and a `restaurant_id` on every row, but not a single customer name or restaurant name.
 
-That is not a mistake; it is the relational model working exactly as intended, storing customer details once in a `customers` `table` and restaurant details once in a `restaurants` `table`, so a customer's name is never duplicated across dozens of orders. The catch is that a report needs those names shown together, on the same line, and a single `SELECT` against `orders` alone simply cannot produce that.
+That is not a mistake; it is the relational model working exactly as intended, storing customer details once in a `customers` table and restaurant details once in a `restaurants` table, so a customer's name is never duplicated across dozens of orders. The catch is that a report needs those names shown together, on the same line, and a single `SELECT` against `orders` alone simply cannot produce that.
 
-This is precisely the problem a **`join`** solves: combining `rows` from two or more `tables` based on a matching `column` between them.
+This is precisely the problem a **join** solves: combining rows from two or more tables based on a matching column between them.
 
-**Definition:** `Joins` exist because normalized `tables` intentionally keep related facts apart, one customer stored once, one restaurant stored once, and a `query` is what pulls those separated facts back together into a single readable result.
+**Definition:** Joins exist because normalized tables intentionally keep related facts apart, one customer stored once, one restaurant stored once, and a query is what pulls those separated facts back together into a single readable result.
 
 ![Intro visual for why joins exist](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_why_joins_exist.png)
 
 ## Seeing the Problem Without a Join
 
-Three small `tables` model the food delivery system: customers who place orders, restaurants that fulfill them, and the orders that connect the two.
+Three small tables model the food delivery system: customers who place orders, restaurants that fulfill them, and the orders that connect the two.
 
 ## Source Data Used in This Lesson
 
@@ -115,17 +115,17 @@ Expected output:
 | 5 | 4 | 2 | 275 | 2025-05-05 |
 | 6 | 2 | 3 | 180 | 2025-05-06 |
 
-Every `row` here is technically complete, an order id, who placed it, which restaurant it went to, an amount, and a date, but "who placed it" is just the number 1 or 2, not a name. Anyone reading this `table` has to separately look up `customer_id` 1 in the `customers` `table` to know it means Aditi Kulkarni. That lookup step, done manually, is exactly what a `join` automates.
+Every row here is technically complete, an order id, who placed it, which restaurant it went to, an amount, and a date, but "who placed it" is just the number 1 or 2, not a name. Anyone reading this table has to separately look up `customer_id` 1 in the `customers` table to know it means Aditi Kulkarni. That lookup step, done manually, is exactly what a join automates.
 
 ## Why the Data Is Split Up Like This in the First Place
 
-It might seem simpler to just store `customer_name` directly on every order `row` and skip the separate `customers` `table` entirely. That approach breaks down quickly. If Aditi places ten orders, her name would be duplicated ten times, and if she ever changed her registered name, all ten `rows` would need updating instead of one.
+It might seem simpler to just store `customer_name` directly on every order row and skip the separate `customers` table entirely. That approach breaks down quickly. If Aditi places ten orders, her name would be duplicated ten times, and if she ever changed her registered name, all ten rows would need updating instead of one.
 
-Keeping customer details in exactly one place, `customers`, and referencing that customer by id from `orders`, is the same normalization principle covered earlier in the course: one fact, stored once, referenced everywhere it is needed. A `join` is the tool that reassembles those separated facts back into one readable result whenever a `query` needs them together.
+Keeping customer details in exactly one place, `customers`, and referencing that customer by id from `orders`, is the same normalization principle covered earlier in the course: one fact, stored once, referenced everywhere it is needed. A join is the tool that reassembles those separated facts back into one readable result whenever a query needs them together.
 
 ## A First Look at Combining Two Tables
 
-Without naming a specific `join` type yet, here is what combining `orders` with `customers` on their shared id looks like.
+Without naming a specific join type yet, here is what combining `orders` with `customers` on their shared id looks like.
 
 <iframe
  frameBorder="0"
@@ -145,17 +145,17 @@ Expected output:
 | 5 | Imran Sheikh | 275 |
 | 6 | Rohan Das | 180 |
 
-`JOIN customers ON orders.customer_id = customers.customer_id` tells the `database` exactly how the two `tables` relate: a `row` in `orders` matches a `row` in `customers` when their `customer_id` values are equal. Two things happen for every match found:
+`JOIN customers ON orders.customer_id = customers.customer_id` tells the database exactly how the two tables relate: a row in `orders` matches a row in `customers` when their `customer_id` values are equal. Two things happen for every match found:
 
-1. The `database` locates the matching `row` in `customers`.
+1. The database locates the matching row in `customers`.
 
-2. It produces one combined `row` carrying `columns` from both `tables`, which is how `customer_name`, a `column` that does not exist on `orders` at all, ends up in this result.
+2. It produces one combined row carrying columns from both tables, which is how `customer_name`, a column that does not exist on `orders` at all, ends up in this result.
 
 ![A join using matching customer_id values to bring the customer name into an order report](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_join_lookup_ids_to_names.png)
 
 ## What a Join Actually Produces
 
-It helps to think of a `join` as building a temporary, wider `table` on the fly, made only for the duration of this one `query`, by pairing up matching `rows` from each side.
+It helps to think of a join as building a temporary, wider table on the fly, made only for the duration of this one query, by pairing up matching rows from each side.
 
 <iframe
  frameBorder="0"
@@ -175,7 +175,7 @@ Expected output:
 | 5 | Imran Sheikh | Sushi Central | 275 |
 | 6 | Rohan Das | Burger Barn | 180 |
 
-This `joins` three `tables` at once, and the result reads like a single flat `table` with an order id, the customer's real name, the restaurant's real name, and the amount, exactly the shape a report needs:
+This joins three tables at once, and the result reads like a single flat table with an order id, the customer's real name, the restaurant's real name, and the amount, exactly the shape a report needs:
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
   <thead>
@@ -208,7 +208,7 @@ This `joins` three `tables` at once, and the result reads like a single flat `ta
   </tbody>
 </table>
 
-Nothing was changed in `orders`, `customers`, or `restaurants` themselves; the `join` only affects what this one `query` returns.
+Nothing was changed in `orders`, `customers`, or `restaurants` themselves; the join only affects what this one query returns.
 
 ![A join producing a temporary wider result table without changing the source tables](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_join_temporary_wider_result.png)
 
@@ -239,7 +239,7 @@ Nothing was changed in `orders`, `customers`, or `restaurants` themselves; the `
 
 ## Your Turn
 
-Zoya needs a quick check: which restaurant did order 4 go to, by name, not by id? Write a `query` against the `orders` and `restaurants` `tables` above that returns the `order_id` and the matching `restaurant_name`, for `order_id = 4`.
+Zoya needs a quick check: which restaurant did order 4 go to, by name, not by id? Write a query against the `orders` and `restaurants` tables above that returns the `order_id` and the matching `restaurant_name`, for `order_id = 4`.
 
 <iframe
  frameBorder="0"
@@ -248,7 +248,7 @@ Zoya needs a quick check: which restaurant did order 4 go to, by name, not by id
  width="100%"
 ></iframe>
 
-If your `query` `joins` `orders` to `restaurants` on `restaurant_id` and filters with `WHERE orders.order_id = 4`, it returns "Pizza Palace," confirming order 4 went to the same restaurant as order 1.
+If your query joins `orders` to `restaurants` on `restaurant_id` and filters with `WHERE orders.order_id = 4`, it returns "Pizza Palace," confirming order 4 went to the same restaurant as order 1.
 
 
 Expected output for the practice query:
@@ -259,8 +259,8 @@ Expected output for the practice query:
 
 ## Conclusion
 
-`Joins` exist because normalized `tables` intentionally keep related facts apart, one customer stored once, one restaurant stored once, and a `query` is what pulls those separated facts back together into a single readable result.
+Joins exist because normalized tables intentionally keep related facts apart, one customer stored once, one restaurant stored once, and a query is what pulls those separated facts back together into a single readable result.
 
 Zoya can now see customer names and restaurant names sitting right next to order amounts, without ever duplicating that data in storage.
 
-The `join` used here always found a match on both sides; the next lesson looks closely at what that matching actually requires and what happens to `rows` that do not find one.
+The join used here always found a match on both sides; the next lesson looks closely at what that matching actually requires and what happens to rows that do not find one.

@@ -1,16 +1,16 @@
 ## Introduction
 
-Karthik has just been given read access to his college's student records `database`. It is his first morning helping out in the admissions office, and the office coordinator has a simple request: "pull up the students list, all of it, for the orientation folder." Karthik opens a `query` window, looks at the empty text box, and realises he does not actually know how to ask a `database` for its own data yet.
+Karthik has just been given read access to his college's student records database. It is his first morning helping out in the admissions office, and the office coordinator has a simple request: "pull up the students list, all of it, for the orientation folder." Karthik opens a query window, looks at the empty text box, and realises he does not actually know how to ask a database for its own data yet.
 
-He is not filtering anything, not searching for one particular person, not doing any arithmetic. He just wants everything a `table` is holding, laid out as `rows` and `columns` he can read. That plain request, "show me what is in this `table`," is exactly what the **`SELECT` statement** answers, and it is the single most used piece of SQL a person will ever type.
+He is not filtering anything, not searching for one particular person, not doing any arithmetic. He just wants everything a table is holding, laid out as rows and columns he can read. That plain request, "show me what is in this table," is exactly what the **`SELECT` statement** answers, and it is the single most used piece of SQL a person will ever type.
 
-**Definition:** The `SELECT` statement is the starting point of nearly every piece of SQL anyone writes: name the `columns` you want, name the `table` they live in, and the `database` hands back exactly that slice of data.
+**Definition:** The `SELECT` statement is the starting point of nearly every piece of SQL anyone writes: name the columns you want, name the table they live in, and the database hands back exactly that slice of data.
 
 ![Intro visual for the select statement](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_the_select_statement.png)
 
 ## Asking For Everything in a Table
 
-The students `table` already exists in the college's `database`, with one `row` per student and `columns` for their ID, name, email, city, phone number, and the date they joined. This is the data Karthik is working with:
+The students table already exists in the college's database, with one row per student and columns for their ID, name, email, city, phone number, and the date they joined. This is the data Karthik is working with:
 
 | student_id | full_name | email | city | phone | joined_on |
 | ---------- | ----------------- | ------------------------------ | --------- | ---------- | ---------- |
@@ -23,7 +23,7 @@ The students `table` already exists in the college's `database`, with one `row` 
 | 7 | Aditya Kulkarni | aditya.kulkarni@example.com | Pune | 9822055555 | 2025-01-25 |
 | 8 | Priya Subramaniam | priya.subramaniam@example.com | Chennai | 9884066666 | 2025-01-28 |
 
-Karthik's first `query` asks for all of this, every `column`, every `row`, with no filtering at all. The query is `SELECT * FROM students;`. `SELECT` names what to retrieve, `*` is a shorthand meaning "every `column`," and `FROM students` names the `table` to read from.
+Karthik's first query asks for all of this, every column, every row, with no filtering at all. The query is `SELECT * FROM students;`. `SELECT` names what to retrieve, `*` is a shorthand meaning "every column," and `FROM students` names the table to read from.
 
 For hands-on practice, `init.sql` creates and populates the displayed `students` table:
 
@@ -70,14 +70,14 @@ Expected output:
 | 7 | Aditya Kulkarni | aditya.kulkarni@example.com | Pune | 9822055555 | 2025-01-25 |
 | 8 | Priya Subramaniam | priya.subramaniam@example.com | Chennai | 9884066666 | 2025-01-28 |
 
-- Running this returns all eight `rows` and all six `columns`, exactly as they are stored - the output is identical to the source `table` because nothing was filtered or narrowed.
-- Karthik gets his orientation list in one line, and for a quick, throwaway look at a small `table`, that is a perfectly reasonable way to work.
+- Running this returns all eight rows and all six columns, exactly as they are stored - the output is identical to the source table because nothing was filtered or narrowed.
+- Karthik gets his orientation list in one line, and for a quick, throwaway look at a small table, that is a perfectly reasonable way to work.
 
 ![SELECT star returning all columns and all rows from the students table](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_select_star_all_rows_columns.png)
 
 ## Asking For Only What You Need
 
-A few minutes later, the coordinator asks a narrower question: "I just need names and cities, for the seating arrangement." Pulling every `column` again and mentally ignoring the ones that do not matter would work, but it is not what a careful `query` looks like. Karthik instead names exactly the `columns` he wants, separated by commas, in the order he wants them to appear. The query is `SELECT full_name, city FROM students;`.
+A few minutes later, the coordinator asks a narrower question: "I just need names and cities, for the seating arrangement." Pulling every column again and mentally ignoring the ones that do not matter would work, but it is not what a careful query looks like. Karthik instead names exactly the columns he wants, separated by commas, in the order he wants them to appear. The query is `SELECT full_name, city FROM students;`.
 
 <iframe
  frameBorder="0"
@@ -99,7 +99,7 @@ Expected output:
 | Aditya Kulkarni | Pune |
 | Priya Subramaniam | Chennai |
 
-The result now has exactly two `columns`, `full_name` and `city`, for all eight students. Naming `columns` explicitly is not just shorter to read, it tells anyone looking at the `query`, including Karthik himself a month from now, precisely what data the `query` depends on. He can add `email` to the list just as easily with `SELECT full_name, email, city FROM students;`.
+The result now has exactly two columns, `full_name` and `city`, for all eight students. Naming columns explicitly is not just shorter to read, it tells anyone looking at the query, including Karthik himself a month from now, precisely what data the query depends on. He can add `email` to the list just as easily with `SELECT full_name, email, city FROM students;`.
 
 <iframe
  frameBorder="0"
@@ -121,22 +121,22 @@ Expected output:
 | Aditya Kulkarni | aditya.kulkarni@example.com | Pune |
 | Priya Subramaniam | priya.subramaniam@example.com | Chennai |
 
-The `column` list can hold as many or as few `columns` as the task needs, in any order, and that order is exactly how they will appear in the result, regardless of how the `table` itself was created.
+The column list can hold as many or as few columns as the task needs, in any order, and that order is exactly how they will appear in the result, regardless of how the table itself was created.
 
 ![Selecting only full_name and city instead of every column](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_select_specific_columns.png)
 
 ## Why Not Always Use SELECT *
 
-- `SELECT *` feels convenient, so it is worth being clear about why experienced SQL users reach for it sparingly once a `table` grows beyond a handful of `columns`.
-- The students `table` here only has six `columns`, but real `tables` in production systems often have twenty, thirty, or more: audit timestamps, internal flags, `foreign keys` to other `tables`, `columns` nobody on the team has looked at in months.
+- `SELECT *` feels convenient, so it is worth being clear about why experienced SQL users reach for it sparingly once a table grows beyond a handful of columns.
+- The students table here only has six columns, but real tables in production systems often have twenty, thirty, or more: audit timestamps, internal flags, `foreign keys` to other tables, columns nobody on the team has looked at in months.
 - Asking for all of them when a report only needs two wastes bandwidth pulling data nobody will read, and it makes the output harder to scan.
 
-There is a subtler risk too. A `query` that says `SELECT *` silently changes its own output if someone later adds a `column` to the `table`, or reorders the `columns` during a redesign.
+There is a subtler risk too. A query that says `SELECT *` silently changes its own output if someone later adds a column to the table, or reorders the columns during a redesign.
 
-A `query` that names its `columns` explicitly keeps returning exactly what it always returned, `column` for `column`, no matter what else changes around it. The rule of thumb that follows:
+A query that names its columns explicitly keeps returning exactly what it always returned, column for column, no matter what else changes around it. The rule of thumb that follows:
 
-- For a one-off look at a small `table`, `*` is fine.
-- For anything Karthik plans to reuse, save, or hand to someone else, naming the `columns` is the safer habit to build early.
+- For a one-off look at a small table, `*` is fine.
+- For anything Karthik plans to reuse, save, or hand to someone else, naming the columns is the safer habit to build early.
 
 ## The SELECT Statement at a Glance
 
@@ -169,7 +169,7 @@ A `query` that names its `columns` explicitly keeps returning exactly what it al
 
 ## Your Turn
 
-The coordinator now wants a phone contact sheet: just the name and the phone number for every student. Write a `query` against the students `table` above that returns exactly those two `columns`, in that order.
+The coordinator now wants a phone contact sheet: just the name and the phone number for every student. Write a query against the students table above that returns exactly those two columns, in that order.
 
 <iframe
  frameBorder="0"
@@ -178,7 +178,7 @@ The coordinator now wants a phone contact sheet: just the name and the phone num
  width="100%"
 ></iframe>
 
-If your `query` starts with `SELECT full_name, phone FROM students;`, you are done. Expected output:
+If your query starts with `SELECT full_name, phone FROM students;`, you are done. Expected output:
 
 | full_name | phone |
 | ----------------- | ---------- |
@@ -195,4 +195,4 @@ Arjun Bhat and Sneha Gowda show up with an empty phone value, since no number wa
 
 ## Conclusion
 
-The `SELECT` statement is the starting point of nearly every piece of SQL anyone writes: name the `columns` you want, name the `table` they live in, and the `database` hands back exactly that slice of data. `SELECT *` is a handy shortcut for a first look at a `table`, but naming specific `columns` keeps a `query` readable, efficient, and stable even as the `table` around it changes shape. Karthik's first morning ends with him able to answer both requests that came his way, the full orientation list and the narrower names-and-cities `view`, using nothing more than `SELECT` and a well-chosen `column` list. With a comfortable way to pull raw `columns` out of a `table` established, the next step is making those `columns` easier to read once they arrive in the result, starting with giving them friendlier names.
+The `SELECT` statement is the starting point of nearly every piece of SQL anyone writes: name the columns you want, name the table they live in, and the database hands back exactly that slice of data. `SELECT *` is a handy shortcut for a first look at a table, but naming specific columns keeps a query readable, efficient, and stable even as the table around it changes shape. Karthik's first morning ends with him able to answer both requests that came his way, the full orientation list and the narrower names-and-cities view, using nothing more than `SELECT` and a well-chosen column list. With a comfortable way to pull raw columns out of a table established, the next step is making those columns easier to read once they arrive in the result, starting with giving them friendlier names.

@@ -1,20 +1,20 @@
 ## Introduction
 
-Every `join` covered earlier in this course, `INNER JOIN`, `LEFT JOIN`, and the rest, describes what result a `query` should produce, matching `rows` from two `tables` based on a condition. It says nothing about how the `database` should actually go about finding those matches, and there is more than one genuinely different algorithm for doing so. PostgreSQL chooses between three main **join algorithms**:
+Every join covered earlier in this course, `INNER JOIN`, `LEFT JOIN`, and the rest, describes what result a query should produce, matching rows from two tables based on a condition. It says nothing about how the database should actually go about finding those matches, and there is more than one genuinely different algorithm for doing so. PostgreSQL chooses between three main **join algorithms**:
 
 - Nested loop.
 - Hash join.
 - Merge join.
 
-Each has a different performance profile depending on `table` sizes and whether a useful `index` or sort order is available.
+Each has a different performance profile depending on table sizes and whether a useful index or sort order is available.
 
-**Definition:** Nested loop, `hash join`, and `merge join` are three genuinely different strategies for finding matching `rows` between two `tables`, each favored by the optimizer under different conditions, small filtered inputs with a good `index`, large unsorted inputs on both sides, or already-sorted inputs respectively, and none of them is a fixed rule so much as the outcome of the same cost-based reasoning covered earlier in this chapter.
+**Definition:** Nested loop, `hash join`, and `merge join` are three genuinely different strategies for finding matching rows between two tables, each favored by the optimizer under different conditions, small filtered inputs with a good index, large unsorted inputs on both sides, or already-sorted inputs respectively, and none of them is a fixed rule so much as the outcome of the same cost-based reasoning covered earlier in this chapter.
 
 ![Intro visual for join algorithms](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_join_algorithms.png)
 
 ## Nested Loop: Simple, Best for Small Inputs
 
-A `nested loop` `join` works exactly the way its name suggests: for every `row` in the outer `table`, it scans, or `index`-looks-up, the inner `table` to find matches, one outer `row` at a time.
+A `nested loop` join works exactly the way its name suggests: for every row in the outer table, it scans, or index-looks-up, the inner table to find matches, one outer row at a time.
 
 ## Source Data Used in This Lesson
 
@@ -86,13 +86,13 @@ Expected output:
          Index Cond: (customer_id = c.customer_id)
 ```
 
-For this narrow filter, matching only 3 customers, the optimizer favors a "Nested Loop": for each of those 3 customer `rows`, it uses `idx_orders_customer_id` to directly look up that customer's orders. With so few outer `rows`, repeating a fast, targeted lookup 3 times is cheap. A `nested loop` shines exactly here, a small outer input paired with an efficient way to look up matches for each one, typically via an `index`.
+For this narrow filter, matching only 3 customers, the optimizer favors a "Nested Loop": for each of those 3 customer rows, it uses `idx_orders_customer_id` to directly look up that customer's orders. With so few outer rows, repeating a fast, targeted lookup 3 times is cheap. A `nested loop` shines exactly here, a small outer input paired with an efficient way to look up matches for each one, typically via an index.
 
 ![A nested loop join repeats an inner lookup for each outer row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_nested_loop_join_repeated_inner_lookup.png)
 
 ## Hash Join: Best When Neither Side Is Small
 
-When both sides of a `join` are large, and no useful `index` narrows either one down first, PostgreSQL often prefers a `hash join`: build an in-memory hash `table` from one side, keyed by the `join` `column`, then scan the other side once, probing the hash `table` for each `row`.
+When both sides of a join are large, and no useful index narrows either one down first, PostgreSQL often prefers a `hash join`: build an in-memory hash table from one side, keyed by the join column, then scan the other side once, probing the hash table for each row.
 
 <iframe
  frameBorder="0"
@@ -113,15 +113,15 @@ Expected output:
          ->  Seq Scan on customers c  (cost=0.00..76.00 rows=5000 width=15)
 ```
 
-With no filter narrowing either `table` down, the plan favors a "Hash Join": it builds a hash `table` from `customers`, the smaller of the two `tables`, in memory, then scans all 20000 `orders` `rows` once, probing the hash `table` for each one's `customer_id`.
+With no filter narrowing either table down, the plan favors a "Hash Join": it builds a hash table from `customers`, the smaller of the two tables, in memory, then scans all 20000 `orders` rows once, probing the hash table for each one's `customer_id`.
 
-This avoids the `nested loop`'s repeated lookups entirely, since scanning `orders` once and doing an in-memory hash lookup per `row` is far cheaper here than repeating an `index` lookup 5000 times, once per customer.
+This avoids the `nested loop`'s repeated lookups entirely, since scanning `orders` once and doing an in-memory hash lookup per row is far cheaper here than repeating an index lookup 5000 times, once per customer.
 
 ![A hash join builds a hash table from one side and probes it with the other](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_hash_join_build_and_probe.png)
 
 ## Merge Join: Best When Both Sides Are Already Sorted
 
-A `merge join` takes advantage of both inputs already being sorted by the `join` `column`, walking through both sorted lists together in lockstep, similar to how the earlier lesson on set operations conceptually combines two already-ordered sequences.
+A `merge join` takes advantage of both inputs already being sorted by the join column, walking through both sorted lists together in lockstep, similar to how the earlier lesson on set operations conceptually combines two already-ordered sequences.
 
 <iframe
  frameBorder="0"
@@ -141,15 +141,15 @@ Expected output:
    ->  Index Scan using idx_orders_customer_id on orders o  (cost=0.29..425.29 rows=20000 width=15)
 ```
 
-If both `customers` and `orders` can be efficiently produced in `customer_id` order, through their `primary key` and the earlier `index` respectively, a `merge join` becomes attractive: walk both sorted streams forward together, advancing whichever side has the smaller current value, matching as it goes, with no hash `table` needed and no repeated lookups.
+If both `customers` and `orders` can be efficiently produced in `customer_id` order, through their `primary key` and the earlier index respectively, a `merge join` becomes attractive: walk both sorted streams forward together, advancing whichever side has the smaller current value, matching as it goes, with no hash table needed and no repeated lookups.
 
-This is particularly efficient when the `query` already needs the result sorted by the `join` `column` anyway, since the `merge join` produces that order as a natural side effect of how it works.
+This is particularly efficient when the query already needs the result sorted by the join column anyway, since the `merge join` produces that order as a natural side effect of how it works.
 
 ![A merge join walks two sorted inputs forward together](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_merge_join_sorted_streams_walk_together.png)
 
 ## The Optimizer Picks Based on Estimated Cost, Not a Fixed Rule
 
-None of these three algorithms is universally "the best" one; the optimizer, using exactly the cost-estimation process covered earlier in this chapter, picks whichever it expects to be cheapest for the specific `tables`, filters, and available `indexes` involved in a given `query`.
+None of these three algorithms is universally "the best" one; the optimizer, using exactly the cost-estimation process covered earlier in this chapter, picks whichever it expects to be cheapest for the specific tables, filters, and available indexes involved in a given query.
 
 <iframe
  frameBorder="0"
@@ -169,9 +169,9 @@ Expected output (with `enable_hashjoin` off, for the unfiltered join):
    ->  Index Scan using idx_orders_customer_id on orders o  (cost=0.29..425.29 rows=20000 width=15)
 ```
 
-With `Hash Join` disabled, the optimizer falls back to a `Merge Join` here instead, since both `customer_id` `columns` can be produced in sorted order cheaply through their existing `indexes`, making merge join the next-cheapest option once hash join is off the table.
+With `Hash Join` disabled, the optimizer falls back to a `Merge Join` here instead, since both `customer_id` columns can be produced in sorted order cheaply through their existing indexes, making merge join the next-cheapest option once hash join is off the table.
 
-Temporarily disabling hash joins with `SET enable_hashjoin = off` forces the optimizer to choose a different algorithm for the same unfiltered `join`, letting Priya directly compare what the optimizer would otherwise do against its default preference, a useful diagnostic technique for confirming why one algorithm was chosen over another, though not something to leave disabled in a real application.
+Temporarily disabling hash joins with `SET enable_hashjoin = off` forces the optimizer to choose a different algorithm for the same unfiltered join, letting Priya directly compare what the optimizer would otherwise do against its default preference, a useful diagnostic technique for confirming why one algorithm was chosen over another, though not something to leave disabled in a real application.
 
 ## Join Algorithms at a Glance
 
@@ -204,7 +204,7 @@ Temporarily disabling hash joins with `SET enable_hashjoin = off` forces the opt
 
 ## Your Turn
 
-Filter the `join` `query` above down to a single customer, `customer_id = 42`, and check which `join` algorithm the optimizer chooses, comparing it to the unfiltered `join`'s choice.
+Filter the join query above down to a single customer, `customer_id = 42`, and check which join algorithm the optimizer chooses, comparing it to the unfiltered join's choice.
 
 <iframe
  frameBorder="0"
@@ -227,10 +227,10 @@ Expected result and verification:
          Index Cond: (customer_id = 42)
 ```
 
-This favors a Nested Loop, since filtering down to one customer makes the outer input tiny, exactly the situation where a `nested loop`, using the `index` on `orders`, beats building a whole hash `table` for just one lookup.
+This favors a Nested Loop, since filtering down to one customer makes the outer input tiny, exactly the situation where a `nested loop`, using the index on `orders`, beats building a whole hash table for just one lookup.
 
 ## Conclusion
 
-Nested loop, `hash join`, and `merge join` are three genuinely different strategies for finding matching `rows` between two `tables`, each favored by the optimizer under different conditions, small filtered inputs with a good `index`, large unsorted inputs on both sides, or already-sorted inputs respectively, and none of them is a fixed rule so much as the outcome of the same cost-based reasoning covered earlier in this chapter.
+Nested loop, `hash join`, and `merge join` are three genuinely different strategies for finding matching rows between two tables, each favored by the optimizer under different conditions, small filtered inputs with a good index, large unsorted inputs on both sides, or already-sorted inputs respectively, and none of them is a fixed rule so much as the outcome of the same cost-based reasoning covered earlier in this chapter.
 
-Priya can now read a `join`'s chosen algorithm in `EXPLAIN` output and understand exactly why the optimizer picked it. With scans, plans, and `join` strategies all covered, the next lesson turns to recognizing the most common patterns that make `queries` slow in practice.
+Priya can now read a join's chosen algorithm in `EXPLAIN` output and understand exactly why the optimizer picked it. With scans, plans, and join strategies all covered, the next lesson turns to recognizing the most common patterns that make queries slow in practice.

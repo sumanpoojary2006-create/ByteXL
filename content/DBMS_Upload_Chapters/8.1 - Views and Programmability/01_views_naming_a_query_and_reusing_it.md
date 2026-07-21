@@ -1,16 +1,16 @@
 ## Introduction
 
-Devraj maintains reporting for a logistics company, and one particular `query`, `join`ing shipments to drivers and filtering for anything still in transit, gets copy-pasted into nearly every dashboard, script, and ad-hoc report his team writes. Every copy is a chance for someone to introduce a small inconsistency, one analyst filters on `status = 'in_transit'`, another accidentally types `'In Transit'`, and now two reports disagree about the same underlying data.
+Devraj maintains reporting for a logistics company, and one particular query, joining shipments to drivers and filtering for anything still in transit, gets copy-pasted into nearly every dashboard, script, and ad-hoc report his team writes. Every copy is a chance for someone to introduce a small inconsistency, one analyst filters on `status = 'in_transit'`, another accidentally types `'In Transit'`, and now two reports disagree about the same underlying data.
 
-A **`view`** solves this by giving a `query` a permanent name in the `database` itself, so that everyone references the same saved definition instead of retyping it.
+A **view** solves this by giving a query a permanent name in the database itself, so that everyone references the same saved definition instead of retyping it.
 
-**Definition:** A `view` saves a `query` under a reusable name, always re-running against current data rather than storing a snapshot, which turns a frequently repeated, error-prone `query` into a single, consistently defined building block every downstream report can rely on.
+**Definition:** A view saves a query under a reusable name, always re-running against current data rather than storing a snapshot, which turns a frequently repeated, error-prone query into a single, consistently defined building block every downstream report can rely on.
 
 ![Intro visual for views naming a query and reusing it](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_views_naming_a_query_and_reusing_it.png)
 
 ## Creating a View from an Existing Query
 
-The `shipments` and `drivers` `tables` set up the recurring `query` Devraj's team keeps duplicating.
+The `shipments` and `drivers` tables set up the recurring query Devraj's team keeps duplicating.
 
 ## Source Data Used in This Lesson
 
@@ -76,16 +76,16 @@ Expected output:
 | 1 | Manoj Yadav | Mumbai |
 | 3 | Manoj Yadav | Nagpur |
 
-`CREATE VIEW active_shipments AS` saves the `join` and filter as a named object in the `database`. From that point on:
+`CREATE VIEW active_shipments AS` saves the join and filter as a named object in the database. From that point on:
 
-- `SELECT * FROM active_shipments` runs exactly as if `active_shipments` were a real `table`, even though it is really just this saved `query`, re-executed fresh every time it is referenced.
-- Anyone on Devraj's team can write `SELECT * FROM active_shipments` instead of retyping the `join` and the exact spelling of the status filter, eliminating the inconsistency risk entirely.
+- `SELECT * FROM active_shipments` runs exactly as if `active_shipments` were a real table, even though it is really just this saved query, re-executed fresh every time it is referenced.
+- Anyone on Devraj's team can write `SELECT * FROM active_shipments` instead of retyping the join and the exact spelling of the status filter, eliminating the inconsistency risk entirely.
 
 ![A view saves one named query definition that many reports can reuse](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_view_named_query_reused_by_reports.png)
 
 ## A View Always Reflects Current Data
 
-A `view` does not store a snapshot of data from when it was created; it is only a saved `query` definition, run fresh every single time it is selected from.
+A view does not store a snapshot of data from when it was created; it is only a saved query definition, run fresh every single time it is selected from.
 
 <iframe
  frameBorder="0"
@@ -100,13 +100,13 @@ Expected output (from the second `SELECT`, after the `UPDATE`):
 | --- | --- | --- |
 | 3 | Manoj Yadav | Nagpur |
 
-After Manoj's Mumbai shipment is marked delivered, querying `active_shipments` again immediately reflects that change, showing only the one remaining in-transit shipment, even though nothing about the `view` itself was touched. This is the core behavior that distinguishes a plain `view` from the `materialized view` covered later in this chapter: a plain `view` has no storage of its own and is always exactly as current as the underlying `tables`.
+After Manoj's Mumbai shipment is marked delivered, querying `active_shipments` again immediately reflects that change, showing only the one remaining in-transit shipment, even though nothing about the view itself was touched. This is the core behavior that distinguishes a plain view from the `materialized view` covered later in this chapter: a plain view has no storage of its own and is always exactly as current as the underlying tables.
 
 ![An ordinary view stores no data and always reflects the current base tables](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_ordinary_view_no_storage_always_current.png)
 
 ## Views Can Be Queried Like Any Table
 
-Because a `view` behaves like a `table` for `SELECT` purposes, it can be filtered, `join`ed, or aggregated further, exactly like any real `table`, letting a saved `view` serve as a clean, reusable building block for other `queries`.
+Because a view behaves like a table for `SELECT` purposes, it can be filtered, joined, or aggregated further, exactly like any real table, letting a saved view serve as a clean, reusable building block for other queries.
 
 <iframe
  frameBorder="0"
@@ -121,11 +121,11 @@ Expected output:
 | --- | ---: |
 | Manoj Yadav | 2 |
 
-This groups directly on top of `active_shipments`, without ever repeating the underlying `join` or filter condition, demonstrating exactly the reuse a `view` is meant to provide: the complexity of "what counts as an active shipment" is defined once, in the `view`, and every downstream `query` simply builds on top of that single, agreed-upon definition.
+This groups directly on top of `active_shipments`, without ever repeating the underlying join or filter condition, demonstrating exactly the reuse a view is meant to provide: the complexity of "what counts as an active shipment" is defined once, in the view, and every downstream query simply builds on top of that single, agreed-upon definition.
 
 ## Replacing or Removing a View
 
-A `view`'s definition can be updated with `CREATE OR REPLACE VIEW`, and removed entirely with `DROP VIEW`, without affecting the underlying `tables` at all, since a `view` never owns any data of its own.
+A view's definition can be updated with `CREATE OR REPLACE VIEW`, and removed entirely with `DROP VIEW`, without affecting the underlying tables at all, since a view never owns any data of its own.
 
 <iframe
  frameBorder="0"
@@ -134,7 +134,7 @@ A `view`'s definition can be updated with `CREATE OR REPLACE VIEW`, and removed 
  width="100%"
 ></iframe>
 
-Expected output (from the final `SELECT`, against the redefined `view`):
+Expected output (from the final `SELECT`, against the redefined view):
 
 | shipment_id | driver_name | destination | status |
 | --- | --- | --- | --- |
@@ -142,7 +142,7 @@ Expected output (from the final `SELECT`, against the redefined `view`):
 | 3 | Manoj Yadav | Nagpur | in_transit |
 | 4 | Sunil Chauhan | Nashik | delayed |
 
-Redefining the `view` to also include delayed shipments changes what every downstream `query` built on top of `active_shipments` sees, immediately and consistently, without anyone needing to hunt down and update every copy-pasted version of the original `query` scattered across scripts and dashboards, exactly the maintenance problem a `view` exists to solve.
+Redefining the view to also include delayed shipments changes what every downstream query built on top of `active_shipments` sees, immediately and consistently, without anyone needing to hunt down and update every copy-pasted version of the original query scattered across scripts and dashboards, exactly the maintenance problem a view exists to solve.
 
 ## Views at a Glance
 
@@ -179,7 +179,7 @@ Redefining the `view` to also include delayed shipments changes what every downs
 
 ## Your Turn
 
-Create a `view` named `driver_shipment_summary` that shows each driver's name alongside their total shipment count, across all statuses, using the `drivers` and `shipments` `tables` above.
+Create a view named `driver_shipment_summary` that shows each driver's name alongside their total shipment count, across all statuses, using the `drivers` and `shipments` tables above.
 
 <iframe
  frameBorder="0"
@@ -190,10 +190,10 @@ Create a `view` named `driver_shipment_summary` that shows each driver's name al
 
 Expected result and verification:
 
-If your `view` is `CREATE VIEW driver_shipment_summary AS SELECT d.driver_name, COUNT(s.shipment_id) AS total_shipments FROM drivers d LEFT JOIN shipments s ON d.driver_id = s.driver_id GROUP BY d.driver_name;`, selecting from it returns every driver, including any with zero shipments, thanks to the `LEFT JOIN` covered earlier in this course.
+If your view is `CREATE VIEW driver_shipment_summary AS SELECT d.driver_name, COUNT(s.shipment_id) AS total_shipments FROM drivers d LEFT JOIN shipments s ON d.driver_id = s.driver_id GROUP BY d.driver_name;`, selecting from it returns every driver, including any with zero shipments, thanks to the `LEFT JOIN` covered earlier in this course.
 
 ## Conclusion
 
-A `view` saves a `query` under a reusable name, always re-running against current data rather than storing a snapshot, which turns a frequently repeated, error-prone `query` into a single, consistently defined building block every downstream report can rely on. Devraj's team can now agree on what "active" means for a shipment in exactly one place.
+A view saves a query under a reusable name, always re-running against current data rather than storing a snapshot, which turns a frequently repeated, error-prone query into a single, consistently defined building block every downstream report can rely on. Devraj's team can now agree on what "active" means for a shipment in exactly one place.
 
-Not every `view` can be written to directly the same way it can be read from, and the next lesson looks closely at where that boundary sits.
+Not every view can be written to directly the same way it can be read from, and the next lesson looks closely at where that boundary sits.

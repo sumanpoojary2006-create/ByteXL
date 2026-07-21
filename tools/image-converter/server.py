@@ -319,6 +319,12 @@ def fallback_topic_title(path: str) -> str:
 
 
 def parse_readme_topics(files: list[dict[str, str]]) -> dict[str, str]:
+    """Return explicit topic titles declared by README tables.
+
+    A README title is authoritative. Filenames are deliberately kept short for
+    portability and therefore cannot preserve punctuation, acronyms, symbols,
+    or the end of long titles.
+    """
     topic_titles: dict[str, str] = {}
     for item in files:
         path = normalize_zip_path(item.get("path", ""))
@@ -334,7 +340,7 @@ def parse_readme_topics(files: list[dict[str, str]]) -> dict[str, str]:
             link_match = re.search(r"\(([^)]+\.md)\)", cols[1], re.IGNORECASE)
             if not link_match:
                 continue
-            linked = normalize_zip_path(posixpath.join(folder, link_match.group(1)))
+            linked = normalize_zip_path(posixpath.join(folder, unquote(link_match.group(1))))
             title = re.sub(r"`", "", cols[2]).strip()
             if title:
                 topic_titles[linked] = title
@@ -826,6 +832,7 @@ async def upload_to_product(payload: dict[str, Any] = Body(...)):
 
         if item["pageAction"] == "update":
             page = fetch_content_page(item["pageId"])
+            page["title"] = item["topicTitle"]
             page["markdown"] = record["markdown"]
             page["publishStatus"] = page.get("publishStatus") or "published"
             page = save_content_page(page)

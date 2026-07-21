@@ -1,16 +1,16 @@
 ## Introduction
 
-Kabir's next report needs a two-step calculation: first, find the average salary within each department, then find which departments pay above the overall company average. The first step is a grouped `query`. The second step needs to treat the result of that grouped `query` as if it were itself a `table`, filtering and comparing `rows` that do not exist anywhere in the original `employees` `table`, only in the summarized output.
+Kabir's next report needs a two-step calculation: first, find the average salary within each department, then find which departments pay above the overall company average. The first step is a grouped query. The second step needs to treat the result of that grouped query as if it were itself a table, filtering and comparing rows that do not exist anywhere in the original `employees` table, only in the summarized output.
 
-A subquery does not have to sit inside `WHERE` producing a single value or a list; it can also sit inside `FROM`, standing in for an entire `table`. This kind of subquery is often called a **derived `table`**.
+A subquery does not have to sit inside `WHERE` producing a single value or a list; it can also sit inside `FROM`, standing in for an entire table. This kind of subquery is often called a **derived table**.
 
-**Definition:** A subquery in `FROM`, or derived `table`, lets a `query` treat an intermediate result, especially a grouped or aggregated one, as if it were a real `table`, complete with the ability to filter, `join`, or select from it further.
+**Definition:** A subquery in `FROM`, or derived table, lets a query treat an intermediate result, especially a grouped or aggregated one, as if it were a real table, complete with the ability to filter, join, or select from it further.
 
 ![Intro visual for subqueries in from](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_subqueries_in_from.png)
 
 ## Treating a Query's Result as a Table
 
-The `employees` `table` is the same one used throughout this chapter.
+The `employees` table is the same one used throughout this chapter.
 
 ## Source Data Used in This Lesson
 
@@ -66,7 +66,7 @@ Expected output:
 | Marketing | 60000.00 |
 | Sales | 61500.00 |
 
-This is the first step on its own: three `rows`, one average per department. Now that same `query` becomes the `FROM` clause of an outer `query`, wrapped in parentheses and given an alias.
+This is the first step on its own: three rows, one average per department. Now that same query becomes the `FROM` clause of an outer query, wrapped in parentheses and given an alias.
 
 <iframe
  frameBorder="0"
@@ -75,7 +75,7 @@ This is the first step on its own: three `rows`, one average per department. Now
  width="100%"
 ></iframe>
 
-The subquery in `FROM`, aliased here as `dept_averages`, runs first and produces a small three-`row` result:
+The subquery in `FROM`, aliased here as `dept_averages`, runs first and produces a small three-row result:
 
 Expected output:
 
@@ -102,13 +102,13 @@ Expected output:
   </tbody>
 </table>
 
-The outer `query` then treats `dept_averages` exactly like a real `table`, filtering its `rows` with a `WHERE` clause that compares `department_avg`, a `column` that only exists because the inner `query` computed it, against the company-wide average of 73000.00 from a second subquery. Engineering is the only department whose average clears the company-wide bar.
+The outer query then treats `dept_averages` exactly like a real table, filtering its rows with a `WHERE` clause that compares `department_avg`, a column that only exists because the inner query computed it, against the company-wide average of 73000.00 from a second subquery. Engineering is the only department whose average clears the company-wide bar.
 
 ![A FROM subquery producing a derived table that the outer query can filter](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_from_subquery_derived_table.png)
 
 ## Why a FROM Subquery Needs an Alias
 
-Every subquery used in `FROM` must be given a name, since the outer `query` needs some way to refer to it, the same way any real `table` needs a name to be selected from.
+Every subquery used in `FROM` must be given a name, since the outer query needs some way to refer to it, the same way any real table needs a name to be selected from.
 
 <iframe
  frameBorder="0"
@@ -125,13 +125,13 @@ Expected output:
 | Marketing | 60000.00 |
 | Sales | 61500.00 |
 
-Leaving off `AS dept_averages` here would cause an error in most `databases`; a derived `table` without a name is not something the outer `query` can reference, even implicitly. This is one clear difference from a `WHERE` subquery, which never needs a name since it is only ever compared against, never selected from.
+Leaving off `AS dept_averages` here would cause an error in most databases; a derived table without a name is not something the outer query can reference, even implicitly. This is one clear difference from a `WHERE` subquery, which never needs a name since it is only ever compared against, never selected from.
 
 ![A derived table needing an alias name before the outer query can use it](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_from_subquery_requires_alias.png)
 
 ## Joining a Derived Table to a Real Table
 
-A `FROM` subquery can be `joined` to a normal `table` exactly like any other `table`, which is useful when a report needs both raw, `row`-level detail and a pre-computed summary side by side.
+A `FROM` subquery can be `joined` to a normal table exactly like any other table, which is useful when a report needs both raw, row-level detail and a pre-computed summary side by side.
 
 <iframe
  frameBorder="0"
@@ -151,7 +151,7 @@ Expected output:
 | Pooja Reddy | 58000.00 | 61500.00 | -3500.00 |
 | Vikas Malhotra | 60000.00 | 60000.00 | 0.00 |
 
-Here, `dept_averages` is `joined` to `employees` on the shared `department` `column`, letting every individual employee `row` see their own department's average sitting right next to their own salary, and a computed `column` shows exactly how far above or below that average each person falls:
+Here, `dept_averages` is `joined` to `employees` on the shared `department` column, letting every individual employee row see their own department's average sitting right next to their own salary, and a computed column shows exactly how far above or below that average each person falls:
 
 - Ananya Sharma earns above her department's average.
 - Rajat Bhatia and Meghna Iyer both earn below it.
@@ -187,7 +187,7 @@ Here, `dept_averages` is `joined` to `employees` on the shared `department` `col
 
 ## Your Turn
 
-Kabir wants to find the single department with the highest average salary, showing just its name and that average. Write a `query` using a `FROM` subquery against `employees` above, ordering the derived `table`'s results and keeping only the top `row`.
+Kabir wants to find the single department with the highest average salary, showing just its name and that average. Write a query using a `FROM` subquery against `employees` above, ordering the derived table's results and keeping only the top row.
 
 <iframe
  frameBorder="0"
@@ -196,7 +196,7 @@ Kabir wants to find the single department with the highest average salary, showi
  width="100%"
 ></iframe>
 
-If your `query` wraps `SELECT department, AVG(salary) AS department_avg FROM employees GROUP BY department` as a derived `table`, then applies `ORDER BY department_avg DESC LIMIT 1` on the outer `query`, it returns Engineering as the top-paying department.
+If your query wraps `SELECT department, AVG(salary) AS department_avg FROM employees GROUP BY department` as a derived table, then applies `ORDER BY department_avg DESC LIMIT 1` on the outer query, it returns Engineering as the top-paying department.
 
 
 Expected output:
@@ -207,6 +207,6 @@ Expected output:
 
 ## Conclusion
 
-A subquery in `FROM`, or derived `table`, lets a `query` treat an intermediate result, especially a grouped or aggregated one, as if it were a real `table`, complete with the ability to filter, `join`, or select from it further.
+A subquery in `FROM`, or derived table, lets a query treat an intermediate result, especially a grouped or aggregated one, as if it were a real table, complete with the ability to filter, join, or select from it further.
 
-Kabir can now compare department averages against a company average and see exactly how each employee sits relative to their department's norm, So far, every subquery has run independently of the outer `query`'s current `row`; the next lesson introduces a subquery that depends on it directly.
+Kabir can now compare department averages against a company average and see exactly how each employee sits relative to their department's norm, So far, every subquery has run independently of the outer query's current row; the next lesson introduces a subquery that depends on it directly.

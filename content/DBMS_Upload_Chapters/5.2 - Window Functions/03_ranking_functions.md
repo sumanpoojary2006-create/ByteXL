@@ -1,16 +1,16 @@
 ## Introduction
 
 - The sales director wants a leaderboard: every salesperson ranked by their total sales, first place, second place, and so on, with ties handled sensibly if two people happen to tie exactly.
-- `ORDER BY` alone can sort a result, but it cannot label each `row` with its rank, and it has no built-in way to decide what should happen to the rank numbers that follow a tie.
-- SQL provides three dedicated **ranking `functions`**, `ROW_NUMBER`, `RANK`, and `DENSE_RANK`, each a `window function` used with `OVER (ORDER BY ...)`, and each with a different, precise rule for handling ties.
+- `ORDER BY` alone can sort a result, but it cannot label each row with its rank, and it has no built-in way to decide what should happen to the rank numbers that follow a tie.
+- SQL provides three dedicated **ranking functions**, `ROW_NUMBER`, `RANK`, and `DENSE_RANK`, each a `window function` used with `OVER (ORDER BY ...)`, and each with a different, precise rule for handling ties.
 
-**Definition:** `ROW_NUMBER`, `RANK`, and `DENSE_RANK` each turn an ordered set of `rows` into rank numbers, differing only in how they handle ties, strict sequencing with no ties, ranking with gaps after a tie, or ranking with no gaps at all.
+**Definition:** `ROW_NUMBER`, `RANK`, and `DENSE_RANK` each turn an ordered set of rows into rank numbers, differing only in how they handle ties, strict sequencing with no ties, ranking with gaps after a tie, or ranking with no gaps at all.
 
 ![Intro visual for ranking functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_ranking_functions.png)
 
 ## Numbering Rows with ROW_NUMBER
 
-The `sales` `table` again holds individual sales, this time including a tie for illustration.
+The `sales` table again holds individual sales, this time including a tie for illustration.
 
 ## Source Data Used in This Lesson
 
@@ -65,16 +65,16 @@ Expected output:
 | Priya Bose | 18500.00 | 4 |
 | Kunal Verma | 11000.00 | 5 |
 
-`ROW_NUMBER()` assigns a strictly increasing integer to every `row`, 1, 2, 3, 4, 5, in the order defined by `ORDER BY amount DESC`, with no regard for ties at all:
+`ROW_NUMBER()` assigns a strictly increasing integer to every row, 1, 2, 3, 4, 5, in the order defined by `ORDER BY amount DESC`, with no regard for ties at all:
 
 - Sana Fatima and Tarun Bakshi both have 21000.00.
-- `ROW_NUMBER` still gives them different numbers, 2 and 3, arbitrarily breaking the tie based on whatever order the `database` happens to process them in. This makes `ROW_NUMBER` useful for a strict, no-ties-allowed sequence, but not ideal for a leaderboard where a genuine tie should probably be reflected as one.
+- `ROW_NUMBER` still gives them different numbers, 2 and 3, arbitrarily breaking the tie based on whatever order the database happens to process them in. This makes `ROW_NUMBER` useful for a strict, no-ties-allowed sequence, but not ideal for a leaderboard where a genuine tie should probably be reflected as one.
 
 ![ROW_NUMBER assigning a strict sequence even when two values are tied](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_row_number_strict_sequence.png)
 
 ## Ranking with Gaps Using RANK
 
-`RANK()` gives tied `rows` the exact same rank number, and then skips ahead by the number of tied `rows` before continuing.
+`RANK()` gives tied rows the exact same rank number, and then skips ahead by the number of tied rows before continuing.
 
 <iframe
  frameBorder="0"
@@ -93,14 +93,14 @@ Expected output:
 | Priya Bose | 18500.00 | 4 |
 | Kunal Verma | 11000.00 | 5 |
 
-Sana and Tarun both land on rank 2, correctly reflecting their tie, but the next `row`, Priya Bose, gets rank 4, not rank 3, because `RANK` counts the two tied second-place `rows` and skips the number that would have been "third." This mirrors how a real sporting leaderboard usually works:
+Sana and Tarun both land on rank 2, correctly reflecting their tie, but the next row, Priya Bose, gets rank 4, not rank 3, because `RANK` counts the two tied second-place rows and skips the number that would have been "third." This mirrors how a real sporting leaderboard usually works:
 
 - Two people tied for second place.
 - Whoever comes next is in fourth, not third, since two people already occupy the ranks above them.
 
 ## Ranking Without Gaps Using DENSE_RANK
 
-`DENSE_RANK()` also gives tied `rows` the same rank, but it does not skip any numbers afterward, keeping the rank sequence consecutive.
+`DENSE_RANK()` also gives tied rows the same rank, but it does not skip any numbers afterward, keeping the rank sequence consecutive.
 
 <iframe
  frameBorder="0"
@@ -128,7 +128,7 @@ Sana and Tarun again both land on rank 2, but Priya Bose now gets rank 3, not 4,
 
 ## Comparing All Three Side by Side
 
-Placing all three ranking `functions` in the same `query` makes the difference between them immediately visible.
+Placing all three ranking functions in the same query makes the difference between them immediately visible.
 
 <iframe
  frameBorder="0"
@@ -147,11 +147,11 @@ Expected output:
 | Priya Bose | 18500.00 | 4 | 4 | 3 |
 | Kunal Verma | 11000.00 | 5 | 5 | 4 |
 
-For the tied pair, `row_num` shows 2 and 3, `rank_position` shows 2 and 2, and `dense_rank_position` also shows 2 and 2, and the divergence appears clearly on Priya Bose's `row` right after: 4, 4, and 3, respectively, for the three `functions`.
+For the tied pair, `row_num` shows 2 and 3, `rank_position` shows 2 and 2, and `dense_rank_position` also shows 2 and 2, and the divergence appears clearly on Priya Bose's row right after: 4, 4, and 3, respectively, for the three functions.
 
 ## Ranking Within Partitions
 
-Ranking `functions` combine naturally with `PARTITION BY`, ranking `rows` separately within each group rather than across the whole `table`, the same partitioning behavior covered for aggregate `window functions`. The `sales` `table` above already carries a `region` `column`, North or South, so the director can ask for a rank within each region instead of one flat company-wide ranking.
+Ranking functions combine naturally with `PARTITION BY`, ranking rows separately within each group rather than across the whole table, the same partitioning behavior covered for aggregate `window functions`. The `sales` table above already carries a `region` column, North or South, so the director can ask for a rank within each region instead of one flat company-wide ranking.
 
 <iframe
  frameBorder="0"
@@ -170,7 +170,7 @@ Expected output:
 | Sana Fatima | South | 21000.00 | 1 |
 | Priya Bose | South | 18500.00 | 2 |
 
-`PARTITION BY region` splits the `rows` into two independent groups before `RANK` ever runs, so the ranking restarts at 1 for each region rather than continuing across the whole `table`. Nikhil Rao is first in North with 29700.00, and separately, Sana Fatima is first in South with 21000.00, even though her 21000.00 would only have been good enough for second place company-wide. This region-scoped ranking is exactly the foundation for finding a top performer per group, which the next lesson builds on directly.
+`PARTITION BY region` splits the rows into two independent groups before `RANK` ever runs, so the ranking restarts at 1 for each region rather than continuing across the whole table. Nikhil Rao is first in North with 29700.00, and separately, Sana Fatima is first in South with 21000.00, even though her 21000.00 would only have been good enough for second place company-wide. This region-scoped ranking is exactly the foundation for finding a top performer per group, which the next lesson builds on directly.
 
 ## Ranking Functions at a Glance
 
@@ -203,7 +203,7 @@ Expected output:
 
 ## Your Turn
 
-The sales director wants a leaderboard using `DENSE_RANK`, showing only salespeople ranked in the top 3 tiers. Write a `query` against the `sales` `table` above that computes `DENSE_RANK` and filters to ranks 1 through 3.
+The sales director wants a leaderboard using `DENSE_RANK`, showing only salespeople ranked in the top 3 tiers. Write a query against the `sales` table above that computes `DENSE_RANK` and filters to ranks 1 through 3.
 
 <iframe
  frameBorder="0"
@@ -212,7 +212,7 @@ The sales director wants a leaderboard using `DENSE_RANK`, showing only salespeo
  width="100%"
 ></iframe>
 
-Filtering directly with `WHERE DENSE_RANK() OVER (...) <= 3` is not allowed, since `window functions` cannot be referenced in `WHERE`, the same restriction that applies to `aggregate functions`. Instead, wrap the ranking in a CTE first, then filter the CTE's result: `WITH ranked AS (SELECT salesperson, amount, DENSE_RANK() OVER (ORDER BY amount DESC) AS dense_rank_position FROM sales) SELECT * FROM ranked WHERE dense_rank_position <= 3;`, which returns the top four `rows` since two people share the second tier.
+Filtering directly with `WHERE DENSE_RANK() OVER (...) <= 3` is not allowed, since `window functions` cannot be referenced in `WHERE`, the same restriction that applies to `aggregate functions`. Instead, wrap the ranking in a CTE first, then filter the CTE's result: `WITH ranked AS (SELECT salesperson, amount, DENSE_RANK() OVER (ORDER BY amount DESC) AS dense_rank_position FROM sales) SELECT * FROM ranked WHERE dense_rank_position <= 3;`, which returns the top four rows since two people share the second tier.
 
 Expected output:
 
@@ -226,4 +226,4 @@ Expected output:
 
 ## Conclusion
 
-`ROW_NUMBER`, `RANK`, and `DENSE_RANK` each turn an ordered set of `rows` into rank numbers, differing only in how they handle ties, strict sequencing with no ties, ranking with gaps after a tie, or ranking with no gaps at all. The director's leaderboard can now be built with exactly the tie-handling behavior the business actually wants. Ranking looks at a `row`'s position; the next lesson looks at comparing a `row` directly to the `rows` immediately before or after it.
+`ROW_NUMBER`, `RANK`, and `DENSE_RANK` each turn an ordered set of rows into rank numbers, differing only in how they handle ties, strict sequencing with no ties, ranking with gaps after a tie, or ranking with no gaps at all. The director's leaderboard can now be built with exactly the tie-handling behavior the business actually wants. Ranking looks at a row's position; the next lesson looks at comparing a row directly to the rows immediately before or after it.

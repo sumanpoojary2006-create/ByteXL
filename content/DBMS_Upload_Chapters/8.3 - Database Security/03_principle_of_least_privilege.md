@@ -1,14 +1,14 @@
 ## Introduction
 
-`GRANT` and `REVOKE`, covered in the previous lesson, are just tools; they say nothing about how much access any given `role` should actually have. The **principle of `least privilege`** answers that question directly: every `role` should be granted exactly the access it needs to do its job, and nothing more, not "might need someday," not "it's easier to just grant everything." This lesson is less about new syntax and more about the judgment that should guide every `GRANT` statement written from here on.
+`GRANT` and `REVOKE`, covered in the previous lesson, are just tools; they say nothing about how much access any given role should actually have. The **principle of `least privilege`** answers that question directly: every role should be granted exactly the access it needs to do its job, and nothing more, not "might need someday," not "it's easier to just grant everything." This lesson is less about new syntax and more about the judgment that should guide every `GRANT` statement written from here on.
 
-**Definition:** The principle of `least privilege` means granting a `role` exactly the access its actual, current responsibilities require, and nothing broader, since every unnecessary privilege granted is unnecessary risk carried indefinitely, whether that `role` represents an automated service or an individual developer, and periodically reviewing existing grants is what keeps this discipline from quietly eroding over time.
+**Definition:** The principle of `least privilege` means granting a role exactly the access its actual, current responsibilities require, and nothing broader, since every unnecessary privilege granted is unnecessary risk carried indefinitely, whether that role represents an automated service or an individual developer, and periodically reviewing existing grants is what keeps this discipline from quietly eroding over time.
 
 ![Intro visual for principle of least privilege](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_principle_of_least_privilege.png)
 
 ## The Tempting Shortcut, and Why It Is a Real Risk
 
-Granting broad, unrestricted access up front avoids the friction of figuring out exactly what a `role` needs, but it turns every `role` into a much larger liability than it needs to be.
+Granting broad, unrestricted access up front avoids the friction of figuring out exactly what a role needs, but it turns every role into a much larger liability than it needs to be.
 
 ## Source Data Used in This Lesson
 
@@ -59,7 +59,7 @@ Before running each active statement, predict which rows, database objects, or s
 
 Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
 
-This single statement gives `reporting_app`, a service that only ever needs to read shipment data for dashboards, full read, write, and delete access to every `table` in the `schema`, including `payroll`, a `table` it has no legitimate business touching at all.
+This single statement gives `reporting_app`, a service that only ever needs to read shipment data for dashboards, full read, write, and delete access to every table in the schema, including `payroll`, a table it has no legitimate business touching at all.
 
 Two risks follow directly from this:
 
@@ -69,7 +69,7 @@ Two risks follow directly from this:
 
 ## Granting Exactly What a Role Needs
 
-The least-privilege alternative starts from the opposite direction: name exactly what this `role` needs, and grant only that.
+The least-privilege alternative starts from the opposite direction: name exactly what this role needs, and grant only that.
 
 <iframe
  frameBorder="0"
@@ -99,12 +99,12 @@ The same discipline applies to individual developer accounts, not only automated
 Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
 
 - `dev_alia` gets exactly what her current debugging work requires, read and update access on `shipments`, and nothing on `payroll`.
-- If her `role`'s responsibilities later genuinely expand, the fix is an additional, deliberate `GRANT` at that point, not a blanket grant made in advance "just in case," which is precisely the shortcut `least privilege` exists to avoid.
+- If her role's responsibilities later genuinely expand, the fix is an additional, deliberate `GRANT` at that point, not a blanket grant made in advance "just in case," which is precisely the shortcut `least privilege` exists to avoid.
 
 ## Periodically Reviewing What Has Actually Been Granted
 
-- `Least privilege` is not a one-time setup step; permissions tend to accumulate over time as `role`s are granted access for a specific, temporary task and then never revisited.
-- Periodically auditing what a `role` can actually do, compared to what it currently needs, is part of maintaining the principle over the long run.
+- `Least privilege` is not a one-time setup step; permissions tend to accumulate over time as roles are granted access for a specific, temporary task and then never revisited.
+- Periodically auditing what a role can actually do, compared to what it currently needs, is part of maintaining the principle over the long run.
 
 <iframe
  frameBorder="0"
@@ -119,7 +119,7 @@ Expected output:
 | --- | --- | --- |
 | *(no rows)* | | |
 
-This block only grants `SELECT` and `UPDATE` to `dev_alia`; `reporting_app` was created by `init.sql` but was never granted anything in this fresh session, so filtering `role_table_grants` for `reporting_app` correctly comes back empty here. In a real, long-running `database`, this same `query` is exactly how a team would spot that `reporting_app` unexpectedly does, or does not, hold a grant it should. `information_schema.role_table_grants` lists every privilege currently held by a given `role`, across every `table`, a direct way to check whether `reporting_app`'s actual granted permissions still match what it genuinely needs, or whether some stale grant from an earlier, now-irrelevant task is still sitting there, unnoticed, quietly widening that account's blast radius.
+This block only grants `SELECT` and `UPDATE` to `dev_alia`; `reporting_app` was created by `init.sql` but was never granted anything in this fresh session, so filtering `role_table_grants` for `reporting_app` correctly comes back empty here. In a real, long-running database, this same query is exactly how a team would spot that `reporting_app` unexpectedly does, or does not, hold a grant it should. `information_schema.role_table_grants` lists every privilege currently held by a given role, across every table, a direct way to check whether `reporting_app`'s actual granted permissions still match what it genuinely needs, or whether some stale grant from an earlier, now-irrelevant task is still sitting there, unnoticed, quietly widening that account's blast radius.
 
 ![Periodic grant review compares current permissions with current need and removes stale access](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_review_grants_revoke_stale_access.png)
 
@@ -170,6 +170,6 @@ Expected result and verification:
 
 ## Conclusion
 
-The principle of `least privilege` means granting a `role` exactly the access its actual, current responsibilities require, and nothing broader, since every unnecessary privilege granted is unnecessary risk carried indefinitely, whether that `role` represents an automated service or an individual developer, and periodically reviewing existing grants is what keeps this discipline from quietly eroding over time.
+The principle of `least privilege` means granting a role exactly the access its actual, current responsibilities require, and nothing broader, since every unnecessary privilege granted is unnecessary risk carried indefinitely, whether that role represents an automated service or an individual developer, and periodically reviewing existing grants is what keeps this discipline from quietly eroding over time.
 
-The next lesson looks at an even finer-grained security mechanism, restricting access not just by `table` or `column`, but by which specific `rows` a `role` is allowed to see at all.
+The next lesson looks at an even finer-grained security mechanism, restricting access not just by table or column, but by which specific rows a role is allowed to see at all.

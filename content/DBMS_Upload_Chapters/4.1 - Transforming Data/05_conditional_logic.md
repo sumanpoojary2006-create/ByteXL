@@ -1,16 +1,16 @@
 ## Introduction
 
-Farah builds reports for a small gym chain, and the `members` `table` stores each member's total visits this month as a plain number. The front desk does not want to stare at raw visit counts; they want members labeled "Highly Active," "Active," or "At Risk" so staff can decide who needs a check-in call.
+Farah builds reports for a small gym chain, and the `members` table stores each member's total visits this month as a plain number. The front desk does not want to stare at raw visit counts; they want members labeled "Highly Active," "Active," or "At Risk" so staff can decide who needs a check-in call.
 
-That label does not exist anywhere in the `table`, it depends on a rule applied to the visit count, and different visit counts should produce different labels within the very same `query`. This is exactly what SQL's **`CASE`** expression is for: choosing between several possible outputs based on a condition, `row` by `row`.
+That label does not exist anywhere in the table, it depends on a rule applied to the visit count, and different visit counts should produce different labels within the very same query. This is exactly what SQL's **`CASE`** expression is for: choosing between several possible outputs based on a condition, row by row.
 
-**Definition:** `CASE` turns a raw `column` value into whatever label, category, or calculated result a business question actually needs, checking conditions in order and returning the first match, with `ELSE` as a safety net for everything else.
+**Definition:** `CASE` turns a raw column value into whatever label, category, or calculated result a business question actually needs, checking conditions in order and returning the first match, with `ELSE` as a safety net for everything else.
 
 ![Intro visual for conditional logic](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_conditional_logic.png)
 
 ## Writing a Simple CASE Expression
 
-The `members` `table` tracks each member's visits for the current month.
+The `members` table tracks each member's visits for the current month.
 
 ## Source Data Used in This Lesson
 
@@ -135,7 +135,7 @@ Run this version and Karan, with 18 visits, gets labeled "Active" instead of "Hi
 
 ## Branching on a Column Value Instead of a Range
 
-`CASE` does not only compare numbers against thresholds; it can also branch on an exact match, which suits the `membership_type` `column` here.
+`CASE` does not only compare numbers against thresholds; it can also branch on an exact match, which suits the `membership_type` column here.
 
 <iframe
  frameBorder="0"
@@ -154,9 +154,9 @@ Expected output:
 | Ritu Sharma | premium | Full access, all branches |
 | Yusuf Ali | basic | Gym floor only, no classes |
 
-This shorter form, `CASE membership_type WHEN 'premium' THEN ...`, compares the `column` directly against each listed value instead of writing out a full condition each time:
+This shorter form, `CASE membership_type WHEN 'premium' THEN ...`, compares the column directly against each listed value instead of writing out a full condition each time:
 
-- Use it when every branch is a simple equality check against the same `column`.
+- Use it when every branch is a simple equality check against the same column.
 - Fall back to the earlier `CASE WHEN condition THEN ...` form whenever a condition is more than a plain equality.
 
 ## Combining CASE with a Calculation
@@ -180,13 +180,13 @@ Expected output:
 | Ritu Sharma | 0 |
 | Yusuf Ali | 18 |
 
-The `CASE` expression resolves to a plain number for each `row`, either 10, 5, or 2 depending on membership type, and that number is then multiplied directly by `visits_this_month`, producing a single loyalty-points `column` without a second `query` or a temporary `table`.
+The `CASE` expression resolves to a plain number for each row, either 10, 5, or 2 depending on membership type, and that number is then multiplied directly by `visits_this_month`, producing a single loyalty-points column without a second query or a temporary table.
 
 ![CASE choosing a membership multiplier before calculating loyalty points](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_case_multiplier_loyalty_points.png)
 
 ## Your Turn
 
-The gym wants a discount eligibility flag: members with fewer than 5 visits this month get the label "Send Offer," everyone else gets "No Offer Needed." Write that `query` against the `members` `table` above, aliasing the result as `offer_status`.
+The gym wants a discount eligibility flag: members with fewer than 5 visits this month get the label "Send Offer," everyone else gets "No Offer Needed." Write that query against the `members` table above, aliasing the result as `offer_status`.
 
 <iframe
  frameBorder="0"
@@ -195,7 +195,7 @@ The gym wants a discount eligibility flag: members with fewer than 5 visits this
  width="100%"
 ></iframe>
 
-If your `query` uses `CASE WHEN visits_this_month < 5 THEN 'Send Offer' ELSE 'No Offer Needed' END AS offer_status`, only Nisha and Ritu will be flagged for an offer, matching their visit counts of 4 and 0.
+If your query uses `CASE WHEN visits_this_month < 5 THEN 'Send Offer' ELSE 'No Offer Needed' END AS offer_status`, only Nisha and Ritu will be flagged for an offer, matching their visit counts of 4 and 0.
 
 
 Expected output for the practice query:
@@ -210,8 +210,8 @@ Expected output for the practice query:
 
 ## Conclusion
 
-`CASE` turns a raw `column` value into whatever label, category, or calculated result a business question actually needs, checking conditions in order and returning the first match, with `ELSE` as a safety net for everything else.
+`CASE` turns a raw column value into whatever label, category, or calculated result a business question actually needs, checking conditions in order and returning the first match, with `ELSE` as a safety net for everything else.
 
-Farah used it to label activity levels, describe membership plans in plain language, and calculate loyalty points, all from two `columns` of raw data.
+Farah used it to label activity levels, describe membership plans in plain language, and calculate loyalty points, all from two columns of raw data.
 
-Individual `rows` transformed this way are useful, but many real questions need entire groups of `rows` summarized into one number, which is where aggregation begins.
+Individual rows transformed this way are useful, but many real questions need entire groups of rows summarized into one number, which is where aggregation begins.

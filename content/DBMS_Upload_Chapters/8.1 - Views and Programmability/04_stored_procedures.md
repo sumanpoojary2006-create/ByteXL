@@ -2,15 +2,15 @@
 
 Marking a shipment delivered, in Devraj's system, is never just one `UPDATE`.
 
-It means changing the shipment's status, and also inserting a `row` into a separate audit log recording who marked it and when, two statements that always need to run together, the exact kind of grouped operation the `transactions` unit covered in depth, Rather than trusting every script and every developer to remember both statements and wrap them correctly, a **`stored procedure`** lets Devraj define this logic once, inside the `database` itself, as a named, callable unit.
+It means changing the shipment's status, and also inserting a row into a separate audit log recording who marked it and when, two statements that always need to run together, the exact kind of grouped operation the transactions unit covered in depth, Rather than trusting every script and every developer to remember both statements and wrap them correctly, a **`stored procedure`** lets Devraj define this logic once, inside the database itself, as a named, callable unit.
 
-**Definition:** A `stored procedure`, invoked with `CALL`, wraps multiple statements into a single, named, reusable routine defined once inside the `database`, capable of managing its own `transaction` boundaries including mid-`procedure` commits, which guarantees every caller gets identical, correct behavior without reimplementing the same logic client by client.
+**Definition:** A `stored procedure`, invoked with `CALL`, wraps multiple statements into a single, named, reusable routine defined once inside the database, capable of managing its own transaction boundaries including mid-procedure commits, which guarantees every caller gets identical, correct behavior without reimplementing the same logic client by client.
 
 ![Intro visual for stored procedures](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_stored_procedures.png)
 
 ## Creating a Simple Procedure
 
-The `shipments` and `shipment_log` `tables` set up the two-statement operation a `procedure` will wrap.
+The `shipments` and `shipment_log` tables set up the two-statement operation a procedure will wrap.
 
 ## Source Data Used in This Lesson
 
@@ -66,11 +66,11 @@ Before running each active statement, predict which rows, database objects, or s
 Expected result: `CREATE PROCEDURE` returns no rows; it registers `mark_shipment_delivered` so later statements in this lesson can `CALL` it. `CREATE PROCEDURE mark_shipment_delivered(p_shipment_id INTEGER)` defines a named routine, written in `plpgsql`, PostgreSQL's own procedural extension of SQL:
 
 - It accepts one parameter and runs both statements inside it every time it is called.
-- The `$$ ... $$` markers, called dollar-quoting, wrap the `procedure`'s body, letting it contain semicolons and even quoted strings of its own without confusing the outer `CREATE PROCEDURE` statement's own boundaries.
+- The `$$ ... $$` markers, called dollar-quoting, wrap the procedure's body, letting it contain semicolons and even quoted strings of its own without confusing the outer `CREATE PROCEDURE` statement's own boundaries.
 
 ## Calling a Procedure
 
-A `procedure` is invoked with `CALL`, not `SELECT`, since it performs actions rather than returning a result set the way a `query` does.
+A procedure is invoked with `CALL`, not `SELECT`, since it performs actions rather than returning a result set the way a query does.
 
 <iframe
  frameBorder="0"
@@ -94,13 +94,13 @@ Expected output:
 | --- | --- | --- | --- |
 | 1 | 1 | marked delivered | *(timestamp of the `CALL`)* |
 
-One call to `mark_shipment_delivered(1)` ran both the `UPDATE` and the `INSERT` from the `procedure`'s body, and both `tables` now reflect that single logical operation, exactly the two-statements-together guarantee Devraj wanted, now enforced automatically by the `procedure` itself rather than relying on every caller to remember both steps.
+One call to `mark_shipment_delivered(1)` ran both the `UPDATE` and the `INSERT` from the procedure's body, and both tables now reflect that single logical operation, exactly the two-statements-together guarantee Devraj wanted, now enforced automatically by the procedure itself rather than relying on every caller to remember both steps.
 
 ![A stored procedure CALL can run an update and an audit-log insert together](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_stored_procedure_call_runs_update_and_log.png)
 
 ## Procedures Can Manage Their Own Transactions
 
-Unlike a plain SQL script, a `procedure` written in `plpgsql` is allowed to issue its own `COMMIT` or `ROLLBACK` partway through its body, useful for long-running `procedures` that need to save progress incrementally rather than treating the whole `procedure` as one giant, indivisible `transaction`.
+Unlike a plain SQL script, a procedure written in `plpgsql` is allowed to issue its own `COMMIT` or `ROLLBACK` partway through its body, useful for long-running procedures that need to save progress incrementally rather than treating the whole procedure as one giant, indivisible transaction.
 
 <iframe
  frameBorder="0"
@@ -118,15 +118,15 @@ Expected output:
 
 - `FOREACH sid IN ARRAY shipment_ids LOOP ...
 - END LOOP` is `plpgsql`'s looping construct, iterating over every value passed in, and the `COMMIT` inside the loop saves each shipment's update independently, rather than risking the entire batch being rolled back together if one shipment far down the list ran into a problem.
-- This ability to commit mid-`procedure` is a capability plain SQL `functions`, covered in the next lesson, do not have.
+- This ability to commit mid-procedure is a capability plain SQL functions, covered in the next lesson, do not have.
 
 ![A procedure can commit during a long-running operation to save progress](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_procedure_can_commit_save_progress.png)
 
 ## Why Wrap Logic in a Procedure at All
 
-The alternative to a `procedure` is writing the same `UPDATE` and `INSERT` pair directly in application code, wrapped in a `BEGIN`/`COMMIT` `transaction`, exactly the pattern covered in the previous unit's lesson on `transactions` in application code.
+The alternative to a procedure is writing the same `UPDATE` and `INSERT` pair directly in application code, wrapped in a `BEGIN`/`COMMIT` transaction, exactly the pattern covered in the previous unit's lesson on transactions in application code.
 
-A `procedure` moves that logic into the `database` itself, which means every caller, whether a Python script, a reporting tool, or a different application entirely, gets the identical, correct behavior automatically, without needing to reimplement the same two-statement sequence and its `transaction` boundaries in every single client.
+A procedure moves that logic into the database itself, which means every caller, whether a Python script, a reporting tool, or a different application entirely, gets the identical, correct behavior automatically, without needing to reimplement the same two-statement sequence and its transaction boundaries in every single client.
 
 ## Stored Procedures at a Glance
 
@@ -159,7 +159,7 @@ A `procedure` moves that logic into the `database` itself, which means every cal
 
 ## Your Turn
 
-Write a `procedure` named `cancel_shipment` that takes a `shipment_id`, sets its status to `'cancelled'`, and logs the action as `'cancelled'` in `shipment_log`, then call it for shipment 2.
+Write a procedure named `cancel_shipment` that takes a `shipment_id`, sets its status to `'cancelled'`, and logs the action as `'cancelled'` in `shipment_log`, then call it for shipment 2.
 
 <iframe
  frameBorder="0"
@@ -170,10 +170,10 @@ Write a `procedure` named `cancel_shipment` that takes a `shipment_id`, sets its
 
 Expected result and verification:
 
-A correct `procedure` follows the same shape as `mark_shipment_delivered`, replacing the update value and the logged action text with `'cancelled'`; calling `CALL cancel_shipment(2);` afterward updates shipment 2's status and adds a matching log entry, confirmed by selecting from both `tables`.
+A correct procedure follows the same shape as `mark_shipment_delivered`, replacing the update value and the logged action text with `'cancelled'`; calling `CALL cancel_shipment(2);` afterward updates shipment 2's status and adds a matching log entry, confirmed by selecting from both tables.
 
 ## Conclusion
 
-A `stored procedure`, invoked with `CALL`, wraps multiple statements into a single, named, reusable routine defined once inside the `database`, capable of managing its own `transaction` boundaries including mid-`procedure` commits, which guarantees every caller gets identical, correct behavior without reimplementing the same logic client by client. Devraj's shipment-delivery logic now lives in exactly one place, called consistently from anywhere.
+A `stored procedure`, invoked with `CALL`, wraps multiple statements into a single, named, reusable routine defined once inside the database, capable of managing its own transaction boundaries including mid-procedure commits, which guarantees every caller gets identical, correct behavior without reimplementing the same logic client by client. Devraj's shipment-delivery logic now lives in exactly one place, called consistently from anywhere.
 
-The next lesson covers a closely related but distinct kind of routine, one built specifically to compute and return a value for use inside a `query`.
+The next lesson covers a closely related but distinct kind of routine, one built specifically to compute and return a value for use inside a query.

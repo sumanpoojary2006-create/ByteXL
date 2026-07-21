@@ -1,6 +1,6 @@
 ## Introduction
 
-Vivek has spent the last two weeks talking his hospital-management design through out loud: entities, attributes, cardinality, participation, all of it worked out carefully in sentences and small `tables`.
+Vivek has spent the last two weeks talking his hospital-management design through out loud: entities, attributes, cardinality, participation, all of it worked out carefully in sentences and small tables.
 
 His manager stops him mid-explanation and asks a fair question: "This is solid work, but if I hand your notes to another developer who was not in the room with you, could they understand the design without you narrating it?" Vivek admits they probably could not.
 
@@ -22,7 +22,7 @@ Three shapes carry three different meanings:
 
 - A rectangle labelled "Patient" represents an entity, a distinct real-world thing the system tracks.
 - Small ovals hanging off that rectangle, connected by short lines, each labelled with one word, "Patient ID," "Name," "Date of Birth," "Blood Group," are attributes, each one describing one property of the entity they are attached to.
-- A diamond shape sitting on the line between the Patient rectangle and a second rectangle labelled "Doctor," labelled "Admits," is the relationship, the meaningful `connection` between the two entities it touches.
+- A diamond shape sitting on the line between the Patient rectangle and a second rectangle labelled "Doctor," labelled "Admits," is the relationship, the meaningful connection between the two entities it touches.
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
   <thead>
@@ -64,7 +64,7 @@ Every shape in the diagram is connected to something by a plain line, and the li
 
 Plain rectangles and ovals capture the basic shapes, but Vivek's diagram also needs to show details covered already: which attribute is the identifying one, which attribute is composite, derived, or multivalued, and which entity has total participation in a relationship.
 
-The identifying attribute, the one that plays the `role` of uniquely picking out one instance of the entity, gets its label underlined inside its oval, so "Patient ID" appears underlined while "Name" does not. A composite attribute, like Address, is drawn as an oval that itself has smaller ovals branching off it, Street, City, Pincode, visually showing that the whole is made of parts.
+The identifying attribute, the one that plays the role of uniquely picking out one instance of the entity, gets its label underlined inside its oval, so "Patient ID" appears underlined while "Name" does not. A composite attribute, like Address, is drawn as an oval that itself has smaller ovals branching off it, Street, City, Pincode, visually showing that the whole is made of parts.
 
 A derived attribute gets a dashed outline instead of a solid one, a quiet visual reminder that this value is calculated rather than stored. A multivalued attribute is drawn with a double-lined oval, signalling that a single entity instance can carry more than one value here.
 
@@ -211,4 +211,4 @@ An ER diagram gives a design a shared visual vocabulary: rectangles for entities
 
 Learning this small, fixed set of shapes is what turns a design that only its author can explain into one that any trained reader can pick up and understand unaided. Vivek's hospital-management diagram, with Patient, Doctor, and Admits drawn out in the standard notation, can now finally answer his manager's original challenge: another developer can pick it up and read it correctly without Vivek in the room to narrate it.
 
-Everything built up so far, the entities, their attributes, the relationships between them, their cardinality, and their participation, exists for one final purpose: to be translated faithfully into the `rows` and `columns` a relational `database` actually stores, which is the last, very practical step still ahead.
+Everything built up so far, the entities, their attributes, the relationships between them, their cardinality, and their participation, exists for one final purpose: to be translated faithfully into the rows and columns a relational database actually stores, which is the last, very practical step still ahead.

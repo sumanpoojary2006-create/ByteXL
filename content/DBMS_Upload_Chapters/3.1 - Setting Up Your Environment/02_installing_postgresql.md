@@ -1,10 +1,10 @@
 ## Introduction
 
-Ananya has decided which system she wants to learn on, and now she is staring at her own laptop wondering what "installing a `database`" even involves in practice. She has installed apps before, the double-click-and-follow-the-wizard kind, but a `database` feels different somehow, more like setting up a piece of infrastructure than opening a program. Is it a program she opens each time, like a text editor?
+Ananya has decided which system she wants to learn on, and now she is staring at her own laptop wondering what "installing a database" even involves in practice. She has installed apps before, the double-click-and-follow-the-wizard kind, but a database feels different somehow, more like setting up a piece of infrastructure than opening a program. Is it a program she opens each time, like a text editor?
 
 Does it run quietly in the background, like something she can forget about until she needs it?
 
-The honest answer is that PostgreSQL is a small, ongoing **server process**, a program that starts once, keeps running quietly in the background listening for `connections`, and stays available until she stops it or shuts down her machine, rather than something she opens and closes each time like a document.
+The honest answer is that PostgreSQL is a small, ongoing **server process**, a program that starts once, keeps running quietly in the background listening for connections, and stays available until she stops it or shuts down her machine, rather than something she opens and closes each time like a document.
 
 Understanding that one idea makes the rest of installing it far less mysterious, because everything else, the installer, the default user, the port number, exists to get that background process running reliably and to give Ananya a safe way to reach it.
 
@@ -37,17 +37,17 @@ Whichever route Ananya takes, the installer leaves her with the same three thing
 
 1. A running server process
 
-2. A default administrative `role`
+2. A default administrative role
 
 3. A default network port the server listens on
 
 ## The Default Admin Role and the Default Port
 
-Every fresh PostgreSQL install creates one particular `role` automatically, conventionally named `postgres`, which has full administrative rights over the whole server. Ananya will use this `role` for her very first `connection`, the same way a brand-new laptop hands you one built-in administrator account before you create your own. In a real team setting, nobody keeps using that account forever; separate, more limited `roles` get created for each person or application.
+Every fresh PostgreSQL install creates one particular role automatically, conventionally named `postgres`, which has full administrative rights over the whole server. Ananya will use this role for her very first connection, the same way a brand-new laptop hands you one built-in administrator account before you create your own. In a real team setting, nobody keeps using that account forever; separate, more limited roles get created for each person or application.
 
 But for a first install on her own machine, `postgres` is exactly the account she is meant to start with.
 
-Alongside the admin `role`, the installer configures the server to listen for `connections` on a specific network port, and PostgreSQL's convention is **port 5432**. A port, in this context, is simply the numbered "door" a program listens at for incoming `connections`, the same way a building might have several numbered entrances even though it is one structure.
+Alongside the admin role, the installer configures the server to listen for connections on a specific network port, and PostgreSQL's convention is **port 5432**. A port, in this context, is simply the numbered "door" a program listens at for incoming connections, the same way a building might have several numbered entrances even though it is one structure.
 
 Ananya does not need to memorize this number so much as recognize it later: any tool that wants to talk to her PostgreSQL server, whether that is a command-line client or a graphical one, will ask for a host, typically her own machine, and a port, typically 5432, before it asks for anything else.
 
@@ -69,13 +69,13 @@ If the command is not recognized, the usual culprit is that the install's tools 
 
 ## A Zero-Install Way to Start Right Now
 
-Here is the reassuring part for anyone who would rather not fight with installers on day one: a full local install is not required to begin writing and running real SQL. A browser-based SQL environment, reachable through nothing more than a web page, gives you an already-running `database` `connection` instantly, with no download, no password setup, and no port configuration to think about.
+Here is the reassuring part for anyone who would rather not fight with installers on day one: a full local install is not required to begin writing and running real SQL. A browser-based SQL environment, reachable through nothing more than a web page, gives you an already-running database connection instantly, with no download, no password setup, and no port configuration to think about.
 
 It is the SQL equivalent of a code runner that lets a brand-new programmer try a first few lines of code without first setting up an entire development machine, and it is a perfectly sound place to spend your first stretch of practice.
 
 Installing PostgreSQL on your own machine is absolutely worth doing, and most of the exercises ahead can be tried either way, but there is no need to treat it as a prerequisite for getting started.
 
-Get comfortable typing `queries` and seeing real results first, in whichever environment is in front of you, and treat a local install as a milestone to reach once the basics of talking to a `database` no longer feel unfamiliar.
+Get comfortable typing queries and seeing real results first, in whichever environment is in front of you, and treat a local install as a milestone to reach once the basics of talking to a database no longer feel unfamiliar.
 
 ![Local PostgreSQL version check and browser SQL runner shown as two ways to start practicing](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_verify_install_or_browser_sql.png)
 
@@ -117,6 +117,6 @@ Get comfortable typing `queries` and seeing real results first, in whichever env
 
 Installing PostgreSQL, stripped of wizard screens and package-manager syntax, comes down to the same few ideas everywhere: get the server software onto the machine, set up a default administrative account to manage it, agree on a port for tools to connect through, and confirm the whole thing actually worked with a quick version check.
 
-None of it demands deep systems knowledge, and none of it needs to happen before Ananya writes her first `query`, since an online environment can get her typing real SQL within seconds.
+None of it demands deep systems knowledge, and none of it needs to happen before Ananya writes her first query, since an online environment can get her typing real SQL within seconds.
 
 Once a server is reachable, whether local or online, the next question is how to actually talk to it, and it turns out there are two quite different styles of tool for exactly that job, one built for typing and one built for pointing and clicking.

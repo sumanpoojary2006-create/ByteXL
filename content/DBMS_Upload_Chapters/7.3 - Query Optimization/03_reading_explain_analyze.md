@@ -1,16 +1,16 @@
 ## Introduction
 
-- Plain `EXPLAIN`, covered in the previous lesson, only ever reports what the optimizer expects to happen, an estimate produced without actually running the `query`.
-- Those estimates can be wrong, sometimes significantly, when the `database`'s statistics are stale or when a condition's true selectivity is harder to predict than usual.
-- `EXPLAIN ANALYZE` closes that gap: it actually executes the `query`, for real, and reports the plan alongside the actual measured time and actual `row` counts observed, letting Priya compare what the optimizer expected against what genuinely happened.
+- Plain `EXPLAIN`, covered in the previous lesson, only ever reports what the optimizer expects to happen, an estimate produced without actually running the query.
+- Those estimates can be wrong, sometimes significantly, when the database's statistics are stale or when a condition's true selectivity is harder to predict than usual.
+- `EXPLAIN ANALYZE` closes that gap: it actually executes the query, for real, and reports the plan alongside the actual measured time and actual row counts observed, letting Priya compare what the optimizer expected against what genuinely happened.
 
-**Definition:** `EXPLAIN ANALYZE` actually runs a `query` and reports real measured time and real `row` counts alongside the optimizer's original estimates, making it possible to see exactly where a plan's assumptions matched reality and where they did not, with `loops=N` and a `ROLLBACK`-wrapped `transaction` as two details worth remembering when reading or running it.
+**Definition:** `EXPLAIN ANALYZE` actually runs a query and reports real measured time and real row counts alongside the optimizer's original estimates, making it possible to see exactly where a plan's assumptions matched reality and where they did not, with `loops=N` and a `ROLLBACK`-wrapped transaction as two details worth remembering when reading or running it.
 
 ![Intro visual for reading explain analyze](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_reading_explain_analyze.png)
 
 ## Estimated vs. Actual, Side by Side
 
-The same `orders` `table`, with a deliberately skewed distribution, sets up a case where an estimate and reality can diverge.
+The same `orders` table, with a deliberately skewed distribution, sets up a case where an estimate and reality can diverge.
 
 ## Source Data Used in This Lesson
 
@@ -69,13 +69,13 @@ Expected output:
 The output now includes both the familiar `cost=` and `rows=` estimates from plain `EXPLAIN`, and a second set of numbers: `actual time=startup..total rows=N loops=N`.
 
 - **`actual time`**: reports genuinely measured milliseconds, not internal cost units.
-- **`rows=N`** (in the actual section): reports how many `rows` this step genuinely returned when actually run, which can be compared directly against the earlier estimate on the same line.
+- **`rows=N`** (in the actual section): reports how many rows this step genuinely returned when actually run, which can be compared directly against the earlier estimate on the same line.
 
 ![EXPLAIN ANALYZE compares estimated rows with the actual rows returned](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_explain_analyze_estimated_vs_actual_rows.png)
 
 ## When Estimates and Reality Disagree
 
-In this deliberately skewed dataset, three quarters of all `rows` belong to `customer_id = 1`, a distribution the optimizer's general statistics may not always model with perfect precision, especially before `ANALYZE` has run recently.
+In this deliberately skewed dataset, three quarters of all rows belong to `customer_id = 1`, a distribution the optimizer's general statistics may not always model with perfect precision, especially before `ANALYZE` has run recently.
 
 <iframe
  frameBorder="0"
@@ -96,13 +96,13 @@ Expected output (the same query, re-examined for the estimate-vs-actual gap):
  Execution Time: 4.487 ms
 ```
 
-Here the setup script ran `ANALYZE orders` right after loading the data, so the optimizer's estimate (`rows=15288`) already tracks the actual count (`rows=15000`) fairly closely, a gap of under 2%. Had the `table` been loaded without a fresh `ANALYZE`, or had the data been bulk-modified afterward, that same query could easily show a far wider gap, for example an estimate of `rows=200` against an actual of `rows=15000`, a 75x undercount. That kind of gap is a direct, measurable sign that the optimizer's assumptions about this data did not match reality. That mismatch can lead PostgreSQL to choose a plan that looked cheap on paper but performs worse in practice.
+Here the setup script ran `ANALYZE orders` right after loading the data, so the optimizer's estimate (`rows=15288`) already tracks the actual count (`rows=15000`) fairly closely, a gap of under 2%. Had the table been loaded without a fresh `ANALYZE`, or had the data been bulk-modified afterward, that same query could easily show a far wider gap, for example an estimate of `rows=200` against an actual of `rows=15000`, a 75x undercount. That kind of gap is a direct, measurable sign that the optimizer's assumptions about this data did not match reality. That mismatch can lead PostgreSQL to choose a plan that looked cheap on paper but performs worse in practice.
 
-For example, it might choose an `index scan` for a condition that actually matches a huge fraction of the `table`, where a `sequential scan` would have been the better call.
+For example, it might choose an `index scan` for a condition that actually matches a huge fraction of the table, where a `sequential scan` would have been the better call.
 
 ## Why loops=N Matters
 
-For a step that gets executed more than once, such as the inner side of certain `join` strategies run once per outer `row`, `EXPLAIN ANALYZE` reports `loops=N`, and the `actual time` shown is the average per loop, not the total across all loops combined.
+For a step that gets executed more than once, such as the inner side of certain join strategies run once per outer row, `EXPLAIN ANALYZE` reports `loops=N`, and the `actual time` shown is the average per loop, not the total across all loops combined.
 
 <iframe
  frameBorder="0"
@@ -131,7 +131,7 @@ This plan runs its inner scan of `orders` once per matching customer, so `loops=
 
 ## Why EXPLAIN ANALYZE Should Be Used with Care
 
-Because `EXPLAIN ANALYZE` genuinely executes the `query`, it is not risk-free to run against a statement that modifies data; an `UPDATE` or `DELETE` wrapped in `EXPLAIN ANALYZE` really performs that update or delete. PostgreSQL provides an option specifically to avoid this danger for write statements that still need analyzing.
+Because `EXPLAIN ANALYZE` genuinely executes the query, it is not risk-free to run against a statement that modifies data; an `UPDATE` or `DELETE` wrapped in `EXPLAIN ANALYZE` really performs that update or delete. PostgreSQL provides an option specifically to avoid this danger for write statements that still need analyzing.
 
 <iframe
  frameBorder="0"
@@ -153,9 +153,9 @@ Expected output:
  Execution Time: 6.812 ms
 ```
 
-The `Update on orders` node's own `rows=0` is normal, an `UPDATE` node does not return `rows` to the client the way a `SELECT` does; the `rows=15000` that matter are reported one level down, on the `Seq Scan` that found the `rows` to modify. The `Execution Time: 6.812 ms` reflects the real cost of updating all 15000 matching `rows`, and because the statement runs inside `BEGIN` / `ROLLBACK`, none of those changes are kept once the `transaction` ends.
+The `Update on orders` node's own `rows=0` is normal, an `UPDATE` node does not return rows to the client the way a `SELECT` does; the `rows=15000` that matter are reported one level down, on the `Seq Scan` that found the rows to modify. The `Execution Time: 6.812 ms` reflects the real cost of updating all 15000 matching rows, and because the statement runs inside `BEGIN` / `ROLLBACK`, none of those changes are kept once the transaction ends.
 
-Wrapping the `EXPLAIN ANALYZE UPDATE` in a `transaction` that ends with `ROLLBACK` instead of `COMMIT` is the standard, safe way to measure a write statement's real `execution plan` and timing without letting its actual changes persist, exactly the transactional safety net covered in the previous unit.
+Wrapping the `EXPLAIN ANALYZE UPDATE` in a transaction that ends with `ROLLBACK` instead of `COMMIT` is the standard, safe way to measure a write statement's real `execution plan` and timing without letting its actual changes persist, exactly the transactional safety net covered in the previous unit.
 
 ## EXPLAIN vs. EXPLAIN ANALYZE at a Glance
 
@@ -193,7 +193,7 @@ Wrapping the `EXPLAIN ANALYZE UPDATE` in a `transaction` that ends with `ROLLBAC
 
 ## Your Turn
 
-Run `EXPLAIN ANALYZE` on a `query` filtering `orders` for `customer_id = 50`, a value from the less-skewed portion of the data, and compare its estimated versus actual `row` counts to the earlier `customer_id = 1` example, noting in a comment which one shows a larger gap between estimate and reality.
+Run `EXPLAIN ANALYZE` on a query filtering `orders` for `customer_id = 50`, a value from the less-skewed portion of the data, and compare its estimated versus actual row counts to the earlier `customer_id = 1` example, noting in a comment which one shows a larger gap between estimate and reality.
 
 <iframe
  frameBorder="0"
@@ -213,8 +213,8 @@ Expected result and verification:
  Execution Time: 0.052 ms
 ```
 
-`EXPLAIN ANALYZE SELECT * FROM orders WHERE customer_id = 50;` shows estimated and actual `row` counts matching exactly (`rows=25` estimated, `rows=25` actual), a far tighter fit than the `customer_id = 1` case (`rows=15288` estimated vs. `rows=15000` actual). Customer 50's share of the data follows the more evenly distributed pattern (roughly 25 out of 20000 rows, spread across 200 near-equal `customer_id` groups), which the optimizer's statistics model far more accurately than the one artificially dominant `customer_id = 1` group.
+`EXPLAIN ANALYZE SELECT * FROM orders WHERE customer_id = 50;` shows estimated and actual row counts matching exactly (`rows=25` estimated, `rows=25` actual), a far tighter fit than the `customer_id = 1` case (`rows=15288` estimated vs. `rows=15000` actual). Customer 50's share of the data follows the more evenly distributed pattern (roughly 25 out of 20000 rows, spread across 200 near-equal `customer_id` groups), which the optimizer's statistics model far more accurately than the one artificially dominant `customer_id = 1` group.
 
 ## Conclusion
 
-`EXPLAIN ANALYZE` actually runs a `query` and reports real measured time and real `row` counts alongside the optimizer's original estimates, making it possible to see exactly where a plan's assumptions matched reality and where they did not, with `loops=N` and a `ROLLBACK`-wrapped `transaction` as two details worth remembering when reading or running it. Priya can now diagnose not just what plan ran, but whether it was actually a good plan once real execution is accounted for. Behind many of these plans sits a specific choice this unit has not yet examined directly: which algorithm the `database` uses to actually perform a `join`.
+`EXPLAIN ANALYZE` actually runs a query and reports real measured time and real row counts alongside the optimizer's original estimates, making it possible to see exactly where a plan's assumptions matched reality and where they did not, with `loops=N` and a `ROLLBACK`-wrapped transaction as two details worth remembering when reading or running it. Priya can now diagnose not just what plan ran, but whether it was actually a good plan once real execution is accounted for. Behind many of these plans sits a specific choice this unit has not yet examined directly: which algorithm the database uses to actually perform a join.

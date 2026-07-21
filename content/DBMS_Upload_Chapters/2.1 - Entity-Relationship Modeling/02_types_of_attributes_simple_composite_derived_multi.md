@@ -4,13 +4,13 @@ Meera is redesigning the member records for the gym where she works part-time as
 
 Instead, she notices that these five things are not actually the same kind of fact at all, and treating them as if they were identical is exactly what has been causing the gym's records to drift out of sync.
 
-Three `columns` on the form each hide a different problem:
+Three columns on the form each hide a different problem:
 
 - **Age and date of birth:** the form asks for both, but age changes every year while date of birth never does, so whenever a member's birthday passes and nobody updates the age field by hand, the two values start contradicting each other.
 - **Address:** the form squeezes it into a single line, even though it is really built from a street, a city, and a pincode that the gym often needs separately, say, to filter members by locality for a new branch opening.
 - **Phone number:** more than one member has written down two numbers in the margin because the form only left room for one.
 
-Meera's manager, watching her frown at the form, explains that this is a well-known problem with a name: not every **attribute** behaves the same way. Attributes come in a small number of recognisable types, and knowing which type an attribute is, before it ever reaches a `table`, determines how it needs to be stored.
+Meera's manager, watching her frown at the form, explains that this is a well-known problem with a name: not every **attribute** behaves the same way. Attributes come in a small number of recognisable types, and knowing which type an attribute is, before it ever reaches a table, determines how it needs to be stored.
 
 ![Simple, composite, derived, and multivalued attributes on a gym member form](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_attribute_types_gym_form.png)
 
@@ -76,7 +76,7 @@ An address is a different animal. Meera realises the gym genuinely does care abo
   </tbody>
 </table>
 
-The test Meera learns to apply is whether the pieces are ever useful on their own. If the gym never once needs to `query` "which members live in which city" without also needing the full address, breaking address apart would be unnecessary detail. Because the gym does need city on its own, address earns composite treatment, stored and reasoned about as a group of smaller, meaningful attributes rather than one indivisible blob of text.
+The test Meera learns to apply is whether the pieces are ever useful on their own. If the gym never once needs to query "which members live in which city" without also needing the full address, breaking address apart would be unnecessary detail. Because the gym does need city on its own, address earns composite treatment, stored and reasoned about as a group of smaller, meaningful attributes rather than one indivisible blob of text.
 
 ## Derived Attributes: Computed, Not Stored
 
@@ -180,9 +180,9 @@ Each of these breaks the assumption that "one entity, one value" always holds, a
 
 ## Why This Sorting Exercise Matters
 
-Meera's redesigned form now separates date of birth from age, breaks address into street, city, and pincode, drops age entirely as a stored field since it can always be computed, and leaves proper room for a member to list more than one phone number. None of this required a single `table` or `column` definition yet; it required only a careful look at what each attribute actually is.
+Meera's redesigned form now separates date of birth from age, breaks address into street, city, and pincode, drops age entirely as a stored field since it can always be computed, and leaves proper room for a member to list more than one phone number. None of this required a single table or column definition yet; it required only a careful look at what each attribute actually is.
 
-That distinction carries forward directly into how a `database` eventually gets built, because a composite attribute usually becomes several `columns`, a derived attribute usually becomes no `column` at all, and a multivalued attribute usually needs a structure of its own rather than a single cramped field.
+That distinction carries forward directly into how a database eventually gets built, because a composite attribute usually becomes several columns, a derived attribute usually becomes no column at all, and a multivalued attribute usually needs a structure of its own rather than a single cramped field.
 
 ![Attribute types flowing into different storage decisions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_attribute_storage_decision_flow.png)
 
@@ -196,6 +196,6 @@ A working answer: blood group is simple, one indivisible value; home address is 
 
 Attributes are not all the same shape. A simple attribute holds one indivisible value, a composite attribute is built from smaller meaningful parts, a derived attribute can always be recalculated from something already stored, and a multivalued attribute allows more than one value for a single entity at the same time.
 
-Sorting an attribute into the right one of these four categories, before ever drawing a `table`, is what keeps a design honest about the data it is actually meant to hold. Meera's redesigned gym enrolment form now drops the drifting age field in favour of date of birth, splits address into street, city, and pincode, and finally leaves room for a member's second phone number instead of forcing it into the margin.
+Sorting an attribute into the right one of these four categories, before ever drawing a table, is what keeps a design honest about the data it is actually meant to hold. Meera's redesigned gym enrolment form now drops the drifting age field in favour of date of birth, splits address into street, city, and pincode, and finally leaves room for a member's second phone number instead of forcing it into the margin.
 
 With entities and their attributes properly understood, the next question is how the entities themselves relate to one another in terms of quantity, whether one student links to one desk, one department links to many employees, or many students link to many courses, which is where the shape of a relationship starts to matter as much as its existence.

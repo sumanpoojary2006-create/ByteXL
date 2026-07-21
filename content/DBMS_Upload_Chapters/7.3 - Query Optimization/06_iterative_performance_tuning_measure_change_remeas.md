@@ -1,8 +1,8 @@
 ## Introduction
 
-Every technique covered in this unit, storage layout, `indexes`, `EXPLAIN`, `join` algorithms, and common bottlenecks, is a piece of a single repeatable process, not a checklist to apply once and forget. Real performance tuning is iterative: measure how a `query` actually performs, make one deliberate change, measure again to confirm that change actually helped, and repeat, rather than guessing at several changes at once and hoping the combination works.
+Every technique covered in this unit, storage layout, indexes, `EXPLAIN`, join algorithms, and common bottlenecks, is a piece of a single repeatable process, not a checklist to apply once and forget. Real performance tuning is iterative: measure how a query actually performs, make one deliberate change, measure again to confirm that change actually helped, and repeat, rather than guessing at several changes at once and hoping the combination works.
 
-This final lesson walks through that full loop, start to finish, on one `query`.
+This final lesson walks through that full loop, start to finish, on one query.
 
 **Definition:** Iterative tuning, measure with `EXPLAIN ANALYZE`, make one deliberate change, re-measure to confirm it actually helped, and repeat, is the discipline that ties every technique in this unit together into a real, evidence-based process, rather than a collection of tricks applied on faith.
 
@@ -75,13 +75,13 @@ Expected output (baseline, before any new index):
  Execution Time: 39.021 ms
 ```
 
-This baseline plan, with no supporting `index` on either `status` or `order_date`, shows a `Seq Scan` across all 60000 `rows`, discarding 59930 of them, before filtering down to the small refunded, recent subset (70 `rows`) the `query` actually cares about. Recording this baseline's actual time, 39.021 ms, is essential, since without it, there is no way to later confirm whether a change genuinely helped or made no real difference.
+This baseline plan, with no supporting index on either `status` or `order_date`, shows a `Seq Scan` across all 60000 rows, discarding 59930 of them, before filtering down to the small refunded, recent subset (70 rows) the query actually cares about. Recording this baseline's actual time, 39.021 ms, is essential, since without it, there is no way to later confirm whether a change genuinely helped or made no real difference.
 
 ![Iterative tuning starts by measuring a baseline before making changes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/13_iterative_tuning_measure_change_remeasure.png)
 
 ## Step Two: Make One Deliberate Change
 
-Rather than adding several `indexes` at once, the disciplined approach is one change at a time, so its individual effect can be measured cleanly. A `composite index` matching both filter `columns` together, the technique covered in the `indexes` chapter, is a reasonable first attempt here.
+Rather than adding several indexes at once, the disciplined approach is one change at a time, so its individual effect can be measured cleanly. A `composite index` matching both filter columns together, the technique covered in the indexes chapter, is a reasonable first attempt here.
 
 <iframe
  frameBorder="0"
@@ -92,7 +92,7 @@ Rather than adding several `indexes` at once, the disciplined approach is one ch
 
 Expected observation: PostgreSQL confirms that the index was created. The command does not return business rows; its effect is verified by rerunning the related query or `EXPLAIN` statement.
 
-This single, targeted change is the entire first iteration, nothing else about the `query` or the `schema` is touched yet, keeping the next measurement a clean, isolated comparison against the baseline.
+This single, targeted change is the entire first iteration, nothing else about the query or the schema is touched yet, keeping the next measurement a clean, isolated comparison against the baseline.
 
 ## Step Three: Re-measure and Compare
 
@@ -122,13 +122,13 @@ Expected output (after adding `idx_orders_status_date`):
 Comparing this plan's actual time directly against the baseline's is the entire point of the exercise:
 
 - The plan now shows an `Index Scan` on `idx_orders_status_date` instead of a `Seq Scan`, and the total `Execution Time` dropped from 39.021 ms to 1.298 ms, roughly a 30x improvement, confirming the change as a real improvement, not just a plausible-sounding guess.
-- Had the actual time barely moved, or had the optimizer still chosen a `sequential scan` anyway, perhaps because the filtered `rows` are not selective enough for the `index` to be worth using, that would be equally important information, and it would mean the next iteration should try a different change rather than assuming this one worked.
+- Had the actual time barely moved, or had the optimizer still chosen a `sequential scan` anyway, perhaps because the filtered rows are not selective enough for the index to be worth using, that would be equally important information, and it would mean the next iteration should try a different change rather than assuming this one worked.
 
 ![Compare baseline time with after-change time to prove whether tuning helped](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/14_baseline_vs_after_change_actual_time.png)
 
 ## Step Four: Repeat, One Change at a Time
 
-If the first change helped but the `query` is still slower than needed, the loop continues: identify the next likely bottleneck from what `EXPLAIN ANALYZE` now shows, make one more targeted change, and measure again.
+If the first change helped but the query is still slower than needed, the loop continues: identify the next likely bottleneck from what `EXPLAIN ANALYZE` now shows, make one more targeted change, and measure again.
 
 <iframe
  frameBorder="0"
@@ -154,11 +154,11 @@ Expected output:
  Execution Time: 1.241 ms
 ```
 
-Adding `LIMIT 10` shaves the `Sort` step down to a cheaper `top-N heapsort` and trims total `Execution Time` from 1.298 ms to 1.241 ms, a small but real and separately attributable gain on top of the `index` change. If the actual business need only ever wants the top 10 customers by refund total, adding `LIMIT 10` is itself a legitimate next iteration, changing the `query` rather than the `schema`, and it is worth re-measuring separately from the `indexing` change to see how much it alone contributes, keeping each iteration's effect distinct and attributable.
+Adding `LIMIT 10` shaves the `Sort` step down to a cheaper `top-N heapsort` and trims total `Execution Time` from 1.298 ms to 1.241 ms, a small but real and separately attributable gain on top of the index change. If the actual business need only ever wants the top 10 customers by refund total, adding `LIMIT 10` is itself a legitimate next iteration, changing the query rather than the schema, and it is worth re-measuring separately from the `indexing` change to see how much it alone contributes, keeping each iteration's effect distinct and attributable.
 
 ## Why This Discipline Matters More Than Any Single Technique
 
-The specific techniques covered across this unit, storage awareness, `indexing`, reading plans, understanding `join` algorithms, are all just tools available during this loop. A tuning session that skips measurement and jumps straight to "add `indexes` everywhere" risks the over-indexing cost covered earlier in this unit, paying for write overhead on `indexes` that never actually helped the `query` they were added for.
+The specific techniques covered across this unit, storage awareness, `indexing`, reading plans, understanding join algorithms, are all just tools available during this loop. A tuning session that skips measurement and jumps straight to "add indexes everywhere" risks the over-indexing cost covered earlier in this unit, paying for write overhead on indexes that never actually helped the query they were added for.
 
 Measuring first, changing one thing, and measuring again is what turns tuning from guesswork into an evidence-based process with a clear, demonstrable outcome at every step.
 
@@ -193,7 +193,7 @@ Measuring first, changing one thing, and measuring again is what turns tuning fr
 
 ## Your Turn
 
-Using the `orders` `table` above, measure the baseline for a `query` filtering `WHERE customer_id = 4000`, add an appropriate `index`, and re-measure to confirm the improvement, following the same measure-change-re-measure discipline covered in this lesson.
+Using the `orders` table above, measure the baseline for a query filtering `WHERE customer_id = 4000`, add an appropriate index, and re-measure to confirm the improvement, following the same measure-change-re-measure discipline covered in this lesson.
 
 <iframe
  frameBorder="0"
@@ -231,6 +231,6 @@ Execution Time drops from 9.841 ms to 0.061 ms, well over 100x faster, the compl
 
 ## Conclusion
 
-Iterative tuning, measure with `EXPLAIN ANALYZE`, make one deliberate change, re-measure to confirm it actually helped, and repeat, is the discipline that ties every technique in this unit together into a real, evidence-based process, rather than a collection of tricks applied on faith. Priya now has a complete, repeatable method for taking any slow `query` from a first honest measurement to a confirmed improvement.
+Iterative tuning, measure with `EXPLAIN ANALYZE`, make one deliberate change, re-measure to confirm it actually helped, and repeat, is the discipline that ties every technique in this unit together into a real, evidence-based process, rather than a collection of tricks applied on faith. Priya now has a complete, repeatable method for taking any slow query from a first honest measurement to a confirmed improvement.
 
-With storage, `indexing`, and `query` optimization all covered, the course moves next into the practical work of running a `database` in a real, production environment.
+With storage, `indexing`, and query optimization all covered, the course moves next into the practical work of running a database in a real, production environment.

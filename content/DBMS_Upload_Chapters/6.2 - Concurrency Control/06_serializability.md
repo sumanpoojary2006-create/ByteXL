@@ -1,16 +1,16 @@
 ## Introduction
 
-Every mechanism covered in this chapter, `locking`, `isolation levels`, and deadlock detection, exists to serve one underlying standard, first mentioned in this chapter's opening lesson: whatever order `transactions` actually run in, overlapping, interleaved, racing against each other, the final result must match some outcome that could have happened if those same `transactions` had instead run one at a time, in some sequence, with no overlap at all.
+Every mechanism covered in this chapter, `locking`, `isolation levels`, and deadlock detection, exists to serve one underlying standard, first mentioned in this chapter's opening lesson: whatever order transactions actually run in, overlapping, interleaved, racing against each other, the final result must match some outcome that could have happened if those same transactions had instead run one at a time, in some sequence, with no overlap at all.
 
 This standard has a name, **serializability**, and understanding it precisely is what ties together why `locking`, `isolation levels`, and deadlock resolution all exist in the first place.
 
-**Definition:** Serializability is the standard every mechanism in this chapter ultimately serves: a guarantee that concurrent `transactions`, however they actually interleave in real time, produce a result equivalent to running them one at a time in some order, and `locking`, `isolation levels`, and deadlock detection are all the practical machinery a `database` uses to approach or fully guarantee that standard.
+**Definition:** Serializability is the standard every mechanism in this chapter ultimately serves: a guarantee that concurrent transactions, however they actually interleave in real time, produce a result equivalent to running them one at a time in some order, and `locking`, `isolation levels`, and deadlock detection are all the practical machinery a database uses to approach or fully guarantee that standard.
 
 ![Intro visual for serializability](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_serializability.png)
 
 ## What "Equivalent to Some Serial Order" Means
 
-The `accounts` `table` sets up two `transactions` whose combined effect depends entirely on execution order.
+The `accounts` table sets up two transactions whose combined effect depends entirely on execution order.
 
 ## Source Data Used in This Lesson
 
@@ -64,9 +64,9 @@ Serializability does not demand a single specific answer; it demands that whatev
 
 ## Why This Standard Matters for Correctness
 
-If two `transactions` run concurrently and the `database` allows a result that does not correspond to any possible one-at-a-time ordering, something has gone wrong that no individual `transaction`'s own logic could have predicted or accounted for.
+If two transactions run concurrently and the database allows a result that does not correspond to any possible one-at-a-time ordering, something has gone wrong that no individual transaction's own logic could have predicted or accounted for.
 
-The `lost update` from earlier in this chapter is a clear example: neither "A then B" nor "B then A" would have caused one sale's stock reduction to vanish entirely, since a strictly sequential execution guarantees each `transaction` sees the previous one's completed result before making its own change.
+The `lost update` from earlier in this chapter is a clear example: neither "A then B" nor "B then A" would have caused one sale's stock reduction to vanish entirely, since a strictly sequential execution guarantees each transaction sees the previous one's completed result before making its own change.
 
 A `lost update` is not just an inconvenient bug; it is a violation of serializability, a result that no valid serial ordering could ever have produced.
 
@@ -74,9 +74,9 @@ A `lost update` is not just an inconvenient bug; it is a violation of serializab
 
 ## Serializability as the Target, Not a Setting
 
-- `SERIALIZABLE`, the `isolation level` covered earlier in this chapter, is the one level that fully guarantees serializability for every `transaction` run under it.
+- `SERIALIZABLE`, the `isolation level` covered earlier in this chapter, is the one level that fully guarantees serializability for every transaction run under it.
 - The other levels, `READ COMMITTED` and `REPEATABLE READ`, are deliberate, named exceptions to full serializability, each one permitting specific, well-understood anomalies, such as non-repeatable reads, in exchange for better performance.
-- This is the precise relationship between the two ideas covered across this chapter: serializability is the theoretical gold standard for what "correct under concurrency" means, and `isolation levels` are the practical, named trade-offs a `database` offers between that gold standard and real-world speed.
+- This is the precise relationship between the two ideas covered across this chapter: serializability is the theoretical gold standard for what "correct under concurrency" means, and `isolation levels` are the practical, named trade-offs a database offers between that gold standard and real-world speed.
 
 ## Verifying the Trade-off Directly
 
@@ -89,7 +89,7 @@ A `lost update` is not just an inconvenient bug; it is a violation of serializab
 
 Expected observation: the isolation-level command completes inside the transaction. Its effect becomes visible when the same read is tested from two concurrent sessions, as explained below.
 
-Running a `transaction` under `SERIALIZABLE` guarantees, for every `transaction` that also runs under `SERIALIZABLE` concurrently with it, that the combined result will always be equivalent to some serial ordering of them, at the cost of the `database` sometimes forcibly aborting one of the `transactions` and requiring a retry, exactly the trade-off discussed when `isolation levels` were first introduced.
+Running a transaction under `SERIALIZABLE` guarantees, for every transaction that also runs under `SERIALIZABLE` concurrently with it, that the combined result will always be equivalent to some serial ordering of them, at the cost of the database sometimes forcibly aborting one of the transactions and requiring a retry, exactly the trade-off discussed when `isolation levels` were first introduced.
 
 ![Serializable isolation preserving correctness by forcing a retry when needed](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/13_serializable_retry_tradeoff.png)
 
@@ -124,7 +124,7 @@ Running a `transaction` under `SERIALIZABLE` guarantees, for every `transaction`
 
 ## Your Turn
 
-Using the `accounts` `table` above, reset the balance to 1000.00, then run Transaction A's 10% bonus and Transaction B's flat 50.00 deduction in the reverse order from the first example, confirming the result matches the "B then A" calculation described earlier.
+Using the `accounts` table above, reset the balance to 1000.00, then run Transaction A's 10% bonus and Transaction B's flat 50.00 deduction in the reverse order from the first example, confirming the result matches the "B then A" calculation described earlier.
 
 <iframe
  frameBorder="0"
@@ -141,6 +141,6 @@ Then run the 10% bonus: `UPDATE accounts SET balance = balance * 1.10 ...`. The 
 
 ## Conclusion
 
-Serializability is the standard every mechanism in this chapter ultimately serves: a guarantee that concurrent `transactions`, however they actually interleave in real time, produce a result equivalent to running them one at a time in some order, and `locking`, `isolation levels`, and deadlock detection are all the practical machinery a `database` uses to approach or fully guarantee that standard.
+Serializability is the standard every mechanism in this chapter ultimately serves: a guarantee that concurrent transactions, however they actually interleave in real time, produce a result equivalent to running them one at a time in some order, and `locking`, `isolation levels`, and deadlock detection are all the practical machinery a database uses to approach or fully guarantee that standard.
 
-With concurrency control covered from the problem it solves through to the standard it targets, the final chapter in this unit turns to what happens when a `transaction` survives not just concurrent access, but an outright system failure.
+With concurrency control covered from the problem it solves through to the standard it targets, the final chapter in this unit turns to what happens when a transaction survives not just concurrent access, but an outright system failure.

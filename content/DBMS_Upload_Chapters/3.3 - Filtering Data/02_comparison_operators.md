@@ -10,9 +10,9 @@ Both questions lean on the same family of tools, the **comparison operators**, w
 
 ## Six Operators, One Idea
 
-SQL gives you six comparison operators, and every one of them reduces to the same thing `WHERE` has always done: test a `row`, keep it if the test is true.
+SQL gives you six comparison operators, and every one of them reduces to the same thing `WHERE` has always done: test a row, keep it if the test is true.
 
-The `courses` `table` holds this data:
+The `courses` table holds this data:
 
 | course_id | title | department | credits | starts_on |
 | --------- | -------------------- | ---------------- | ------: | ---------- |
@@ -107,7 +107,7 @@ Expected output:
 | Data Structures | Computer Science |
 | Microeconomics | Economics |
 
-Every course except `Linear Algebra` and `Discrete Mathematics` comes back, since those are the only two `rows` where the condition `department <> 'Mathematics'` is false.
+Every course except `Linear Algebra` and `Discrete Mathematics` comes back, since those are the only two rows where the condition `department <> 'Mathematics'` is false.
 
 ## Comparison Operators at a Glance
 
@@ -155,7 +155,7 @@ Every course except `Linear Algebra` and `Discrete Mathematics` comes back, sinc
 
 ## Text Compares Alphabetically Too
 
-These same six operators work on text `columns`, not just numbers and dates. PostgreSQL compares strings character by character in alphabetical order. Neha can use the already displayed course titles and ask for titles from L onward with `SELECT title FROM courses WHERE title >= 'L' ORDER BY title;`.
+These same six operators work on text columns, not just numbers and dates. PostgreSQL compares strings character by character in alphabetical order. Neha can use the already displayed course titles and ask for titles from L onward with `SELECT title FROM courses WHERE title >= 'L' ORDER BY title;`.
 
 <iframe
  frameBorder="0"
@@ -177,7 +177,7 @@ Expected output:
 
 ## Your Turn
 
-Write a `query` against `courses` that returns only the course with the lowest credit value, using a comparison operator rather than sorting and limiting.
+Write a query against `courses` that returns only the course with the lowest credit value, using a comparison operator rather than sorting and limiting.
 
 <iframe
  frameBorder="0"
@@ -198,4 +198,4 @@ This should return only `Microeconomics`, the sole course carrying two credits. 
 
 Comparison operators let `WHERE` reach past plain equality into ordering: greater than, less than, and their inclusive cousins, all working across numbers, dates, and text. Neha can now filter heavier courses with `credits > 3` and earlier courses with `starts_on < '2025-02-05'` without introducing unrelated datasets.
 
-Once a condition can express "more than," "before," or "after," the next natural step is combining several such conditions in a single `query`, deciding what it means for a `row` to satisfy more than one requirement at once.
+Once a condition can express "more than," "before," or "after," the next natural step is combining several such conditions in a single query, deciding what it means for a row to satisfy more than one requirement at once.

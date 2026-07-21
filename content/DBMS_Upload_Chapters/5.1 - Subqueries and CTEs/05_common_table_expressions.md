@@ -1,16 +1,16 @@
 ## Introduction
 
-Kabir's department-average report from the `FROM` subquery lesson worked correctly, but re-reading it a week later, he found himself squinting at nested parentheses to figure out which `SELECT` belonged to which part of the `query`. As soon as a `query` needs two or three layered steps, subqueries buried inside `FROM` or `WHERE` start to read inside-out, with the first thing the eye lands on being the deepest, least important detail.
+Kabir's department-average report from the `FROM` subquery lesson worked correctly, but re-reading it a week later, he found himself squinting at nested parentheses to figure out which `SELECT` belonged to which part of the query. As soon as a query needs two or three layered steps, subqueries buried inside `FROM` or `WHERE` start to read inside-out, with the first thing the eye lands on being the deepest, least important detail.
 
-SQL offers a cleaner way to write exactly the same logic: a **`Common Table Expression`**, written with a `WITH` clause, which names an intermediate result up front and lets the rest of the `query` read top to bottom in the order the logic actually happens.
+SQL offers a cleaner way to write exactly the same logic: a **`Common Table Expression`**, written with a `WITH` clause, which names an intermediate result up front and lets the rest of the query read top to bottom in the order the logic actually happens.
 
-**Definition:** A CTE, written with `WITH`, names an intermediate `query` result up front so the rest of a statement can read top to bottom instead of inside out, and several CTEs can be chained together, each one building on the last, without losing clarity as the logic grows more layered.
+**Definition:** A CTE, written with `WITH`, names an intermediate query result up front so the rest of a statement can read top to bottom instead of inside out, and several CTEs can be chained together, each one building on the last, without losing clarity as the logic grows more layered.
 
 ![Intro visual for common table expressions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_common_table_expressions.png)
 
 ## Rewriting a Subquery as a CTE
 
-The `employees` `table` is the same one used throughout this chapter.
+The `employees` table is the same one used throughout this chapter.
 
 ## Source Data Used in This Lesson
 
@@ -51,7 +51,7 @@ INSERT INTO employees (employee_id, employee_name, department, salary, manager_i
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-Here is the derived-`table` version from an earlier lesson, for comparison.
+Here is the derived-table version from an earlier lesson, for comparison.
 
 <iframe
  frameBorder="0"
@@ -81,7 +81,7 @@ Expected output:
 | --- | --- |
 | Engineering | 85000.00 |
 
-- `WITH dept_averages AS (...)` names the inner `query` before the main `query` even begins, and the main `query` afterward simply reads `FROM dept_averages`, exactly as if it were a real `table`.
+- `WITH dept_averages AS (...)` names the inner query before the main query even begins, and the main query afterward simply reads `FROM dept_averages`, exactly as if it were a real table.
 - The two versions produce an identical result, Engineering as the only department above the company average, but the CTE version reads in the order a person would naturally explain it out loud: "first compute department averages, then find the ones above the company average."
 
 ![A CTE naming a temporary result so the main query can read from it](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_cte_named_temporary_result.png)
@@ -103,22 +103,22 @@ Expected output:
 | --- | --- | --- |
 | Engineering | 85000.00 | 73000.00 |
 
-`dept_averages` and `company_average` are each defined once, given clear names, and then both referenced in the final `SELECT`, which lists them side by side and compares their `columns` directly. Naming each step this way pays off in two ways:
+`dept_averages` and `company_average` are each defined once, given clear names, and then both referenced in the final `SELECT`, which lists them side by side and compares their columns directly. Naming each step this way pays off in two ways:
 
-- It makes it far easier to check each piece in isolation, since the whole first CTE can be run on its own, just by selecting from it directly, before it is ever plugged into the larger `query`.
-- It documents what each intermediate result actually represents, for anyone reading the `query` later.
+- It makes it far easier to check each piece in isolation, since the whole first CTE can be run on its own, just by selecting from it directly, before it is ever plugged into the larger query.
+- It documents what each intermediate result actually represents, for anyone reading the query later.
 
 ![Multiple CTEs chained as named steps before the final report](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_cte_chain_multiple_steps.png)
 
 ## Why CTEs Are Often Preferred Over Nested Subqueries
 
-Both derived `tables` and CTEs are ultimately handled by the `database` in comparable ways, and neither is inherently faster than the other in most modern `databases`. The real difference is readability and maintainability: a CTE gives an intermediate result a name that documents what it represents, and it keeps deeply nested `queries` from turning into a wall of parentheses that has to be read from the inside out.
+Both derived tables and CTEs are ultimately handled by the database in comparable ways, and neither is inherently faster than the other in most modern databases. The real difference is readability and maintainability: a CTE gives an intermediate result a name that documents what it represents, and it keeps deeply nested queries from turning into a wall of parentheses that has to be read from the inside out.
 
-For any `query` with more than one layer of subquery, reaching for a CTE instead is usually the better habit to build.
+For any query with more than one layer of subquery, reaching for a CTE instead is usually the better habit to build.
 
 ## A CTE Can Also Simplify a WHERE Subquery
 
-CTEs are not limited to replacing `FROM` subqueries; any subquery, including the correlated and list-based ones from earlier lessons, can be pulled out into a named CTE if doing so makes the `query` easier to follow.
+CTEs are not limited to replacing `FROM` subqueries; any subquery, including the correlated and list-based ones from earlier lessons, can be pulled out into a named CTE if doing so makes the query easier to follow.
 
 <iframe
  frameBorder="0"
@@ -135,7 +135,7 @@ Expected output:
 | Meghna Iyer | 82000.00 |
 | Rajat Bhatia | 78000.00 |
 
-This is a small example, but the pattern scales: as soon as a `WHERE` subquery's own logic becomes complex enough to deserve a name, wrapping it in a CTE keeps the final `query` focused on what happens with the result, not how that result was derived.
+This is a small example, but the pattern scales: as soon as a `WHERE` subquery's own logic becomes complex enough to deserve a name, wrapping it in a CTE keeps the final query focused on what happens with the result, not how that result was derived.
 
 ## CTEs at a Glance
 
@@ -168,7 +168,7 @@ This is a small example, but the pattern scales: as soon as a `WHERE` subquery's
 
 ## Your Turn
 
-Rewrite the `correlated subquery` from the previous lesson, finding employees whose salary exceeds their own department's average, as a CTE-based `query` instead of a `WHERE`-embedded subquery.
+Rewrite the `correlated subquery` from the previous lesson, finding employees whose salary exceeds their own department's average, as a CTE-based query instead of a `WHERE`-embedded subquery.
 
 <iframe
  frameBorder="0"
@@ -177,7 +177,7 @@ Rewrite the `correlated subquery` from the previous lesson, finding employees wh
  width="100%"
 ></iframe>
 
-One valid answer defines `WITH dept_averages AS (SELECT department, AVG(salary) AS department_avg FROM employees GROUP BY department)` and then `joins` `employees` to `dept_averages` on `department`, filtering with `WHERE employees.salary > dept_averages.department_avg`, returning Ananya Sharma, whose 95000.00 clears Engineering's 85000.00 average, and Sameer Khan, whose 65000.00 clears Sales's 61500.00 average.
+One valid answer defines `WITH dept_averages AS (SELECT department, AVG(salary) AS department_avg FROM employees GROUP BY department)` and then joins `employees` to `dept_averages` on `department`, filtering with `WHERE employees.salary > dept_averages.department_avg`, returning Ananya Sharma, whose 95000.00 clears Engineering's 85000.00 average, and Sameer Khan, whose 65000.00 clears Sales's 61500.00 average.
 
 
 Expected output:
@@ -189,6 +189,6 @@ Expected output:
 
 ## Conclusion
 
-A CTE, written with `WITH`, names an intermediate `query` result up front so the rest of a statement can read top to bottom instead of inside out, and several CTEs can be chained together, each one building on the last, without losing clarity as the logic grows more layered. Kabir's department-average report is now something a colleague can read and understand in one pass.
+A CTE, written with `WITH`, names an intermediate query result up front so the rest of a statement can read top to bottom instead of inside out, and several CTEs can be chained together, each one building on the last, without losing clarity as the logic grows more layered. Kabir's department-average report is now something a colleague can read and understand in one pass.
 
-Every CTE so far has referenced only `tables` or earlier CTEs; the next lesson introduces a CTE that is allowed to reference itself.
+Every CTE so far has referenced only tables or earlier CTEs; the next lesson introduces a CTE that is allowed to reference itself.

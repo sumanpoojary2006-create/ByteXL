@@ -2,7 +2,7 @@
 
 Meera coordinates student clubs on campus, and this term she has been handed an awkward request from the events office: they want one clean list of every student who belongs to either the Coding Club or the Robotics Club, another list of students who belong to both, and a third list of coding-club students who have never set foot in robotics.
 
-Meera has two separate spreadsheets, one per club, each with a single `column` of student IDs, and no idea how to compare them without manually scrolling back and forth for an afternoon.
+Meera has two separate spreadsheets, one per club, each with a single column of student IDs, and no idea how to compare them without manually scrolling back and forth for an afternoon.
 
 What Meera is really asking for are three classic comparisons between two relations that happen to hold the same kind of thing:
 
@@ -13,13 +13,13 @@ What Meera is really asking for are three classic comparisons between two relati
 - `Relational algebra` has a dedicated operation for each of these, borrowed directly from set theory, and together they are simply called **set operations**.
 - Before any of the three can be applied, though, the two relations being compared have to satisfy one important condition, and that condition comes first.
 
-**Definition:** Union, intersection, and difference let a `database` compare two relations the way set theory compares two collections, but only once those relations are union-compatible, meaning they agree on the number of `columns` and the domain each `column` draws from.
+**Definition:** Union, intersection, and difference let a database compare two relations the way set theory compares two collections, but only once those relations are union-compatible, meaning they agree on the number of columns and the domain each column draws from.
 
 ![Intro visual for set operations](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_set_operations.png)
 
 ## The Two Club Relations
 
-Here are Meera's two relations, trimmed down to just the `column` that matters:
+Here are Meera's two relations, trimmed down to just the column that matters:
 
 Coding Club:
 
@@ -66,23 +66,23 @@ Robotics Club:
   </tbody>
 </table>
 
-Both relations have exactly one `column`, student_id, and both draw their values from the same underlying pool, valid student roll numbers at the same college. That similarity is not a coincidence, it is a requirement.
+Both relations have exactly one column, student_id, and both draw their values from the same underlying pool, valid student roll numbers at the same college. That similarity is not a coincidence, it is a requirement.
 
 ## Union-Compatible: Why the Shapes Must Match
 
-Set operations only make sense when the two relations involved are what `relational algebra` calls **union-compatible**. Two relations are union-compatible when they have the same number of `columns`, and each corresponding `column` draws its values from the same domain, meaning the same kind of underlying data. Meera's two club relations qualify easily, both have one `column`, and both hold student IDs from the same college's numbering scheme.
+Set operations only make sense when the two relations involved are what `relational algebra` calls **union-compatible**. Two relations are union-compatible when they have the same number of columns, and each corresponding column draws its values from the same domain, meaning the same kind of underlying data. Meera's two club relations qualify easily, both have one column, and both hold student IDs from the same college's numbering scheme.
 
-It helps to see why this requirement exists by imagining what would go wrong without it. Suppose Meera tried to compare her Coding Club relation, a single `column` of student IDs, against a relation of book titles from the library catalogue.
+It helps to see why this requirement exists by imagining what would go wrong without it. Suppose Meera tried to compare her Coding Club relation, a single column of student IDs, against a relation of book titles from the library catalogue.
 
-Asking "which `rows` appear in both" would be meaningless, a student ID and a book title are not comparable values, and there would be no sensible way to line up the `columns` to check for a match. Union-compatibility is what guarantees that comparing two relations `row` by `row` is actually a coherent thing to do.
+Asking "which rows appear in both" would be meaningless, a student ID and a book title are not comparable values, and there would be no sensible way to line up the columns to check for a match. Union-compatibility is what guarantees that comparing two relations row by row is actually a coherent thing to do.
 
-Two relations can have entirely different `column` names and still be union-compatible, what matters is the number of `columns` and the domain each one draws from, not the labels typed above them.
+Two relations can have entirely different column names and still be union-compatible, what matters is the number of columns and the domain each one draws from, not the labels typed above them.
 
 ![Union-compatible club rosters passing the shape and domain check while book titles are rejected](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_union_compatibility_shape_domain.png)
 
 ## Union: Everyone in Either Relation
 
-The union of two union-compatible relations keeps every `row` that appears in at least one of them, with duplicates collapsed down to a single copy, exactly the way "or" works in ordinary set theory. Applied to Meera's two club relations, the union answers "who belongs to the Coding Club, the Robotics Club, or both":
+The union of two union-compatible relations keeps every row that appears in at least one of them, with duplicates collapsed down to a single copy, exactly the way "or" works in ordinary set theory. Applied to Meera's two club relations, the union answers "who belongs to the Coding Club, the Robotics Club, or both":
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
   <thead>
@@ -109,11 +109,11 @@ The union of two union-compatible relations keeps every `row` that appears in at
   </tbody>
 </table>
 
-Five distinct IDs, even though the two relations together listed seven `rows`, because S104 and S107 appeared in both and were only kept once. This single list is exactly what the events office wanted for its first request, one combined roster of everyone involved in either club.
+Five distinct IDs, even though the two relations together listed seven rows, because S104 and S107 appeared in both and were only kept once. This single list is exactly what the events office wanted for its first request, one combined roster of everyone involved in either club.
 
 ## Intersection: Only the Rows in Both
 
-The intersection of two union-compatible relations keeps only the `rows` that appear in both relations at once, exactly the way "and" works in ordinary set theory. Applied to the same two club relations, it answers "who belongs to both clubs":
+The intersection of two union-compatible relations keeps only the rows that appear in both relations at once, exactly the way "and" works in ordinary set theory. Applied to the same two club relations, it answers "who belongs to both clubs":
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
   <thead>
@@ -131,11 +131,11 @@ The intersection of two union-compatible relations keeps only the `rows` that ap
   </tbody>
 </table>
 
-Only S104 and S107 show up in both the Coding Club and Robotics Club relations, so only those two `rows` survive. This is the second list the events office asked for, students who might need to be counted once rather than twice when the office plans seating for a joint event.
+Only S104 and S107 show up in both the Coding Club and Robotics Club relations, so only those two rows survive. This is the second list the events office asked for, students who might need to be counted once rather than twice when the office plans seating for a joint event.
 
 ## Difference: Rows in One But Not the Other
 
-The difference between two union-compatible relations keeps the `rows` that appear in the first relation but not in the second, and order matters here in a way it did not for union or intersection. Applied as Coding Club minus Robotics Club, it answers "who is in coding but has never joined robotics":
+The difference between two union-compatible relations keeps the rows that appear in the first relation but not in the second, and order matters here in a way it did not for union or intersection. Applied as Coding Club minus Robotics Club, it answers "who is in coding but has never joined robotics":
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
   <thead>
@@ -194,14 +194,14 @@ S104 and S107 are removed because they also appear in the Robotics Club relation
 
 Meera is later asked for one more list: students who joined Robotics Club but have never joined Coding Club. First, could this pair of relations be compared with a set operation at all, and second, which operation and which order gives the right answer?
 
-Yes, the pair is union-compatible, since both relations still have exactly one `column`, student_id, drawing from the same pool of the college's student IDs, so a set operation is valid here. The request needs difference, applied as Robotics Club minus Coding Club, which keeps only the `rows` in Robotics Club that do not also appear in Coding Club. Applying it to Meera's data leaves just S112, the one student who joined robotics but never coding, and reversing the order would instead give the coding-only members, a different answer entirely, which is exactly why order matters for difference and not for union or intersection.
+Yes, the pair is union-compatible, since both relations still have exactly one column, student_id, drawing from the same pool of the college's student IDs, so a set operation is valid here. The request needs difference, applied as Robotics Club minus Coding Club, which keeps only the rows in Robotics Club that do not also appear in Coding Club. Applying it to Meera's data leaves just S112, the one student who joined robotics but never coding, and reversing the order would instead give the coding-only members, a different answer entirely, which is exactly why order matters for difference and not for union or intersection.
 
 ## Conclusion
 
-Union, intersection, and difference let a `database` compare two relations the way set theory compares two collections, but only once those relations are union-compatible, meaning they agree on the number of `columns` and the domain each `column` draws from.
+Union, intersection, and difference let a database compare two relations the way set theory compares two collections, but only once those relations are union-compatible, meaning they agree on the number of columns and the domain each column draws from.
 
 Union merges everyone from either side while dropping duplicates, intersection keeps only the overlap, and difference keeps what belongs to one side and not the other, with the order of the two relations mattering for that last one.
 
 Meera can now hand the events office exactly the three lists they asked for, a combined roster from union, the overlap from intersection, and the coding-only members from difference, without a single afternoon lost scrolling between two spreadsheets.
 
-Every operation seen so far has worked on relations that already share the same `columns`, either narrowing a single relation or comparing two similarly shaped ones. The next operation breaks that pattern entirely, combining two genuinely different relations, each with its own `columns`, based on a value they happen to share.
+Every operation seen so far has worked on relations that already share the same columns, either narrowing a single relation or comparing two similarly shaped ones. The next operation breaks that pattern entirely, combining two genuinely different relations, each with its own columns, based on a value they happen to share.

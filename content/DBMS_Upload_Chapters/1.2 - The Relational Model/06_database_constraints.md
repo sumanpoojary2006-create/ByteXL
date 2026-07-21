@@ -6,41 +6,41 @@ Another week, the same patient, Farah Sheikh, got registered twice under two sli
 
 None of these were failures of the receptionists' intelligence. They were failures of the spreadsheet, because the spreadsheet never enforced a single rule about what counted as an acceptable entry. It simply accepted whatever was typed and moved on.
 
-When Kiran's clinic finally moved to a proper `database`, the software itself started refusing bad entries before they could ever be saved. Leave the phone number blank, and the system stops you right there. Try to register the same patient twice under the same ID, and the system rejects it outright.
+When Kiran's clinic finally moved to a proper database, the software itself started refusing bad entries before they could ever be saved. Leave the phone number blank, and the system stops you right there. Try to register the same patient twice under the same ID, and the system rejects it outright.
 
-Type -3 into the age field, and the system will not accept it. These automatic, built-in rules that a `database` enforces on every single `row`, without needing a human to double-check by hand, are called **`constraints`**, and they are what quietly turns a `database` from "a place that stores whatever it's given" into "a place that only ever holds data you can actually trust."
+Type -3 into the age field, and the system will not accept it. These automatic, built-in rules that a database enforces on every single row, without needing a human to double-check by hand, are called **constraints**, and they are what quietly turns a database from "a place that stores whatever it's given" into "a place that only ever holds data you can actually trust."
 
-**Definition:** A `constraint` is a promise the `database` itself keeps on every single `row`, automatically and without exception, so that the trustworthiness of a `table` never depends on how careful, or how tired, the person entering the data happens to be that day.
+**Definition:** A constraint is a promise the database itself keeps on every single row, automatically and without exception, so that the trustworthiness of a table never depends on how careful, or how tired, the person entering the data happens to be that day.
 
 ![Intro visual for database constraints](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_database_constraints.png)
 
 ## A Constraint Is a Rule the Database Enforces For You
 
-- A `constraint` is simply a rule attached to a `column`, or sometimes to a whole `table`, that every `row` must satisfy before the `database` will accept it.
+- A constraint is simply a rule attached to a column, or sometimes to a whole table, that every row must satisfy before the database will accept it.
 - The rule is not a suggestion written in a manual somewhere that a busy receptionist might forget to follow.
-- It is enforced automatically, every single time, by the `database` software itself, regardless of who is entering the data or how tired they are.
+- It is enforced automatically, every single time, by the database software itself, regardless of who is entering the data or how tired they are.
 
-- This builds directly on the idea of a domain, the set of legal values a `column` is allowed to hold.
-- A domain describes, in the abstract, what values belong in a `column`.
-- A `constraint` is the `database` actually standing guard at that boundary and turning away anything that does not belong.
+- This builds directly on the idea of a domain, the set of legal values a column is allowed to hold.
+- A domain describes, in the abstract, what values belong in a column.
+- A constraint is the database actually standing guard at that boundary and turning away anything that does not belong.
 
 ## The Most Common Everyday Rules
 
-A handful of rule shapes cover most of what a real `table` needs, and every one of them maps onto something Kiran's clinic genuinely needed:
+A handful of rule shapes cover most of what a real table needs, and every one of them maps onto something Kiran's clinic genuinely needed:
 
-- **Must never be missing.** A patient's phone number, in Kiran's clinic, must always be present, because there is no way to send an appointment reminder to a blank field. Whenever a piece of information is essential for a `row` to make sense at all, the `database` can be told that `column` may never be left empty.
+- **Must never be missing.** A patient's phone number, in Kiran's clinic, must always be present, because there is no way to send an appointment reminder to a blank field. Whenever a piece of information is essential for a row to make sense at all, the database can be told that column may never be left empty.
 - **Must be unique.** No two patients should ever be able to register under the exact same Patient ID, and, depending on how the clinic wants to run things, perhaps no two patients should share the same email address either. A uniqueness rule stops accidental duplicates and outright double-registrations from slipping in.
 - **Must fall within a certain range.** A patient's age must be a realistic number, certainly never negative, and probably never above some sensible upper bound. An appointment date must never fall in the past. Range rules keep obviously impossible values, like an age of -3, from ever being saved.
 - **Must come from a fixed, allowed set.** A patient's blood group can only ever be one of a short list of real blood groups, never a typo or a made-up label. A membership status might only ever be "Active," "Inactive," or "Suspended," nothing else.
-- **Must always point at something real.** When one `table` refers to another, as a `foreign key` does, the `database` can insist that the value being pointed at genuinely exists, so an appointment can never be booked for a patient ID that does not correspond to any real patient.
+- **Must always point at something real.** When one table refers to another, as a `foreign key` does, the database can insist that the value being pointed at genuinely exists, so an appointment can never be booked for a patient ID that does not correspond to any real patient.
 
 ## Constraints in Everyday Language, Not Syntax
 
-- It helps, at this stage, to describe every one of these rules in plain English rather than as any particular piece of code, because the same underlying rule can be expressed in more than one `database` system, and the exact wording used to switch it on comes later in this course.
-- For now, the discipline worth building is simply learning to spot, for any `table` you are designing, which of its `columns` need which kind of rule.
+- It helps, at this stage, to describe every one of these rules in plain English rather than as any particular piece of code, because the same underlying rule can be expressed in more than one database system, and the exact wording used to switch it on comes later in this course.
+- For now, the discipline worth building is simply learning to spot, for any table you are designing, which of its columns need which kind of rule.
 
 - "A phone number must be present" describes a value that must never be missing.
-- "An email must be unique" describes a value that must never repeat across `rows`.
+- "An email must be unique" describes a value that must never repeat across rows.
 - "An age must be between 0 and 120" describes a value that must fall within a range.
 - "A grade must be one of A, B, C, D, or F" describes a value restricted to a fixed set.
 - "Every appointment's patient ID must match a real patient" describes a value that must point at something real.
@@ -50,10 +50,10 @@ A handful of rule shapes cover most of what a real `table` needs, and every one 
 ## Why Constraints Belong to the Database, Not the Application
 
 - It is tempting to think these rules could just as well live inside whatever app or website is collecting the data, and indeed most well-built applications do check things on their end too.
-- But an application is only one door into a `database`.
-- Larger systems often have several doors: a website, a mobile app, a batch import script run by an administrator, a direct `connection` used by another internal system.
+- But an application is only one door into a database.
+- Larger systems often have several doors: a website, a mobile app, a batch import script run by an administrator, a direct connection used by another internal system.
 - If the rule about a missing phone number is only checked by the website's form, then the batch import script, which never passes through that form, can quietly slip bad data straight past it.
-- A `constraint` enforced by the `database` itself guards every single door at once, because no data can ever reach the `table` without passing the `database`'s own checks first.
+- A constraint enforced by the database itself guards every single door at once, because no data can ever reach the table without passing the database's own checks first.
 
 ![Database constraints guarding every entry route while app-only rules protect just one route](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_database_constraints_guard_all_routes.png)
 
@@ -96,18 +96,18 @@ A handful of rule shapes cover most of what a real `table` needs, and every one 
   </tbody>
 </table>
 
-Take a moment, with any `table` you can picture, a college's Students `table`, a shop's Products `table`, and ask which of its `columns` genuinely needs which of these five rule shapes. Almost every `column` you can imagine will need at least one.
+Take a moment, with any table you can picture, a college's Students table, a shop's Products table, and ask which of its columns genuinely needs which of these five rule shapes. Almost every column you can imagine will need at least one.
 
 ## Your Turn: Name the Rule Shape
 
-Kiran's clinic also wants to add an Appointments `table`. For each of these requirements, identify which kind of `constraint` shape it needs: (1) every appointment must have a doctor assigned, (2) no two appointments can share the same Appointment ID, (3) an appointment's status must be "Scheduled," "Completed," or "Cancelled."
+Kiran's clinic also wants to add an Appointments table. For each of these requirements, identify which kind of constraint shape it needs: (1) every appointment must have a doctor assigned, (2) no two appointments can share the same Appointment ID, (3) an appointment's status must be "Scheduled," "Completed," or "Cancelled."
 
-The first requirement needs a "must never be missing" `constraint` on the doctor `column`, since an appointment with no doctor makes no sense. The second needs a "must be unique" `constraint` on Appointment ID, the same guarantee a `primary key` provides. The third needs a "must come from a fixed, allowed set" `constraint`, so a typo like "Cancled" or an invented status can never sneak into the `column`, exactly like Kiran's blood group rule.
+The first requirement needs a "must never be missing" constraint on the doctor column, since an appointment with no doctor makes no sense. The second needs a "must be unique" constraint on Appointment ID, the same guarantee a `primary key` provides. The third needs a "must come from a fixed, allowed set" constraint, so a typo like "Cancled" or an invented status can never sneak into the column, exactly like Kiran's blood group rule.
 
 ## Conclusion
 
-A `constraint` is a promise the `database` itself keeps on every single `row`, automatically and without exception, so that the trustworthiness of a `table` never depends on how careful, or how tired, the person entering the data happens to be that day. Kiran's clinic did not become more reliable because its receptionists suddenly became more careful.
+A constraint is a promise the database itself keeps on every single row, automatically and without exception, so that the trustworthiness of a table never depends on how careful, or how tired, the person entering the data happens to be that day. Kiran's clinic did not become more reliable because its receptionists suddenly became more careful.
 
-It became more reliable because the `database` stopped trusting anyone to be careful and started enforcing the rules itself.
+It became more reliable because the database stopped trusting anyone to be careful and started enforcing the rules itself.
 
-Rules about individual values are only part of the picture, and there is one more question every relational `database` has to answer: when a `row` that other `rows` depend on through a `foreign key` is deleted, or its identifying value changes, what should happen to all of those dependent `rows` left pointing at something that may no longer exist.
+Rules about individual values are only part of the picture, and there is one more question every relational database has to answer: when a row that other rows depend on through a `foreign key` is deleted, or its identifying value changes, what should happen to all of those dependent rows left pointing at something that may no longer exist.

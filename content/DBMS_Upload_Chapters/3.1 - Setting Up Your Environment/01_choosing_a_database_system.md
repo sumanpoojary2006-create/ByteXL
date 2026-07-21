@@ -1,28 +1,28 @@
 ## Introduction
 
-Ishaan has just been handed a real assignment for the first time: build a small system to track members, events, and attendance for his college's robotics club. Before he writes a single line of anything, he needs a place to actually store that data, and when he searches for "`database`" online, he is met with a wall of names.
+Ishaan has just been handed a real assignment for the first time: build a small system to track members, events, and attendance for his college's robotics club. Before he writes a single line of anything, he needs a place to actually store that data, and when he searches for "database" online, he is met with a wall of names.
 
 PostgreSQL. MySQL. SQLite. MongoDB. Oracle. SQL Server.
 
 Someone in a forum thread insists one is "the only real choice," someone else insists the opposite, and Ishaan closes seventeen browser tabs no closer to an answer than when he started. His actual decision comes down to three things:
 
-- What a relational `database` management system is actually built to do well
+- What a relational database management system is actually built to do well
 - Which of the several relational systems on offer make the most sense for someone learning the craft from scratch
 - What his robotics club's data genuinely needs, not what sounds most impressive
 
-What Ishaan actually needs is not a ranking of which `database` is "best" in some abstract sense.
+What Ishaan actually needs is not a ranking of which database is "best" in some abstract sense.
 
-He needs to understand what a **relational `database` management system**, a piece of software that stores data in structured `tables` and lets him ask precise questions of it using a shared `query` language, is built to do well, and which of the several relational systems on offer make the most sense for someone learning the craft from scratch. That question has a much calmer answer than the forum threads suggest.
+He needs to understand what a **relational database management system**, a piece of software that stores data in structured tables and lets him ask precise questions of it using a shared query language, is built to do well, and which of the several relational systems on offer make the most sense for someone learning the craft from scratch. That question has a much calmer answer than the forum threads suggest.
 
-**Definition:** Choosing a `database` system is not about finding one flawless option and discarding the rest, it is about matching a system's actual design to the shape of the problem in front of you.
+**Definition:** Choosing a database system is not about finding one flawless option and discarding the rest, it is about matching a system's actual design to the shape of the problem in front of you.
 
 ![Intro visual for choosing a database system](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_choosing_a_database_system.png)
 
 ## The Relational Family Ishaan Keeps Running Into
 
-Almost every name Ishaan encountered belongs to one of two broad families. The first is the relational family: PostgreSQL, MySQL, SQLite, Oracle, and SQL Server all organize data into `rows` and `columns` inside named `tables`, and all of them understand the same general `query` language, with small dialect differences between them.
+Almost every name Ishaan encountered belongs to one of two broad families. The first is the relational family: PostgreSQL, MySQL, SQLite, Oracle, and SQL Server all organize data into rows and columns inside named tables, and all of them understand the same general query language, with small dialect differences between them.
 
-The second family covers everything else, loosely grouped under "NoSQL", systems built around documents, key-value pairs, or graphs instead of rigid `tables`, aimed at problems where the relational shape does not fit naturally, such as storing loosely structured logs or building a recommendation graph.
+The second family covers everything else, loosely grouped under "NoSQL", systems built around documents, key-value pairs, or graphs instead of rigid tables, aimed at problems where the relational shape does not fit naturally, such as storing loosely structured logs or building a recommendation graph.
 
 Ishaan's robotics club data, members, events, attendance records, and the relationships between them, is a textbook fit for the relational shape. A member belongs to the club, attends events, and each attendance record links a specific member to a specific event on a specific date.
 
@@ -35,16 +35,16 @@ That is precisely the kind of structured, interrelated data a relational system 
 Among the relational systems, three names come up constantly for anyone starting out, and each earned its popularity for a different reason.
 
 - PostgreSQL is open source, free to use without restriction, and has spent decades building a reputation for closely following the official SQL standard rather than inventing its own shortcuts.
-- It handles complex `queries`, enforces data integrity rules strictly, and is trusted in production by companies running everything from small startups to large financial systems.
+- It handles complex queries, enforces data integrity rules strictly, and is trusted in production by companies running everything from small startups to large financial systems.
 - Because it behaves so predictably and sticks so closely to the standard, whatever Ishaan learns on PostgreSQL transfers almost unchanged to most other relational systems he might meet later in his career.
 
 - MySQL is also open source, also free, and arguably even more widely deployed across the web, particularly in content management systems and many popular hosting stacks.
 - It is fast for simple, high-volume read-heavy workloads and has an enormous community around it.
-- Where it differs from PostgreSQL is mostly in smaller feature emphasis: PostgreSQL tends to support more advanced `query` features and stricter data validation out of the box, while MySQL has historically prioritized straightforward speed for common web workloads.
+- Where it differs from PostgreSQL is mostly in smaller feature emphasis: PostgreSQL tends to support more advanced query features and stricter data validation out of the box, while MySQL has historically prioritized straightforward speed for common web workloads.
 - Neither is "wrong"; they simply grew up optimizing for slightly different priorities.
 
 - SQLite is a different kind of tool altogether.
-- It is not a server you connect to at all, it is a library that stores an entire `database` inside a single file on disk, with no separate process to install, configure, or keep running.
+- It is not a server you connect to at all, it is a library that stores an entire database inside a single file on disk, with no separate process to install, configure, or keep running.
 - That makes it wonderful for a mobile app's local storage, a small script's scratch data, or a quick prototype, since there is nothing to set up beyond the file itself.
 - But that same simplicity is its limitation: SQLite is not built to have many people or programs writing to it at once over a network, which is exactly the situation a shared club-membership system, accessed by several club officers at once, actually needs.
 
@@ -95,9 +95,9 @@ That is exactly the reasoning behind a decision worth stating plainly, since it 
 
 ## Conclusion
 
-Choosing a `database` system is not about finding one flawless option and discarding the rest, it is about matching a system's actual design to the shape of the problem in front of you.
+Choosing a database system is not about finding one flawless option and discarding the rest, it is about matching a system's actual design to the shape of the problem in front of you.
 
-PostgreSQL, MySQL, and SQLite all belong to the same relational family and share the same core `query` language, but they differ sharply in how they are run, how strictly they enforce rules, and how well they support several people working against the same data at once.
+PostgreSQL, MySQL, and SQLite all belong to the same relational family and share the same core query language, but they differ sharply in how they are run, how strictly they enforce rules, and how well they support several people working against the same data at once.
 
 For a shared, growing system like Ishaan's club tracker, and for learning SQL in a way that transfers cleanly to real-world work, a full standards-compliant server is the right starting point.
 

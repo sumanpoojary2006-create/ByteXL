@@ -1,16 +1,16 @@
 ## Introduction
 
-The previous lesson treated an `index` as a sorted list pointing back to `rows`, which is accurate but leaves an important detail unexamined: how does the `database` actually search through that sorted structure efficiently, especially once it holds millions of entries? A plain sorted list would still require narrowing down through many entries one at a time.
+The previous lesson treated an index as a sorted list pointing back to rows, which is accurate but leaves an important detail unexamined: how does the database actually search through that sorted structure efficiently, especially once it holds millions of entries? A plain sorted list would still require narrowing down through many entries one at a time.
 
-PostgreSQL's default `index` type, and the default in nearly every relational `database`, is a **B-tree**, a structure specifically designed so that even a huge number of entries can be searched in just a handful of steps.
+PostgreSQL's default index type, and the default in nearly every relational database, is a **B-tree**, a structure specifically designed so that even a huge number of entries can be searched in just a handful of steps.
 
-**Definition:** A B-tree keeps an `index`'s entries in a balanced, sorted tree structure, so that even huge `tables` can be searched in just a handful of steps, and its sorted nature means the same structure naturally supports equality lookups, range `queries`, sorting, and minimum or maximum searches, all without a separate scan.
+**Definition:** A B-tree keeps an index's entries in a balanced, sorted tree structure, so that even huge tables can be searched in just a handful of steps, and its sorted nature means the same structure naturally supports equality lookups, range queries, sorting, and minimum or maximum searches, all without a separate scan.
 
 ![Intro visual for btree indexes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_btree_indexes.png)
 
 ## Why CREATE INDEX Defaults to a B-Tree
 
-Every `index` created in the previous lesson, without specifying a type, was already a B-tree, since it is PostgreSQL's default.
+Every index created in the previous lesson, without specifying a type, was already a B-tree, since it is PostgreSQL's default.
 
 ## Source Data Used in This Lesson
 
@@ -62,14 +62,14 @@ Expected output:
 | orders_pkey | CREATE UNIQUE INDEX orders_pkey ON public.orders USING btree (order_id) |
 | idx_orders_amount | CREATE INDEX idx_orders_amount ON public.orders USING btree (amount) |
 
-- `pg_indexes` shows the actual definition of every `index` on the `orders` `table`, and `idx_orders_amount`'s definition confirms it uses the `btree` access method, even though `CREATE INDEX ...
+- `pg_indexes` shows the actual definition of every index on the `orders` table, and `idx_orders_amount`'s definition confirms it uses the `btree` access method, even though `CREATE INDEX ...
 - ON orders (amount)` never mentioned the word "btree" explicitly; it is simply assumed unless a different type is requested.
 
 ## The Shape of a B-Tree
 
 A B-tree organizes its entries as a balanced, sorted tree:
 
-- A small root node at the top branches into a handful of child nodes, each of which branches further, down to leaf nodes that hold the actual sorted values and their pointers back to the `table`.
+- A small root node at the top branches into a handful of child nodes, each of which branches further, down to leaf nodes that hold the actual sorted values and their pointers back to the table.
 - "Balanced" means every leaf sits at the same depth from the root, so no particular search path is ever dramatically longer than another.
 
 Searching a B-tree means starting at the root, comparing the target value, and following exactly one branch downward at each level, narrowing the search space enormously with each step, until reaching the leaf that holds the answer.
@@ -92,11 +92,11 @@ Expected output:
    Index Cond: (amount = 5000.00)
 ```
 
-The reported "`Index Scan`" here is the `query planner` choosing to walk down `idx_orders_amount`'s B-tree structure, following branches based on comparing 5000.00 against the values stored at each level, rather than checking all 10000 `rows` one at a time.
+The reported "`Index Scan`" here is the `query planner` choosing to walk down `idx_orders_amount`'s B-tree structure, following branches based on comparing 5000.00 against the values stored at each level, rather than checking all 10000 rows one at a time.
 
 ## Why a B-Tree Stays Fast as Data Grows
 
-The defining property of a B-tree is that its depth, the number of levels a search has to walk through, grows extremely slowly as the number of entries grows, because each level can branch into many children at once rather than just two. Doubling the number of `rows` in a `table` typically adds at most one extra level to its B-tree, not double the search steps.
+The defining property of a B-tree is that its depth, the number of levels a search has to walk through, grows extremely slowly as the number of entries grows, because each level can branch into many children at once rather than just two. Doubling the number of rows in a table typically adds at most one extra level to its B-tree, not double the search steps.
 
 <iframe
  frameBorder="0"
@@ -114,7 +114,7 @@ Expected output:
    Index Cond: (amount = 50000.00)
 ```
 
-The cost's startup component only rose from 0.29 to 0.42, reflecting one extra B-tree level to walk through for a table ten times larger, nowhere near a tenfold increase. Even after growing the `table` tenfold, the plan still reports an `index scan`, and the practical number of steps needed to find a match grows only marginally, nowhere near proportionally to the tenfold increase in `row` count. This is the core reason B-trees are the default choice: they stay fast even as a `table` grows from thousands to millions of `rows`, in a way a `sequential scan` fundamentally cannot.
+The cost's startup component only rose from 0.29 to 0.42, reflecting one extra B-tree level to walk through for a table ten times larger, nowhere near a tenfold increase. Even after growing the table tenfold, the plan still reports an `index scan`, and the practical number of steps needed to find a match grows only marginally, nowhere near proportionally to the tenfold increase in row count. This is the core reason B-trees are the default choice: they stay fast even as a table grows from thousands to millions of rows, in a way a `sequential scan` fundamentally cannot.
 
 ## What B-Trees Are Naturally Good At
 
@@ -136,7 +136,7 @@ Expected output:
    Index Cond: ((amount >= 1000.00) AND (amount <= 2000.00))
 ```
 
-No separate `Sort` node appears above the `Index Scan`, because the B-tree already returns matching `rows` in `amount` order, satisfying the `ORDER BY` as a side effect. This range `query` and its ordering both benefit from the same B-tree, since the matching values already sit consecutively, in sorted order, at the leaf level the `database` can walk to the start of the range and read forward until it passes the end, with no separate sorting step required afterward.
+No separate `Sort` node appears above the `Index Scan`, because the B-tree already returns matching rows in `amount` order, satisfying the `ORDER BY` as a side effect. This range query and its ordering both benefit from the same B-tree, since the matching values already sit consecutively, in sorted order, at the leaf level the database can walk to the start of the range and read forward until it passes the end, with no separate sorting step required afterward.
 
 ![B-tree leaf values are sorted, so range scans read a contiguous run](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_btree_sorted_leaves_range_scan.png)
 
@@ -171,7 +171,7 @@ No separate `Sort` node appears above the `Index Scan`, because the B-tree alrea
 
 ## Your Turn
 
-Confirm that `idx_orders_amount` is used for a narrow range `query`, `amount > 124000.00`, a condition only the few highest-priced orders satisfy, then check the plan for finding the single largest `amount` in the `table`, and note in a comment whether the B-tree helps with that too.
+Confirm that `idx_orders_amount` is used for a narrow range query, `amount > 124000.00`, a condition only the few highest-priced orders satisfy, then check the plan for finding the single largest `amount` in the table, and note in a comment whether the B-tree helps with that too.
 
 <iframe
  frameBorder="0"
@@ -203,12 +203,12 @@ Expected result and verification:
                  Index Cond: (amount IS NOT NULL)
 ```
 
-- The range `query` walks to the start of the narrow range (just above 124000.00) and reads forward through the sorted leaf level, matching only the 13 highest-priced orders.
-- The `MAX` `query` does not scan the `table` at all; it uses an `Index Only Scan Backward`, jumping straight to the far end of the sorted leaf level and reading just the single largest value, wrapped in a `Limit` of 1.
-- The plan shows this as a backward scan of the `index`, instead of scanning and comparing every `row` to find the maximum.
+- The range query walks to the start of the narrow range (just above 124000.00) and reads forward through the sorted leaf level, matching only the 13 highest-priced orders.
+- The `MAX` query does not scan the table at all; it uses an `Index Only Scan Backward`, jumping straight to the far end of the sorted leaf level and reading just the single largest value, wrapped in a `Limit` of 1.
+- The plan shows this as a backward scan of the index, instead of scanning and comparing every row to find the maximum.
 
 ## Conclusion
 
-A B-tree keeps an `index`'s entries in a balanced, sorted tree structure, so that even huge `tables` can be searched in just a handful of steps, and its sorted nature means the same structure naturally supports equality lookups, range `queries`, sorting, and minimum or maximum searches, all without a separate scan. Priya's `queries` now stay fast even as the company's order history grows into the hundreds of thousands of `rows`.
+A B-tree keeps an index's entries in a balanced, sorted tree structure, so that even huge tables can be searched in just a handful of steps, and its sorted nature means the same structure naturally supports equality lookups, range queries, sorting, and minimum or maximum searches, all without a separate scan. Priya's queries now stay fast even as the company's order history grows into the hundreds of thousands of rows.
 
-Not every kind of `query` benefits most from a B-tree, though, and the next lesson looks at `index` types built for other, more specific situations.
+Not every kind of query benefits most from a B-tree, though, and the next lesson looks at index types built for other, more specific situations.

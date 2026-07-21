@@ -1,17 +1,17 @@
 ## Introduction
 
-- The plain `JOIN` Zoya used to combine orders with customer and restaurant names has a formal name that the previous lesson skipped over: an **`INNER JOIN`**.
-- `JOIN` by itself, with no other keyword in front of it, defaults to an inner `join` in every major `database`, so the two are the same thing, one just spelled out for clarity.
-- What matters is understanding exactly what "inner" means: an inner `join` keeps a `row` in the result only when a match is found on both sides of the `join` condition.
+- The plain JOIN Zoya used to combine orders with customer and restaurant names has a formal name that the previous lesson skipped over: an **`INNER JOIN`**.
+- JOIN by itself, with no other keyword in front of it, defaults to an inner join in every major database, so the two are the same thing, one just spelled out for clarity.
+- What matters is understanding exactly what "inner" means: an inner join keeps a row in the result only when a match is found on both sides of the join condition.
 - Rows with no match on either side are silently left out, and that quiet exclusion is worth understanding precisely before relying on it.
 
-**Definition:** `INNER JOIN`, and its shorthand `JOIN`, keeps only the `rows` where both sides of the `join` condition find a partner, quietly dropping everything else, which makes it the right choice whenever unmatched `rows` carry no useful information for the question at hand.
+**Definition:** `INNER JOIN`, and its shorthand JOIN, keeps only the rows where both sides of the join condition find a partner, quietly dropping everything else, which makes it the right choice whenever unmatched rows carry no useful information for the question at hand.
 
 ![Intro visual for inner join](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_inner_join.png)
 
 ## Confirming the Match-Only Behavior
 
-The same delivery `schema` from the previous lesson is the setup here, with one detail worth noticing: customer 5, Neha Bhatt, has never placed an order, and restaurant 4, Taco Town, has never received one.
+The same delivery schema from the previous lesson is the setup here, with one detail worth noticing: customer 5, Neha Bhatt, has never placed an order, and restaurant 4, Taco Town, has never received one.
 
 ## Source Data Used in This Lesson
 
@@ -114,13 +114,13 @@ Expected output:
 | Imran Sheikh | 5 | 275 |
 | Rohan Das | 6 | 180 |
 
-This returns six `rows`, one per order, but Neha Bhatt never appears anywhere in the output, even though she is a perfectly valid `row` in `customers`. She has no matching `row` in `orders`, so the inner `join` excludes her entirely rather than showing her with blank order `columns`. This is the defining trait of `INNER JOIN`: no match means no `row` in the result, on either side.
+This returns six rows, one per order, but Neha Bhatt never appears anywhere in the output, even though she is a perfectly valid row in `customers`. She has no matching row in `orders`, so the inner join excludes her entirely rather than showing her with blank order columns. This is the defining trait of `INNER JOIN`: no match means no row in the result, on either side.
 
 ![INNER JOIN keeping only rows that have a matching partner on both sides](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_inner_join_matched_only.png)
 
 ## Checking the Row Count Before and After
 
-It helps to compare the `row` count of a `table` alone against the `row` count after joining, to see exactly how many `rows` an inner `join` keeps.
+It helps to compare the row count of a table alone against the row count after joining, to see exactly how many rows an inner join keeps.
 
 <iframe
  frameBorder="0"
@@ -148,7 +148,7 @@ Expected output:
 | --- |
 | 6 |
 
-The `customers` `table` alone has 5 `rows`, but the joined `query` returns 6, not 5 and not fewer:
+The `customers` table alone has 5 rows, but the joined query returns 6, not 5 and not fewer:
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
   <thead>
@@ -187,15 +187,15 @@ The `customers` `table` alone has 5 `rows`, but the joined `query` returns 6, no
   </tbody>
 </table>
 
-That number is higher than 5 because Aditi Kulkarni and Rohan Das each placed more than one order, so an inner `join` produces one output `row` for every matching pair, and a customer with two orders contributes two `rows` to the result. Meanwhile, Neha's `row` contributes zero, since it has no partner in `orders` at all.
+That number is higher than 5 because Aditi Kulkarni and Rohan Das each placed more than one order, so an inner join produces one output row for every matching pair, and a customer with two orders contributes two rows to the result. Meanwhile, Neha's row contributes zero, since it has no partner in `orders` at all.
 
-The inner `join` `row` count depends entirely on how many matches exist, not on how many `rows` either original `table` has.
+The inner join row count depends entirely on how many matches exist, not on how many rows either original table has.
 
 ![INNER JOIN producing two joined rows when one customer matches two orders](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_inner_join_one_to_many_rows.png)
 
 ## Adding a WHERE Clause on Top of an Inner Join
 
-Once `tables` are joined, `WHERE` filters the combined `rows` exactly the way it filters a single `table`, since after the `join` runs, the `database` is working with one wide result set.
+Once tables are joined, `WHERE` filters the combined rows exactly the way it filters a single table, since after the join runs, the database is working with one wide result set.
 
 <iframe
  frameBorder="0"
@@ -212,17 +212,17 @@ Expected output:
 | Rohan Das | Sushi Central | 620 |
 | Kavya Nair | Pizza Palace | 500 |
 
-This `query` runs in two clear stages:
+This query runs in two clear stages:
 
-1. The two `INNER JOIN` clauses first assemble the full combined `view` across all three `tables`.
+1. The two `INNER JOIN` clauses first assemble the full combined view across all three tables.
 
 2. Only then does `WHERE orders.amount > 400` remove the smaller orders, leaving just the three highest-value ones, orders 1, 2, and 4, with both the customer's and the restaurant's real names attached.
 
 ## When an Inner Join Is the Right Choice
 
-An inner `join` is the right tool whenever a `row` without a match is not useful for the question being asked. A report on "orders and who placed them" has no reason to include a customer who has never ordered, since there is nothing to report about them in that context.
+An inner join is the right tool whenever a row without a match is not useful for the question being asked. A report on "orders and who placed them" has no reason to include a customer who has never ordered, since there is nothing to report about them in that context.
 
-The next lesson introduces a `join` type built for the opposite situation, when unmatched `rows` are exactly what needs to stay visible.
+The next lesson introduces a join type built for the opposite situation, when unmatched rows are exactly what needs to stay visible.
 
 ## INNER JOIN at a Glance
 
@@ -255,7 +255,7 @@ The next lesson introduces a `join` type built for the opposite situation, when 
 
 ## Your Turn
 
-Zoya wants a list of every restaurant that has actually received at least one order, with no duplicates needed, just the restaurant names that appear in `orders`. Write a `query` against `orders` and `restaurants` above using `INNER JOIN` and `DISTINCT` together.
+Zoya wants a list of every restaurant that has actually received at least one order, with no duplicates needed, just the restaurant names that appear in `orders`. Write a query against `orders` and `restaurants` above using `INNER JOIN` and `DISTINCT` together.
 
 <iframe
  frameBorder="0"
@@ -264,7 +264,7 @@ Zoya wants a list of every restaurant that has actually received at least one or
  width="100%"
 ></iframe>
 
-If your `query` is `SELECT DISTINCT restaurants.restaurant_name FROM orders INNER JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id;`, it returns Pizza Palace, Sushi Central, and Burger Barn, and Taco Town is correctly missing, since it has never matched an order.
+If your query is `SELECT DISTINCT restaurants.restaurant_name FROM orders INNER JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id;`, it returns Pizza Palace, Sushi Central, and Burger Barn, and Taco Town is correctly missing, since it has never matched an order.
 
 
 Expected output for the practice query:
@@ -277,8 +277,8 @@ Expected output for the practice query:
 
 ## Conclusion
 
-`INNER JOIN`, and its shorthand `JOIN`, keeps only the `rows` where both sides of the `join` condition find a partner, quietly dropping everything else, which makes it the right choice whenever unmatched `rows` carry no useful information for the question at hand.
+`INNER JOIN`, and its shorthand JOIN, keeps only the rows where both sides of the join condition find a partner, quietly dropping everything else, which makes it the right choice whenever unmatched rows carry no useful information for the question at hand.
 
 Zoya now knows precisely why Neha Bhatt and Taco Town never showed up in her earlier reports.
 
-Sometimes, though, an unmatched `row` is exactly the information a report needs to surface, and that is where outer `joins` come in.
+Sometimes, though, an unmatched row is exactly the information a report needs to surface, and that is where outer joins come in.

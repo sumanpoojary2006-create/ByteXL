@@ -1,16 +1,16 @@
 ## Introduction
 
-Every `transaction` covered so far has run alone, one `connection`, one sequence of statements, nothing else touching the `database` at the same time. A real banking system is never that quiet: hundreds of transfers, deposits, and balance checks can hit the same accounts within the same second.
+Every transaction covered so far has run alone, one connection, one sequence of statements, nothing else touching the database at the same time. A real banking system is never that quiet: hundreds of transfers, deposits, and balance checks can hit the same accounts within the same second.
 
-The third letter in ACID, **isolation**, is the guarantee that concurrently running `transactions` do not interfere with each other in ways that produce incorrect results, specifically, that one `transaction`'s in-progress, uncommitted changes stay invisible to every other `transaction` until they are actually committed.
+The third letter in ACID, **isolation**, is the guarantee that concurrently running transactions do not interfere with each other in ways that produce incorrect results, specifically, that one transaction's in-progress, uncommitted changes stay invisible to every other transaction until they are actually committed.
 
-**Definition:** Isolation guarantees that concurrently running `transactions` do not see each other's uncommitted, potentially-to-be-rolled-back changes, keeping a `transaction`'s in-progress work private until it actually commits, which is what makes it safe for a real system to run many `transactions` against the same data at once.
+**Definition:** Isolation guarantees that concurrently running transactions do not see each other's uncommitted, potentially-to-be-rolled-back changes, keeping a transaction's in-progress work private until it actually commits, which is what makes it safe for a real system to run many transactions against the same data at once.
 
 ![Intro visual for isolation running transactions safely together](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_isolation_running_transactions_safely_together.png)
 
 ## What a Transaction Can See of Its Own Changes
 
-The `accounts` `table` is the familiar one from earlier in this chapter.
+The `accounts` table is the familiar one from earlier in this chapter.
 
 ## Source Data Used in This Lesson
 
@@ -56,10 +56,10 @@ Expected output:
 | --- |
 | 45000.00 |
 
-Within this single `transaction`, the `SELECT` after the `UPDATE` correctly shows 45000.00, the reduced balance, since a `transaction` always sees its own uncommitted changes. Two things are true at once here:
+Within this single transaction, the `SELECT` after the `UPDATE` correctly shows 45000.00, the reduced balance, since a transaction always sees its own uncommitted changes. Two things are true at once here:
 
-- Isolation is not about hiding a `transaction`'s work from itself.
-- It is about what a completely different, concurrently running `transaction`, on a separate `connection`, is allowed to see before this one commits.
+- Isolation is not about hiding a transaction's work from itself.
+- It is about what a completely different, concurrently running transaction, on a separate connection, is allowed to see before this one commits.
 
 ![Isolation letting one transaction see its own change while hiding it from another session](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_isolation_sessions_uncommitted_private.png)
 
@@ -67,7 +67,7 @@ Within this single `transaction`, the `SELECT` after the `UPDATE` correctly show
 
 Picture a second banking session, running at the exact same moment, checking Meera's balance while the transfer above is still in progress, sitting between its `UPDATE` and its `COMMIT`. Without isolation, that second session could read 40000.00, a balance that might still get rolled back and never actually become real.
 
-With isolation guaranteed, the second session instead sees 45000.00, Meera's balance left over from the already-committed transfer earlier in this lesson, for as long as this `transaction` remains uncommitted, and only sees 40000.00 once `COMMIT` actually runs.
+With isolation guaranteed, the second session instead sees 45000.00, Meera's balance left over from the already-committed transfer earlier in this lesson, for as long as this transaction remains uncommitted, and only sees 40000.00 once `COMMIT` actually runs.
 
 The following illustrates the two sessions side by side, as comments, since a single script can only run one session's statements in real sequence.
 
@@ -86,11 +86,11 @@ Expected output:
 | --- |
 | 45000.00 |
 
-The final `SELECT` in this script, running after `COMMIT`, correctly shows 40000.00, confirming the change is now permanent and visible to any session, including a completely fresh one that started with no knowledge of the `transaction` at all.
+The final `SELECT` in this script, running after `COMMIT`, correctly shows 40000.00, confirming the change is now permanent and visible to any session, including a completely fresh one that started with no knowledge of the transaction at all.
 
 ## Checking the Current Isolation Level
 
-Every `database` `connection` operates under an `isolation level`, a named setting that controls exactly how much of one `transaction`'s in-progress work a concurrent `transaction` is allowed to see. The next lesson in this course covers the specific problems isolation prevents, and a later unit covers the named levels in depth, but the setting itself can be checked right now.
+Every database connection operates under an `isolation level`, a named setting that controls exactly how much of one transaction's in-progress work a concurrent transaction is allowed to see. The next lesson in this course covers the specific problems isolation prevents, and a later unit covers the named levels in depth, but the setting itself can be checked right now.
 
 <iframe
  frameBorder="0"
@@ -101,15 +101,15 @@ Every `database` `connection` operates under an `isolation level`, a named setti
 
 Expected observation: PostgreSQL returns one row containing the current server or transaction setting. The exact value depends on the OneCompiler PostgreSQL environment, so compare the setting name and meaning rather than memorizing a particular value.
 
-This reports the `isolation level` the current session is using for its `transactions`, `read committed` by default in PostgreSQL, which already guarantees that a `transaction` never sees another `transaction`'s uncommitted changes, exactly the behavior demonstrated above.
+This reports the `isolation level` the current session is using for its transactions, `read committed` by default in PostgreSQL, which already guarantees that a transaction never sees another transaction's uncommitted changes, exactly the behavior demonstrated above.
 
 ![An isolation level dial blocking uncommitted changes from other sessions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_isolation_level_blocks_uncommitted.png)
 
 ## Why Isolation Matters for Correctness, Not Just Comfort
 
-Without isolation, a concurrent balance check could read a value that later gets rolled back, and any decision made based on that reading, such as approving a withdrawal because a balance looked sufficient, would be based on data that never actually existed as far as the `database` is concerned.
+Without isolation, a concurrent balance check could read a value that later gets rolled back, and any decision made based on that reading, such as approving a withdrawal because a balance looked sufficient, would be based on data that never actually existed as far as the database is concerned.
 
-Isolation is what makes it safe to run many `transactions` against the same data at the same time without each one having to worry about catching every other `transaction` mid-change.
+Isolation is what makes it safe to run many transactions against the same data at the same time without each one having to worry about catching every other transaction mid-change.
 
 ## Isolation at a Glance
 
@@ -142,7 +142,7 @@ Isolation is what makes it safe to run many `transactions` against the same data
 
 ## Your Turn
 
-Check the current `transaction` `isolation level` for this session, then run a `transaction` that updates Sanjay's balance by 1000.00 without committing, and confirm within the same `transaction` that the change is visible there.
+Check the current transaction `isolation level` for this session, then run a transaction that updates Sanjay's balance by 1000.00 without committing, and confirm within the same transaction that the change is visible there.
 
 <iframe
  frameBorder="0"
@@ -166,6 +166,6 @@ the `isolation level` reports as `read committed`, and the `SELECT` shows 13000.
 
 ## Conclusion
 
-Isolation guarantees that concurrently running `transactions` do not see each other's uncommitted, potentially-to-be-rolled-back changes, keeping a `transaction`'s in-progress work private until it actually commits, which is what makes it safe for a real system to run many `transactions` against the same data at once.
+Isolation guarantees that concurrently running transactions do not see each other's uncommitted, potentially-to-be-rolled-back changes, keeping a transaction's in-progress work private until it actually commits, which is what makes it safe for a real system to run many transactions against the same data at once.
 
-Rahul's banking app can now trust that a balance check running alongside a transfer will never read a value that might not actually stick. Isolation is a guarantee against interference; the final property in ACID guarantees that a committed `transaction` survives even a crash.
+Rahul's banking app can now trust that a balance check running alongside a transfer will never read a value that might not actually stick. Isolation is a guarantee against interference; the final property in ACID guarantees that a committed transaction survives even a crash.

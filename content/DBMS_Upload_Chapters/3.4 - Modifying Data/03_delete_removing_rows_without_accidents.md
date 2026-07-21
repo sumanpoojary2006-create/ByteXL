@@ -1,8 +1,8 @@
 ## Introduction
 
-Priyanka is closing out add-drop week. One student, Rahul Verma, registered for Linear Algebra and then decided, well within the deadline, to drop it. His enrollment `row` now needs to be removed from the `table` entirely, not marked, not changed, simply gone, since a dropped course should not appear on his record at all.
+Priyanka is closing out add-drop week. One student, Rahul Verma, registered for Linear Algebra and then decided, well within the deadline, to drop it. His enrollment row now needs to be removed from the table entirely, not marked, not changed, simply gone, since a dropped course should not appear on his record at all.
 
-The statement for this is **`DELETE`**, and Priyanka already knows, from watching Rohit's `UPDATE` go sideways for a moment during his own address corrections, that a statement which removes `rows` deserves exactly the same caution as one that changes them.
+The statement for this is **`DELETE`**, and Priyanka already knows, from watching Rohit's `UPDATE` go sideways for a moment during his own address corrections, that a statement which removes rows deserves exactly the same caution as one that changes them.
 
 **Definition:** The **`DELETE` statement** removes existing rows from a table, with the `WHERE` clause determining which rows are removed.
 
@@ -10,7 +10,7 @@ The statement for this is **`DELETE`**, and Priyanka already knows, from watchin
 
 ## Finding the Row Before Removing It
 
-The `enrollments` `table` holds this data:
+The `enrollments` table holds this data:
 
 | enrollment_id | student_id | course_id | enrolled_on | grade |
 | ------------- | ---------- | --------- | ---------- | ------ |
@@ -25,7 +25,7 @@ The `enrollments` `table` holds this data:
 | 9 | 7 | 103 | 2025-02-07 | C+ |
 | 10 | 8 | 105 | 2025-02-08 | B- |
 
-A setup file builds this starting point: `CREATE TABLE` defines the `students`, `courses`, and `enrollments` `columns`, and `INSERT INTO` loads the `rows`, including the ten enrollment `rows` shown above. That setup is necessary for the hands-on exercise but is not the topic here; the topic is how `DELETE` removes a `row` that already exists.
+A setup file builds this starting point: `CREATE TABLE` defines the `students`, `courses`, and `enrollments` columns, and `INSERT INTO` loads the rows, including the ten enrollment rows shown above. That setup is necessary for the hands-on exercise but is not the topic here; the topic is how `DELETE` removes a row that already exists.
 
 Priyanka starts the same way Rohit learned to: a `SELECT` using the exact condition she is about to delete with, so she knows precisely what is about to disappear: `SELECT enrollment_id, student_id, course_id, enrolled_on FROM enrollments WHERE enrollment_id = 9;`.
 
@@ -35,13 +35,13 @@ Expected output:
 | ------------- | ---------- | --------- | ---------- |
 | 9 | 7 | 103 | 2025-02-07 |
 
-One `row` comes back: enrollment 9, Rahul Verma's registration in course 103, Linear Algebra. That is the exact `row` and only that `row` that her `DELETE` is about to remove.
+One row comes back: enrollment 9, Rahul Verma's registration in course 103, Linear Algebra. That is the exact row and only that row that her `DELETE` is about to remove.
 
 ### Hands-On Practice: Check the Target Row
 
-The OneCompiler exercise uses two files. `init.sql` creates and populates the starting `tables`. The active query file contains only the statements being practised. Because each run reloads `init.sql`, the dataset is always fresh, so a `DELETE` you run can be rerun from the same starting point.
+The OneCompiler exercise uses two files. `init.sql` creates and populates the starting tables. The active query file contains only the statements being practised. Because each run reloads `init.sql`, the dataset is always fresh, so a `DELETE` you run can be rerun from the same starting point.
 
-First, `init.sql` prepares the source `tables`:
+First, `init.sql` prepares the source tables:
 
 ```postgresql
 CREATE TABLE students (
@@ -98,7 +98,7 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 (10, 8, 105, '2025-02-08', 'B-');
 ```
 
-Then the active query file checks the target `row`:
+Then the active query file checks the target row:
 
 <iframe
  frameBorder="0"
@@ -109,14 +109,14 @@ Then the active query file checks the target `row`:
 
 ## The Shape of DELETE
 
-`DELETE FROM` names the `table`, and `WHERE` narrows which `rows` are removed. Priyanka writes `DELETE FROM enrollments WHERE enrollment_id = 9;`.
+`DELETE FROM` names the table, and `WHERE` narrows which rows are removed. Priyanka writes `DELETE FROM enrollments WHERE enrollment_id = 9;`.
 
 The statement has two parts:
 
-- `DELETE FROM enrollments` names the `table` the `row` is removed from.
-- `WHERE enrollment_id = 9` narrows the removal to exactly one `row`.
+- `DELETE FROM enrollments` names the table the row is removed from.
+- `WHERE enrollment_id = 9` narrows the removal to exactly one row.
 
-Confirming afterward with `SELECT enrollment_id, student_id, course_id FROM enrollments ORDER BY enrollment_id;` gives the expected output, enrollment 9 missing and every other `row` unchanged:
+Confirming afterward with `SELECT enrollment_id, student_id, course_id FROM enrollments ORDER BY enrollment_id;` gives the expected output, enrollment 9 missing and every other row unchanged:
 
 | enrollment_id | student_id | course_id |
 | ------------- | ---------- | --------- |
@@ -131,8 +131,8 @@ Confirming afterward with `SELECT enrollment_id, student_id, course_id FROM enro
 | 10 | 8 | 105 |
 
 - Enrollment 9 is gone from the results, and every other enrollment, all nine of the remaining ones, is untouched.
-- Unlike `UPDATE`, `DELETE` has no `SET` clause, because there is nothing to set, a deleted `row` simply stops existing in the `table`.
-- `WHERE` is doing the identical job it always does: picking out which `rows` the statement applies to.
+- Unlike `UPDATE`, `DELETE` has no `SET` clause, because there is nothing to set, a deleted row simply stops existing in the table.
+- `WHERE` is doing the identical job it always does: picking out which rows the statement applies to.
 
 ![Safe DELETE habit: select the target row first, then delete that exact row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_delete_select_target_first.png)
 
@@ -149,9 +149,9 @@ Keep the same `init.sql` file and change only the active query file. It runs the
 
 ## Why WHERE Matters Here Even More
 
-A `DELETE` with no `WHERE` clause at all is valid SQL, and PostgreSQL will run it without complaint, which makes it one of the most dangerous single lines a person can type into a `database`. Consider `DELETE FROM enrollments;` with no `WHERE` at all.
+A `DELETE` with no `WHERE` clause at all is valid SQL, and PostgreSQL will run it without complaint, which makes it one of the most dangerous single lines a person can type into a database. Consider `DELETE FROM enrollments;` with no `WHERE` at all.
 
-This snippet runs against the original `enrollments` data again, since each snippet starts fresh from `init.sql`. Before this `DELETE`, all ten `rows`, including enrollment 9, are still present:
+This snippet runs against the original `enrollments` data again, since each snippet starts fresh from `init.sql`. Before this `DELETE`, all ten rows, including enrollment 9, are still present:
 
 | enrollment_id | student_id | course_id |
 | ------------- | ---------- | --------- |
@@ -170,16 +170,16 @@ Confirming with `SELECT enrollment_id, student_id, course_id FROM enrollments;` 
 
 *(no rows returned - the table is now empty)*
 
-The second `SELECT` returns nothing at all, because every single enrollment `row`, all ten of them, has been removed, not just Rahul's. Two failure modes look nearly identical here:
+The second `SELECT` returns nothing at all, because every single enrollment row, all ten of them, has been removed, not just Rahul's. Two failure modes look nearly identical here:
 
-- No `WHERE` clause at all: there was no warning, no count of `rows` about to disappear, and once the statement finishes there is no ordinary way to bring those `rows` back.
-- A `WHERE` clause that is merely too broad: writing `WHERE course_id = 103` when the intent was `WHERE enrollment_id = 9` removes every enrollment in Linear Algebra across every student, not the one `row` Rahul actually dropped.
+- No `WHERE` clause at all: there was no warning, no count of rows about to disappear, and once the statement finishes there is no ordinary way to bring those rows back.
+- A `WHERE` clause that is merely too broad: writing `WHERE course_id = 103` when the intent was `WHERE enrollment_id = 9` removes every enrollment in Linear Algebra across every student, not the one row Rahul actually dropped.
 
 ![DELETE without WHERE removing all rows from the enrollments table](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_delete_without_where_all_rows.png)
 
 ### Hands-On Practice: See the Danger
 
-Keep the same `init.sql` file and change only the active query file. This intentionally omits `WHERE` so you can see it empty the whole `table`:
+Keep the same `init.sql` file and change only the active query file. This intentionally omits `WHERE` so you can see it empty the whole table:
 
 <iframe
  frameBorder="0"
@@ -190,13 +190,13 @@ Keep the same `init.sql` file and change only the active query file. This intent
 
 ## The Same Safety Habit, Applied to Deletion
 
-The habit that protects `UPDATE` protects `DELETE` just as well: write the condition, run it first as a `SELECT`, look at exactly which `rows` would be affected, and only turn that same condition into a `DELETE` once the `SELECT` shows precisely the `rows` meant to go. Checking `student_id = 5 AND course_id = 101` first shows one `row`:
+The habit that protects `UPDATE` protects `DELETE` just as well: write the condition, run it first as a `SELECT`, look at exactly which rows would be affected, and only turn that same condition into a `DELETE` once the `SELECT` shows precisely the rows meant to go. Checking `student_id = 5 AND course_id = 101` first shows one row:
 
 | enrollment_id | student_id | course_id |
 | ------------- | ---------- | --------- |
 | 7 | 5 | 101 |
 
-Reusing that identical condition for the `DELETE` and listing the `table` afterward leaves nine `rows`, with enrollment 7 no longer among them:
+Reusing that identical condition for the `DELETE` and listing the table afterward leaves nine rows, with enrollment 7 no longer among them:
 
 | enrollment_id | student_id | course_id |
 | ------------- | ---------- | --------- |
@@ -210,13 +210,13 @@ Reusing that identical condition for the `DELETE` and listing the `table` afterw
 | 9 | 7 | 103 |
 | 10 | 8 | 105 |
 
-The first `SELECT` shows exactly one `row`, Yusuf Khan's registration in course 101. The `DELETE` reuses the identical `WHERE student_id = 5 AND course_id = 101` condition, and the closing `SELECT` confirms nine `rows` remain and Yusuf's course 101 enrollment is the only one missing.
+The first `SELECT` shows exactly one row, Yusuf Khan's registration in course 101. The `DELETE` reuses the identical `WHERE student_id = 5 AND course_id = 101` condition, and the closing `SELECT` confirms nine rows remain and Yusuf's course 101 enrollment is the only one missing.
 
-Combining two conditions with `AND`, exactly as covered with logical operators, is often what makes a `DELETE` condition specific enough to trust: `student_id = 5` alone might one day match more than one `row` if Yusuf ever enrolls in something else.
+Combining two conditions with `AND`, exactly as covered with logical operators, is often what makes a `DELETE` condition specific enough to trust: `student_id = 5` alone might one day match more than one row if Yusuf ever enrolls in something else.
 
 ### Hands-On Practice: Check, Delete, Confirm
 
-Keep the same `init.sql` file and change only the active query file. The three statements check the `row`, remove it, and list what remains:
+Keep the same `init.sql` file and change only the active query file. The three statements check the row, remove it, and list what remains:
 
 <iframe
  frameBorder="0"
@@ -256,7 +256,7 @@ Keep the same `init.sql` file and change only the active query file. The three s
 
 ## Your Turn
 
-Neha Sharma has dropped Database Systems (course_id 101). Confirm which enrollment `row` that is first, then remove it, then confirm the `table`'s remaining state.
+Neha Sharma has dropped Database Systems (course_id 101). Confirm which enrollment row that is first, then remove it, then confirm the table's remaining state.
 
 <iframe
  frameBorder="0"
@@ -265,13 +265,13 @@ Neha Sharma has dropped Database Systems (course_id 101). Confirm which enrollme
  width="100%"
 ></iframe>
 
-A working answer runs `SELECT enrollment_id, student_id, course_id FROM enrollments WHERE student_id = 2 AND course_id = 101;`, then `DELETE FROM enrollments WHERE student_id = 2 AND course_id = 101;`, then a listing `SELECT`. Before, the check shows one `row`:
+A working answer runs `SELECT enrollment_id, student_id, course_id FROM enrollments WHERE student_id = 2 AND course_id = 101;`, then `DELETE FROM enrollments WHERE student_id = 2 AND course_id = 101;`, then a listing `SELECT`. Before, the check shows one row:
 
 | enrollment_id | student_id | course_id |
 | ------------- | ---------- | --------- |
 | 3 | 2 | 101 |
 
-After, nine `rows` remain with enrollment 3 no longer among them:
+After, nine rows remain with enrollment 3 no longer among them:
 
 | enrollment_id | student_id | course_id |
 | ------------- | ---------- | --------- |
@@ -285,8 +285,8 @@ After, nine `rows` remain with enrollment 3 no longer among them:
 | 9 | 7 | 103 |
 | 10 | 8 | 105 |
 
-The first `SELECT` isolates enrollment 3, Neha's `row` in course 101. The `DELETE` removes exactly that `row`, and the closing `SELECT` confirms nine `rows` remain with enrollment 3 no longer among them.
+The first `SELECT` isolates enrollment 3, Neha's row in course 101. The `DELETE` removes exactly that row, and the closing `SELECT` confirms nine rows remain with enrollment 3 no longer among them.
 
 ## Conclusion
 
-`DELETE` is the shortest of the modification statements to type and, without a `WHERE` clause, the fastest way to empty a `table` by accident. The exact discipline that keeps `UPDATE` safe applies here without any real change: know which `rows` a condition selects before running it, confirm with a `SELECT` first, and treat the absence of a `WHERE` clause as a decision that removes everything rather than a shortcut. Priyanka closed out add-drop week having removed exactly Rahul Verma's dropped Linear Algebra enrollment, and nothing else, because she checked with a `SELECT` before she ever typed `DELETE`. Sometimes, though, the safest thing is not just checking before a change but getting the `database` to confirm, immediately and in the same breath, exactly what a statement just did.
+`DELETE` is the shortest of the modification statements to type and, without a `WHERE` clause, the fastest way to empty a table by accident. The exact discipline that keeps `UPDATE` safe applies here without any real change: know which rows a condition selects before running it, confirm with a `SELECT` first, and treat the absence of a `WHERE` clause as a decision that removes everything rather than a shortcut. Priyanka closed out add-drop week having removed exactly Rahul Verma's dropped Linear Algebra enrollment, and nothing else, because she checked with a `SELECT` before she ever typed `DELETE`. Sometimes, though, the safest thing is not just checking before a change but getting the database to confirm, immediately and in the same breath, exactly what a statement just did.

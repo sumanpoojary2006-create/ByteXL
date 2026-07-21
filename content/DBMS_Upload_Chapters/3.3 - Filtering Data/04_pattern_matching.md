@@ -10,12 +10,12 @@ What he needs is a way to match a partial shape of text rather than an exact val
 
 ## Matching Part of a String with LIKE
 
-`LIKE` compares a text `column` against a pattern instead of a fixed value. The pattern can include two special wildcard characters:
+`LIKE` compares a text column against a pattern instead of a fixed value. The pattern can include two special wildcard characters:
 
 - `%` stands in for any number of characters, including zero.
 - `_` stands in for exactly one character.
 
-The `students` `table` holds this data:
+The `students` table holds this data:
 
 | student_id | full_name | email | city | phone | joined_on |
 | ---------- | ------------- | ----------------------------- | --------- | ---------- | ---------- |
@@ -144,7 +144,7 @@ Expected output:
 
 - This still returns Varun Nair, Yusuf Khan, and Rahul Verma, even though the pattern is written in uppercase and the stored addresses are all lowercase.
 - Swapping `ILIKE` for `LIKE` here with the same uppercase pattern would return nothing at all, since `LIKE` treats `GMAIL` and `gmail` as different text entirely.
-- `ILIKE` is specific to PostgreSQL; other `database` systems handle case-insensitive matching differently, so it is worth knowing it is a PostgreSQL convenience rather than a universal SQL feature.
+- `ILIKE` is specific to PostgreSQL; other database systems handle case-insensitive matching differently, so it is worth knowing it is a PostgreSQL convenience rather than a universal SQL feature.
 
 ## Pattern Matching at a Glance
 
@@ -187,7 +187,7 @@ Expected output:
 
 ## Your Turn
 
-Write a `query` that finds every student whose email address contains the text "verma", regardless of where it appears in the address.
+Write a query that finds every student whose email address contains the text "verma", regardless of where it appears in the address.
 
 <iframe
  frameBorder="0"
@@ -202,10 +202,10 @@ Expected output:
 | ----------- | ---------------------- |
 | Rahul Verma | rahul.verma@gmail.com |
 
-This should return exactly one `row`, Rahul Verma, since his email address is the only one containing that fragment anywhere in it. Try replacing `%verma%` with just `verma%` and notice the result becomes empty, since that pattern demands the address start with "verma" rather than merely contain it.
+This should return exactly one row, Rahul Verma, since his email address is the only one containing that fragment anywhere in it. Try replacing `%verma%` with just `verma%` and notice the result becomes empty, since that pattern demands the address start with "verma" rather than merely contain it.
 
 ## Conclusion
 
 `LIKE` turns `WHERE` from a tool that only recognises exact values into one that can recognise the shape of text. `%` stands for a stretch of any length, `_` stands for one character, and PostgreSQL's `ILIKE` ignores letter case. Siddharth can therefore retrieve every college-issued address with `WHERE email LIKE '%campusmail.edu'` without knowing each complete address beforehand.
 
-Text is not the only place where an exact comparison falls short. Some `columns` hold no known value at all, and working with that absence requires SQL's special `NULL` rules.
+Text is not the only place where an exact comparison falls short. Some columns hold no known value at all, and working with that absence requires SQL's special `NULL` rules.

@@ -1,14 +1,14 @@
 ## Introduction
 
-Divya runs the front desk software for a small clinic, and the `appointments` `table` logs every visit with a timestamp. Doctors keep asking questions that a raw timestamp cannot answer by itself:
+Divya runs the front desk software for a small clinic, and the `appointments` table logs every visit with a timestamp. Doctors keep asking questions that a raw timestamp cannot answer by itself:
 
 - "How many days ago was this patient's last visit?"
 - "Which appointments were booked in the last 7 days?"
 - "Just give me the hour of day patients tend to show up, not the full date."
 
-A timestamp is a single value, but the questions above need it pulled apart, compared, or measured against right now. SQL's **date and time `functions`** exist for exactly this kind of work.
+A timestamp is a single value, but the questions above need it pulled apart, compared, or measured against right now. SQL's **date and time functions** exist for exactly this kind of work.
 
-**Definition:** Date and time `functions` turn a single stored timestamp into whatever shape a question needs: `NOW()` and `CURRENT_DATE` for a reference point, interval arithmetic for shifting dates forward or measuring spans, and `EXTRACT` for pulling out just a weekday or an hour.
+**Definition:** Date and time functions turn a single stored timestamp into whatever shape a question needs: `NOW()` and `CURRENT_DATE` for a reference point, interval arithmetic for shifting dates forward or measuring spans, and `EXTRACT` for pulling out just a weekday or an hour.
 
 ![Intro visual for date and time functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_date_and_time_functions.png)
 
@@ -66,7 +66,7 @@ Expected output shape:
 | --- | --- |
 | Current timestamp at execution time | Current date at execution time |
 
-`NOW()` returns the exact current timestamp the `database` sees at `query` time, down to the second, while `CURRENT_DATE` returns just today's date with no time component. Divya will use `NOW()` as the anchor point for every "how long ago" question the clinic asks.
+`NOW()` returns the exact current timestamp the database sees at query time, down to the second, while `CURRENT_DATE` returns just today's date with no time component. Divya will use `NOW()` as the anchor point for every "how long ago" question the clinic asks.
 
 ![NOW, CURRENT_DATE, and INTERVAL using the current moment to suggest a follow-up date](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_now_current_date_interval_followup.png)
 
@@ -94,7 +94,7 @@ Expected output:
 | Devika Menon | 2025-03-18 10:00:00 | Calculated from current time | 2025-03-25 10:00:00 |
 
 - `AGE(later, earlier)` returns a readable span, such as "11 months 2 days," which is friendlier for a doctor to scan than a raw number of seconds.
-- Adding an `INTERVAL` directly to a timestamp, like `+ INTERVAL '7 days'`, produces a new timestamp shifted forward by exactly that span, which is how Divya generates a suggested follow-up date for every patient in one `query`.
+- Adding an `INTERVAL` directly to a timestamp, like `+ INTERVAL '7 days'`, produces a new timestamp shifted forward by exactly that span, which is how Divya generates a suggested follow-up date for every patient in one query.
 
 ## Extracting Just One Part of a Date
 
@@ -127,7 +127,7 @@ Expected output:
 
 ## Comparing Two Dates Directly
 
-Divya also wants a simple flag: was a given appointment booked in the last 30 days from today, or is it older than that? Subtracting two dates in most `databases` returns the number of days between them as a plain number.
+Divya also wants a simple flag: was a given appointment booked in the last 30 days from today, or is it older than that? Subtracting two dates in most databases returns the number of days between them as a plain number.
 
 The query converts each timestamp to a date, subtracts it from `CURRENT_DATE`, and orders the calculated day counts from smallest to largest. The exact numbers increase as time passes.
 
@@ -149,7 +149,7 @@ Expected output shape:
 | Rohit Nair | 2025-01-10 09:15:00 | Calculated from current date |
 
 - `visit_time::DATE` converts the timestamp to a plain date first, dropping the time-of-day portion so the subtraction returns a clean whole number of days rather than a mixed interval.
-- Ordering by that computed `column` puts the most recent visits first, which is exactly the list the front desk checks each morning.
+- Ordering by that computed column puts the most recent visits first, which is exactly the list the front desk checks each morning.
 
 ## EXTRACT Fields Worth Knowing
 
@@ -233,7 +233,7 @@ Expected output shape:
 
 ## Your Turn
 
-The clinic wants a simple recall list: patient name and visit date for every appointment more than 60 days old, counting from today, ordered with the oldest visit first. Write that `query` against the `appointments` `table` above.
+The clinic wants a simple recall list: patient name and visit date for every appointment more than 60 days old, counting from today, ordered with the oldest visit first. Write that query against the `appointments` table above.
 
 <iframe
  frameBorder="0"
@@ -242,7 +242,7 @@ The clinic wants a simple recall list: patient name and visit date for every app
  width="100%"
 ></iframe>
 
-If your `query` filters with `WHERE CURRENT_DATE - visit_time::DATE > 60` and orders by `visit_time`, the earliest visits in the `table` surface first, which is exactly who the clinic should be calling back.
+If your query filters with `WHERE CURRENT_DATE - visit_time::DATE > 60` and orders by `visit_time`, the earliest visits in the table surface first, which is exactly who the clinic should be calling back.
 
 Expected output depends on the date the query is run. Once all five sample visits are more than 60 days old, the ordered result is:
 
@@ -256,6 +256,6 @@ Expected output depends on the date the query is run. Once all five sample visit
 
 ## Conclusion
 
-Date and time `functions` turn a single stored timestamp into whatever shape a question needs: `NOW()` and `CURRENT_DATE` for a reference point, interval arithmetic for shifting dates forward or measuring spans, and `EXTRACT` for pulling out just a weekday or an hour. Divya answered four different scheduling questions from one `column` of raw timestamps. Not every gap in a `table` is a wrong value, though.
+Date and time functions turn a single stored timestamp into whatever shape a question needs: `NOW()` and `CURRENT_DATE` for a reference point, interval arithmetic for shifting dates forward or measuring spans, and `EXTRACT` for pulling out just a weekday or an hour. Divya answered four different scheduling questions from one column of raw timestamps. Not every gap in a table is a wrong value, though.
 
 Some of it is genuinely missing data, and that needs its own handling.

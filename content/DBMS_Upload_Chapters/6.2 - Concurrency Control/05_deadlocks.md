@@ -1,17 +1,17 @@
 ## Introduction
 
-- `Locking` prevents two `transactions` from conflicting over the same `row`, but it introduces a new failure mode of its own: two `transactions` can each hold a `lock` the other one needs, with neither willing to let go until it gets what it is waiting for.
-- Picture Transaction A `locking` account 1 and then trying to `lock` account 2, while at nearly the same moment, Transaction B has already `locked` account 2 and is now trying to `lock` account 1.
-- Each `transaction` is waiting on the other, forever, unless something intervenes.
-- This standoff is called a **deadlock**, and every production `database` includes a mechanism specifically to detect and break it.
+- `Locking` prevents two transactions from conflicting over the same row, but it introduces a new failure mode of its own: two transactions can each hold a lock the other one needs, with neither willing to let go until it gets what it is waiting for.
+- Picture Transaction A `locking` account 1 and then trying to lock account 2, while at nearly the same moment, Transaction B has already `locked` account 2 and is now trying to lock account 1.
+- Each transaction is waiting on the other, forever, unless something intervenes.
+- This standoff is called a **deadlock**, and every production database includes a mechanism specifically to detect and break it.
 
-**Definition:** A deadlock forms when two `transactions` each hold a `lock` the other needs, a cycle the `database` detects automatically and breaks by rolling back one of the two `transactions`, leaving the application to retry, and the most reliable prevention is `locking` multiple `rows` in a consistent order across every `transaction` in the system.
+**Definition:** A deadlock forms when two transactions each hold a lock the other needs, a cycle the database detects automatically and breaks by rolling back one of the two transactions, leaving the application to retry, and the most reliable prevention is `locking` multiple rows in a consistent order across every transaction in the system.
 
 ![Intro visual for deadlocks](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_deadlocks.png)
 
 ## How a Deadlock Forms
 
-The `accounts` `table` sets up the scenario, two accounts that two different transfer `transactions` both need to touch, in opposite order.
+The `accounts` table sets up the scenario, two accounts that two different transfer transactions both need to touch, in opposite order.
 
 ## Source Data Used in This Lesson
 
@@ -51,19 +51,19 @@ Before running each active statement, predict which rows, database objects, or s
 
 Expected observation: PostgreSQL completes the transaction-control statements. Use the following explanation and any closing `SELECT` to verify whether the changes were committed or rolled back.
 
-Each `transaction` is individually doing something perfectly reasonable, `locking` one `row` and then requesting a second `row` it needs, but the two together form a cycle: A waits on B, and B waits on A, with no possible way for either to naturally continue.
+Each transaction is individually doing something perfectly reasonable, `locking` one row and then requesting a second row it needs, but the two together form a cycle: A waits on B, and B waits on A, with no possible way for either to naturally continue.
 
 ![A deadlock cycle where Transaction A waits for B and Transaction B waits for A](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_deadlock_wait_cycle.png)
 
 ## How the Database Breaks a Deadlock
 
-A `database` does not simply let two `transactions` wait forever. PostgreSQL, like other production `databases`, continuously watches for exactly this kind of waiting cycle, and once it detects one:
+A database does not simply let two transactions wait forever. PostgreSQL, like other production databases, continuously watches for exactly this kind of waiting cycle, and once it detects one:
 
-1. It forcibly aborts one of the two `transactions`.
+1. It forcibly aborts one of the two transactions.
 
-2. It rolls that `transaction` back and raises a deadlock error.
+2. It rolls that transaction back and raises a deadlock error.
 
-3. The other `transaction` is freed to continue.
+3. The other transaction is freed to continue.
 
 <iframe
  frameBorder="0"
@@ -81,11 +81,11 @@ Expected output:
 | 1 | Meera Iyer | 50000.00 |
 | 2 | Sanjay Rathi | 12000.00 |
 
-The specific `transaction` chosen as the "victim" is typically whichever one the `database` determines is cheapest to roll back, and the application on the receiving end of that error is expected to catch it and retry the whole `transaction` from the beginning, this time likely succeeding, since the other `transaction` has usually finished by the time the retry runs.
+The specific transaction chosen as the "victim" is typically whichever one the database determines is cheapest to roll back, and the application on the receiving end of that error is expected to catch it and retry the whole transaction from the beginning, this time likely succeeding, since the other transaction has usually finished by the time the retry runs.
 
 ## Preventing Deadlocks Through Consistent Lock Ordering
 
-The most reliable way to avoid deadlocks in application code is to make sure every `transaction` that touches multiple `rows` always `locks` them in the same, consistent order, for example, always `locking` the account with the lower `account_id` first, regardless of which direction money is moving.
+The most reliable way to avoid deadlocks in application code is to make sure every transaction that touches multiple rows always locks them in the same, consistent order, for example, always `locking` the account with the lower `account_id` first, regardless of which direction money is moving.
 
 <iframe
  frameBorder="0"
@@ -110,7 +110,7 @@ Expected output 2:
 | --- | --- | --- |
 | 2 | Sanjay Rathi | 12000.00 |
 
-If every `transaction`, regardless of which direction it transfers money, always `locks` account 1 before account 2 whenever both are involved, the circular waiting pattern from the earlier example can never form: whichever `transaction` gets to account 1 first simply makes the other one wait its turn, in a straight line rather than a cycle.
+If every transaction, regardless of which direction it transfers money, always locks account 1 before account 2 whenever both are involved, the circular waiting pattern from the earlier example can never form: whichever transaction gets to account 1 first simply makes the other one wait its turn, in a straight line rather than a cycle.
 
 ![Preventing deadlocks by locking accounts in the same consistent order](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_deadlock_prevention_same_lock_order.png)
 
@@ -149,7 +149,7 @@ If every `transaction`, regardless of which direction it transfers money, always
 
 ## Your Turn
 
-Rewrite a two-account transfer `transaction` against the `accounts` `table` above so that it `locks` both `rows` with `FOR UPDATE` in ascending `account_id` order before making any changes, regardless of which account the money is conceptually coming from.
+Rewrite a two-account transfer transaction against the `accounts` table above so that it locks both rows with `FOR UPDATE` in ascending `account_id` order before making any changes, regardless of which account the money is conceptually coming from.
 
 <iframe
  frameBorder="0"
@@ -160,7 +160,7 @@ Rewrite a two-account transfer `transaction` against the `accounts` `table` abov
 
 Expected result and verification:
 
-A deadlock-safe version `locks` the lower id first regardless of transfer direction:
+A deadlock-safe version locks the lower id first regardless of transfer direction:
 
 <iframe
  frameBorder="0"
@@ -173,4 +173,4 @@ Following this same ordering convention everywhere in the application prevents t
 
 ## Conclusion
 
-A deadlock forms when two `transactions` each hold a `lock` the other needs, a cycle the `database` detects automatically and breaks by rolling back one of the two `transactions`, leaving the application to retry, and the most reliable prevention is `locking` multiple `rows` in a consistent order across every `transaction` in the system. With `locking`, `isolation levels`, and deadlocks all covered, the final piece is naming the standard every one of these mechanisms is ultimately working to uphold.
+A deadlock forms when two transactions each hold a lock the other needs, a cycle the database detects automatically and breaks by rolling back one of the two transactions, leaving the application to retry, and the most reliable prevention is `locking` multiple rows in a consistent order across every transaction in the system. With `locking`, `isolation levels`, and deadlocks all covered, the final piece is naming the standard every one of these mechanisms is ultimately working to uphold.

@@ -1,21 +1,21 @@
 ## Introduction
 
-Nikhil is building a small course catalog page, and the design calls for two things the courses `table` does not actually store:
+Nikhil is building a small course catalog page, and the design calls for two things the courses table does not actually store:
 
-- A combined label like "Computer Science: Database Systems" for each `row`
+- A combined label like "Computer Science: Database Systems" for each row
 - A "workload score" that doubles the credit value to weight it against another metric the page tracks
 
-Neither of these exists as a `column`. Nothing needs to be added to the `table` to get them, though, because SQL can compute new values on the fly, right inside a `SELECT` list, using the `columns` that already exist.
+Neither of these exists as a column. Nothing needs to be added to the table to get them, though, because SQL can compute new values on the fly, right inside a `SELECT` list, using the columns that already exist.
 
-A value built this way, out of `columns` and operators rather than read directly off disk, is called an **expression**, and when it is given a name in the output, it behaves exactly like a calculated `column`.
+A value built this way, out of columns and operators rather than read directly off disk, is called an **expression**, and when it is given a name in the output, it behaves exactly like a calculated column.
 
-**Definition:** Expressions turn a `SELECT` list from a plain menu of stored `columns` into a small calculator that runs once per `row`: arithmetic operators combine numbers, `||` combines text, and `AS` gives the result a name worth keeping.
+**Definition:** Expressions turn a `SELECT` list from a plain menu of stored columns into a small calculator that runs once per row: arithmetic operators combine numbers, `||` combines text, and `AS` gives the result a name worth keeping.
 
 ![Intro visual for expressions and calculated columns](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_expressions_and_calculated_columns.png)
 
 ## Doing Arithmetic in a SELECT List
 
-The `courses` `table` holds this data:
+The `courses` table holds this data:
 
 | course_id | title | department | credits |
 | --------- | -------------------- | ---------------- | ------: |
@@ -25,7 +25,7 @@ The `courses` `table` holds this data:
 | 104 | Discrete Mathematics | Mathematics | 3 |
 | 105 | Microeconomics | Economics | 3 |
 
-The `credits` `column` is stored as a plain integer. Nikhil wants a doubled version of it for his workload score, and he gets it by writing the arithmetic directly where a `column` name would normally go. The query is `SELECT title, credits, credits * 2 AS double_credits FROM courses;`.
+The `credits` column is stored as a plain integer. Nikhil wants a doubled version of it for his workload score, and he gets it by writing the arithmetic directly where a column name would normally go. The query is `SELECT title, credits, credits * 2 AS double_credits FROM courses;`.
 
 For hands-on practice, `init.sql` creates and populates the displayed `courses` table:
 
@@ -64,7 +64,7 @@ Expected output:
 | Discrete Mathematics | 3 | 6 |
 | Microeconomics | 3 | 6 |
 
-The result carries a third `column`, `double_credits`, holding 8, 8, 6, 6, and 6 for the five courses in that order, double whatever sat in `credits` for that `row`. PostgreSQL computes `credits * 2` fresh for every `row` as it builds the result; nothing about that math is stored anywhere, and running the same `query` again next year, after credit values might have changed, would simply recompute it from whatever `credits` holds then.
+The result carries a third column, `double_credits`, holding 8, 8, 6, 6, and 6 for the five courses in that order, double whatever sat in `credits` for that row. PostgreSQL computes `credits * 2` fresh for every row as it builds the result; nothing about that math is stored anywhere, and running the same query again next year, after credit values might have changed, would simply recompute it from whatever `credits` holds then.
 
 The usual arithmetic operators all work the same way inside a `SELECT` list: `+`, `-`, `*`, `/`, and `%` for remainder.
 
@@ -97,7 +97,7 @@ Each row now returns a single text value: "Computer Science: Database Systems", 
 
 ## Mixing Expressions With Ordinary Columns
 
-An expression does not have to stand alone. It sits in the `SELECT` list exactly like any real `column`, so a single `query` can freely mix calculated values with `columns` pulled straight from the `table`. The query is `SELECT course_id, title, credits, credits * 2 AS double_credits, department || ': ' || title AS course_label FROM courses;`.
+An expression does not have to stand alone. It sits in the `SELECT` list exactly like any real column, so a single query can freely mix calculated values with columns pulled straight from the table. The query is `SELECT course_id, title, credits, credits * 2 AS double_credits, department || ': ' || title AS course_label FROM courses;`.
 
 <iframe
  frameBorder="0"
@@ -116,7 +116,7 @@ Expected output:
 | 104 | Discrete Mathematics | 3 | 6 | Mathematics: Discrete Mathematics |
 | 105 | Microeconomics | 3 | 6 | Economics: Microeconomics |
 
-This single `query` returns five `columns`: two untouched `columns` straight off the `table`, `course_id` and `title`, alongside `credits` shown plainly, then the doubled value, then the combined label, all computed in one pass over the same five `rows`. Nothing stops a `query` from having as many expressions as it needs sitting beside as many plain `columns` as it needs.
+This single query returns five columns: two untouched columns straight off the table, `course_id` and `title`, alongside `credits` shown plainly, then the doubled value, then the combined label, all computed in one pass over the same five rows. Nothing stops a query from having as many expressions as it needs sitting beside as many plain columns as it needs.
 
 ## Expressions at a Glance
 
@@ -149,7 +149,7 @@ This single `query` returns five `columns`: two untouched `columns` straight off
 
 ## Your Turn
 
-The catalog page also needs a "credit hours per week" figure, assuming each credit corresponds to roughly 15 contact hours across a term, shown alongside the course title. Write a `query` that returns `title` and a calculated `column` named `contact_hours`, equal to `credits * 15`.
+The catalog page also needs a "credit hours per week" figure, assuming each credit corresponds to roughly 15 contact hours across a term, shown alongside the course title. Write a query that returns `title` and a calculated column named `contact_hours`, equal to `credits * 15`.
 
 <iframe
  frameBorder="0"
@@ -172,6 +172,6 @@ The catalog page also needs a "credit hours per week" figure, assuming each cred
 
 ## Conclusion
 
-Expressions turn a `SELECT` list from a plain menu of stored `columns` into a small calculator that runs once per `row`: arithmetic operators combine numbers, `||` combines text, and `AS` gives the result a name worth keeping. None of this changes a single value sitting in the `table`, it only shapes what comes back for that one `query`.
+Expressions turn a `SELECT` list from a plain menu of stored columns into a small calculator that runs once per row: arithmetic operators combine numbers, `||` combines text, and `AS` gives the result a name worth keeping. None of this changes a single value sitting in the table, it only shapes what comes back for that one query.
 
-Nikhil's course catalog page can now show its combined "Computer Science: Database Systems" label and doubled workload score straight from a `SELECT`, with no new `column` ever added to the courses `table` itself. With the ability to pick `columns`, rename them, deduplicate them, and compute new ones from them all in hand, the next natural need is controlling the order those `rows` arrive in, rather than accepting whatever order the `database` happens to hand them back.
+Nikhil's course catalog page can now show its combined "Computer Science: Database Systems" label and doubled workload score straight from a `SELECT`, with no new column ever added to the courses table itself. With the ability to pick columns, rename them, deduplicate them, and compute new ones from them all in hand, the next natural need is controlling the order those rows arrive in, rather than accepting whatever order the database happens to hand them back.

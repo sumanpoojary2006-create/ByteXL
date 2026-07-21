@@ -1,16 +1,16 @@
 ## Introduction
 
-Rahul's transfer feature now groups statements atomically, keeps the data consistent, and isolates concurrent `transactions` from each other's in-progress work. One question remains, and it is the one that matters most the instant something actually goes wrong: once `COMMIT` has run and told the customer "your transfer succeeded," what happens if the server loses power one second later?
+Rahul's transfer feature now groups statements atomically, keeps the data consistent, and isolates concurrent transactions from each other's in-progress work. One question remains, and it is the one that matters most the instant something actually goes wrong: once `COMMIT` has run and told the customer "your transfer succeeded," what happens if the server loses power one second later?
 
-The fourth letter in ACID, **durability**, is the guarantee that once a `transaction` has committed, its changes are permanent, surviving a crash, a power loss, or a restart, even if the change had only existed in memory a moment before.
+The fourth letter in ACID, **durability**, is the guarantee that once a transaction has committed, its changes are permanent, surviving a crash, a power loss, or a restart, even if the change had only existed in memory a moment before.
 
-**Definition:** Durability closes the loop that atomicity, consistency, and isolation open: once a `transaction` commits, its result is guaranteed permanent, surviving any crash, because the `database` records it somewhere durable before ever reporting success.
+**Definition:** Durability closes the loop that atomicity, consistency, and isolation open: once a transaction commits, its result is guaranteed permanent, surviving any crash, because the database records it somewhere durable before ever reporting success.
 
 ![Intro visual for durability surviving a crash](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_durability_surviving_a_crash.png)
 
 ## COMMIT Means Permanent, Not Just Visible
 
-The `accounts` `table` is the same one used throughout this chapter.
+The `accounts` table is the same one used throughout this chapter.
 
 ## Source Data Used in This Lesson
 
@@ -57,24 +57,24 @@ Expected output:
 | 1 | 45000.00 |
 | 2 | 17000.00 |
 
-Once `COMMIT` finishes here, durability guarantees this new balance is not sitting only in server memory, waiting to disappear the moment power is lost. The `database` has already made sure this change is recorded somewhere that survives a crash, before it ever reported success back to Rahul's application.
+Once `COMMIT` finishes here, durability guarantees this new balance is not sitting only in server memory, waiting to disappear the moment power is lost. The database has already made sure this change is recorded somewhere that survives a crash, before it ever reported success back to Rahul's application.
 
 ![COMMIT writing a transaction result to durable storage so it survives a crash](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_durability_commit_survives_crash.png)
 
 This is a meaningfully different promise from isolation:
 
-- Isolation was about what other `transactions` can see while a `transaction` is still in progress.
-- Durability is about what happens to a `transaction`'s result after it has already finished successfully.
+- Isolation was about what other transactions can see while a transaction is still in progress.
+- Durability is about what happens to a transaction's result after it has already finished successfully.
 
 ## How Databases Deliver on This Promise
 
-A `database` cannot simply keep committed data in memory and hope nothing goes wrong before it eventually gets written to disk, since memory is erased by a power loss. Instead, most relational `databases`, including PostgreSQL, use a technique called `write-ahead logging`: before a `transaction` is allowed to report success, its changes are first written to a durable log on disk.
+A database cannot simply keep committed data in memory and hope nothing goes wrong before it eventually gets written to disk, since memory is erased by a power loss. Instead, most relational databases, including PostgreSQL, use a technique called `write-ahead logging`: before a transaction is allowed to report success, its changes are first written to a durable log on disk.
 
-If the server crashes immediately after, that log is what the `database` replays on restart to reconstruct any committed work that had not yet been fully applied to the main data files. The mechanics of that log are worth a closer look on their own, but the guarantee it exists to provide is simple: `COMMIT` does not return success until the change is already somewhere that a crash cannot erase.
+If the server crashes immediately after, that log is what the database replays on restart to reconstruct any committed work that had not yet been fully applied to the main data files. The mechanics of that log are worth a closer look on their own, but the guarantee it exists to provide is simple: `COMMIT` does not return success until the change is already somewhere that a crash cannot erase.
 
 ## A Setting That Trades Durability for Speed
 
-Durability is not free; forcing every commit to wait for a disk write takes real time, which is why some `databases` expose a setting to relax this guarantee for performance-sensitive situations. PostgreSQL's `synchronous_commit` setting is one example, and checking it shows how explicit this trade-off is.
+Durability is not free; forcing every commit to wait for a disk write takes real time, which is why some databases expose a setting to relax this guarantee for performance-sensitive situations. PostgreSQL's `synchronous_commit` setting is one example, and checking it shows how explicit this trade-off is.
 
 <iframe
  frameBorder="0"
@@ -91,7 +91,7 @@ This setting is not something a banking application should ever turn off, but it
 
 ## Durability Applies Only After COMMIT
 
-It is worth being precise about the boundary here. Everything before `COMMIT` is provisional, and a crash during an uncommitted `transaction` is expected to lose that `transaction`'s work entirely, which is exactly what atomicity already promises, an incomplete `transaction` should never partially survive.
+It is worth being precise about the boundary here. Everything before `COMMIT` is provisional, and a crash during an uncommitted transaction is expected to lose that transaction's work entirely, which is exactly what atomicity already promises, an incomplete transaction should never partially survive.
 
 <iframe
  frameBorder="0"
@@ -102,7 +102,7 @@ It is worth being precise about the boundary here. Everything before `COMMIT` is
 
 Expected observation: PostgreSQL completes the transaction-control statements. Use the following explanation and any closing `SELECT` to verify whether the changes were committed or rolled back.
 
-Durability only ever protects a `transaction` once it has fully committed. A `transaction` that never reaches `COMMIT` is supposed to disappear on failure, whether that failure is an explicit `ROLLBACK` or a crash; durability's job begins exactly where atomicity's job for that `transaction` ends.
+Durability only ever protects a transaction once it has fully committed. A transaction that never reaches `COMMIT` is supposed to disappear on failure, whether that failure is an explicit `ROLLBACK` or a crash; durability's job begins exactly where atomicity's job for that transaction ends.
 
 ## ACID at a Glance, All Four Properties Together
 
@@ -137,7 +137,7 @@ Durability only ever protects a `transaction` once it has fully committed. A `tr
 
 ## Your Turn
 
-Check the current `synchronous_commit` setting, then run a committed `transaction` that adds 500.00 to Sanjay's balance, and confirm the change is reflected with a final `SELECT`, reasoning through why that result would still hold even if the server crashed the instant after `COMMIT` returned.
+Check the current `synchronous_commit` setting, then run a committed transaction that adds 500.00 to Sanjay's balance, and confirm the change is reflected with a final `SELECT`, reasoning through why that result would still hold even if the server crashed the instant after `COMMIT` returned.
 
 <iframe
  frameBorder="0"
@@ -161,6 +161,6 @@ the balance shows 12500.00, and durability is the reason that value can be trust
 
 ## Conclusion
 
-Durability closes the loop that atomicity, consistency, and isolation open: once a `transaction` commits, its result is guaranteed permanent, surviving any crash, because the `database` records it somewhere durable before ever reporting success. Together, the four ACID properties are what let Rahul tell a customer "your transfer succeeded" and mean it unconditionally.
+Durability closes the loop that atomicity, consistency, and isolation open: once a transaction commits, its result is guaranteed permanent, surviving any crash, because the database records it somewhere durable before ever reporting success. Together, the four ACID properties are what let Rahul tell a customer "your transfer succeeded" and mean it unconditionally.
 
-With all four properties covered individually, the next chapter looks at what specifically goes wrong when `transactions` run concurrently without enough care, and how a `database` prevents it.
+With all four properties covered individually, the next chapter looks at what specifically goes wrong when transactions run concurrently without enough care, and how a database prevents it.

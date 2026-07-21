@@ -1,16 +1,16 @@
 ## Introduction
 
-Once a `connection` is open, an application still has to decide exactly how to send a `query` that includes a value only known at runtime, such as a customer-entered order ID. The tempting, simplest approach is to build the SQL text by directly pasting that value into a string.
+Once a connection is open, an application still has to decide exactly how to send a query that includes a value only known at runtime, such as a customer-entered order ID. The tempting, simplest approach is to build the SQL text by directly pasting that value into a string.
 
-This is a genuine hazard, both for correctness and for security, and the fix is a mechanism nearly every `database` and client library supports directly: a **`prepared statement`**, which sends the `query` structure and its runtime values as two separate things, rather than one combined string.
+This is a genuine hazard, both for correctness and for security, and the fix is a mechanism nearly every database and client library supports directly: a **`prepared statement`**, which sends the query structure and its runtime values as two separate things, rather than one combined string.
 
-**Definition:** A `prepared statement` separates a `query`'s fixed structure from the runtime values it operates on, letting an application safely handle untrusted input as pure data that can never alter what the `query` actually does, while also allowing the `database` to reuse a parsed and planned `query` across repeated executions.
+**Definition:** A `prepared statement` separates a query's fixed structure from the runtime values it operates on, letting an application safely handle untrusted input as pure data that can never alter what the query actually does, while also allowing the database to reuse a parsed and planned query across repeated executions.
 
 ![Intro visual for prepared statements](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_prepared_statements.png)
 
 ## The Problem with Building SQL by Pasting in Values
 
-The `shipments` `table` sets up a simple lookup that an application might naively build by string concatenation.
+The `shipments` table sets up a simple lookup that an application might naively build by string concatenation.
 
 ## Source Data Used in This Lesson
 
@@ -63,13 +63,13 @@ The tampered query, with `OR 1=1` appended, returns every row instead:
 | 2 | Pune |
 | 3 | Nagpur |
 
-The second `query` demonstrates exactly what happens once user-provided text is treated as part of the SQL itself rather than as a single, inert value: the `query`'s actual logic changes entirely, returning all three shipments instead of the one that was asked for.
+The second query demonstrates exactly what happens once user-provided text is treated as part of the SQL itself rather than as a single, inert value: the query's actual logic changes entirely, returning all three shipments instead of the one that was asked for.
 
-This category of problem, letting untrusted input change a `query`'s structure, is the foundation of SQL injection, covered in full in a later chapter of this unit; this lesson focuses on the mechanism, `prepared statements`, that prevents it as a natural side effect of how it works.
+This category of problem, letting untrusted input change a query's structure, is the foundation of SQL injection, covered in full in a later chapter of this unit; this lesson focuses on the mechanism, `prepared statements`, that prevents it as a natural side effect of how it works.
 
 ## Separating Query Structure from Values with PREPARE
 
-PostgreSQL supports `prepared statements` directly in SQL, and the same mechanism is what every `database` client library uses under the hood when it offers "parameterized `queries`."
+PostgreSQL supports `prepared statements` directly in SQL, and the same mechanism is what every database client library uses under the hood when it offers "parameterized queries."
 
 <iframe
  frameBorder="0"
@@ -84,18 +84,18 @@ Expected output:
 | --- | --- |
 | 1 | Mumbai |
 
-This splits the `query` into two separate pieces:
+This splits the query into two separate pieces:
 
-- `PREPARE get_shipment (INTEGER) AS ...` defines the `query`'s fixed structure once, with `$1` marking a placeholder for a value to be supplied later, not text to be pasted into the `query`.
-- `EXECUTE get_shipment(1)` then supplies the actual value, 1, entirely separately from the `query`'s structure.
+- `PREPARE get_shipment (INTEGER) AS ...` defines the query's fixed structure once, with `$1` marking a placeholder for a value to be supplied later, not text to be pasted into the query.
+- `EXECUTE get_shipment(1)` then supplies the actual value, 1, entirely separately from the query's structure.
 
-Even if the supplied value were a maliciously crafted string, it would be handled purely as data, a single value being compared against `shipment_id`, never as SQL syntax that could change what the `query` does; the injection demonstrated above becomes structurally impossible.
+Even if the supplied value were a maliciously crafted string, it would be handled purely as data, a single value being compared against `shipment_id`, never as SQL syntax that could change what the query does; the injection demonstrated above becomes structurally impossible.
 
 ![Prepared statements keep query structure separate from runtime values](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_prepared_statement_separates_structure_and_value.png)
 
 ## Running the Same Prepared Statement with Different Values
 
-The whole point of separating structure from value is that the same `prepared statement` can be executed repeatedly, with different values, without redefining the `query` each time.
+The whole point of separating structure from value is that the same `prepared statement` can be executed repeatedly, with different values, without redefining the query each time.
 
 <iframe
  frameBorder="0"
@@ -118,13 +118,13 @@ Expected output, one result set per `EXECUTE`:
 | --- | --- |
 | 3 | Nagpur |
 
-Each `EXECUTE` reuses the exact same prepared `query` structure, only the value plugged into `$1` changes, exactly the pattern a real application follows when handling many different incoming requests for different shipment IDs, using the same underlying `prepared statement` each time.
+Each `EXECUTE` reuses the exact same prepared query structure, only the value plugged into `$1` changes, exactly the pattern a real application follows when handling many different incoming requests for different shipment IDs, using the same underlying `prepared statement` each time.
 
 ![One prepared statement can be executed many times with different values](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_prepared_statement_reuse_many_values.png)
 
 ## The Performance Benefit Alongside the Safety Benefit
 
-Beyond safety, a `prepared statement` lets the `database` parse and plan the `query`'s structure once, then reuse that same plan across multiple executions with different values, skipping the repeated parsing and planning cost a fresh, newly-built SQL string would incur every single time.
+Beyond safety, a `prepared statement` lets the database parse and plan the query's structure once, then reuse that same plan across multiple executions with different values, skipping the repeated parsing and planning cost a fresh, newly-built SQL string would incur every single time.
 
 <iframe
  frameBorder="0"
@@ -139,7 +139,7 @@ Expected output (from `EXECUTE get_shipment(1)`, before `DEALLOCATE` runs):
 | --- | --- |
 | 1 | Mumbai |
 
-`DEALLOCATE` itself returns no rows; it just releases the prepared `query` plan. `DEALLOCATE` releases a `prepared statement` once it is no longer needed; in a real application, this typically happens automatically when a `connection` closes, or explicitly if the `query` is no longer needed for the lifetime of a long-running `connection`.
+`DEALLOCATE` itself returns no rows; it just releases the prepared query plan. `DEALLOCATE` releases a `prepared statement` once it is no longer needed; in a real application, this typically happens automatically when a connection closes, or explicitly if the query is no longer needed for the lifetime of a long-running connection.
 
 ## Prepared Statements at a Glance
 
@@ -183,10 +183,10 @@ Prepare a statement named `get_by_destination` that takes a `TEXT` parameter and
 
 Expected result and verification:
 
-If your statement is `PREPARE get_by_destination (TEXT) AS SELECT * FROM shipments WHERE destination = $1;` followed by `EXECUTE get_by_destination('Pune');`, it returns exactly shipment 2, with the destination value passed safely as data, not pasted into the `query` text.
+If your statement is `PREPARE get_by_destination (TEXT) AS SELECT * FROM shipments WHERE destination = $1;` followed by `EXECUTE get_by_destination('Pune');`, it returns exactly shipment 2, with the destination value passed safely as data, not pasted into the query text.
 
 ## Conclusion
 
-A `prepared statement` separates a `query`'s fixed structure from the runtime values it operates on, letting an application safely handle untrusted input as pure data that can never alter what the `query` actually does, while also allowing the `database` to reuse a parsed and planned `query` across repeated executions.
+A `prepared statement` separates a query's fixed structure from the runtime values it operates on, letting an application safely handle untrusted input as pure data that can never alter what the query actually does, while also allowing the database to reuse a parsed and planned query across repeated executions.
 
-Every `database` client library's "parameterized `query`" feature is this same mechanism, just expressed through that language's own syntax rather than SQL's `PREPARE` and `EXECUTE` directly. The next lesson returns to a familiar topic, `transactions`, this time from the specific perspective of application code managing them across a live `connection`.
+Every database client library's "parameterized query" feature is this same mechanism, just expressed through that language's own syntax rather than SQL's `PREPARE` and `EXECUTE` directly. The next lesson returns to a familiar topic, transactions, this time from the specific perspective of application code managing them across a live connection.

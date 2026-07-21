@@ -6,17 +6,17 @@ When the vice-principal asks her, "Which students scored above 80 in Maths?", Me
 
 - One evening she gets tired of this and rules a grid into her notebook instead.
 - Across the top she writes headings: Roll No, Name, Maths, Science, English.
-- Down the side, one `row` per student, in the same roll-number order every time.
+- Down the side, one row per student, in the same roll-number order every time.
 - Now the vice-principal's question takes ten seconds.
-- Meera runs her finger down the Maths `column` and simply reads off the names sitting above 80.
+- Meera runs her finger down the Maths column and simply reads off the names sitting above 80.
 
 Nothing about the underlying facts changed. The marks are the same marks.
 
-What changed is the shape she put them in. A grid where every `row` describes one student, and every `column` describes one fact that is true of every student in exactly the same way, is what a `database` calls a **`table`**.
+What changed is the shape she put them in. A grid where every row describes one student, and every column describes one fact that is true of every student in exactly the same way, is what a database calls a **table**.
 
-Learning to think in `tables`, `rows`, and `columns`, rather than in loose freeform notes, is the very first habit a `database` designer builds, and it is the idea this entire course rests on.
+Learning to think in tables, rows, and columns, rather than in loose freeform notes, is the very first habit a database designer builds, and it is the idea this entire course rests on.
 
-**Definition:** A relational `database` is, at its heart, nothing more mysterious than Meera's ruled grid: a named `table` holding `rows` of the same kind of thing, with `columns` that describe one consistent fact about every single `row`.
+**Definition:** A relational database is, at its heart, nothing more mysterious than Meera's ruled grid: a named table holding rows of the same kind of thing, with columns that describe one consistent fact about every single row.
 
 ![Intro visual for tables rows and columns the relational way of](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_tables_rows_and_columns_the_relational_way_of_th.png)
 
@@ -66,32 +66,32 @@ Here is roughly what Meera's grid looks like once she has ruled it out properly.
   </tbody>
 </table>
 
-Notice what this small grid buys her. Every student's information lives in exactly one `row`, so nothing about Divya is scattered across three different pieces of paper. Every `column` holds exactly one kind of fact, so the Maths `column` never accidentally contains an English score. And because every `row` has the same set of `columns` in the same order, comparing student to student, or scanning a single `column`, becomes mechanical instead of a treasure hunt.
+Notice what this small grid buys her. Every student's information lives in exactly one row, so nothing about Divya is scattered across three different pieces of paper. Every column holds exactly one kind of fact, so the Maths column never accidentally contains an English score. And because every row has the same set of columns in the same order, comparing student to student, or scanning a single column, becomes mechanical instead of a treasure hunt.
 
-This is precisely what a relational `database` does at a much larger scale. Instead of forty loose sheets, it might hold four hundred thousand student records, and instead of a ruled notebook page, it stores the grid as a proper structure the software understands. But the underlying idea is identical to what Meera arrived at with a pencil and a ruler.
+This is precisely what a relational database does at a much larger scale. Instead of forty loose sheets, it might hold four hundred thousand student records, and instead of a ruled notebook page, it stores the grid as a proper structure the software understands. But the underlying idea is identical to what Meera arrived at with a pencil and a ruler.
 
 ![Loose student mark sheets becoming a uniform Students table that Meera can scan quickly](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_pile_of_sheets_to_students_table.png)
 
 ## A Table Is a Named Collection of the Same Kind of Thing
 
-A `table` is not just any grid. It has a name, "Students," "Orders," "Books," and every single `row` inside it represents one instance of that same kind of thing. A Students `table` holds students and nothing else.
+A table is not just any grid. It has a name, "Students," "Orders," "Books," and every single row inside it represents one instance of that same kind of thing. A Students table holds students and nothing else.
 
-It would be strange, and genuinely confusing, to slip a `row` describing a textbook into the middle of a `table` meant to hold students, even though both a student and a textbook can be described using words and numbers.
+It would be strange, and genuinely confusing, to slip a row describing a textbook into the middle of a table meant to hold students, even though both a student and a textbook can be described using words and numbers.
 
 Two ideas fall out of this naturally:
 
-- A **`row`** is one specific instance of the thing the `table` is about. In the grid above, the `row` for roll number 103 is Divya Nair specifically, her marks and nobody else's. Add a new student to the class, and you add exactly one new `row`. Databases sometimes call a `row` a "record" or a "tuple," but the idea stays the same: one `row`, one instance.
-- A **`column`** is one named attribute that every `row` in the `table` has, whether or not that particular `row`'s value is exciting. Every student has a Maths score, even the student who scored zero. Every student has a Name, even if two students happen to share one. A `column` defines a slot that exists for every `row`, consistently, so that the same question ("what is this student's Science mark?") always has a predictable place to be answered from.
+- A **row** is one specific instance of the thing the table is about. In the grid above, the row for roll number 103 is Divya Nair specifically, her marks and nobody else's. Add a new student to the class, and you add exactly one new row. Databases sometimes call a row a "record" or a "tuple," but the idea stays the same: one row, one instance.
+- A **column** is one named attribute that every row in the table has, whether or not that particular row's value is exciting. Every student has a Maths score, even the student who scored zero. Every student has a Name, even if two students happen to share one. A column defines a slot that exists for every row, consistently, so that the same question ("what is this student's Science mark?") always has a predictable place to be answered from.
 
 ![A Students table showing the table, one row, one column, and the cell where they meet](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_table_row_column_cell_anatomy.png)
 
 ## Why Rows Must Stay Uniform
 
-It is tempting, especially when a spreadsheet is being built quickly, to let one `row` grow an extra `column` that no other `row` has, say, a "Sports Quota" note scribbled only next to Rohit's name. A relational `table` resists this. Every `row` in a `table` shares exactly the same `columns`, in the same order, meaning the same thing for each `row`.
+It is tempting, especially when a spreadsheet is being built quickly, to let one row grow an extra column that no other row has, say, a "Sports Quota" note scribbled only next to Rohit's name. A relational table resists this. Every row in a table shares exactly the same columns, in the same order, meaning the same thing for each row.
 
-If Sports Quota genuinely matters, it becomes a proper `column` that every `row` has, even if most `rows` simply leave it blank. This uniformity is what lets Meera's finger-scan down the Maths `column` work at all: if some `rows` quietly had "Maths" and others had "Mathematics" or "Maths (retest)," scanning a single `column` would stop being reliable.
+If Sports Quota genuinely matters, it becomes a proper column that every row has, even if most rows simply leave it blank. This uniformity is what lets Meera's finger-scan down the Maths column work at all: if some rows quietly had "Maths" and others had "Mathematics" or "Maths (retest)," scanning a single column would stop being reliable.
 
-This same uniformity is what makes a `table` something a computer can process quickly and correctly at massive scale, long after Meera's notebook has run out of pages.
+This same uniformity is what makes a table something a computer can process quickly and correctly at massive scale, long after Meera's notebook has run out of pages.
 
 ## Tables, Rows, and Columns at a Glance
 
@@ -127,16 +127,16 @@ This same uniformity is what makes a `table` something a computer can process qu
   </tbody>
 </table>
 
-Once you can look at any everyday list, a class register, a hostel occupancy sheet, a cricket team's scorecard, and instantly ask "what would the `table`, the `rows`, and the `columns` be here?", you already possess the relational way of thinking that every `database` design decision in this course builds on.
+Once you can look at any everyday list, a class register, a hostel occupancy sheet, a cricket team's scorecard, and instantly ask "what would the table, the rows, and the columns be here?", you already possess the relational way of thinking that every database design decision in this course builds on.
 
 ## Your Turn: Design the Table
 
-A cricket coach keeps a scorecard for every match: player name, runs scored, balls faced, and whether they were out or not out. Sketch what the `table`, its `rows`, and its `columns` would be, and name one thing that would break the uniformity rule if a scorer got sloppy.
+A cricket coach keeps a scorecard for every match: player name, runs scored, balls faced, and whether they were out or not out. Sketch what the table, its rows, and its columns would be, and name one thing that would break the uniformity rule if a scorer got sloppy.
 
-A working answer: the `table` would be named something like "Innings," with one `row` per player per match, and `columns` for Player, Runs, Balls Faced, and Out/Not Out, every `row` sharing exactly those same four `columns`. Uniformity would break if a scorer added a note like "retired hurt" only in the margin next to one player's `row` instead of giving every `row` a proper Out/Not Out `column` value, the same "Sports Quota" mistake Meera's grid resisted, just wearing a scorer's pencil instead of a teacher's.
+A working answer: the table would be named something like "Innings," with one row per player per match, and columns for Player, Runs, Balls Faced, and Out/Not Out, every row sharing exactly those same four columns. Uniformity would break if a scorer added a note like "retired hurt" only in the margin next to one player's row instead of giving every row a proper Out/Not Out column value, the same "Sports Quota" mistake Meera's grid resisted, just wearing a scorer's pencil instead of a teacher's.
 
 ## Conclusion
 
-A relational `database` is, at its heart, nothing more mysterious than Meera's ruled grid: a named `table` holding `rows` of the same kind of thing, with `columns` that describe one consistent fact about every single `row`. That simple discipline of uniform `rows` and named `columns` is what turns a pile of scattered facts into something a person, or a program, can search, sort, and trust.
+A relational database is, at its heart, nothing more mysterious than Meera's ruled grid: a named table holding rows of the same kind of thing, with columns that describe one consistent fact about every single row. That simple discipline of uniform rows and named columns is what turns a pile of scattered facts into something a person, or a program, can search, sort, and trust.
 
-Once a `table`'s shape is settled, a natural question follows almost immediately: what exactly is allowed to sit inside a given `column`, and what would count as an obviously wrong value for it to hold.
+Once a table's shape is settled, a natural question follows almost immediately: what exactly is allowed to sit inside a given column, and what would count as an obviously wrong value for it to hold.

@@ -1,16 +1,16 @@
 ## Introduction
 
-Devraj's ordinary `view`s, covered so far in this chapter, always re-run their underlying `query` on every single `SELECT`, which is exactly what keeps them current, but it also means a `view` built on a genuinely expensive aggregate, summarizing millions of historical shipments, pays that full computation cost every single time anyone `queries` it, even if the underlying data has not changed in hours.
+Devraj's ordinary views, covered so far in this chapter, always re-run their underlying query on every single `SELECT`, which is exactly what keeps them current, but it also means a view built on a genuinely expensive aggregate, summarizing millions of historical shipments, pays that full computation cost every single time anyone queries it, even if the underlying data has not changed in hours.
 
-A **`materialized view`** solves this by actually storing the `query`'s result on disk, like a real `table`, and only recomputing it when explicitly refreshed, trading perfect freshness for dramatically faster reads.
+A **`materialized view`** solves this by actually storing the query's result on disk, like a real table, and only recomputing it when explicitly refreshed, trading perfect freshness for dramatically faster reads.
 
-**Definition:** A `materialized view` stores its `query`'s result physically rather than recomputing it on every read, dramatically speeding up expensive aggregate or summary `queries`, at the cost of only being as current as its most recent explicit refresh, with `REFRESH MATERIALIZED VIEW CONCURRENTLY` available when the `view` needs to stay readable during that refresh.
+**Definition:** A `materialized view` stores its query's result physically rather than recomputing it on every read, dramatically speeding up expensive aggregate or summary queries, at the cost of only being as current as its most recent explicit refresh, with `REFRESH MATERIALIZED VIEW CONCURRENTLY` available when the view needs to stay readable during that refresh.
 
 ![Intro visual for materialized views](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_materialized_views.png)
 
 ## Creating a Materialized View
 
-The setup mirrors the ordinary `view` from earlier in this chapter, but the underlying data here represents a much larger, slower-to-aggregate history.
+The setup mirrors the ordinary view from earlier in this chapter, but the underlying data here represents a much larger, slower-to-aggregate history.
 
 ## Source Data Used in This Lesson
 
@@ -74,17 +74,17 @@ Expected output:
 
 `CREATE MATERIALIZED VIEW` does two things, in order:
 
-1. Runs the aggregate `query` once, immediately.
+1. Runs the aggregate query once, immediately.
 
 2. Physically stores its result.
 
-Selecting from `monthly_shipment_summary` afterward reads that stored result directly, the same way reading from a real `table` would, without recomputing the `GROUP BY` and `COUNT` over all 5000 `rows` again.
+Selecting from `monthly_shipment_summary` afterward reads that stored result directly, the same way reading from a real table would, without recomputing the `GROUP BY` and `COUNT` over all 5000 rows again.
 
 ![A materialized view stores an expensive query result for faster reads](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_materialized_view_stored_result_fast_reads.png)
 
 ## A Materialized View Does Not Automatically Stay Current
 
-Unlike an ordinary `view`, new data added to the underlying `table` does not appear in a `materialized view` until it is explicitly refreshed.
+Unlike an ordinary view, new data added to the underlying table does not appear in a `materialized view` until it is explicitly refreshed.
 
 <iframe
  frameBorder="0"
@@ -99,7 +99,7 @@ Expected output:
 | --- | ---: | ---: |
 | 2025-06-01 | 417 | 0 |
 
-This new delayed shipment for June does not appear in `monthly_shipment_summary`'s June `row`, because the `materialized view` is still showing its stored result from when it was created, before this insert ever happened.
+This new delayed shipment for June does not appear in `monthly_shipment_summary`'s June row, because the `materialized view` is still showing its stored result from when it was created, before this insert ever happened.
 
 This staleness is not a bug; it is the entire point of a `materialized view`, avoiding the cost of recomputing the aggregate on every read, in exchange for accepting that reads may be out of date until a refresh runs.
 
@@ -107,7 +107,7 @@ This staleness is not a bug; it is the entire point of a `materialized view`, av
 
 ## Refreshing a Materialized View
 
-`REFRESH MATERIALIZED VIEW` recomputes the stored result from scratch, bringing it back in line with the underlying `tables`' current state.
+`REFRESH MATERIALIZED VIEW` recomputes the stored result from scratch, bringing it back in line with the underlying tables' current state.
 
 <iframe
  frameBorder="0"
@@ -122,11 +122,11 @@ Expected output:
 | --- | ---: | ---: |
 | 2025-06-01 | 418 | 1 |
 
-After the refresh, June's `row` correctly reflects the newly inserted delayed shipment. In a real production system, this refresh is typically scheduled, run every hour, every night, or after a known batch of data loads, rather than run manually, which is a deliberate design decision about how stale the summary is allowed to get before it matters.
+After the refresh, June's row correctly reflects the newly inserted delayed shipment. In a real production system, this refresh is typically scheduled, run every hour, every night, or after a known batch of data loads, rather than run manually, which is a deliberate design decision about how stale the summary is allowed to get before it matters.
 
 ## Refreshing Without Blocking Reads
 
-A plain `REFRESH MATERIALIZED VIEW` `lock`s the `view` against reads while it recomputes, which can be a problem for a dashboard that needs to stay available. PostgreSQL supports a concurrent refresh option for this, at the cost of requiring a unique `index` on the `materialized view` first.
+A plain `REFRESH MATERIALIZED VIEW` locks the view against reads while it recomputes, which can be a problem for a dashboard that needs to stay available. PostgreSQL supports a concurrent refresh option for this, at the cost of requiring a unique index on the `materialized view` first.
 
 <iframe
  frameBorder="0"
@@ -205,6 +205,6 @@ If your `materialized view` is `CREATE MATERIALIZED VIEW driver_shipment_totals 
 
 ## Conclusion
 
-A `materialized view` stores its `query`'s result physically rather than recomputing it on every read, dramatically speeding up expensive aggregate or summary `queries`, at the cost of only being as current as its most recent explicit refresh, with `REFRESH MATERIALIZED VIEW CONCURRENTLY` available when the `view` needs to stay readable during that refresh.
+A `materialized view` stores its query's result physically rather than recomputing it on every read, dramatically speeding up expensive aggregate or summary queries, at the cost of only being as current as its most recent explicit refresh, with `REFRESH MATERIALIZED VIEW CONCURRENTLY` available when the view needs to stay readable during that refresh.
 
-Devraj's monthly shipment dashboard can now load instantly, refreshed on a schedule that matches how current the business actually needs it to be. With `view`s and `materialized view`s both covered, the next lesson introduces reusable, callable `procedures` for logic that goes beyond a single `query`.
+Devraj's monthly shipment dashboard can now load instantly, refreshed on a schedule that matches how current the business actually needs it to be. With views and `materialized view`s both covered, the next lesson introduces reusable, callable procedures for logic that goes beyond a single query.

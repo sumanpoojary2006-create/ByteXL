@@ -1,16 +1,16 @@
 ## Introduction
 
-- Leela's partitioned totals from the previous lesson treat every `row` in a salesperson's window as equally weighted, with no sense of sequence.
+- Leela's partitioned totals from the previous lesson treat every row in a salesperson's window as equally weighted, with no sense of sequence.
 - Her next request needs sequence to matter: "show me each of Nikhil's sales next to his running total up to and including that sale, in date order." That is a fundamentally different calculation from a flat per-salesperson total; it depends on which sales came before which, within the window.
-- `OVER (...)` supports exactly this with a second ingredient alongside `PARTITION BY`: an `ORDER BY` that runs inside the window itself, changing what "the related `rows`" for each calculation actually means.
+- `OVER (...)` supports exactly this with a second ingredient alongside `PARTITION BY`: an `ORDER BY` that runs inside the window itself, changing what "the related rows" for each calculation actually means.
 
-**Definition:** `PARTITION BY` decides which `rows` share a window, and `ORDER BY` inside that same `OVER (...)` clause decides the sequence within it, together turning a flat per-group total into a `row`-by-`row` running calculation.
+**Definition:** `PARTITION BY` decides which rows share a window, and `ORDER BY` inside that same `OVER (...)` clause decides the sequence within it, together turning a flat per-group total into a row-by-row running calculation.
 
 ![Intro visual for over partition by and order by](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_over_partition_by_and_order_by.png)
 
 ## Ordering Rows Within a Window
 
-The same `sales` `table` applies here.
+The same `sales` table applies here.
 
 ## Source Data Used in This Lesson
 
@@ -69,21 +69,21 @@ Expected output:
 | Sana Fatima | 2025-06-11 | 6000.00 | 21000.00 |
 | Tarun Bakshi | 2025-06-03 | 11000.00 | 11000.00 |
 
-Adding `ORDER BY sale_date` inside the `OVER (...)` clause changes the window's meaning entirely: instead of summing across all of a salesperson's `rows` equally, it now sums across only the `rows` up to and including the current one, in date order. Nikhil's first sale, June 1, shows a running total of 12000.00, exactly its own amount, since nothing came before it.
+Adding `ORDER BY sale_date` inside the `OVER (...)` clause changes the window's meaning entirely: instead of summing across all of a salesperson's rows equally, it now sums across only the rows up to and including the current one, in date order. Nikhil's first sale, June 1, shows a running total of 12000.00, exactly its own amount, since nothing came before it.
 
 His June 5 sale shows 20500.00, the first two sales combined, and his June 10 sale shows 29700.00, all three combined. This ordered, cumulative behavior is the default whenever `ORDER BY` appears inside `OVER`.
 
 ## Why the Outer ORDER BY Is Still Needed
 
-- `ORDER BY sale_date` inside `OVER (...)` controls how the running total is calculated, but it does not control the order `rows` appear in the final result.
-- The separate `ORDER BY salesperson, sale_date` at the very end of the `query`, outside `OVER`, is what actually sorts the displayed output.
-- Removing that outer `ORDER BY` would leave `row` order effectively unspecified, even though every running total would still be computed correctly, since the calculation logic and the display order are two entirely separate concerns.
+- `ORDER BY sale_date` inside `OVER (...)` controls how the running total is calculated, but it does not control the order rows appear in the final result.
+- The separate `ORDER BY salesperson, sale_date` at the very end of the query, outside `OVER`, is what actually sorts the displayed output.
+- Removing that outer `ORDER BY` would leave row order effectively unspecified, even though every running total would still be computed correctly, since the calculation logic and the display order are two entirely separate concerns.
 
 ## PARTITION BY and ORDER BY Working Together
 
 `PARTITION BY` and `ORDER BY` inside `OVER` combine cleanly:
 
-- `PARTITION BY` decides which `rows` belong together at all.
+- `PARTITION BY` decides which rows belong together at all.
 - `ORDER BY` decides the sequence within each of those groups.
 
 ![PARTITION BY splitting rows into lanes and ORDER BY arranging each lane by date](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_partition_by_order_by_window_lanes.png)
@@ -106,7 +106,7 @@ Expected output:
 | Sana Fatima | 2025-06-11 | 6000.00 | 21000.00 | 21000.00 |
 | Tarun Bakshi | 2025-06-03 | 11000.00 | 11000.00 | 11000.00 |
 
-Showing both `window functions` side by side makes the difference concrete: `running_total` grows `row` by `row` within each salesperson's partition, while `salesperson_total`, with no `ORDER BY`, stays fixed at that salesperson's grand total on every one of their `rows`. Both are legitimate `window functions` computed over the same partition; only the presence of `ORDER BY` changes what each `row`'s window actually includes.
+Showing both `window functions` side by side makes the difference concrete: `running_total` grows row by row within each salesperson's partition, while `salesperson_total`, with no `ORDER BY`, stays fixed at that salesperson's grand total on every one of their rows. Both are legitimate `window functions` computed over the same partition; only the presence of `ORDER BY` changes what each row's window actually includes.
 
 ![A running total growing row by row in the order defined inside the window](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_running_total_ordered_window.png)
 
@@ -165,7 +165,7 @@ This tracks a company-wide running total across every sale, regardless of salesp
 
 ## Your Turn
 
-Leela wants a running total of sales for the South region only, in date order, alongside each individual sale. Write a `query` against the `sales` `table` above using `PARTITION BY` and `ORDER BY` together inside `OVER`.
+Leela wants a running total of sales for the South region only, in date order, alongside each individual sale. Write a query against the `sales` table above using `PARTITION BY` and `ORDER BY` together inside `OVER`.
 
 <iframe
  frameBorder="0"
@@ -174,7 +174,7 @@ Leela wants a running total of sales for the South region only, in date order, a
  width="100%"
 ></iframe>
 
-If your `query` filters with `WHERE region = 'South'` and uses `SUM(amount) OVER (PARTITION BY region ORDER BY sale_date) AS running_total`, Sana's June 2 sale shows a running total of 15000.00, and her June 11 sale shows 21000.00, the two combined.
+If your query filters with `WHERE region = 'South'` and uses `SUM(amount) OVER (PARTITION BY region ORDER BY sale_date) AS running_total`, Sana's June 2 sale shows a running total of 15000.00, and her June 11 sale shows 21000.00, the two combined.
 
 
 Expected output:
@@ -186,4 +186,4 @@ Expected output:
 
 ## Conclusion
 
-`PARTITION BY` decides which `rows` share a window, and `ORDER BY` inside that same `OVER (...)` clause decides the sequence within it, together turning a flat per-group total into a `row`-by-`row` running calculation. Leela can now show a running total that grows sale by sale, exactly the shape her report needed. Sums are only one kind of window calculation; the next lesson introduces `functions` built specifically to rank `rows` within a window.
+`PARTITION BY` decides which rows share a window, and `ORDER BY` inside that same `OVER (...)` clause decides the sequence within it, together turning a flat per-group total into a row-by-row running calculation. Leela can now show a running total that grows sale by sale, exactly the shape her report needed. Sums are only one kind of window calculation; the next lesson introduces functions built specifically to rank rows within a window.

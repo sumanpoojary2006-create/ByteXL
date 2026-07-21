@@ -54,11 +54,11 @@ A college's result portal does exactly this at scale: it takes thousands of raw 
 
 ## Why the Distinction Matters for a Database
 
-This distinction is not academic. It is the entire reason a `database` exists rather than a simple pile of files. A **`database`'s job is to store data in a structured way so that turning it into information later is fast, reliable, and repeatable**, rather than something a person has to reconstruct by hand every single time.
+This distinction is not academic. It is the entire reason a database exists rather than a simple pile of files. A **database's job is to store data in a structured way so that turning it into information later is fast, reliable, and repeatable**, rather than something a person has to reconstruct by hand every single time.
 
 Think about what Priya's office would look like without that structure. Every time someone asked "What did Ananya score in Physics?", a clerk would need to physically dig through stacks of forms, find the right one, and read off the number. With even a few thousand students, that becomes slow and error-prone.
 
-A well-organised `database`, by contrast, keeps roll number, name, subject, and marks tied together as structured data, so producing the information "Ananya scored 85 in Physics" is a matter of asking a precise question and getting an instant, correct answer.
+A well-organised database, by contrast, keeps roll number, name, subject, and marks tied together as structured data, so producing the information "Ananya scored 85 in Physics" is a matter of asking a precise question and getting an instant, correct answer.
 
 ![Priya comparing a slow search through paper forms with an instant database query](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_manual_files_vs_database_query.png)
 
@@ -110,10 +110,10 @@ Look at this short list and decide, for each line, whether it reads as bare data
 
 In lines 1 and 3, the value is floating free with no label attached, so it stays data. In lines 2 and 4, the same kind of value is tied to a name, an identifier, and a purpose, which is exactly what turns it into information.
 
-Every lesson from here forward is really about one question: how does a `database` hold onto data reliably enough that turning it into information stays fast and trustworthy, no matter how large the pile of forms grows?
+Every lesson from here forward is really about one question: how does a database hold onto data reliably enough that turning it into information stays fast and trustworthy, no matter how large the pile of forms grows?
 
 ## Conclusion
 
-Data is the raw fact; information is that fact once it has been organised, labelled, and connected to something a person can use. A `database`'s whole purpose is to make that transformation dependable at scale, instead of leaving it to a tired clerk searching through paper.
+Data is the raw fact; information is that fact once it has been organised, labelled, and connected to something a person can use. A database's whole purpose is to make that transformation dependable at scale, instead of leaving it to a tired clerk searching through paper.
 
-Priya no longer has to dig through a stack of forms to answer "What did Ananya score in Physics?"; the result system does in an instant what would otherwise cost her office minutes per student and hours per class. With that distinction fixed in mind, the next question becomes obvious: what actually goes wrong when an organisation tries to manage growing piles of data using plain files instead of a proper `database`.
+Priya no longer has to dig through a stack of forms to answer "What did Ananya score in Physics?"; the result system does in an instant what would otherwise cost her office minutes per student and hours per class. With that distinction fixed in mind, the next question becomes obvious: what actually goes wrong when an organisation tries to manage growing piles of data using plain files instead of a proper database.

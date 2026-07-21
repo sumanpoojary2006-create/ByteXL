@@ -1,16 +1,16 @@
 ## Introduction
 
-Zoya's manager asks a question the inner `join` from the last lesson cannot answer: "which registered customers have never placed a single order? I want to send them a welcome discount." An inner `join` between `customers` and `orders` only ever shows customers who already have a match, which means it is structurally incapable of surfacing the very customers this question cares about, the ones with no match at all.
+Zoya's manager asks a question the inner join from the last lesson cannot answer: "which registered customers have never placed a single order? I want to send them a welcome discount." An inner join between `customers` and `orders` only ever shows customers who already have a match, which means it is structurally incapable of surfacing the very customers this question cares about, the ones with no match at all.
 
-What Zoya needs is a `join` that keeps every `row` from `customers` regardless of whether a matching order exists, filling in the order `columns` with `NULL` when nothing matches. That is exactly what a **`LEFT JOIN`** does.
+What Zoya needs is a join that keeps every row from `customers` regardless of whether a matching order exists, filling in the order columns with `NULL` when nothing matches. That is exactly what a **`LEFT JOIN`** does.
 
-**Definition:** `LEFT JOIN` guarantees every `row` from the first-named `table` survives the `join`, filling in `NULL` for the other side when no match exists, which makes it the right tool whenever "customers with no orders" or "restaurants with no orders" is itself the question.
+**Definition:** `LEFT JOIN` guarantees every row from the first-named table survives the join, filling in `NULL` for the other side when no match exists, which makes it the right tool whenever "customers with no orders" or "restaurants with no orders" is itself the question.
 
 ![Intro visual for left join](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_left_join.png)
 
 ## Keeping Every Row From the Left Table
 
-The same delivery `schema` is used again, including Neha Bhatt, who has never placed an order.
+The same delivery schema is used again, including Neha Bhatt, who has never placed an order.
 
 ## Source Data Used in This Lesson
 
@@ -114,16 +114,16 @@ Expected output:
 | Imran Sheikh | 5 | 275 |
 | Neha Bhatt | *NULL* | *NULL* |
 
-Every one of the 5 customers appears in this result, including Neha Bhatt, whose `row` now shows `NULL` for `order_id` and `amount` instead of being dropped. "Left" refers to `customers`, the `table` named first, right after `FROM`:
+Every one of the 5 customers appears in this result, including Neha Bhatt, whose row now shows `NULL` for `order_id` and `amount` instead of being dropped. "Left" refers to `customers`, the table named first, right after `FROM`:
 
-- A `LEFT JOIN` guarantees every `row` from that left-hand `table` survives, matched or not.
-- The right-hand `table`, `orders`, only contributes `columns` when a match exists.
+- A `LEFT JOIN` guarantees every row from that left-hand table survives, matched or not.
+- The right-hand table, `orders`, only contributes columns when a match exists.
 
 ![LEFT JOIN keeping every row from the left table and filling NULL for missing matches](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_left_join_keeps_left_rows.png)
 
 ## Finding Unmatched Rows on Purpose
 
-Combining a `LEFT JOIN` with a `WHERE` clause that checks for `NULL` on the right-hand `table`'s key is the standard pattern for finding exactly the `rows` with no match, answering the manager's original question directly.
+Combining a `LEFT JOIN` with a `WHERE` clause that checks for `NULL` on the right-hand table's key is the standard pattern for finding exactly the rows with no match, answering the manager's original question directly.
 
 <iframe
  frameBorder="0"
@@ -138,14 +138,14 @@ Expected output:
 | --- |
 | Neha Bhatt |
 
-- `WHERE orders.order_id IS NULL` only keeps `rows` where the `join` found nothing to attach, and since `order_id` is the `primary key` of `orders`, it can only be `NULL` in the result when no matching order `row` existed in the first place.
+- `WHERE orders.order_id IS NULL` only keeps rows where the join found nothing to attach, and since `order_id` is the `primary key` of `orders`, it can only be `NULL` in the result when no matching order row existed in the first place.
 - This returns exactly one name, Neha Bhatt, the customer the discount campaign needs to reach.
 
 ![LEFT JOIN followed by WHERE order_id IS NULL finding customers with no orders](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_left_join_find_unmatched_null.png)
 
 ## Why the Table Order Matters
 
-A `LEFT JOIN` is not symmetric; swapping which `table` comes first changes which side is protected from being dropped.
+A `LEFT JOIN` is not symmetric; swapping which table comes first changes which side is protected from being dropped.
 
 <iframe
  frameBorder="0"
@@ -162,11 +162,11 @@ Expected output:
 
 - Here `restaurants` is on the left, so every restaurant is guaranteed to appear, and filtering for `orders.order_id IS NULL` now finds restaurants with no orders instead of customers with no orders.
 - This returns Taco Town, the one restaurant from earlier lessons that has never received a single order.
-- The same `LEFT JOIN ... WHERE ... IS NULL` pattern answers two entirely different business questions, depending purely on which `table` is written first.
+- The same `LEFT JOIN ... WHERE ... IS NULL` pattern answers two entirely different business questions, depending purely on which table is written first.
 
 ## Counting Orders Per Customer, Including Zero
 
-A `LEFT JOIN` combined with `GROUP BY` and `COUNT` is how a report shows every customer's order count, including customers who legitimately have zero, something an `INNER JOIN` could never produce since a zero-order customer has no `rows` to count in the first place.
+A `LEFT JOIN` combined with `GROUP BY` and `COUNT` is how a report shows every customer's order count, including customers who legitimately have zero, something an `INNER JOIN` could never produce since a zero-order customer has no rows to count in the first place.
 
 <iframe
  frameBorder="0"
@@ -185,7 +185,7 @@ Expected output:
 | Imran Sheikh | 1 |
 | Neha Bhatt | 0 |
 
-`COUNT(orders.order_id)` counts only non-`NULL` values, as covered when `aggregate functions` were introduced, so Neha's `row` correctly shows 0 instead of being counted as 1 or omitted from the report entirely:
+`COUNT(orders.order_id)` counts only non-`NULL` values, as covered when `aggregate functions` were introduced, so Neha's row correctly shows 0 instead of being counted as 1 or omitted from the report entirely:
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
   <thead>
@@ -218,7 +218,7 @@ Expected output:
   </tbody>
 </table>
 
-Using `COUNT(*)` here instead would incorrectly count her as 1, since `COUNT(*)` counts `rows` regardless of `NULL` content, which is why `COUNT(orders.order_id)` is the deliberate choice.
+Using `COUNT(*)` here instead would incorrectly count her as 1, since `COUNT(*)` counts rows regardless of `NULL` content, which is why `COUNT(orders.order_id)` is the deliberate choice.
 
 ## LEFT JOIN at a Glance
 
@@ -251,7 +251,7 @@ Using `COUNT(*)` here instead would incorrectly count her as 1, since `COUNT(*)`
 
 ## Your Turn
 
-The manager also wants to know which restaurants in Pune have never received an order, by name. Write a `query` against `restaurants` and `orders` above using `LEFT JOIN`, filtering to restaurants in the "Pune" city with no matching orders.
+The manager also wants to know which restaurants in Pune have never received an order, by name. Write a query against `restaurants` and `orders` above using `LEFT JOIN`, filtering to restaurants in the "Pune" city with no matching orders.
 
 <iframe
  frameBorder="0"
@@ -260,7 +260,7 @@ The manager also wants to know which restaurants in Pune have never received an 
  width="100%"
 ></iframe>
 
-If your `query` left-`joins` `restaurants` to `orders` and filters with `WHERE restaurants.city = 'Pune' AND orders.order_id IS NULL`, the result is empty, correctly showing that both Pune restaurants, Pizza Palace and Burger Barn, have received at least one order each.
+If your query left-joins `restaurants` to `orders` and filters with `WHERE restaurants.city = 'Pune' AND orders.order_id IS NULL`, the result is empty, correctly showing that both Pune restaurants, Pizza Palace and Burger Barn, have received at least one order each.
 
 
 Expected output for the practice query:
@@ -269,8 +269,8 @@ Expected output for the practice query:
 
 ## Conclusion
 
-`LEFT JOIN` guarantees every `row` from the first-named `table` survives the `join`, filling in `NULL` for the other side when no match exists, which makes it the right tool whenever "customers with no orders" or "restaurants with no orders" is itself the question.
+`LEFT JOIN` guarantees every row from the first-named table survives the join, filling in `NULL` for the other side when no match exists, which makes it the right tool whenever "customers with no orders" or "restaurants with no orders" is itself the question.
 
-Zoya answered a question the inner `join` structurally could not answer, just by changing one keyword.
+Zoya answered a question the inner join structurally could not answer, just by changing one keyword.
 
 A `RIGHT JOIN` mirrors this same idea from the opposite side, and a `FULL OUTER JOIN` protects both sides at once.

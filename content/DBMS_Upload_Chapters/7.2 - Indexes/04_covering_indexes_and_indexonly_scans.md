@@ -1,16 +1,16 @@
 ## Introduction
 
-An `index scan`, covered throughout this chapter, is already far cheaper than a `sequential scan`, but it is not free: after finding a matching entry in the `index`, the `database` still has to jump over to the actual `table` to fetch the rest of that `row`'s `columns`, since a typical `index` only stores the `indexed` `column` plus a pointer, not the whole `row`.
+An `index scan`, covered throughout this chapter, is already far cheaper than a `sequential scan`, but it is not free: after finding a matching entry in the index, the database still has to jump over to the actual table to fetch the rest of that row's columns, since a typical index only stores the `indexed` column plus a pointer, not the whole row.
 
-That extra jump, from `index` entry to `table` page, is called a heap fetch, and for a `query` that touches many `rows`, all those extra jumps add up. A **covering `index`** is an `index` built specifically to eliminate that extra step entirely, letting the `database` answer a `query` using only the `index`, never touching the `table` at all.
+That extra jump, from index entry to table page, is called a heap fetch, and for a query that touches many rows, all those extra jumps add up. A **covering index** is an index built specifically to eliminate that extra step entirely, letting the database answer a query using only the index, never touching the table at all.
 
-**Definition:** A `covering index`, built with `INCLUDE`, stores extra `columns` alongside the `indexed` key so that a matching `query` can be answered entirely from the `index`, skipping the heap fetch a regular `index scan` still requires, at the cost of a larger `index` and more write overhead.
+**Definition:** A `covering index`, built with `INCLUDE`, stores extra columns alongside the `indexed` key so that a matching query can be answered entirely from the index, skipping the heap fetch a regular `index scan` still requires, at the cost of a larger index and more write overhead.
 
 ![Intro visual for covering indexes and indexonly scans](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_covering_indexes_and_indexonly_scans.png)
 
 ## Watching a Heap Fetch Happen
 
-The `orders` `table` sets up a `query` that needs more than just the `indexed` `column`. Only 20 of its 10000 orders are still active, the selective situation an `index` is best at, and the closing `VACUUM ANALYZE` both refreshes the planner's statistics and marks the `table`'s pages as stable, something `index`-only scans, this lesson's subject, specifically depend on.
+The `orders` table sets up a query that needs more than just the `indexed` column. Only 20 of its 10000 orders are still active, the selective situation an index is best at, and the closing `VACUUM ANALYZE` both refreshes the planner's statistics and marks the table's pages as stable, something index-only scans, this lesson's subject, specifically depend on.
 
 ## Source Data Used in This Lesson
 
@@ -66,13 +66,13 @@ Expected output:
    Index Cond: (status = 'active'::text)
 ```
 
-The plan shows `idx_orders_status` finding the 20 matching `rows`, but that is not the whole story: `idx_orders_status` only stores `status` values and pointers back to matching `rows`, so for every match, the `database` still has to fetch that `row` from the actual `table`'s heap to retrieve `order_id` and `amount`, `columns` the `index` itself does not contain. This heap fetch step is exactly the extra cost a `covering index` is built to remove.
+The plan shows `idx_orders_status` finding the 20 matching rows, but that is not the whole story: `idx_orders_status` only stores `status` values and pointers back to matching rows, so for every match, the database still has to fetch that row from the actual table's heap to retrieve `order_id` and `amount`, columns the index itself does not contain. This heap fetch step is exactly the extra cost a `covering index` is built to remove.
 
 ![A regular index scan still performs heap fetches for missing columns](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_regular_index_scan_heap_fetch.png)
 
 ## Building a Covering Index with INCLUDE
 
-PostgreSQL's `INCLUDE` clause adds extra `columns` to an `index` purely for storage alongside the `indexed` `column`, without making them part of the searchable, sorted key itself.
+PostgreSQL's `INCLUDE` clause adds extra columns to an index purely for storage alongside the `indexed` column, without making them part of the searchable, sorted key itself.
 
 <iframe
  frameBorder="0"
@@ -91,15 +91,15 @@ Expected output:
    Heap Fetches: 0
 ```
 
-The plan now reports an "Index Only Scan" instead of a scan that visits the heap, confirming that `order_id` and `amount`, both included in the `covering index`, are read directly from the `index` itself, with no need to visit the `table`'s heap at all.
+The plan now reports an "Index Only Scan" instead of a scan that visits the heap, confirming that `order_id` and `amount`, both included in the `covering index`, are read directly from the index itself, with no need to visit the table's heap at all.
 
-Every `column` the `query` asks for, both in `WHERE` and in `SELECT`, is now available directly from `idx_orders_status_covering`, which is exactly what "covering" the `query` means: the `index` alone is enough to answer it completely.
+Every column the query asks for, both in `WHERE` and in `SELECT`, is now available directly from `idx_orders_status_covering`, which is exactly what "covering" the query means: the index alone is enough to answer it completely.
 
 ![A covering index can answer the query from the index alone](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_covering_index_index_only_scan.png)
 
 ## Why This Is Not Automatic for Every Index
 
-An ordinary `index`, without `INCLUDE`, only ever gets an `index-only scan` if the `query` happens to need nothing beyond the `indexed` `column` itself and the `table`'s visibility information the moment a `query` asks for even one `column` the `index` does not store, the `database` has no choice but to fall back to a regular `index scan` with a heap fetch for every matching `row`.
+An ordinary index, without `INCLUDE`, only ever gets an `index-only scan` if the query happens to need nothing beyond the `indexed` column itself and the table's visibility information the moment a query asks for even one column the index does not store, the database has no choice but to fall back to a regular `index scan` with a heap fetch for every matching row.
 
 <iframe
  frameBorder="0"
@@ -117,14 +117,14 @@ Expected output:
    Index Cond: (status = 'active'::text)
 ```
 
-Adding `customer_name` to the `SELECT` list, a `column` not included in `idx_orders_status_covering`, means the plan is no longer an Index Only Scan: the `database` is back to fetching every matching `row` from the heap, since the `covering index` cannot answer this broader request on its own. This is a direct, practical illustration of why a `covering index` has to be designed around the specific `columns` a specific `query` actually needs.
+Adding `customer_name` to the `SELECT` list, a column not included in `idx_orders_status_covering`, means the plan is no longer an Index Only Scan: the database is back to fetching every matching row from the heap, since the `covering index` cannot answer this broader request on its own. This is a direct, practical illustration of why a `covering index` has to be designed around the specific columns a specific query actually needs.
 
 ## The Trade-off a Covering Index Represents
 
-`INCLUDE` `columns` come with two costs:
+`INCLUDE` columns come with two costs:
 
-- The `index` grows larger, since it now physically stores copies of extra data beyond just the `indexed` key.
-- Every write to those included `columns` also has to update the `index`, the same maintenance cost every `index` carries, just spread across more `columns`.
+- The index grows larger, since it now physically stores copies of extra data beyond just the `indexed` key.
+- Every write to those included columns also has to update the index, the same maintenance cost every index carries, just spread across more columns.
 
 <iframe
  frameBorder="0"
@@ -139,8 +139,8 @@ Expected output:
 | --- | --- |
 | 88 kB | 296 kB |
 
-- The `covering index` is noticeably larger than the plain one, since it duplicates `order_id` and `amount` alongside every entry, storage that exists purely to avoid heap fetches for a specific, known `query` pattern.
-- `Covering indexes` are worth building for genuinely hot, frequently run `queries` where the read-speed benefit clearly outweighs the extra storage and write cost, not applied indiscriminately to every `index` in a `schema`.
+- The `covering index` is noticeably larger than the plain one, since it duplicates `order_id` and `amount` alongside every entry, storage that exists purely to avoid heap fetches for a specific, known query pattern.
+- `Covering indexes` are worth building for genuinely hot, frequently run queries where the read-speed benefit clearly outweighs the extra storage and write cost, not applied indiscriminately to every index in a schema.
 
 ![INCLUDE columns are stored in the index for reading, but are not the main search key](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_include_columns_stored_for_reading.png)
 
@@ -175,7 +175,7 @@ Expected output:
 
 ## Your Turn
 
-Create a `covering index` on `customer_name` that includes `status`, then confirm with `EXPLAIN` that a `query` selecting both `columns`, filtered by `customer_name`, produces an `index-only scan`.
+Create a `covering index` on `customer_name` that includes `status`, then confirm with `EXPLAIN` that a query selecting both columns, filtered by `customer_name`, produces an `index-only scan`.
 
 <iframe
  frameBorder="0"
@@ -196,10 +196,10 @@ If you run `CREATE INDEX idx_orders_name_covering ON orders (customer_name) INCL
    Heap Fetches: 0
 ```
 
-This reports an Index Only Scan, since both the filtered `column` and the selected `column` are fully available from the `covering index` alone.
+This reports an Index Only Scan, since both the filtered column and the selected column are fully available from the `covering index` alone.
 
 ## Conclusion
 
-A `covering index`, built with `INCLUDE`, stores extra `columns` alongside the `indexed` key so that a matching `query` can be answered entirely from the `index`, skipping the heap fetch a regular `index scan` still requires, at the cost of a larger `index` and more write overhead. Priya's most frequently run reports can now be tuned to avoid that extra `table` visit entirely.
+A `covering index`, built with `INCLUDE`, stores extra columns alongside the `indexed` key so that a matching query can be answered entirely from the index, skipping the heap fetch a regular `index scan` still requires, at the cost of a larger index and more write overhead. Priya's most frequently run reports can now be tuned to avoid that extra table visit entirely.
 
-Every `index` covered in this chapter has assumed adding one is worthwhile; the final lesson looks at when that assumption breaks down.
+Every index covered in this chapter has assumed adding one is worthwhile; the final lesson looks at when that assumption breaks down.

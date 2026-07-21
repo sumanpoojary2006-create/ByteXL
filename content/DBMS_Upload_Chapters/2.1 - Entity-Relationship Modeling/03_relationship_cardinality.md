@@ -40,7 +40,7 @@ The simplest cardinality is a **one-to-one relationship**, where one instance of
   </tbody>
 </table>
 
-Notice how clean this `table` looks: each `row` pairs exactly one employee with exactly one desk, and no employee or desk name repeats anywhere in the list. One-to-one relationships are the least common of the three, in practice, because most real associations do allow more of one thing to attach to another.
+Notice how clean this table looks: each row pairs exactly one employee with exactly one desk, and no employee or desk name repeats anywhere in the list. One-to-one relationships are the least common of the three, in practice, because most real associations do allow more of one thing to attach to another.
 
 Other genuine examples include a country and its capital city, or a passport and the one citizen it is issued to.
 
@@ -106,7 +106,7 @@ Students and courses show this perfectly: one student can enrol in several cours
 
 Unlike the one-to-many case, there is no side here that can be pinned down to "exactly one." A single course, say Database Systems, has three students sitting in it, and a single student, say Rohan Mehta, sits in two different courses.
 
-Both directions genuinely allow more than one `connection`, which is precisely what makes this cardinality harder to represent later than the other two, a detail worth remembering once the moment comes to turn this kind of relationship into an actual `table` structure.
+Both directions genuinely allow more than one connection, which is precisely what makes this cardinality harder to represent later than the other two, a detail worth remembering once the moment comes to turn this kind of relationship into an actual table structure.
 
 ## Reading Cardinality from Both Directions
 

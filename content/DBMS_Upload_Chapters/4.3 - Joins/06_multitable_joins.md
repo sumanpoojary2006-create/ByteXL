@@ -1,16 +1,16 @@
 ## Introduction
 
-Every `join` so far has combined exactly two `table` references at a time, but a real order in the delivery system touches four different `tables` at once: the customer who ordered, the restaurant that cooked it, the rider who delivered it, and the order `row` that ties all three together.
+Every join so far has combined exactly two table references at a time, but a real order in the delivery system touches four different tables at once: the customer who ordered, the restaurant that cooked it, the rider who delivered it, and the order row that ties all three together.
 
-Zoya's dispatch manager wants exactly that: one line per order showing the customer's name, the restaurant's name, and the rider's name, side by side. This does not need a new kind of `join`, just more of the same `JOIN` clauses chained one after another, each one attaching another `table` to the growing result.
+Zoya's dispatch manager wants exactly that: one line per order showing the customer's name, the restaurant's name, and the rider's name, side by side. This does not need a new kind of join, just more of the same JOIN clauses chained one after another, each one attaching another table to the growing result.
 
-**Definition:** `Joining` three or more `tables` is just the same `JOIN` clause repeated once per additional `table`, each one widening the working result before the next `join`, filter, or grouping step runs, with aliases keeping the `query` readable as the `table` count grows.
+**Definition:** `Joining` three or more tables is just the same JOIN clause repeated once per additional table, each one widening the working result before the next join, filter, or grouping step runs, with aliases keeping the query readable as the table count grows.
 
 ![Intro visual for multitable joins](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_multitable_joins.png)
 
 ## Setting Up Four Related Tables
 
-`orders` now references three other `tables` at once: `customers`, `restaurants`, and `riders`.
+`orders` now references three other tables at once: `customers`, `restaurants`, and `riders`.
 
 ## Source Data Used in This Lesson
 
@@ -114,7 +114,7 @@ Expected output:
 | 4 | Kavya Nair | Pizza Palace | Deepa Krishnan | 500 |
 | 5 | Rohan Das | Burger Barn | Suresh Pillai | 180 |
 
-Each `JOIN` clause attaches one more `table` to the result, and the `database` processes them in sequence:
+Each JOIN clause attaches one more table to the result, and the database processes them in sequence:
 
 1. `orders` is joined to `customers`, producing a wider intermediate result.
 
@@ -122,13 +122,13 @@ Each `JOIN` clause attaches one more `table` to the result, and the `database` p
 
 3. The result of that is joined to `riders`.
 
-By the time all three `JOIN` clauses have run, every order `row` carries a customer name, a restaurant name, and a rider name in the same line.
+By the time all three JOIN clauses have run, every order row carries a customer name, a restaurant name, and a rider name in the same line.
 
 ![A multi-table join chain widening one order row with customer restaurant and rider details](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_multitable_join_chain_widens_order.png)
 
 ## Using Table Aliases to Keep a Multi-Table Query Readable
 
-As the number of joined `tables` grows, writing the full `table` name in front of every `column` gets noisy. Aliases, introduced briefly with self `joins`, keep a multi-`table` `query` readable.
+As the number of joined tables grows, writing the full table name in front of every column gets noisy. Aliases, introduced briefly with self joins, keep a multi-table query readable.
 
 <iframe
  frameBorder="0"
@@ -147,13 +147,13 @@ Expected output:
 | 4 | Kavya Nair | Pizza Palace | Deepa Krishnan | 500 |
 | 5 | Rohan Das | Burger Barn | Suresh Pillai | 180 |
 
-- `orders o`, `customers c`, `restaurants r`, and `riders d` give each `table` a short alias immediately after naming it, and every `column` reference afterward uses that alias instead of the full `table` name.
-- This produces the identical result to the previous `query`, just noticeably shorter to type and easier to scan, especially once `WHERE`, `GROUP BY`, or `ORDER BY` clauses are added on top.
+- `orders o`, `customers c`, `restaurants r`, and `riders d` give each table a short alias immediately after naming it, and every column reference afterward uses that alias instead of the full table name.
+- This produces the identical result to the previous query, just noticeably shorter to type and easier to scan, especially once `WHERE`, `GROUP BY`, or `ORDER BY` clauses are added on top.
 
 ## Mixing Join Types Across Multiple Tables
 
-- A multi-`table` `query` does not have to use the same `join` type for every `table`.
-- If the dispatch manager wants every order shown even for a rider who has somehow not yet been assigned, one `JOIN` in the chain can become a `LEFT JOIN` while the others stay as `INNER JOIN`.
+- A multi-table query does not have to use the same join type for every table.
+- If the dispatch manager wants every order shown even for a rider who has somehow not yet been assigned, one JOIN in the chain can become a `LEFT JOIN` while the others stay as `INNER JOIN`.
 
 <iframe
  frameBorder="0"
@@ -172,14 +172,14 @@ Expected output:
 | 4 | Kavya Nair | Pizza Palace | Deepa Krishnan |
 | 5 | Rohan Das | Burger Barn | Suresh Pillai |
 
-- Every order still requires a valid customer and a valid restaurant to appear, since those two `joins` stay as strict `INNER JOIN`, but an order would still show up even with a `NULL` rider name if its `rider_id` did not match anything in `riders`.
-- Mixing `join` types like this lets a `query` express exactly which relationships are mandatory and which are optional, all in one statement.
+- Every order still requires a valid customer and a valid restaurant to appear, since those two joins stay as strict `INNER JOIN`, but an order would still show up even with a `NULL` rider name if its `rider_id` did not match anything in `riders`.
+- Mixing join types like this lets a query express exactly which relationships are mandatory and which are optional, all in one statement.
 
 ![Mixed join types requiring customer and restaurant matches while allowing an optional rider](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_mixed_join_types_optional_rider.png)
 
 ## Filtering and Grouping Across a Multi-Table Join
 
-Once several `tables` are joined, `WHERE`, `GROUP BY`, and `aggregate functions` all work exactly as they did on a single `table` or a two-`table` `join`, just with more `columns` available to filter or group by.
+Once several tables are joined, `WHERE`, `GROUP BY`, and `aggregate functions` all work exactly as they did on a single table or a two-table join, just with more columns available to filter or group by.
 
 <iframe
  frameBorder="0"
@@ -196,7 +196,7 @@ Expected output:
 | Deepa Krishnan | 2 | 950 |
 | Om Prakash | 1 | 300 |
 
-This groups by rider name after the `join` has already attached each order to its rider, giving a per-rider delivery count and total value in one `query`, built from data spread across two `tables`.
+This groups by rider name after the join has already attached each order to its rider, giving a per-rider delivery count and total value in one query, built from data spread across two tables.
 
 ## Multi-Table Joins at a Glance
 
@@ -229,7 +229,7 @@ This groups by rider name after the `join` has already attached each order to it
 
 ## Your Turn
 
-The dispatch manager wants a report showing, for every order over 300 in amount, the customer's name and the rider's name only, ordered by amount descending. Write that `query` against the `orders`, `customers`, and `riders` `tables` above.
+The dispatch manager wants a report showing, for every order over 300 in amount, the customer's name and the rider's name only, ordered by amount descending. Write that query against the `orders`, `customers`, and `riders` tables above.
 
 <iframe
  frameBorder="0"
@@ -238,7 +238,7 @@ The dispatch manager wants a report showing, for every order over 300 in amount,
  width="100%"
 ></iframe>
 
-If your `query` `joins` `orders` to `customers` and `riders`, filters with `WHERE o.amount > 300`, and orders by `o.amount DESC`, Rohan Das's order delivered by Suresh Pillai comes out on top at 620.00.
+If your query joins `orders` to `customers` and `riders`, filters with `WHERE o.amount > 300`, and orders by `o.amount DESC`, Rohan Das's order delivered by Suresh Pillai comes out on top at 620.00.
 
 
 Expected output for the practice query:
@@ -251,8 +251,8 @@ Expected output for the practice query:
 
 ## Conclusion
 
-`Joining` three or more `tables` is just the same `JOIN` clause repeated once per additional `table`, each one widening the working result before the next `join`, filter, or grouping step runs, with aliases keeping the `query` readable as the `table` count grows.
+`Joining` three or more tables is just the same JOIN clause repeated once per additional table, each one widening the working result before the next join, filter, or grouping step runs, with aliases keeping the query readable as the table count grows.
 
-Zoya can now build a single `query` that reaches across customers, restaurants, riders, and orders at once.
+Zoya can now build a single query that reaches across customers, restaurants, riders, and orders at once.
 
-Every `join` covered so far has matched `rows` that share a value; the last two lessons in this chapter cover `joins` built to check for existence or absence instead.
+Every join covered so far has matched rows that share a value; the last two lessons in this chapter cover joins built to check for existence or absence instead.

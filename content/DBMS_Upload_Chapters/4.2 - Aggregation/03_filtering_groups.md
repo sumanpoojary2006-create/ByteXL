@@ -1,8 +1,8 @@
 ## Introduction
 
-- Priya's category breakdown worked well, but the founders' next request exposed a gap: "just show me customers who have spent over 1000 total, I don't need to see anyone below that." Priya's first instinct was to reach for `WHERE`, the filter she already knew, and add `WHERE SUM(amount) > 1000` to her grouped `query`.
+- Priya's category breakdown worked well, but the founders' next request exposed a gap: "just show me customers who have spent over 1000 total, I don't need to see anyone below that." Priya's first instinct was to reach for `WHERE`, the filter she already knew, and add `WHERE SUM(amount) > 1000` to her grouped query.
 - It failed immediately with an error about `aggregate functions` not being allowed there.
-- The reason is about timing: `WHERE` filters individual `rows` before grouping happens, but Priya's condition depends on a sum that only exists after grouping happens.
+- The reason is about timing: `WHERE` filters individual rows before grouping happens, but Priya's condition depends on a sum that only exists after grouping happens.
 - SQL has a separate clause for exactly this situation, **`HAVING`**, which filters groups after they have already been summarized.
 
 **Definition:** `HAVING` fills the exact gap `WHERE` cannot: filtering on values that only exist after grouping and aggregation have already run.
@@ -11,7 +11,7 @@
 
 ## Why WHERE Cannot Filter on an Aggregate
 
-The `orders` `table` is the same one used for grouping.
+The `orders` table is the same one used for grouping.
 
 ## Source Data Used in This Lesson
 
@@ -54,12 +54,12 @@ INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUE
 (8, 'Ishita Rao', 'Non-Fiction', 990.00, '2025-04-14');
 ```
 
-- A `query` like `SELECT customer_name, SUM(amount) FROM orders WHERE SUM(amount) > 1000 GROUP BY customer_name;` raises an error, because `WHERE` runs before `GROUP BY` ever forms groups, back when the `database` is still looking at individual `rows`, and no single `row` has a `SUM(amount)` value to compare.
-- `WHERE` can only see `columns` that already exist on a `row`, such as `amount` or `category`, not a total that has not been computed yet.
+- A query like `SELECT customer_name, SUM(amount) FROM orders WHERE SUM(amount) > 1000 GROUP BY customer_name;` raises an error, because `WHERE` runs before `GROUP BY` ever forms groups, back when the database is still looking at individual rows, and no single row has a `SUM(amount)` value to compare.
+- `WHERE` can only see columns that already exist on a row, such as `amount` or `category`, not a total that has not been computed yet.
 
 ## Filtering After Grouping with HAVING
 
-`HAVING` runs after `GROUP BY` has already collapsed `rows` into groups and the `aggregate functions` have already produced their results, so it can filter directly on those aggregate values.
+`HAVING` runs after `GROUP BY` has already collapsed rows into groups and the `aggregate functions` have already produced their results, so it can filter directly on those aggregate values.
 
 Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
 
@@ -118,7 +118,7 @@ Ishita Rao, Vivek Menon, and Sonal Deshpande survive the filter; Aman Gupta, who
 
 ## Combining WHERE and HAVING in the Same Query
 
-`WHERE` and `HAVING` are not interchangeable, but they work well together, since each one filters at a different stage. `WHERE` can narrow down the `rows` before grouping even happens, which is often cheaper than grouping everything first and discarding groups afterward.
+`WHERE` and `HAVING` are not interchangeable, but they work well together, since each one filters at a different stage. `WHERE` can narrow down the rows before grouping even happens, which is often cheaper than grouping everything first and discarding groups afterward.
 
 <iframe
  frameBorder="0"
@@ -135,21 +135,21 @@ Expected output:
 | Sonal Deshpande | 1450 |
 | Vivek Menon | 1509 |
 
-This `query` runs in three clean stages:
+This query runs in three clean stages:
 
-1. `WHERE category != 'Children'` removes Aman Gupta's two children's-book orders before any grouping starts, so his `rows` never even reach the grouping stage.
+1. `WHERE category != 'Children'` removes Aman Gupta's two children's-book orders before any grouping starts, so his rows never even reach the grouping stage.
 
 2. `GROUP BY` then forms totals from what remains.
 
 3. `HAVING SUM(amount) > 500` discards any customer whose remaining total does not clear 500.
 
-The two clauses divide the work cleanly: `WHERE` picks which `rows` count, `HAVING` picks which resulting groups are worth keeping.
+The two clauses divide the work cleanly: `WHERE` picks which rows count, `HAVING` picks which resulting groups are worth keeping.
 
 ![WHERE filtering individual rows before GROUP BY and HAVING filtering groups after aggregation](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_where_vs_having_timing.png)
 
 ## Filtering on Count Instead of Sum
 
-`HAVING` works with any `aggregate function`, not just `SUM`. A common use is filtering on how many `rows` landed in a group.
+`HAVING` works with any `aggregate function`, not just `SUM`. A common use is filtering on how many rows landed in a group.
 
 <iframe
  frameBorder="0"
@@ -192,7 +192,7 @@ This surfaces only the customers who placed 3 or more orders, which is a differe
 
 ## Your Turn
 
-The founders want to see only the product categories that generated less than 1000 in total revenue, so the team can decide whether to keep stocking them. Write a `query` against the `orders` `table` above that returns `category` and `total_revenue`, showing only categories under that threshold.
+The founders want to see only the product categories that generated less than 1000 in total revenue, so the team can decide whether to keep stocking them. Write a query against the `orders` table above that returns `category` and `total_revenue`, showing only categories under that threshold.
 
 <iframe
  frameBorder="0"
@@ -201,7 +201,7 @@ The founders want to see only the product categories that generated less than 10
  width="100%"
 ></iframe>
 
-If your `query` groups by `category` with `SUM(amount) AS total_revenue` and filters with `HAVING SUM(amount) < 1000`, only the Children's category appears, with a combined total of 385.00.
+If your query groups by `category` with `SUM(amount) AS total_revenue` and filters with `HAVING SUM(amount) < 1000`, only the Children's category appears, with a combined total of 385.00.
 
 
 Expected output for the practice query:
@@ -214,6 +214,6 @@ Expected output for the practice query:
 
 `HAVING` fills the exact gap `WHERE` cannot: filtering on values that only exist after grouping and aggregation have already run.
 
-Used together, `WHERE` trims `rows` before grouping and `HAVING` trims groups after, giving Priya precise control over both stages of a report.
+Used together, `WHERE` trims rows before grouping and `HAVING` trims groups after, giving Priya precise control over both stages of a report.
 
-With grouping, aggregating, and filtering groups all in hand, the next step is seeing how these pieces sit relative to sorting, `row`-level filtering, and `joins` in a single, more complete `query`.
+With grouping, aggregating, and filtering groups all in hand, the next step is seeing how these pieces sit relative to sorting, row-level filtering, and joins in a single, more complete query.

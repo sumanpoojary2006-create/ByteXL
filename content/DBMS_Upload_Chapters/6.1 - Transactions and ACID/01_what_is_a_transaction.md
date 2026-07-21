@@ -4,15 +4,15 @@ Rahul is building the money-transfer feature for a banking app, and the logic so
 
 If the first `UPDATE` completes and the second never runs, money has vanished from the system entirely, deducted from one account and credited to nowhere. This is not a hypothetical edge case; it is the exact kind of failure real systems must survive.
 
-The `database`'s answer to this problem is the **`transaction`**: a group of one or more statements that the `database` guarantees will either all succeed together or all fail together, with no in-between state ever left visible.
+The database's answer to this problem is the **transaction**: a group of one or more statements that the database guarantees will either all succeed together or all fail together, with no in-between state ever left visible.
 
-**Definition:** A `transaction` groups one or more statements into a single unit that either commits entirely or rolls back entirely, closing the gap where a partial failure could otherwise leave data in a broken, half-changed state.
+**Definition:** A transaction groups one or more statements into a single unit that either commits entirely or rolls back entirely, closing the gap where a partial failure could otherwise leave data in a broken, half-changed state.
 
 ![Intro visual for what is a transaction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_what_is_a_transaction.png)
 
 ## Two Statements That Need to Move as One
 
-The `accounts` `table` holds a simple balance per account, the starting point for Rahul's transfer feature.
+The `accounts` table holds a simple balance per account, the starting point for Rahul's transfer feature.
 
 ## Source Data Used in This Lesson
 
@@ -59,13 +59,13 @@ Expected output:
 | 1 | Meera Iyer | 45000.00 |
 | 2 | Sanjay Rathi | 17000.00 |
 
-Run on their own, these two statements move 5000.00 from Meera's account to Sanjay's, and the final balances look correct: 45000.00 and 17000.00. But nothing here tells the `database` that these two statements belong together as a single unit of work.
+Run on their own, these two statements move 5000.00 from Meera's account to Sanjay's, and the final balances look correct: 45000.00 and 17000.00. But nothing here tells the database that these two statements belong together as a single unit of work.
 
-If the `connection` dropped after the first `UPDATE` ran but before the second one did, the `database` would have no way of knowing that Sanjay's credit was ever supposed to happen, and 5000.00 would simply be gone.
+If the connection dropped after the first `UPDATE` ran but before the second one did, the database would have no way of knowing that Sanjay's credit was ever supposed to happen, and 5000.00 would simply be gone.
 
 ## Wrapping Statements in a Transaction
 
-`BEGIN` starts a `transaction`, and `COMMIT` ends it, making every change inside permanent all at once. Everything between those two commands is treated as a single, indivisible unit.
+`BEGIN` starts a transaction, and `COMMIT` ends it, making every change inside permanent all at once. Everything between those two commands is treated as a single, indivisible unit.
 
 <iframe
  frameBorder="0"
@@ -83,13 +83,13 @@ Expected output:
 | 1 | Meera Iyer | 45000.00 |
 | 2 | Sanjay Rathi | 17000.00 |
 
-The two `UPDATE` statements are now bound together by `BEGIN` and `COMMIT`. If anything went wrong between them, a crash, a `constraint` violation, an explicit cancellation, the `database` guarantees that neither change takes effect, not just the first one, not just the second. Only once `COMMIT` runs successfully does either change become permanent and visible to anyone else looking at the `table`.
+The two `UPDATE` statements are now bound together by `BEGIN` and `COMMIT`. If anything went wrong between them, a crash, a constraint violation, an explicit cancellation, the database guarantees that neither change takes effect, not just the first one, not just the second. Only once `COMMIT` runs successfully does either change become permanent and visible to anyone else looking at the table.
 
 ![A transaction wrapping debit and credit updates so they move as one unit](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_transaction_wraps_debit_credit.png)
 
 ## Undoing a Transaction with ROLLBACK
 
-If something inside a `transaction` turns out to be wrong before `COMMIT` runs, `ROLLBACK` discards every change made since `BEGIN`, as if none of it had ever happened.
+If something inside a transaction turns out to be wrong before `COMMIT` runs, `ROLLBACK` discards every change made since `BEGIN`, as if none of it had ever happened.
 
 <iframe
  frameBorder="0"
@@ -116,7 +116,7 @@ Expected output 2:
 | 1 | 50000.00 |
 | 2 | 12000.00 |
 
-The `SELECT` immediately after the two `UPDATE` statements, while still inside the `transaction`, shows the changed balances, 45000.00 and 17000.00, because within the same `transaction`, a `connection` can see its own uncommitted changes. But once `ROLLBACK` runs, those changes are discarded entirely, and the final `SELECT` shows both accounts back at their original values, 50000.00 and 12000.00, exactly as if the `transaction` had never happened.
+The `SELECT` immediately after the two `UPDATE` statements, while still inside the transaction, shows the changed balances, 45000.00 and 17000.00, because within the same transaction, a connection can see its own uncommitted changes. But once `ROLLBACK` runs, those changes are discarded entirely, and the final `SELECT` shows both accounts back at their original values, 50000.00 and 12000.00, exactly as if the transaction had never happened.
 
 ![ROLLBACK undoing provisional changes before they are committed](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_rollback_undoes_uncommitted_changes.png)
 
@@ -128,7 +128,7 @@ Bank transfers are the classic example, but the same problem shows up anywhere t
 - Registering a student for a course and updating a seat count
 - Moving a support ticket between two queues
 
-Any time an application needs "these changes happen together, or not at all," a `transaction` is the tool that guarantees it.
+Any time an application needs "these changes happen together, or not at all," a transaction is the tool that guarantees it.
 
 ## Transactions at a Glance
 
@@ -161,7 +161,7 @@ Any time an application needs "these changes happen together, or not at all," a 
 
 ## Your Turn
 
-Meera wants to send 2000.00 to Sanjay, but decides midway through to cancel the transfer entirely. Write a `transaction` against the `accounts` `table` above that performs both balance updates, then rolls the whole thing back, and confirm with a final `SELECT` that both balances are unchanged.
+Meera wants to send 2000.00 to Sanjay, but decides midway through to cancel the transfer entirely. Write a transaction against the `accounts` table above that performs both balance updates, then rolls the whole thing back, and confirm with a final `SELECT` that both balances are unchanged.
 
 <iframe
  frameBorder="0"
@@ -172,10 +172,10 @@ Meera wants to send 2000.00 to Sanjay, but decides midway through to cancel the 
 
 Expected result and verification:
 
-If your `transaction` runs `BEGIN`, the two `UPDATE` statements adjusting 2000.00 in opposite directions, then `ROLLBACK`, the closing `SELECT` shows Meera still at 50000.00 and Sanjay still at 12000.00, confirming the cancelled transfer left no trace.
+If your transaction runs `BEGIN`, the two `UPDATE` statements adjusting 2000.00 in opposite directions, then `ROLLBACK`, the closing `SELECT` shows Meera still at 50000.00 and Sanjay still at 12000.00, confirming the cancelled transfer left no trace.
 
 ## Conclusion
 
-A `transaction` groups one or more statements into a single unit that either commits entirely or rolls back entirely, closing the gap where a partial failure could otherwise leave data in a broken, half-changed state. Rahul's transfer feature can now guarantee that money is never deducted from one account without being credited to another.
+A transaction groups one or more statements into a single unit that either commits entirely or rolls back entirely, closing the gap where a partial failure could otherwise leave data in a broken, half-changed state. Rahul's transfer feature can now guarantee that money is never deducted from one account without being credited to another.
 
-This all-or-nothing guarantee has a name, atomicity, and it is the first of four properties that define what makes a `transaction` trustworthy.
+This all-or-nothing guarantee has a name, atomicity, and it is the first of four properties that define what makes a transaction trustworthy.

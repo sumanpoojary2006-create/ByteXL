@@ -1,16 +1,16 @@
 ## Introduction
 
-The previous two lessons established two physical facts: data is read in whole pages, not individual `rows`, and a heap, PostgreSQL's default organization, offers no guarantee about which `rows` end up on which pages.
+The previous two lessons established two physical facts: data is read in whole pages, not individual rows, and a heap, PostgreSQL's default organization, offers no guarantee about which rows end up on which pages.
 
-This lesson connects those two facts directly to something Priya can actually see happen: without any help, finding `rows` in a heap `table` means reading every single page, checking every single `row`, an approach called a `full table scan`, and it gets slower in direct proportion to how large the `table` grows.
+This lesson connects those two facts directly to something Priya can actually see happen: without any help, finding rows in a heap table means reading every single page, checking every single row, an approach called a `full table scan`, and it gets slower in direct proportion to how large the table grows.
 
-**Definition:** Without a supporting structure on the `column` being filtered, a heap-organized `table` forces a `query` into a `full table scan`, reading every single page and checking every single `row`, with cost that scales directly with `table` size regardless of how few `rows` the `query` actually needs; the `primary key` search escaped this fate only because PostgreSQL quietly built an `index` for it.
+**Definition:** Without a supporting structure on the column being filtered, a heap-organized table forces a query into a `full table scan`, reading every single page and checking every single row, with cost that scales directly with table size regardless of how few rows the query actually needs; the `primary key` search escaped this fate only because PostgreSQL quietly built an index for it.
 
 ![Intro visual for why storage layout affects query speed](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_why_storage_layout_affects_query_speed.png)
 
 ## Watching a Full Table Scan Happen
 
-A larger `table` makes the cost of a full scan easy to observe directly.
+A larger table makes the cost of a full scan easy to observe directly.
 
 ## Source Data Used in This Lesson
 
@@ -60,9 +60,9 @@ Expected output:
    Filter: (customer_name = 'Customer 3000'::text)
 ```
 
-- `EXPLAIN`, covered in full detail later in this unit, previews how the `database` plans to execute a `query` without actually running it.
-- The plan here reports a "Seq Scan," short for `sequential scan`, meaning the `database` intends to read the `table` page by page, from the beginning, checking every `row`'s `customer_name` against 'Customer 3000' until it reaches the end.
-- Even though this `query` is only interested in exactly one `row` out of 5000, the heap organization from the previous lesson gives the `database` no shortcut, no way to know in advance which page holds that customer without checking.
+- `EXPLAIN`, covered in full detail later in this unit, previews how the database plans to execute a query without actually running it.
+- The plan here reports a "Seq Scan," short for `sequential scan`, meaning the database intends to read the table page by page, from the beginning, checking every row's `customer_name` against 'Customer 3000' until it reaches the end.
+- Even though this query is only interested in exactly one row out of 5000, the heap organization from the previous lesson gives the database no shortcut, no way to know in advance which page holds that customer without checking.
 
 <iframe
  frameBorder="0"
@@ -77,13 +77,13 @@ Expected output:
 | --- |
 | 46 |
 
-Using the same page-number extraction from the first lesson, this counts how many distinct pages the `table` occupies a `sequential scan` has to read every single one of them, even for this single-`row` lookup, because a `sequential scan`'s cost scales with the size of the whole `table`, not with how many `rows` the `query` actually needs, whether that need is 1 `row` or 1000.
+Using the same page-number extraction from the first lesson, this counts how many distinct pages the table occupies a `sequential scan` has to read every single one of them, even for this single-row lookup, because a `sequential scan`'s cost scales with the size of the whole table, not with how many rows the query actually needs, whether that need is 1 row or 1000.
 
 ![A full table scan checks every page even when only one target row is needed](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_full_scan_checks_every_page.png)
 
 ## Why the Primary Key Search Behaves Differently
 
-Running the same shape of `query`, but filtering on `order_id`, the `table`'s `primary key`, produces a completely different plan.
+Running the same shape of query, but filtering on `order_id`, the table's `primary key`, produces a completely different plan.
 
 <iframe
  frameBorder="0"
@@ -103,15 +103,15 @@ Expected output:
 
 The plan now reports an "Index Scan using orders_pkey" instead of a `sequential scan`.
 
-The physical reality is that a `primary key` `constraint` does not change how `rows` are organized on disk, the `table` is still the same unordered heap, but PostgreSQL automatically builds a separate structure, an `index`, for every `primary key` in order to enforce uniqueness, and the planner uses that structure to jump straight to the right page instead of checking all of them.
+The physical reality is that a `primary key` constraint does not change how rows are organized on disk, the table is still the same unordered heap, but PostgreSQL automatically builds a separate structure, an index, for every `primary key` in order to enforce uniqueness, and the planner uses that structure to jump straight to the right page instead of checking all of them.
 
-Nothing about the `table`'s layout changed between these two `queries`; the only difference is that one `column` has a supporting structure and the other does not. That structure, the `index`, is exactly what the next chapter covers in depth.
+Nothing about the table's layout changed between these two queries; the only difference is that one column has a supporting structure and the other does not. That structure, the index, is exactly what the next chapter covers in depth.
 
 ![An index gives the database a shortcut to the page instead of scanning many pages](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_index_scan_jumps_to_page.png)
 
 ## How Table Size Directly Predicts Scan Cost
 
-Doubling the number of `rows` in a heap `table` roughly doubles the number of pages it occupies, and a full scan reads every page, so a full scan's cost grows linearly with `table` size, a relationship worth being able to reason about directly.
+Doubling the number of rows in a heap table roughly doubles the number of pages it occupies, and a full scan reads every page, so a full scan's cost grows linearly with table size, a relationship worth being able to reason about directly.
 
 <iframe
  frameBorder="0"
@@ -130,9 +130,9 @@ Expected output:
 | --- |
 | 736 kB |
 
-Doubling the `row` count roughly doubles the reported `table` size, and a full scan against this larger `table` now has roughly twice as many pages to check for the exact same single-`row` lookup, even though the answer being searched for has not changed in any way.
+Doubling the row count roughly doubles the reported table size, and a full scan against this larger table now has roughly twice as many pages to check for the exact same single-row lookup, even though the answer being searched for has not changed in any way.
 
-This is precisely why "it worked fine on my small test `table`" is not evidence that a `query` will stay fast once real data volume arrives; a `full table scan`'s cost is a direct, predictable `function` of `table` size.
+This is precisely why "it worked fine on my small test table" is not evidence that a query will stay fast once real data volume arrives; a `full table scan`'s cost is a direct, predictable function of table size.
 
 ![As more rows create more pages, a full scan has more pages to read](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_more_rows_more_pages_full_scan_cost.png)
 
@@ -140,8 +140,8 @@ This is precisely why "it worked fine on my small test `table`" is not evidence 
 
 A full scan is not always the wrong choice:
 
-- When a `query` genuinely needs most or all of a `table`'s `rows`, such as computing an aggregate across the entire `table`, reading every page is unavoidable regardless of any structure available, and a full scan is often the most efficient plan the `database` could choose.
-- Full scans become a problem specifically when a `query` only needs a small fraction of a large `table`'s `rows`, since that is exactly the situation where reading every page is enormously wasteful compared to reading just the handful of pages that actually matter.
+- When a query genuinely needs most or all of a table's rows, such as computing an aggregate across the entire table, reading every page is unavoidable regardless of any structure available, and a full scan is often the most efficient plan the database could choose.
+- Full scans become a problem specifically when a query only needs a small fraction of a large table's rows, since that is exactly the situation where reading every page is enormously wasteful compared to reading just the handful of pages that actually matter.
 
 ## Storage Layout and Query Speed at a Glance
 
@@ -174,7 +174,7 @@ A full scan is not always the wrong choice:
 
 ## Your Turn
 
-Run `EXPLAIN` on a `query` filtering the `orders` `table` above for `amount > 120000`, a condition only a small fraction of `rows` will satisfy (`amount` tops out at 125000.00 for `order_id = 10000`), and note in a comment whether the plan shows a `sequential scan` and why that is expected given everything covered in this lesson.
+Run `EXPLAIN` on a query filtering the `orders` table above for `amount > 120000`, a condition only a small fraction of rows will satisfy (`amount` tops out at 125000.00 for `order_id = 10000`), and note in a comment whether the plan shows a `sequential scan` and why that is expected given everything covered in this lesson.
 
 <iframe
  frameBorder="0"
@@ -185,10 +185,10 @@ Run `EXPLAIN` on a `query` filtering the `orders` `table` above for `amount > 12
 
 Expected result and verification:
 
-`EXPLAIN SELECT * FROM orders WHERE amount > 120000;` reports a `sequential scan`, exactly as expected, since `amount` has no supporting structure to help the `database` skip pages, meaning it must check every `row`'s `amount` value against the condition regardless of how few `rows` actually qualify.
+`EXPLAIN SELECT * FROM orders WHERE amount > 120000;` reports a `sequential scan`, exactly as expected, since `amount` has no supporting structure to help the database skip pages, meaning it must check every row's `amount` value against the condition regardless of how few rows actually qualify.
 
 ## Conclusion
 
-Without a supporting structure on the `column` being filtered, a heap-organized `table` forces a `query` into a `full table scan`, reading every single page and checking every single `row`, with cost that scales directly with `table` size regardless of how few `rows` the `query` actually needs; the `primary key` search escaped this fate only because PostgreSQL quietly built an `index` for it.
+Without a supporting structure on the column being filtered, a heap-organized table forces a query into a `full table scan`, reading every single page and checking every single row, with cost that scales directly with table size regardless of how few rows the query actually needs; the `primary key` search escaped this fate only because PostgreSQL quietly built an index for it.
 
-Priya finally has a concrete, physical explanation for why her reports slow down as the company's order history grows. The next chapter introduces that rescuing structure properly, and shows how to build one for any `column` a `query` filters on: the `index`.
+Priya finally has a concrete, physical explanation for why her reports slow down as the company's order history grows. The next chapter introduces that rescuing structure properly, and shows how to build one for any column a query filters on: the index.

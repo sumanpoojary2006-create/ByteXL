@@ -1,19 +1,19 @@
 ## Introduction
 
-Vikram maintains the employee directory for a mid-sized company, and the `employees` `table` has two honest gaps:
+Vikram maintains the employee directory for a mid-sized company, and the `employees` table has two honest gaps:
 
 - Not every employee has a secondary phone number on file.
 - Not every employee reports to a manager, since the CEO does not report to anyone.
 
-Both gaps are stored as `NULL`, and both cause the same problem once Vikram tries to build a printable directory: `NULL` values show up as blank cells or, worse, silently break calculations that touch them. SQL provides two small but essential `functions`, **`COALESCE`** and **`NULLIF`**, built specifically to handle `NULL` gracefully instead of letting it derail a `query`.
+Both gaps are stored as `NULL`, and both cause the same problem once Vikram tries to build a printable directory: `NULL` values show up as blank cells or, worse, silently break calculations that touch them. SQL provides two small but essential functions, **`COALESCE`** and **`NULLIF`**, built specifically to handle `NULL` gracefully instead of letting it derail a query.
 
-**Definition:** `COALESCE` and `NULLIF` are small `functions` that solve a large, recurring problem: real data has gaps, and a `query` that ignores those gaps produces blank cells, broken math, or misleading duplicates.
+**Definition:** `COALESCE` and `NULLIF` are small functions that solve a large, recurring problem: real data has gaps, and a query that ignores those gaps produces blank cells, broken math, or misleading duplicates.
 
 ![Intro visual for nullhandling functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_nullhandling_functions.png)
 
 ## Filling In a Default When a Value Is Missing
 
-The directory needs a phone number to display for every employee, even the ones with no secondary number recorded, Rather than leaving those `rows` blank, Vikram wants to fall back to the primary number, and if even that is missing, fall back to a placeholder.
+The directory needs a phone number to display for every employee, even the ones with no secondary number recorded, Rather than leaving those rows blank, Vikram wants to fall back to the primary number, and if even that is missing, fall back to a placeholder.
 
 ## Source Data Used in This Lesson
 
@@ -71,7 +71,7 @@ Expected output:
 
 - `COALESCE` scans its arguments left to right and returns the first one that is not `NULL`.
 - For Rahul, `secondary_phone` is `NULL`, so it falls through to `primary_phone`.
-- For Ayesha, both phone `columns` are `NULL`, so it falls all the way through to the literal text `'Not on file'`.
+- For Ayesha, both phone columns are `NULL`, so it falls all the way through to the literal text `'Not on file'`.
 - This is the standard pattern for showing a sensible default instead of a blank space.
 
 ![COALESCE choosing the first available phone value as a contact number](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_coalesce_first_available_fallback.png)
@@ -111,7 +111,7 @@ Tracing a few employees through the fallback chain makes the left-to-right scan 
 
 ## Treating Two Equal Values as Missing
 
-Manoj's `row` has an odd duplication: his `primary_phone` and `secondary_phone` are identical, which happened because someone copied the primary number into the secondary field by mistake instead of leaving it blank. Vikram wants the directory to treat a secondary number that exactly matches the primary as if it were not really provided at all.
+Manoj's row has an odd duplication: his `primary_phone` and `secondary_phone` are identical, which happened because someone copied the primary number into the secondary field by mistake instead of leaving it blank. Vikram wants the directory to treat a secondary number that exactly matches the primary as if it were not really provided at all.
 
 <iframe
  frameBorder="0"
@@ -138,7 +138,7 @@ Expected output:
 
 ## Combining Both to Handle Messy Real Data
 
-The two `functions` are often used together: first clean up an accidental duplicate with `NULLIF`, then supply a fallback with `COALESCE` so the final `column` has no blanks left at all.
+The two functions are often used together: first clean up an accidental duplicate with `NULLIF`, then supply a fallback with `COALESCE` so the final column has no blanks left at all.
 
 <iframe
  frameBorder="0"
@@ -158,7 +158,7 @@ Expected output:
 | Simran Kaur | 9811100006 |
 
 - Reading from the inside out: `NULLIF` first turns Manoj's duplicated secondary number into `NULL`, then `COALESCE` steps in and falls back to his `primary_phone` since the secondary is now effectively missing.
-- Every other `row` resolves the same way it did before, since `NULLIF` only changes behavior when the two compared values are identical.
+- Every other row resolves the same way it did before, since `NULLIF` only changes behavior when the two compared values are identical.
 
 ## COALESCE and NULLIF at a Glance
 
@@ -186,7 +186,7 @@ Expected output:
 
 ## Your Turn
 
-The company org chart needs a "reports to" `column`: for every employee, show their `employee_id` as the reporting line if `manager_id` is missing, otherwise show `manager_id` itself, aliased as `reports_to`. Write that `query` against the `employees` `table` above.
+The company org chart needs a "reports to" column: for every employee, show their `employee_id` as the reporting line if `manager_id` is missing, otherwise show `manager_id` itself, aliased as `reports_to`. Write that query against the `employees` table above.
 
 <iframe
  frameBorder="0"
@@ -195,7 +195,7 @@ The company org chart needs a "reports to" `column`: for every employee, show th
  width="100%"
 ></iframe>
 
-If your `query` is `SELECT full_name, COALESCE(manager_id, employee_id) AS reports_to FROM employees;`, Neha's `row` will show her own `employee_id` in the `reports_to` `column`, correctly marking her as the top of the chart with nobody above her.
+If your query is `SELECT full_name, COALESCE(manager_id, employee_id) AS reports_to FROM employees;`, Neha's row will show her own `employee_id` in the `reports_to` column, correctly marking her as the top of the chart with nobody above her.
 
 
 Expected output for the practice query:
@@ -210,10 +210,10 @@ Expected output for the practice query:
 
 ## Conclusion
 
-`COALESCE` and `NULLIF` are small `functions` that solve a large, recurring problem: real data has gaps, and a `query` that ignores those gaps produces blank cells, broken math, or misleading duplicates.
+`COALESCE` and `NULLIF` are small functions that solve a large, recurring problem: real data has gaps, and a query that ignores those gaps produces blank cells, broken math, or misleading duplicates.
 
 `COALESCE` fills a missing value with a fallback, and `NULLIF` turns an unwanted match into a `NULL` that `COALESCE` can then catch.
 
-Vikram's directory now shows a usable number for every employee and a clean reporting line for every `row`.
+Vikram's directory now shows a usable number for every employee and a clean reporting line for every row.
 
 Cleaning up individual values is one kind of transformation; choosing between entirely different outputs based on a condition is the next tool to add.

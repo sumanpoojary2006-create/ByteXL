@@ -1,6 +1,6 @@
 ## Introduction
 
-Yusuf is trying to list every enrollment that has already been graded, so he writes the condition the way he would for any other value: `WHERE grade = NULL`. The `query` runs without error, but it comes back completely empty, even though he can see graded `rows` sitting right there in the `table`. Nothing is broken.
+Yusuf is trying to list every enrollment that has already been graded, so he writes the condition the way he would for any other value: `WHERE grade = NULL`. The query runs without error, but it comes back completely empty, even though he can see graded rows sitting right there in the table. Nothing is broken.
 
 He has just run into the one place where SQL's usual comparison rules quietly stop applying: **`NULL`**, the marker for a value that is missing or not yet known.
 
@@ -16,9 +16,9 @@ He has just run into the one place where SQL's usual comparison rules quietly st
 - An empty string
 - False
 
-It means "unknown." Three of Yusuf's enrollments have not been graded yet, because the courses are still in progress, so their `grade` `column` holds `NULL` rather than any particular grade.
+It means "unknown." Three of Yusuf's enrollments have not been graded yet, because the courses are still in progress, so their `grade` column holds `NULL` rather than any particular grade.
 
-The `enrollments` `table` holds this data:
+The `enrollments` table holds this data:
 
 | enrollment_id | student_id | course_id | enrolled_on | grade |
 | ------------- | ---------- | --------- | ---------- | ------ |
@@ -72,9 +72,9 @@ Expected output:
 
 *(no rows returned)*
 
-Zero `rows` come back, even though three enrollments genuinely have a `NULL` grade. The reason is that `=` asks "are these two values the same," and `NULL` is not a value at all, it is the absence of one. Comparing an unknown quantity against anything, even against another unknown quantity, does not produce true, it produces unknown, and `WHERE` only keeps `rows` where the condition comes out true.
+Zero rows come back, even though three enrollments genuinely have a `NULL` grade. The reason is that `=` asks "are these two values the same," and `NULL` is not a value at all, it is the absence of one. Comparing an unknown quantity against anything, even against another unknown quantity, does not produce true, it produces unknown, and `WHERE` only keeps rows where the condition comes out true.
 
-A condition that comes out unknown is treated exactly like one that came out false: the `row` is dropped either way.
+A condition that comes out unknown is treated exactly like one that came out false: the row is dropped either way.
 
 ## IS NULL and IS NOT NULL
 
@@ -95,8 +95,8 @@ Expected output:
 | 5 | 3 | 105 | *NULL* |
 | 7 | 5 | 101 | *NULL* |
 
-- This time three `rows` come back, enrollment 3, 5, and 7, the courses that are still in progress and have not been assigned a grade yet.
-- `IS NULL` does not compare the `column` to anything; it asks the `column` directly whether it is holding a value at all, which is a different kind of question from `=` and the only one that reliably finds missing data.
+- This time three rows come back, enrollment 3, 5, and 7, the courses that are still in progress and have not been assigned a grade yet.
+- `IS NULL` does not compare the column to anything; it asks the column directly whether it is holding a value at all, which is a different kind of question from `=` and the only one that reliably finds missing data.
 
 <iframe
  frameBorder="0"
@@ -117,7 +117,7 @@ Expected output:
 | 9 | 7 | 103 | C+ |
 | 10 | 8 | 105 | B- |
 
-This returns the other seven enrollments, every `row` where a grade has actually been recorded. The same pattern applies to any nullable `column`: use `IS NULL` to find missing values and `IS NOT NULL` to find recorded values.
+This returns the other seven enrollments, every row where a grade has actually been recorded. The same pattern applies to any nullable column: use `IS NULL` to find missing values and `IS NOT NULL` to find recorded values.
 
 ## Supplying a Fallback with COALESCE
 
@@ -146,7 +146,7 @@ Expected output:
 | 9 | 103 | C+ |
 | 10 | 105 | B- |
 
-Every `row` that already had a grade shows that grade unchanged, since `COALESCE` only reaches for its fallback when the first value is `NULL`. Enrollments 3, 5, and 7 now show `In Progress` instead of a blank grade, which reads far better in a report than an empty cell that could just as easily be mistaken for a data entry mistake.
+Every row that already had a grade shows that grade unchanged, since `COALESCE` only reaches for its fallback when the first value is `NULL`. Enrollments 3, 5, and 7 now show `In Progress` instead of a blank grade, which reads far better in a report than an empty cell that could just as easily be mistaken for a data entry mistake.
 
 ![COALESCE replacing a NULL grade with the fallback label In Progress for display](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_coalesce_null_fallback.png)
 
@@ -209,4 +209,4 @@ These three rows are the only enrollments with a missing grade. Replacing `IS NU
 
 `NULL` represents an unknown or missing value, not zero or empty text. That is why `=` cannot find it, why `IS NULL` and `IS NOT NULL` exist, and why `COALESCE` is useful when a report needs a readable fallback without changing the stored data. Yusuf's graded-enrollment query works as soon as `WHERE grade = NULL` becomes `WHERE grade IS NOT NULL`.
 
-Filtering and reading data only goes so far. Eventually an in-progress enrollment needs its grade entered, a new student needs adding, or an old record needs correcting. Those tasks move from asking the `database` questions to changing the data it holds.
+Filtering and reading data only goes so far. Eventually an in-progress enrollment needs its grade entered, a new student needs adding, or an old record needs correcting. Those tasks move from asking the database questions to changing the data it holds.

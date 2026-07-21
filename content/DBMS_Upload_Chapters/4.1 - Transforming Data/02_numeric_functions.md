@@ -1,20 +1,20 @@
 ## Introduction
 
-Arjun manages pricing for a small electronics store, and the `products` `table` holds costs and margins as raw decimal numbers, exactly as calculated. The problem is that "exactly as calculated" is not how a price tag or an invoice should look:
+Arjun manages pricing for a small electronics store, and the `products` table holds costs and margins as raw decimal numbers, exactly as calculated. The problem is that "exactly as calculated" is not how a price tag or an invoice should look:
 
 - A price of 1499.996 needs to round to 1500.00 before it reaches a customer.
 - A margin percentage needs rounding to a sensible number of decimal places for a report.
 - A shipping-weight calculation occasionally produces a negative number that should really just be its positive distance from zero.
 
-SQL's built-in **numeric `functions`** handle exactly this kind of cleanup, right inside the `query`.
+SQL's built-in **numeric functions** handle exactly this kind of cleanup, right inside the query.
 
 ![ROUND turning an over-precise selling price into a customer-ready price](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_round_price_display_precision.png)
 
-**Definition:** Numeric `functions` turn raw, over-precise, or oddly signed numbers into values fit for a report or a receipt: `ROUND` for display precision, `CEIL` and `FLOOR` for deliberate rounding direction, `ABS` for magnitude regardless of sign, and `MOD` for remainders.
+**Definition:** Numeric functions turn raw, over-precise, or oddly signed numbers into values fit for a report or a receipt: `ROUND` for display precision, `CEIL` and `FLOOR` for deliberate rounding direction, `ABS` for magnitude regardless of sign, and `MOD` for remainders.
 
 ## Rounding to a Sensible Precision
 
-The `products` `table` stores prices with more decimal precision than any customer needs to see.
+The `products` table stores prices with more decimal precision than any customer needs to see.
 
 Before applying any function, inspect the source data:
 
@@ -104,7 +104,7 @@ Expected output:
 
 ## Working with Distance from Zero and Remainders
 
-The webcam `row` has a `selling_price` of -1249.0000, a data-entry mistake from a refund adjustment that got applied to the wrong `column`. Before fixing the source data, Arjun wants to measure its distance from zero. The query is `SELECT product_name, selling_price, ABS(selling_price) AS positive_price FROM products WHERE selling_price < 0;`.
+The webcam row has a `selling_price` of -1249.0000, a data-entry mistake from a refund adjustment that got applied to the wrong column. Before fixing the source data, Arjun wants to measure its distance from zero. The query is `SELECT product_name, selling_price, ABS(selling_price) AS positive_price FROM products WHERE selling_price < 0;`.
 
 <iframe
  frameBorder="0"
@@ -138,14 +138,14 @@ Expected output:
 | Laptop Stand | 7 | 1 |
 | Webcam | 12 | 0 |
 
-- `ABS` strips the sign off a number, turning -1249.0000 into 1249.0000, which is what flagged the webcam `row` as suspicious in the first place: a price should never be negative.
-- The `%` operator, also written as `MOD(a, b)` in some `databases`, returns the remainder of a division. A remainder of 0 means every unit fits into complete cartons of six; a remainder of 1 means one unit is left over.
+- `ABS` strips the sign off a number, turning -1249.0000 into 1249.0000, which is what flagged the webcam row as suspicious in the first place: a price should never be negative.
+- The `%` operator, also written as `MOD(a, b)` in some databases, returns the remainder of a division. A remainder of 0 means every unit fits into complete cartons of six; a remainder of 1 means one unit is left over.
 
 ![CEIL, FLOOR, ABS, and remainder reshaping numeric values for reports](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_numeric_functions_rounding_abs_mod.png)
 
 ## A Few Values Worked Out by Hand
 
-Seeing a handful of inputs and outputs side by side makes each `function`'s behavior easy to check:
+Seeing a handful of inputs and outputs side by side makes each function's behavior easy to check:
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
   <thead>
@@ -219,7 +219,7 @@ Seeing a handful of inputs and outputs side by side makes each `function`'s beha
 
 ## Your Turn
 
-Arjun needs a margin report: for every product, show the product name and the profit margin (`selling_price - cost_price`) rounded to two decimal places, aliased as `margin`. Write that `query` against the `products` `table` above.
+Arjun needs a margin report: for every product, show the product name and the profit margin (`selling_price - cost_price`) rounded to two decimal places, aliased as `margin`. Write that query against the `products` table above.
 
 The calculation happens before rounding: `ROUND(selling_price - cost_price, 2)` subtracts the stored cost from the selling price and then keeps two decimal places.
 
@@ -230,7 +230,7 @@ The calculation happens before rounding: `ROUND(selling_price - cost_price, 2)` 
  width="100%"
 ></iframe>
 
-If your `query` is `SELECT product_name, ROUND(selling_price - cost_price, 2) AS margin FROM products;`, the webcam `row` will show a large negative margin, one more confirmation that its price needs a manual fix.
+If your query is `SELECT product_name, ROUND(selling_price - cost_price, 2) AS margin FROM products;`, the webcam row will show a large negative margin, one more confirmation that its price needs a manual fix.
 
 Expected output:
 
@@ -244,6 +244,6 @@ Expected output:
 
 ## Conclusion
 
-Numeric `functions` turn raw, over-precise, or oddly signed numbers into values fit for a report or a receipt: `ROUND` for display precision, `CEIL` and `FLOOR` for deliberate rounding direction, `ABS` for magnitude regardless of sign, and `MOD` for remainders. Arjun cleaned up prices and packing counts without changing a single stored value, only how the `query` presented them.
+Numeric functions turn raw, over-precise, or oddly signed numbers into values fit for a report or a receipt: `ROUND` for display precision, `CEIL` and `FLOOR` for deliberate rounding direction, `ABS` for magnitude regardless of sign, and `MOD` for remainders. Arjun cleaned up prices and packing counts without changing a single stored value, only how the query presented them.
 
 Dates and times bring their own quirks, and SQL has a matching toolkit for those too.

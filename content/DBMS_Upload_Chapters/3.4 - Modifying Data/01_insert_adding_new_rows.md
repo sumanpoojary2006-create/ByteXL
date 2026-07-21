@@ -2,7 +2,7 @@
 
 Alia handles admissions for a small college, and it is the first week of term. A new student has just finished paying fees and needs to appear in the system before she can be given a timetable or a login.
 
-Alia has spent the last few weeks only ever looking at data on screen, running `SELECT` statements to check who is already enrolled, who has paid, who still owes a phone number on file. Today is different. Today she has to put a brand new `row` into the `table` herself, and the tool for that job is **`INSERT`**, the statement that adds new `rows` to a `table`.
+Alia has spent the last few weeks only ever looking at data on screen, running `SELECT` statements to check who is already enrolled, who has paid, who still owes a phone number on file. Today is different. Today she has to put a brand new row into the table herself, and the tool for that job is **`INSERT`**, the statement that adds new rows to a table.
 
 **Definition:** The **`INSERT` statement** adds one or more new rows to a table by supplying values for the table's columns.
 
@@ -10,7 +10,7 @@ Alia has spent the last few weeks only ever looking at data on screen, running `
 
 ## The Anatomy of INSERT INTO
 
-Before the `INSERT`, the `students` `table` holds these eight `rows`, with no Diya Kulkarni yet:
+Before the `INSERT`, the `students` table holds these eight rows, with no Diya Kulkarni yet:
 
 | student_id | full_name | email | city | phone | joined_on |
 | ---------- | ------------- | ----------------------------- | --------- | ---------- | ---------- |
@@ -23,17 +23,17 @@ Before the `INSERT`, the `students` `table` holds these eight `rows`, with no Di
 | 7 | Rahul Verma | rahul.verma@gmail.com | Chennai | 9845055555 | 2025-01-25 |
 | 8 | Sanya Iyer | sanya.iyer@campusmail.edu | Mysuru | *NULL* | 2025-01-28 |
 
-A setup file first has to build this starting point. `CREATE TABLE` defines the `columns` and their data types for `students`, and `INSERT INTO` loads the eight `rows` shown above. The same setup file also creates the `courses` and `enrollments` `tables` this unit reuses. That setup is necessary for the hands-on exercise, but it is not the topic here; the topic is the single new `INSERT` Alia is about to run.
+A setup file first has to build this starting point. `CREATE TABLE` defines the columns and their data types for `students`, and `INSERT INTO` loads the eight rows shown above. The same setup file also creates the `courses` and `enrollments` tables this unit reuses. That setup is necessary for the hands-on exercise, but it is not the topic here; the topic is the single new `INSERT` Alia is about to run.
 
-The shape of an `INSERT` statement is always the same: name the `table`, name the `columns` you are filling in, then supply the values in the same order as the `columns`. Alia writes `INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES (9, 'Diya Kulkarni', 'diya.kulkarni@campusmail.edu', 'Pune', '9845066666', '2025-02-14');`.
+The shape of an `INSERT` statement is always the same: name the table, name the columns you are filling in, then supply the values in the same order as the columns. Alia writes `INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES (9, 'Diya Kulkarni', 'diya.kulkarni@campusmail.edu', 'Pune', '9845066666', '2025-02-14');`.
 
 The statement reads in three parts:
 
-- `INSERT INTO students` names the `table` receiving the new `row`.
-- `(student_id, full_name, ...)` lists which `columns` are being filled in.
-- `VALUES (9, 'Diya Kulkarni', ...)` supplies one value per named `column`, in the same order.
+- `INSERT INTO students` names the table receiving the new row.
+- `(student_id, full_name, ...)` lists which columns are being filled in.
+- `VALUES (9, 'Diya Kulkarni', ...)` supplies one value per named column, in the same order.
 
-To confirm the `row` landed, Alia runs `SELECT student_id, full_name, city, phone FROM students WHERE student_id = 9;`.
+To confirm the row landed, Alia runs `SELECT student_id, full_name, city, phone FROM students WHERE student_id = 9;`.
 
 Expected output, after the `INSERT`:
 
@@ -41,15 +41,15 @@ Expected output, after the `INSERT`:
 | ---------- | -------------- | ---- | ---------- |
 | 9 | Diya Kulkarni | Pune | 9845066666 |
 
-Alia's new student, Diya Kulkarni, now has a `row` of her own. The `column` list right after the `table` name tells the `database` exactly which `column` each value in `VALUES` belongs to, so no value ever gets misread as something it isn't. The final `SELECT` is not part of the `INSERT` itself; it is Alia simply confirming that the `row` landed the way she expects.
+Alia's new student, Diya Kulkarni, now has a row of her own. The column list right after the table name tells the database exactly which column each value in `VALUES` belongs to, so no value ever gets misread as something it isn't. The final `SELECT` is not part of the `INSERT` itself; it is Alia simply confirming that the row landed the way she expects.
 
 ![INSERT adding Diya as a new row in the students table](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_insert_adds_new_row.png)
 
 ### Hands-On Practice: Add the First Row
 
-The OneCompiler exercise uses two files. `init.sql` creates and populates the starting `tables`. The active query file contains only the statements being practised, here the `INSERT` followed by a confirming `SELECT`. Keeping setup and practice separate lets you rerun the modification against the same fresh dataset every time.
+The OneCompiler exercise uses two files. `init.sql` creates and populates the starting tables. The active query file contains only the statements being practised, here the `INSERT` followed by a confirming `SELECT`. Keeping setup and practice separate lets you rerun the modification against the same fresh dataset every time.
 
-First, `init.sql` prepares the source `tables`:
+First, `init.sql` prepares the source tables:
 
 ```postgresql
 CREATE TABLE students (
@@ -115,11 +115,11 @@ Then the active query file runs the `INSERT` and confirms it:
  width="100%"
 ></iframe>
 
-Run the active query file. OneCompiler loads `init.sql` first, so the `INSERT` adds Diya to the freshly built eight-row `table`, and the `SELECT` returns the single new `row` shown in the expected-output table above.
+Run the active query file. OneCompiler loads `init.sql` first, so the `INSERT` adds Diya to the freshly built eight-row table, and the `SELECT` returns the single new row shown in the expected-output table above.
 
 ## Inserting Several Rows in One Statement
 
-Registration week rarely brings in one student at a time. `INSERT` accepts more than one `row` inside a single statement, each one a parenthesized group separated by a comma: `INSERT INTO students (...) VALUES (10, 'Kabir Sethi', ...), (11, 'Meera Das', ...);`.
+Registration week rarely brings in one student at a time. `INSERT` accepts more than one row inside a single statement, each one a parenthesized group separated by a comma: `INSERT INTO students (...) VALUES (10, 'Kabir Sethi', ...), (11, 'Meera Das', ...);`.
 
 Confirming both with `SELECT student_id, full_name, city FROM students WHERE student_id IN (10, 11);` gives the expected output:
 
@@ -128,9 +128,9 @@ Confirming both with `SELECT student_id, full_name, city FROM students WHERE stu
 | 10 | Kabir Sethi | Chennai |
 | 11 | Meera Das | *NULL* |
 
-Both Kabir and Meera arrive in the `table` with a single statement instead of two separate ones. Meera's `city` is left as `NULL` here because her form did not record one yet, which is a perfectly ordinary thing to leave blank as long as the `column` itself allows it.
+Both Kabir and Meera arrive in the table with a single statement instead of two separate ones. Meera's `city` is left as `NULL` here because her form did not record one yet, which is a perfectly ordinary thing to leave blank as long as the column itself allows it.
 
-Batching `rows` like this is not just shorter to type; the `database` also treats the whole batch as one unit of work, which matters once a `table` has rules like `PRIMARY KEY` that must hold for every `row` in the statement together.
+Batching rows like this is not just shorter to type; the database also treats the whole batch as one unit of work, which matters once a table has rules like `PRIMARY KEY` that must hold for every row in the statement together.
 
 ### Hands-On Practice: Insert a Batch
 
@@ -145,7 +145,7 @@ Keep the same `init.sql` file and change only the active query file:
 
 ## Naming Columns Versus Relying on Column Order
 
-`INSERT` does not require a `column` list at all. Leaving it out tells the `database` to match your values to the `table`'s `columns` purely by position, in the exact order the `table` was created. Before this `INSERT`, the `courses` `table` holds this data:
+`INSERT` does not require a column list at all. Leaving it out tells the database to match your values to the table's columns purely by position, in the exact order the table was created. Before this `INSERT`, the `courses` table holds this data:
 
 | course_id | title | department | credits |
 | --------- | -------------------- | ---------------- | ------: |
@@ -155,7 +155,7 @@ Keep the same `init.sql` file and change only the active query file:
 | 104 | Discrete Mathematics | Mathematics | 3 |
 | 105 | Microeconomics | Economics | 2 |
 
-Writing `INSERT INTO courses VALUES (106, 'Operating Systems', 'Computer Science', 4);` - with no `column` list - and confirming with `SELECT course_id, title, department, credits FROM courses WHERE course_id = 106;` gives the expected output:
+Writing `INSERT INTO courses VALUES (106, 'Operating Systems', 'Computer Science', 4);` - with no column list - and confirming with `SELECT course_id, title, department, credits FROM courses WHERE course_id = 106;` gives the expected output:
 
 | course_id | title | department | credits |
 | --------- | ------------------ | ---------------- | ------: |
@@ -163,8 +163,8 @@ Writing `INSERT INTO courses VALUES (106, 'Operating Systems', 'Computer Science
 
 This works, and the new course lands correctly, but only because Alia happened to remember `courses` was created with `course_id`, `title`, `department`, `credits` in exactly that order. That is a fragile thing to depend on:
 
-- If a future change to the `table` adds a `column` in the middle, or if two `column` values are simply written in the wrong order by mistake, a positional `INSERT` places every later value into the wrong `column` with no error at all, since the `database` has no way to know that "Computer Science" was meant to be a department and not a title.
-- Naming the `columns` explicitly, as the earlier examples did, removes that guesswork entirely: the statement keeps working correctly even if the `table`'s `column` order changes later, and a reader checking the statement months from now can see exactly what value was intended for what `column` without needing to look up the `table` definition first.
+- If a future change to the table adds a column in the middle, or if two column values are simply written in the wrong order by mistake, a positional `INSERT` places every later value into the wrong column with no error at all, since the database has no way to know that "Computer Science" was meant to be a department and not a title.
+- Naming the columns explicitly, as the earlier examples did, removes that guesswork entirely: the statement keeps working correctly even if the table's column order changes later, and a reader checking the statement months from now can see exactly what value was intended for what column without needing to look up the table definition first.
 
 ![INSERT column names aligned with matching values to avoid positional mistakes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_insert_name_columns_match_values.png)
 
@@ -210,7 +210,7 @@ Keep the same `init.sql` file and change only the active query file:
 
 ## Your Turn
 
-A new student, Farhan Ali, has just registered from Hyderabad with no phone number on file yet. Add him to the roster with `student_id` 12, and confirm the `row` landed correctly.
+A new student, Farhan Ali, has just registered from Hyderabad with no phone number on file yet. Add him to the roster with `student_id` 12, and confirm the row landed correctly.
 
 <iframe
  frameBorder="0"
@@ -229,4 +229,4 @@ Farhan now shows up with his city recorded and his phone left as `NULL`, exactly
 
 ## Conclusion
 
-`INSERT` is how a `table` stops being a fixed list and starts being something a real system can grow, one new student, one new course, one new enrollment at a time. Naming the `columns` you are filling in is a small habit that costs almost nothing to type and protects the statement from a `table`'s `column` order ever quietly working against you. Alia can now get her newly paid student into the system the moment fees clear, typing a single `INSERT` instead of waiting on someone else to add the `row`, and the same statement scales to the whole batch of registrations still to come this week. Adding a `row` safely is only half of keeping data honest, though. Sooner or later something already on file turns out to be wrong, and that calls for a different kind of statement, one that changes a `row` that already exists rather than creating a new one.
+`INSERT` is how a table stops being a fixed list and starts being something a real system can grow, one new student, one new course, one new enrollment at a time. Naming the columns you are filling in is a small habit that costs almost nothing to type and protects the statement from a table's column order ever quietly working against you. Alia can now get her newly paid student into the system the moment fees clear, typing a single `INSERT` instead of waiting on someone else to add the row, and the same statement scales to the whole batch of registrations still to come this week. Adding a row safely is only half of keeping data honest, though. Sooner or later something already on file turns out to be wrong, and that calls for a different kind of statement, one that changes a row that already exists rather than creating a new one.
