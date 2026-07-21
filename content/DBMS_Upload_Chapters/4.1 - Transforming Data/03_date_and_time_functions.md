@@ -10,7 +10,7 @@ A timestamp is a single value, but the questions above need it pulled apart, com
 
 **Definition:** Date and time functions turn a single stored timestamp into whatever shape a question needs: `NOW()` and `CURRENT_DATE` for a reference point, interval arithmetic for shifting dates forward or measuring spans, and `EXTRACT` for pulling out just a weekday or an hour.
 
-![Intro visual for date and time functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_date_and_time_functions_clean_e35e31b4.png)
+![Intro visual for date and time functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_date_and_time_functions_actual3d_d8393a60.png)
 
 ## Getting the Current Moment
 

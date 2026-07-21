@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Conditional Logic" plus only these few l
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for conditional logic](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_conditional_logic_clean_cb332755.png)
+![Intro visual for conditional logic](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_conditional_logic_actual3d_4e10345e.png)
 
 ## Writing a Simple CASE Expression
 
