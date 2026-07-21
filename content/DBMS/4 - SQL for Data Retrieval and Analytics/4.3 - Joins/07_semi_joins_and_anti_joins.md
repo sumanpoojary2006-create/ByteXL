@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Semi Joins And Anti Joins" plus only the
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for semi joins and anti joins](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_intro_semi_joins_and_anti_joins_clean_246a2ec5.png)
+![Intro visual for semi joins and anti joins](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_intro_semi_joins_and_anti_joins_actual3d_8644543a.png)
 
 ## Finding Rows That Have a Match, Without Pulling in Columns
 

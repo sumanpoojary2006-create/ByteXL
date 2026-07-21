@@ -6,7 +6,7 @@ Zoya's dispatch manager wants exactly that: one line per order showing the custo
 
 **Definition:** `Joining` three or more tables is just the same JOIN clause repeated once per additional table, each one widening the working result before the next join, filter, or grouping step runs, with aliases keeping the query readable as the table count grows.
 
-![Intro visual for multitable joins](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_multitable_joins_clean_a8a311d3.png)
+![Intro visual for multitable joins](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_multitable_joins_actual3d_15c64526.png)
 
 ## Setting Up Four Related Tables
 

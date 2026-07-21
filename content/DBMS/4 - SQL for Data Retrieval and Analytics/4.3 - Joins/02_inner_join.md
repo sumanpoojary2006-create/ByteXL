@@ -21,7 +21,7 @@ ON-IMAGE TEXT: show a short bold title "Inner Join" plus only these few labels, 
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for inner join](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_inner_join_clean_12b5846c.png)
+![Intro visual for inner join](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_inner_join_actual3d_97b9262b.png)
 
 ## Confirming the Match-Only Behavior
 

@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Right Join And Full Outer Join" plus onl
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for right join and full outer join](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_right_join_and_full_outer_join_clean_373502e6.png)
+![Intro visual for right join and full outer join](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_right_join_and_full_outer_join_actual3d_2cb5e871.png)
 
 ## RIGHT JOIN as the Mirror of LEFT JOIN
 

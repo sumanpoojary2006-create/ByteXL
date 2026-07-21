@@ -8,7 +8,7 @@ This is precisely the problem a **join** solves: combining rows from two or more
 
 **Definition:** Joins exist because normalized tables intentionally keep related facts apart, one customer stored once, one restaurant stored once, and a query is what pulls those separated facts back together into a single readable result.
 
-![Intro visual for why joins exist](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_why_joins_exist_clean_fe7a2042.png)
+![Intro visual for why joins exist](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_why_joins_exist_actual3d_536ca090.png)
 
 ## Seeing the Problem Without a Join
 

@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Left Join" plus only these few labels, l
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for left join](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_left_join_clean_02b47b94.png)
+![Intro visual for left join](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_left_join_actual3d_962fee41.png)
 
 ## Keeping Every Row From the Left Table
 

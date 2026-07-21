@@ -6,7 +6,7 @@ There is also a third option, a **`FULL OUTER JOIN`**, for the rarer case where 
 
 **Definition:** `RIGHT JOIN` mirrors `LEFT JOIN` from the opposite table, and `FULL OUTER JOIN` protects both sides of a join at once, together completing the full family of ways two tables can be combined based on whether unmatched rows should be kept or dropped, and on which side.
 
-![Intro visual for right join and full outer join](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_right_join_and_full_outer_join_clean_373502e6.png)
+![Intro visual for right join and full outer join](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_right_join_and_full_outer_join_actual3d_2cb5e871.png)
 
 ## RIGHT JOIN as the Mirror of LEFT JOIN
 

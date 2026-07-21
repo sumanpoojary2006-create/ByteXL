@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Self Joins" plus only these few labels, 
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for self joins](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_self_joins_clean_c282cd97.png)
+![Intro visual for self joins](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_self_joins_actual3d_3f1ca34a.png)
 
 ## Why One Table Needs to Act Like Two
 
