@@ -6,7 +6,7 @@ A real application never gets that convenience for free; before it can run a sin
 
 **Definition:** A connection is a real, costly, stateful link between an application and a database, requiring a `connection string` to establish, real server-side resources to maintain, and deliberate closing to avoid leaking those resources, with connection failures and query failures representing genuinely different problems that call for different handling in application code.
 
-![Intro visual for connecting to a database from application code](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_connecting_to_a_database_from_application_code_clean_2eb058e0.png)
+![Intro visual for connecting to a database from application code](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_connecting_to_a_database_from_application_code_actual3d_14d1d3a8.png)
 
 ## What a Connection String Actually Contains
 

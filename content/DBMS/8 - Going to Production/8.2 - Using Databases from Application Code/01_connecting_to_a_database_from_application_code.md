@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Connecting To A Database From Applicatio
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for connecting to a database from application code](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_connecting_to_a_database_from_application_code_clean_2eb058e0.png)
+![Intro visual for connecting to a database from application code](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_connecting_to_a_database_from_application_code_actual3d_14d1d3a8.png)
 
 ## What a Connection String Actually Contains
 

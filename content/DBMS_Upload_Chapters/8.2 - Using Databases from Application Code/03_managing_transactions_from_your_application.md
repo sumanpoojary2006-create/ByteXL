@@ -7,7 +7,7 @@ An earlier unit covered the discipline of wrapping related statements in `BEGIN`
 
 **Definition:** A transaction belongs to exactly one connection and must always reach a `COMMIT` or `ROLLBACK`, since a connection left "idle in transaction" holds its locks indefinitely and can block other work, and savepoints give application code a way to discard just one problematic step inside a larger transaction without losing everything else already done.
 
-![Intro visual for managing transactions from your application](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_managing_transactions_from_your_application_clean_9cd61271.png)
+![Intro visual for managing transactions from your application](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_managing_transactions_from_your_application_actual3d_7c267725.png)
 
 ## A Transaction Belongs to Exactly One Connection
 

@@ -6,7 +6,7 @@ Neither approach is universally correct; each trades away something the other of
 
 **Definition:** An ORM speeds up routine, everyday database operations by letting a developer work in objects rather than SQL text, at the cost of sometimes hiding real query costs, most notoriously the N+1 pattern, while raw SQL offers full visibility and control at the cost of more code to write directly, and most real applications end up using both, an ORM for the routine cases and raw SQL for anything complex or performance-critical enough to need precise control.
 
-![Intro visual for orm vs raw sql](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_orm_vs_raw_sql_clean_bcb28a01.png)
+![Intro visual for orm vs raw sql](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_orm_vs_raw_sql_actual3d_9b55b238.png)
 
 ## What an ORM Actually Generates
 
