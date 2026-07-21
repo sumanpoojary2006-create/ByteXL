@@ -10,7 +10,7 @@ Tanvi's next request from the marketing team is more specific than a merged mail
 
 **Definition:** `INTERSECT` isolates exactly the rows two queries have in common, and `EXCEPT` isolates the rows one query has that the other does not, with `EXCEPT` alone being sensitive to which query is written first.
 
-![Intro visual for intersect and except](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_intersect_and_except_clean_354d3672.png)
+![Intro visual for intersect and except](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_intersect_and_except_actual3d_22b3df67.png)
 
 ## Finding Rows Common to Both Queries
 

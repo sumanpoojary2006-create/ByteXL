@@ -8,7 +8,7 @@ The short version is that joins combine columns from two tables side by side, wh
 
 **Definition:** Joins widen rows by attaching columns from a matching table, set operations stack or compare whole rows across similarly shaped queries, and `EXISTS` checks for a match without pulling in any columns at all, and recognizing which shape a question actually needs is what decides between them.
 
-![Intro visual for when to use set operations vs joins](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_when_to_use_set_operations_vs_joins_clean_56885995.png)
+![Intro visual for when to use set operations vs joins](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_when_to_use_set_operations_vs_joins_actual3d_0a28d95b.png)
 
 ## The Core Difference: Sideways vs. Stacked
 

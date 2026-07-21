@@ -24,7 +24,7 @@ ON-IMAGE TEXT: show a short bold title "Intersect And Except" plus only these fe
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for intersect and except](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_intersect_and_except_clean_354d3672.png)
+![Intro visual for intersect and except](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_intersect_and_except_actual3d_22b3df67.png)
 
 ## Finding Rows Common to Both Queries
 
