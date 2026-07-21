@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Undo And Redo How A Database Rolls Back"
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for undo and redo how a database rolls back](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_undo_and_redo_how_a_database_rolls_back_and_repl_clean_1011bf80.png)
+![Intro visual for undo and redo how a database rolls back](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_undo_and_redo_how_a_database_rolls_back_and_replay_actual3d_b1af3dde.png)
 
 ## Redo: Replaying Committed Work That Never Made It to Disk
 

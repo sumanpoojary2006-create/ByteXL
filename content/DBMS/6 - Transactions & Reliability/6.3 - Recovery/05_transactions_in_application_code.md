@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Transactions In Application Code" plus o
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for transactions in application code](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_transactions_in_application_code_clean_bf801640.png)
+![Intro visual for transactions in application code](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_transactions_in_application_code_actual3d_62f8324f.png)
 
 ## Auto-commit: The Default Behavior Worth Knowing About
 
