@@ -4,6 +4,10 @@ Column-level privileges, previewed briefly in the `GRANT` lesson, restrict acces
 
 PostgreSQL's **`row-level security`**, or RLS, makes exactly this possible, enforced automatically by the `database` itself, rather than trusted to every application `query` remembering to add the right filter.
 
+**Definition:** `Row-level security`, enabled with `ALTER TABLE ... ENABLE ROW LEVEL SECURITY` and defined through `CREATE POLICY`, restricts which specific rows a `role` can see.
+
+![Intro visual for rowlevel and column level security](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_rowlevel_and_column_level_security.png)
+
 ## The Problem Without Row-Level Security
 
 The `shipments` `table` now includes a `branch` `column`, and two `role`s represent two different branch coordinators.
@@ -25,7 +29,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     branch TEXT,
@@ -50,14 +54,12 @@ Without `row-level security`, `mumbai_coordinator`'s `GRANT SELECT` gives access
 
 `Row-level security` is enabled per `table`, and then one or more policies define exactly which `rows` each `role` is allowed to see.
 
-```postgresql with=init.sql
-ALTER TABLE shipments ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY mumbai_only ON shipments
-FOR SELECT
-TO mumbai_coordinator
-USING (branch = 'Mumbai');
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajddn" 
+ width="100%"
+></iframe>
 
 Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
 
@@ -72,13 +74,12 @@ This filtering happens automatically, inside the `database` itself, for every si
 
 The entire point of `row-level security` is that it cannot be bypassed by simply forgetting to filter, since the `database` enforces it regardless of what the `query` itself asks for.
 
-```postgresql with=init.sql
-SET ROLE mumbai_coordinator;
-
-SELECT * FROM shipments;
-
-RESET ROLE;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajdr6" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -90,38 +91,24 @@ Expected output:
 - `SET ROLE mumbai_coordinator` switches the current session to act as that `role`, and the plain `SELECT * FROM shipments`, with no `WHERE` clause written at all, still returns only the two Mumbai `rows`.
 - The policy is enforced by the `database` itself, beneath the `query`, exactly the guarantee application-side filtering alone could never provide, since application-side filtering only protects against `queries` that remembered to include it.
 
-![Row-level security automatically filters which rows a role can see](images/07_row_level_security_policy_filter.png)
+![Row-level security automatically filters which rows a role can see](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_row_level_security_policy_filter.png)
 
 ## Column-Level Security Revisited Alongside Row-Level Security
 
 Column-level and `row-level security` can be combined on the same `table`, restricting both which `columns` and which `rows` a `role` can see, addressing both dimensions of "this `role` should not see that data" together.
 
-```postgresql with=init.sql
-CREATE TABLE shipments_with_cost (
-    shipment_id INTEGER PRIMARY KEY,
-    branch TEXT,
-    status TEXT,
-    internal_cost NUMERIC(10, 2)
-);
-
-INSERT INTO shipments_with_cost (shipment_id, branch, status, internal_cost) VALUES
-(1, 'Mumbai', 'in_transit', 320.00);
-
-ALTER TABLE shipments_with_cost ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY branch_coordinators_own_branch ON shipments_with_cost
-FOR SELECT
-TO mumbai_coordinator
-USING (branch = 'Mumbai');
-
-GRANT SELECT (shipment_id, branch, status) ON shipments_with_cost TO mumbai_coordinator;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaje35" 
+ width="100%"
+></iframe>
 
 Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
 
 `mumbai_coordinator` can now only see Mumbai's `rows`, through the `row`-level policy, and within those `rows`, only `shipment_id`, `branch`, and `status`, through the `column`-level grant, with `internal_cost` withheld entirely, both restrictions enforced together, automatically, on every `query` this `role` ever runs against the `table`.
 
-![Row-level policies and column-level grants can combine to restrict rows and columns together](images/08_row_and_column_security_two_layers.png)
+![Row-level policies and column-level grants can combine to restrict rows and columns together](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_row_and_column_security_two_layers.png)
 
 ## Row-Level and Column-Level Security at a Glance
 
@@ -156,9 +143,12 @@ Expected result: PostgreSQL completes the definition or privilege command withou
 
 Create a `role` `pune_coordinator`, enable a `row-level security` policy restricting it to `branch = 'Pune'` on `shipments`, and confirm with `SET ROLE` that it only ever sees Pune's `rows`.
 
-```postgresql with=init.sql
--- Write your role, policy, and test below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajeda" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

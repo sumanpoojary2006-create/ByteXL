@@ -13,6 +13,10 @@ What Meera is really asking for are three classic comparisons between two relati
 - `Relational algebra` has a dedicated operation for each of these, borrowed directly from set theory, and together they are simply called **set operations**.
 - Before any of the three can be applied, though, the two relations being compared have to satisfy one important condition, and that condition comes first.
 
+**Definition:** Union, intersection, and difference let a `database` compare two relations the way set theory compares two collections, but only once those relations are union-compatible, meaning they agree on the number of `columns` and the domain each `column` draws from.
+
+![Intro visual for set operations](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_set_operations.png)
+
 ## The Two Club Relations
 
 Here are Meera's two relations, trimmed down to just the `column` that matters:
@@ -74,7 +78,7 @@ Asking "which `rows` appear in both" would be meaningless, a student ID and a bo
 
 Two relations can have entirely different `column` names and still be union-compatible, what matters is the number of `columns` and the domain each one draws from, not the labels typed above them.
 
-![Union-compatible club rosters passing the shape and domain check while book titles are rejected](images/06_union_compatibility_shape_domain.png)
+![Union-compatible club rosters passing the shape and domain check while book titles are rejected](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_union_compatibility_shape_domain.png)
 
 ## Union: Everyone in Either Relation
 
@@ -151,7 +155,7 @@ The difference between two union-compatible relations keeps the `rows` that appe
 
 S104 and S107 are removed because they also appear in the Robotics Club relation, leaving only the coding-only members. Notice that reversing the operation, Robotics Club minus Coding Club, would give a different answer entirely, just S112, the one robotics member who never joined coding. Difference is the one set operation in this trio where the order the relations are written in changes the result.
 
-![Union, intersection, and coding-minus-robotics difference applied to two club rosters](images/05_union_intersection_difference.png)
+![Union, intersection, and coding-minus-robotics difference applied to two club rosters](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_union_intersection_difference.png)
 
 ## Set Operations at a Glance
 

@@ -6,6 +6,22 @@ She scrolls through the list herself, mentally crossing off repeats, to work out
 
 **Definition:** `DISTINCT` strips a result down to its genuinely unique `rows`, whether uniqueness is judged on a single `column` or on the combination of every `column` named in the `SELECT` list.
 
+<!--
+IMAGE PROMPT  ->  generate as images/03_intro_distinct_removing_duplicate_rows.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Simran has been asked a question that sounds like it should have a short answer: "which cities do our students come from?" She writes what feels like the obvious query, selecting the city column from the students table, and runs it. Eight rows come back, one.
+
+ON-IMAGE TEXT: show a short bold title "Distinct Removing Duplicate Rows" plus only these few labels, large and legible: Table, Column, Query. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for distinct removing duplicate rows](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_distinct_removing_duplicate_rows.png)
+
 ## The Repeated-Rows Problem
 
 Before reaching for `DISTINCT`, it helps to see the problem it solves in plain output. The `students` `table` holds this data:
@@ -70,7 +86,7 @@ The result has eight `rows`, matching the eight students, and Bengaluru, Chennai
 - It is faithfully reporting one city per student.
 - It does not answer Simran's actual question, which is about the set of cities involved, not the list of students.
 
-![Selecting city returns repeated city values because each student row contributes one value](images/05_repeated_values_before_distinct.png)
+![Selecting city returns repeated city values because each student row contributes one value](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_repeated_values_before_distinct.png)
 
 ## Collapsing Repeats With DISTINCT
 
@@ -92,7 +108,7 @@ Expected output:
 
 This time the result has exactly five `rows`: Bengaluru, Chennai, Pune, Hyderabad, and Mysuru, each listed once no matter how many students share it. PostgreSQL builds the full list first and then throws away any `row` whose value is an exact repeat of one already kept. Simran gets the answer to her real question directly, without counting anything by hand.
 
-![DISTINCT filtering duplicate city cards into unique city values](images/06_distinct_unique_values.png)
+![DISTINCT filtering duplicate city cards into unique city values](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_distinct_unique_values.png)
 
 ## DISTINCT Across More Than One Column
 

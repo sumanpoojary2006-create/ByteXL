@@ -6,6 +6,22 @@ SQL offers a cleaner way to write exactly the same logic: a **`Common Table Expr
 
 **Definition:** A CTE, written with `WITH`, names an intermediate `query` result up front so the rest of a statement can read top to bottom instead of inside out, and several CTEs can be chained together, each one building on the last, without losing clarity as the logic grows more layered.
 
+<!--
+IMAGE PROMPT  ->  generate as images/05_intro_common_table_expressions.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Kabir's department-average report from the FROM subquery lesson worked correctly, but re-reading it a week later, he found himself squinting at nested parentheses to figure out which SELECT belonged to which part of the query. As soon as a query needs two or.
+
+ON-IMAGE TEXT: show a short bold title "Common Table Expressions" plus only these few labels, large and legible: Table, Query, Select. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for common table expressions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_common_table_expressions.png)
+
 ## Rewriting a Subquery as a CTE
 
 The `employees` `table` is the same one used throughout this chapter.
@@ -89,7 +105,7 @@ Expected output:
 - `WITH dept_averages AS (...)` names the inner `query` before the main `query` even begins, and the main `query` afterward simply reads `FROM dept_averages`, exactly as if it were a real `table`.
 - The two versions produce an identical result, Engineering as the only department above the company average, but the CTE version reads in the order a person would naturally explain it out loud: "first compute department averages, then find the ones above the company average."
 
-![A CTE naming a temporary result so the main query can read from it](images/09_cte_named_temporary_result.png)
+![A CTE naming a temporary result so the main query can read from it](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_cte_named_temporary_result.png)
 
 ## Chaining Several CTEs Together
 
@@ -120,7 +136,7 @@ Expected output:
 - It makes it far easier to check each piece in isolation, since the whole first CTE can be run on its own, just by selecting from it directly, before it is ever plugged into the larger `query`.
 - It documents what each intermediate result actually represents, for anyone reading the `query` later.
 
-![Multiple CTEs chained as named steps before the final report](images/10_cte_chain_multiple_steps.png)
+![Multiple CTEs chained as named steps before the final report](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_cte_chain_multiple_steps.png)
 
 ## Why CTEs Are Often Preferred Over Nested Subqueries
 

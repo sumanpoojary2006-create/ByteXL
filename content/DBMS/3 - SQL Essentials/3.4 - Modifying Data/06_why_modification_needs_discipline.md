@@ -6,6 +6,22 @@ Naveen realizes that everything he has learned about `INSERT`, `UPDATE`, `DELETE
 
 **Definition:** **Disciplined data modification** means identifying the exact rows a write statement will affect, protecting related changes with transactions when necessary, and verifying the result so accidental or partial changes do not damage the data.
 
+<!--
+IMAGE PROMPT  ->  generate as images/06_intro_why_modification_needs_discipline.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Naveen has just been handed write access to the college's live enrollment system, the same tables Alia, Rohit, Priyanka, Zara, and Aditya have all been working with, and he notices something about how each of them actually types their statements. None of them.
+
+ON-IMAGE TEXT: show a short bold title "Why Modification Needs Discipline" plus only these few labels, large and legible: Modification, Needs, Discipline. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for why modification needs discipline](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_why_modification_needs_discipline.png)
+
 ## Why a SELECT Mistake and a Modification Mistake Are Not the Same
 
 The `students`, `courses`, and `enrollments` `tables` hold this data:
@@ -36,7 +52,7 @@ A `SELECT` with a wrong `WHERE` clause returns the wrong `rows` on screen, and N
 
 This asymmetry, that reading forgives mistakes and writing does not, is the entire reason a modification statement deserves a slower hand than a `query` typed to satisfy curiosity.
 
-![A SELECT mistake can be retried, while an UPDATE or DELETE mistake changes real data](images/11_select_mistake_vs_modification_mistake.png)
+![A SELECT mistake can be retried, while an UPDATE or DELETE mistake changes real data](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_select_mistake_vs_modification_mistake.png)
 
 ## Knowing Exactly Which Rows Before Touching Any of Them
 
@@ -146,7 +162,7 @@ Expected output, directly from the `RETURNING` clause, the row's last snapshot b
 
 The result shows exactly one `row` leaving the `table`, Siddharth Rao's Data Structures enrollment, and that visible confirmation, arriving in the same breath as the `DELETE` itself, is what turns "I think that worked" into "I can see that it worked."
 
-![Safe modification checklist: select the target, reuse the same WHERE, and confirm with RETURNING](images/12_safe_modification_checklist.png)
+![Safe modification checklist: select the target, reuse the same WHERE, and confirm with RETURNING](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_safe_modification_checklist.png)
 
 ### Hands-On Practice: Delete with a Built-In Receipt
 

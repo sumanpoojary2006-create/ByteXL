@@ -12,6 +12,10 @@ The trouble starts small and grows fast. The sales team creates a `table` called
 
 The two `Orders` `tables` collide, and nobody notices until a report quietly pulls the wrong one. Kiran's fix is not a naming trick or a stricter review process, it is an organizational tool built into the `database` itself, called a **`schema`**, or **namespace**, a named grouping that lets related `tables` live together under one label while staying cleanly separated from `tables` owned by a different team.
 
+**Definition:** A `schema`, in this sense, is less about how any single `table` is shaped and more about how a whole `database` full of `tables` is kept organized once more than one team is building on top of it.
+
+![Intro visual for database schemas and namespaces](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_database_schemas_and_namespaces.png)
+
 ## A Schema Is a Folder, Not a Table Design
 
 The word "`schema`" is used two different ways in `database` work, and Kiran is careful to keep them apart when she explains this to new hires. One meaning, the one usually covered first, refers to the structure of a single `table`, its `columns`, types, and keys, the blueprint for what a `row` looks like.
@@ -20,7 +24,7 @@ The meaning at stake here is different: a `schema` as a named container that gro
 
 A retail company's single physical `database` can hold a `sales` `schema`, an `inventory` `schema`, and a `reporting` `schema` side by side, each one free to contain its own `Orders` `table` without the two ever being confused, because a `table`'s true identity is really the pair of its `schema` name and its `table` name together, `sales.Orders` and `inventory.Orders`, not the `table` name alone.
 
-![Database schemas shown as folders where sales.Orders and inventory.Orders do not collide](images/09_schemas_as_folders_namespaces.png)
+![Database schemas shown as folders where sales.Orders and inventory.Orders do not collide](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_schemas_as_folders_namespaces.png)
 
 ## Why Grouping Tables Prevents Collisions and Confusion
 
@@ -34,7 +38,7 @@ A `schema` turns a `database`'s `table` list from a flat pile into something clo
 
 Here is Kiran's fix as real PostgreSQL: two schemas, each holding its own `Orders`-style table, with no collision because a table's true identity is the schema-and-table pair together.
 
-```postgresql file=init.sql
+```postgresql
 CREATE SCHEMA sales;
 CREATE SCHEMA inventory;
 
@@ -60,11 +64,12 @@ INSERT INTO inventory.orders (supplier_id, item_count) VALUES
 
 The active query reaches into each schema explicitly, proving `sales.orders` and `inventory.orders` coexist without ever being confused for one another:
 
-```postgresql with=init.sql
-SELECT order_id, customer_id, order_total
-FROM sales.orders
-ORDER BY order_id;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaj665" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -73,11 +78,12 @@ Expected output:
 | 1 | 101 | 4599.00 |
 | 2 | 102 | 1250.50 |
 
-```postgresql with=init.sql
-SELECT order_id, supplier_id, item_count
-FROM inventory.orders
-ORDER BY order_id;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaj6f3" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -98,7 +104,7 @@ The sales team, by contrast, gets full read-and-write access to its own `sales` 
 
 This is the same instinct behind giving each team its own labeled drawer rather than one shared drawer everyone digs through: a team that only ever reaches into its own `schema` is far less likely to accidentally break something that belongs to someone else.
 
-![Schema-level permissions granting reporting read access while blocking write access](images/10_schema_level_permissions.png)
+![Schema-level permissions granting reporting read access while blocking write access](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_schema_level_permissions.png)
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
   <thead>

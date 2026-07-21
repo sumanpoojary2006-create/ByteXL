@@ -12,6 +12,22 @@ That shared language is the **ER diagram**, a standardised way of drawing entiti
 
 **Definition:** An ER diagram gives a design a shared visual vocabulary: rectangles for entities, ovals for attributes, diamonds for relationships, with underlines, dashes, and double outlines layered on to capture identifying, derived, and multivalued attributes, and with labelled or crow's-foot lines capturing cardinality and participation together.
 
+<!--
+IMAGE PROMPT  ->  generate as images/05_intro_drawing_an_er_diagram_notation_and_conventions.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Vivek has spent the last two weeks talking his hospital-management design through out loud: entities, attributes, cardinality, participation, all of it worked out carefully in sentences and small tables. His manager stops him mid-explanation and asks a fair.
+
+ON-IMAGE TEXT: show a short bold title "Drawing An Er Diagram Notation And Conventions" plus only these few labels, large and legible: Drawing, Diagram, Notation. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for drawing an er diagram notation and conventions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_drawing_an_er_diagram_notation_and_conventions.png)
+
 ## The Core Shapes and What Each One Means
 
 An ER diagram leans on a small, disciplined set of shapes, and the discipline is the entire point: reusing the same shape for the same kind of idea every single time is what makes the diagram readable to a stranger.
@@ -56,7 +72,7 @@ Three shapes carry three different meanings:
 
 Every shape in the diagram is connected to something by a plain line, and the lines themselves carry no separate meaning beyond "this thing belongs to, or takes part in, that thing." An oval floating with no line to any rectangle would be meaningless, because an attribute detached from its entity is not describing anything.
 
-![ER diagram notation using rectangles for entities, ovals for attributes, and diamonds for relationships](images/09_er_diagram_core_notation.png)
+![ER diagram notation using rectangles for entities, ovals for attributes, and diamonds for relationships](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_er_diagram_core_notation.png)
 
 ## Marking the Finer Details Within Each Shape
 
@@ -136,7 +152,7 @@ Total participation is layered onto the same line using a double line instead of
 
 In Vivek's hospital diagram, the line between Patient and the Admits diamond is doubled, because every admitted patient must have an admitting doctor, while the line between Doctor and the same diamond stays single, because a doctor can currently have zero admitted patients.
 
-![ER notation details for identifying, composite, derived, multivalued, cardinality, and total participation](images/10_er_diagram_detail_notation.png)
+![ER notation details for identifying, composite, derived, multivalued, cardinality, and total participation](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_er_diagram_detail_notation.png)
 
 ## Notation Legend
 

@@ -4,7 +4,7 @@ Varun wants a shortlist of courses worth registering for: something that is eith
 
 The problem is that SQL read his conditions in an order he did not intend, and fixing it means learning how the **logical operators**, `AND`, `OR`, and `NOT`, actually combine.
 
-![AND and OR shown as gates where AND needs all checks true and OR needs at least one](images/05_and_or_logical_gates.png)
+![AND and OR shown as gates where AND needs all checks true and OR needs at least one](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_and_or_logical_gates.png)
 
 **Definition:** `AND`, `OR`, and `NOT` let a single `WHERE` clause weigh several conditions at once.
 
@@ -121,7 +121,7 @@ Expected output:
 - `Microeconomics` is correctly dropped, since it fails the `credits > 3` test once that test is applied to the right group of `rows`.
 - The SQL text barely changed, four characters, but the meaning changed completely, which is exactly why relying on operator precedence to do the right thing by accident is worth avoiding whenever `AND` and `OR` appear in the same `WHERE` clause.
 
-![Parentheses grouping department choices before applying the credits greater than 3 condition](images/06_parentheses_group_conditions.png)
+![Parentheses grouping department choices before applying the credits greater than 3 condition](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_parentheses_group_conditions.png)
 
 ## NOT Reverses a Condition
 

@@ -6,6 +6,22 @@ A **`view`** solves this by giving a `query` a permanent name in the `database` 
 
 **Definition:** A `view` saves a `query` under a reusable name, always re-running against current data rather than storing a snapshot, which turns a frequently repeated, error-prone `query` into a single, consistently defined building block every downstream report can rely on.
 
+<!--
+IMAGE PROMPT  ->  generate as images/01_intro_views_naming_a_query_and_reusing_it.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Devraj maintains reporting for a logistics company, and one particular query, joining shipments to drivers and filtering for anything still in transit, gets copy-pasted into nearly every dashboard, script, and ad-hoc report his team writes. Every copy is a.
+
+ON-IMAGE TEXT: show a short bold title "Views Naming A Query And Reusing It" plus only these few labels, large and legible: Query, Join, View. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for views naming a query and reusing it](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_views_naming_a_query_and_reusing_it.png)
+
 ## Creating a View from an Existing Query
 
 The `shipments` and `drivers` `tables` set up the recurring `query` Devraj's team keeps duplicating.
@@ -82,7 +98,7 @@ Expected output:
 - `SELECT * FROM active_shipments` runs exactly as if `active_shipments` were a real `table`, even though it is really just this saved `query`, re-executed fresh every time it is referenced.
 - Anyone on Devraj's team can write `SELECT * FROM active_shipments` instead of retyping the `join` and the exact spelling of the status filter, eliminating the inconsistency risk entirely.
 
-![A view saves one named query definition that many reports can reuse](images/01_view_named_query_reused_by_reports.png)
+![A view saves one named query definition that many reports can reuse](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_view_named_query_reused_by_reports.png)
 
 ## A View Always Reflects Current Data
 
@@ -110,7 +126,7 @@ Expected output (from the second `SELECT`, after the `UPDATE`):
 
 After Manoj's Mumbai shipment is marked delivered, querying `active_shipments` again immediately reflects that change, showing only the one remaining in-transit shipment, even though nothing about the `view` itself was touched. This is the core behavior that distinguishes a plain `view` from the `materialized view` covered later in this chapter: a plain `view` has no storage of its own and is always exactly as current as the underlying `tables`.
 
-![An ordinary view stores no data and always reflects the current base tables](images/02_ordinary_view_no_storage_always_current.png)
+![An ordinary view stores no data and always reflects the current base tables](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_ordinary_view_no_storage_always_current.png)
 
 ## Views Can Be Queried Like Any Table
 

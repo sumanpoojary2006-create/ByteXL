@@ -4,6 +4,10 @@ Everything in this unit so far has been demonstrated by typing `BEGIN`, some sta
 
 Closing out this unit means connecting everything learned about `transactions`, ACID, concurrency, and `recovery`, back to the actual pattern a developer writes day to day.
 
+**Definition:** Every guarantee this unit has built, atomicity, consistency, isolation, durability, concurrency control, and crash `recovery`, ultimately exists so that application code can follow one simple, disciplined pattern: begin a `transaction` around exactly the statements that must succeed or fail together, commit only when all of them succeed, roll back on any failure, keep the `transaction` short, and retry safely when a deadlock is the cause.
+
+![Intro visual for transactions in application code](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_transactions_in_application_code.png)
+
 ## Auto-commit: The Default Behavior Worth Knowing About
 
 Most `database` client libraries default to auto-commit mode, where every individual statement is automatically wrapped in its own tiny `transaction` and committed immediately, unless the code explicitly starts a `transaction` itself.
@@ -23,7 +27,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
     balance NUMERIC(10, 2) CHECK (balance >= 0)
@@ -34,12 +38,12 @@ INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00), (2, 3000.00);
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-UPDATE accounts SET balance = balance - 500.00 WHERE account_id = 1;
-UPDATE accounts SET balance = balance + 500.00 WHERE account_id = 2;
-
-SELECT * FROM accounts;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaezan" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -61,14 +65,12 @@ This is the behavior every application-level bug about "half a transfer went thr
 
 The fix, already demonstrated throughout this unit, is for application code to explicitly start a `transaction` before the first related statement and commit only after the last one succeeds.
 
-```postgresql with=init.sql
-BEGIN;
-UPDATE accounts SET balance = balance - 500.00 WHERE account_id = 1;
-UPDATE accounts SET balance = balance + 500.00 WHERE account_id = 2;
-COMMIT;
-
-SELECT * FROM accounts;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaezm3" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -81,18 +83,12 @@ Expected output:
 
 In real application code, this pattern is usually expressed with a try-and-catch style structure, roughly: open a `connection`, begin a `transaction`, run the statements the business operation requires, and commit only if every one of them succeeded; if any step raises an error, catch it and roll back instead of committing. Written as pseudocode alongside the SQL it wraps, the shape looks like this:
 
-```postgresql with=init.sql
--- try:
-BEGIN;
-UPDATE accounts SET balance = balance - 500.00 WHERE account_id = 1;
-UPDATE accounts SET balance = balance + 500.00 WHERE account_id = 2;
-COMMIT;
--- except any error during the above:
---     ROLLBACK;
---     re-raise or report the failure to the caller
-
-SELECT * FROM accounts;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaezw8" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -105,21 +101,18 @@ Expected output:
 
 The `COMMIT` only ever runs if both statements succeeded without error; any exception raised by the `database`, a `constraint` violation, a deadlock, a lost `connection`, skips straight to the `ROLLBACK` branch instead, guaranteeing the `transaction` never commits a partial result.
 
-![Application transaction flow committing on success and rolling back on error](images/09_app_transaction_commit_or_rollback_flow.png)
+![Application transaction flow committing on success and rolling back on error](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_app_transaction_commit_or_rollback_flow.png)
 
 ## Keeping Transactions Short
 
 Every `lock` a `transaction` holds, covered in the concurrency control chapter, stays held until that `transaction` commits or rolls back. A `transaction` left open for a long time, whether because it is doing slow, unrelated work in between statements or because a bug forgot to commit at all, holds its `locks` the entire time, potentially blocking every other `transaction` that needs the same `rows`.
 
-```postgresql with=init.sql
-BEGIN;
-SELECT balance FROM accounts WHERE account_id = 1 FOR UPDATE;
--- A well-behaved application does the minimum necessary work here,
--- then commits quickly, rather than pausing for a slow external call,
--- like a network request or a user confirmation, while still holding this lock.
-UPDATE accounts SET balance = balance - 100.00 WHERE account_id = 1;
-COMMIT;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaf27u" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -135,19 +128,12 @@ The practical rule that follows directly from everything covered in this unit is
 
 Some failures covered in this unit, deadlocks in particular, are expected to happen occasionally under normal concurrent load and are meant to be retried, not treated as a fatal application error.
 
-```postgresql with=init.sql
--- try:
-BEGIN;
-UPDATE accounts SET balance = balance - 200.00 WHERE account_id = 1;
-UPDATE accounts SET balance = balance + 200.00 WHERE account_id = 2;
-COMMIT;
--- except deadlock error specifically:
---     ROLLBACK;
---     wait a short, small random delay;
---     retry the entire transaction from the beginning
-
-SELECT * FROM accounts;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaf2h3" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -160,7 +146,7 @@ Expected output:
 
 Because a deadlock victim's `transaction` is guaranteed to have been fully rolled back by the `database`, retrying it from scratch is always safe the application simply repeats the same `BEGIN` through `COMMIT` sequence again, and it typically succeeds the second time, once whatever `transaction` it was competing with has already finished.
 
-![Application retrying the entire transaction after a deadlock rollback](images/10_retry_transaction_after_deadlock_rollback.png)
+![Application retrying the entire transaction after a deadlock rollback](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_retry_transaction_after_deadlock_rollback.png)
 
 ## Transactions in Application Code at a Glance
 
@@ -199,9 +185,12 @@ Because a deadlock victim's `transaction` is guaranteed to have been fully rolle
 
 Write the try-and-catch style pseudocode pattern, in SQL with comments, for a `transaction` that inserts a new account and immediately transfers 100.00 into it from account 1, including a rollback branch for any failure.
 
-```postgresql with=init.sql
--- Write your transaction below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaf2t5" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

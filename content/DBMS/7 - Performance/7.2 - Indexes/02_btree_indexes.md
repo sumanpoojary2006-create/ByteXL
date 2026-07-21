@@ -6,6 +6,22 @@ PostgreSQL's default `index` type, and the default in nearly every relational `d
 
 **Definition:** A B-tree keeps an `index`'s entries in a balanced, sorted tree structure, so that even huge `tables` can be searched in just a handful of steps, and its sorted nature means the same structure naturally supports equality lookups, range `queries`, sorting, and minimum or maximum searches, all without a separate scan.
 
+<!--
+IMAGE PROMPT  ->  generate as images/02_intro_btree_indexes.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: The previous lesson treated an index as a sorted list pointing back to rows, which is accurate but leaves an important detail unexamined: how does the database actually search through that sorted structure efficiently, especially once it holds millions of.
+
+ON-IMAGE TEXT: show a short bold title "Btree Indexes" plus only these few labels, large and legible: Index, Btree, Indexes. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for btree indexes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_btree_indexes.png)
+
 ## Why CREATE INDEX Defaults to a B-Tree
 
 Every `index` created in the previous lesson, without specifying a type, was already a B-tree, since it is PostgreSQL's default.
@@ -69,7 +85,7 @@ A B-tree organizes its entries as a balanced, sorted tree:
 
 Searching a B-tree means starting at the root, comparing the target value, and following exactly one branch downward at each level, narrowing the search space enormously with each step, until reaching the leaf that holds the answer.
 
-![A B-tree is a balanced index with root, branch, and leaf levels](images/03_btree_balanced_root_branches_leaves.png)
+![A B-tree is a balanced index with root, branch, and leaf levels](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_btree_balanced_root_branches_leaves.png)
 
 ```postgresql with=init.sql
 EXPLAIN SELECT * FROM orders WHERE amount = 5000.00;
@@ -130,7 +146,7 @@ Expected output:
 
 No separate `Sort` node appears above the `Index Scan`, because the B-tree already returns matching `rows` in `amount` order, satisfying the `ORDER BY` as a side effect. This range `query` and its ordering both benefit from the same B-tree, since the matching values already sit consecutively, in sorted order, at the leaf level the `database` can walk to the start of the range and read forward until it passes the end, with no separate sorting step required afterward.
 
-![B-tree leaf values are sorted, so range scans read a contiguous run](images/04_btree_sorted_leaves_range_scan.png)
+![B-tree leaf values are sorted, so range scans read a contiguous run](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_btree_sorted_leaves_range_scan.png)
 
 ## B-Tree Indexes at a Glance
 

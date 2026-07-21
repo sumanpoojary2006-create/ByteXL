@@ -17,6 +17,22 @@ That Customer ID `column` sitting inside the Orders `table`, referring back to a
 
 **Definition:** A `foreign key` is how one `table` reaches out and anchors itself to a specific, real `row` living inside another `table`, turning two separate grids of data into one connected, trustworthy structure.
 
+<!--
+IMAGE PROMPT  ->  generate as images/04_intro_foreign_keys_linking_tables_together.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Ravi runs the back office for a small online stationery shop in Kochi. He keeps two separate registers: a Customers register with one row per customer, and an Orders register with one row per order placed. One busy Friday, an order sheet comes to him with the.
+
+ON-IMAGE TEXT: show a short bold title "Foreign Keys Linking Tables Together" plus only these few labels, large and legible: Row, Order, Foreign. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for foreign keys linking tables together](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_foreign_keys_linking_tables_together.png)
+
 ## Two Tables That Need to Talk to Each Other
 
 Look at Ravi's two `tables` side by side.
@@ -87,7 +103,7 @@ Customer ID is the `primary key` of the Customers `table`, the value that unique
 
 It is reaching across into the Customers `table` and saying, plainly, "this particular order belongs to whichever customer holds this ID." Order 5001 and order 5003 both carry Customer ID 1042, so both orders belong to Meera Pillai, even though they are two separate `rows` in a completely separate `table`.
 
-![Orders using Customer ID as a foreign key to point back to Meera's customer row](images/07_foreign_key_links_orders_to_customers.png)
+![Orders using Customer ID as a foreign key to point back to Meera's customer row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_foreign_key_links_orders_to_customers.png)
 
 ## What Makes a Column a Foreign Key
 
@@ -97,7 +113,7 @@ This relationship carries a quiet but important promise: every Customer ID that 
 
 A `foreign key` is the `database`'s way of refusing to let that dangling, meaningless reference happen in the first place.
 
-![A foreign key gate accepting orders with real customers and rejecting an orphan order](images/08_foreign_key_rejects_orphans.png)
+![A foreign key gate accepting orders with real customers and rejecting an orphan order](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_foreign_key_rejects_orphans.png)
 
 ## Why This Matters Beyond One Shop
 

@@ -4,6 +4,10 @@ Alia handles admissions for a small college, and it is the first week of term. A
 
 Alia has spent the last few weeks only ever looking at data on screen, running `SELECT` statements to check who is already enrolled, who has paid, who still owes a phone number on file. Today is different. Today she has to put a brand new `row` into the `table` herself, and the tool for that job is **`INSERT`**, the statement that adds new `rows` to a `table`.
 
+**Definition:** The **`INSERT` statement** adds one or more new rows to a table by supplying values for the table's columns.
+
+![Intro visual for insert adding new rows](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_insert_adding_new_rows.png)
+
 ## The Anatomy of INSERT INTO
 
 Before the `INSERT`, the `students` `table` holds these eight `rows`, with no Diya Kulkarni yet:
@@ -39,7 +43,7 @@ Expected output, after the `INSERT`:
 
 Alia's new student, Diya Kulkarni, now has a `row` of her own. The `column` list right after the `table` name tells the `database` exactly which `column` each value in `VALUES` belongs to, so no value ever gets misread as something it isn't. The final `SELECT` is not part of the `INSERT` itself; it is Alia simply confirming that the `row` landed the way she expects.
 
-![INSERT adding Diya as a new row in the students table](images/01_insert_adds_new_row.png)
+![INSERT adding Diya as a new row in the students table](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_insert_adds_new_row.png)
 
 ### Hands-On Practice: Add the First Row
 
@@ -47,7 +51,7 @@ The OneCompiler exercise uses two files. `init.sql` creates and populates the st
 
 First, `init.sql` prepares the source `tables`:
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE students (
     student_id INTEGER PRIMARY KEY,
     full_name TEXT,
@@ -104,14 +108,12 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 
 Then the active query file runs the `INSERT` and confirms it:
 
-```postgresql with=init.sql
-INSERT INTO students (student_id, full_name, email, city, phone, joined_on)
-VALUES (9, 'Diya Kulkarni', 'diya.kulkarni@campusmail.edu', 'Pune', '9845066666', '2025-02-14');
-
-SELECT student_id, full_name, city, phone
-FROM students
-WHERE student_id = 9;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafnrx" 
+ width="100%"
+></iframe>
 
 Run the active query file. OneCompiler loads `init.sql` first, so the `INSERT` adds Diya to the freshly built eight-row `table`, and the `SELECT` returns the single new `row` shown in the expected-output table above.
 
@@ -134,15 +136,12 @@ Batching `rows` like this is not just shorter to type; the `database` also treat
 
 Keep the same `init.sql` file and change only the active query file:
 
-```postgresql with=init.sql
-INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES
-(10, 'Kabir Sethi', 'kabir.sethi@campusmail.edu', 'Chennai', '9845077777', '2025-02-15'),
-(11, 'Meera Das', 'meera.das@gmail.com', NULL, '9845088888', '2025-02-15');
-
-SELECT student_id, full_name, city
-FROM students
-WHERE student_id IN (10, 11);
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafp9n" 
+ width="100%"
+></iframe>
 
 ## Naming Columns Versus Relying on Column Order
 
@@ -167,19 +166,18 @@ This works, and the new course lands correctly, but only because Alia happened t
 - If a future change to the `table` adds a `column` in the middle, or if two `column` values are simply written in the wrong order by mistake, a positional `INSERT` places every later value into the wrong `column` with no error at all, since the `database` has no way to know that "Computer Science" was meant to be a department and not a title.
 - Naming the `columns` explicitly, as the earlier examples did, removes that guesswork entirely: the statement keeps working correctly even if the `table`'s `column` order changes later, and a reader checking the statement months from now can see exactly what value was intended for what `column` without needing to look up the `table` definition first.
 
-![INSERT column names aligned with matching values to avoid positional mistakes](images/02_insert_name_columns_match_values.png)
+![INSERT column names aligned with matching values to avoid positional mistakes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_insert_name_columns_match_values.png)
 
 ### Hands-On Practice: Insert Without a Column List
 
 Keep the same `init.sql` file and change only the active query file:
 
-```postgresql with=init.sql
-INSERT INTO courses VALUES (106, 'Operating Systems', 'Computer Science', 4);
-
-SELECT course_id, title, department, credits
-FROM courses
-WHERE course_id = 106;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafpk4" 
+ width="100%"
+></iframe>
 
 ## INSERT at a Glance
 
@@ -214,9 +212,12 @@ WHERE course_id = 106;
 
 A new student, Farhan Ali, has just registered from Hyderabad with no phone number on file yet. Add him to the roster with `student_id` 12, and confirm the `row` landed correctly.
 
-```postgresql with=init.sql
--- Write your INSERT and a confirming SELECT below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafpvb" 
+ width="100%"
+></iframe>
 
 A working answer is `INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES (12, 'Farhan Ali', 'farhan.ali@campusmail.edu', 'Hyderabad', NULL, '2025-02-16');` followed by `SELECT student_id, full_name, city, phone FROM students WHERE student_id = 12;`. Expected output:
 

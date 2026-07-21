@@ -10,6 +10,10 @@ Priya's reports so far have all come from one `table`, but the founders' latest 
 
 None of these pieces are new on their own; what is new is seeing exactly how they fit together and in what order the `database` actually applies them.
 
+**Definition:** `Joins`, `row` filters, grouping, group filters, and sorting are not separate skills; they are stages of one pipeline that runs in a fixed order regardless of how the `query` is written, and understanding that order explains every rule about what each clause is and is not allowed to reference.
+
+![Intro visual for combining aggregation with sorting filtering and j](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_combining_aggregation_with_sorting_filtering_and.png)
+
 ## Setting Up a Second Table to Join
 
 Region information lives on a separate `customers` `table`, not on `orders` itself, which is a completely normal way for a real `schema` to be organized.
@@ -44,7 +48,7 @@ The OneCompiler activity keeps setup and practice separate. `init.sql` creates a
 
 ## Hands-On Setup: Prepare the Data
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE customers (
     customer_name TEXT PRIMARY KEY,
     region TEXT
@@ -77,12 +81,12 @@ INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUE
 
 Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
 
-```postgresql with=init.sql
-SELECT c.region, SUM(o.amount) AS region_revenue
-FROM orders o
-JOIN customers c ON o.customer_name = c.customer_name
-GROUP BY c.region;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajrug" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -94,19 +98,18 @@ Expected output:
 
 The `JOIN` attaches each order to its customer's region before grouping ever happens, so `GROUP BY c.region` can collapse `rows` by a `column` that was never on the `orders` `table` to begin with. Aggregation and `joins` combine naturally this way: the `join` widens each `row` with extra `columns`, and grouping then works with whichever of those `columns` it needs.
 
-![JOIN adding customer region to order rows before GROUP BY summarizes revenue by region](images/07_join_before_group_by_region.png)
+![JOIN adding customer region to order rows before GROUP BY summarizes revenue by region](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_join_before_group_by_region.png)
 
 ## Layering in a Row-Level Filter
 
 The founders' request also wants only orders placed after April 7. That is a `row`-level condition, so it belongs in `WHERE`, applied before grouping, exactly as covered when `WHERE` and `HAVING` were first compared.
 
-```postgresql with=init.sql
-SELECT c.region, SUM(o.amount) AS region_revenue
-FROM orders o
-JOIN customers c ON o.customer_name = c.customer_name
-WHERE o.order_date > '2025-04-07'
-GROUP BY c.region;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajs5u" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -122,15 +125,12 @@ Only orders 5 through 8 survive the `WHERE` clause, and grouping happens on that
 
 The last two pieces, "at least two customers" and "sorted highest revenue first," need `HAVING` on a `COUNT(DISTINCT ...)` and an `ORDER BY` on the computed total.
 
-```postgresql with=init.sql
-SELECT c.region, SUM(o.amount) AS region_revenue, COUNT(DISTINCT o.customer_name) AS customer_count
-FROM orders o
-JOIN customers c ON o.customer_name = c.customer_name
-WHERE o.order_date > '2025-04-07'
-GROUP BY c.region
-HAVING COUNT(DISTINCT o.customer_name) >= 2
-ORDER BY region_revenue DESC;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajsfy" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -189,15 +189,18 @@ Every clause used above is written in a fixed syntax order (`SELECT`, `FROM`, `W
 
 This ordering is exactly why `WHERE` cannot reference `SUM(amount)`, that aggregate does not exist yet at step 2, and why `ORDER BY` can reference a `column` alias defined in `SELECT`, since sorting happens last, after the alias already exists.
 
-![Logical execution order of an aggregate SQL query from FROM JOIN through ORDER BY](images/08_logical_query_execution_order.png)
+![Logical execution order of an aggregate SQL query from FROM JOIN through ORDER BY](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_logical_query_execution_order.png)
 
 ## Your Turn
 
 The founders want one more cut: total revenue and order count per category, but only for orders from the West and South regions, only categories with more than one order, sorted by revenue descending. Write that `query` against the `orders` and `customers` `tables` above.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajsry" 
+ width="100%"
+></iframe>
 
 - If your `query` `joins` `orders` to `customers`, filters with `WHERE c.region IN ('West', 'South')`, groups by `o.category`, filters with `HAVING COUNT(*) > 1`.
 - It then orders by summed revenue descending.

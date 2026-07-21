@@ -10,6 +10,10 @@ What Vivek needs is a shared visual language, one where a rectangle always means
 
 That shared language is the **ER diagram**, a standardised way of drawing entities, their attributes, and the relationships between them, using a small, fixed set of shapes and lines so that anyone trained in the notation can read the design at a glance, without needing the original designer in the room to explain it.
 
+**Definition:** An ER diagram gives a design a shared visual vocabulary: rectangles for entities, ovals for attributes, diamonds for relationships, with underlines, dashes, and double outlines layered on to capture identifying, derived, and multivalued attributes, and with labelled or crow's-foot lines capturing cardinality and participation together.
+
+![Intro visual for drawing an er diagram notation and conventions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_drawing_an_er_diagram_notation_and_conventions.png)
+
 ## The Core Shapes and What Each One Means
 
 An ER diagram leans on a small, disciplined set of shapes, and the discipline is the entire point: reusing the same shape for the same kind of idea every single time is what makes the diagram readable to a stranger.
@@ -54,7 +58,7 @@ Three shapes carry three different meanings:
 
 Every shape in the diagram is connected to something by a plain line, and the lines themselves carry no separate meaning beyond "this thing belongs to, or takes part in, that thing." An oval floating with no line to any rectangle would be meaningless, because an attribute detached from its entity is not describing anything.
 
-![ER diagram notation using rectangles for entities, ovals for attributes, and diamonds for relationships](images/09_er_diagram_core_notation.png)
+![ER diagram notation using rectangles for entities, ovals for attributes, and diamonds for relationships](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_er_diagram_core_notation.png)
 
 ## Marking the Finer Details Within Each Shape
 
@@ -134,7 +138,7 @@ Total participation is layered onto the same line using a double line instead of
 
 In Vivek's hospital diagram, the line between Patient and the Admits diamond is doubled, because every admitted patient must have an admitting doctor, while the line between Doctor and the same diamond stays single, because a doctor can currently have zero admitted patients.
 
-![ER notation details for identifying, composite, derived, multivalued, cardinality, and total participation](images/10_er_diagram_detail_notation.png)
+![ER notation details for identifying, composite, derived, multivalued, cardinality, and total participation](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_er_diagram_detail_notation.png)
 
 ## Notation Legend
 

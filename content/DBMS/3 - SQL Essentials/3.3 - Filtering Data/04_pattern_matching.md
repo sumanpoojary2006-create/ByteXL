@@ -4,7 +4,7 @@ Siddharth has been asked to pull together a list of everyone still using their c
 
 What he needs is a way to match a partial shape of text rather than an exact value, and that is what **pattern matching** with `LIKE` is for.
 
-![LIKE with percent wildcard matching any email that ends in campusmail.edu](images/07_like_percent_email_pattern.png)
+![LIKE with percent wildcard matching any email that ends in campusmail.edu](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_like_percent_email_pattern.png)
 
 **Definition:** `LIKE` turns `WHERE` from a tool that only recognises exact values into one that can recognise the shape of text.
 
@@ -118,7 +118,7 @@ Expected output:
 - The pattern says "any single character, followed by the letter a, followed by anything," and all three names happen to have `a` as their second letter.
 - Compare this with `full_name LIKE 'a%'`, which would look for names starting with `a` itself, a completely different and, in this data, empty result.
 
-![LIKE patterns showing percent for many characters and underscore for exactly one character](images/08_like_percent_and_underscore_wildcards.png)
+![LIKE patterns showing percent for many characters and underscore for exactly one character](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_like_percent_and_underscore_wildcards.png)
 
 ## Case-Insensitive Matching with ILIKE
 

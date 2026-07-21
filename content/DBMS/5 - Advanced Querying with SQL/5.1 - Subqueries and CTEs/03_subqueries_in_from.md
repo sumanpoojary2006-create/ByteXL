@@ -6,6 +6,22 @@ A subquery does not have to sit inside `WHERE` producing a single value or a lis
 
 **Definition:** A subquery in `FROM`, or derived `table`, lets a `query` treat an intermediate result, especially a grouped or aggregated one, as if it were a real `table`, complete with the ability to filter, `join`, or select from it further.
 
+<!--
+IMAGE PROMPT  ->  generate as images/03_intro_subqueries_in_from.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Kabir's next report needs a two-step calculation: first, find the average salary within each department, then find which departments pay above the overall company average. The first step is a grouped query. The second step needs to treat the result of that.
+
+ON-IMAGE TEXT: show a short bold title "Subqueries In From" plus only these few labels, large and legible: Table, Query, Where. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for subqueries in from](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_subqueries_in_from.png)
+
 ## Treating a Query's Result as a Table
 
 The `employees` `table` is the same one used throughout this chapter.
@@ -104,7 +120,7 @@ Expected output:
 
 The outer `query` then treats `dept_averages` exactly like a real `table`, filtering its `rows` with a `WHERE` clause that compares `department_avg`, a `column` that only exists because the inner `query` computed it, against the company-wide average of 73000.00 from a second subquery. Engineering is the only department whose average clears the company-wide bar.
 
-![A FROM subquery producing a derived table that the outer query can filter](images/05_from_subquery_derived_table.png)
+![A FROM subquery producing a derived table that the outer query can filter](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_from_subquery_derived_table.png)
 
 ## Why a FROM Subquery Needs an Alias
 
@@ -129,7 +145,7 @@ Expected output:
 
 Leaving off `AS dept_averages` here would cause an error in most `databases`; a derived `table` without a name is not something the outer `query` can reference, even implicitly. This is one clear difference from a `WHERE` subquery, which never needs a name since it is only ever compared against, never selected from.
 
-![A derived table needing an alias name before the outer query can use it](images/06_from_subquery_requires_alias.png)
+![A derived table needing an alias name before the outer query can use it](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_from_subquery_requires_alias.png)
 
 ## Joining a Derived Table to a Real Table
 

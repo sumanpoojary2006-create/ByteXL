@@ -8,6 +8,22 @@ Most real-world performance problems trace back to a small handful of recurring 
 
 **Definition:** A missing `index` on a selective `column`, the `N+1 query` pattern hiding in application code, and a `function` or cast silently defeating an otherwise-useful `index` are three of the most common ways a real system slows down, and all three are diagnosable with the same tools covered across this unit: `EXPLAIN`, `EXPLAIN ANALYZE`, and a clear understanding of what each plan node actually means.
 
+<!--
+IMAGE PROMPT  ->  generate as images/05_intro_common_bottlenecks_missing_indexes_n1_queries_la.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Most real-world performance problems trace back to a small handful of recurring patterns, not exotic, one-off causes. With scans, indexes, plans, and join algorithms all covered individually across this unit, this lesson names the three bottlenecks Priya is.
+
+ON-IMAGE TEXT: show a short bold title "Common Bottlenecks Missing Indexes N1 Queries Larg" plus only these few labels, large and legible: Column, Query, Index. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for common bottlenecks missing indexes n1 queries larg](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_common_bottlenecks_missing_indexes_n1_queries_la.png)
+
 ## Bottleneck One: A Missing Index on a Selective Column
 
 The clearest, most mechanical bottleneck is a filter condition on a `column` with no supporting `index`, forcing a `sequential scan` even when very few `rows` actually match.
@@ -85,7 +101,7 @@ Expected output (after the index exists):
 
 The plan switches to an `index scan`, and the actual measured time drops from 8.231 ms to 0.062 ms, well over 100x faster, precisely the diagnostic workflow, run `EXPLAIN ANALYZE`, spot a `sequential scan` on a selective filter, add an `index`, confirm the plan changes.
 
-![A missing index on a selective filter forces a scan until an index shortcut is added](images/10_missing_index_selective_filter_bottleneck.png)
+![A missing index on a selective filter forces a scan until an index shortcut is added](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_missing_index_selective_filter_bottleneck.png)
 
 ## Bottleneck Two: The N+1 Query Problem
 
@@ -142,7 +158,7 @@ This single `query` retrieves the exact same data the 6-`query` loop above would
 
 That is why N+1 is such a common, costly bottleneck in real applications built on top of an object-relational mapper or any code that fetches a list and then loops.
 
-![The N+1 query problem makes one query plus many repeated child queries](images/11_n_plus_one_queries_many_round_trips.png)
+![The N+1 query problem makes one query plus many repeated child queries](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_n_plus_one_queries_many_round_trips.png)
 
 ## Bottleneck Three: Large Scans Hiding Inside a Reasonable-Looking Query
 
@@ -180,7 +196,7 @@ Expected output:
 
 Removing the cast and comparing directly against the numeric value restores the `index scan`, confirming the cast, not the `index` itself, was the actual bottleneck.
 
-![A cast or function around an indexed column can block the existing index](images/12_cast_or_function_defeats_index.png)
+![A cast or function around an indexed column can block the existing index](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_cast_or_function_defeats_index.png)
 
 ## Common Bottlenecks at a Glance
 

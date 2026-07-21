@@ -6,6 +6,22 @@ Closing out this unit means connecting everything learned about `transactions`, 
 
 **Definition:** Every guarantee this unit has built, atomicity, consistency, isolation, durability, concurrency control, and crash `recovery`, ultimately exists so that application code can follow one simple, disciplined pattern: begin a `transaction` around exactly the statements that must succeed or fail together, commit only when all of them succeed, roll back on any failure, keep the `transaction` short, and retry safely when a deadlock is the cause.
 
+<!--
+IMAGE PROMPT  ->  generate as images/05_intro_transactions_in_application_code.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Everything in this unit so far has been demonstrated by typing BEGIN, some statements, and COMMIT or ROLLBACK directly into a SQL editor. Real applications rarely work that way; a web server handling a checkout request does not have a human deciding.
+
+ON-IMAGE TEXT: show a short bold title "Transactions In Application Code" plus only these few labels, large and legible: Commit, Rollback, Transactions. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for transactions in application code](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_transactions_in_application_code.png)
+
 ## Auto-commit: The Default Behavior Worth Knowing About
 
 Most `database` client libraries default to auto-commit mode, where every individual statement is automatically wrapped in its own tiny `transaction` and committed immediately, unless the code explicitly starts a `transaction` itself.
@@ -107,7 +123,7 @@ Expected output:
 
 The `COMMIT` only ever runs if both statements succeeded without error; any exception raised by the `database`, a `constraint` violation, a deadlock, a lost `connection`, skips straight to the `ROLLBACK` branch instead, guaranteeing the `transaction` never commits a partial result.
 
-![Application transaction flow committing on success and rolling back on error](images/09_app_transaction_commit_or_rollback_flow.png)
+![Application transaction flow committing on success and rolling back on error](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_app_transaction_commit_or_rollback_flow.png)
 
 ## Keeping Transactions Short
 
@@ -162,7 +178,7 @@ Expected output:
 
 Because a deadlock victim's `transaction` is guaranteed to have been fully rolled back by the `database`, retrying it from scratch is always safe the application simply repeats the same `BEGIN` through `COMMIT` sequence again, and it typically succeeds the second time, once whatever `transaction` it was competing with has already finished.
 
-![Application retrying the entire transaction after a deadlock rollback](images/10_retry_transaction_after_deadlock_rollback.png)
+![Application retrying the entire transaction after a deadlock rollback](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_retry_transaction_after_deadlock_rollback.png)
 
 ## Transactions in Application Code at a Glance
 

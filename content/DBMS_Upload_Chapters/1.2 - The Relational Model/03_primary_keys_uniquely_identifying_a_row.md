@@ -12,6 +12,10 @@ From that point on, "Ravi Kumar, Roll No. 20456" and "Ravi Kumar, Roll No.
 
 What Tara stumbled into is one of the most important ideas in the relational model. A `table` needs some `column`, or combination of `columns`, whose value is guaranteed to be different for every single `row`, so that any one `row` can always be picked out with total certainty. That `column` is called the `table`'s **`primary key`**.
 
+**Definition:** A `primary key` is the `column`, or combination of `columns`, a `table` leans on to guarantee that every `row` can always be told apart from every other `row`, no matter how large the `table` grows or how many `rows` happen to share the same name, city, or course.
+
+![Intro visual for primary keys uniquely identifying a row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_primary_keys_uniquely_identifying_a_row.png)
+
 ## Why "Just Search by Name" Falls Apart
 
 It is tempting to think a `database` can always find the `row` it needs by searching on whatever attribute seems most natural, a name, a title, a city. The trouble is that almost none of those attributes are actually guaranteed to be unique.
@@ -49,7 +53,7 @@ Ask this `table` "give me Ravi Kumar's details," and it cannot answer with confi
 
 Without something that is guaranteed unique, a `table` cannot promise that any question about "this one `row`" has a single, correct answer.
 
-![Duplicate Ravi Kumar names becoming unambiguous only after Tara uses roll numbers as the primary key](images/05_primary_key_resolves_duplicate_names.png)
+![Duplicate Ravi Kumar names becoming unambiguous only after Tara uses roll numbers as the primary key](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_primary_key_resolves_duplicate_names.png)
 
 ## What a Primary Key Actually Guarantees
 
@@ -99,7 +103,7 @@ Roll number, by contrast, is assigned once by the college, never reused for a di
 
 Real-world `tables` reach for the same pattern constantly, because most collections of things already have some naturally unique code attached to them.
 
-![Roll number passing uniqueness, never-empty, and stability checks to become the primary key](images/06_primary_key_qualification_gates.png)
+![Roll number passing uniqueness, never-empty, and stability checks to become the primary key](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_primary_key_qualification_gates.png)
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
   <thead>

@@ -6,6 +6,22 @@ There is a more direct way to ask "does a matching `row` exist" or "does no matc
 
 **Definition:** Semi `joins` and anti `joins` answer "does a match exist" and "does no match exist" directly, using `EXISTS`, `NOT EXISTS`, `IN`, or `NOT IN`, without pulling in `columns` from the other `table` or risking duplicated `rows` the way an `INNER JOIN` or `LEFT JOIN` can.
 
+<!--
+IMAGE PROMPT  ->  generate as images/07_intro_semi_joins_and_anti_joins.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Back in the LEFT JOIN lesson, Zoya found customers with no orders by joining customers to orders and filtering for WHERE orders.orderid IS NULL. That query works, but it is solving a check-for-existence question using a tool built for combining columns, and.
+
+ON-IMAGE TEXT: show a short bold title "Semi Joins And Anti Joins" plus only these few labels, large and legible: Row, Column, Query. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for semi joins and anti joins](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_intro_semi_joins_and_anti_joins.png)
+
 ## Finding Rows That Have a Match, Without Pulling in Columns
 
 The same delivery `schema` applies here, with Neha Bhatt having no orders and Taco Town having no orders.
@@ -120,7 +136,7 @@ This behaves differently from an `INNER JOIN` in one important way:
 
 This returns four customers, everyone except Neha Bhatt.
 
-![EXISTS acting like a semi join by returning matching customers once without order columns](images/13_exists_semi_join_no_duplicates.png)
+![EXISTS acting like a semi join by returning matching customers once without order columns](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/13_exists_semi_join_no_duplicates.png)
 
 ## Finding Rows That Have No Match
 
@@ -143,7 +159,7 @@ Expected output:
 - This returns exactly one `row`, Neha Bhatt, the same answer the `LEFT JOIN ... WHERE order_id IS NULL` pattern produced earlier, but arrived at without ever `joining` a single column from `orders` into the result.
 - For a pure existence check like this one, `NOT EXISTS` states the intent more directly: "keep this customer only if no order references them," rather than "`join` every order, then throw away everything except the empty matches."
 
-![NOT EXISTS acting like an anti join by returning rows with no matching order](images/14_not_exists_anti_join_no_match.png)
+![NOT EXISTS acting like an anti join by returning rows with no matching order](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/14_not_exists_anti_join_no_match.png)
 
 ## Using IN as a Simpler Alternative for Single-Column Checks
 

@@ -4,6 +4,10 @@ Priya's one-number summaries answered the founders' first round of questions, bu
 
 What Priya actually needs is the `table` split into separate buckets, one per category, with the `aggregate functions` run separately inside each bucket. SQL's **`GROUP BY`** clause does exactly this: it partitions `rows` into groups before the `aggregate functions` ever run.
 
+**Definition:** `GROUP BY` is what turns a single flat summary into a per-category, per-customer, or per-combination breakdown, by partitioning `rows` before the `aggregate functions` run over them.
+
+![Intro visual for grouping data](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_grouping_data.png)
+
 ## Splitting Rows Into Groups
 
 The `orders` `table` from `aggregate functions` is the starting point again.
@@ -29,7 +33,7 @@ The OneCompiler activity keeps setup and practice separate. `init.sql` creates a
 
 ## Hands-On Setup: Prepare the Data
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
     customer_name TEXT,
@@ -51,11 +55,12 @@ INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUE
 
 Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
 
-```postgresql with=init.sql
-SELECT category, SUM(amount) AS category_revenue
-FROM orders
-GROUP BY category;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajqcm" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -92,23 +97,18 @@ Expected output:
 
 Fiction, Non-Fiction, and Children's books each get their own `row` in the result, and the founders' question is answered directly: Non-Fiction earns the most.
 
-![GROUP BY category sorting order rows into separate category revenue buckets](images/03_group_by_category_buckets.png)
+![GROUP BY category sorting order rows into separate category revenue buckets](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_group_by_category_buckets.png)
 
 ## Why Every Selected Column Must Be Grouped or Aggregated
 
 A common mistake when starting with `GROUP BY` is trying to select a `column` that is neither grouped on nor wrapped in an `aggregate function`.
 
-```postgresql with=init.sql
--- This is the mistake. Uncomment it in a local PostgreSQL session
--- if you want to see the GROUP BY error directly:
--- SELECT category, customer_name, SUM(amount) AS category_revenue
--- FROM orders
--- GROUP BY category;
-
-SELECT category, SUM(amount) AS category_revenue
-FROM orders
-GROUP BY category;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajqnc" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -128,17 +128,18 @@ The rule that follows from this: every `column` in the `SELECT` list must do one
 
 Either way, the `database` always knows exactly one value to produce per group.
 
-![GROUP BY selected column rule showing grouped columns and aggregate functions as allowed](images/04_group_by_selected_column_rule.png)
+![GROUP BY selected column rule showing grouped columns and aggregate functions as allowed](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_group_by_selected_column_rule.png)
 
 ## Grouping by More Than One Column
 
 Priya can group by more than one `column` at a time, which produces one group for every distinct combination of the grouped values.
 
-```postgresql with=init.sql
-SELECT customer_name, category, COUNT(*) AS orders_placed, SUM(amount) AS total_spent
-FROM orders
-GROUP BY customer_name, category;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajqx8" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -157,12 +158,12 @@ Each `row` in the result now represents one customer and one category together, 
 
 `GROUP BY` collapses `rows` into groups, but it does not control what order those groups appear in. Combining it with `ORDER BY` on the aggregated `column` gives a ranked summary.
 
-```postgresql with=init.sql
-SELECT category, SUM(amount) AS category_revenue
-FROM orders
-GROUP BY category
-ORDER BY category_revenue DESC;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajr96" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -208,9 +209,12 @@ Expected output:
 
 The founders want to know how many orders each individual customer has placed, and their total spend, ranked from the highest spender down. Write a `query` against the `orders` `table` above that returns `customer_name`, an `order_count`, and a `total_spent`, ordered by `total_spent` descending.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajrjr" 
+ width="100%"
+></iframe>
 
 If your `query` groups by `customer_name` with `COUNT(*) AS order_count` and `SUM(amount) AS total_spent`, ordered by `total_spent DESC`, Ishita Rao comes out on top with three orders totaling 1760.00.
 

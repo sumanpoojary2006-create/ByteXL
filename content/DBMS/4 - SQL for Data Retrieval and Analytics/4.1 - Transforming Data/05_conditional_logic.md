@@ -6,6 +6,22 @@ That label does not exist anywhere in the `table`, it depends on a rule applied 
 
 **Definition:** `CASE` turns a raw `column` value into whatever label, category, or calculated result a business question actually needs, checking conditions in order and returning the first match, with `ELSE` as a safety net for everything else.
 
+<!--
+IMAGE PROMPT  ->  generate as images/05_intro_conditional_logic.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Farah builds reports for a small gym chain, and the members table stores each member's total visits this month as a plain number. The front desk does not want to stare at raw visit counts; they want members labeled "Highly Active," "Active," or "At Risk" so.
+
+ON-IMAGE TEXT: show a short bold title "Conditional Logic" plus only these few labels, large and legible: Table, Query, Conditional. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for conditional logic](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_conditional_logic.png)
+
 ## Writing a Simple CASE Expression
 
 The `members` `table` tracks each member's visits for the current month.
@@ -70,7 +86,7 @@ Expected output:
 - If none of the `WHEN` conditions match, it falls back to whatever follows `ELSE`.
 - Karan's 18 visits satisfy the first condition and get "Highly Active," while Ritu's 0 visits fail both `WHEN` checks and land on "At Risk" through the `ELSE` branch.
 
-![CASE assigning activity labels by checking conditions in order](images/09_case_first_matching_condition.png)
+![CASE assigning activity labels by checking conditions in order](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_case_first_matching_condition.png)
 
 Walking through every member against the rule shows exactly which branch each one lands on:
 
@@ -193,7 +209,7 @@ Expected output:
 
 The `CASE` expression resolves to a plain number for each `row`, either 10, 5, or 2 depending on membership type, and that number is then multiplied directly by `visits_this_month`, producing a single loyalty-points `column` without a second `query` or a temporary `table`.
 
-![CASE choosing a membership multiplier before calculating loyalty points](images/10_case_multiplier_loyalty_points.png)
+![CASE choosing a membership multiplier before calculating loyalty points](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_case_multiplier_loyalty_points.png)
 
 ## Your Turn
 

@@ -8,6 +8,22 @@
 
 **Definition:** Restoring a `backup`, whether a logical `restore` reapplying a dump script or a `point-in-time recovery` replaying archived write-ahead logs to an exact moment, is only genuinely useful if it has actually been tested and verified ahead of time, since an unverified `backup` offers only the appearance of safety rather than the real thing.
 
+<!--
+IMAGE PROMPT  ->  generate as images/03_intro_restore_and_recovery.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: - A backup that has never been tested by actually restoring it is, in a very real sense, unverified: it might be corrupted, incomplete, or simply fail to apply cleanly. - If nobody tests it, nobody knows whether it works until the moment it is genuinely.
+
+ON-IMAGE TEXT: show a short bold title "Restore And Recovery" plus only these few labels, large and legible: Backup, Restore, Recovery. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for restore and recovery](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_restore_and_recovery.png)
+
 ## Restoring from a Logical Backup
 
 A logical `backup`, produced with `pg_dump` as covered in the previous lesson, is restored by running its contents against a target `database`, recreating `tables` and reloading data.
@@ -67,7 +83,7 @@ Expected output:
 - The `INSERT INTO shipments_restored` statement reloads data into the freshly created `table`, standing in for the data-loading statements a full `pg_dump`-produced `restore` script runs at scale, across every `table` in a `database`, in one automated pass.
 - The restored `table`'s contents exactly match the original, confirming the `restore` succeeded.
 
-![A logical restore rebuilds tables and reloads rows into a fresh database](images/05_logical_restore_rebuilds_database.png)
+![A logical restore rebuilds tables and reloads rows into a fresh database](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_logical_restore_rebuilds_database.png)
 
 ## Point-in-Time Recovery: Restoring to an Exact Moment
 
@@ -129,7 +145,7 @@ A disciplined operations practice periodically performs a real, full `restore`, 
 
 This is exactly the kind of check the single `query` above represents in miniature. Skipping this verification step is one of the most common, and most costly, gaps in a team's `backup` strategy: the `backups` exist, but nobody actually knows whether they work until the day they are desperately needed and turn out not to.
 
-![A backup is only trusted after a test restore verifies the restored data](images/06_test_restore_verify_backup.png)
+![A backup is only trusted after a test restore verifies the restored data](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_test_restore_verify_backup.png)
 
 ## Restore and Recovery at a Glance
 

@@ -10,6 +10,22 @@ Tanvi's next request from the marketing team is more specific than a merged mail
 
 **Definition:** `INTERSECT` isolates exactly the `rows` two `queries` have in common, and `EXCEPT` isolates the `rows` one `query` has that the other does not, with `EXCEPT` alone being sensitive to which `query` is written first.
 
+<!--
+IMAGE PROMPT  ->  generate as images/02_intro_intersect_and_except.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Tanvi's next request from the marketing team is more specific than a merged mailing list: - First, she needs to know exactly which customers shop both online and in-store, for a special cross-channel loyalty reward. - Then, separately, she needs to know which.
+
+ON-IMAGE TEXT: show a short bold title "Intersect And Except" plus only these few labels, large and legible: Intersect, Except, Tanvi. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for intersect and except](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_intersect_and_except.png)
+
 ## Finding Rows Common to Both Queries
 
 The same two customer `tables` from the `UNION` lesson apply here.
@@ -78,7 +94,7 @@ Expected output:
 - Here, that means a `row` must have the exact same `customer_name` and `email` in both `online_customers` and `store_customers` to survive.
 - Only Kavya Nair qualifies, since she is the one customer whose full `row` appears identically in both `tables`, which is exactly the cross-channel shopper list Tanvi needs for the loyalty reward.
 
-![INTERSECT keeping only the customer row that appears in both result sets](images/03_intersect_common_rows.png)
+![INTERSECT keeping only the customer row that appears in both result sets](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intersect_common_rows.png)
 
 ## Finding Rows in One Query but Not the Other
 
@@ -99,7 +115,7 @@ Expected output:
 
 This returns Aditi Kulkarni and Rohan Das, the two online customers who do not appear anywhere in `store_customers`, exactly the list the "visit us in person" campaign needs. Order matters with `EXCEPT`: this `query` starts from `online_customers` and subtracts `store_customers`, which is a different question from starting with `store_customers` and subtracting `online_customers`.
 
-![EXCEPT returning rows from the first customer list after subtracting the second list](images/04_except_first_minus_second.png)
+![EXCEPT returning rows from the first customer list after subtracting the second list](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_except_first_minus_second.png)
 
 ## Why EXCEPT Is Not Symmetric
 

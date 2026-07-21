@@ -9,6 +9,10 @@ Both requests sound like they want "a version of the catalogue," but they want c
 - The librarian wants fewer `rows`, all of the `columns`, but only the ones that meet her price condition.
 - The volunteer wants every `row`, but only two of the `columns`. `Relational algebra` gives each of these two needs its own dedicated operation. Picking out `rows` that satisfy a condition is called **selection**, written with the Greek letter sigma, and picking out certain `columns` is called **projection**, written with the Greek letter pi. Learning to tell these two apart cleanly is the first real skill worth building here.
 
+**Definition:** **Selection** chooses the rows of a relation that satisfy a condition, while **projection** chooses which columns appear in the result.
+
+![Intro visual for selection](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_selection.png)
+
 ## The Catalogue Rohan Is Working With
 
 Everything that follows works off one small relation, a simplified slice of Rohan's Books `table`:
@@ -130,7 +134,7 @@ Applied to the same Books relation, only one `row` survives:
 
 Whether the condition is a single check or several joined together, the operation is still sigma, still working `row` by `row`, still leaving every `column` exactly as it was.
 
-![Selection keeps matching rows while projection keeps chosen columns](images/03_selection_vs_projection.png)
+![Selection keeps matching rows while projection keeps chosen columns](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_selection_vs_projection.png)
 
 ## Projection: Keeping the Columns That Matter
 
@@ -202,7 +206,7 @@ Then projection strips that narrowed relation down to just the title `column`:
 
 This chaining is exactly the "closure" idea put to work: because sigma's output is a relation and pi's input is a relation, the two snap together cleanly, one operation feeding directly into the next, with no special glue code required in between.
 
-![A selection for mystery books feeding into a projection of only the title column](images/04_selection_then_projection_chain.png)
+![A selection for mystery books feeding into a projection of only the title column](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_selection_then_projection_chain.png)
 
 ## Selection and Projection at a Glance
 

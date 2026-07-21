@@ -6,6 +6,22 @@ He laughs, not unkindly, and pulls up three very different systems already runni
 
 **Definition:** A **database type** is a category based on how data is organized and related. Relational databases use tables, document databases store flexible documents, key-value databases pair unique keys with values, and graph databases represent data as connected nodes and edges.
 
+<!--
+IMAGE PROMPT  ->  generate as images/05_intro_types_of_databases.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Kiran, a final-year student interning with a small software team, is given her first real task: help sketch out how the food delivery app her team is building should store its data. She assumes there is exactly one correct way to build a database, the way.
+
+ON-IMAGE TEXT: show a short bold title "Types Of Databases" plus only these few labels, large and legible: Types, Databases, Kiran. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for types of databases](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_types_of_databases.png)
+
 ## The Relational Model: Neat Rows and Columns
 
 A relational `database` stores data in `tables`, `rows`, and `columns`, similar to a strict, disciplined spreadsheet with fixed rules about what each `column` may hold and how separate `tables` connect to one another. The order history her team's app needs to keep, every order, its customer, its restaurant, and its final bill, fits this shape naturally, because every order has the same fields:
@@ -33,7 +49,7 @@ A document `database` stores each record as a single, self-contained bundle, oft
 
 A relational `table` would resist this kind of variation, since every `row` in a relational `table` is expected to share the same `columns`. A document `database` is built to embrace that variation rather than fight it.
 
-![Relational tables, key-value lockers, and flexible documents matched to their natural data shapes](images/09_three_database_models.png)
+![Relational tables, key-value lockers, and flexible documents matched to their natural data shapes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_three_database_models.png)
 
 ## Comparing the Three Shapes
 
@@ -76,7 +92,7 @@ The same app likely reaches for a key-value store for login sessions and a docum
 
 A habit worth carrying forward from this internship onward: before reaching for any particular `database` technology, ask what shape the data naturally takes on its own, structured and interconnected, a simple key-driven lookup, or flexible and record by record, and let that answer, not familiarity, decide the tool. This course chooses to go deep on one shape first.
 
-![One application choosing relational, key-value, and document stores for different jobs](images/10_choose_database_by_data_shape.png)
+![One application choosing relational, key-value, and document stores for different jobs](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_choose_database_by_data_shape.png)
 
 ## Your Turn: Match the Data to Its Shape
 

@@ -6,6 +6,22 @@ Pulling the whole `table` and cutting it down to five `rows` in whatever code re
 
 **Definition:** `LIMIT` trims a result down to a manageable number of `rows`, and `OFFSET` lets a `query` skip past `rows` already handled, together making dashboard previews and paginated `views` practical without ever pulling more data than a screen can use.
 
+<!--
+IMAGE PROMPT  ->  generate as images/06_intro_limiting_results.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Tanvi is building a small dashboard widget titled "Recent Enrollments" for the department office's home screen, and the design only has room for five rows. The enrollments table behind it, though, holds every enrollment ever recorded, and that number only.
+
+ON-IMAGE TEXT: show a short bold title "Limiting Results" plus only these few labels, large and legible: Table, Limiting, Results. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for limiting results](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_limiting_results.png)
+
 ## Cutting a Result Down to N Rows
 
 The enrollments `table` links students to the courses they have taken, along with the date they enrolled and, once available, a grade. It holds this data:
@@ -108,7 +124,7 @@ The enrollments `table` has ten `rows` in it, but this `query` returns exactly f
 
 This is precisely Tanvi's dashboard widget, in one `query`, with the `database` doing the trimming instead of any application code downstream.
 
-![ORDER BY newest first followed by LIMIT 5 keeping only the first five rows](images/11_limit_first_rows_after_order.png)
+![ORDER BY newest first followed by LIMIT 5 keeping only the first five rows](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_limit_first_rows_after_order.png)
 
 ## Why LIMIT Needs ORDER BY to Mean Anything Useful
 
@@ -158,7 +174,7 @@ Expected output:
 
 This returns the next five most recent enrollments, the ones ranked sixth through tenth by enrollment date, since the first five were already shown on an earlier page and this `query` skips past them with `OFFSET 5`. A page 3 request, if the data were large enough, would simply change `OFFSET 5` to `OFFSET 10`, skipping the first ten `rows` before collecting the next batch of five.
 
-![OFFSET 5 skipping the first five rows before LIMIT 5 collects the next page](images/12_offset_pagination.png)
+![OFFSET 5 skipping the first five rows before LIMIT 5 collects the next page](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_offset_pagination.png)
 
 ## LIMIT and OFFSET at a Glance
 

@@ -9,7 +9,9 @@ The tool she reaches for is called a **`functional dependency`**, and it says so
 - If CustomerID C12 always means the shop is Ilyas Bakery Supplies, and it can never mean anything else, then CustomerID determines CustomerName.
 - `Functional dependencies` are the precise, rule-based foundation that every later decision about splitting or keeping a `table` rests on, and Meera spends her first afternoon simply writing them down.
 
-![Functional dependency shown as X determining Y with CustomerID and RollNumber examples](images/03_functional_dependency_x_determines_y.png)
+![Functional dependency shown as X determining Y with CustomerID and RollNumber examples](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_functional_dependency_x_determines_y.png)
+
+**Definition:** A `functional dependency` turns "these `columns` seem related" into a precise, testable rule: given a value in one `column`, exactly one value in another `column` is guaranteed, every time.
 
 ## What "X Determines Y" Actually Means
 
@@ -102,7 +104,7 @@ Meera spots a second, subtler pattern while looking at a simplified Orders `tabl
 
 This two-hop chain, where a `column` depends on the key only indirectly, through another non-key `column`, is called a **transitive dependency**. Meera flags it for later, sensing that a fact reached only by a detour through another fact is probably not sitting in the right `table`.
 
-![Dependency checker comparing full dependency, partial dependency, and transitive dependency](images/04_dependency_checker_partial_transitive.png)
+![Dependency checker comparing full dependency, partial dependency, and transitive dependency](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_dependency_checker_partial_transitive.png)
 
 ## Functional Dependencies at a Glance
 

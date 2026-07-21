@@ -15,6 +15,22 @@ What Meera is really asking for are three classic comparisons between two relati
 
 **Definition:** Union, intersection, and difference let a `database` compare two relations the way set theory compares two collections, but only once those relations are union-compatible, meaning they agree on the number of `columns` and the domain each `column` draws from.
 
+<!--
+IMAGE PROMPT  ->  generate as images/03_intro_set_operations.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Meera coordinates student clubs on campus, and this term she has been handed an awkward request from the events office: they want one clean list of every student who belongs to either the Coding Club or the Robotics Club, another list of students who belong.
+
+ON-IMAGE TEXT: show a short bold title "Set Operations" plus only these few labels, large and legible: Column, Operations, Meera. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for set operations](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_set_operations.png)
+
 ## The Two Club Relations
 
 Here are Meera's two relations, trimmed down to just the `column` that matters:
@@ -76,7 +92,7 @@ Asking "which `rows` appear in both" would be meaningless, a student ID and a bo
 
 Two relations can have entirely different `column` names and still be union-compatible, what matters is the number of `columns` and the domain each one draws from, not the labels typed above them.
 
-![Union-compatible club rosters passing the shape and domain check while book titles are rejected](images/06_union_compatibility_shape_domain.png)
+![Union-compatible club rosters passing the shape and domain check while book titles are rejected](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_union_compatibility_shape_domain.png)
 
 ## Union: Everyone in Either Relation
 
@@ -153,7 +169,7 @@ The difference between two union-compatible relations keeps the `rows` that appe
 
 S104 and S107 are removed because they also appear in the Robotics Club relation, leaving only the coding-only members. Notice that reversing the operation, Robotics Club minus Coding Club, would give a different answer entirely, just S112, the one robotics member who never joined coding. Difference is the one set operation in this trio where the order the relations are written in changes the result.
 
-![Union, intersection, and coding-minus-robotics difference applied to two club rosters](images/05_union_intersection_difference.png)
+![Union, intersection, and coding-minus-robotics difference applied to two club rosters](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_union_intersection_difference.png)
 
 ## Set Operations at a Glance
 

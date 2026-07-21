@@ -4,6 +4,10 @@ The `prepared statements` lesson, back in the application-code chapter, briefly 
 
 This attack has a name, **SQL injection**, and it remains one of the most common, most damaging vulnerabilities in real software, precisely because the mistake that causes it, building SQL by string concatenation, is so easy to write without realizing the danger. This lesson revisits the mechanism in more depth and lays out the full set of defenses, `prepared statements` as the primary one, backed by everything covered earlier in this chapter.
 
+**Definition:** SQL injection happens when untrusted input is allowed to become part of a `query`'s structure rather than staying confined to a value being compared or inserted, and `prepared statements` prevent this by construction, keeping structure and data permanently separate, with input validation and `least privilege` serving as valuable additional layers rather than substitutes for that primary defense.
+
+![Intro visual for sql injection prevention](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_sql_injection_prevention.png)
+
 ## A More Damaging Injection Example
 
 The earlier example returned extra `rows`; a real injection can go much further, touching data the `query` was never meant to involve at all.
@@ -23,7 +27,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     status TEXT
@@ -34,17 +38,12 @@ INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'deliv
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
--- Imagine application code building a query like this:
--- shipment_id_input = "1; DROP TABLE shipments; --"
--- sql_text = "SELECT * FROM shipments WHERE shipment_id = " + shipment_id_input
--- If the database allowed multiple statements per call, this would become:
--- SELECT * FROM shipments WHERE shipment_id = 1; DROP TABLE shipments; --
--- The semicolon ends the intended SELECT, DROP TABLE shipments is then run
--- as a completely separate, second statement, and -- comments out
--- whatever trailing text the original query template had left over.
-SELECT * FROM shipments WHERE shipment_id = 1;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajeqp" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -57,18 +56,18 @@ This `SELECT` itself runs safely; the commented-out lines above it illustrate wh
 - It can delete, modify, or destroy data entirely.
 - Depending on the `database` account's granted privileges, it can reach into `tables` the application was never designed to touch at all, exactly the blast radius the least-privilege lesson in this chapter warned about.
 
-![SQL injection happens when input is allowed to change the query structure](images/09_sql_injection_changes_query_structure.png)
+![SQL injection happens when input is allowed to change the query structure](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_sql_injection_changes_query_structure.png)
 
 ## Prepared Statements Prevent Injection by Construction
 
 The core defense, already introduced in the application-code chapter, is worth restating precisely here: a `prepared statement` never lets user-supplied text become part of the `query`'s structure, no matter what that text contains.
 
-```postgresql with=init.sql
-PREPARE get_shipment (INTEGER) AS
-SELECT * FROM shipments WHERE shipment_id = $1;
-
-EXECUTE get_shipment(1);
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajf2a" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -84,22 +83,12 @@ Expected output:
 
 It might seem like carefully checking and sanitizing user input before building a `query` would be enough on its own. It is a reasonable additional layer, but it is not a reliable substitute for `prepared statements`, since it depends entirely on the validation logic anticipating every possible dangerous pattern, an approach that has repeatedly proven incomplete in real-world security history.
 
-```postgresql with=init.sql
-PREPARE get_shipment (INTEGER) AS
-SELECT * FROM shipments WHERE shipment_id = $1;
-
-EXECUTE get_shipment(1);
-
--- A validation-only approach, without prepared statements, might try to
--- reject any input containing a semicolon or the word "DROP":
--- if ";" in user_input or "DROP" in user_input.upper():
---     reject the request
--- This can still be bypassed by encoding, case variations, or SQL
--- constructs the validation logic simply did not anticipate.
--- Prepared statements avoid this arms race entirely, since the parameter
--- is never treated as SQL syntax regardless of its content.
-SELECT * FROM shipments WHERE shipment_id = 1;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajfaz" 
+ width="100%"
+></iframe>
 
 Expected output (from the `EXECUTE` and the final `SELECT`, both querying `shipment_id = 1`):
 
@@ -113,15 +102,12 @@ Input validation still has real value, rejecting obviously malformed input early
 
 Even with `prepared statements` used everywhere, the least-privilege principle from earlier in this chapter provides a valuable second line of defense: if an injection vulnerability somehow still existed, the damage it could do is bounded by what the compromised `database` account was actually granted.
 
-```postgresql with=init.sql
-PREPARE get_shipment (INTEGER) AS
-SELECT * FROM shipments WHERE shipment_id = $1;
-
-EXECUTE get_shipment(1);
-
-CREATE ROLE web_app WITH LOGIN PASSWORD 'change_this_in_real_use';
-GRANT SELECT, INSERT ON shipments TO web_app;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajfnv" 
+ width="100%"
+></iframe>
 
 Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
 
@@ -129,7 +115,7 @@ A `web_app` `role` granted only `SELECT` and `INSERT` on `shipments`, with no `D
 
 This is exactly why layered defenses matter: `prepared statements` should make injection impossible in the first place, and `least privilege` limits the damage in case some other, unanticipated flaw ever slips through.
 
-![Prepared statements, input validation, and least privilege form defense in depth](images/10_sql_injection_defense_in_depth.png)
+![Prepared statements, input validation, and least privilege form defense in depth](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_sql_injection_defense_in_depth.png)
 
 ## SQL Injection Prevention at a Glance
 
@@ -164,17 +150,12 @@ This is exactly why layered defenses matter: `prepared statements` should make i
 
 Rewrite the vulnerable, string-concatenation-style `query` from the beginning of this lesson as a safe, `prepared statement`, and explain in a comment exactly why the injected value can no longer change the `query`'s behavior.
 
-```postgresql with=init.sql
-PREPARE get_shipment (INTEGER) AS
-SELECT * FROM shipments WHERE shipment_id = $1;
-
-EXECUTE get_shipment(1);
-
-CREATE ROLE web_app WITH LOGIN PASSWORD 'change_this_in_real_use';
-GRANT SELECT, INSERT ON shipments TO web_app;
-
--- Write your prepared statement, execution, and comment below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajfyw" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

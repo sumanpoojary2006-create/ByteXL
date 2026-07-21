@@ -11,6 +11,22 @@ Naming each one clearly is what makes the next lessons, on `locking` and `isolat
 
 **Definition:** `Dirty reads`, non-repeatable reads, phantom reads, and lost updates each name a specific way concurrent `transactions` can interfere with each other, giving a precise vocabulary for problems that would otherwise all just look like unpredictable bugs under load.
 
+<!--
+IMAGE PROMPT  ->  generate as images/02_intro_concurrency_problems.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: The double-booking scenario from the previous lesson is one specific example of a broader family of problems that show up whenever transactions overlap in time. Database theory gives each pattern in that family a precise name, so that a specific symptom can.
+
+ON-IMAGE TEXT: show a short bold title "Concurrency Problems" plus only these few labels, large and legible: Concurrency, Problems, Double. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for concurrency problems](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_concurrency_problems.png)
+
 ## Dirty Reads: Seeing Data That Was Never Actually Committed
 
 A `dirty read` happens when one `transaction` reads a change made by another `transaction` that has not yet committed, and might still be rolled back.
@@ -71,7 +87,7 @@ Expected output:
 - The final `SELECT` correctly shows 50, since PostgreSQL's default isolation level prevents `dirty reads` entirely, a concurrent `transaction` is never allowed to see this kind of in-progress, uncommitted change, exactly the isolation guarantee covered in the previous chapter.
 - `Dirty reads` are catalogued here because some `databases`, or some deliberately relaxed isolation levels, do allow them, and knowing the name of the problem is what makes a setting like "read uncommitted" understandable later in this chapter.
 
-![Dirty read showing one transaction reading an uncommitted value that later rolls back](images/03_dirty_read_uncommitted_then_rollback.png)
+![Dirty read showing one transaction reading an uncommitted value that later rolls back](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_dirty_read_uncommitted_then_rollback.png)
 
 ## Non-Repeatable Reads: The Same Query, Two Different Answers
 
@@ -151,13 +167,13 @@ Expected output 2:
 
 The new `row` was not a value that changed underneath Transaction A, it is an entirely new `row` matching a condition Transaction A was relying on, which is why this gets its own name distinct from a `non-repeatable read`.
 
-![Non-repeatable read changing one row and phantom read adding a new matching row](images/04_nonrepeatable_vs_phantom_read.png)
+![Non-repeatable read changing one row and phantom read adding a new matching row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_nonrepeatable_vs_phantom_read.png)
 
 ## Lost Updates: Two Writes, One Silently Overwritten
 
 A `lost update` happens when two `transactions` both read the same value, both calculate a new value based on that same original reading, and both write their result, with the second write silently overwriting the first, so one of the two changes disappears entirely, exactly the double-booking scenario from the previous lesson.
 
-![Lost update where two transactions read the same value and one write overwrites the other](images/05_lost_update_overwritten_write.png)
+![Lost update where two transactions read the same value and one write overwrites the other](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_lost_update_overwritten_write.png)
 
 ```postgresql with=init.sql
 -- Transaction A: sells 5 units, based on a stock reading of 50

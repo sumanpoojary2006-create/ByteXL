@@ -4,6 +4,10 @@
 - Those estimates can be wrong, sometimes significantly, when the `database`'s statistics are stale or when a condition's true selectivity is harder to predict than usual.
 - `EXPLAIN ANALYZE` closes that gap: it actually executes the `query`, for real, and reports the plan alongside the actual measured time and actual `row` counts observed, letting Priya compare what the optimizer expected against what genuinely happened.
 
+**Definition:** `EXPLAIN ANALYZE` actually runs a `query` and reports real measured time and real `row` counts alongside the optimizer's original estimates, making it possible to see exactly where a plan's assumptions matched reality and where they did not, with `loops=N` and a `ROLLBACK`-wrapped `transaction` as two details worth remembering when reading or running it.
+
+![Intro visual for reading explain analyze](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_reading_explain_analyze.png)
+
 ## Estimated vs. Actual, Side by Side
 
 The same `orders` `table`, with a deliberately skewed distribution, sets up a case where an estimate and reality can diverge.
@@ -26,7 +30,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
     customer_id INTEGER,
@@ -43,9 +47,12 @@ ANALYZE orders;
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-EXPLAIN ANALYZE SELECT * FROM orders WHERE customer_id = 1;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkak33n" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -64,15 +71,18 @@ The output now includes both the familiar `cost=` and `rows=` estimates from pla
 - **`actual time`**: reports genuinely measured milliseconds, not internal cost units.
 - **`rows=N`** (in the actual section): reports how many `rows` this step genuinely returned when actually run, which can be compared directly against the earlier estimate on the same line.
 
-![EXPLAIN ANALYZE compares estimated rows with the actual rows returned](images/05_explain_analyze_estimated_vs_actual_rows.png)
+![EXPLAIN ANALYZE compares estimated rows with the actual rows returned](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_explain_analyze_estimated_vs_actual_rows.png)
 
 ## When Estimates and Reality Disagree
 
 In this deliberately skewed dataset, three quarters of all `rows` belong to `customer_id = 1`, a distribution the optimizer's general statistics may not always model with perfect precision, especially before `ANALYZE` has run recently.
 
-```postgresql with=init.sql
-EXPLAIN ANALYZE SELECT * FROM orders WHERE customer_id = 1;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkak3d3" 
+ width="100%"
+></iframe>
 
 Expected output (the same query, re-examined for the estimate-vs-actual gap):
 
@@ -94,21 +104,12 @@ For example, it might choose an `index scan` for a condition that actually match
 
 For a step that gets executed more than once, such as the inner side of certain `join` strategies run once per outer `row`, `EXPLAIN ANALYZE` reports `loops=N`, and the `actual time` shown is the average per loop, not the total across all loops combined.
 
-```postgresql with=init.sql
-CREATE TABLE customers (
-    customer_id INTEGER PRIMARY KEY,
-    customer_name TEXT
-);
-
-INSERT INTO customers (customer_id, customer_name)
-SELECT i, 'Customer ' || i FROM generate_series(1, 210) AS i;
-
-EXPLAIN ANALYZE
-SELECT c.customer_name, o.amount
-FROM customers c
-JOIN orders o ON c.customer_id = o.customer_id
-WHERE c.customer_id BETWEEN 1 AND 5;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkak3q6" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -126,17 +127,18 @@ Expected output:
 
 This plan runs its inner scan of `orders` once per matching customer, so `loops=5` appears on that inner `Index Scan` step. The `actual time=0.008..1.612` shown there is the *average per loop*, not the total, so the true total time contributed by that step is roughly `1.612 x 5 ≈ 8.06 ms`, not `1.612 ms` alone. Likewise, `rows=3020` is the average rows returned per loop; the inner step returned about 3020 `orders` rows on each of its 5 executions, one heavily loaded execution for `customer_id = 1` (roughly 15000 rows) and four lighter ones for `customer_id` 2 through 5 (roughly 25 rows each), averaging out to the reported figure. Missing this detail is a common way to misread `EXPLAIN ANALYZE` output, understating how expensive a repeatedly executed inner step actually was in total.
 
-![loops=N means an inner plan step repeats and the total work adds up](images/06_explain_analyze_loops_repeat_inner_step.png)
+![loops=N means an inner plan step repeats and the total work adds up](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_explain_analyze_loops_repeat_inner_step.png)
 
 ## Why EXPLAIN ANALYZE Should Be Used with Care
 
 Because `EXPLAIN ANALYZE` genuinely executes the `query`, it is not risk-free to run against a statement that modifies data; an `UPDATE` or `DELETE` wrapped in `EXPLAIN ANALYZE` really performs that update or delete. PostgreSQL provides an option specifically to avoid this danger for write statements that still need analyzing.
 
-```postgresql with=init.sql
-BEGIN;
-EXPLAIN ANALYZE UPDATE orders SET amount = amount * 1.05 WHERE customer_id = 1;
-ROLLBACK;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkak432" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -193,9 +195,12 @@ Wrapping the `EXPLAIN ANALYZE UPDATE` in a `transaction` that ends with `ROLLBAC
 
 Run `EXPLAIN ANALYZE` on a `query` filtering `orders` for `customer_id = 50`, a value from the less-skewed portion of the data, and compare its estimated versus actual `row` counts to the earlier `customer_id = 1` example, noting in a comment which one shows a larger gap between estimate and reality.
 
-```postgresql with=init.sql
--- Write your query and comment below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkak4br" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

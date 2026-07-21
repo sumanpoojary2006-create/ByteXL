@@ -5,6 +5,10 @@ An earlier unit covered the discipline of wrapping related statements in `BEGIN`
 - How a `transaction` relates to the `connection` it runs on
 - A tool this course has not yet introduced, the savepoint, for handling a partial failure inside an otherwise successful `transaction`, a situation application code runs into constantly
 
+**Definition:** A `transaction` belongs to exactly one `connection` and must always reach a `COMMIT` or `ROLLBACK`, since a `connection` left "idle in `transaction`" holds its `lock`s indefinitely and can block other work, and savepoints give application code a way to discard just one problematic step inside a larger `transaction` without losing everything else already done.
+
+![Intro visual for managing transactions from your application](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_managing_transactions_from_your_application.png)
+
 ## A Transaction Belongs to Exactly One Connection
 
 A `transaction` is tied entirely to the specific `connection` it was started on; it is not a general, `database`-wide state, and no other `connection` can see, join, or affect it.
@@ -24,7 +28,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     status TEXT
@@ -35,16 +39,12 @@ INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'in_tr
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-SELECT pid, state FROM pg_stat_activity WHERE pid = pg_backend_pid();
-
-BEGIN;
-UPDATE shipments SET status = 'delivered' WHERE shipment_id = 1;
-
-SELECT pid, state FROM pg_stat_activity WHERE pid = pg_backend_pid();
-
-COMMIT;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaknfr" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
@@ -52,19 +52,18 @@ The `state` `column` changes from `idle` to `active` (or briefly `idle in transa
 
 If an application opened a second, separate `connection` at this exact moment, that second `connection` would have no visibility into this in-progress `transaction` at all, and could not accidentally commit or roll it back; each `connection` manages its own `transaction` independently.
 
-![A transaction belongs to exactly one database connection](images/05_transaction_belongs_to_one_connection.png)
+![A transaction belongs to exactly one database connection](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_transaction_belongs_to_one_connection.png)
 
 ## The Danger of a Connection Left "Idle in Transaction"
 
 If application code calls `BEGIN` but then, due to a bug or an unhandled error, never reaches its `COMMIT` or `ROLLBACK`, the `connection` is left sitting in a state called "idle in `transaction`," still holding whatever `lock`s it acquired, indefinitely.
 
-```postgresql with=init.sql
-BEGIN;
-UPDATE shipments SET status = 'cancelled' WHERE shipment_id = 2;
--- Imagine application code crashing or hanging right here, before COMMIT or ROLLBACK.
-
-SELECT pid, state, query FROM pg_stat_activity WHERE state = 'idle in transaction';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakns7" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
@@ -72,9 +71,12 @@ A `connection` stuck like this continues holding its `lock` on shipment 2's `row
 
 This is precisely why well-written application code always wraps its `transaction` logic in a structure that guarantees `COMMIT` or `ROLLBACK` runs no matter what, even when an unexpected error occurs, the same discipline covered when `transactions` in application code were first introduced.
 
-```postgresql with=init.sql
-ROLLBACK;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakp3z" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL completes the statement, and the explanation below identifies the database object, permission, or operational effect to verify.
 
@@ -82,21 +84,12 @@ Expected observation: PostgreSQL completes the statement, and the explanation be
 
 Sometimes a single logical operation involves several steps, and only one of them might reasonably fail without needing to discard everything else already done in that same `transaction`. A `SAVEPOINT` marks a point inside a `transaction` that can be rolled back to individually, without rolling back the entire `transaction`.
 
-```postgresql with=init.sql
-BEGIN;
-
-UPDATE shipments SET status = 'delivered' WHERE shipment_id = 1;
-
-SAVEPOINT before_risky_step;
-
-UPDATE shipments SET status = 'INVALID_STATUS_TYPO' WHERE shipment_id = 2;
-
-ROLLBACK TO SAVEPOINT before_risky_step;
-
-SELECT * FROM shipments;
-
-COMMIT;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakpgs" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -109,7 +102,7 @@ Expected output:
 - `ROLLBACK TO SAVEPOINT before_risky_step` undoes only the changes made after that point, shipment 2's incorrect update, while keeping everything before it, shipment 1's valid update, fully intact and still part of the `transaction`.
 - The final `COMMIT` then commits shipment 1's change alone, since shipment 2's change was already discarded by the savepoint rollback before the `transaction` ever finished.
 
-![A savepoint lets an application roll back one risky step while keeping earlier work](images/06_savepoint_partial_rollback.png)
+![A savepoint lets an application roll back one risky step while keeping earlier work](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_savepoint_partial_rollback.png)
 
 ## Why Savepoints Matter for Application Code
 
@@ -150,9 +143,12 @@ Without savepoints, a single failure anywhere in that loop would force the entir
 
 Start a `transaction`, update shipment 1's status to `'delivered'`, set a savepoint, then attempt an update that should be discarded, roll back to the savepoint, and commit, confirming only the first update survives.
 
-```postgresql with=init.sql
--- Write your transaction below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakpxc" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

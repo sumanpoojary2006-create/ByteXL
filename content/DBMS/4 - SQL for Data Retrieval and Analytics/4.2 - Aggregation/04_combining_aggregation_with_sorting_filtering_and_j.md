@@ -12,6 +12,22 @@ None of these pieces are new on their own; what is new is seeing exactly how the
 
 **Definition:** `Joins`, `row` filters, grouping, group filters, and sorting are not separate skills; they are stages of one pipeline that runs in a fixed order regardless of how the `query` is written, and understanding that order explains every rule about what each clause is and is not allowed to reference.
 
+<!--
+IMAGE PROMPT  ->  generate as images/04_intro_combining_aggregation_with_sorting_filtering_and.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Priya's reports so far have all come from one table, but the founders' latest request pulls in more: "show me total revenue by region, for regions with at least two customers, sorted highest revenue first, but only counting orders placed after the first week.
+
+ON-IMAGE TEXT: show a short bold title "Combining Aggregation With Sorting Filtering And J" plus only these few labels, large and legible: Table, Row, Join. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for combining aggregation with sorting filtering and j](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_combining_aggregation_with_sorting_filtering_and.png)
+
 ## Setting Up a Second Table to Join
 
 Region information lives on a separate `customers` `table`, not on `orders` itself, which is a completely normal way for a real `schema` to be organized.
@@ -96,7 +112,7 @@ Expected output:
 
 The `JOIN` attaches each order to its customer's region before grouping ever happens, so `GROUP BY c.region` can collapse `rows` by a `column` that was never on the `orders` `table` to begin with. Aggregation and `joins` combine naturally this way: the `join` widens each `row` with extra `columns`, and grouping then works with whichever of those `columns` it needs.
 
-![JOIN adding customer region to order rows before GROUP BY summarizes revenue by region](images/07_join_before_group_by_region.png)
+![JOIN adding customer region to order rows before GROUP BY summarizes revenue by region](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_join_before_group_by_region.png)
 
 ## Layering in a Row-Level Filter
 
@@ -191,7 +207,7 @@ Every clause used above is written in a fixed syntax order (`SELECT`, `FROM`, `W
 
 This ordering is exactly why `WHERE` cannot reference `SUM(amount)`, that aggregate does not exist yet at step 2, and why `ORDER BY` can reference a `column` alias defined in `SELECT`, since sorting happens last, after the alias already exists.
 
-![Logical execution order of an aggregate SQL query from FROM JOIN through ORDER BY](images/08_logical_query_execution_order.png)
+![Logical execution order of an aggregate SQL query from FROM JOIN through ORDER BY](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_logical_query_execution_order.png)
 
 ## Your Turn
 

@@ -6,6 +6,22 @@ He is not filtering anything, not searching for one particular person, not doing
 
 **Definition:** The `SELECT` statement is the starting point of nearly every piece of SQL anyone writes: name the `columns` you want, name the `table` they live in, and the `database` hands back exactly that slice of data.
 
+<!--
+IMAGE PROMPT  ->  generate as images/01_intro_the_select_statement.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Karthik has just been given read access to his college's student records database. It is his first morning helping out in the admissions office, and the office coordinator has a simple request: "pull up the students list, all of it, for the orientation.
+
+ON-IMAGE TEXT: show a short bold title "The Select Statement" plus only these few labels, large and legible: Query, Select, Statement. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for the select statement](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_the_select_statement.png)
+
 ## Asking For Everything in a Table
 
 The students `table` already exists in the college's `database`, with one `row` per student and `columns` for their ID, name, email, city, phone number, and the date they joined. This is the data Karthik is working with:
@@ -68,7 +84,7 @@ Expected output:
 - Running this returns all eight `rows` and all six `columns`, exactly as they are stored - the output is identical to the source `table` because nothing was filtered or narrowed.
 - Karthik gets his orientation list in one line, and for a quick, throwaway look at a small `table`, that is a perfectly reasonable way to work.
 
-![SELECT star returning all columns and all rows from the students table](images/01_select_star_all_rows_columns.png)
+![SELECT star returning all columns and all rows from the students table](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_select_star_all_rows_columns.png)
 
 ## Asking For Only What You Need
 
@@ -112,7 +128,7 @@ Expected output:
 
 The `column` list can hold as many or as few `columns` as the task needs, in any order, and that order is exactly how they will appear in the result, regardless of how the `table` itself was created.
 
-![Selecting only full_name and city instead of every column](images/02_select_specific_columns.png)
+![Selecting only full_name and city instead of every column](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_select_specific_columns.png)
 
 ## Why Not Always Use SELECT *
 

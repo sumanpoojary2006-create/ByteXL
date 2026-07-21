@@ -4,6 +4,10 @@ Every lesson in this course has run against a single `database` server.
 
 A production system serving real, sustained traffic eventually outgrows what one server can comfortably handle, and it also cannot afford for that one server to be a single point of total failure. **Replication** addresses both concerns: continuously copying a `database`'s changes to one or more additional servers, called `replicas`, which can take over if the primary fails, and can also absorb read traffic that would otherwise all fall on a single machine.
 
+**Definition:** Replication streams a primary `database`'s `write-ahead log` to one or more `replicas`, which replay it to stay continuously in sync, enabling both read scaling, directing tolerant read traffic away from the primary, and availability, standing ready to take over if the primary fails, at the cost of a small, measurable lag that every application using a `replica` has to account for.
+
+![Intro visual for replication and read replicas](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_replication_and_read_replicas.png)
+
 ## How Streaming Replication Works, Conceptually
 
 PostgreSQL's standard replication approach relies on exactly the mechanism covered in the `recovery` unit: the `write-ahead log`. A `replica` continuously receives the same `WAL` records the primary server generates, and replays them, effectively performing the same redo process `recovery` uses after a crash, except continuously, in near real time, against a running, healthy primary.
@@ -22,7 +26,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     status TEXT
@@ -33,9 +37,12 @@ INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit');
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-SELECT pg_current_wal_lsn() AS primary_wal_position;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahake" 
+ width="100%"
+></iframe>
 
 Expected result: PostgreSQL returns the rows described below. Compare the visible columns and row-level effect with the explanation, since security and administration settings may make some values environment-dependent.
 
@@ -47,17 +54,18 @@ Every change made on the primary, this `INSERT` included, generates `WAL` record
 
 This is why replication is often described as `recovery`'s mechanism, run continuously against a live server rather than only after a crash.
 
-![Streaming replication sends WAL from the primary to replicas, which replay it](images/09_streaming_replication_wal_to_replicas.png)
+![Streaming replication sends WAL from the primary to replicas, which replay it](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_streaming_replication_wal_to_replicas.png)
 
 ## Monitoring Replication from the Primary
 
 A running PostgreSQL primary tracks every connected `replica` directly, exposing exactly how far behind each one currently is.
 
-```postgresql with=init.sql
-SELECT client_addr, state, sent_lsn, replay_lsn,
-       sent_lsn - replay_lsn AS replication_lag_bytes
-FROM pg_stat_replication;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahavb" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
@@ -68,15 +76,12 @@ Expected observation: PostgreSQL returns live server metadata. Values differ acr
 
 Because a `replica` applies changes slightly after the primary generates them, there is always some delay, however small, between a change committing on the primary and that same change becoming visible on a `replica`. A `query` reading from a `replica` can, in principle, see slightly stale data, a deliberate trade-off in exchange for spreading read load across more than one server.
 
-```postgresql with=init.sql
--- A read-heavy reporting query, directed to a replica instead of the primary:
--- SELECT status, COUNT(*) FROM shipments GROUP BY status;
--- This runs identically whether issued against the primary or a replica,
--- but a replica's answer reflects data as of its own replay_lsn, which
--- may lag the primary's true current state by anywhere from milliseconds
--- to, under heavy load or network trouble, much longer.
-SELECT status, COUNT(*) FROM shipments GROUP BY status;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahb65" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -86,7 +91,7 @@ Expected output:
 
 This is why `replicas` are typically used for read traffic that can tolerate a small amount of staleness, dashboards, analytics, reporting, exactly the kind of workload this course has repeatedly used as its running examples, while writes, and any read that absolutely requires the most current possible data, continue to go to the primary.
 
-![Writes go to the primary, while read-heavy dashboards can query replicas with some lag](images/10_read_replicas_reads_primary_writes_lag.png)
+![Writes go to the primary, while read-heavy dashboards can query replicas with some lag](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_read_replicas_reads_primary_writes_lag.png)
 
 ## Read Replicas for Scaling, Failover for Availability
 
@@ -131,9 +136,12 @@ A well-designed production deployment often uses replication for both purposes s
 
 Write the `query` that would report `replication lag` in seconds rather than bytes, using `pg_stat_replication`'s `replay_lag` `column`, and add a comment explaining why a reporting dashboard might be deliberately directed to `query` a `replica` instead of the primary.
 
-```postgresql with=init.sql
--- Write your query and comment below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahbfu" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

@@ -8,6 +8,22 @@ Which one could literally any developer at this company sit down and `query` cor
 
 **Definition:** Relational `databases` earn their place as the default starting point because `tables` are a shape people already understand, and SQL is a language that transfers across systems, jobs, and years instead of expiring the moment one particular product falls out of fashion.
 
+<!--
+IMAGE PROMPT  ->  generate as images/06_intro_why_relational_databases_first_tables_sql_and_th.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Farhan is interning at a logistics startup, and his manager hands him two proposals from two different engineers for the same delivery-tracking system. The first engineer wants to store every shipment as a neat grid of rows and columns: one row per shipment.
+
+ON-IMAGE TEXT: show a short bold title "Why Relational Databases First Tables SQL And The" plus only these few labels, large and legible: Row, Key, Relational. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for why relational databases first tables sql and the](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_why_relational_databases_first_tables_sql_and_th.png)
+
 ## Tables Are Something Everyone Already Understands
 
 A relational `table` is not a clever invention that requires special training to read. It is a grid, `rows` and `columns`, the same shape as a spreadsheet, an attendance register, or a printed timetable. Anyone who has ever glanced at a class list with names down the side and subjects across the top already has the right mental model for a relational `table` before they write a single line of code.
@@ -16,7 +32,7 @@ That familiarity has a real, practical payoff. When Farhan's manager reviews the
 
 Compare that to the flexible bundle-of-fields approach, where one shipment record might carry a field the next record does not, and understanding what "a shipment" even looks like requires reading through many examples first, or asking the person who designed it. A shape that everyone already understands is a shape that fewer people get wrong.
 
-![Uniform shipment records becoming familiar rows and columns that different team members can read](images/11_real_records_become_table_rows.png)
+![Uniform shipment records becoming familiar rows and columns that different team members can read](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_real_records_become_table_rows.png)
 
 ## SQL: One Language, Understood Everywhere
 
@@ -26,7 +42,7 @@ This matters enormously for Farhan's company. A developer who already knows SQL 
 
 Compare that to a storage system with its own unique `query` syntax invented specifically for that one product; every new hire has to learn that syntax before they can be trusted to touch production data, and that knowledge rarely transfers anywhere else.
 
-![The same standard SQL query working across three relational database systems](images/12_sql_standard_across_systems.png)
+![The same standard SQL query working across three relational database systems](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_sql_standard_across_systems.png)
 
 ## Why "Industry Standard" Is Not Just a Slogan
 

@@ -6,6 +6,10 @@ If the first `UPDATE` completes and the second never runs, money has vanished fr
 
 The `database`'s answer to this problem is the **`transaction`**: a group of one or more statements that the `database` guarantees will either all succeed together or all fail together, with no in-between state ever left visible.
 
+**Definition:** A `transaction` groups one or more statements into a single unit that either commits entirely or rolls back entirely, closing the gap where a partial failure could otherwise leave data in a broken, half-changed state.
+
+![Intro visual for what is a transaction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_what_is_a_transaction.png)
+
 ## Two Statements That Need to Move as One
 
 The `accounts` `table` holds a simple balance per account, the starting point for Rahul's transfer feature.
@@ -25,7 +29,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
     owner_name TEXT,
@@ -39,12 +43,12 @@ INSERT INTO accounts (account_id, owner_name, balance) VALUES
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-UPDATE accounts SET balance = balance - 5000.00 WHERE account_id = 1;
-UPDATE accounts SET balance = balance + 5000.00 WHERE account_id = 2;
-
-SELECT account_id, owner_name, balance FROM accounts;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaj4x8" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -63,16 +67,12 @@ If the `connection` dropped after the first `UPDATE` ran but before the second o
 
 `BEGIN` starts a `transaction`, and `COMMIT` ends it, making every change inside permanent all at once. Everything between those two commands is treated as a single, indivisible unit.
 
-```postgresql with=init.sql
-BEGIN;
-
-UPDATE accounts SET balance = balance - 5000.00 WHERE account_id = 1;
-UPDATE accounts SET balance = balance + 5000.00 WHERE account_id = 2;
-
-COMMIT;
-
-SELECT account_id, owner_name, balance FROM accounts;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaj58w" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -85,24 +85,18 @@ Expected output:
 
 The two `UPDATE` statements are now bound together by `BEGIN` and `COMMIT`. If anything went wrong between them, a crash, a `constraint` violation, an explicit cancellation, the `database` guarantees that neither change takes effect, not just the first one, not just the second. Only once `COMMIT` runs successfully does either change become permanent and visible to anyone else looking at the `table`.
 
-![A transaction wrapping debit and credit updates so they move as one unit](images/01_transaction_wraps_debit_credit.png)
+![A transaction wrapping debit and credit updates so they move as one unit](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_transaction_wraps_debit_credit.png)
 
 ## Undoing a Transaction with ROLLBACK
 
 If something inside a `transaction` turns out to be wrong before `COMMIT` runs, `ROLLBACK` discards every change made since `BEGIN`, as if none of it had ever happened.
 
-```postgresql with=init.sql
-BEGIN;
-
-UPDATE accounts SET balance = balance - 5000.00 WHERE account_id = 1;
-UPDATE accounts SET balance = balance + 5000.00 WHERE account_id = 2;
-
-SELECT account_id, balance FROM accounts;
-
-ROLLBACK;
-
-SELECT account_id, balance FROM accounts;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaj5jq" 
+ width="100%"
+></iframe>
 
 Expected output 1:
 
@@ -124,7 +118,7 @@ Expected output 2:
 
 The `SELECT` immediately after the two `UPDATE` statements, while still inside the `transaction`, shows the changed balances, 45000.00 and 17000.00, because within the same `transaction`, a `connection` can see its own uncommitted changes. But once `ROLLBACK` runs, those changes are discarded entirely, and the final `SELECT` shows both accounts back at their original values, 50000.00 and 12000.00, exactly as if the `transaction` had never happened.
 
-![ROLLBACK undoing provisional changes before they are committed](images/02_rollback_undoes_uncommitted_changes.png)
+![ROLLBACK undoing provisional changes before they are committed](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_rollback_undoes_uncommitted_changes.png)
 
 ## Why Transactions Matter Beyond Money
 
@@ -169,9 +163,12 @@ Any time an application needs "these changes happen together, or not at all," a 
 
 Meera wants to send 2000.00 to Sanjay, but decides midway through to cancel the transfer entirely. Write a `transaction` against the `accounts` `table` above that performs both balance updates, then rolls the whole thing back, and confirm with a final `SELECT` that both balances are unchanged.
 
-```postgresql with=init.sql
--- Write your transaction below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaj5uk" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

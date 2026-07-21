@@ -33,7 +33,9 @@ Ilyas Bakery Supplies has two phone numbers crammed into a single cell, separate
 
 Getting this right is the very first checkpoint in redesigning any `table`, and it has a name: **First `Normal Form`**, usually written 1NF, the rule that every `column` in every `row` must hold one atomic, indivisible value, never a repeating group or a comma-separated bundle disguised as a single entry.
 
-![First Normal Form requiring one atomic value per cell instead of comma-separated phone numbers](images/05_first_normal_form_atomic_cells.png)
+![First Normal Form requiring one atomic value per cell instead of comma-separated phone numbers](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_first_normal_form_atomic_cells.png)
+
+**Definition:** First `Normal Form` asks for the most basic kind of honesty a `table` can offer: every `column` holds exactly one value, never a hidden list dressed up as a single entry.
 
 ## Why a Comma-Separated Cell Is Not Actually One Value
 
@@ -122,7 +124,7 @@ Every cell in both `tables` now holds exactly one value. Ilyas Bakery Supplies h
 
 "Find every customer whose phone number is 9900112244" is now a plain, direct lookup, and "count how many phone numbers Sunrise Traders has on file" is just counting `rows`.
 
-![Fixing 1NF by moving phone numbers into a separate CustomerPhones table with one phone per row](images/06_first_normal_form_split_phone_numbers.png)
+![Fixing 1NF by moving phone numbers into a separate CustomerPhones table with one phone per row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_first_normal_form_split_phone_numbers.png)
 
 ## A Table Can Fail 1NF in More Than One Way
 

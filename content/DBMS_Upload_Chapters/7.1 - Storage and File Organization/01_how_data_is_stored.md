@@ -6,6 +6,10 @@ Underneath that abstraction, though, a `table` is physically stored as files on 
 
 Priya, the finance analyst from earlier reporting lessons, has started noticing that some of her `queries` run instantly while others crawl, and the difference traces directly back to how data is actually laid out on disk.
 
+**Definition:** A `table` is physically stored as a sequence of fixed-size pages, each holding many `rows`, and every read has to fetch a whole page at a time rather than a single `row` in isolation, which is the physical fact underneath every performance question this unit is about to explore.
+
+![Intro visual for how data is stored](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_how_data_is_stored.png)
+
 ## Rows Live Inside Pages, Not Loose on Disk
 
 A `database` does not read or write one `row` at a time from disk; it reads and writes in fixed-size blocks called pages, typically 8 kilobytes each in PostgreSQL, with many `rows` packed into each page.
@@ -28,7 +32,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
     customer_name TEXT,
@@ -42,9 +46,12 @@ FROM generate_series(1, 500) AS i;
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-SELECT pg_size_pretty(pg_relation_size('orders')) AS table_size_on_disk;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajhxd" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -57,18 +64,18 @@ Expected output:
 
 That size is not 500 individual files, one per `row` it is a small number of 8 kilobyte pages, each holding dozens of `rows` packed together, which is why reading many `rows` that happen to sit on the same page is so much cheaper than reading the same number of `rows` scattered across many different pages.
 
-![Rows are packed inside database pages rather than stored loose on disk](images/01_rows_packed_inside_pages.png)
+![Rows are packed inside database pages rather than stored loose on disk](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_rows_packed_inside_pages.png)
 
 ## Every Row Has a Physical Address
 
 PostgreSQL exposes the physical location of a `row` directly through a hidden system `column` called `ctid`, which identifies exactly which page and which position within that page a `row` currently occupies.
 
-```postgresql with=init.sql
-SELECT ctid, order_id, customer_name
-FROM orders
-WHERE order_id IN (1, 2, 250, 500)
-ORDER BY order_id;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajj85" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -83,19 +90,18 @@ The `ctid` values here look like `(0,1)`, meaning page 0, position 1 within that
 
 This is the physical reality behind every `query`: reading a `row` means finding its page and reading that whole page off disk, not teleporting directly to one `row`'s bytes.
 
-![A ctid points to the page number and slot position of a row](images/02_ctid_page_slot_address.png)
+![A ctid points to the page number and slot position of a row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_ctid_page_slot_address.png)
 
 ## Why Reading a Page Costs More Than Reading a Row
 
 Disks, even fast solid-state ones, are dramatically better at reading one large contiguous chunk than at making many small, scattered reads. A `database` exploits this by always reading a full page at once, even if a `query` only needs one `row` from it, since the `row` cannot be read in isolation from the page it lives in.
 
-```postgresql with=init.sql
-SELECT (ctid::text::point)[0] AS page_number,
-       COUNT(*) AS rows_on_page
-FROM orders
-GROUP BY page_number
-ORDER BY page_number;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajjja" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -150,9 +156,12 @@ This is the foundational fact behind why the next lessons in this unit matter so
 
 Check the total disk size of the `orders` `table` above, then look up the `ctid` values for order_id 100 and order_id 101, and note in a comment whether they appear to land on the same page.
 
-```postgresql with=init.sql
--- Write your queries and comment below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajjua" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

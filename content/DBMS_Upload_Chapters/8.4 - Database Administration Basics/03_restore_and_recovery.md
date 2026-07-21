@@ -6,6 +6,10 @@
 - **Restore and `recovery`** is the practice of reconstructing a working `database` from a `backup`.
 - It should be rehearsed deliberately, not attempted for the first time during a real emergency.
 
+**Definition:** Restoring a `backup`, whether a logical `restore` reapplying a dump script or a `point-in-time recovery` replaying archived write-ahead logs to an exact moment, is only genuinely useful if it has actually been tested and verified ahead of time, since an unverified `backup` offers only the appearance of safety rather than the real thing.
+
+![Intro visual for restore and recovery](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_restore_and_recovery.png)
+
 ## Restoring from a Logical Backup
 
 A logical `backup`, produced with `pg_dump` as covered in the previous lesson, is restored by running its contents against a target `database`, recreating `tables` and reloading data.
@@ -25,7 +29,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE shipments_backup_source (
     shipment_id INTEGER PRIMARY KEY,
     status TEXT
@@ -36,24 +40,12 @@ INSERT INTO shipments_backup_source (shipment_id, status) VALUES (1, 'in_transit
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
--- A real logical restore, run from a terminal, looks roughly like:
--- psql -U postgres -d shipments_restored -f backup_2025_06_15.sql
--- This runs the CREATE TABLE and data-loading statements from the dump
--- file directly against a fresh, empty target database. The SQL-level
--- equivalent, restoring one table's data in this online editor, looks
--- like this pair of statements:
-CREATE TABLE shipments_restored (
-    shipment_id INTEGER PRIMARY KEY,
-    status TEXT
-);
-
-INSERT INTO shipments_restored (shipment_id, status) VALUES
-(1, 'in_transit'),
-(2, 'delivered');
-
-SELECT * FROM shipments_restored;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkah92z" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -65,7 +57,7 @@ Expected output:
 - The `INSERT INTO shipments_restored` statement reloads data into the freshly created `table`, standing in for the data-loading statements a full `pg_dump`-produced `restore` script runs at scale, across every `table` in a `database`, in one automated pass.
 - The restored `table`'s contents exactly match the original, confirming the `restore` succeeded.
 
-![A logical restore rebuilds tables and reloads rows into a fresh database](images/05_logical_restore_rebuilds_database.png)
+![A logical restore rebuilds tables and reloads rows into a fresh database](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_logical_restore_rebuilds_database.png)
 
 ## Point-in-Time Recovery: Restoring to an Exact Moment
 
@@ -73,20 +65,21 @@ A full `backup` alone only restores a `database` to the exact moment that `backu
 
 Point-in-time `recovery`, or PITR, combines a full `backup` with the `write-ahead log` archive covered in the `recovery` unit, replaying logged changes forward from that `backup` up to, but not including, the moment of the mistake.
 
-```postgresql with=init.sql
-SELECT pg_current_wal_lsn() AS wal_position_now;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkah9cu" 
+ width="100%"
+></iframe>
 
 Expected result: PostgreSQL returns the rows described below. Compare the visible columns and row-level effect with the explanation, since security and administration settings may make some values environment-dependent.
 
-```postgresql with=init.sql
--- A real point-in-time recovery is configured roughly like:
--- restore the most recent full backup taken before the incident
--- set recovery_target_time = '2025-06-15 14:32:00'
--- start the server, which replays archived WAL from the backup forward,
--- stopping exactly at the specified target time, just before the mistake
-SELECT 'Point-in-time recovery replays WAL up to a specific timestamp, not just to the last full backup' AS pitr_summary;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkah9pb" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -100,18 +93,12 @@ This is precisely why the `write-ahead logging` covered earlier in this course m
 
 A `backup` file that exists is not proof that a `restore` will actually work; corruption, an incomplete transfer, or a subtly incompatible `database` version can all silently break a `backup`'s usefulness without ever showing an obvious error at `backup` time.
 
-```postgresql with=init.sql
-CREATE TABLE shipments_restored (
-    shipment_id INTEGER PRIMARY KEY,
-    status TEXT
-);
-
-INSERT INTO shipments_restored (shipment_id, status) VALUES
-(1, 'in_transit'),
-(2, 'delivered');
-
-SELECT COUNT(*) AS row_count_after_restore FROM shipments_restored;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkah9yr" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -127,7 +114,7 @@ A disciplined operations practice periodically performs a real, full `restore`, 
 
 This is exactly the kind of check the single `query` above represents in miniature. Skipping this verification step is one of the most common, and most costly, gaps in a team's `backup` strategy: the `backups` exist, but nobody actually knows whether they work until the day they are desperately needed and turn out not to.
 
-![A backup is only trusted after a test restore verifies the restored data](images/06_test_restore_verify_backup.png)
+![A backup is only trusted after a test restore verifies the restored data](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_test_restore_verify_backup.png)
 
 ## Restore and Recovery at a Glance
 
@@ -162,9 +149,12 @@ This is exactly the kind of check the single `query` above represents in miniatu
 
 Simulate a `restore` by creating a new `table` `shipments_restored_v2`, loading it with the same two `rows` from `shipments_backup_source`, and then writing a verification `query` confirming the `row` count and contents match the original exactly.
 
-```postgresql with=init.sql
--- Write your restore and verification below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahaa4" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

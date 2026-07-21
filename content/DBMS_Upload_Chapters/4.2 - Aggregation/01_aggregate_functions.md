@@ -9,6 +9,10 @@ Priya handles finance reporting for a small online bookstore, and every question
 
 None of those questions can be answered by looking at one `row` of the `orders` `table`; each one requires looking at every `row` and boiling it down to a single number. SQL calls this **aggregation**, and it provides a small set of built-in `aggregate functions`, `COUNT`, `SUM`, `AVG`, `MIN`, and `MAX`, that do exactly this kind of summarizing.
 
+**Definition:** `COUNT`, `SUM`, `AVG`, `MIN`, and `MAX` collapse an entire result set into single summary numbers, answering exactly the kind of whole-business questions raw `rows` cannot answer on their own.
+
+![Intro visual for aggregate functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_aggregate_functions.png)
+
 ## Counting Rows
 
 The `orders` `table` holds one `row` per order placed on the bookstore's site.
@@ -34,7 +38,7 @@ The OneCompiler activity keeps setup and practice separate. `init.sql` creates a
 
 ## Hands-On Setup: Prepare the Data
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
     customer_name TEXT,
@@ -56,10 +60,12 @@ INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUE
 
 Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
 
-```postgresql with=init.sql
-SELECT COUNT(*) AS total_orders
-FROM orders;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajt4y" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -70,16 +76,18 @@ Expected output:
 - `COUNT(*)` counts every `row` in the result set, regardless of what any `column` contains, and here it answers Priya's first question directly: the bookstore received 8 orders.
 - `COUNT(column_name)` behaves slightly differently, counting only the `rows` where that specific `column` is not `NULL`, which matters once a `table` has optional fields.
 
-![COUNT star counting every order row into one total order count](images/01_count_rows_total_orders.png)
+![COUNT star counting every order row into one total order count](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_count_rows_total_orders.png)
 
 ## Totaling and Averaging a Column
 
 Revenue and average order value both come from the same `amount` `column`, just combined differently.
 
-```postgresql with=init.sql
-SELECT SUM(amount) AS total_revenue, AVG(amount) AS average_order_value
-FROM orders;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajte3" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -91,16 +99,18 @@ Expected output:
 - `AVG` divides that same sum by the count of `rows` automatically, giving the average order value without Priya having to calculate it by hand from the other two numbers.
 - Both `functions` ignore `NULL` values in the `column` they are summarizing, rather than treating a `NULL` as zero.
 
-![SUM and AVG collapsing order amounts into total revenue and average order value](images/02_sum_avg_order_amounts.png)
+![SUM and AVG collapsing order amounts into total revenue and average order value](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_sum_avg_order_amounts.png)
 
 ## Finding the Smallest and Largest Values
 
 Priya's last question, the biggest single sale, needs a `function` that looks at every value and keeps only the extreme.
 
-```postgresql with=init.sql
-SELECT MIN(amount) AS smallest_order, MAX(amount) AS largest_order
-FROM orders;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajtq6" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -116,14 +126,12 @@ Expected output:
 
 All five `aggregate functions` can appear together in a single `SELECT`, each one summarizing the same set of `rows` in its own way.
 
-```postgresql with=init.sql
-SELECT COUNT(*) AS total_orders,
-       SUM(amount) AS total_revenue,
-       ROUND(AVG(amount), 2) AS average_order_value,
-       MIN(amount) AS smallest_order,
-       MAX(amount) AS largest_order
-FROM orders;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaju6z" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -176,9 +184,12 @@ This single `query` answers every question the founders originally asked, in one
 
 The founders now want to know the total number of orders placed and the total revenue earned specifically from the "Fiction" category. Write a `query` against the `orders` `table` above that returns both numbers, aliased as `fiction_orders` and `fiction_revenue`.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajug4" 
+ width="100%"
+></iframe>
 
 If your `query` filters with `WHERE category = 'Fiction'` before aggregating, it returns 3 orders and 1380.00 in revenue, since `WHERE` narrows the `rows` down first and the `aggregate functions` only ever see what survives that filter.
 

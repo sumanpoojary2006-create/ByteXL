@@ -5,6 +5,22 @@
 
 **Definition:** A checkpoint marks a point where every previously logged change is guaranteed to already be written to the actual data files, giving `recovery` a recent, known starting point instead of forcing it to replay a `database`'s entire history after every crash, at the cost of periodic disk activity that has to be balanced against how quickly the system needs to recover.
 
+<!--
+IMAGE PROMPT  ->  generate as images/03_intro_checkpoints_bounding_how_far_back_recovery_must.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: - Write-ahead logging guarantees that every change is recorded before it is applied, but it leaves an obvious question unanswered: if the log records every change forever, a database that has been running for months would have to replay months of log entries.
+
+ON-IMAGE TEXT: show a short bold title "Checkpoints Bounding How Far Back Recovery Must Go" plus only these few labels, large and legible: Checkpoints, Bounding, Recovery. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for checkpoints bounding how far back recovery must go](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_checkpoints_bounding_how_far_back_recovery_must.png)
+
 ## What a Checkpoint Actually Does
 
 A checkpoint is a point in time where the `database` guarantees that every change logged before that point has also been fully written out to the real data files on disk, not just recorded in the log.
@@ -69,7 +85,7 @@ Expected observation: PostgreSQL completes `CHECKPOINT` without returning a busi
 
 The two updates before `CHECKPOINT` are guaranteed to already be reflected in the data files themselves the moment the checkpoint completes. Only the change logged after the checkpoint is at risk of existing only in the log and not yet in the data files, which is exactly the portion `recovery` would need to replay if a crash happened right after it.
 
-![Checkpoint marking which logged changes are already safely on disk](images/05_checkpoint_bounds_recovery_timeline.png)
+![Checkpoint marking which logged changes are already safely on disk](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_checkpoint_bounds_recovery_timeline.png)
 
 ## Why Checkpoints Happen Automatically, Not Just on Demand
 
@@ -88,7 +104,7 @@ Expected output:
 - `checkpoint_timeout` reports how long PostgreSQL waits, at most, between automatic checkpoints, 5 minutes by default.
 - This is a deliberate trade-off: checkpointing more frequently keeps `recovery` time shorter after a crash, since less log needs replaying, but each checkpoint itself costs time and disk activity while it runs, so checkpointing too aggressively can slow down the `database`'s normal, everyday operation.
 
-![Checkpoint frequency balancing shorter recovery against normal-operation cost](images/06_checkpoint_frequency_tradeoff.png)
+![Checkpoint frequency balancing shorter recovery against normal-operation cost](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_checkpoint_frequency_tradeoff.png)
 
 ## The Trade-off Checkpoints Represent
 

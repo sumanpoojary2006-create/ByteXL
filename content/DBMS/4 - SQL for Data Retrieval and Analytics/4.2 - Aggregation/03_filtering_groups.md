@@ -7,6 +7,22 @@
 
 **Definition:** `HAVING` fills the exact gap `WHERE` cannot: filtering on values that only exist after grouping and aggregation have already run.
 
+<!--
+IMAGE PROMPT  ->  generate as images/03_intro_filtering_groups.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: - Priya's category breakdown worked well, but the founders' next request exposed a gap: "just show me customers who have spent over 1000 total, I don't need to see anyone below that." Priya's first instinct was to reach for WHERE, the filter she already knew.
+
+ON-IMAGE TEXT: show a short bold title "Filtering Groups" plus only these few labels, large and legible: Query, Where, Filtering. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for filtering groups](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_filtering_groups.png)
+
 ## Why WHERE Cannot Filter on an Aggregate
 
 The `orders` `table` is the same one used for grouping.
@@ -112,7 +128,7 @@ This groups every order by `customer_name`, computes each customer's total, and 
 
 Ishita Rao, Vivek Menon, and Sonal Deshpande survive the filter; Aman Gupta, whose total falls under 1000, is dropped from the result entirely, group and all.
 
-![HAVING filtering summarized customer total groups after aggregation](images/05_having_filters_group_totals.png)
+![HAVING filtering summarized customer total groups after aggregation](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_having_filters_group_totals.png)
 
 ## Combining WHERE and HAVING in the Same Query
 
@@ -144,7 +160,7 @@ This `query` runs in three clean stages:
 
 The two clauses divide the work cleanly: `WHERE` picks which `rows` count, `HAVING` picks which resulting groups are worth keeping.
 
-![WHERE filtering individual rows before GROUP BY and HAVING filtering groups after aggregation](images/06_where_vs_having_timing.png)
+![WHERE filtering individual rows before GROUP BY and HAVING filtering groups after aggregation](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_where_vs_having_timing.png)
 
 ## Filtering on Count Instead of Sum
 

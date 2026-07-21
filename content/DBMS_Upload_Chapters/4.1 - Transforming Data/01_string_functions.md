@@ -8,7 +8,9 @@ Meera runs the online ordering system for a chain of five restaurants, and the `
 
 None of this needs a new `column` or a data-entry fix from head office. It needs SQL to reshape the text on the way out, using a set of built-in **string `functions`** that every relational `database` ships with.
 
-![CONCAT joining branch name and locality into one restaurant display name](images/01_concat_branch_locality_display_name.png)
+![CONCAT joining branch name and locality into one restaurant display name](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_concat_branch_locality_display_name.png)
+
+**Definition:** String `functions` let a `query` reshape text as it leaves the `table`, joining `columns` together, normalizing case, stripping stray whitespace, and pulling out just the substring that matters, all without ever editing the stored data.
 
 ## Joining Text Together
 
@@ -32,7 +34,7 @@ The OneCompiler exercise uses two files. `init.sql` creates and populates the vi
 
 First, `init.sql` prepares the dataset:
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE restaurants (
     restaurant_id INTEGER PRIMARY KEY,
     branch_name TEXT,
@@ -52,10 +54,12 @@ Then the active query file creates the display names:
 
 Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
 
-```postgresql with=init.sql
-SELECT CONCAT(branch_name, ' - ', locality) AS display_name
-FROM restaurants;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakru5" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -76,10 +80,12 @@ The result contains one calculated `column`. The original `branch_name` and `loc
 
 To compare both transformations, Meera uses `SELECT branch_name, UPPER(branch_name) AS shout_case, LOWER(branch_name) AS quiet_case FROM restaurants;`. The raw value remains visible beside its uppercase and lowercase forms.
 
-```postgresql with=init.sql
-SELECT branch_name, UPPER(branch_name) AS shout_case, LOWER(branch_name) AS quiet_case
-FROM restaurants;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaks6y" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -100,11 +106,12 @@ The `manager_email` `column` has a worse problem: some values have leading or tr
 
 Meera selects the three affected rows with `SELECT manager_email, TRIM(manager_email) AS cleaned_email, LENGTH(manager_email) AS raw_length, LENGTH(TRIM(manager_email)) AS clean_length FROM restaurants WHERE restaurant_id IN (1, 4, 5);`. The two length columns make otherwise invisible spaces measurable.
 
-```postgresql with=init.sql
-SELECT manager_email, TRIM(manager_email) AS cleaned_email, LENGTH(manager_email) AS raw_length, LENGTH(TRIM(manager_email)) AS clean_length
-FROM restaurants
-WHERE restaurant_id IN (1, 4, 5);
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakssr" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -117,17 +124,18 @@ Expected output:
 - `TRIM` removes whitespace from both ends of a string, and `LENGTH` counts characters, which is how Meera confirmed the raw `column` had extra characters an eyeball check could not catch.
 - Comparing `raw_length` against `clean_length` for each `row` makes the hidden whitespace visible instead of invisible.
 
-![LOWER and TRIM cleaning a messy email into a normalized contact address](images/02_lower_trim_clean_email.png)
+![LOWER and TRIM cleaning a messy email into a normalized contact address](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_lower_trim_clean_email.png)
 
 ## Pulling Out Part of a String
 
 Meera also needs just the domain of each manager's email, to check which restaurants still use the old `curryleaf.com` address before a rebrand. `SUBSTRING` extracts a piece of a string given a starting position and, optionally, a length. Her query is `SELECT manager_email, SUBSTRING(TRIM(manager_email) FROM POSITION('@' IN TRIM(manager_email)) + 1) AS domain FROM restaurants;`.
 
-```postgresql with=init.sql
-SELECT manager_email,
-       SUBSTRING(TRIM(manager_email) FROM POSITION('@' IN TRIM(manager_email)) + 1) AS domain
-FROM restaurants;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakt6p" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -219,9 +227,12 @@ Head office wants a cleaned-up manager directory: one `column` with the branch n
 
 The required transformation is `LOWER(TRIM(manager_email))`: `TRIM` removes the outer spaces first, and `LOWER` then normalizes the remaining address.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaktfg" 
+ width="100%"
+></iframe>
 
 If your `query` is `SELECT LOWER(TRIM(manager_email)) AS contact_email FROM restaurants;`, every address now reads the same clean way regardless of how it was originally typed.
 

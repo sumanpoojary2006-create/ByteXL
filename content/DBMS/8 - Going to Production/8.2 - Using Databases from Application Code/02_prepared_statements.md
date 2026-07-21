@@ -6,6 +6,22 @@ This is a genuine hazard, both for correctness and for security, and the fix is 
 
 **Definition:** A `prepared statement` separates a `query`'s fixed structure from the runtime values it operates on, letting an application safely handle untrusted input as pure data that can never alter what the `query` actually does, while also allowing the `database` to reuse a parsed and planned `query` across repeated executions.
 
+<!--
+IMAGE PROMPT  ->  generate as images/02_intro_prepared_statements.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Once a connection is open, an application still has to decide exactly how to send a query that includes a value only known at runtime, such as a customer-entered order ID. The tempting, simplest approach is to build the SQL text by directly pasting that value.
+
+ON-IMAGE TEXT: show a short bold title "Prepared Statements" plus only these few labels, large and legible: Query, Order, Prepared. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for prepared statements](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_prepared_statements.png)
+
 ## The Problem with Building SQL by Pasting in Values
 
 The `shipments` `table` sets up a simple lookup that an application might naively build by string concatenation.
@@ -97,7 +113,7 @@ This splits the `query` into two separate pieces:
 
 Even if the supplied value were a maliciously crafted string, it would be handled purely as data, a single value being compared against `shipment_id`, never as SQL syntax that could change what the `query` does; the injection demonstrated above becomes structurally impossible.
 
-![Prepared statements keep query structure separate from runtime values](images/03_prepared_statement_separates_structure_and_value.png)
+![Prepared statements keep query structure separate from runtime values](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_prepared_statement_separates_structure_and_value.png)
 
 ## Running the Same Prepared Statement with Different Values
 
@@ -129,7 +145,7 @@ Expected output, one result set per `EXECUTE`:
 
 Each `EXECUTE` reuses the exact same prepared `query` structure, only the value plugged into `$1` changes, exactly the pattern a real application follows when handling many different incoming requests for different shipment IDs, using the same underlying `prepared statement` each time.
 
-![One prepared statement can be executed many times with different values](images/04_prepared_statement_reuse_many_values.png)
+![One prepared statement can be executed many times with different values](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_prepared_statement_reuse_many_values.png)
 
 ## The Performance Benefit Alongside the Safety Benefit
 

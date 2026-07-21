@@ -5,6 +5,22 @@
 
 **Definition:** `EXPLAIN` output names the chosen operation for each step of a `query`, an estimated relative cost, an estimated `row` count, and an estimated `row` width, nested to show which steps feed into which, and none of those cost numbers represent actual measured time, only the optimizer's own relative comparison between candidate plans.
 
+<!--
+IMAGE PROMPT  ->  generate as images/02_intro_reading_explain.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: - EXPLAIN has appeared throughout this unit as a way to check whether a query uses a sequential scan or an index scan, but its output carries more detail than just a scan type, and reading that detail precisely is what turns EXPLAIN from a yes-or-no check.
+
+ON-IMAGE TEXT: show a short bold title "Reading Explain" plus only these few labels, large and legible: Query, Index, Reading. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for reading explain](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_reading_explain.png)
+
 ## The Basic Shape of an EXPLAIN Plan
 
 A plan for a simple, single-`table` `query` is the easiest starting point.
@@ -63,7 +79,7 @@ A typical line of output looks like `Index Scan using idx_orders_customer_id on 
 - **`rows=100`**: the optimizer's estimate of how many `rows` this step will return.
 - **`width=15`**: estimates the average size, in bytes, of each returned `row`.
 
-![An EXPLAIN plan line contains the operation, cost, estimated rows, and width](images/03_explain_plan_line_anatomy.png)
+![An EXPLAIN plan line contains the operation, cost, estimated rows, and width](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_explain_plan_line_anatomy.png)
 
 ## Cost Numbers Are Estimates, Not Measured Time
 
@@ -114,7 +130,7 @@ Expected output:
 - Reading a nested plan means starting from the innermost, most indented step, which runs first and feeds its output upward, and working outward toward the final, least indented step, which represents the last operation applied before the result is returned.
 - The aggregation cannot begin until the filtered `rows` beneath it have been gathered, which is exactly why it is nested underneath that scan in the output.
 
-![Indented EXPLAIN steps are read from the inner step outward](images/04_explain_nested_steps_inside_out.png)
+![Indented EXPLAIN steps are read from the inner step outward](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_explain_nested_steps_inside_out.png)
 
 ## Distinguishing Plan Nodes from Actual Table and Index Names
 

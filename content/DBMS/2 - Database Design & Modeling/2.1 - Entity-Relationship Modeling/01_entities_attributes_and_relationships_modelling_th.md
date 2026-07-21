@@ -16,7 +16,7 @@ And when Kabir watches the student borrow a book, he notices something that belo
 
 Long before any `table` gets created, this three-part exercise, naming the things, naming their properties, and naming how the things connect, is the real work of designing a `database`.
 
-![Kabir identifying library entities, their attributes, and the relationships between them](images/01_entities_attributes_relationships_library.png)
+![Kabir identifying library entities, their attributes, and the relationships between them](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_entities_attributes_relationships_library.png)
 
 **Definition:** An entity is a distinct real-world thing a system needs to remember facts about, an attribute is one of those facts, and a relationship is a meaningful `connection` between two entities.
 
@@ -153,7 +153,7 @@ When his manager asks to see progress, Kabir walks her through the list verbally
 
 She nods and tells him that is exactly the right starting point: get the real-world picture right first, because every `table`, `column`, and `constraint` that comes later is only a faithful translation of that picture into a form a `database` can store.
 
-![Real library observations sorted into entities, attributes, relationships, and irrelevant details](images/02_observation_to_er_model_funnel.png)
+![Real library observations sorted into entities, attributes, relationships, and irrelevant details](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_observation_to_er_model_funnel.png)
 
 This same three-question habit, what are the things, what do we know about each thing, and how do the things connect, applies just as cleanly to other domains:
 

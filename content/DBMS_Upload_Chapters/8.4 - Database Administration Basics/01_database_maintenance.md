@@ -6,6 +6,10 @@ In PostgreSQL specifically, that is not quite what happens: an updated or delete
 
 Left unmanaged, this leftover space accumulates, and **`database` maintenance** is the ongoing work of cleaning it up, keeping a production `database` healthy as it runs for months and years, not just correct at the moment each `query` executes.
 
+**Definition:** Because PostgreSQL keeps old `row` versions around to support concurrent, isolated reads, routine maintenance, reclaiming dead tuple space with `VACUUM` and keeping the optimizer's statistics current with `ANALYZE`, is essential to keeping a `database` healthy over time, and autovacuum handles this automatically for the large majority of real-world cases without manual intervention.
+
+![Intro visual for database maintenance](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_database_maintenance.png)
+
 ## Why Updates and Deletes Leave Behind Dead Rows
 
 PostgreSQL's approach to updates, called `MVCC`, multiversion concurrency control, is what makes isolation between concurrent `transactions` possible in the first place, and it has a direct physical consequence.
@@ -27,7 +31,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     status TEXT
@@ -39,13 +43,12 @@ SELECT i, 'in_transit' FROM generate_series(1, 5000) AS i;
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-SELECT pg_size_pretty(pg_relation_size('shipments')) AS size_before_updates;
-
-UPDATE shipments SET status = 'delivered' WHERE shipment_id <= 4000;
-
-SELECT pg_size_pretty(pg_relation_size('shipments')) AS size_after_updates;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahbrv" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
@@ -54,17 +57,18 @@ Even though this `UPDATE` did not add a single new `row`, the `table`'s physical
 - PostgreSQL writes each updated `row` as a new version alongside the old one, rather than overwriting it in place.
 - The old, no-longer-current versions, called dead tuples, keep occupying disk space until something explicitly reclaims it.
 
-![VACUUM cleans up dead tuples and marks their space reusable](images/01_dead_tuples_vacuum_reusable_space.png)
+![VACUUM cleans up dead tuples and marks their space reusable](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_dead_tuples_vacuum_reusable_space.png)
 
 ## Reclaiming Space with VACUUM
 
 `VACUUM` is the command that scans a `table` for dead tuples and marks their space as reusable for future inserts and updates.
 
-```postgresql with=init.sql
-VACUUM shipments;
-
-SELECT pg_size_pretty(pg_relation_size('shipments')) AS size_after_vacuum;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahc74" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
@@ -75,26 +79,30 @@ Expected observation: PostgreSQL returns live server metadata. Values differ acr
 
 The `query optimizer`, covered in the performance unit, relies on `table` and `column` statistics to estimate costs and choose plans, and those statistics do not update themselves automatically after a large batch of changes.
 
-```postgresql with=init.sql
-ANALYZE shipments;
-
-SELECT relname, n_live_tup, n_dead_tup FROM pg_stat_user_tables WHERE relname = 'shipments';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahcfx" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
 - `ANALYZE` refreshes PostgreSQL's internal statistics about the `table`'s data distribution, and `n_live_tup` and `n_dead_tup` in `pg_stat_user_tables` show, respectively, the estimated count of current, valid `rows` and dead, reclaimable `rows` PostgreSQL is currently tracking.
 - Stale statistics, left unrefreshed after significant data changes, can mislead the optimizer into choosing a worse plan than it otherwise would, exactly the risk noted when the optimizer was first introduced.
 
-![ANALYZE refreshes table statistics so the optimizer can choose better plans](images/02_analyze_fresh_stats_autovacuum.png)
+![ANALYZE refreshes table statistics so the optimizer can choose better plans](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_analyze_fresh_stats_autovacuum.png)
 
 ## Autovacuum: Maintenance Running Automatically
 
 Running `VACUUM` and `ANALYZE` manually after every change would be impractical, which is why PostgreSQL runs a background process, autovacuum, that performs both automatically once a `table`'s dead-tuple count or data changes cross a configured threshold.
 
-```postgresql with=init.sql
-SHOW autovacuum;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahcrp" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
@@ -138,9 +146,12 @@ Expected observation: PostgreSQL returns live server metadata. Values differ acr
 
 Delete a large portion of the `shipments` `table`, check `n_dead_tup` before running `VACUUM`, then run it and check again, confirming the dead tuple count drops.
 
-```postgresql with=init.sql
--- Write your queries below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahd2n" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

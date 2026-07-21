@@ -12,7 +12,7 @@ Further down still, none of this looks like `tables` or portals at all. It is by
 
 This layered way of describing a `database`, from what one user sees, to how the data is logically organised, to how it is physically stored, is called the **`three-schema architecture`**.
 
-![The external, conceptual, and internal schemas showing three views of one college results database](images/01_three_schema_architecture_layers.png)
+![The external, conceptual, and internal schemas showing three views of one college results database](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_three_schema_architecture_layers.png)
 
 **Definition:** The `three-schema architecture` is really just an honest admission that "the `database`" means different things to different people looking at it from different heights: a tailored screen for an end user at the external level, a shared structural design at the conceptual level, and raw stored bytes at the internal level.
 
@@ -30,7 +30,7 @@ A professor logging into the same underlying `database` might see a completely d
 
 Same `database` underneath, several different external `views`, each shaped around what one kind of user or one application actually needs to see.
 
-![Student, professor, and fee-portal views drawing different slices from one shared conceptual schema](images/02_external_views_from_one_schema.png)
+![Student, professor, and fee-portal views drawing different slices from one shared conceptual schema](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_external_views_from_one_schema.png)
 
 ### The Conceptual Level: How the Registrar Designed It
 

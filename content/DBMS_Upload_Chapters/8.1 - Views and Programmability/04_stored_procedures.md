@@ -4,6 +4,10 @@ Marking a shipment delivered, in Devraj's system, is never just one `UPDATE`.
 
 It means changing the shipment's status, and also inserting a `row` into a separate audit log recording who marked it and when, two statements that always need to run together, the exact kind of grouped operation the `transactions` unit covered in depth, Rather than trusting every script and every developer to remember both statements and wrap them correctly, a **`stored procedure`** lets Devraj define this logic once, inside the `database` itself, as a named, callable unit.
 
+**Definition:** A `stored procedure`, invoked with `CALL`, wraps multiple statements into a single, named, reusable routine defined once inside the `database`, capable of managing its own `transaction` boundaries including mid-`procedure` commits, which guarantees every caller gets identical, correct behavior without reimplementing the same logic client by client.
+
+![Intro visual for stored procedures](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_stored_procedures.png)
+
 ## Creating a Simple Procedure
 
 The `shipments` and `shipment_log` `tables` set up the two-statement operation a `procedure` will wrap.
@@ -34,7 +38,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     status TEXT
@@ -52,16 +56,12 @@ INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'in_tr
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-CREATE PROCEDURE mark_shipment_delivered(p_shipment_id INTEGER)
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    UPDATE shipments SET status = 'delivered' WHERE shipment_id = p_shipment_id;
-    INSERT INTO shipment_log (shipment_id, action) VALUES (p_shipment_id, 'marked delivered');
-END;
-$$;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagw4s" 
+ width="100%"
+></iframe>
 
 Expected result: `CREATE PROCEDURE` returns no rows; it registers `mark_shipment_delivered` so later statements in this lesson can `CALL` it. `CREATE PROCEDURE mark_shipment_delivered(p_shipment_id INTEGER)` defines a named routine, written in `plpgsql`, PostgreSQL's own procedural extension of SQL:
 
@@ -72,21 +72,12 @@ Expected result: `CREATE PROCEDURE` returns no rows; it registers `mark_shipment
 
 A `procedure` is invoked with `CALL`, not `SELECT`, since it performs actions rather than returning a result set the way a `query` does.
 
-```postgresql with=init.sql
-CREATE PROCEDURE mark_shipment_delivered(p_shipment_id INTEGER)
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    UPDATE shipments SET status = 'delivered' WHERE shipment_id = p_shipment_id;
-    INSERT INTO shipment_log (shipment_id, action) VALUES (p_shipment_id, 'marked delivered');
-END;
-$$;
-
-CALL mark_shipment_delivered(1);
-
-SELECT * FROM shipments;
-SELECT * FROM shipment_log;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagwku" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -105,41 +96,18 @@ Expected output:
 
 One call to `mark_shipment_delivered(1)` ran both the `UPDATE` and the `INSERT` from the `procedure`'s body, and both `tables` now reflect that single logical operation, exactly the two-statements-together guarantee Devraj wanted, now enforced automatically by the `procedure` itself rather than relying on every caller to remember both steps.
 
-![A stored procedure CALL can run an update and an audit-log insert together](images/07_stored_procedure_call_runs_update_and_log.png)
+![A stored procedure CALL can run an update and an audit-log insert together](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_stored_procedure_call_runs_update_and_log.png)
 
 ## Procedures Can Manage Their Own Transactions
 
 Unlike a plain SQL script, a `procedure` written in `plpgsql` is allowed to issue its own `COMMIT` or `ROLLBACK` partway through its body, useful for long-running `procedures` that need to save progress incrementally rather than treating the whole `procedure` as one giant, indivisible `transaction`.
 
-```postgresql with=init.sql
-CREATE PROCEDURE mark_shipment_delivered(p_shipment_id INTEGER)
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    UPDATE shipments SET status = 'delivered' WHERE shipment_id = p_shipment_id;
-    INSERT INTO shipment_log (shipment_id, action) VALUES (p_shipment_id, 'marked delivered');
-END;
-$$;
-
-CREATE PROCEDURE mark_multiple_delivered(shipment_ids INTEGER[])
-LANGUAGE plpgsql
-AS $$
-DECLARE
-    sid INTEGER;
-BEGIN
-    FOREACH sid IN ARRAY shipment_ids
-    LOOP
-        UPDATE shipments SET status = 'delivered' WHERE shipment_id = sid;
-        INSERT INTO shipment_log (shipment_id, action) VALUES (sid, 'marked delivered (batch)');
-        COMMIT;
-    END LOOP;
-END;
-$$;
-
-CALL mark_multiple_delivered(ARRAY[2]);
-
-SELECT * FROM shipments;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagww4" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -152,7 +120,7 @@ Expected output:
 - END LOOP` is `plpgsql`'s looping construct, iterating over every value passed in, and the `COMMIT` inside the loop saves each shipment's update independently, rather than risking the entire batch being rolled back together if one shipment far down the list ran into a problem.
 - This ability to commit mid-`procedure` is a capability plain SQL `functions`, covered in the next lesson, do not have.
 
-![A procedure can commit during a long-running operation to save progress](images/08_procedure_can_commit_save_progress.png)
+![A procedure can commit during a long-running operation to save progress](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_procedure_can_commit_save_progress.png)
 
 ## Why Wrap Logic in a Procedure at All
 
@@ -193,37 +161,12 @@ A `procedure` moves that logic into the `database` itself, which means every cal
 
 Write a `procedure` named `cancel_shipment` that takes a `shipment_id`, sets its status to `'cancelled'`, and logs the action as `'cancelled'` in `shipment_log`, then call it for shipment 2.
 
-```postgresql with=init.sql
-CREATE PROCEDURE mark_shipment_delivered(p_shipment_id INTEGER)
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    UPDATE shipments SET status = 'delivered' WHERE shipment_id = p_shipment_id;
-    INSERT INTO shipment_log (shipment_id, action) VALUES (p_shipment_id, 'marked delivered');
-END;
-$$;
-
-CREATE PROCEDURE mark_multiple_delivered(shipment_ids INTEGER[])
-LANGUAGE plpgsql
-AS $$
-DECLARE
-    sid INTEGER;
-BEGIN
-    FOREACH sid IN ARRAY shipment_ids
-    LOOP
-        UPDATE shipments SET status = 'delivered' WHERE shipment_id = sid;
-        INSERT INTO shipment_log (shipment_id, action) VALUES (sid, 'marked delivered (batch)');
-        COMMIT;
-    END LOOP;
-END;
-$$;
-
-CALL mark_multiple_delivered(ARRAY[2]);
-
-SELECT * FROM shipments;
-
--- Write your procedure and call below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagx7q" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

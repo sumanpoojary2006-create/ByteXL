@@ -6,6 +6,22 @@ There are a few standard strategies for how a `table`'s file can be organized, a
 
 **Definition:** A heap places `rows` wherever space is free, with no ordering guarantee, sorted or clustered organization keeps `rows` physically near others with similar values in a chosen `column`, and hashed organization groups `rows` by a computed bucket for fast exact-match lookups, each with a different trade-off between write simplicity and read speed for a particular kind of `query`.
 
+<!--
+IMAGE PROMPT  ->  generate as images/02_intro_file_organization_heap_sorted_and_hashed_files.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Knowing that rows live in pages raises a natural next question: in what order do rows actually land inside those pages? The answer is not automatically "sorted by primary key," or by anything else meaningful, unless the database is specifically told to.
+
+ON-IMAGE TEXT: show a short bold title "File Organization Heap Sorted And Hashed Files" plus only these few labels, large and legible: Table, Key, Order. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for file organization heap sorted and hashed files](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_file_organization_heap_sorted_and_hashed_files.png)
+
 ## Heap Organization: Rows Land Wherever There Is Room
 
 By default, PostgreSQL stores a `table` as a heap, meaning new `rows` are simply placed wherever there happens to be free space, with no guaranteed ordering by any `column` at all.
@@ -60,7 +76,7 @@ Even though these `rows` were inserted with `order_id` values 5, 2, 8, then 1, t
 
 This means a `query` that wants "every order with `order_id` between 1 and 4" cannot assume those `rows` sit near each other on disk. A heap offers no such guarantee, and finding them without help requires checking every page, a `full table scan`, the subject of the next lesson.
 
-![Heap organization places rows wherever there is space while clustered organization keeps nearby keys together](images/03_heap_vs_sorted_clustered_layout.png)
+![Heap organization places rows wherever there is space while clustered organization keeps nearby keys together](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_heap_vs_sorted_clustered_layout.png)
 
 ## Sorted (Clustered) Organization: Rows Kept in Physical Order
 
@@ -110,7 +126,7 @@ With the names listed alphabetically, the bucket numbers jump around with no pat
 
 PostgreSQL does not organize whole `tables` this way, but it offers `hash indexes`, which apply exactly this idea to speed up equality lookups specifically, at the cost of being unable to help at all with range `queries` like "greater than" or "between."
 
-![Hashed organization sends an exact-match key to one bucket but cannot preserve ranges](images/04_hash_bucket_exact_match_layout.png)
+![Hashed organization sends an exact-match key to one bucket but cannot preserve ranges](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_hash_bucket_exact_match_layout.png)
 
 ```postgresql with=init.sql
 CREATE INDEX idx_orders_hash ON orders USING hash (customer_name);

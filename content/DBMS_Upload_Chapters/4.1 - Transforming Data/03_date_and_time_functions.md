@@ -8,6 +8,10 @@ Divya runs the front desk software for a small clinic, and the `appointments` `t
 
 A timestamp is a single value, but the questions above need it pulled apart, compared, or measured against right now. SQL's **date and time `functions`** exist for exactly this kind of work.
 
+**Definition:** Date and time `functions` turn a single stored timestamp into whatever shape a question needs: `NOW()` and `CURRENT_DATE` for a reference point, interval arithmetic for shifting dates forward or measuring spans, and `EXTRACT` for pulling out just a weekday or an hour.
+
+![Intro visual for date and time functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_date_and_time_functions.png)
+
 ## Getting the Current Moment
 
 Every date calculation eventually needs to know what "now" is, so that is the natural starting point.
@@ -32,7 +36,7 @@ The OneCompiler activity keeps setup and practice separate. `init.sql` creates a
 
 ## Hands-On Setup: Prepare the Data
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE appointments (
     appointment_id INTEGER PRIMARY KEY,
     patient_name TEXT,
@@ -49,9 +53,12 @@ INSERT INTO appointments (appointment_id, patient_name, visit_time) VALUES
 
 Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
 
-```postgresql with=init.sql
-SELECT NOW() AS current_timestamp_value, CURRENT_DATE AS current_date_value;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakwxk" 
+ width="100%"
+></iframe>
 
 Expected output shape:
 
@@ -61,7 +68,7 @@ Expected output shape:
 
 `NOW()` returns the exact current timestamp the `database` sees at `query` time, down to the second, while `CURRENT_DATE` returns just today's date with no time component. Divya will use `NOW()` as the anchor point for every "how long ago" question the clinic asks.
 
-![NOW, CURRENT_DATE, and INTERVAL using the current moment to suggest a follow-up date](images/05_now_current_date_interval_followup.png)
+![NOW, CURRENT_DATE, and INTERVAL using the current moment to suggest a follow-up date](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_now_current_date_interval_followup.png)
 
 ## Doing Arithmetic on Dates
 
@@ -69,12 +76,12 @@ With a reference point available, Divya can measure how far in the past each app
 
 The query below calculates a readable age from `NOW()` and adds a seven-day interval to every stored visit. The age changes with the execution date, but the suggested follow-up is always exactly seven days after the visit.
 
-```postgresql with=init.sql
-SELECT patient_name, visit_time,
-       AGE(NOW(), visit_time) AS time_since_visit,
-       visit_time + INTERVAL '7 days' AS suggested_followup
-FROM appointments;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakx9h" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -95,12 +102,12 @@ Sometimes the full timestamp is more detail than the question needs. Divya wants
 
 Her query uses `EXTRACT(DOW FROM visit_time)` for PostgreSQL's Sunday-to-Saturday number and `EXTRACT(HOUR FROM visit_time)` for the 24-hour clock value.
 
-```postgresql with=init.sql
-SELECT patient_name, visit_time,
-       EXTRACT(DOW FROM visit_time) AS day_of_week_number,
-       EXTRACT(HOUR FROM visit_time) AS hour_of_day
-FROM appointments;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakxky" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -116,7 +123,7 @@ Expected output:
 - `DOW` (day of week) returns 0 for Sunday through 6 for Saturday, and `HOUR` returns the hour in 24-hour format.
 - Grouping later by `EXTRACT(HOUR FROM visit_time)` is how Divya would eventually find the clinic's busiest hour, one topic ahead once grouping is introduced.
 
-![EXTRACT pulling hour and day-of-week parts from a visit timestamp](images/06_extract_timestamp_parts.png)
+![EXTRACT pulling hour and day-of-week parts from a visit timestamp](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_extract_timestamp_parts.png)
 
 ## Comparing Two Dates Directly
 
@@ -124,12 +131,12 @@ Divya also wants a simple flag: was a given appointment booked in the last 30 da
 
 The query converts each timestamp to a date, subtracts it from `CURRENT_DATE`, and orders the calculated day counts from smallest to largest. The exact numbers increase as time passes.
 
-```postgresql with=init.sql
-SELECT patient_name, visit_time,
-       CURRENT_DATE - visit_time::DATE AS days_since_visit
-FROM appointments
-ORDER BY days_since_visit;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakxwk" 
+ width="100%"
+></iframe>
 
 Expected output shape:
 
@@ -228,9 +235,12 @@ Expected output shape:
 
 The clinic wants a simple recall list: patient name and visit date for every appointment more than 60 days old, counting from today, ordered with the oldest visit first. Write that `query` against the `appointments` `table` above.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaky8m" 
+ width="100%"
+></iframe>
 
 If your `query` filters with `WHERE CURRENT_DATE - visit_time::DATE > 60` and orders by `visit_time`, the earliest visits in the `table` surface first, which is exactly who the clinic should be calling back.
 

@@ -4,6 +4,10 @@ The sales director's final request ties together nearly everything in this chapt
 
 Ranking `functions` alone cannot filter, since `window functions` are not allowed inside `WHERE`, the same restriction noted when ranking `functions` were first introduced. Solving this cleanly needs a ranking `function` wrapped in a CTE.
 
+**Definition:** A top-N-per-group report combines a ranking `function` partitioned by the grouping `column` with a CTE that makes the rank filterable, and the choice between `ROW_NUMBER`, `RANK`, and `DENSE_RANK` decides exactly how ties are handled in the result.
+
+![Intro visual for topn per group](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_topn_per_group.png)
+
 ## Ranking Within Each Region
 
 The `sales` `table` now includes a `region` `column` so rankings can be scoped per region.
@@ -28,7 +32,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE sales (
     salesperson TEXT,
     region TEXT,
@@ -47,11 +51,12 @@ INSERT INTO sales (salesperson, region, total_amount) VALUES
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-SELECT salesperson, region, total_amount,
-       RANK() OVER (PARTITION BY region ORDER BY total_amount DESC) AS region_rank
-FROM sales;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagg62" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -72,23 +77,18 @@ Expected output:
 
 Every region starts its own count from 1, which is exactly the "within each region" part of the director's request.
 
-![Ranking rows within each region and keeping the top two per group](images/11_top_two_per_group_rank_filter.png)
+![Ranking rows within each region and keeping the top two per group](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_top_two_per_group_rank_filter.png)
 
 ## Filtering to the Top N Using a CTE
 
 Since `region_rank` cannot be referenced directly in `WHERE` within the same `query` that defines it, the ranked result needs to be named with a CTE first, then filtered from there.
 
-```postgresql with=init.sql
-WITH ranked_sales AS (
-    SELECT salesperson, region, total_amount,
-           RANK() OVER (PARTITION BY region ORDER BY total_amount DESC) AS region_rank
-    FROM sales
-)
-SELECT salesperson, region, total_amount, region_rank
-FROM ranked_sales
-WHERE region_rank <= 2
-ORDER BY region, region_rank;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaggha" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -106,23 +106,18 @@ South's tie is handled cleanly too, Sana Fatima and Tarun Bakshi both hold rank 
 
 Had South instead had a three-way tie for first place, all three tied `rows` would have survived the same filter, since every one of them would hold rank 1, which is worth knowing before assuming a top-N `query` always returns exactly N `rows` per group.
 
-![A CTE computing window ranks before an outer query filters to top rows](images/12_cte_filtering_window_rank.png)
+![A CTE computing window ranks before an outer query filters to top rows](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_cte_filtering_window_rank.png)
 
 ## Choosing ROW_NUMBER Instead When Ties Should Not Multiply Results
 
 If the business rule is strictly "exactly 2 per region, no matter what," regardless of ties, `ROW_NUMBER` guarantees exactly that count, at the cost of breaking ties arbitrarily.
 
-```postgresql with=init.sql
-WITH ranked_sales AS (
-    SELECT salesperson, region, total_amount,
-           ROW_NUMBER() OVER (PARTITION BY region ORDER BY total_amount DESC) AS row_num
-    FROM sales
-)
-SELECT salesperson, region, total_amount
-FROM ranked_sales
-WHERE row_num <= 2
-ORDER BY region, row_num;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaggt8" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -169,9 +164,12 @@ This CTE-plus-ranking-plus-filter shape generalizes far beyond sales regions: to
 
 Find the single lowest-selling salesperson in each region, using `RANK`. Write that `query` against the `sales` `table` above.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagh4e" 
+ width="100%"
+></iframe>
 
 One valid answer wraps `RANK() OVER (PARTITION BY region ORDER BY total_amount ASC) AS region_rank` in a CTE and filters with `WHERE region_rank = 1`, returning Devika Rao for North, Reema Ghosh for South, and Kunal Verma for East, since ordering ascending instead of descending flips the ranking to find the smallest value first.
 

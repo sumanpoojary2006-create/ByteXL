@@ -2,6 +2,10 @@
 
 `GRANT` and `REVOKE`, covered in the previous lesson, are just tools; they say nothing about how much access any given `role` should actually have. The **principle of `least privilege`** answers that question directly: every `role` should be granted exactly the access it needs to do its job, and nothing more, not "might need someday," not "it's easier to just grant everything." This lesson is less about new syntax and more about the judgment that should guide every `GRANT` statement written from here on.
 
+**Definition:** The principle of `least privilege` means granting a `role` exactly the access its actual, current responsibilities require, and nothing broader, since every unnecessary privilege granted is unnecessary risk carried indefinitely, whether that `role` represents an automated service or an individual developer, and periodically reviewing existing grants is what keeps this discipline from quietly eroding over time.
+
+![Intro visual for principle of least privilege](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_principle_of_least_privilege.png)
+
 ## The Tempting Shortcut, and Why It Is a Real Risk
 
 Granting broad, unrestricted access up front avoids the friction of figuring out exactly what a `role` needs, but it turns every `role` into a much larger liability than it needs to be.
@@ -29,7 +33,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     status TEXT,
@@ -46,9 +50,12 @@ CREATE ROLE reporting_app WITH LOGIN PASSWORD 'change_this_in_real_use';
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO reporting_app;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaj8uc" 
+ width="100%"
+></iframe>
 
 Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
 
@@ -64,27 +71,30 @@ Two risks follow directly from this:
 
 The least-privilege alternative starts from the opposite direction: name exactly what this `role` needs, and grant only that.
 
-```postgresql with=init.sql
-REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA public FROM reporting_app;
-
-GRANT SELECT ON shipments TO reporting_app;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaj95n" 
+ width="100%"
+></iframe>
 
 Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
 
 - `reporting_app` can now read `shipments`, exactly what a reporting dashboard needs, and nothing else; it has no access to `payroll` at all, and no ability to modify `shipments` either, since `INSERT`, `UPDATE`, and `DELETE` were never granted.
 - If this service's credentials were ever compromised, the worst an attacker could do through this specific account is read shipment data, not touch payroll, not delete anything, a dramatically smaller blast radius than the broad grant above.
 
-![Least privilege gives a role only the access it needs, reducing the blast radius](images/05_least_privilege_smaller_blast_radius.png)
+![Least privilege gives a role only the access it needs, reducing the blast radius](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_least_privilege_smaller_blast_radius.png)
 
 ## Least Privilege Applies to People, Not Just Services
 
 The same discipline applies to individual developer accounts, not only automated services. A developer debugging a shipment-tracking issue does not need write access to `payroll` either, even though as a human they might reasonably need broader access than an automated reporting service in other ways.
 
-```postgresql with=init.sql
-CREATE ROLE dev_alia WITH LOGIN PASSWORD 'change_this_in_real_use';
-GRANT SELECT, UPDATE ON shipments TO dev_alia;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaj9ge" 
+ width="100%"
+></iframe>
 
 Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
 
@@ -96,14 +106,12 @@ Expected result: PostgreSQL completes the definition or privilege command withou
 - `Least privilege` is not a one-time setup step; permissions tend to accumulate over time as `role`s are granted access for a specific, temporary task and then never revisited.
 - Periodically auditing what a `role` can actually do, compared to what it currently needs, is part of maintaining the principle over the long run.
 
-```postgresql with=init.sql
-CREATE ROLE dev_alia WITH LOGIN PASSWORD 'change_this_in_real_use';
-GRANT SELECT, UPDATE ON shipments TO dev_alia;
-
-SELECT grantee, table_name, privilege_type
-FROM information_schema.role_table_grants
-WHERE grantee = 'reporting_app';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaj9vm" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -113,7 +121,7 @@ Expected output:
 
 This block only grants `SELECT` and `UPDATE` to `dev_alia`; `reporting_app` was created by `init.sql` but was never granted anything in this fresh session, so filtering `role_table_grants` for `reporting_app` correctly comes back empty here. In a real, long-running `database`, this same `query` is exactly how a team would spot that `reporting_app` unexpectedly does, or does not, hold a grant it should. `information_schema.role_table_grants` lists every privilege currently held by a given `role`, across every `table`, a direct way to check whether `reporting_app`'s actual granted permissions still match what it genuinely needs, or whether some stale grant from an earlier, now-irrelevant task is still sitting there, unnoticed, quietly widening that account's blast radius.
 
-![Periodic grant review compares current permissions with current need and removes stale access](images/06_review_grants_revoke_stale_access.png)
+![Periodic grant review compares current permissions with current need and removes stale access](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_review_grants_revoke_stale_access.png)
 
 ## Least Privilege at a Glance
 
@@ -148,12 +156,12 @@ This block only grants `SELECT` and `UPDATE` to `dev_alia`; `reporting_app` was 
 
 Audit `dev_alia`'s current privileges using `information_schema.role_table_grants`, then revoke her `UPDATE` privilege on `shipments`, reasoning in a comment about whether a read-only debugging task genuinely needs write access at all.
 
-```postgresql with=init.sql
-CREATE ROLE dev_alia WITH LOGIN PASSWORD 'change_this_in_real_use';
-GRANT SELECT, UPDATE ON shipments TO dev_alia;
-
--- Write your query, revoke, and comment below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajaek" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

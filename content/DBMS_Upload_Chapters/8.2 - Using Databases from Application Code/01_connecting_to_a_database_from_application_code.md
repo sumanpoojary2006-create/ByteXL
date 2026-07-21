@@ -4,6 +4,10 @@ Every `query` in this course so far has run inside an editor already connected t
 
 A real application never gets that convenience for free; before it can run a single `SELECT`, it has to establish a **`connection`**, a live, authenticated link between the application process and the `database` server, and that `connection` has its own setup cost, its own configuration, and its own failure modes worth understanding before writing a line of `query` code.
 
+**Definition:** A `connection` is a real, costly, stateful link between an application and a `database`, requiring a `connection string` to establish, real server-side resources to maintain, and deliberate closing to avoid leaking those resources, with `connection` failures and `query` failures representing genuinely different problems that call for different handling in application code.
+
+![Intro visual for connecting to a database from application code](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_connecting_to_a_database_from_application_code.png)
+
 ## What a Connection String Actually Contains
 
 An application typically opens a `connection` using a `connection string`, a compact format bundling everything the `database` needs to know: where the server is, which `database` to use, and who is connecting.
@@ -25,7 +29,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE app_config (
     config_key TEXT PRIMARY KEY,
     config_value TEXT
@@ -40,9 +44,12 @@ INSERT INTO app_config (config_key, config_value) VALUES
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-SELECT * FROM app_config;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakqbu" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -65,15 +72,18 @@ A real `connection string` built from values like these would look something lik
 
 The `app_config` `table` above is only illustrative, showing the pieces such a string is made of a production application would never store a raw password in a plain `table` like this, and the security chapter of this unit covers exactly why, and what to do instead.
 
-![A connection string bundles host, port, database, and credentials into one connection target](images/01_connection_string_pieces.png)
+![A connection string bundles host, port, database, and credentials into one connection target](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_connection_string_pieces.png)
 
 ## Why Every Connection Involves a Real Cost
 
 Opening a `connection` is not free: it typically means a network round trip to the server, an authentication handshake, and the server allocating resources on its side to track that `connection`. This is the reason a well-built application does not open a brand new `connection` for every single `query` it runs.
 
-```postgresql with=init.sql
-SELECT count(*) AS active_connections FROM pg_stat_activity;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakqvb" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
@@ -83,11 +93,12 @@ Expected observation: PostgreSQL returns live server metadata. Values differ acr
 
 A `connection` that is opened but never properly closed continues consuming server-side resources indefinitely, even after the application code that opened it has long since finished using it, or crashed without cleaning up.
 
-```postgresql with=init.sql
-SELECT pid, state, query, now() - query_start AS running_for
-FROM pg_stat_activity
-WHERE state = 'idle';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakr6g" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
@@ -95,7 +106,7 @@ A `connection` sitting in the `idle` state, especially one that has been idle fo
 
 Well-written application code always ensures a `connection` is closed once it is no longer needed, typically through a pattern the connecting language provides for guaranteed cleanup, even if an error occurs partway through.
 
-![Application code should open, use, and close connections to avoid idle leaks](images/02_connection_lifecycle_open_use_close.png)
+![Application code should open, use, and close connections to avoid idle leaks](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_connection_lifecycle_open_use_close.png)
 
 ## A Connection Failure Is Not the Same as a Query Failure
 
@@ -140,9 +151,12 @@ The two call for different handling: a `connection` failure often means retrying
 
 Query `pg_stat_activity` for the current `database`, filtering to just this session's own `connection`, and identify which `columns` describe the `connection` itself versus the `query` currently running on it.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakrf5" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

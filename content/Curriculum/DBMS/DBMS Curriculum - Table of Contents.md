@@ -1,6 +1,6 @@
 # Database Management Systems - Curriculum Table of Contents
 
-**Draft for finalization.** Mirrors the Python Fundamentals structure: clean Unit -> Topic layout (no chapters), in teaching order, over a 15-week term. Each unit has a one-line goal, followed by its topics in the exact order they should be taught. Reading materials will follow the same house style as the Python course: professional, beginner-friendly, no emojis, no em dashes, standardized Introduction heading, narrative flow.
+**Draft for finalization.** Mirrors the Python Fundamentals structure: clean Unit -> Topic layout for teaching content, followed by separate Mini Projects and Capstone Projects chapters, in teaching order over a 15-week term. Each unit has a one-line goal, followed by its topics in the exact order they should be taught. Reading materials will follow the same house style as the Python course: professional, beginner-friendly, no emojis, no em dashes, standardized Introduction heading, narrative flow.
 
 The arc matches the Python course philosophy: think in data before writing SQL (Units 1-2), learn the language hands-on (Units 3-9), then design and operate real databases (Units 10-13).
 
@@ -176,7 +176,24 @@ Make queries fast, find out why they are slow, and package them for reuse - the 
 6. Views: Saved Queries as Virtual Tables
 7. Users, Privileges, and GRANT/REVOKE Basics
 8. A Performance-Debugging Routine: Measure, Explain, Index, Re-measure
-9. Course Capstone: Design, Build, Load, and Query a Complete Database
+
+## Project Chapter: Mini Projects
+
+Apply unit concepts through focused, standalone database projects without nesting individual project briefs inside teaching units.
+
+1. Designing a Library Database
+2. Student Club Database CRUD
+3. Sales Analytics Report
+4. Employee Hierarchy and Leaderboard
+5. Bank Transfer System
+6. Speeding Up a Slow Query
+7. Secure Reporting Layer
+
+## Project Chapter: Capstone Projects
+
+Integrate the full course in an end-to-end database build.
+
+1. Retail Order Management Database
 
 ---
 
@@ -196,12 +213,14 @@ Make queries fast, find out why they are slow, and package them for reuse - the 
 | 10 | Database Design and ER Modeling | 8 |
 | 11 | Normalization | 8 |
 | 12 | Transactions and Concurrency | 8 |
-| 13 | Indexes, Views, and Query Performance | 9 |
-| | **Total** | **107** |
+| 13 | Indexes, Views, and Query Performance | 8 |
+| | **Teaching topic total** | **106** |
+
+Project briefs are counted separately: 7 mini projects and 1 capstone project.
 
 **Notes for finalization**
 
-- 13 units matches the Semester 1 Python folder structure; topic count (107) is in the same band as Python Semester 1 (99).
+- 13 units matches the Semester 1 Python folder structure; teaching-topic count (106) is in the same band as Python Semester 1 (99).
 - SQL flavour is written to be MySQL-first with SQLite acceptable for local practice; wording stays engine-neutral wherever possible.
 - Design theory (ER modeling, normalization) is placed after hands-on SQL, mirroring how the Python course teaches syntax before architecture, so students design tables only after they have queried them for weeks.
 - Python-DBMS integration (connecting from `sqlite3`/drivers) is intentionally excluded here because Python Semester 2, Unit 13 (Database Interaction) already covers it.

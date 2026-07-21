@@ -4,6 +4,10 @@
 - Different applications also have different tolerances: a dashboard showing an approximate `view` count can live with a non-repeatable read that a banking transfer never could.
 - SQL exposes this trade-off directly through **isolation levels**, a per-`transaction` setting that controls exactly which of the concurrency problems from earlier in this chapter, `dirty reads`, non-repeatable reads, and phantom reads, the `database` is allowed to permit in exchange for less `locking` and better performance.
 
+**Definition:** `Isolation levels` let a `transaction` choose exactly how much protection against concurrency problems it needs, trading stricter guarantees for more waiting and potential retries, with `READ COMMITTED` as a sensible everyday default and `SERIALIZABLE` reserved for operations where any interference at all is unacceptable.
+
+![Intro visual for isolation levels](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_isolation_levels.png)
+
 ## The Four Standard Isolation Levels
 
 The SQL standard defines four `isolation levels`, ordered from loosest to strictest, and each one is a promise about which of the earlier lesson's problems cannot occur.
@@ -22,7 +26,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE inventory (
     product_id INTEGER PRIMARY KEY,
     stock_count INTEGER
@@ -33,9 +37,12 @@ INSERT INTO inventory (product_id, stock_count) VALUES (1, 50);
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-SHOW transaction_isolation;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaf8n5" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL returns one row containing the current server or transaction setting. The exact value depends on the OneCompiler PostgreSQL environment, so compare the setting name and meaning rather than memorizing a particular value.
 
@@ -45,13 +52,12 @@ This confirms the default level for a new PostgreSQL session, `read committed`, 
 
 The `isolation level` can be set explicitly at the start of a `transaction`, overriding the session default for just that one `transaction`.
 
-```postgresql with=init.sql
-BEGIN;
-SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-SHOW transaction_isolation;
-SELECT stock_count FROM inventory WHERE product_id = 1;
-COMMIT;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaf8x3" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL returns one row containing the current server or transaction setting. The exact value depends on the OneCompiler PostgreSQL environment, so compare the setting name and meaning rather than memorizing a particular value.
 
@@ -103,33 +109,22 @@ Each level adds one more guarantee on top of the last:
 - `REPEATABLE READ` additionally guarantees that if a `transaction` reads the same `row` twice, it gets the same answer both times, even if another `transaction` commits a change to that `row` in between.
 - `SERIALIZABLE`, the strictest level, guarantees the `transaction` behaves as if it had run completely alone, with no interleaving effects from any concurrent `transaction` visible at all.
 
-![Isolation levels as a protection ladder from read committed to serializable](images/08_isolation_levels_protection_ladder.png)
+![Isolation levels as a protection ladder from read committed to serializable](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_isolation_levels_protection_ladder.png)
 
 ## Seeing REPEATABLE READ Prevent a Non-Repeatable Read
 
-```postgresql with=init.sql
-BEGIN;
-SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
-
-SELECT stock_count FROM inventory WHERE product_id = 1;
--- Reads 50.
-
--- If another transaction committed a change to stock_count right now,
--- REPEATABLE READ guarantees this transaction still sees its own
--- consistent snapshot from when it started.
-
-SELECT stock_count FROM inventory WHERE product_id = 1;
--- Reads 50 again, guaranteed identical to the first read within this transaction,
--- regardless of what any other transaction committed in between.
-
-COMMIT;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaf98p" 
+ width="100%"
+></iframe>
 
 Expected observation: the isolation-level command completes inside the transaction. Its effect becomes visible when the same read is tested from two concurrent sessions, as explained below.
 
 Both reads inside this `transaction` are guaranteed to agree, because `REPEATABLE READ` takes a consistent snapshot of the data as of when the `transaction` began, and every read within that `transaction` is served from that same snapshot rather than the constantly updating live data.
 
-![Repeatable read keeping the same row value stable across two reads](images/09_repeatable_read_same_row_stays_same.png)
+![Repeatable read keeping the same row value stable across two reads](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_repeatable_read_same_row_stays_same.png)
 
 ## Why Not Always Use SERIALIZABLE
 
@@ -170,9 +165,12 @@ Both reads inside this `transaction` are guaranteed to agree, because `REPEATABL
 
 Start a `transaction` under `REPEATABLE READ`, confirm the level with `SHOW transaction_isolation`, read `stock_count` for product 1 twice with an ordinary `SELECT` in between, and commit.
 
-```postgresql with=init.sql
--- Write your transaction below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaf9k5" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

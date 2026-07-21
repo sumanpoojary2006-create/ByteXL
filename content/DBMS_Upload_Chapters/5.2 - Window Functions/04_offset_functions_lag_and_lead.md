@@ -4,6 +4,10 @@ Leela's next report tracks month-over-month growth: for each salesperson's month
 
 SQL's **offset `functions`**, `LAG` and `LEAD`, are `window functions` purpose-built for exactly this: pulling a value from a `row` a fixed number of positions before or after the current one, within an ordered window.
 
+**Definition:** `LAG` and `LEAD` pull a value from a neighboring `row`, before or after the current one within an ordered window, turning `row`-to-`row` comparisons like month-over-month change into a straightforward calculation on a single `row` instead of a self `join` across two.
+
+![Intro visual for offset functions lag and lead](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_offset_functions_lag_and_lead.png)
+
 ## Looking Back at the Previous Row with LAG
 
 The `monthly_sales` `table` holds one `row` per salesperson per month.
@@ -27,7 +31,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE monthly_sales (
     salesperson TEXT,
     sale_month DATE,
@@ -45,12 +49,12 @@ INSERT INTO monthly_sales (salesperson, sale_month, total_amount) VALUES
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-SELECT salesperson, sale_month, total_amount,
-       LAG(total_amount) OVER (PARTITION BY salesperson ORDER BY sale_month) AS previous_month
-FROM monthly_sales
-ORDER BY salesperson, sale_month;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaghe4" 
+ width="100%"
+></iframe>
 
 `LAG(total_amount)` reaches back one `row` within each salesperson's partition, ordered by month, and returns that prior `row`'s `total_amount`:
 
@@ -95,18 +99,18 @@ Expected output:
 
 Nikhil's April `row` shows 22000.00 as its `previous_month`, exactly March's total. His March `row`, having nothing before it in the partition, shows `NULL`, since there is no earlier `row` for `LAG` to reach.
 
-![LAG reaching backward from the current row to the previous month](images/07_lag_previous_row.png)
+![LAG reaching backward from the current row to the previous month](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_lag_previous_row.png)
 
 ## Calculating Change Using LAG
 
 With the previous month's value sitting in the same `row`, calculating growth is now a plain subtraction.
 
-```postgresql with=init.sql
-SELECT salesperson, sale_month, total_amount,
-       total_amount - LAG(total_amount) OVER (PARTITION BY salesperson ORDER BY sale_month) AS change_from_last_month
-FROM monthly_sales
-ORDER BY salesperson, sale_month;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaghq3" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -125,12 +129,12 @@ Nikhil's April change is 3500.00, an increase, and his May change is -4500.00, a
 
 `LEAD` is the mirror of `LAG`, reaching forward to a later `row` instead of an earlier one.
 
-```postgresql with=init.sql
-SELECT salesperson, sale_month, total_amount,
-       LEAD(total_amount) OVER (PARTITION BY salesperson ORDER BY sale_month) AS next_month
-FROM monthly_sales
-ORDER BY salesperson, sale_month;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaghyx" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -146,7 +150,7 @@ Expected output:
 - Nikhil's March `row` now shows 25500.00 as `next_month`, April's total, and his last `row`, June, shows `NULL`, since there is no later `row` in his partition for `LEAD` to reach forward into.
 - `LEAD` is useful for questions phrased the other way around, such as "what did this salesperson do right after this particular month."
 
-![LEAD reaching forward from the current row to the next month](images/08_lead_next_row.png)
+![LEAD reaching forward from the current row to the next month](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_lead_next_row.png)
 
 ## Reaching More Than One Row Away
 
@@ -155,12 +159,12 @@ Both `LAG` and `LEAD` accept two optional extra arguments:
 - A second argument specifying how many `rows` to look back or forward, defaulting to 1 when left out.
 - A third argument specifying what to return when there is no such `row`, instead of `NULL`.
 
-```postgresql with=init.sql
-SELECT salesperson, sale_month, total_amount,
-       LAG(total_amount, 2, 0) OVER (PARTITION BY salesperson ORDER BY sale_month) AS two_months_ago
-FROM monthly_sales
-ORDER BY salesperson, sale_month;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagj9w" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -218,9 +222,12 @@ Expected output:
 
 Leela wants to flag any month where a salesperson's total dropped compared to the previous month. Write a `query` against `monthly_sales` above that shows `salesperson`, `sale_month`, `total_amount`, and a `trend` `column` reading either "up" or "down" based on `LAG`.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagjkw" 
+ width="100%"
+></iframe>
 
 One valid answer wraps the `LAG` comparison in a `CASE` expression: `CASE WHEN total_amount < LAG(total_amount) OVER (PARTITION BY salesperson ORDER BY sale_month) THEN 'down' ELSE 'up' END AS trend`. This correctly labels Nikhil's May `row` as "down" and every other `row` as "up." The first `row` of each salesperson has nothing to compare against, so it defaults to "up" through the `ELSE` branch.
 

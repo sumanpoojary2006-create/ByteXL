@@ -4,6 +4,10 @@ Every `query` in this course has run under a single, implicit `database` account
 
 PostgreSQL's answer to this is **`role`s**, the unified mechanism it uses to represent both individual users and groups of permissions, and understanding `role`s is the foundation the rest of this chapter's security material builds on.
 
+**Definition:** A `role` in PostgreSQL can represent either an individually authenticating account or a non-login group used to bundle permissions, and structuring access around distinct `role`s per person and per service, rather than a single shared login, is what makes accountability and precise permission management possible at all.
+
+![Intro visual for users and roles managing database accounts](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_users_and_roles_managing_database_accounts.png)
+
 ## Creating a Role
 
 A `role` can represent a login-capable user or a non-login group, and the same `CREATE ROLE` command handles both, differing only in the options supplied.
@@ -21,16 +25,19 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE ROLE reporting_app WITH LOGIN PASSWORD 'change_this_in_real_use';
 CREATE ROLE dev_alia WITH LOGIN PASSWORD 'change_this_in_real_use';
 ```
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-SELECT rolname, rolcanlogin FROM pg_roles WHERE rolname IN ('reporting_app', 'dev_alia');
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajg9n" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -50,12 +57,12 @@ Expected output:
 
 A `role` does not have to represent a person or a service at all; it can exist purely as a named bundle of permissions that other `role`s can be added to.
 
-```postgresql with=init.sql
-CREATE ROLE shipment_readers;
-
-GRANT shipment_readers TO reporting_app;
-GRANT shipment_readers TO dev_alia;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajgk2" 
+ width="100%"
+></iframe>
 
 Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
 
@@ -63,22 +70,18 @@ Expected result: PostgreSQL completes the definition or privilege command withou
 - `GRANT shipment_readers TO reporting_app` adds `reporting_app` as a member of that group, and any permission granted to `shipment_readers` as a whole, covered in the next lesson, automatically applies to every member.
 - This is the standard pattern for managing permissions at scale: define what a group of accounts should be allowed to do once, on the group `role`, rather than repeating the same permission grants individually on every single user `role`.
 
-![Login roles can inherit a group role that bundles permissions](images/01_login_roles_and_group_role_permissions.png)
+![Login roles can inherit a group role that bundles permissions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_login_roles_and_group_role_permissions.png)
 
 ## Why Shared Logins Are a Security Anti-Pattern
 
 It might seem simpler to give every developer and every service the same single `database` login. This is a well-known anti-pattern, for reasons that go beyond convenience.
 
-```postgresql with=init.sql
-CREATE ROLE shipment_readers;
-
-GRANT shipment_readers TO reporting_app;
-GRANT shipment_readers TO dev_alia;
-
-SELECT usename, query, query_start
-FROM pg_stat_activity
-WHERE usename = 'reporting_app';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajgv2" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
@@ -86,22 +89,18 @@ Expected observation: PostgreSQL returns live server metadata. Values differ acr
 - If every developer and every application connected as one single, shared account, there would be no way to answer "who ran this slow `query`" or "which service made this change" after the fact, since the log would show only the one shared name for every single action, regardless of who or what actually took it.
 - Separate `role`s per person and per service are what make that kind of accountability possible at all.
 
-![Shared logins hide who performed an action, while separate roles preserve accountability](images/02_shared_login_loses_accountability.png)
+![Shared logins hide who performed an action, while separate roles preserve accountability](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_shared_login_loses_accountability.png)
 
 ## Altering and Dropping Roles
 
 A `role`'s properties can be changed after creation, and a `role` that is no longer needed can be removed, though only once nothing still depends on it.
 
-```postgresql with=init.sql
-CREATE ROLE shipment_readers;
-
-GRANT shipment_readers TO reporting_app;
-GRANT shipment_readers TO dev_alia;
-
-ALTER ROLE dev_alia WITH PASSWORD 'a_new_stronger_password';
-
-DROP ROLE shipment_readers;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajh5v" 
+ width="100%"
+></iframe>
 
 Expected result: PostgreSQL completes the definition or privilege command without returning a business-data table. The later query in the lesson verifies the object or access rule that was created.
 
@@ -140,14 +139,12 @@ Dropping `shipment_readers` succeeds here since nothing else in this example sti
 
 Create a new login `role` named `dev_farah` and a group `role` named `shipment_writers`, then add `dev_farah` as a member of `shipment_writers`.
 
-```postgresql with=init.sql
-CREATE ROLE shipment_readers;
-
-GRANT shipment_readers TO reporting_app;
-GRANT shipment_readers TO dev_alia;
-
--- Write your role creation and grant below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajhna" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

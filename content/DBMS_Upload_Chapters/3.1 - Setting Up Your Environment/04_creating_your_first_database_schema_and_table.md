@@ -14,7 +14,9 @@ So she asks the question plainly: if a PostgreSQL server can hold many things at
 
 Server, then `database`, then `schema`, then `table`, each level nested inside the one before it. Today Pooja builds the bottom two levels of that nesting for real, for the first time.
 
-![Server, database, schema, and table shown as nested containers where rows finally live](images/07_server_database_schema_table_nesting.png)
+![Server, database, schema, and table shown as nested containers where rows finally live](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_server_database_schema_table_nesting.png)
+
+**Definition:** The nesting Pooja set out to understand turned out to be exactly as tidy as it sounded: a server holds `databases`, a `database` holds `schemas`, and a `schema` holds the `tables` where `rows` of real data actually live.
 
 ## Why a Fresh Database Is Usually a Manual, Local Step
 
@@ -58,7 +60,7 @@ The `courses` table will contain:
 
 To reproduce these tables, `init.sql` creates the `campus` schema, defines both table structures, and inserts the displayed rows. The active query file is kept separate so students can practise reading the finished tables without mixing retrieval SQL into the setup.
 
-```postgresql file=init.sql
+```postgresql
 CREATE SCHEMA IF NOT EXISTS campus;
 
 CREATE TABLE campus.students (
@@ -90,10 +92,12 @@ INSERT INTO campus.courses (course_id, title, department, credits) VALUES
 
 Once `init.sql` has prepared the data, the active query file reads both tables with `SELECT *`. Each statement requests every stored column and row from one table.
 
-```postgresql with=init.sql
-SELECT * FROM campus.students;
-SELECT * FROM campus.courses;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaf8bt" 
+ width="100%"
+></iframe>
 
 Expected output from `campus.students`:
 
@@ -119,7 +123,7 @@ The two `INSERT INTO` statements add a handful of realistic `rows`, and notice t
 
 The final two `SELECT * FROM` statements ask PostgreSQL to hand back every `column` of every `row` in each `table`, which is exactly how Pooja confirms the `tables` were not just created but genuinely hold the data she just inserted.
 
-![The first SQL workflow: create schema, create table, insert rows, and select results](images/08_create_insert_select_workflow.png)
+![The first SQL workflow: create schema, create table, insert rows, and select results](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_create_insert_select_workflow.png)
 
 ## Reading What Came Back
 

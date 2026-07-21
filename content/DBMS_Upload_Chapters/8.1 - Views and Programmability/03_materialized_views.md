@@ -4,6 +4,10 @@ Devraj's ordinary `view`s, covered so far in this chapter, always re-run their u
 
 A **`materialized view`** solves this by actually storing the `query`'s result on disk, like a real `table`, and only recomputing it when explicitly refreshed, trading perfect freshness for dramatically faster reads.
 
+**Definition:** A `materialized view` stores its `query`'s result physically rather than recomputing it on every read, dramatically speeding up expensive aggregate or summary `queries`, at the cost of only being as current as its most recent explicit refresh, with `REFRESH MATERIALIZED VIEW CONCURRENTLY` available when the `view` needs to stay readable during that refresh.
+
+![Intro visual for materialized views](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_materialized_views.png)
+
 ## Creating a Materialized View
 
 The setup mirrors the ordinary `view` from earlier in this chapter, but the underlying data here represents a much larger, slower-to-aggregate history.
@@ -27,7 +31,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     driver_id INTEGER,
@@ -44,15 +48,12 @@ FROM generate_series(1, 5000) AS i;
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-CREATE MATERIALIZED VIEW monthly_shipment_summary AS
-SELECT shipped_month, COUNT(*) AS total_shipments,
-       COUNT(*) FILTER (WHERE status = 'delayed') AS delayed_shipments
-FROM shipments
-GROUP BY shipped_month;
-
-SELECT * FROM monthly_shipment_summary ORDER BY shipped_month;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagr3m" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -79,26 +80,18 @@ Expected output:
 
 Selecting from `monthly_shipment_summary` afterward reads that stored result directly, the same way reading from a real `table` would, without recomputing the `GROUP BY` and `COUNT` over all 5000 `rows` again.
 
-![A materialized view stores an expensive query result for faster reads](images/05_materialized_view_stored_result_fast_reads.png)
+![A materialized view stores an expensive query result for faster reads](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_materialized_view_stored_result_fast_reads.png)
 
 ## A Materialized View Does Not Automatically Stay Current
 
 Unlike an ordinary `view`, new data added to the underlying `table` does not appear in a `materialized view` until it is explicitly refreshed.
 
-```postgresql with=init.sql
-CREATE MATERIALIZED VIEW monthly_shipment_summary AS
-SELECT shipped_month, COUNT(*) AS total_shipments,
-       COUNT(*) FILTER (WHERE status = 'delayed') AS delayed_shipments
-FROM shipments
-GROUP BY shipped_month;
-
-SELECT * FROM monthly_shipment_summary ORDER BY shipped_month;
-
-INSERT INTO shipments (shipment_id, driver_id, status, shipped_month)
-VALUES (5001, 5, 'delayed', '2025-06-01');
-
-SELECT * FROM monthly_shipment_summary WHERE shipped_month = '2025-06-01';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagrjf" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -110,25 +103,18 @@ This new delayed shipment for June does not appear in `monthly_shipment_summary`
 
 This staleness is not a bug; it is the entire point of a `materialized view`, avoiding the cost of recomputing the aggregate on every read, in exchange for accepting that reads may be out of date until a refresh runs.
 
-![A materialized view stays stale until REFRESH recomputes its stored result](images/06_materialized_view_stale_until_refresh.png)
+![A materialized view stays stale until REFRESH recomputes its stored result](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_materialized_view_stale_until_refresh.png)
 
 ## Refreshing a Materialized View
 
 `REFRESH MATERIALIZED VIEW` recomputes the stored result from scratch, bringing it back in line with the underlying `tables`' current state.
 
-```postgresql with=init.sql
-CREATE MATERIALIZED VIEW monthly_shipment_summary AS
-SELECT shipped_month, COUNT(*) AS total_shipments,
-       COUNT(*) FILTER (WHERE status = 'delayed') AS delayed_shipments
-FROM shipments
-GROUP BY shipped_month;
-
-SELECT * FROM monthly_shipment_summary ORDER BY shipped_month;
-
-REFRESH MATERIALIZED VIEW monthly_shipment_summary;
-
-SELECT * FROM monthly_shipment_summary WHERE shipped_month = '2025-06-01';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagrwt" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -142,19 +128,12 @@ After the refresh, June's `row` correctly reflects the newly inserted delayed sh
 
 A plain `REFRESH MATERIALIZED VIEW` `lock`s the `view` against reads while it recomputes, which can be a problem for a dashboard that needs to stay available. PostgreSQL supports a concurrent refresh option for this, at the cost of requiring a unique `index` on the `materialized view` first.
 
-```postgresql with=init.sql
-CREATE MATERIALIZED VIEW monthly_shipment_summary AS
-SELECT shipped_month, COUNT(*) AS total_shipments,
-       COUNT(*) FILTER (WHERE status = 'delayed') AS delayed_shipments
-FROM shipments
-GROUP BY shipped_month;
-
-SELECT * FROM monthly_shipment_summary ORDER BY shipped_month;
-
-CREATE UNIQUE INDEX idx_monthly_summary_month ON monthly_shipment_summary (shipped_month);
-
-REFRESH MATERIALIZED VIEW CONCURRENTLY monthly_shipment_summary;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkags89" 
+ width="100%"
+></iframe>
 
 Expected output (from the `SELECT` right after `CREATE MATERIALIZED VIEW`, before the index and concurrent refresh run):
 
@@ -213,17 +192,12 @@ Expected output (from the `SELECT` right after `CREATE MATERIALIZED VIEW`, befor
 
 Create a `materialized view` named `driver_shipment_totals` summarizing total shipment counts per driver, insert one more shipment, and confirm the `materialized view` is stale until refreshed.
 
-```postgresql with=init.sql
-CREATE MATERIALIZED VIEW monthly_shipment_summary AS
-SELECT shipped_month, COUNT(*) AS total_shipments,
-       COUNT(*) FILTER (WHERE status = 'delayed') AS delayed_shipments
-FROM shipments
-GROUP BY shipped_month;
-
-SELECT * FROM monthly_shipment_summary ORDER BY shipped_month;
-
--- Write your queries below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagsrn" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

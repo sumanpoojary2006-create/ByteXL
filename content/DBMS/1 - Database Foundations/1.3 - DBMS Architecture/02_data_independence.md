@@ -12,6 +12,22 @@ A few months later, the product team asks for something different: every order `
 
 **Definition:** Data independence works because a `database` is not one flat structure but a set of separated levels, and a change confined to one level does not have to ripple through the others.
 
+<!--
+IMAGE PROMPT  ->  generate as images/02_intro_data_independence.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Ravi is the database administrator at a mid-sized food delivery company, and tonight he is nervous. The company's ageing storage disks are being swapped for faster solid-state drives, and Ravi has spent the past two weeks reorganising how order records are.
+
+ON-IMAGE TEXT: show a short bold title "Data Independence" plus only these few labels, large and legible: Order, Independence, Administrator. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for data independence](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_data_independence.png)
+
 ## Physical Data Independence: Changing the Storage Without Touching the Apps
 
 The first kind of independence is the one Ravi relied on during the hardware migration. **Physical data independence** means the internal, physical level of the `database`, how data is actually stored on disk, can be changed without requiring any change to the conceptual `schema` or to the applications built on top of it.
@@ -26,7 +42,7 @@ None of that touched the definition of what an "order" is, how many `columns` it
 
 A checkout screen that asks for "today's orders for this customer" gets the same answer, computed the same way from the application's point of `view`, whether the underlying bytes sit on an old spinning disk or a new solid-state drive.
 
-![Ravi changing disks, files, and indexes while the Orders schema and checkout app remain unchanged](images/03_physical_data_independence_storage_migration.png)
+![Ravi changing disks, files, and indexes while the Orders schema and checkout app remain unchanged](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_physical_data_independence_storage_migration.png)
 
 ## Logical Data Independence: Extending the Schema Without Breaking Every App
 
@@ -36,7 +52,7 @@ Adding a new `column` to the Orders `table` did genuinely change the conceptual 
 
 They were never written to demand "give me every `column` of the Orders `table`, in this exact order," so a new `column` arriving at the end of the `row` simply did not concern them. Only the small handful of screens that actually needed to show or record a tip had to change, and that change was additive rather than disruptive.
 
-![A new Tip column added to the Orders schema while existing apps keep using their old fields](images/04_logical_data_independence_tip_column.png)
+![A new Tip column added to the Orders schema while existing apps keep using their old fields](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_logical_data_independence_tip_column.png)
 
 ## Why This Separation Is Worth Protecting
 

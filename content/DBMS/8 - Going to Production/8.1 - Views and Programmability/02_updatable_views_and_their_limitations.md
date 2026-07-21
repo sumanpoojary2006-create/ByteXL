@@ -6,6 +6,22 @@ A `view` built simply enough can be genuinely **updatable**, passing writes stra
 
 **Definition:** A `view` built from a single `table` with no aggregation is updatable automatically, since a `row` in the `view` maps unambiguously to one `row` in one underlying `table`, while a `view` involving a `join` or an aggregate cannot be written to directly, since that mapping becomes ambiguous or nonexistent, though `INSTEAD OF` `trigger`s exist as a deliberate way to bridge that gap when genuinely needed.
 
+<!--
+IMAGE PROMPT  ->  generate as images/02_intro_updatable_views_and_their_limitations.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Devraj's activeshipments view has been used for SELECT queries so far, but a colleague asks a natural next question: can a driver's dispatcher just UPDATE activeshipments directly to change a shipment's destination, instead of going back to the underlying.
+
+ON-IMAGE TEXT: show a short bold title "Updatable Views And Their Limitations" plus only these few labels, large and legible: Table, View, Select. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for updatable views and their limitations](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_updatable_views_and_their_limitations.png)
+
 ## A Simple View Is Updatable by Default
 
 A `view` built from a single `table`, with a straightforward `SELECT` and no aggregation, is updatable without any special setup.
@@ -65,7 +81,7 @@ The `UPDATE` was issued against `in_transit_shipments`, the `view`, not `shipmen
 
 2. There is no doubt about which `row` in `shipments` this update was meant for.
 
-![A simple view can pass an update through to exactly one base table row](images/03_simple_updatable_view_one_to_one_mapping.png)
+![A simple view can pass an update through to exactly one base table row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_simple_updatable_view_one_to_one_mapping.png)
 
 ## A View with a Join Is Generally Not Updatable
 
@@ -142,7 +158,7 @@ Expected output (from the final `SELECT`, against `driver_shipment_counts`):
 
 This fails for a more fundamental reason than the `join` case: `shipment_count` is not a stored value at all, it is calculated fresh from however many `rows` currently match, so "setting" it to 5 is not a meaningful operation the `database` could even attempt to translate into a real change.
 
-![Joined and aggregate views are not directly updatable because the target row is ambiguous or computed](images/04_join_and_aggregate_views_not_directly_updatable.png)
+![Joined and aggregate views are not directly updatable because the target row is ambiguous or computed](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_join_and_aggregate_views_not_directly_updatable.png)
 
 ## Making a Join-Based View Writable with INSTEAD OF Triggers
 

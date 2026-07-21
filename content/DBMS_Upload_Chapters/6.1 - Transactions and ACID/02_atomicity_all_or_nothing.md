@@ -7,6 +7,10 @@
 - The answer is yes, and that guarantee has a name: **atomicity**, the first letter in ACID.
 - Atomicity is the promise that a `transaction`'s changes are indivisible, either every one of them takes effect, or none of them do, regardless of how or why the `transaction` failed to finish.
 
+**Definition:** Atomicity guarantees that every statement inside a `transaction` commits together or fails together, whether the failure comes from an explicit `ROLLBACK` or an unplanned error like a `constraint` violation, though it is still up to the application to decide which statements belong grouped together in the first place.
+
+![Intro visual for atomicity all or nothing](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_atomicity_all_or_nothing.png)
+
 ## Atomicity Protects Against More Than Explicit Rollbacks
 
 The `accounts` `table` from the previous lesson is the setup here again.
@@ -26,7 +30,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
     owner_name TEXT,
@@ -42,17 +46,12 @@ Before running each active statement, predict which rows, database objects, or s
 
 A `constraint` violation partway through a `transaction` is one common, entirely unplanned way for a `transaction` to fail. Suppose a `CHECK` `constraint` requires a balance to never go negative.
 
-```postgresql with=init.sql
-ALTER TABLE accounts ADD CONSTRAINT balance_not_negative CHECK (balance >= 0);
-
--- This transaction would fail because it makes account 1 negative:
--- BEGIN;
--- UPDATE accounts SET balance = balance - 60000.00 WHERE account_id = 1;
--- UPDATE accounts SET balance = balance + 60000.00 WHERE account_id = 2;
--- COMMIT;
-
-SELECT account_id, balance FROM accounts;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahx9e" 
+ width="100%"
+></iframe>
 
 Expected result: the constraint is added successfully, and the final `SELECT` still shows the original account balances. If the commented invalid transfer is enabled, PostgreSQL rejects it because it would create a negative balance.
 
@@ -66,19 +65,18 @@ This `transaction` fails in a chain:
 
 The closing `SELECT` shows both balances completely untouched, exactly as atomicity promises, even though nobody typed `ROLLBACK` by hand. The failure itself triggered the same all-or-nothing guarantee.
 
-![Atomicity discarding the whole transaction when one statement fails](images/03_atomicity_failure_discards_transaction.png)
+![Atomicity discarding the whole transaction when one statement fails](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_atomicity_failure_discards_transaction.png)
 
 ## What Atomicity Does Not Protect Against
 
 It is worth being precise about what atomicity actually guarantees, since it is easy to expect too much from it. Atomicity only guarantees that a `transaction`'s own set of changes are indivisible; it says nothing about whether those changes, once committed, make logical sense.
 
-```postgresql with=init.sql
-BEGIN;
-
-UPDATE accounts SET balance = balance - 5000.00 WHERE account_id = 1;
-
-COMMIT;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahxj8" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL completes the transaction-control statements. Use the following explanation and any closing `SELECT` to verify whether the changes were committed or rolled back.
 
@@ -90,17 +88,12 @@ Rahul's earlier two-statement transfer was correct because both necessary statem
 
 Atomicity applies to however many statements sit between `BEGIN` and `COMMIT`, not just two. A `transaction` with five statements offers the same guarantee as one with two: all five succeed together, or none of them take effect.
 
-```postgresql with=init.sql
-BEGIN;
-
-INSERT INTO accounts (account_id, owner_name, balance) VALUES (3, 'Farah Ali', 0.00);
-UPDATE accounts SET balance = balance - 1000.00 WHERE account_id = 1;
-UPDATE accounts SET balance = balance + 1000.00 WHERE account_id = 3;
-
-COMMIT;
-
-SELECT account_id, owner_name, balance FROM accounts;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahxvu" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -114,7 +107,7 @@ Expected output:
 
 This `transaction` opens a new account for Farah Ali and funds it from Meera's account, three statements acting as one atomic unit. If the `INSERT` for the new account had failed, for instance because `account_id = 3` already existed, neither `UPDATE` would take effect either, keeping Meera's balance untouched rather than deducting money toward an account that was never actually created.
 
-![Atomicity treating many statements as one all-or-nothing unit](images/04_atomicity_all_statements_one_unit.png)
+![Atomicity treating many statements as one all-or-nothing unit](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_atomicity_all_statements_one_unit.png)
 
 ## Atomicity at a Glance
 
@@ -149,9 +142,12 @@ This `transaction` opens a new account for Farah Ali and funds it from Meera's a
 
 Using the `balance_not_negative` `constraint` already added earlier in this lesson, attempt a `transaction` that tries to move 100000.00 from Sanjay's account (which only has 12000.00) to Meera's account. Confirm afterward that Sanjay's balance is unaffected.
 
-```postgresql with=init.sql
--- Write your transaction below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahy85" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

@@ -7,6 +7,22 @@
 
 **Definition:** `INNER JOIN`, and its shorthand `JOIN`, keeps only the `rows` where both sides of the `join` condition find a partner, quietly dropping everything else, which makes it the right choice whenever unmatched `rows` carry no useful information for the question at hand.
 
+<!--
+IMAGE PROMPT  ->  generate as images/02_intro_inner_join.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: - The plain JOIN Zoya used to combine orders with customer and restaurant names has a formal name that the previous lesson skipped over: an INNER JOIN. - JOIN by itself, with no other keyword in front of it, defaults to an inner join in every major database.
+
+ON-IMAGE TEXT: show a short bold title "Inner Join" plus only these few labels, large and legible: Row, Join, Result. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for inner join](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_inner_join.png)
+
 ## Confirming the Match-Only Behavior
 
 The same delivery `schema` from the previous lesson is the setup here, with one detail worth noticing: customer 5, Neha Bhatt, has never placed an order, and restaurant 4, Taco Town, has never received one.
@@ -113,7 +129,7 @@ Expected output:
 
 This returns six `rows`, one per order, but Neha Bhatt never appears anywhere in the output, even though she is a perfectly valid `row` in `customers`. She has no matching `row` in `orders`, so the inner `join` excludes her entirely rather than showing her with blank order `columns`. This is the defining trait of `INNER JOIN`: no match means no `row` in the result, on either side.
 
-![INNER JOIN keeping only rows that have a matching partner on both sides](images/03_inner_join_matched_only.png)
+![INNER JOIN keeping only rows that have a matching partner on both sides](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_inner_join_matched_only.png)
 
 ## Checking the Row Count Before and After
 
@@ -184,7 +200,7 @@ That number is higher than 5 because Aditi Kulkarni and Rohan Das each placed mo
 
 The inner `join` `row` count depends entirely on how many matches exist, not on how many `rows` either original `table` has.
 
-![INNER JOIN producing two joined rows when one customer matches two orders](images/04_inner_join_one_to_many_rows.png)
+![INNER JOIN producing two joined rows when one customer matches two orders](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_inner_join_one_to_many_rows.png)
 
 ## Adding a WHERE Clause on Top of an Inner Join
 

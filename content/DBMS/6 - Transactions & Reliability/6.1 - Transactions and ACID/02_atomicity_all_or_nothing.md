@@ -9,6 +9,22 @@
 
 **Definition:** Atomicity guarantees that every statement inside a `transaction` commits together or fails together, whether the failure comes from an explicit `ROLLBACK` or an unplanned error like a `constraint` violation, though it is still up to the application to decide which statements belong grouped together in the first place.
 
+<!--
+IMAGE PROMPT  ->  generate as images/02_intro_atomicity_all_or_nothing.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: - The previous lesson showed a transaction rolling back cleanly, by choice, with an explicit ROLLBACK command. - Real failures are rarely that polite. - A server can lose power mid-transaction, a network cable can be unplugged, an application process can.
+
+ON-IMAGE TEXT: show a short bold title "Atomicity All Or Nothing" plus only these few labels, large and legible: Transaction, Rollback, Atomicity. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for atomicity all or nothing](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_atomicity_all_or_nothing.png)
+
 ## Atomicity Protects Against More Than Explicit Rollbacks
 
 The `accounts` `table` from the previous lesson is the setup here again.
@@ -68,7 +84,7 @@ This `transaction` fails in a chain:
 
 The closing `SELECT` shows both balances completely untouched, exactly as atomicity promises, even though nobody typed `ROLLBACK` by hand. The failure itself triggered the same all-or-nothing guarantee.
 
-![Atomicity discarding the whole transaction when one statement fails](images/03_atomicity_failure_discards_transaction.png)
+![Atomicity discarding the whole transaction when one statement fails](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_atomicity_failure_discards_transaction.png)
 
 ## What Atomicity Does Not Protect Against
 
@@ -116,7 +132,7 @@ Expected output:
 
 This `transaction` opens a new account for Farah Ali and funds it from Meera's account, three statements acting as one atomic unit. If the `INSERT` for the new account had failed, for instance because `account_id = 3` already existed, neither `UPDATE` would take effect either, keeping Meera's balance untouched rather than deducting money toward an account that was never actually created.
 
-![Atomicity treating many statements as one all-or-nothing unit](images/04_atomicity_all_statements_one_unit.png)
+![Atomicity treating many statements as one all-or-nothing unit](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_atomicity_all_statements_one_unit.png)
 
 ## Atomicity at a Glance
 

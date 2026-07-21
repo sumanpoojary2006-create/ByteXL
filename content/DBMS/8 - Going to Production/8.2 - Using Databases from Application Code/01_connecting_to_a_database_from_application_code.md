@@ -6,6 +6,22 @@ A real application never gets that convenience for free; before it can run a sin
 
 **Definition:** A `connection` is a real, costly, stateful link between an application and a `database`, requiring a `connection string` to establish, real server-side resources to maintain, and deliberate closing to avoid leaking those resources, with `connection` failures and `query` failures representing genuinely different problems that call for different handling in application code.
 
+<!--
+IMAGE PROMPT  ->  generate as images/01_intro_connecting_to_a_database_from_application_code.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Every query in this course so far has run inside an editor already connected to a database, with connection details handled invisibly. A real application never gets that convenience for free; before it can run a single SELECT, it has to establish a.
+
+ON-IMAGE TEXT: show a short bold title "Connecting To A Database From Application Code" plus only these few labels, large and legible: Query, Select, Connecting. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for connecting to a database from application code](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_connecting_to_a_database_from_application_code.png)
+
 ## What a Connection String Actually Contains
 
 An application typically opens a `connection` using a `connection string`, a compact format bundling everything the `database` needs to know: where the server is, which `database` to use, and who is connecting.
@@ -67,7 +83,7 @@ A real `connection string` built from values like these would look something lik
 
 The `app_config` `table` above is only illustrative, showing the pieces such a string is made of a production application would never store a raw password in a plain `table` like this, and the security chapter of this unit covers exactly why, and what to do instead.
 
-![A connection string bundles host, port, database, and credentials into one connection target](images/01_connection_string_pieces.png)
+![A connection string bundles host, port, database, and credentials into one connection target](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_connection_string_pieces.png)
 
 ## Why Every Connection Involves a Real Cost
 
@@ -97,7 +113,7 @@ A `connection` sitting in the `idle` state, especially one that has been idle fo
 
 Well-written application code always ensures a `connection` is closed once it is no longer needed, typically through a pattern the connecting language provides for guaranteed cleanup, even if an error occurs partway through.
 
-![Application code should open, use, and close connections to avoid idle leaks](images/02_connection_lifecycle_open_use_close.png)
+![Application code should open, use, and close connections to avoid idle leaks](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_connection_lifecycle_open_use_close.png)
 
 ## A Connection Failure Is Not the Same as a Query Failure
 

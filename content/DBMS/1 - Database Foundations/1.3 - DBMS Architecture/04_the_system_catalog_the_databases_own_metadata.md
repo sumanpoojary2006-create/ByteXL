@@ -10,7 +10,7 @@ This is the **`system catalog`**, sometimes called the data dictionary, and it i
 
 Kiran, the backend developer sitting next to Kabir, put it simply: "The `database` does not just hold your data. It holds data about its own data too." That second kind of data, data describing data, is what the `system catalog` is built from.
 
-![The system catalog storing metadata about tables, columns, keys, permissions, and indexes](images/07_system_catalog_metadata_memory.png)
+![The system catalog storing metadata about tables, columns, keys, permissions, and indexes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_system_catalog_metadata_memory.png)
 
 **Definition:** The `system catalog` is the `database`'s memory of its own shape: every `table`, every `column`, every type, every `constraint`, and every permission, recorded once and consulted constantly.
 
@@ -50,7 +50,7 @@ This self-description is also what keeps the `three-schema architecture` and dat
 
 Every other part of the `database`, and every application asking sensible questions of it, consults that same catalog to know what currently exists, which is exactly why the addition could be introduced without a company-wide rewrite.
 
-![Catalog tables queried like ordinary data to answer questions about the database structure](images/08_system_catalog_queryable_tables.png)
+![Catalog tables queried like ordinary data to answer questions about the database structure](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_system_catalog_queryable_tables.png)
 
 ## The System Catalog At A Glance
 

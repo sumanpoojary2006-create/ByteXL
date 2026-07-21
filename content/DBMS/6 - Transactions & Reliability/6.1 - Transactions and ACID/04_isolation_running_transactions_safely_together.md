@@ -6,6 +6,22 @@ The third letter in ACID, **isolation**, is the guarantee that concurrently runn
 
 **Definition:** Isolation guarantees that concurrently running `transactions` do not see each other's uncommitted, potentially-to-be-rolled-back changes, keeping a `transaction`'s in-progress work private until it actually commits, which is what makes it safe for a real system to run many `transactions` against the same data at once.
 
+<!--
+IMAGE PROMPT  ->  generate as images/04_intro_isolation_running_transactions_safely_together.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Every transaction covered so far has run alone, one connection, one sequence of statements, nothing else touching the database at the same time. A real banking system is never that quiet: hundreds of transfers, deposits, and balance checks can hit the same.
+
+ON-IMAGE TEXT: show a short bold title "Isolation Running Transactions Safely Together" plus only these few labels, large and legible: Transaction, Isolation, Running. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for isolation running transactions safely together](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_isolation_running_transactions_safely_together.png)
+
 ## What a Transaction Can See of Its Own Changes
 
 The `accounts` `table` is the familiar one from earlier in this chapter.
@@ -62,7 +78,7 @@ Within this single `transaction`, the `SELECT` after the `UPDATE` correctly show
 - Isolation is not about hiding a `transaction`'s work from itself.
 - It is about what a completely different, concurrently running `transaction`, on a separate `connection`, is allowed to see before this one commits.
 
-![Isolation letting one transaction see its own change while hiding it from another session](images/07_isolation_sessions_uncommitted_private.png)
+![Isolation letting one transaction see its own change while hiding it from another session](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_isolation_sessions_uncommitted_private.png)
 
 ## What a Concurrent Transaction Should Not See
 
@@ -112,7 +128,7 @@ Expected observation: PostgreSQL returns one row containing the current server o
 
 This reports the `isolation level` the current session is using for its `transactions`, `read committed` by default in PostgreSQL, which already guarantees that a `transaction` never sees another `transaction`'s uncommitted changes, exactly the behavior demonstrated above.
 
-![An isolation level dial blocking uncommitted changes from other sessions](images/08_isolation_level_blocks_uncommitted.png)
+![An isolation level dial blocking uncommitted changes from other sessions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_isolation_level_blocks_uncommitted.png)
 
 ## Why Isolation Matters for Correctness, Not Just Comfort
 

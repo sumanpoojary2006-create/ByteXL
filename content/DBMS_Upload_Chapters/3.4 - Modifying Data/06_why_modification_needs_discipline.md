@@ -4,6 +4,10 @@ Naveen has just been handed write access to the college's live enrollment system
 
 Naveen realizes that everything he has learned about `INSERT`, `UPDATE`, `DELETE`, `RETURNING`, and `ON CONFLICT` was never really a set of separate ideas about separate keywords. It was one continuous idea, that changing data is a fundamentally different act from reading it, and it calls for **discipline**, a habit of checking before acting that a `SELECT` never demanded in the first place.
 
+**Definition:** **Disciplined data modification** means identifying the exact rows a write statement will affect, protecting related changes with transactions when necessary, and verifying the result so accidental or partial changes do not damage the data.
+
+![Intro visual for why modification needs discipline](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_why_modification_needs_discipline.png)
+
 ## Why a SELECT Mistake and a Modification Mistake Are Not the Same
 
 The `students`, `courses`, and `enrollments` `tables` hold this data:
@@ -34,7 +38,7 @@ A `SELECT` with a wrong `WHERE` clause returns the wrong `rows` on screen, and N
 
 This asymmetry, that reading forgives mistakes and writing does not, is the entire reason a modification statement deserves a slower hand than a `query` typed to satisfy curiosity.
 
-![A SELECT mistake can be retried, while an UPDATE or DELETE mistake changes real data](images/11_select_mistake_vs_modification_mistake.png)
+![A SELECT mistake can be retried, while an UPDATE or DELETE mistake changes real data](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_select_mistake_vs_modification_mistake.png)
 
 ## Knowing Exactly Which Rows Before Touching Any of Them
 
@@ -70,7 +74,7 @@ The OneCompiler exercise uses two files. `init.sql` creates and populates the st
 
 First, `init.sql` prepares the source `tables`:
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE students (
     student_id INTEGER PRIMARY KEY,
     full_name TEXT,
@@ -115,16 +119,12 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 
 Then the active query file checks the target `row`, changes it, and confirms the change:
 
-```postgresql with=init.sql
-SELECT enrollment_id, student_id, course_id, grade
-FROM enrollments
-WHERE student_id = 2 AND course_id = 101;
-
-UPDATE enrollments
-SET grade = 'B'
-WHERE student_id = 2 AND course_id = 101
-RETURNING enrollment_id, student_id, course_id, grade;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafg97" 
+ width="100%"
+></iframe>
 
 ## Treating a Modification as a Decision, Not a Reflex
 
@@ -144,17 +144,18 @@ Expected output, directly from the `RETURNING` clause, the row's last snapshot b
 
 The result shows exactly one `row` leaving the `table`, Siddharth Rao's Data Structures enrollment, and that visible confirmation, arriving in the same breath as the `DELETE` itself, is what turns "I think that worked" into "I can see that it worked."
 
-![Safe modification checklist: select the target, reuse the same WHERE, and confirm with RETURNING](images/12_safe_modification_checklist.png)
+![Safe modification checklist: select the target, reuse the same WHERE, and confirm with RETURNING](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_safe_modification_checklist.png)
 
 ### Hands-On Practice: Delete with a Built-In Receipt
 
 Keep the same `init.sql` file and change only the active query file:
 
-```postgresql with=init.sql
-DELETE FROM enrollments
-WHERE student_id = 4 AND course_id = 102
-RETURNING enrollment_id, student_id, course_id;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafgjb" 
+ width="100%"
+></iframe>
 
 ## Discipline Habits at a Glance
 
@@ -193,9 +194,12 @@ RETURNING enrollment_id, student_id, course_id;
 
 Confirm exactly which enrollment belongs to Varun Nair in Linear Algebra, then correct his grade to A, using `RETURNING` to see the result immediately.
 
-```postgresql with=init.sql
--- Check, update, then confirm below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafgub" 
+ width="100%"
+></iframe>
 
 A working answer runs `SELECT enrollment_id, student_id, course_id, grade FROM enrollments WHERE student_id = 3 AND course_id = 103;`, then `UPDATE enrollments SET grade = 'A' WHERE student_id = 3 AND course_id = 103 RETURNING enrollment_id, student_id, course_id, grade;`. Before, from the `SELECT`:
 

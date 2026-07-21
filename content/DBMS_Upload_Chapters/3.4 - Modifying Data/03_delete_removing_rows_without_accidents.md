@@ -4,6 +4,10 @@ Priyanka is closing out add-drop week. One student, Rahul Verma, registered for 
 
 The statement for this is **`DELETE`**, and Priyanka already knows, from watching Rohit's `UPDATE` go sideways for a moment during his own address corrections, that a statement which removes `rows` deserves exactly the same caution as one that changes them.
 
+**Definition:** The **`DELETE` statement** removes existing rows from a table, with the `WHERE` clause determining which rows are removed.
+
+![Intro visual for delete removing rows without accidents](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_delete_removing_rows_without_accidents.png)
+
 ## Finding the Row Before Removing It
 
 The `enrollments` `table` holds this data:
@@ -39,7 +43,7 @@ The OneCompiler exercise uses two files. `init.sql` creates and populates the st
 
 First, `init.sql` prepares the source `tables`:
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE students (
     student_id INTEGER PRIMARY KEY,
     full_name TEXT,
@@ -96,11 +100,12 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 
 Then the active query file checks the target `row`:
 
-```postgresql with=init.sql
-SELECT enrollment_id, student_id, course_id, enrolled_on
-FROM enrollments
-WHERE enrollment_id = 9;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafkw6" 
+ width="100%"
+></iframe>
 
 ## The Shape of DELETE
 
@@ -129,20 +134,18 @@ Confirming afterward with `SELECT enrollment_id, student_id, course_id FROM enro
 - Unlike `UPDATE`, `DELETE` has no `SET` clause, because there is nothing to set, a deleted `row` simply stops existing in the `table`.
 - `WHERE` is doing the identical job it always does: picking out which `rows` the statement applies to.
 
-![Safe DELETE habit: select the target row first, then delete that exact row](images/05_delete_select_target_first.png)
+![Safe DELETE habit: select the target row first, then delete that exact row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_delete_select_target_first.png)
 
 ### Hands-On Practice: Run the DELETE
 
 Keep the same `init.sql` file and change only the active query file. It runs the `DELETE` and then lists what remains:
 
-```postgresql with=init.sql
-DELETE FROM enrollments
-WHERE enrollment_id = 9;
-
-SELECT enrollment_id, student_id, course_id
-FROM enrollments
-ORDER BY enrollment_id;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafm7r" 
+ width="100%"
+></iframe>
 
 ## Why WHERE Matters Here Even More
 
@@ -172,18 +175,18 @@ The second `SELECT` returns nothing at all, because every single enrollment `row
 - No `WHERE` clause at all: there was no warning, no count of `rows` about to disappear, and once the statement finishes there is no ordinary way to bring those `rows` back.
 - A `WHERE` clause that is merely too broad: writing `WHERE course_id = 103` when the intent was `WHERE enrollment_id = 9` removes every enrollment in Linear Algebra across every student, not the one `row` Rahul actually dropped.
 
-![DELETE without WHERE removing all rows from the enrollments table](images/06_delete_without_where_all_rows.png)
+![DELETE without WHERE removing all rows from the enrollments table](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_delete_without_where_all_rows.png)
 
 ### Hands-On Practice: See the Danger
 
 Keep the same `init.sql` file and change only the active query file. This intentionally omits `WHERE` so you can see it empty the whole `table`:
 
-```postgresql with=init.sql
-DELETE FROM enrollments;
-
-SELECT enrollment_id, student_id, course_id
-FROM enrollments;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafmha" 
+ width="100%"
+></iframe>
 
 ## The Same Safety Habit, Applied to Deletion
 
@@ -215,18 +218,12 @@ Combining two conditions with `AND`, exactly as covered with logical operators, 
 
 Keep the same `init.sql` file and change only the active query file. The three statements check the `row`, remove it, and list what remains:
 
-```postgresql with=init.sql
-SELECT enrollment_id, student_id, course_id
-FROM enrollments
-WHERE student_id = 5 AND course_id = 101;
-
-DELETE FROM enrollments
-WHERE student_id = 5 AND course_id = 101;
-
-SELECT enrollment_id, student_id, course_id
-FROM enrollments
-ORDER BY enrollment_id;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafmz6" 
+ width="100%"
+></iframe>
 
 ## DELETE at a Glance
 
@@ -261,9 +258,12 @@ ORDER BY enrollment_id;
 
 Neha Sharma has dropped Database Systems (course_id 101). Confirm which enrollment `row` that is first, then remove it, then confirm the `table`'s remaining state.
 
-```postgresql with=init.sql
--- Check, delete, then confirm below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafna5" 
+ width="100%"
+></iframe>
 
 A working answer runs `SELECT enrollment_id, student_id, course_id FROM enrollments WHERE student_id = 2 AND course_id = 101;`, then `DELETE FROM enrollments WHERE student_id = 2 AND course_id = 101;`, then a listing `SELECT`. Before, the check shows one `row`:
 

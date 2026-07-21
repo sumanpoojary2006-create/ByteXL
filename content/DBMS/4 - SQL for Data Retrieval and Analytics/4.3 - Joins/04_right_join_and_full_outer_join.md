@@ -6,6 +6,22 @@ There is also a third option, a **`FULL OUTER JOIN`**, for the rarer case where 
 
 **Definition:** `RIGHT JOIN` mirrors `LEFT JOIN` from the opposite `table`, and `FULL OUTER JOIN` protects both sides of a `join` at once, together completing the full family of ways two `tables` can be combined based on whether unmatched `rows` should be kept or dropped, and on which side.
 
+<!--
+IMAGE PROMPT  ->  generate as images/04_intro_right_join_and_full_outer_join.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Zoya now understands LEFT JOIN well enough to solve it a different way: instead of writing restaurants LEFT JOIN orders to protect every restaurant, she could write orders RIGHT JOIN restaurants and protect the same table from the other side. A RIGHT JOIN is.
+
+ON-IMAGE TEXT: show a short bold title "Right Join And Full Outer Join" plus only these few labels, large and legible: Table, Row, Join. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for right join and full outer join](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_right_join_and_full_outer_join.png)
+
 ## RIGHT JOIN as the Mirror of LEFT JOIN
 
 The same delivery `schema` applies here, with Neha Bhatt having no orders and Taco Town having no orders.
@@ -115,7 +131,7 @@ Every one of the 4 restaurants appears here, including Taco Town, whose `row` sh
 
 In practice, most SQL style guides, and most of the lessons in this course, prefer `LEFT JOIN` over `RIGHT JOIN` for readability, since it reads left to right in the same order the `tables` are typically listed, but both exist and behave as exact mirrors of each other.
 
-![RIGHT JOIN protecting every row from the right table even when no matching order exists](images/07_right_join_keeps_right_rows.png)
+![RIGHT JOIN protecting every row from the right table even when no matching order exists](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_right_join_keeps_right_rows.png)
 
 ## Rewriting a RIGHT JOIN as a LEFT JOIN
 
@@ -169,7 +185,7 @@ Expected output:
 
 This result includes Neha Bhatt with `NULL` order `columns`, exactly as a `LEFT JOIN` would, and it would also include any order `row` with no matching customer, exactly as a `RIGHT JOIN` would, though in this particular data every order does have a valid customer. A `FULL OUTER JOIN` is essentially a `LEFT JOIN` and a `RIGHT JOIN` combined into a single result, with no `row` from either side left out.
 
-![FULL OUTER JOIN keeping unmatched rows from both tables in one result](images/08_full_outer_join_keeps_both_sides.png)
+![FULL OUTER JOIN keeping unmatched rows from both tables in one result](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_full_outer_join_keeps_both_sides.png)
 
 ## Finding Rows Unmatched on Either Side
 

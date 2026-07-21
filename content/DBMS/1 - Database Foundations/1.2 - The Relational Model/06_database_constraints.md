@@ -12,6 +12,22 @@ Type -3 into the age field, and the system will not accept it. These automatic, 
 
 **Definition:** A `constraint` is a promise the `database` itself keeps on every single `row`, automatically and without exception, so that the trustworthiness of a `table` never depends on how careful, or how tired, the person entering the data happens to be that day.
 
+<!--
+IMAGE PROMPT  ->  generate as images/06_intro_database_constraints.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Kiran manages patient registration at a small clinic in Hyderabad, and for years the front desk kept records on a spreadsheet that let anyone type anything into any box. One week, a new receptionist left the phone number field empty for an entire day's worth.
+
+ON-IMAGE TEXT: show a short bold title "Database Constraints" plus only these few labels, large and legible: Constraints, Kiran, Manages. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for database constraints](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_database_constraints.png)
+
 ## A Constraint Is a Rule the Database Enforces For You
 
 - A `constraint` is simply a rule attached to a `column`, or sometimes to a whole `table`, that every `row` must satisfy before the `database` will accept it.
@@ -43,7 +59,7 @@ A handful of rule shapes cover most of what a real `table` needs, and every one 
 - "A grade must be one of A, B, C, D, or F" describes a value restricted to a fixed set.
 - "Every appointment's patient ID must match a real patient" describes a value that must point at something real.
 
-![Constraint gates rejecting missing, duplicate, out-of-range, invalid-set, and broken-reference data](images/11_constraint_gates_reject_bad_data.png)
+![Constraint gates rejecting missing, duplicate, out-of-range, invalid-set, and broken-reference data](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_constraint_gates_reject_bad_data.png)
 
 ## Why Constraints Belong to the Database, Not the Application
 
@@ -53,7 +69,7 @@ A handful of rule shapes cover most of what a real `table` needs, and every one 
 - If the rule about a missing phone number is only checked by the website's form, then the batch import script, which never passes through that form, can quietly slip bad data straight past it.
 - A `constraint` enforced by the `database` itself guards every single door at once, because no data can ever reach the `table` without passing the `database`'s own checks first.
 
-![Database constraints guarding every entry route while app-only rules protect just one route](images/12_database_constraints_guard_all_routes.png)
+![Database constraints guarding every entry route while app-only rules protect just one route](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_database_constraints_guard_all_routes.png)
 
 ## Constraints at a Glance
 

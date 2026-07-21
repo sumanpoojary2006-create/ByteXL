@@ -6,6 +6,22 @@ SQL's **offset `functions`**, `LAG` and `LEAD`, are `window functions` purpose-b
 
 **Definition:** `LAG` and `LEAD` pull a value from a neighboring `row`, before or after the current one within an ordered window, turning `row`-to-`row` comparisons like month-over-month change into a straightforward calculation on a single `row` instead of a self `join` across two.
 
+<!--
+IMAGE PROMPT  ->  generate as images/04_intro_offset_functions_lag_and_lead.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Leela's next report tracks month-over-month growth: for each salesperson's monthly total, how much did it change compared to the previous month? Answering this means comparing a row to a different row, specifically, whichever row comes immediately before it.
+
+ON-IMAGE TEXT: show a short bold title "Offset Functions Lag And Lead" plus only these few labels, large and legible: Row, Select, Offset. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for offset functions lag and lead](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_offset_functions_lag_and_lead.png)
+
 ## Looking Back at the Previous Row with LAG
 
 The `monthly_sales` `table` holds one `row` per salesperson per month.
@@ -97,7 +113,7 @@ Expected output:
 
 Nikhil's April `row` shows 22000.00 as its `previous_month`, exactly March's total. His March `row`, having nothing before it in the partition, shows `NULL`, since there is no earlier `row` for `LAG` to reach.
 
-![LAG reaching backward from the current row to the previous month](images/07_lag_previous_row.png)
+![LAG reaching backward from the current row to the previous month](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_lag_previous_row.png)
 
 ## Calculating Change Using LAG
 
@@ -148,7 +164,7 @@ Expected output:
 - Nikhil's March `row` now shows 25500.00 as `next_month`, April's total, and his last `row`, June, shows `NULL`, since there is no later `row` in his partition for `LEAD` to reach forward into.
 - `LEAD` is useful for questions phrased the other way around, such as "what did this salesperson do right after this particular month."
 
-![LEAD reaching forward from the current row to the next month](images/08_lead_next_row.png)
+![LEAD reaching forward from the current row to the next month](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_lead_next_row.png)
 
 ## Reaching More Than One Row Away
 
@@ -176,6 +192,8 @@ Expected output:
 | Sana Fatima | 2025-06-01 | 21000.00 | 0.00 |
 
 `LAG(total_amount, 2, 0)` reaches back two `rows` instead of one, and supplies 0 instead of `NULL` whenever there is no `row` that far back, which is useful when a downstream calculation needs a real number rather than a `NULL` to work with.
+
+![An offset of two makes LAG reach two rows backward and LEAD reach two rows forward](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08b_lag_lead_offset_two_rows.png)
 
 ## LAG and LEAD at a Glance
 

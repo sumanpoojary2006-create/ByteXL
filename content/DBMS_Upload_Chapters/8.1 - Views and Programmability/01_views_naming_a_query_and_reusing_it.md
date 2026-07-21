@@ -4,6 +4,10 @@ Devraj maintains reporting for a logistics company, and one particular `query`, 
 
 A **`view`** solves this by giving a `query` a permanent name in the `database` itself, so that everyone references the same saved definition instead of retyping it.
 
+**Definition:** A `view` saves a `query` under a reusable name, always re-running against current data rather than storing a snapshot, which turns a frequently repeated, error-prone `query` into a single, consistently defined building block every downstream report can rely on.
+
+![Intro visual for views naming a query and reusing it](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_views_naming_a_query_and_reusing_it.png)
+
 ## Creating a View from an Existing Query
 
 The `shipments` and `drivers` `tables` set up the recurring `query` Devraj's team keeps duplicating.
@@ -33,7 +37,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE drivers (
     driver_id INTEGER PRIMARY KEY,
     driver_name TEXT
@@ -58,15 +62,12 @@ INSERT INTO shipments (shipment_id, driver_id, status, destination) VALUES
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-CREATE VIEW active_shipments AS
-SELECT s.shipment_id, d.driver_name, s.destination
-FROM shipments s
-JOIN drivers d ON s.driver_id = d.driver_id
-WHERE s.status = 'in_transit';
-
-SELECT * FROM active_shipments;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagpeg" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -80,25 +81,18 @@ Expected output:
 - `SELECT * FROM active_shipments` runs exactly as if `active_shipments` were a real `table`, even though it is really just this saved `query`, re-executed fresh every time it is referenced.
 - Anyone on Devraj's team can write `SELECT * FROM active_shipments` instead of retyping the `join` and the exact spelling of the status filter, eliminating the inconsistency risk entirely.
 
-![A view saves one named query definition that many reports can reuse](images/01_view_named_query_reused_by_reports.png)
+![A view saves one named query definition that many reports can reuse](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_view_named_query_reused_by_reports.png)
 
 ## A View Always Reflects Current Data
 
 A `view` does not store a snapshot of data from when it was created; it is only a saved `query` definition, run fresh every single time it is selected from.
 
-```postgresql with=init.sql
-CREATE VIEW active_shipments AS
-SELECT s.shipment_id, d.driver_name, s.destination
-FROM shipments s
-JOIN drivers d ON s.driver_id = d.driver_id
-WHERE s.status = 'in_transit';
-
-SELECT * FROM active_shipments;
-
-UPDATE shipments SET status = 'delivered' WHERE shipment_id = 1;
-
-SELECT * FROM active_shipments;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagpsz" 
+ width="100%"
+></iframe>
 
 Expected output (from the second `SELECT`, after the `UPDATE`):
 
@@ -108,25 +102,18 @@ Expected output (from the second `SELECT`, after the `UPDATE`):
 
 After Manoj's Mumbai shipment is marked delivered, querying `active_shipments` again immediately reflects that change, showing only the one remaining in-transit shipment, even though nothing about the `view` itself was touched. This is the core behavior that distinguishes a plain `view` from the `materialized view` covered later in this chapter: a plain `view` has no storage of its own and is always exactly as current as the underlying `tables`.
 
-![An ordinary view stores no data and always reflects the current base tables](images/02_ordinary_view_no_storage_always_current.png)
+![An ordinary view stores no data and always reflects the current base tables](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_ordinary_view_no_storage_always_current.png)
 
 ## Views Can Be Queried Like Any Table
 
 Because a `view` behaves like a `table` for `SELECT` purposes, it can be filtered, `join`ed, or aggregated further, exactly like any real `table`, letting a saved `view` serve as a clean, reusable building block for other `queries`.
 
-```postgresql with=init.sql
-CREATE VIEW active_shipments AS
-SELECT s.shipment_id, d.driver_name, s.destination
-FROM shipments s
-JOIN drivers d ON s.driver_id = d.driver_id
-WHERE s.status = 'in_transit';
-
-SELECT * FROM active_shipments;
-
-SELECT driver_name, COUNT(*) AS active_shipment_count
-FROM active_shipments
-GROUP BY driver_name;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagq4r" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -140,23 +127,12 @@ This groups directly on top of `active_shipments`, without ever repeating the un
 
 A `view`'s definition can be updated with `CREATE OR REPLACE VIEW`, and removed entirely with `DROP VIEW`, without affecting the underlying `tables` at all, since a `view` never owns any data of its own.
 
-```postgresql with=init.sql
-CREATE VIEW active_shipments AS
-SELECT s.shipment_id, d.driver_name, s.destination
-FROM shipments s
-JOIN drivers d ON s.driver_id = d.driver_id
-WHERE s.status = 'in_transit';
-
-SELECT * FROM active_shipments;
-
-CREATE OR REPLACE VIEW active_shipments AS
-SELECT s.shipment_id, d.driver_name, s.destination, s.status
-FROM shipments s
-JOIN drivers d ON s.driver_id = d.driver_id
-WHERE s.status IN ('in_transit', 'delayed');
-
-SELECT * FROM active_shipments;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagqdu" 
+ width="100%"
+></iframe>
 
 Expected output (from the final `SELECT`, against the redefined `view`):
 
@@ -205,25 +181,12 @@ Redefining the `view` to also include delayed shipments changes what every downs
 
 Create a `view` named `driver_shipment_summary` that shows each driver's name alongside their total shipment count, across all statuses, using the `drivers` and `shipments` `tables` above.
 
-```postgresql with=init.sql
-CREATE VIEW active_shipments AS
-SELECT s.shipment_id, d.driver_name, s.destination
-FROM shipments s
-JOIN drivers d ON s.driver_id = d.driver_id
-WHERE s.status = 'in_transit';
-
-SELECT * FROM active_shipments;
-
-CREATE OR REPLACE VIEW active_shipments AS
-SELECT s.shipment_id, d.driver_name, s.destination, s.status
-FROM shipments s
-JOIN drivers d ON s.driver_id = d.driver_id
-WHERE s.status IN ('in_transit', 'delayed');
-
-SELECT * FROM active_shipments;
-
--- Write your view below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagqqd" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

@@ -8,7 +8,7 @@ They do belong to two different worlds, in a sense, and Rehan has just discovere
 
 The other is **pgAdmin**, a graphical client where `databases`, `schemas`, and `tables` are represented as a browsable tree you can click through, with visual `query` editors and result grids instead of a scrolling terminal. Neither tool changes what the `database` actually stores, they are simply two different lenses for looking at, and working with, the same underlying server.
 
-![psql and pgAdmin shown as two different doors into the same PostgreSQL server](images/05_psql_pgadmin_two_doors_same_server.png)
+![psql and pgAdmin shown as two different doors into the same PostgreSQL server](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_psql_pgadmin_two_doors_same_server.png)
 
 **Definition:** **psql** is PostgreSQL's command-line client for entering SQL and administrative commands, while **pgAdmin** is a graphical interface for performing many of the same tasks through menus, forms, and visual tools.
 
@@ -77,7 +77,7 @@ When Rehan is exploring something unfamiliar instead, a `database` a teammate bu
 
 For a genuine beginner still building a mental model of what a `schema`, a `table`, and a `column` even look like in relation to each other, that visual scaffolding is often worth more than the extra speed a command line offers to someone who already knows the terrain.
 
-![psql matched with quick repeated tasks and pgAdmin matched with visual database exploration](images/06_psql_speed_pgadmin_visibility.png)
+![psql matched with quick repeated tasks and pgAdmin matched with visual database exploration](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_psql_speed_pgadmin_visibility.png)
 
 ## psql and pgAdmin at a Glance
 

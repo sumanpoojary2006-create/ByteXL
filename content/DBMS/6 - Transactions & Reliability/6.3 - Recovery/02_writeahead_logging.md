@@ -6,6 +6,22 @@ This ordering, log first, data files second, is the entire foundation of how a `
 
 **Definition:** `Write-ahead logging` guarantees that a durable record of every change exists before the change is considered complete, which is what allows a `database` to safely defer the slower work of updating actual data files while still guaranteeing that a crash can never lose a committed `transaction`'s effect.
 
+<!--
+IMAGE PROMPT  ->  generate as images/02_intro_writeahead_logging.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Durability, covered earlier in this unit, promised that a committed transaction survives a crash, and briefly mentioned the mechanism behind that promise without explaining it in depth: write-ahead logging. The name describes the rule precisely: before any.
+
+ON-IMAGE TEXT: show a short bold title "Writeahead Logging" plus only these few labels, large and legible: Transaction, Writeahead, Logging. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for writeahead logging](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_writeahead_logging.png)
+
 ## Why Writing Directly to Data Files Is Not Enough
 
 It might seem simpler for a `database` to just write a change straight to its data files the moment a `transaction` commits. The problem is that updating a data file on disk is not instantaneous or atomic at the hardware level:
@@ -67,7 +83,7 @@ By the time this `COMMIT` returns success to the caller, PostgreSQL guarantees t
 
 This is why `COMMIT` can safely report success immediately: the log, not the data file, is what `recovery` actually depends on.
 
-![Write-ahead logging records the log before the data page is written](images/03_wal_log_before_data_page.png)
+![Write-ahead logging records the log before the data page is written](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_wal_log_before_data_page.png)
 
 ## Why Logging First Makes Recovery Possible
 
@@ -79,7 +95,7 @@ If the server crashes at any point after `COMMIT` returns, the data file on disk
 
 This is exactly how durability is delivered in practice: not by guaranteeing every data file write happens instantly, but by guaranteeing the log record exists first and can always be replayed if needed.
 
-![WAL replay restoring committed changes after a crash](images/04_wal_replay_after_crash.png)
+![WAL replay restoring committed changes after a crash](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_wal_replay_after_crash.png)
 
 ## What Gets Written to the Log
 

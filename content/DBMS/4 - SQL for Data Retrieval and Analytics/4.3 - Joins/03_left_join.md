@@ -6,6 +6,22 @@ What Zoya needs is a `join` that keeps every `row` from `customers` regardless o
 
 **Definition:** `LEFT JOIN` guarantees every `row` from the first-named `table` survives the `join`, filling in `NULL` for the other side when no match exists, which makes it the right tool whenever "customers with no orders" or "restaurants with no orders" is itself the question.
 
+<!--
+IMAGE PROMPT  ->  generate as images/03_intro_left_join.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Zoya's manager asks a question the inner join from the last lesson cannot answer: "which registered customers have never placed a single order? I want to send them a welcome discount." An inner join between customers and orders only ever shows customers who.
+
+ON-IMAGE TEXT: show a short bold title "Left Join" plus only these few labels, large and legible: Row, Join, Order. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for left join](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_left_join.png)
+
 ## Keeping Every Row From the Left Table
 
 The same delivery `schema` is used again, including Neha Bhatt, who has never placed an order.
@@ -116,7 +132,7 @@ Every one of the 5 customers appears in this result, including Neha Bhatt, whose
 - A `LEFT JOIN` guarantees every `row` from that left-hand `table` survives, matched or not.
 - The right-hand `table`, `orders`, only contributes `columns` when a match exists.
 
-![LEFT JOIN keeping every row from the left table and filling NULL for missing matches](images/05_left_join_keeps_left_rows.png)
+![LEFT JOIN keeping every row from the left table and filling NULL for missing matches](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_left_join_keeps_left_rows.png)
 
 ## Finding Unmatched Rows on Purpose
 
@@ -138,7 +154,7 @@ Expected output:
 - `WHERE orders.order_id IS NULL` only keeps `rows` where the `join` found nothing to attach, and since `order_id` is the `primary key` of `orders`, it can only be `NULL` in the result when no matching order `row` existed in the first place.
 - This returns exactly one name, Neha Bhatt, the customer the discount campaign needs to reach.
 
-![LEFT JOIN followed by WHERE order_id IS NULL finding customers with no orders](images/06_left_join_find_unmatched_null.png)
+![LEFT JOIN followed by WHERE order_id IS NULL finding customers with no orders](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_left_join_find_unmatched_null.png)
 
 ## Why the Table Order Matters
 

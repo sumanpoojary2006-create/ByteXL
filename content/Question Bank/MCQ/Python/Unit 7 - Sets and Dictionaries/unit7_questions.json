@@ -1,0 +1,417 @@
+[
+  {
+    "set": 1,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "sets",
+    "description": "A parcel hub records every barcode scan, including repeated scans of the same parcel:\n\n```python\nscans = [\"P8\", \"P3\", \"P8\", \"P1\", \"P3\"]\nunique = set(scans)\nprint(len(scans), len(unique))\n```\n\nWhat is printed?",
+    "explanation": "The list keeps all five scan events. Converting it to a set removes repeated values, leaving the three distinct codes P8, P3, and P1. The two lengths are therefore 5 and 3.",
+    "options": ["`3 3`", "`5 3`", "`3 5`", "`5 5`"],
+    "answer": "B"
+  },
+  {
+    "set": 1,
+    "difficulty": "easy",
+    "bloom": "apply",
+    "subtopic": "sets",
+    "description": "A ticketing service needs an empty collection of unique seat numbers. Which assignment creates an empty set rather than an empty dictionary?",
+    "explanation": "Empty curly braces create a dictionary. Calling `set()` is the required way to create an empty set, ready for unique seat values.",
+    "options": ["`seats = []`", "`seats = {}`", "`seats = ()`", "`seats = set()`"],
+    "answer": "D"
+  },
+  {
+    "set": 1,
+    "difficulty": "hard",
+    "bloom": "analyze",
+    "subtopic": "set-operations",
+    "description": "A streaming service compares viewers of two premieres:\n\n```python\nfirst = {\"Asha\", \"Ravi\", \"Meera\"}\nsecond = {\"Ravi\", \"Meera\", \"Dev\"}\nresult = (first | second) - (first & second)\n```\n\nWhich viewers are in `result`?",
+    "explanation": "The union contains all four viewers, while the intersection contains Ravi and Meera. Removing the intersection leaves Asha and Dev, which is also the symmetric difference of the two sets.",
+    "options": ["Asha and Dev", "Ravi and Meera", "Asha, Ravi, Meera, and Dev", "Only Dev"],
+    "answer": "A"
+  },
+  {
+    "set": 1,
+    "difficulty": "hard",
+    "bloom": "analyze",
+    "subtopic": "sets",
+    "description": "A test checks the exact printed order of a set:\n\n```python\ncodes = {\"K3\", \"K1\", \"K2\"}\nprint(codes)\n```\n\nWhich assertion is appropriate?",
+    "explanation": "Sets do not guarantee positional or printed order. A reliable test should compare the set value itself or test membership, not demand one exact display sequence. `codes == {\"K1\", \"K2\", \"K3\"}` checks the contents without assuming order.",
+    "options": [
+      "Assert that the first printed item is always `K3`",
+      "Assert that `list(codes)` always equals `['K3', 'K1', 'K2']`",
+      "Assert that `codes == {\"K1\", \"K2\", \"K3\"}`",
+      "Index `codes[0]` and assert that it is one of the three values"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 1,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "dictionaries",
+    "description": "A price dictionary accidentally repeats the same product key:\n\n```python\nprices = {\"Mug\": 150, \"Badge\": 50, \"Mug\": 180}\nprint(prices[\"Mug\"], len(prices))\n```\n\nWhat is printed?",
+    "explanation": "Dictionary keys must be unique. The later `Mug` value replaces the earlier one, so its price is 180. Only the keys Mug and Badge remain, giving a length of 2.",
+    "options": ["`150 3`", "`180 2`", "`180 3`", "A `KeyError`"],
+    "answer": "B"
+  },
+  {
+    "set": 1,
+    "difficulty": "easy",
+    "bloom": "understand",
+    "subtopic": "dictionaries",
+    "description": "A catalogue stores `prices = {\"Mug\": 150, \"Badge\": 50}`. Which expression correctly checks whether the product name `Mug` is a key?",
+    "explanation": "Membership on a dictionary checks keys. Therefore `\"Mug\" in prices` is true. Testing 150 would ask whether 150 is a key, not whether it appears as a value.",
+    "options": ["`\"Mug\" in prices`", "`150 in prices`", "`prices[150] in prices`", "`\"Mug\" in prices.values()`"],
+    "answer": "A"
+  },
+  {
+    "set": 1,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "dictionary-operations",
+    "description": "A clinic lookup must return `not scheduled` when a patient ID is absent, without raising an error:\n\n```python\nappointments = {\"P101\": \"10:00\"}\nstatus = __________\n```\n\nWhich completion is the smallest safe solution?",
+    "explanation": "`get()` performs a safe lookup and returns the supplied default when the key is missing. Square-bracket lookup would raise `KeyError` for an absent patient, while checking values would search the wrong part of the dictionary.",
+    "options": [
+      "`appointments[\"P999\"]`",
+      "`appointments.pop(\"P999\")` without checking membership",
+      "`\"P999\" in appointments.values()`",
+      "`appointments.get(\"P999\", \"not scheduled\")`"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 1,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "dictionary-comprehensions",
+    "description": "A store creates a sale view containing only in-stock products, with each retained price reduced by 20 percent:\n\n```python\nstock = {\"Mug\": 2, \"Cap\": 0, \"Badge\": 5}\nprices = {\"Mug\": 150, \"Cap\": 200, \"Badge\": 50}\nsale = {item: prices[item] * 0.8 for item, count in stock.items() if count > 0}\n```\n\nWhat is stored in `sale`?",
+    "explanation": "The condition excludes Cap because its count is 0. Mug and Badge remain, and their prices are multiplied by 0.8, producing 120.0 and 40.0.",
+    "options": [
+      "`{'Mug': 150, 'Badge': 50}`",
+      "`{'Cap': 160.0}`",
+      "`{'Mug': 120.0, 'Badge': 40.0}`",
+      "`{'Mug': 2, 'Badge': 5}`"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 1,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "nested-dictionaries",
+    "description": "A hospital stores room status inside ward dictionaries:\n\n```python\nwards = {\n    \"A\": {\"101\": \"occupied\", \"102\": \"free\"},\n    \"B\": {\"201\": \"free\"},\n}\n```\n\nWhich assignment changes only room 102 in Ward A to `cleaning`?",
+    "explanation": "The first key selects Ward A's inner dictionary, and the second key selects room 102 within it. Assigning through both keys changes that one nested value without replacing the ward or another room.",
+    "options": ["`wards[\"102\"] = \"cleaning\"`", "`wards[\"A\"][\"102\"] = \"cleaning\"`", "`wards[\"A\"] = \"cleaning\"`", "`wards[\"B\"][\"102\"] = \"cleaning\"`"],
+    "answer": "B"
+  },
+  {
+    "set": 1,
+    "difficulty": "hard",
+    "bloom": "analyze",
+    "subtopic": "choosing-data-structures",
+    "description": "A university system must store each student's current score for name-based lookup and separately record whether an ID has ever submitted, without duplicates. Which pairing best fits the two jobs?",
+    "explanation": "Scores need a meaningful key mapped to a value, so a dictionary fits. Submission tracking needs only unique membership, so a set fits. A list would permit duplicate IDs, and a tuple would not support a growing submission record.",
+    "options": ["A dictionary for scores and a set for submitted IDs", "A set mapping names to scores and a tuple containing submitted IDs", "Two lists indexed in parallel", "One tuple containing every score and submission"],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "easy",
+    "bloom": "apply",
+    "subtopic": "set-operations",
+    "description": "Two branches list the skills available on their support teams:\n\n```python\neast = {\"Python\", \"SQL\", \"Linux\"}\nwest = {\"SQL\", \"Cloud\"}\nshared = east & west\n```\n\nWhat is `shared`?",
+    "explanation": "Intersection keeps only values found in both sets. SQL is the only shared skill, so the result is the one-item set `{'SQL'}`.",
+    "options": ["`{'Python', 'Linux'}`", "`{'Python', 'SQL', 'Linux', 'Cloud'}`", "`{'SQL'}`", "`{'Cloud'}`"],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "set-operations",
+    "description": "A library compares yesterday's borrowers with today's:\n\n```python\nyesterday = {\"Asha\", \"Ravi\", \"Meera\"}\ntoday = {\"Ravi\", \"Dev\"}\nprint(yesterday - today)\n```\n\nWhich names are in the result?",
+    "explanation": "Set difference is directional. `yesterday - today` keeps names present yesterday but absent today, which are Asha and Meera. Dev is only in today's set and is not included.",
+    "options": ["Ravi only", "Dev only", "Asha, Meera, and Dev", "Asha and Meera"],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "hard",
+    "bloom": "analyze",
+    "subtopic": "set-operations",
+    "description": "A fraud check has two implementations for IDs seen in exactly one system:\n\n```python\nbank = {\"A1\", \"A2\", \"A3\"}\nwallet = {\"A2\", \"A4\"}\n\n# Version A\nonly_one_a = bank ^ wallet\n\n# Version B\nonly_one_b = (bank - wallet) | (wallet - bank)\n```\n\nHow do the results compare?",
+    "explanation": "The symmetric difference keeps values exclusive to either set. The union of the two directional differences describes the same membership rule, so both versions produce equal sets.",
+    "options": ["They always produce equal sets", "Version B also includes the intersection", "Version A keeps only values from `bank`", "They are equal only when the sets do not overlap"],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "easy",
+    "bloom": "understand",
+    "subtopic": "sets",
+    "description": "A sensor tries to read the first value from a set:\n\n```python\nactive = {\"S1\", \"S2\", \"S3\"}\nprint(active[0])\n```\n\nWhat happens?",
+    "explanation": "A set has no positional order and cannot be indexed. Using `[0]` therefore raises `TypeError` rather than returning an arbitrary first value.",
+    "options": ["It prints `S1`", "Python raises `TypeError`", "It prints the whole set", "Python raises `KeyError`"],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "sets",
+    "description": "A survey deduplicates responses before checking membership:\n\n```python\nresponses = [\"yes\", \"no\", \"yes\", \"maybe\"]\nchoices = set(responses)\nprint(\"yes\" in choices, len(choices))\n```\n\nWhat is printed?",
+    "explanation": "The value `yes` is present, so the membership test is true. The set contains the three unique values yes, no, and maybe, so its length is 3.",
+    "options": ["`False 4`", "`True 4`", "`False 3`", "`True 3`"],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "dictionaries",
+    "description": "A menu lookup requests an item that was never added:\n\n```python\nmenu = {\"Tea\": 20, \"Coffee\": 40}\nprice = menu[\"Juice\"]\n```\n\nWhat happens?",
+    "explanation": "Square-bracket lookup requires the key to exist. Since `Juice` is absent, Python raises `KeyError`. A safe alternative would be `menu.get(\"Juice\")` or a membership check first.",
+    "options": ["`price` becomes 0", "`price` becomes `None`", "Python raises `KeyError`", "The last price, 40, is reused"],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "dictionary-operations",
+    "description": "A stock system needs to add a new `Cap` entry and later revise its quantity. Which statement correctly describes the syntax?",
+    "explanation": "The same assignment syntax handles both operations. `stock[\"Cap\"] = value` adds Cap when the key is missing and overwrites its value when the key already exists. Dictionaries never keep two entries with the same key.",
+    "options": ["A separate `append()` method is required whenever a new key is added", "`stock[\"Cap\"] = value` adds or updates based on key existence", "Assignment works only for keys created in the literal", "A key must be deleted before its value can change"],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "dictionary-operations",
+    "description": "A café removes a sold-out product but still needs its former price:\n\n```python\nmenu = {\"Tea\": 20, \"Cake\": 80}\nremoved_price = menu.pop(\"Cake\")\nprint(removed_price, menu)\n```\n\nWhat is printed?",
+    "explanation": "`pop(key)` removes the key-value pair and returns its value. The removed price is 80, and the remaining dictionary contains only Tea.",
+    "options": ["`80 {'Tea': 20}`", "`Cake {'Tea': 20}`", "`None {'Tea': 20}`", "`80 {'Tea': 20, 'Cake': 80}`"],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "dictionary-operations",
+    "description": "A cleanup task deletes a key that may not exist:\n\n```python\nstock = {\"Mug\": 4}\ndel stock[\"Cap\"]\n```\n\nWhat is the result?",
+    "explanation": "`del` requires an existing key. Since Cap is absent, Python raises `KeyError`; the operation is not silently ignored. A membership check can guard the deletion.",
+    "options": ["The dictionary becomes empty", "The statement returns `None` without changing the dictionary", "Python raises `KeyError`", "Python adds Cap with a value of `None`"],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "dictionary-operations",
+    "description": "A transport app asks for a missing route with a numeric fallback:\n\n```python\nfares = {\"R1\": 25, \"R2\": 30}\nprint(fares.get(\"R9\", -1))\n```\n\nWhat is printed?",
+    "explanation": "`R9` is absent, so `get()` returns the provided default value `-1`. It does not raise `KeyError` and does not add R9 to the dictionary.",
+    "options": ["`None`", "`0`", "A `KeyError`", "`-1`"],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "easy",
+    "bloom": "understand",
+    "subtopic": "dictionaries",
+    "description": "A profile dictionary is `profile = {\"name\": \"Asha\", \"city\": \"Pune\", \"active\": True}`. What does `len(profile)` return?",
+    "explanation": "`len()` counts key-value pairs in a dictionary. The keys name, city, and active make three entries, so the result is 3.",
+    "options": ["3", "6", "2", "1"],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "dictionaries",
+    "description": "A loop walks directly over a dictionary:\n\n```python\nprices = {\"Mug\": 150, \"Badge\": 50}\nfor value in prices:\n    print(value)\n```\n\nWhat does the loop print?",
+    "explanation": "Direct dictionary iteration visits keys, despite the variable being named `value`. It prints Mug and Badge in insertion order, not their prices. Variable names do not change what the dictionary supplies.",
+    "options": ["150 and 50", "Each key-value pair as a tuple", "Mug and Badge", "The dictionary twice"],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "dictionaries",
+    "description": "A finance report needs the total of all amounts, without using their account names:\n\n```python\namounts = {\"cash\": 120, \"card\": 350, \"upi\": 230}\ntotal = 0\nfor amount in __________:\n    total += amount\n```\n\nWhich completion is correct?",
+    "explanation": "`.values()` supplies the numeric amounts without the keys, allowing each value to be added directly. Iterating over the dictionary or `.keys()` would produce strings instead.",
+    "options": ["`amounts.items()`", "`amounts.values()`", "`amounts.keys()`", "`amounts`"],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "dictionaries",
+    "description": "A receipt prints both product and price:\n\n```python\nprices = {\"Tea\": 20, \"Cake\": 80}\nfor item, price in prices.items():\n    print(f\"{item}:{price}\")\n```\n\nWhat is printed?",
+    "explanation": "`.items()` supplies each key-value pair, and the loop header unpacks it into `item` and `price`. In insertion order, the output is Tea:20 followed by Cake:80.",
+    "options": ["`20:Tea` then `80:Cake`", "`Tea` then `Cake`", "`20` then `80`", "`Tea:20` then `Cake:80`"],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "dictionaries",
+    "description": "A report alphabetises dictionary entries by product name:\n\n```python\nprices = {\"T-shirt\": 350, \"Badge\": 50, \"Mug\": 150}\nfor item, price in sorted(prices.items()):\n    print(item)\n```\n\nWhich order is printed?",
+    "explanation": "`prices.items()` provides key-value pairs, and `sorted()` orders those pairs by their first element, the key. The product names therefore print as Badge, Mug, T-shirt.",
+    "options": ["T-shirt, Mug, Badge", "Badge, T-shirt, Mug", "Badge, Mug, T-shirt", "50, 150, 350"],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "dictionary-comprehensions",
+    "description": "A payroll tool increases every allowance by 10 percent:\n\n```python\nallowances = {\"Asha\": 1000, \"Ravi\": 1500}\nupdated = {name: amount * 1.1 for name, amount in allowances.items()}\n```\n\nWhat is `updated`?",
+    "explanation": "The comprehension keeps each employee name as the key and multiplies each amount by 1.1. The new dictionary is `{'Asha': 1100.0, 'Ravi': 1650.0}`; the original dictionary is not mutated.",
+    "options": ["`{'Asha': 1100.0, 'Ravi': 1650.0}`", "`{'Asha': 1000, 'Ravi': 1500}`", "`{1100.0: 'Asha', 1650.0: 'Ravi'}`", "`[1100.0, 1650.0]`"],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "dictionary-comprehensions",
+    "description": "A stock view should include only positive quantities:\n\n```python\nstock = {\"Mug\": 0, \"Badge\": 3, \"Cap\": -1, \"Book\": 2}\navailable = {item: count for item, count in stock.items() if count > 0}\n```\n\nWhat is `available`?",
+    "explanation": "The condition is strictly greater than zero. It excludes Mug at the boundary 0 and Cap at -1, retaining only Badge and Book with their original counts.",
+    "options": ["`{'Mug': 0, 'Badge': 3, 'Book': 2}`", "`{'Cap': -1}`", "`{'Mug': 0, 'Cap': -1}`", "`{'Badge': 3, 'Book': 2}`"],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "hard",
+    "bloom": "apply",
+    "subtopic": "dictionary-comprehensions",
+    "description": "A menu pairs product names and prices:\n\n```python\nitems = [\"Tea\", \"Cake\", \"Juice\"]\nprices = [20, 80]\nmenu = {item: price for item, price in zip(items, prices)}\n```\n\nWhat is stored in `menu`?",
+    "explanation": "`zip()` stops at the shorter list, so it creates only Tea-20 and Cake-80 pairs. Juice has no matching price and is omitted rather than receiving a default.",
+    "options": ["`{'Tea': 20, 'Cake': 80, 'Juice': None}`", "`{'Tea': 20, 'Cake': 80}`", "`{'Tea': 20, 'Cake': 80, 'Juice': 20}`", "A `ValueError`"],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "nested-dictionaries",
+    "description": "A school stores subject marks by student:\n\n```python\nmarks = {\n    \"Asha\": {\"Math\": 88, \"Python\": 92},\n    \"Ravi\": {\"Math\": 75, \"Python\": 81},\n}\nprint(marks[\"Ravi\"][\"Python\"])\n```\n\nWhat is printed?",
+    "explanation": "The first key selects Ravi's inner dictionary, and the second key selects the Python mark from it. The value printed is 81.",
+    "options": ["75", "88", "81", "92"],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "nested-dictionaries",
+    "description": "A festival report already contains Merch and Food stalls. Which assignment adds an entire Games stall with two prices?",
+    "explanation": "A new outer key can be assigned a complete inner dictionary. This creates one Games entry whose value maps Ring Toss and Dart to their prices.",
+    "options": ["`stalls[\"Games\"][\"Ring Toss\"] = 20` before Games exists", "`stalls.append({\"Games\": 20})`", "`stalls[\"Games\"] = 20, 25`", "`stalls[\"Games\"] = {\"Ring Toss\": 20, \"Dart\": 25}`"],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "nested-dictionaries",
+    "description": "A dashboard must change only the retry limit for the payment service:\n\n```python\nconfig = {\n    \"search\": {\"timeout\": 3, \"retries\": 1},\n    \"payment\": {\"timeout\": 5, \"retries\": 2},\n}\n```\n\nWhich assignment is correct?",
+    "explanation": "The outer key `payment` selects that service's settings, and the inner key `retries` selects the single value to update. Other payment settings and the search service remain unchanged.",
+    "options": ["`config[\"payment\"][\"retries\"] = 3`", "`config[\"retries\"] = 3`", "`config[\"payment\"] = 3`", "`config[\"search\"][\"retries\"] = 3`"],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "hard",
+    "bloom": "analyze",
+    "subtopic": "nested-dictionaries",
+    "description": "A warehouse counts every product across zones:\n\n```python\nzones = {\n    \"North\": {\"P1\": 4, \"P2\": 2},\n    \"South\": {\"P3\": 5},\n    \"West\": {\"P4\": 1, \"P5\": 3, \"P6\": 2},\n}\ncount = 0\nfor zone, products in zones.items():\n    for product, quantity in products.items():\n        count += 1\nprint(count)\n```\n\nWhat is printed?",
+    "explanation": "The nested loop counts dictionary entries, not quantities. North has 2 products, South has 1, and West has 3, giving `2 + 1 + 3 = 6`.",
+    "options": ["17", "6", "5", "3"],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "easy",
+    "bloom": "apply",
+    "subtopic": "choosing-data-structures",
+    "description": "A security service only needs to know whether a token has been revoked, and duplicate revocation reports should collapse automatically. Which structure is the best fit?",
+    "explanation": "A set stores unique values and supports direct membership checks, exactly matching a revoked-or-not question. No position or attached value is needed.",
+    "options": ["A tuple", "A list", "A set", "A nested dictionary"],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "choosing-data-structures",
+    "description": "A railway app must look up each station's current platform by station code. Which structure most directly models that requirement?",
+    "explanation": "A dictionary maps each meaningful station code to its platform value, allowing direct lookup. A list would require positional searching and would not express the code-to-platform relationship.",
+    "options": ["A set of platform numbers", "A tuple of every station name", "A position-based list kept permanently sorted by station code", "A dictionary mapping station code to platform"],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "choosing-data-structures",
+    "description": "A map stores one fixed coordinate pair that should not change after creation. Which structure communicates that intent best?",
+    "explanation": "A tuple is an ordered, immutable group and is the clearest fit for a fixed latitude-longitude pair. A set loses positional meaning, while lists and dictionaries are mutable.",
+    "options": ["A list", "A tuple", "A set", "A dictionary"],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "choosing-data-structures",
+    "description": "A trip planner keeps adding stops, but each stop is a fixed `(name, latitude, longitude)` record. Which structure best represents the whole itinerary?",
+    "explanation": "The itinerary must grow, so its outer collection should be a list. Each stop has a fixed shape, so tuples are suitable records inside that list.",
+    "options": ["A list of tuples", "A set of lists", "One dictionary with duplicate keys", "A single immutable tuple for the whole trip"],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "dictionaries",
+    "description": "A literal contains a repeated key:\n\n```python\nsettings = {\"theme\": \"light\", \"font\": \"large\", \"theme\": \"dark\"}\nprint(settings[\"theme\"], len(settings))\n```\n\nWhat is printed?",
+    "explanation": "The later theme value overwrites the earlier one because keys are unique. The dictionary contains theme and font, so it prints `dark 2`.",
+    "options": ["`light 3`", "`dark 3`", "`dark 2`", "A `KeyError`"],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "dictionaries",
+    "description": "A shop checks whether a price appears in a dictionary:\n\n```python\nprices = {\"Mug\": 150, \"Badge\": 50}\nprint(150 in prices)\n```\n\nWhat is printed?",
+    "explanation": "Dictionary membership checks keys, not values. The keys are Mug and Badge, so the numeric value 150 is not found and the expression prints `False`. `150 in prices.values()` would be true.",
+    "options": ["`150`", "A `TypeError`", "`True`", "`False`"],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "easy",
+    "bloom": "apply",
+    "subtopic": "dictionary-operations",
+    "description": "A fare lookup requests an existing route while also providing a fallback:\n\n```python\nfares = {\"R1\": 25}\nprint(fares.get(\"R1\", 0))\n```\n\nWhat is printed?",
+    "explanation": "Because R1 exists, `get()` returns its stored value 25 and ignores the fallback. The default is used only when the key is absent.",
+    "options": ["25", "0", "`None`", "A `KeyError`"],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "dictionary-operations",
+    "description": "A warehouse must remove `Cap` from stock and immediately use its previous quantity in a transfer record. Which operation directly supports both needs?",
+    "explanation": "`pop(\"Cap\")` removes the entry and returns its value, so the old quantity can be stored at the same time. `del` removes the entry but does not return the removed value.",
+    "options": ["`del stock[\"Cap\"]`", "`quantity = stock.pop(\"Cap\")`", "`quantity = stock.get(\"Cap\")`", "`stock[\"Cap\"] = None`"],
+    "answer": "B"
+  }
+]

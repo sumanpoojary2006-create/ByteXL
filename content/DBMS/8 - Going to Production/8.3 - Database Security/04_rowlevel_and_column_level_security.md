@@ -6,6 +6,22 @@ PostgreSQL's **`row-level security`**, or RLS, makes exactly this possible, enfo
 
 **Definition:** `Row-level security`, enabled with `ALTER TABLE ... ENABLE ROW LEVEL SECURITY` and defined through `CREATE POLICY`, restricts which specific rows a `role` can see.
 
+<!--
+IMAGE PROMPT  ->  generate as images/04_intro_rowlevel_and_column_level_security.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Column-level privileges, previewed briefly in the GRANT lesson, restrict access to entire columns, but some security requirements are finer than that: a warehouse manager should see every shipment, but a branch coordinator should only ever see shipments.
+
+ON-IMAGE TEXT: show a short bold title "Rowlevel And Column Level Security" plus only these few labels, large and legible: Table, Row, Column. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for rowlevel and column level security](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_rowlevel_and_column_level_security.png)
+
 ## The Problem Without Row-Level Security
 
 The `shipments` `table` now includes a `branch` `column`, and two `role`s represent two different branch coordinators.
@@ -92,7 +108,7 @@ Expected output:
 - `SET ROLE mumbai_coordinator` switches the current session to act as that `role`, and the plain `SELECT * FROM shipments`, with no `WHERE` clause written at all, still returns only the two Mumbai `rows`.
 - The policy is enforced by the `database` itself, beneath the `query`, exactly the guarantee application-side filtering alone could never provide, since application-side filtering only protects against `queries` that remembered to include it.
 
-![Row-level security automatically filters which rows a role can see](images/07_row_level_security_policy_filter.png)
+![Row-level security automatically filters which rows a role can see](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_row_level_security_policy_filter.png)
 
 ## Column-Level Security Revisited Alongside Row-Level Security
 
@@ -123,7 +139,7 @@ Expected result: PostgreSQL completes the definition or privilege command withou
 
 `mumbai_coordinator` can now only see Mumbai's `rows`, through the `row`-level policy, and within those `rows`, only `shipment_id`, `branch`, and `status`, through the `column`-level grant, with `internal_cost` withheld entirely, both restrictions enforced together, automatically, on every `query` this `role` ever runs against the `table`.
 
-![Row-level policies and column-level grants can combine to restrict rows and columns together](images/08_row_and_column_security_two_layers.png)
+![Row-level policies and column-level grants can combine to restrict rows and columns together](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_row_and_column_security_two_layers.png)
 
 ## Row-Level and Column-Level Security at a Glance
 

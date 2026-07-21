@@ -10,7 +10,9 @@ By Thursday, Sanjay has spent more time asking teammates "wait, which `table` do
 
 What Sanjay is living through is the practical cost of ignoring **naming conventions**, the agreed-upon rules a team follows for how `tables` and `columns` are named, so that a name alone tells a reader what it holds and how it relates to everything else, without anyone needing to ask.
 
-![Messy database names being reorganized into consistent naming conventions](images/05_naming_conventions_messy_vs_consistent.png)
+![Messy database names being reorganized into consistent naming conventions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_naming_conventions_messy_vs_consistent.png)
+
+**Definition:** A naming convention is a small, almost invisible kind of documentation, one that lives inside the names themselves rather than in a separate document nobody reads.
 
 ## Singular or Plural Table Names: Pick One and Never Look Back
 
@@ -43,7 +45,7 @@ A well-named `foreign key` states plainly what it points to: `customer_id` insid
 
 Sanjay's rule of thumb going forward is that a `foreign key` `column` should always be named after the `table` it references, in the singular, followed by `_id`.
 
-![A foreign key named orders.customer_id clearly pointing to customers.customer_id](images/06_foreign_key_name_points_to_parent.png)
+![A foreign key named orders.customer_id clearly pointing to customers.customer_id](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_foreign_key_name_points_to_parent.png)
 
 ## Abbreviations That Only the Original Author Understood
 
@@ -86,7 +88,7 @@ Sanjay's rule of thumb going forward is that a `foreign key` `column` should alw
 
 Here is a small `transactions` table built following every rule Sanjay's team settled on: plural table name applied consistently, snake_case throughout, a specific name instead of the reserved-sounding `order`, and a foreign key named after the table it references.
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE customers (
     customer_id  INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     full_name    TEXT NOT NULL
@@ -108,12 +110,12 @@ INSERT INTO transactions (customer_id, attempt_number, amount) VALUES
 
 The active query confirms the naming pays off immediately, a reader can tell exactly what `customer_id` points to without inspecting any data:
 
-```postgresql with=init.sql
-SELECT t.transaction_id, c.full_name, t.attempt_number, t.amount
-FROM transactions t
-JOIN customers c ON t.customer_id = c.customer_id
-ORDER BY t.transaction_id;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaj87s" 
+ width="100%"
+></iframe>
 
 Expected output:
 

@@ -6,7 +6,7 @@ Isolation, covered in the previous chapter, promised that `transactions` do not 
 
 This is the problem **concurrency control** exists to solve: coordinating multiple `transactions` that touch the same data at the same time, so the end result is exactly as correct as if they had run one after another.
 
-![Two passengers trying to book the same seat at the same time, creating double-booking risk](images/01_double_booking_risk_same_seat.png)
+![Two passengers trying to book the same seat at the same time, creating double-booking risk](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_double_booking_risk_same_seat.png)
 
 **Definition:** Concurrency control coordinates multiple `transactions` touching the same data at nearly the same time, aiming for a result that matches what would have happened if those `transactions` had run one after another, even though in reality they overlap.
 
@@ -97,7 +97,7 @@ The benchmark concurrency control is measured against is called serializability,
 
 If Passenger A and Passenger B's bookings had genuinely run one after the other, whichever went second would have seen the seat already taken and been stopped before booking it. A `database` with proper concurrency control produces that same correct outcome even when the two bookings actually overlap in real time.
 
-![Concurrency control turning overlapping transactions into a result equivalent to a serial order](images/02_concurrency_control_serializable_goal.png)
+![Concurrency control turning overlapping transactions into a result equivalent to a serial order](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_concurrency_control_serializable_goal.png)
 
 ## Why This Matters More as Systems Grow
 

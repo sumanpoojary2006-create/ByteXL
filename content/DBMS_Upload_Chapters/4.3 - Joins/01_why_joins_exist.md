@@ -6,6 +6,10 @@ That is not a mistake; it is the relational model working exactly as intended, s
 
 This is precisely the problem a **`join`** solves: combining `rows` from two or more `tables` based on a matching `column` between them.
 
+**Definition:** `Joins` exist because normalized `tables` intentionally keep related facts apart, one customer stored once, one restaurant stored once, and a `query` is what pulls those separated facts back together into a single readable result.
+
+![Intro visual for why joins exist](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_why_joins_exist.png)
+
 ## Seeing the Problem Without a Join
 
 Three small `tables` model the food delivery system: customers who place orders, restaurants that fulfill them, and the orders that connect the two.
@@ -48,7 +52,7 @@ The OneCompiler activity keeps setup and practice separate. `init.sql` creates a
 
 ## Hands-On Setup: Prepare the Data
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE customers (
     customer_id INTEGER PRIMARY KEY,
     customer_name TEXT,
@@ -93,9 +97,12 @@ INSERT INTO orders (order_id, customer_id, restaurant_id, amount, order_date) VA
 
 Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
 
-```postgresql with=init.sql
-SELECT * FROM orders;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahkge" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -120,11 +127,12 @@ Keeping customer details in exactly one place, `customers`, and referencing that
 
 Without naming a specific `join` type yet, here is what combining `orders` with `customers` on their shared id looks like.
 
-```postgresql with=init.sql
-SELECT orders.order_id, customers.customer_name, orders.amount
-FROM orders
-JOIN customers ON orders.customer_id = customers.customer_id;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahktk" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -143,18 +151,18 @@ Expected output:
 
 2. It produces one combined `row` carrying `columns` from both `tables`, which is how `customer_name`, a `column` that does not exist on `orders` at all, ends up in this result.
 
-![A join using matching customer_id values to bring the customer name into an order report](images/01_join_lookup_ids_to_names.png)
+![A join using matching customer_id values to bring the customer name into an order report](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_join_lookup_ids_to_names.png)
 
 ## What a Join Actually Produces
 
 It helps to think of a `join` as building a temporary, wider `table` on the fly, made only for the duration of this one `query`, by pairing up matching `rows` from each side.
 
-```postgresql with=init.sql
-SELECT orders.order_id, customers.customer_name, restaurants.restaurant_name, orders.amount
-FROM orders
-JOIN customers ON orders.customer_id = customers.customer_id
-JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahm4f" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -202,7 +210,7 @@ This `joins` three `tables` at once, and the result reads like a single flat `ta
 
 Nothing was changed in `orders`, `customers`, or `restaurants` themselves; the `join` only affects what this one `query` returns.
 
-![A join producing a temporary wider result table without changing the source tables](images/02_join_temporary_wider_result.png)
+![A join producing a temporary wider result table without changing the source tables](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_join_temporary_wider_result.png)
 
 ## Why Joins Exist, in One Line
 
@@ -233,9 +241,12 @@ Nothing was changed in `orders`, `customers`, or `restaurants` themselves; the `
 
 Zoya needs a quick check: which restaurant did order 4 go to, by name, not by id? Write a `query` against the `orders` and `restaurants` `tables` above that returns the `order_id` and the matching `restaurant_name`, for `order_id = 4`.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahmda" 
+ width="100%"
+></iframe>
 
 If your `query` `joins` `orders` to `restaurants` on `restaurant_id` and filters with `WHERE orders.order_id = 4`, it returns "Pizza Palace," confirming order 4 went to the same restaurant as order 1.
 

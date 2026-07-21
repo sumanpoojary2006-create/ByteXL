@@ -9,7 +9,9 @@ What Rohan is being pushed to nail down is **cardinality**, the count of how man
 - A design has to know precisely how many of one side can connect to how many of the other side.
 - That number changes everything about how the relationship eventually gets stored.
 
-![One-to-one, one-to-many, and many-to-many relationships shown with visible connection counts](images/05_relationship_cardinality_three_shapes.png)
+![One-to-one, one-to-many, and many-to-many relationships shown with visible connection counts](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_relationship_cardinality_three_shapes.png)
+
+**Definition:** Cardinality describes how many instances of one entity can be linked to how many instances of another through a relationship, and it comes in three familiar shapes: one-to-one, where both sides are capped at a single match; one-to-many, where one side can have several matches but the other side cannot; and many-to-many, where both sides can have several matches at once.
 
 ## One-to-One: A Single Match on Both Sides
 
@@ -112,7 +114,7 @@ Rohan's manager has one more piece of advice that sticks with him: never describ
 
 "A department has employees" tells only half the story until it is paired with the other half, "an employee belongs to one department." Getting into the habit of stating both directions out loud, "one department to many employees, one employee to one department," is what prevents a design from silently sliding into the wrong cardinality further down the line.
 
-![Checking relationship cardinality from both directions before choosing 1:1, 1:N, or M:N](images/06_read_cardinality_both_directions.png)
+![Checking relationship cardinality from both directions before choosing 1:1, 1:N, or M:N](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_read_cardinality_both_directions.png)
 
 ## Relationship Cardinality at a Glance
 

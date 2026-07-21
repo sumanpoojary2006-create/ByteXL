@@ -6,6 +6,10 @@ She runs a plain `SELECT full_name, city FROM students;` and the `rows` come bac
 
 The clause that asks for one is **`ORDER BY`**, and it is what turns an unpredictable pile of `rows` into a sequence a person can actually use.
 
+**Definition:** `ORDER BY` replaces an unpredictable `row` order with one you actually chose, ascending by default or reversed with DESC, and it can chain several `columns` together so later ones only settle ties left by earlier ones.
+
+![Intro visual for sorting results](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_sorting_results.png)
+
 ## Sorting Ascending, the Default
 
 The `students` `table` holds this data, in no particular order:
@@ -25,7 +29,7 @@ Rhea's first fix is simple: add `ORDER BY` followed by the `column` she wants to
 
 For hands-on practice, `init.sql` creates and populates the displayed `students` table:
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE students (
     student_id INTEGER PRIMARY KEY,
     full_name TEXT,
@@ -48,11 +52,12 @@ INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALU
 
 The active query file contains the sort being practised:
 
-```postgresql with=init.sql
-SELECT full_name, city
-FROM students
-ORDER BY full_name;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkah3jy" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -73,17 +78,18 @@ The result now starts with Aditya Kulkarni and ends with Sneha Gowda, running al
 - For numbers, it means smallest to largest.
 - For dates, it means earliest to latest.
 
-![ORDER BY arranging unordered student names alphabetically from A to Z](images/09_order_by_ascending.png)
+![ORDER BY arranging unordered student names alphabetically from A to Z](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_order_by_ascending.png)
 
 ## Sorting Descending
 
 Sometimes the useful order runs the other way. If Rhea instead wants the newest joiners at the top of a "welcome our latest students" notice, ascending order on the join date would put the oldest joiners first, exactly backwards from what she needs. Adding `DESC` after the `column` reverses the direction. The query is `SELECT full_name, joined_on FROM students ORDER BY joined_on DESC;`.
 
-```postgresql with=init.sql
-SELECT full_name, joined_on
-FROM students
-ORDER BY joined_on DESC;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkah3xp" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -106,11 +112,12 @@ Now Priya Subramaniam, who joined on 2025-01-28, appears first, and Ishaan Verma
 - Suppose Rhea wants students grouped by city, and within each city, listed alphabetically by name, so a volunteer working the Bengaluru desk can find their group's names in order without scrolling past every other city first.
 - `ORDER BY` accepts a list of `columns`, and it sorts by the first one, then uses the second one only to break ties within groups that share the same first value. The query is `SELECT full_name, city FROM students ORDER BY city, full_name;`.
 
-```postgresql with=init.sql
-SELECT full_name, city
-FROM students
-ORDER BY city, full_name;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkah48s" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -129,7 +136,7 @@ The result groups all of Bengaluru's students together, sorted alphabetically wi
 
 Each `column` in the list can carry its own direction too, so `ORDER BY city, full_name DESC` would keep cities grouped in ascending order while listing names within each city from Z to A.
 
-![ORDER BY city first and full_name second grouping rows by city and sorting names inside each group](images/10_order_by_multiple_columns.png)
+![ORDER BY city first and full_name second grouping rows by city and sorting names inside each group](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_order_by_multiple_columns.png)
 
 ## Sorting Results at a Glance
 
@@ -164,9 +171,12 @@ Each `column` in the list can carry its own direction too, so `ORDER BY city, fu
 
 The office also wants a version of the roster sorted so that students from the same city are still grouped together, but this time with the most recently joined student in each city appearing first. Write a `query` that returns `full_name`, `city`, and `joined_on`, grouped by city ascending and, within each city, newest join date first.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkah4k6" 
+ width="100%"
+></iframe>
 
 `SELECT full_name, city, joined_on FROM students ORDER BY city, joined_on DESC;` does exactly this. Expected output:
 

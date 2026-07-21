@@ -9,6 +9,10 @@ A B-tree is an excellent default, but it is not the only shape an `index` can ta
 
 Each of these has a dedicated `index` type suited to it.
 
+**Definition:** `Hash indexes` optimize equality at the cost of range support, `composite indexes` serve `queries` that filter on the same multiple `columns` together, `partial indexes` shrink an `index` down to only the `rows` a `query` actually cares about, and `expression indexes` make a computed or transformed value searchable, each one a deliberate specialization beyond what a plain B-tree offers.
+
+![Intro visual for hash composite partial and expression indexes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_hash_composite_partial_and_expression_indexes.png)
+
 ## A Table Large Enough to Need Them
 
 Demonstrating these variants takes a `table` with more `columns` and enough `rows` that the planner genuinely prefers an `index` over a `sequential scan`: 10000 orders with unique customer names, four regions, and a `status` where only 1 order in 100 is still active and another 1 in 100 is cancelled.
@@ -33,7 +37,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
     customer_name TEXT,
@@ -64,11 +68,12 @@ Before running each active statement, predict which rows, database objects, or s
 
 A `hash index`, briefly introduced when file organization strategies were first covered, stores entries by their computed hash value rather than in sorted order, which makes it well suited to exact-match lookups but useless for range `queries`, since hashing intentionally destroys any sense of order between values.
 
-```postgresql with=init.sql
-CREATE INDEX idx_orders_name_hash ON orders USING hash (customer_name);
-
-EXPLAIN SELECT * FROM orders WHERE customer_name = 'Customer 7500';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkag3ns" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -83,17 +88,18 @@ The plan reports an "Index Scan" using `idx_orders_name_hash`: the `database` ha
 
 In practice, a B-tree `index` handles equality just as well as a `hash index` while also supporting ranges, which is why `hash indexes` see limited use; they matter mainly as a reminder that "sorted" and "searchable by equality" are not the same requirement.
 
-![A hash index supports equality lookups but not range searches](images/08_hash_index_equality_only.png)
+![A hash index supports equality lookups but not range searches](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_hash_index_equality_only.png)
 
 ## Composite Indexes: Covering More Than One Column
 
 A `composite index` spans two or more `columns` together, useful when `queries` consistently filter on the same combination of `columns`.
 
-```postgresql with=init.sql
-CREATE INDEX idx_orders_status_region ON orders (status, region);
-
-EXPLAIN SELECT * FROM orders WHERE status = 'active' AND region = 'North';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkag3yd" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -108,17 +114,18 @@ The plan shows `idx_orders_status_region` narrowing straight down to the roughly
 
 Column order in a `composite index` matters: this same `index` can still help a `query` that filters on `status` alone, since `status` is the leading `column`, but it offers little help to a `query` that filters on `region` alone without mentioning `status`, since the `index` is not separately sorted by `region` on its own.
 
-![A composite index is sorted by the first column, then by the next column](images/05_composite_index_column_order.png)
+![A composite index is sorted by the first column, then by the next column](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_composite_index_column_order.png)
 
 ## Partial Indexes: Indexing Only the Rows That Matter
 
 A `partial index` includes only the `rows` matching a specified condition, which keeps the `index` smaller and faster to maintain when most `queries` only ever care about a subset of the `table`.
 
-```postgresql with=init.sql
-CREATE INDEX idx_orders_active_amount ON orders (amount) WHERE status = 'active';
-
-EXPLAIN SELECT * FROM orders WHERE status = 'active' AND amount > 100000.00;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkag49f" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -134,15 +141,14 @@ Notice there is no separate `Filter: (status = 'active')` line, since the `parti
 - `idx_orders_active_amount` only ever contains the roughly 100 `rows` where `status = 'active'`, entirely excluding the other 9900 completed and cancelled orders, and the plan shows it being used to satisfy this `query`, since the `query`'s filter matches the `index`'s condition.
 - Inserting a completed order never touches this `index` at all, and the size saving is directly visible next to a full `index` on the same `column`:
 
-![A partial index stores only the rows matching the query condition](images/06_partial_index_active_rows_only.png)
+![A partial index stores only the rows matching the query condition](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_partial_index_active_rows_only.png)
 
-```postgresql with=init.sql
-CREATE INDEX idx_orders_amount_full ON orders (amount);
-CREATE INDEX idx_orders_active_amount ON orders (amount) WHERE status = 'active';
-
-SELECT pg_size_pretty(pg_relation_size('idx_orders_amount_full')) AS full_index_size,
-       pg_size_pretty(pg_relation_size('idx_orders_active_amount')) AS partial_index_size;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkag4jk" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -156,13 +162,12 @@ The `partial index` is a small fraction of the full one's size, since it carries
 
 An expression `index` `indexes` the result of a `function` or calculation applied to a `column`, rather than the `column`'s raw stored value, which matters when `queries` consistently search using a transformed version of that `column`.
 
-```postgresql with=init.sql
-CREATE INDEX idx_orders_lower_name ON orders (LOWER(customer_name));
-
-ANALYZE orders;
-
-EXPLAIN SELECT * FROM orders WHERE LOWER(customer_name) = 'customer 7500';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkag4uq" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -177,7 +182,7 @@ A plain B-tree on `customer_name` would not help a `query` filtering on `LOWER(c
 
 The extra `ANALYZE` is there because an expression `index` keeps its own statistics on the computed values, gathered the next time `ANALYZE` runs.
 
-![An expression index stores a computed value such as LOWER(customer_name)](images/07_expression_index_computed_value.png)
+![An expression index stores a computed value such as LOWER(customer_name)](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_expression_index_computed_value.png)
 
 ## Index Types at a Glance
 
@@ -222,9 +227,12 @@ The extra `ANALYZE` is there because an expression `index` keeps its own statist
 
 Create a `partial index` on `amount` for `rows` where `status = 'cancelled'`, then confirm with `EXPLAIN` that a `query` for cancelled orders with `amount > 100000.00` uses it.
 
-```postgresql with=init.sql
--- Write your queries below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkag56d" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

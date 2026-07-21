@@ -8,7 +8,7 @@ What Meenal is doing has a name, a **`schema` design review**, reading a propose
 
 The draft in front of her is a single `table` called `booking`, and by the time she finishes her second pass, she has found six separate problems in it, each one a mistake worth recognising on sight, because each one shows up again and again across real `schemas` built by developers in a hurry.
 
-![Schema review checklist catching key, naming, money, timestamp, and duplicate-data problems before launch](images/11_schema_review_checklist.png)
+![Schema review checklist catching key, naming, money, timestamp, and duplicate-data problems before launch](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_schema_review_checklist.png)
 
 **Definition:** A **schema design review** is a structured examination of tables, keys, relationships, constraints, data types, and naming choices to find integrity and maintainability problems before the schema is deployed.
 
@@ -164,7 +164,7 @@ Naina's name and email now exist exactly once, in `students`, no matter how many
 
 After Meenal's notes, the single flawed `table` becomes two well-formed ones.
 
-![Corrected booking design splitting one crowded table into students and bookings linked by student_id](images/12_corrected_booking_schema_split.png)
+![Corrected booking design splitting one crowded table into students and bookings linked by student_id](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_corrected_booking_schema_split.png)
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
   <thead>

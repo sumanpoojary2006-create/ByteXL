@@ -4,6 +4,10 @@ Atomicity guarantees a `transaction` commits entirely or not at all, but it says
 
 The second letter in ACID, **consistency**, is the guarantee that a `transaction` can only move a `database` from one valid state to another valid state, never into a state that breaks the rules the `database` has been told to enforce. Where atomicity is about the `transaction` as a whole succeeding or failing, consistency is about what "succeeding" is even allowed to look like.
 
+**Definition:** Consistency guarantees that a `transaction` can only ever move a `database` from one valid state to another, with every declared `constraint`, `CHECK`, `foreign key`, `NOT NULL`, or `UNIQUE`, acting as the `database`'s own definition of what "valid" means, while business rules that were never expressed as a `constraint` remain the application's responsibility to protect.
+
+![Intro visual for consistency valid states only](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_consistency_valid_states_only.png)
+
 ## Constraints Are What Define a Valid State
 
 The `accounts` `table`, with a `constraint` restored from the previous lesson, defines exactly what counts as valid.
@@ -23,7 +27,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
     owner_name TEXT,
@@ -37,15 +41,12 @@ INSERT INTO accounts (account_id, owner_name, balance) VALUES
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
--- This transaction would fail because the CHECK constraint
--- prevents account 1 from becoming negative:
--- BEGIN;
--- UPDATE accounts SET balance = balance - 60000.00 WHERE account_id = 1;
--- COMMIT;
-
-SELECT account_id, balance FROM accounts;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaj3qd" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -60,7 +61,7 @@ Expected output:
 - This `transaction` tries to push Meera's balance to -10000.00, and the `database` refuses to let that become the committed state, rejecting the statement and, through atomicity, rolling back the whole `transaction` along with it.
 - The final `SELECT` shows Meera's balance unchanged.
 
-![A CHECK constraint blocking an invalid negative balance from becoming committed data](images/05_consistency_check_constraint_blocks_invalid.png)
+![A CHECK constraint blocking an invalid negative balance from becoming committed data](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_consistency_check_constraint_blocks_invalid.png)
 
 This is consistency and atomicity working together:
 
@@ -71,7 +72,7 @@ This is consistency and atomicity working together:
 
 `Constraints` that define validity are not limited to `CHECK`. A `foreign key` is just as much a consistency rule, and a `transaction` that would violate one is refused the same way.
 
-```postgresql file=init_002.sql
+```postgresql
 CREATE TABLE customers (
     customer_id INTEGER PRIMARY KEY,
     customer_name TEXT
@@ -86,20 +87,18 @@ CREATE TABLE orders (
 INSERT INTO customers (customer_id, customer_name) VALUES (1, 'Aditi Kulkarni');
 ```
 
-```postgresql with=init_002.sql
--- This transaction would fail because customer_id 99 does not exist:
--- BEGIN;
--- INSERT INTO orders (order_id, customer_id, amount) VALUES (1, 99, 500.00);
--- COMMIT;
-
-SELECT * FROM orders;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaj3zu" 
+ width="100%"
+></iframe>
 
 - Customer id 99 does not exist in `customers`, so this `INSERT` would create an order pointing to a customer that does not exist, a state the `foreign key` `constraint` defines as invalid.
 - The `database` rejects it, the `transaction` fails, and `orders` remains empty.
 - Consistency here means the `database` will never contain an order referencing a customer that is not really there, regardless of what any individual `transaction` tries to do.
 
-![A foreign key allowing valid references and blocking orders with missing customers](images/06_consistency_foreign_key_valid_link.png)
+![A foreign key allowing valid references and blocking orders with missing customers](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_consistency_foreign_key_valid_link.png)
 
 ## Consistency Also Depends on the Application
 
@@ -107,13 +106,12 @@ SELECT * FROM orders;
 - A rule the `database` was never told about is not something it can protect.
 - If the actual business rule is "the total money across all accounts in the bank must never change," but no `constraint` expresses that, the `database` cannot stop a `transaction` that deducts money from one account without crediting it anywhere.
 
-```postgresql with=init.sql
-BEGIN;
-UPDATE accounts SET balance = balance - 5000.00 WHERE account_id = 1;
-COMMIT;
-
-SELECT SUM(balance) AS total_money_in_bank FROM accounts;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaj4ay" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -165,9 +163,12 @@ Expected output:
 
 Add a `CHECK` `constraint` to the `orders` `table` requiring `amount > 0`, then attempt a `transaction` that inserts an order with `amount = -200.00`, and confirm it is rejected.
 
-```postgresql with=init_002.sql
--- Write your transaction below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaj4ma" 
+ width="100%"
+></iframe>
 
 If you run `ALTER TABLE orders ADD CONSTRAINT positive_amount CHECK (amount > 0);` followed by a `transaction` inserting `amount = -200.00`, the `INSERT` is rejected, the `transaction` commits nothing, and a closing `SELECT * FROM orders;` shows the `table` still empty.
 

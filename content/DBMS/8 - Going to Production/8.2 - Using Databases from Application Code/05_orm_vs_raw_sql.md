@@ -6,6 +6,22 @@ Neither approach is universally correct; each trades away something the other of
 
 **Definition:** An ORM speeds up routine, everyday `database` operations by letting a developer work in objects rather than SQL text, at the cost of sometimes hiding real `query` costs, most notoriously the N+1 pattern, while raw SQL offers full visibility and control at the cost of more code to write directly, and most real applications end up using both, an ORM for the routine cases and raw SQL for anything complex or performance-critical enough to need precise control.
 
+<!--
+IMAGE PROMPT  ->  generate as images/05_intro_orm_vs_raw_sql.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Every query in this course has been written as raw SQL, typed directly. Much real application code, especially in frameworks built around languages like Python, Java, or Ruby, instead uses an object-relational mapper, or ORM, a library that lets a developer.
+
+ON-IMAGE TEXT: show a short bold title "ORM Vs Raw SQL" plus only these few labels, large and legible: Query, Every, Course. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for orm vs raw sql](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_orm_vs_raw_sql.png)
+
 ## What an ORM Actually Generates
 
 An ORM's core promise is translating object-oriented code into SQL automatically, without the developer writing SQL text directly.
@@ -63,7 +79,7 @@ The generated SQL here is clean and matches exactly what a developer would have 
 - The developer never has to write or think about SQL text at all.
 - Work happens entirely in terms of objects and method calls in their own programming language, with the library handling the translation.
 
-![An ORM translates object-style application code into SQL behind the scenes](images/09_orm_translates_objects_to_sql.png)
+![An ORM translates object-style application code into SQL behind the scenes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_orm_translates_objects_to_sql.png)
 
 ## Where an ORM's Convenience Can Hide a Real Cost
 
@@ -95,7 +111,7 @@ Expected output:
 - Nothing about the object-oriented loop above looks like a `database` performance hazard; `shipment.driver.driver_name` reads like ordinary property access, not a `database` call.
 - This is exactly the danger: an ORM's abstraction can hide the fact that a `query` is happening at all, making it easy to write code that is correct but silently slow, unless the developer specifically knows to ask the ORM to fetch related data eagerly, in one combined `query`, rather than one at a time as each object is touched.
 
-![ORM convenience can hide N+1 queries, while raw SQL makes one-query control explicit](images/10_orm_n_plus_one_vs_raw_sql.png)
+![ORM convenience can hide N+1 queries, while raw SQL makes one-query control explicit](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_orm_n_plus_one_vs_raw_sql.png)
 
 ## Where Raw SQL Is the More Direct Choice
 

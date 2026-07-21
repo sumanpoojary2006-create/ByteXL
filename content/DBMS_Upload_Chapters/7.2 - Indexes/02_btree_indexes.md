@@ -4,6 +4,10 @@ The previous lesson treated an `index` as a sorted list pointing back to `rows`,
 
 PostgreSQL's default `index` type, and the default in nearly every relational `database`, is a **B-tree**, a structure specifically designed so that even a huge number of entries can be searched in just a handful of steps.
 
+**Definition:** A B-tree keeps an `index`'s entries in a balanced, sorted tree structure, so that even huge `tables` can be searched in just a handful of steps, and its sorted nature means the same structure naturally supports equality lookups, range `queries`, sorting, and minimum or maximum searches, all without a separate scan.
+
+![Intro visual for btree indexes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_btree_indexes.png)
+
 ## Why CREATE INDEX Defaults to a B-Tree
 
 Every `index` created in the previous lesson, without specifying a type, was already a B-tree, since it is PostgreSQL's default.
@@ -26,7 +30,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
     customer_name TEXT,
@@ -44,9 +48,12 @@ ANALYZE orders;
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-SELECT indexname, indexdef FROM pg_indexes WHERE tablename = 'orders';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkag9yp" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -67,11 +74,14 @@ A B-tree organizes its entries as a balanced, sorted tree:
 
 Searching a B-tree means starting at the root, comparing the target value, and following exactly one branch downward at each level, narrowing the search space enormously with each step, until reaching the leaf that holds the answer.
 
-![A B-tree is a balanced index with root, branch, and leaf levels](images/03_btree_balanced_root_branches_leaves.png)
+![A B-tree is a balanced index with root, branch, and leaf levels](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_btree_balanced_root_branches_leaves.png)
 
-```postgresql with=init.sql
-EXPLAIN SELECT * FROM orders WHERE amount = 5000.00;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaga9s" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -88,15 +98,12 @@ The reported "`Index Scan`" here is the `query planner` choosing to walk down `i
 
 The defining property of a B-tree is that its depth, the number of levels a search has to walk through, grows extremely slowly as the number of entries grows, because each level can branch into many children at once rather than just two. Doubling the number of `rows` in a `table` typically adds at most one extra level to its B-tree, not double the search steps.
 
-```postgresql with=init.sql
-INSERT INTO orders (order_id, customer_name, amount)
-SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
-FROM generate_series(10001, 100000) AS i;
-
-ANALYZE orders;
-
-EXPLAIN SELECT * FROM orders WHERE amount = 50000.00;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagajw" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -113,9 +120,12 @@ The cost's startup component only rose from 0.29 to 0.42, reflecting one extra B
 
 Because a B-tree keeps its entries in sorted order at the leaf level, it supports far more than exact-match lookups. Range conditions, sorting, and finding the minimum or maximum value can all use the same structure directly.
 
-```postgresql with=init.sql
-EXPLAIN SELECT * FROM orders WHERE amount BETWEEN 1000.00 AND 2000.00 ORDER BY amount;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagaux" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -128,7 +138,7 @@ Expected output:
 
 No separate `Sort` node appears above the `Index Scan`, because the B-tree already returns matching `rows` in `amount` order, satisfying the `ORDER BY` as a side effect. This range `query` and its ordering both benefit from the same B-tree, since the matching values already sit consecutively, in sorted order, at the leaf level the `database` can walk to the start of the range and read forward until it passes the end, with no separate sorting step required afterward.
 
-![B-tree leaf values are sorted, so range scans read a contiguous run](images/04_btree_sorted_leaves_range_scan.png)
+![B-tree leaf values are sorted, so range scans read a contiguous run](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_btree_sorted_leaves_range_scan.png)
 
 ## B-Tree Indexes at a Glance
 
@@ -163,9 +173,12 @@ No separate `Sort` node appears above the `Index Scan`, because the B-tree alrea
 
 Confirm that `idx_orders_amount` is used for a narrow range `query`, `amount > 124000.00`, a condition only the few highest-priced orders satisfy, then check the plan for finding the single largest `amount` in the `table`, and note in a comment whether the B-tree helps with that too.
 
-```postgresql with=init.sql
--- Write your queries and comment below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagb5t" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

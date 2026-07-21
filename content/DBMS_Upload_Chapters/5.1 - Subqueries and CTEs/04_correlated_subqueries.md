@@ -6,6 +6,10 @@ His next question breaks that independence: "for each employee, is their salary 
 
 A subquery that reaches back into the outer `query`'s current `row` like this is called a **`correlated subquery`**, and it behaves less like a one-time calculation and more like a small `function` run once per `row`.
 
+**Definition:** A `correlated subquery` reaches into the outer `query`'s current `row`, recalculating its result for every `row` rather than running once and reusing a fixed answer, which makes it the right tool whenever a comparison needs to be relative to each `row`'s own context, such as its own department or its own manager.
+
+![Intro visual for correlated subqueries](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_correlated_subqueries.png)
+
 ## A Subquery That References the Outer Row
 
 The `employees` `table` is the same one used throughout this chapter.
@@ -29,7 +33,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE employees (
     employee_id INTEGER PRIMARY KEY,
     employee_name TEXT,
@@ -49,13 +53,12 @@ INSERT INTO employees (employee_id, employee_name, department, salary, manager_i
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-SELECT e1.employee_name, e1.department, e1.salary
-FROM employees e1
-WHERE e1.salary > (
-    SELECT AVG(e2.salary) FROM employees e2 WHERE e2.department = e1.department
-);
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafugf" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -75,13 +78,14 @@ The inner `query`'s condition, `e2.department = e1.department`, reaches out to `
 
 A regular, uncorrelated subquery, like the ones from earlier lessons, runs exactly once, and its single result is reused for every `row` the outer `query` checks. A `correlated subquery` conceptually reruns once per outer `row`, because its result depends on a value, `e1.department` here, that changes from `row` to `row`.
 
-![A correlated subquery recalculating relative to the current outer row](images/07_correlated_subquery_per_outer_row.png)
+![A correlated subquery recalculating relative to the current outer row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_correlated_subquery_per_outer_row.png)
 
-```postgresql with=init.sql
-SELECT e1.employee_name,
-       (SELECT AVG(e2.salary) FROM employees e2 WHERE e2.department = e1.department) AS dept_avg
-FROM employees e1;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafusc" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -100,13 +104,12 @@ Placed in the `SELECT` list instead of `WHERE`, the same `correlated subquery` n
 
 `Correlated subqueries` pair especially naturally with `EXISTS`, since `EXISTS` already checks `row` by `row` for a match, and the earlier `joins`-chapter examples of `EXISTS` were, without naming it directly, already `correlated subqueries`.
 
-```postgresql with=init.sql
-SELECT e1.employee_name
-FROM employees e1
-WHERE EXISTS (
-    SELECT 1 FROM employees e2 WHERE e2.manager_id = e1.employee_id
-);
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafv4n" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -117,7 +120,7 @@ Expected output:
 
 The inner `query` checks, for each candidate `row` `e1`, whether any other employee `e2` lists `e1`'s `employee_id` as their `manager_id`. This correlated `EXISTS` returns everyone who manages at least one other employee, Ananya and Sameer, without needing a self `join` or a `GROUP BY`, since it only asks a yes-or-no question per `row` rather than pulling in matching `columns`.
 
-![Correlated EXISTS checking whether the current employee manages anyone](images/08_correlated_exists_manager_check.png)
+![Correlated EXISTS checking whether the current employee manages anyone](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_correlated_exists_manager_check.png)
 
 ## Why Correlated Subqueries Can Be Slower
 
@@ -158,9 +161,12 @@ For small reference `tables` like this one, the difference is invisible, but it 
 
 Kabir wants to find every employee who earns more than their own direct manager. Write a `query` against `employees` above using a `correlated subquery` that compares each employee's salary to their manager's salary.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafvh4" 
+ width="100%"
+></iframe>
 
 If your `query` is `SELECT e1.employee_name FROM employees e1 WHERE e1.salary > (SELECT e2.salary FROM employees e2 WHERE e2.employee_id = e1.manager_id);`, it returns no `rows` at all in this data, since every manager here, Ananya Sharma at 95000.00 and Sameer Khan at 65000.00, out-earns their own direct reports.
 

@@ -6,6 +6,22 @@ This standard has a name, **serializability**, and understanding it precisely is
 
 **Definition:** Serializability is the standard every mechanism in this chapter ultimately serves: a guarantee that concurrent `transactions`, however they actually interleave in real time, produce a result equivalent to running them one at a time in some order, and `locking`, `isolation levels`, and deadlock detection are all the practical machinery a `database` uses to approach or fully guarantee that standard.
 
+<!--
+IMAGE PROMPT  ->  generate as images/06_intro_serializability.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Every mechanism covered in this chapter, locking, isolation levels, and deadlock detection, exists to serve one underlying standard, first mentioned in this chapter's opening lesson: whatever order transactions actually run in, overlapping, interleaved.
+
+ON-IMAGE TEXT: show a short bold title "Serializability" plus only these few labels, large and legible: Order, Result, Serializability. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for serializability](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_serializability.png)
+
 ## What "Equivalent to Some Serial Order" Means
 
 The `accounts` `table` sets up two `transactions` whose combined effect depends entirely on execution order.
@@ -75,7 +91,7 @@ The `lost update` from earlier in this chapter is a clear example: neither "A th
 
 A `lost update` is not just an inconvenient bug; it is a violation of serializability, a result that no valid serial ordering could ever have produced.
 
-![Serializability requiring an interleaved execution to match some serial order](images/12_serializability_equivalent_serial_order.png)
+![Serializability requiring an interleaved execution to match some serial order](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_serializability_equivalent_serial_order.png)
 
 ## Serializability as the Target, Not a Setting
 
@@ -96,7 +112,7 @@ Expected observation: the isolation-level command completes inside the transacti
 
 Running a `transaction` under `SERIALIZABLE` guarantees, for every `transaction` that also runs under `SERIALIZABLE` concurrently with it, that the combined result will always be equivalent to some serial ordering of them, at the cost of the `database` sometimes forcibly aborting one of the `transactions` and requiring a retry, exactly the trade-off discussed when `isolation levels` were first introduced.
 
-![Serializable isolation preserving correctness by forcing a retry when needed](images/13_serializable_retry_tradeoff.png)
+![Serializable isolation preserving correctness by forcing a retry when needed](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/13_serializable_retry_tradeoff.png)
 
 ## Serializability at a Glance
 

@@ -7,6 +7,10 @@ Vikram maintains the employee directory for a mid-sized company, and the `employ
 
 Both gaps are stored as `NULL`, and both cause the same problem once Vikram tries to build a printable directory: `NULL` values show up as blank cells or, worse, silently break calculations that touch them. SQL provides two small but essential `functions`, **`COALESCE`** and **`NULLIF`**, built specifically to handle `NULL` gracefully instead of letting it derail a `query`.
 
+**Definition:** `COALESCE` and `NULLIF` are small `functions` that solve a large, recurring problem: real data has gaps, and a `query` that ignores those gaps produces blank cells, broken math, or misleading duplicates.
+
+![Intro visual for nullhandling functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_nullhandling_functions.png)
+
 ## Filling In a Default When a Value Is Missing
 
 The directory needs a phone number to display for every employee, even the ones with no secondary number recorded, Rather than leaving those `rows` blank, Vikram wants to fall back to the primary number, and if even that is missing, fall back to a placeholder.
@@ -29,7 +33,7 @@ The OneCompiler activity keeps setup and practice separate. `init.sql` creates a
 
 ## Hands-On Setup: Prepare the Data
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE employees (
     employee_id INTEGER PRIMARY KEY,
     full_name TEXT,
@@ -48,10 +52,12 @@ INSERT INTO employees (employee_id, full_name, primary_phone, secondary_phone, m
 
 Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
 
-```postgresql with=init.sql
-SELECT full_name, COALESCE(secondary_phone, primary_phone, 'Not on file') AS contact_number
-FROM employees;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakvhc" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -68,7 +74,7 @@ Expected output:
 - For Ayesha, both phone `columns` are `NULL`, so it falls all the way through to the literal text `'Not on file'`.
 - This is the standard pattern for showing a sensible default instead of a blank space.
 
-![COALESCE choosing the first available phone value as a contact number](images/07_coalesce_first_available_fallback.png)
+![COALESCE choosing the first available phone value as a contact number](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_coalesce_first_available_fallback.png)
 
 Tracing a few employees through the fallback chain makes the left-to-right scan concrete:
 
@@ -107,11 +113,12 @@ Tracing a few employees through the fallback chain makes the left-to-right scan 
 
 Manoj's `row` has an odd duplication: his `primary_phone` and `secondary_phone` are identical, which happened because someone copied the primary number into the secondary field by mistake instead of leaving it blank. Vikram wants the directory to treat a secondary number that exactly matches the primary as if it were not really provided at all.
 
-```postgresql with=init.sql
-SELECT full_name, primary_phone, secondary_phone,
-       NULLIF(secondary_phone, primary_phone) AS real_secondary_phone
-FROM employees;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakvvt" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -127,17 +134,18 @@ Expected output:
 - For Manoj, `secondary_phone` equals `primary_phone`, so the result is `NULL` instead of a duplicate number.
 - For every other employee, the two phone values differ, so `real_secondary_phone` just passes through whatever `secondary_phone` already held.
 
-![NULLIF turning a duplicated secondary phone into NULL](images/08_nullif_duplicate_to_null.png)
+![NULLIF turning a duplicated secondary phone into NULL](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_nullif_duplicate_to_null.png)
 
 ## Combining Both to Handle Messy Real Data
 
 The two `functions` are often used together: first clean up an accidental duplicate with `NULLIF`, then supply a fallback with `COALESCE` so the final `column` has no blanks left at all.
 
-```postgresql with=init.sql
-SELECT full_name,
-       COALESCE(NULLIF(secondary_phone, primary_phone), primary_phone, 'Not on file') AS best_contact_number
-FROM employees;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakw86" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -180,9 +188,12 @@ Expected output:
 
 The company org chart needs a "reports to" `column`: for every employee, show their `employee_id` as the reporting line if `manager_id` is missing, otherwise show `manager_id` itself, aliased as `reports_to`. Write that `query` against the `employees` `table` above.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakwjc" 
+ width="100%"
+></iframe>
 
 If your `query` is `SELECT full_name, COALESCE(manager_id, employee_id) AS reports_to FROM employees;`, Neha's `row` will show her own `employee_id` in the `reports_to` `column`, correctly marking her as the top of the chart with nobody above her.
 

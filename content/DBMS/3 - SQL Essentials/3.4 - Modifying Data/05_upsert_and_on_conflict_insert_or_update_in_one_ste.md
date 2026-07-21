@@ -8,6 +8,22 @@ What Aditya needs is a single statement that inserts a `row` if it is new and up
 
 **Definition:** An **upsert** is a single operation that inserts a new row when no matching row exists or updates the existing row when a uniqueness conflict occurs; PostgreSQL implements it with `INSERT ... ON CONFLICT`.
 
+<!--
+IMAGE PROMPT  ->  generate as images/05_intro_upsert_and_on_conflict_insert_or_update_in_one_s.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Aditya is processing a batch of enrollment submissions that arrived from a paper form, and the batch has a problem: some of these student-course pairings are brand new and simply need to be inserted, while others already exist in the table from an earlier.
+
+ON-IMAGE TEXT: show a short bold title "Upsert And On Conflict Insert Or Update In" plus only these few labels, large and legible: Table, Select, Upsert. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for upsert and on conflict insert or update in](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_upsert_and_on_conflict_insert_or_update_in_one_s.png)
+
 ## Setting Up a Uniqueness Rule to Conflict Against
 
 The `students`, `courses`, and `enrollments` `tables` hold this data:
@@ -32,7 +48,7 @@ The `students`, `courses`, and `enrollments` `tables` hold this data:
 
 A setup file builds this starting point with `CREATE TABLE` and `INSERT INTO`. An upsert only makes sense once the `database` has a rule to check a new `row` against, so the `enrollments` `table` is created with a `UNIQUE (student_id, course_id)` `constraint`, which states plainly that the same student cannot be enrolled in the same course twice. That constraint line is what gives `ON CONFLICT` something concrete to react to; without it, PostgreSQL would have no rule saying two `rows` with the same student_id and course_id are a problem, and there would be nothing for an upsert to "conflict" against at all.
 
-![A UNIQUE student_id plus course_id rule detecting a duplicate enrollment conflict](images/09_upsert_unique_conflict_rule.png)
+![A UNIQUE student_id plus course_id rule detecting a duplicate enrollment conflict](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_upsert_unique_conflict_rule.png)
 
 ### Hands-On Practice: Prepare the Tables
 
@@ -128,7 +144,7 @@ This time enrollment_id 5 appears in the result, a genuinely new `row`, because 
 
 The exact same statement Aditya used a moment ago to update an existing `row` here performs a plain insert instead, because `ON CONFLICT` only changes behavior when a conflict is actually detected; otherwise the `INSERT` proceeds exactly as it would have without the clause at all.
 
-![ON CONFLICT branching to INSERT when there is no conflict and UPDATE when there is one](images/10_upsert_insert_or_update_branch.png)
+![ON CONFLICT branching to INSERT when there is no conflict and UPDATE when there is one](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_upsert_insert_or_update_branch.png)
 
 ### Hands-On Practice: Upsert That Inserts
 

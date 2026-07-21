@@ -4,6 +4,10 @@ Zara has been running her `INSERT`, `UPDATE`, and `DELETE` statements the way Al
 
 A senior developer reviewing her work points out that PostgreSQL can hand that confirmation back immediately, as part of the very same statement, using a clause called **`RETURNING`**.
 
+**Definition:** `RETURNING` turns a modification into its own confirmation, handing back exactly the `row` an `INSERT` just created, an `UPDATE` just changed, or a `DELETE` just removed, without a second statement needed to check the result.
+
+![Intro visual for returning getting back what you just changed](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_returning_getting_back_what_you_just_changed.png)
+
 ## RETURNING After INSERT
 
 The `enrollments` `table` holds this data:
@@ -31,7 +35,7 @@ The output shows enrollment_id 6, student_id 5, course_id 101, and the enrolled_
 - `RETURNING` is how the caller learns what value the `database` actually chose.
 - That happens at the exact moment the `row` is created, rather than by guessing or querying again a moment later.
 
-![RETURNING producing an immediate receipt for a row changed by INSERT or UPDATE](images/07_returning_change_receipt.png)
+![RETURNING producing an immediate receipt for a row changed by INSERT or UPDATE](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_returning_change_receipt.png)
 
 ### Hands-On Practice: INSERT with RETURNING
 
@@ -39,7 +43,7 @@ The OneCompiler exercise uses two files. `init.sql` creates and populates the st
 
 First, `init.sql` prepares the source `tables`:
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE students (
     student_id INTEGER PRIMARY KEY,
     full_name TEXT,
@@ -88,11 +92,12 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 
 Then the active query file inserts a `row` and reads it back in one statement:
 
-```postgresql with=init.sql
-INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade)
-VALUES (6, 5, 101, '2025-02-09', NULL)
-RETURNING enrollment_id, student_id, course_id, enrolled_on;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafjhf" 
+ width="100%"
+></iframe>
 
 ## RETURNING After UPDATE
 
@@ -122,12 +127,12 @@ If the `WHERE` condition had matched no `rows` at all, `RETURNING` would come ba
 
 Keep the same `init.sql` file and change only the active query file:
 
-```postgresql with=init.sql
-UPDATE students
-SET city = 'Chennai'
-WHERE student_id = 2
-RETURNING student_id, full_name, city;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafjth" 
+ width="100%"
+></iframe>
 
 ## RETURNING After DELETE
 
@@ -141,17 +146,18 @@ Expected output, directly from the `RETURNING` clause, the row's last snapshot b
 
 The output shows enrollment_id 5, student_id 4, course_id 104, grade B, the last `view` anyone gets of that `row` before it is gone from the `table` for good. This is often more useful than it first sounds: a support workflow that lets a student drop a course can log exactly what was removed using this single result, without needing to have queried the `row` moments earlier and hoped nothing changed in between.
 
-![DELETE RETURNING giving back a snapshot of the removed row](images/08_returning_deleted_row_snapshot.png)
+![DELETE RETURNING giving back a snapshot of the removed row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_returning_deleted_row_snapshot.png)
 
 ### Hands-On Practice: DELETE with RETURNING
 
 Keep the same `init.sql` file and change only the active query file:
 
-```postgresql with=init.sql
-DELETE FROM enrollments
-WHERE enrollment_id = 5
-RETURNING enrollment_id, student_id, course_id, grade;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafkau" 
+ width="100%"
+></iframe>
 
 ## Why RETURNING Beats a Separate SELECT
 
@@ -191,9 +197,12 @@ RETURNING enrollment_id, student_id, course_id, grade;
 
 Insert a new student, Kabir Sethi, and use `RETURNING` to confirm the `row` in the same statement, with no separate `SELECT` afterward.
 
-```postgresql with=init.sql
--- Write an INSERT ... RETURNING below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafkkw" 
+ width="100%"
+></iframe>
 
 A working answer is `INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALUES (6, 'Kabir Sethi', 'kabir.sethi@campusmail.edu', 'Chennai', '9845077777', '2025-02-16') RETURNING student_id, full_name, city;`. Expected output, directly from the `RETURNING` clause:
 

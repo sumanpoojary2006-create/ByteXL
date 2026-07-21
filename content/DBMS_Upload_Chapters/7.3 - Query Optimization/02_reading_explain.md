@@ -3,6 +3,10 @@
 - `EXPLAIN` has appeared throughout this unit as a way to check whether a `query` uses a `sequential scan` or an `index scan`, but its output carries more detail than just a scan type, and reading that detail precisely is what turns `EXPLAIN` from a yes-or-no check into a genuine diagnostic tool.
 - Priya wants to understand not just what plan the optimizer chose, but how expensive it expects that plan to be, and how it expects the different parts of a `query` to fit together.
 
+**Definition:** `EXPLAIN` output names the chosen operation for each step of a `query`, an estimated relative cost, an estimated `row` count, and an estimated `row` width, nested to show which steps feed into which, and none of those cost numbers represent actual measured time, only the optimizer's own relative comparison between candidate plans.
+
+![Intro visual for reading explain](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_reading_explain.png)
+
 ## The Basic Shape of an EXPLAIN Plan
 
 A plan for a simple, single-`table` `query` is the easiest starting point.
@@ -25,7 +29,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
     customer_id INTEGER,
@@ -41,9 +45,12 @@ CREATE INDEX idx_orders_customer_id ON orders (customer_id);
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-EXPLAIN SELECT * FROM orders WHERE customer_id = 50;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajw8u" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -61,7 +68,7 @@ A typical line of output looks like `Index Scan using idx_orders_customer_id on 
 - **`rows=100`**: the optimizer's estimate of how many `rows` this step will return.
 - **`width=15`**: estimates the average size, in bytes, of each returned `row`.
 
-![An EXPLAIN plan line contains the operation, cost, estimated rows, and width](images/03_explain_plan_line_anatomy.png)
+![An EXPLAIN plan line contains the operation, cost, estimated rows, and width](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_explain_plan_line_anatomy.png)
 
 ## Cost Numbers Are Estimates, Not Measured Time
 
@@ -69,9 +76,12 @@ It is worth being precise about what the cost numbers mean: they are the optimiz
 
 A cost of 8.51 for one `query` and 8.51 for a completely different `query` does not mean those two `queries` take the same real time to run; it only means the optimizer estimated a similar relative amount of work for each, under its own internal cost model.
 
-```postgresql with=init.sql
-EXPLAIN SELECT * FROM orders;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajwhn" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -88,12 +98,12 @@ Expected output:
 
 A `query` involving a `join` or a filter on top of a scan produces a plan with more than one line, nested to show which step feeds into which.
 
-```postgresql with=init.sql
-EXPLAIN SELECT customer_id, SUM(amount) AS total
-FROM orders
-WHERE customer_id < 100
-GROUP BY customer_id;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajwvh" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -112,16 +122,19 @@ Expected output:
 - Reading a nested plan means starting from the innermost, most indented step, which runs first and feeds its output upward, and working outward toward the final, least indented step, which represents the last operation applied before the result is returned.
 - The aggregation cannot begin until the filtered `rows` beneath it have been gathered, which is exactly why it is nested underneath that scan in the output.
 
-![Indented EXPLAIN steps are read from the inner step outward](images/04_explain_nested_steps_inside_out.png)
+![Indented EXPLAIN steps are read from the inner step outward](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_explain_nested_steps_inside_out.png)
 
 ## Distinguishing Plan Nodes from Actual Table and Index Names
 
 - `EXPLAIN` output mixes generic operation names, `Seq Scan`, `Index Scan`, `HashAggregate`, `Nested Loop`, with the specific `table` and `index` names involved in this particular `query`.
 - Learning to separate the two is part of reading a plan fluently: the operation name describes a strategy the `database` has, applicable across any `query`, while the `table` and `index` names describe what that strategy is being applied to in this one specific case.
 
-```postgresql with=init.sql
-EXPLAIN SELECT * FROM orders WHERE customer_id = 50 OR customer_id = 75;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajx9q" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -176,9 +189,12 @@ This plan reports a `BitmapOr` combining two `Bitmap Index Scan`s, one per match
 
 Run `EXPLAIN` on a `query` that filters `orders` for `amount > 205000.00`, a condition matching very few `rows` given the data generated above (`amount` tops out at 210000.00 for `order_id = 20000`), and identify the estimated `row` count and total cost reported for the plan.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajxkk" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

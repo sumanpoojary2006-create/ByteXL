@@ -2,6 +2,10 @@
 
 The security mechanisms covered so far, `roles`, privileges, `least privilege`, `row-level security`, and injection prevention, all work to prevent unwanted access before it happens. **Auditing** is the complementary discipline for after the fact: recording who did what and when, so that if something goes wrong, or simply needs reviewing later, the team has an actual trail to examine instead of forcing everyone to guess.
 
+**Definition:** Auditing, typically built on the `trigger` mechanism for writes and server-level logging for reads, records who did what and when, providing the after-the-fact trail that prevention mechanisms like `row-level security` and `least privilege` cannot offer on their own, valuable for detecting misuse, investigating incidents, and meeting compliance requirements.
+
+![Intro visual for auditing and tracking data access](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_auditing_and_tracking_data_access.png)
+
 ## Recording Who Changed a Row, Using a Trigger
 
 The `trigger` mechanism from earlier in this course is the natural building block for an audit trail, extended here to capture which `role` made a change, not just what changed.
@@ -34,7 +38,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     status TEXT
@@ -55,29 +59,12 @@ INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit');
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-CREATE FUNCTION audit_shipments_change()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    INSERT INTO audit_log (table_name, action, changed_by, old_data, new_data)
-    VALUES (
-        'shipments',
-        TG_OP,
-        current_user,
-        CASE WHEN TG_OP != 'INSERT' THEN to_jsonb(OLD) ELSE NULL END,
-        CASE WHEN TG_OP != 'DELETE' THEN to_jsonb(NEW) ELSE NULL END
-    );
-    RETURN COALESCE(NEW, OLD);
-END;
-$$;
-
-CREATE TRIGGER trg_audit_shipments
-AFTER INSERT OR UPDATE OR DELETE ON shipments
-FOR EACH ROW
-EXECUTE FUNCTION audit_shipments_change();
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajar3" 
+ width="100%"
+></iframe>
 
 Expected result: `CREATE FUNCTION` and `CREATE TRIGGER` return no rows; they arm the audit mechanism on `shipments` without touching any data yet. The next section fires the `trigger` for real and shows the row it writes into `audit_log`.
 
@@ -90,33 +77,12 @@ Expected result: `CREATE FUNCTION` and `CREATE TRIGGER` return no rows; they arm
 
 Every change to `shipments` from this point forward is captured automatically, with no cooperation required from whatever code issues the change.
 
-```postgresql with=init.sql
-CREATE FUNCTION audit_shipments_change()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    INSERT INTO audit_log (table_name, action, changed_by, old_data, new_data)
-    VALUES (
-        'shipments',
-        TG_OP,
-        current_user,
-        CASE WHEN TG_OP != 'INSERT' THEN to_jsonb(OLD) ELSE NULL END,
-        CASE WHEN TG_OP != 'DELETE' THEN to_jsonb(NEW) ELSE NULL END
-    );
-    RETURN COALESCE(NEW, OLD);
-END;
-$$;
-
-CREATE TRIGGER trg_audit_shipments
-AFTER INSERT OR UPDATE OR DELETE ON shipments
-FOR EACH ROW
-EXECUTE FUNCTION audit_shipments_change();
-
-UPDATE shipments SET status = 'delivered' WHERE shipment_id = 1;
-
-SELECT table_name, action, changed_by, old_data, new_data FROM audit_log;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajb3h" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -126,37 +92,18 @@ Expected output:
 
 The audit entry shows `action = 'UPDATE'`, `changed_by` recording exactly which `role` made the change, and both the `row`'s state before, `status: in_transit`, and after, `status: delivered`, preserved in `old_data` and `new_data`. This is a complete, precise record: not just that something changed, but exactly what changed, who changed it, and when.
 
-![A trigger-based audit log records who changed a row and the old and new values](images/11_audit_trigger_records_who_old_new.png)
+![A trigger-based audit log records who changed a row and the old and new values](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_audit_trigger_records_who_old_new.png)
 
 ## Auditing Reads, Not Just Writes
 
 A `trigger` naturally captures `INSERT`, `UPDATE`, and `DELETE`, since those are the events a `trigger` fires on, but auditing "who read this sensitive data" is a genuinely different, harder problem, since a plain `SELECT` does not fire a `trigger` at all. PostgreSQL addresses this through server-level logging configuration and extensions purpose-built for statement auditing, tracking every `query` executed against the server, not just changes.
 
-```postgresql with=init.sql
-CREATE FUNCTION audit_shipments_change()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    INSERT INTO audit_log (table_name, action, changed_by, old_data, new_data)
-    VALUES (
-        'shipments',
-        TG_OP,
-        current_user,
-        CASE WHEN TG_OP != 'INSERT' THEN to_jsonb(OLD) ELSE NULL END,
-        CASE WHEN TG_OP != 'DELETE' THEN to_jsonb(NEW) ELSE NULL END
-    );
-    RETURN COALESCE(NEW, OLD);
-END;
-$$;
-
-CREATE TRIGGER trg_audit_shipments
-AFTER INSERT OR UPDATE OR DELETE ON shipments
-FOR EACH ROW
-EXECUTE FUNCTION audit_shipments_change();
-
-SHOW log_statement;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajbce" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
@@ -171,7 +118,7 @@ An audit trail does not stop an unauthorized action from happening; `row-level s
 - Investigating an incident after the fact to understand exactly what happened
 - Satisfying compliance requirements that specifically demand a record of who touched sensitive data, independent of whether that access was ultimately appropriate
 
-![Prevention blocks unwanted access, while auditing records activity for later investigation](images/12_auditing_complements_prevention.png)
+![Prevention blocks unwanted access, while auditing records activity for later investigation](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_auditing_complements_prevention.png)
 
 ## Auditing at a Glance
 
@@ -210,31 +157,12 @@ An audit trail does not stop an unauthorized action from happening; `row-level s
 
 Insert a new shipment and then delete it, and confirm the audit log captures both the `INSERT` and the `DELETE` as two separate, distinct entries, each recording the correct `role` and `row` data.
 
-```postgresql with=init.sql
-CREATE FUNCTION audit_shipments_change()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    INSERT INTO audit_log (table_name, action, changed_by, old_data, new_data)
-    VALUES (
-        'shipments',
-        TG_OP,
-        current_user,
-        CASE WHEN TG_OP != 'INSERT' THEN to_jsonb(OLD) ELSE NULL END,
-        CASE WHEN TG_OP != 'DELETE' THEN to_jsonb(NEW) ELSE NULL END
-    );
-    RETURN COALESCE(NEW, OLD);
-END;
-$$;
-
-CREATE TRIGGER trg_audit_shipments
-AFTER INSERT OR UPDATE OR DELETE ON shipments
-FOR EACH ROW
-EXECUTE FUNCTION audit_shipments_change();
-
--- Write your insert, delete, and query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajbnd" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

@@ -4,6 +4,10 @@ The running total from earlier in this chapter, built with `SUM(amount) OVER (PA
 
 The sales director's newest request needs a genuinely different range, a 3-month moving average, where each month's value is the average of itself and the two months before it, not the average of everything since the beginning. Getting this right means controlling the **window frame** directly, the exact slice of `rows` a `window function` looks at for each calculation.
 
+**Definition:** A window frame, written with `ROWS BETWEEN ... AND ...`, controls exactly which rows a `window function` considers for each calculation, and changing it turns the same `SUM` or `AVG` from a full running total into a fixed-size moving calculation or a centered average.
+
+![Intro visual for running totals moving averages and window frames](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_running_totals_moving_averages_and_window_frames.png)
+
 ## The Default Frame Behind a Running Total
 
 The `monthly_sales` `table` tracks one `row` per salesperson per month.
@@ -27,7 +31,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE monthly_sales (
     salesperson TEXT,
     sale_month DATE,
@@ -45,12 +49,12 @@ INSERT INTO monthly_sales (salesperson, sale_month, total_amount) VALUES
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-SELECT sale_month, total_amount,
-       SUM(total_amount) OVER (ORDER BY sale_month) AS running_total
-FROM monthly_sales
-ORDER BY sale_month;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagbh2" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -69,15 +73,12 @@ This is the same running-total pattern from earlier in the chapter, and its exac
 
 The same running total can be written out fully, naming the frame instead of relying on the default.
 
-```postgresql with=init.sql
-SELECT sale_month, total_amount,
-       SUM(total_amount) OVER (
-           ORDER BY sale_month
-           ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-       ) AS running_total
-FROM monthly_sales
-ORDER BY sale_month;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagbtt" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -93,21 +94,18 @@ Expected output:
 - `ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW` names the frame directly: start from the first `row` available (`UNBOUNDED PRECEDING`) and end at the current `row` (`CURRENT ROW`).
 - This produces an identical result to the shorthand version, but writing it explicitly is what makes it possible to change the frame to something other than the default.
 
-![A window frame spanning from the first row to the current row](images/09_window_frame_start_to_current.png)
+![A window frame spanning from the first row to the current row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_window_frame_start_to_current.png)
 
 ## Building a Moving Average with a Custom Frame
 
 A 3-month moving average needs a frame of exactly the current `row` plus the two `rows` before it, which `ROWS BETWEEN 2 PRECEDING AND CURRENT ROW` expresses directly.
 
-```postgresql with=init.sql
-SELECT sale_month, total_amount,
-       ROUND(AVG(total_amount) OVER (
-           ORDER BY sale_month
-           ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
-       ), 2) AS moving_avg_3month
-FROM monthly_sales
-ORDER BY sale_month;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagc68" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -122,21 +120,18 @@ Expected output:
 
 January's moving average is just 18000.00, its own value, since only zero `rows` precede it. February's is the average of January and February, two `rows`. From March onward, every `row`'s moving average is built from exactly three months: itself and the two immediately before it, sliding forward one month at a time as `sale_month` increases, which is exactly the smoothing effect a moving average is meant to produce.
 
-![A three-row moving average frame sliding across monthly rows](images/10_moving_average_three_row_frame.png)
+![A three-row moving average frame sliding across monthly rows](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_moving_average_three_row_frame.png)
 
 ## A Frame That Looks Both Backward and Forward
 
 A frame does not have to be limited to `rows` before the current one; it can extend in both directions at once.
 
-```postgresql with=init.sql
-SELECT sale_month, total_amount,
-       ROUND(AVG(total_amount) OVER (
-           ORDER BY sale_month
-           ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING
-       ), 2) AS centered_avg
-FROM monthly_sales
-ORDER BY sale_month;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagcj5" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -184,9 +179,12 @@ Expected output:
 
 Leela wants a 2-month moving total, the current month plus the one before it, for Nikhil's sales. Write a `query` against `monthly_sales` above using an explicit window frame to compute it.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagctz" 
+ width="100%"
+></iframe>
 
 If your `query` uses `SUM(total_amount) OVER (ORDER BY sale_month ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS moving_total_2month`, February shows 38000.00, January plus February combined, and March shows 42000.00, February plus March.
 

@@ -4,6 +4,10 @@ Every diagnostic tool used across this course, `EXPLAIN ANALYZE`, `pg_stat_activ
 
 This helps teams respond before users are affected, instead of diagnosing the problem only after an outage has already begun.
 
+**Definition:** Continuous monitoring of `connection` usage, `table` bloat, cache hit ratio, and long-running or blocked `queries` turns the diagnostic tools used reactively throughout this course into an early-warning system, catching degrading health before it becomes a full outage, rather than only after users are already affected.
+
+![Intro visual for database monitoring](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_database_monitoring.png)
+
 ## Watching Connection Usage Over Time
 
 The `connection pooling` lesson introduced checking current `connections` against `max_connections` as a one-time check; monitoring turns that same check into something tracked continuously.
@@ -25,7 +29,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     status TEXT
@@ -37,12 +41,12 @@ SELECT i, 'in_transit' FROM generate_series(1, 1000) AS i;
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-SELECT count(*) AS current_connections,
-       (SELECT setting::int FROM pg_settings WHERE name = 'max_connections') AS max_connections,
-       round(100.0 * count(*) / (SELECT setting::int FROM pg_settings WHERE name = 'max_connections'), 1) AS percent_used
-FROM pg_stat_activity;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahdcn" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
@@ -58,14 +62,12 @@ This catches a `connection leak`, covered in the pooling lesson, while there is 
 
 The dead tuples covered in the maintenance lesson are exactly the kind of metric worth tracking continuously, since a `table` whose dead-tuple count keeps climbing despite autovacuum running is a sign something is preventing cleanup from keeping up.
 
-```postgresql with=init.sql
-SELECT relname, n_live_tup, n_dead_tup,
-       round(100.0 * n_dead_tup / GREATEST(n_live_tup + n_dead_tup, 1), 1) AS dead_tuple_percent,
-       last_autovacuum
-FROM pg_stat_user_tables
-ORDER BY n_dead_tup DESC
-LIMIT 5;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahdp3" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
@@ -75,12 +77,12 @@ Tracking `dead_tuple_percent` and `last_autovacuum` across a `database`'s busies
 
 A `database` keeps frequently accessed data cached in memory, and how often a `query` finds what it needs already in that cache, rather than having to read from disk, is one of the clearest overall health signals a running `database` offers.
 
-```postgresql with=init.sql
-SELECT sum(heap_blks_hit) AS cache_hits,
-       sum(heap_blks_read) AS disk_reads,
-       round(100.0 * sum(heap_blks_hit) / GREATEST(sum(heap_blks_hit) + sum(heap_blks_read), 1), 2) AS cache_hit_ratio
-FROM pg_statio_user_tables;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahdxz" 
+ width="100%"
+></iframe>
 
 Expected result: PostgreSQL returns the rows described below. Compare the visible columns and row-level effect with the explanation, since security and administration settings may make some values environment-dependent.
 
@@ -88,25 +90,25 @@ A healthy, well-provisioned `database` typically sustains a cache hit ratio well
 
 A ratio that drops noticeably, tracked over time rather than as a single snapshot, can signal that the `database`'s available memory is no longer large enough for its actual working data set, a capacity signal worth acting on before it manifests as widespread `query` slowdowns.
 
-![Database monitoring continuously tracks connections, dead tuples, cache hit ratio, and long queries](images/07_monitoring_database_health_metrics.png)
+![Database monitoring continuously tracks connections, dead tuples, cache hit ratio, and long queries](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_monitoring_database_health_metrics.png)
 
 ## Watching for Long-Running and Blocked Queries
 
 `pg_stat_activity`, used throughout this unit for one-off checks, is also the foundation for continuously monitoring `queries` that have been running unusually long, or are stuck waiting on a `lock` held by another session.
 
-```postgresql with=init.sql
-SELECT pid, state, wait_event_type, wait_event, now() - query_start AS running_for, query
-FROM pg_stat_activity
-WHERE state != 'idle' AND now() - query_start > INTERVAL '5 seconds'
-ORDER BY running_for DESC;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahe93" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
 - `wait_event_type` and `wait_event` reveal specifically what a `query` is stuck waiting on, if anything, such as a `lock` held by another `transaction`, exactly the kind of contention the concurrency control unit covered.
 - A monitoring system alerting on `queries` that exceed a reasonable running-time threshold, tuned to what "reasonable" actually means for a given application, catches runaway or blocked `queries` early, rather than letting them silently degrade the whole system's responsiveness.
 
-![Monitoring alerts can catch blocked or long-running queries before users are affected](images/08_monitoring_blocked_query_alert.png)
+![Monitoring alerts can catch blocked or long-running queries before users are affected](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_monitoring_blocked_query_alert.png)
 
 ## Database Monitoring at a Glance
 
@@ -146,9 +148,12 @@ Expected observation: PostgreSQL returns live server metadata. Values differ acr
 
 Write a monitoring `query` that reports the five `tables` in `pg_stat_user_tables` with the lowest cache-friendliness, approximated by the highest ratio of sequential scans to `index scans`, a signal that those `tables` may be missing a useful `index`.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaheht" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

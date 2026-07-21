@@ -8,7 +8,7 @@ Arjun manages pricing for a small electronics store, and the `products` `table` 
 
 SQL's built-in **numeric `functions`** handle exactly this kind of cleanup, right inside the `query`.
 
-![ROUND turning an over-precise selling price into a customer-ready price](images/03_round_price_display_precision.png)
+![ROUND turning an over-precise selling price into a customer-ready price](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_round_price_display_precision.png)
 
 **Definition:** Numeric `functions` turn raw, over-precise, or oddly signed numbers into values fit for a report or a receipt: `ROUND` for display precision, `CEIL` and `FLOOR` for deliberate rounding direction, `ABS` for magnitude regardless of sign, and `MOD` for remainders.
 
@@ -136,7 +136,7 @@ Expected output:
 - `ABS` strips the sign off a number, turning -1249.0000 into 1249.0000, which is what flagged the webcam `row` as suspicious in the first place: a price should never be negative.
 - The `%` operator, also written as `MOD(a, b)` in some `databases`, returns the remainder of a division. A remainder of 0 means every unit fits into complete cartons of six; a remainder of 1 means one unit is left over.
 
-![CEIL, FLOOR, ABS, and remainder reshaping numeric values for reports](images/04_numeric_functions_rounding_abs_mod.png)
+![CEIL, FLOOR, ABS, and remainder reshaping numeric values for reports](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_numeric_functions_rounding_abs_mod.png)
 
 ## A Few Values Worked Out by Hand
 

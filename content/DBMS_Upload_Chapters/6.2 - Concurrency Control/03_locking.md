@@ -4,6 +4,10 @@ The `lost update` from the previous lesson happened because two `transactions` b
 
 The fix is not clever application logic checking timestamps after the fact; it is stopping the second `transaction` from reading and acting on that value until the first `transaction` has finished with it entirely. This is what **locking** does: a `transaction` can claim a `lock` on a `row`, blocking other `transactions` from making conflicting changes to that same `row` until the `lock` is released.
 
+**Definition:** `Locking` gives a `transaction` exclusive claim over a `row` it intends to change, forcing other `transactions` that want to touch the same `row` to wait until the `lock` is released, which is what actually prevents `lost updates` and similar conflicts rather than just naming them.
+
+![Intro visual for locking](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_locking.png)
+
 ## Locking a Row for Update
 
 The `inventory` `table` from the previous lesson is the setup again.
@@ -22,7 +26,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE inventory (
     product_id INTEGER PRIMARY KEY,
     product_name TEXT,
@@ -35,17 +39,12 @@ INSERT INTO inventory (product_id, product_name, stock_count) VALUES
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-BEGIN;
-
-SELECT stock_count FROM inventory WHERE product_id = 1 FOR UPDATE;
-
-UPDATE inventory SET stock_count = stock_count - 5 WHERE product_id = 1;
-
-COMMIT;
-
-SELECT stock_count FROM inventory WHERE product_id = 1;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafejz" 
+ width="100%"
+></iframe>
 
 Expected output 1:
 
@@ -66,7 +65,7 @@ Expected output 2:
 - `FOR UPDATE`, added to the end of a `SELECT`, tells the `database` that this `transaction` intends to modify the `row` it just read, and claims a `lock` on that `row` immediately.
 - Any other `transaction` that also tries one of these is forced to wait until this `transaction` either commits or rolls back and releases the `lock`:
 
-![SELECT FOR UPDATE placing an exclusive row lock while another transaction waits](images/06_select_for_update_row_lock.png)
+![SELECT FOR UPDATE placing an exclusive row lock while another transaction waits](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_select_for_update_row_lock.png)
 
 - `SELECT ... FOR UPDATE` on the same `row`
 - An `UPDATE` directly against it If a second sale `transaction` had tried to `lock` and read product 1's stock count while this `transaction` was still open, it would simply pause, then proceed only once this one finished, at which point it would correctly see 45, not the stale 50, avoiding the `lost update` entirely.
@@ -84,13 +83,12 @@ Not every `lock` blocks every other operation equally. A shared `lock`, taken au
 
 An exclusive `lock`, the kind `FOR UPDATE` takes, blocks any other `transaction` from reading with intent to modify or from writing to that `row` at all, since two `transactions` both planning to change the same `row` is exactly the conflict that needs preventing.
 
-```postgresql with=init.sql
-BEGIN;
-SELECT stock_count FROM inventory WHERE product_id = 1;
--- An ordinary SELECT like this takes no exclusive lock; other transactions
--- can freely read this same row concurrently without being blocked.
-COMMIT;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafevk" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -106,15 +104,12 @@ An ordinary `SELECT`, without `FOR UPDATE`, does not block other readers or even
 
 `Locking` in a well-behaved system is scoped as narrowly as possible, typically to individual `rows`, rather than to an entire `table`, so that unrelated `transactions` touching different `rows` never have to wait on each other.
 
-```postgresql with=init.sql
-INSERT INTO inventory (product_id, product_name, stock_count) VALUES (2, 'USB Cable', 200);
-
-BEGIN;
-SELECT stock_count FROM inventory WHERE product_id = 1 FOR UPDATE;
--- This locks only the row for product_id = 1.
--- A separate transaction working with product_id = 2 is never blocked by this lock.
-COMMIT;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaff6w" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -126,7 +121,7 @@ Expected output:
 
 This `row`-level scope is what makes `locking` practical at real-world scale: a busy inventory system can have thousands of concurrent `transactions`, each safely `locking` only the specific `rows` it touches, without the whole `table` grinding to a halt waiting on unrelated updates.
 
-![Row-level locking blocking product 1 while unrelated product rows continue](images/07_row_level_lock_scope.png)
+![Row-level locking blocking product 1 while unrelated product rows continue](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_row_level_lock_scope.png)
 
 ## Locking at a Glance
 
@@ -165,20 +160,23 @@ This `row`-level scope is what makes `locking` practical at real-world scale: a 
 
 Write a `transaction` that `locks` product 1's `row` with `FOR UPDATE`, deducts 8 units, and commits, then confirm the final stock count with a `SELECT`.
 
-```postgresql with=init.sql
--- Write your transaction below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafffu" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 
 If your `transaction` runs:
 
-```sql
-BEGIN;
-SELECT stock_count FROM inventory WHERE product_id = 1 FOR UPDATE;
-UPDATE inventory SET stock_count = stock_count - 8 WHERE product_id = 1;
-COMMIT;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/mysql/44vkaffsa" 
+ width="100%"
+></iframe>
 
 the closing `SELECT` shows 37, eight less than the 45 already left over from the earlier `FOR UPDATE` example in this lesson, and any concurrent transaction attempting the same `lock` on product 1 would have had to wait until this one finished.
 

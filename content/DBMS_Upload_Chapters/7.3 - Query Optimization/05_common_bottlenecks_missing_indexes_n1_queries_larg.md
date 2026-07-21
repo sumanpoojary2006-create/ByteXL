@@ -6,6 +6,10 @@ Most real-world performance problems trace back to a small handful of recurring 
 - An application pattern called the `N+1 query` problem
 - Large, unnecessary scans hiding inside an otherwise reasonable-looking `query`
 
+**Definition:** A missing `index` on a selective `column`, the `N+1 query` pattern hiding in application code, and a `function` or cast silently defeating an otherwise-useful `index` are three of the most common ways a real system slows down, and all three are diagnosable with the same tools covered across this unit: `EXPLAIN`, `EXPLAIN ANALYZE`, and a clear understanding of what each plan node actually means.
+
+![Intro visual for common bottlenecks missing indexes n1 queries larg](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_common_bottlenecks_missing_indexes_n1_queries_la.png)
+
 ## Bottleneck One: A Missing Index on a Selective Column
 
 The clearest, most mechanical bottleneck is a filter condition on a `column` with no supporting `index`, forcing a `sequential scan` even when very few `rows` actually match.
@@ -29,7 +33,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
     customer_id INTEGER,
@@ -46,9 +50,12 @@ FROM generate_series(1, 50000) AS i;
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-EXPLAIN ANALYZE SELECT * FROM orders WHERE status = 'flagged';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkak4t4" 
+ width="100%"
+></iframe>
 
 Expected output (before the index exists):
 
@@ -64,11 +71,12 @@ Expected output (before the index exists):
 
 Only about 1 in 1000 `rows` are flagged, a highly selective condition, but with no `index` on `status`, the plan is forced into a `sequential scan` of all 50000 `rows` to find the roughly 50 that match. This is the most straightforward bottleneck to diagnose, `EXPLAIN` clearly shows a `sequential scan`, and the fix, an `index`, is exactly what the previous chapter covered.
 
-```postgresql with=init.sql
-CREATE INDEX idx_orders_status ON orders (status);
-
-EXPLAIN ANALYZE SELECT * FROM orders WHERE status = 'flagged';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkak53u" 
+ width="100%"
+></iframe>
 
 Expected output (after the index exists):
 
@@ -83,25 +91,18 @@ Expected output (after the index exists):
 
 The plan switches to an `index scan`, and the actual measured time drops from 8.231 ms to 0.062 ms, well over 100x faster, precisely the diagnostic workflow, run `EXPLAIN ANALYZE`, spot a `sequential scan` on a selective filter, add an `index`, confirm the plan changes.
 
-![A missing index on a selective filter forces a scan until an index shortcut is added](images/10_missing_index_selective_filter_bottleneck.png)
+![A missing index on a selective filter forces a scan until an index shortcut is added](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_missing_index_selective_filter_bottleneck.png)
 
 ## Bottleneck Two: The N+1 Query Problem
 
 This bottleneck lives in application code, not in any single SQL statement. It happens when code first fetches a list of parent `rows` with one `query`, then loops over that list, running one additional `query` per item to fetch related data, N extra `queries` for N parent `rows`, instead of one `query` that fetches everything together.
 
-```postgresql with=init.sql
--- The N+1 pattern, shown as pseudocode alongside the SQL it represents:
--- 1 query to fetch customers:
-SELECT customer_id FROM orders GROUP BY customer_id LIMIT 5;
-
--- then, in application code, looping over each of those 5 customer_ids:
--- for each customer_id in the list above:
---     SELECT * FROM orders WHERE customer_id = customer_id;
--- This runs 1 + 5 = 6 total queries for just 5 customers.
--- With 5000 customers instead of 5, this becomes 5001 separate round trips
--- to the database, each with its own network latency, even though the
--- total amount of data needed is the same either way.
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkak5cy" 
+ width="100%"
+></iframe>
 
 Expected output for the first query (`GROUP BY` with no `ORDER BY` returns whichever 5 groups the plan happens to produce first, so the exact `customer_id` values can vary between runs; this is one representative result):
 
@@ -117,13 +118,12 @@ Each of those 5 `customer_id`s then triggers one more round trip in the loop, `S
 
 The fix is almost always the same one covered throughout the `joins` chapter: replace the loop of individual `queries` with a single `query` that `joins` or filters for everything needed at once.
 
-```postgresql with=init.sql
-SELECT customer_id, order_id, amount
-FROM orders
-WHERE customer_id IN (
-    SELECT customer_id FROM orders GROUP BY customer_id LIMIT 5
-);
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkak5rq" 
+ width="100%"
+></iframe>
 
 Expected output (using the same 5 `customer_id`s from above; each customer has 10 matching `orders` `rows`, since 50000 `rows` are spread across 5000 customers, so this returns 50 `rows` total, shown here truncated to the first few per customer):
 
@@ -140,17 +140,18 @@ This single `query` retrieves the exact same data the 6-`query` loop above would
 
 That is why N+1 is such a common, costly bottleneck in real applications built on top of an object-relational mapper or any code that fetches a list and then loops.
 
-![The N+1 query problem makes one query plus many repeated child queries](images/11_n_plus_one_queries_many_round_trips.png)
+![The N+1 query problem makes one query plus many repeated child queries](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_n_plus_one_queries_many_round_trips.png)
 
 ## Bottleneck Three: Large Scans Hiding Inside a Reasonable-Looking Query
 
 Sometimes a `query` looks selective at a glance but is not, because a `function` or a type mismatch on the filtered `column` silently defeats an otherwise-present `index`, forcing a full scan the same way a missing `index` would.
 
-```postgresql with=init.sql
-CREATE INDEX idx_orders_amount ON orders (amount);
-
-EXPLAIN SELECT * FROM orders WHERE amount::TEXT = '525.00';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkak629" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -163,9 +164,12 @@ Expected output:
 
 Casting `amount` to text before comparing defeats `idx_orders_amount`, since the `index` is built on the numeric `column`'s own sorted values, not on a text-converted version of them, forcing a `sequential scan` despite an `index` technically existing on the underlying `column`. This is a subtle bottleneck precisely because the `query` author may not realize the cast is even happening, especially if it was introduced indirectly through application code building the condition dynamically.
 
-```postgresql with=init.sql
-EXPLAIN SELECT * FROM orders WHERE amount = 525.00;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkak6dx" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -178,7 +182,7 @@ Expected output:
 
 Removing the cast and comparing directly against the numeric value restores the `index scan`, confirming the cast, not the `index` itself, was the actual bottleneck.
 
-![A cast or function around an indexed column can block the existing index](images/12_cast_or_function_defeats_index.png)
+![A cast or function around an indexed column can block the existing index](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_cast_or_function_defeats_index.png)
 
 ## Common Bottlenecks at a Glance
 
@@ -213,9 +217,12 @@ Removing the cast and comparing directly against the numeric value restores the 
 
 Check whether filtering `orders` on `customer_id = 42` uses an `index`, given there is currently no `index` on `customer_id`, then create one and confirm the plan changes.
 
-```postgresql with=init.sql
--- Write your queries below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkak6pq" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

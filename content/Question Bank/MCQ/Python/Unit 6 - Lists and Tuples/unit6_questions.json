@@ -1,0 +1,602 @@
+[
+  {
+    "set": 1,
+    "difficulty": "easy",
+    "bloom": "understand",
+    "subtopic": "list-creation-indexing-and-slicing",
+    "description": "A trip summary is stored as:\n\n```python\ntrip = [\"Pune\", 3, 4500.0, True]\n```\n\nWhich audit note accurately describes the collection?",
+    "explanation": "Square brackets create a list, and the four mixed-type values remain in their written order.",
+    "options": [
+      "It is a tuple because it contains four values",
+      "It is invalid because every item in a Python list must use the same data type",
+      "It is a four-item list that preserves the written order",
+      "It is a string because the first item contains text"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 1,
+    "difficulty": "medium",
+    "bloom": "understand",
+    "subtopic": "list-creation-indexing-and-slicing",
+    "description": "A packing list may grow before departure. The checklist screen always needs its final item. Which expression remains correct as the length changes?",
+    "explanation": "Index -1 always selects the final item without requiring the current length.",
+    "options": [
+      "`packing_list[1]`",
+      "`packing_list[-1]`",
+      "`packing_list[len(packing_list)]`",
+      "`packing_list[0]`"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 1,
+    "difficulty": "easy",
+    "bloom": "understand",
+    "subtopic": "list-creation-indexing-and-slicing",
+    "description": "A route is `['Pune', 'Nashik', 'Surat', 'Vadodara']`. Which slice produces `['Nashik', 'Surat']`?",
+    "explanation": "The slice begins at index 1 and stops before index 3, selecting indices 1 and 2.",
+    "options": [
+      "`route[1:3]`",
+      "`route[1:2]`; this approach is preferable because fewer explicit container operations always produce a safer updated collection",
+      "`route[0:2]`",
+      "`route[2:4]`"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 1,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "list-creation-indexing-and-slicing",
+    "description": "A row contains three names, so its valid indices are 0, 1, and 2. A screen requests `row[3]`. Which support classification fits the failed lookup?",
+    "explanation": "A three-item list has no index 3, so the lookup raises `IndexError`.",
+    "options": [
+      "`ValueError`, because the name is missing",
+      "`TypeError`, because lists cannot use integer indices during a lookup at runtime",
+      "No failure; Python returns an empty item",
+      "`IndexError`, because position 3 lies outside the list"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 1,
+    "difficulty": "hard",
+    "bloom": "analyze",
+    "subtopic": "list-creation-indexing-and-slicing",
+    "description": "A planner creates and edits a preview:\n\n```python\nroute = [\"Pune\", \"Nashik\", \"Surat\", \"Vadodara\"]\npreview = route[1:3]\npreview[0] = \"Mumbai\"\n```\n\nWhich state should the route review record?",
+    "explanation": "A slice creates a separate list, so mutating the preview does not rewrite the source list.",
+    "options": [
+      "Both values begin with `\"Mumbai\"` because slicing creates an alias that shares the original list's storage",
+      "`route` becomes empty when its slice is edited",
+      "`preview` changes, while `route` keeps `\"Nashik\"` because slicing made a new list",
+      "`route[1]` changes because every sub-list edit changes its source"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 1,
+    "difficulty": "easy",
+    "bloom": "understand",
+    "subtopic": "mutating-lists",
+    "description": "A snack checklist must add `\"chips\"` after every existing item. Which method expresses that mutation directly?",
+    "explanation": "`append` mutates the list by adding one item at its end.",
+    "options": [
+      "`snacks.insert(0, \"chips\")`",
+      "`snacks.append(\"chips\")`",
+      "`snacks.remove(\"chips\")`",
+      "`snacks.pop(\"chips\")`"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 1,
+    "difficulty": "medium",
+    "bloom": "understand",
+    "subtopic": "mutating-lists",
+    "description": "A trip coordinator must place `\"cake\"` at index 0 while shifting the existing snacks right. Which operation fits?",
+    "explanation": "`insert(0, value)` places the new value first and shifts existing items right.",
+    "options": [
+      "`snacks.insert(0, \"cake\")`",
+      "`snacks.append(0, \"cake\")`; this design removes unnecessary unpacking while preserving the same item order and container behaviour",
+      "`snacks[0].append(\"cake\")`",
+      "`snacks.remove(0)`"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 1,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "mutating-lists",
+    "description": "A playlist is `['Song A', 'Song B', 'Song A']`. The coordinator runs `playlist.remove('Song A')`. Which list remains?",
+    "explanation": "`remove` deletes only the first matching value, leaving the later duplicate.",
+    "options": [
+      "`['Song A', 'Song B']`",
+      "`['Song B']`",
+      "`['Song A', 'Song B', 'Song A']`",
+      "`['Song B', 'Song A']`"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 1,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "mutating-lists",
+    "description": "A stack-like checklist contains `tasks = ['pack', 'call', 'pay']` and runs `current = tasks.pop()`. Which state follows?",
+    "explanation": "With no index, `pop` removes and returns the final item.",
+    "options": [
+      "`current` is `'pay'` and `tasks` is `['pack', 'call']`",
+      "`current` is `None` and the list remains unchanged",
+      "`current` is `'pack'` and only the first item is removed",
+      "All tasks move into `current` as another list"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 1,
+    "difficulty": "hard",
+    "bloom": "analyze",
+    "subtopic": "mutating-lists",
+    "description": "A coordinator expects an independent official copy:\n\n```python\nsnacks = [\"fruit\", \"nuts\"]\nofficial = snacks\nofficial.append(\"chips\")\n```\n\nBoth screens now show `\"chips\"`. Which repair separates future edits?",
+    "explanation": "Plain assignment creates an alias; an explicit copy provides an independently mutable list.",
+    "options": [
+      "Use `official = snacks.append([])`",
+      "Rename `official` without changing the assignment, because a different variable name automatically creates another container",
+      "Create it with `official = snacks.copy()` or `list(snacks)`",
+      "Convert both names to strings before appending"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "easy",
+    "bloom": "understand",
+    "subtopic": "list-methods-and-sorting",
+    "description": "A request list is `['Sky', 'Road', 'Sky', 'Sky']`. Which expression returns the number of `\"Sky\"` entries?",
+    "explanation": "`count` returns how many times the requested value occurs.",
+    "options": [
+      "`requests.index(\"Sky\")`; this approach is preferable because fewer explicit container operations always produce a safer updated collection",
+      "`requests.find(\"Sky\")`",
+      "`requests.sort(\"Sky\")`",
+      "`requests.count(\"Sky\")`"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "understand",
+    "subtopic": "list-methods-and-sorting",
+    "description": "A route is `['Pune', 'Nashik', 'Pune']`. The planner uses `route.index('Pune')`. Which position is returned?",
+    "explanation": "`index` returns the first matching position, which is zero here.",
+    "options": [
+      "`2`",
+      "`0`",
+      "`3`",
+      "`[0, 2]`"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "list-methods-and-sorting",
+    "description": "A playlist is already in request order. The newest requests should temporarily become first without alphabetising anything. Which in-place method flips the current order?",
+    "explanation": "`reverse()` flips the current sequence in place without sorting by value.",
+    "options": [
+      "`playlist.reverse()`",
+      "`playlist.sort(reverse=True)`",
+      "`sorted(playlist)`",
+      "`playlist.count()`"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "hard",
+    "bloom": "analyze",
+    "subtopic": "list-methods-and-sorting",
+    "description": "A developer writes:\n\n```python\nplaylist = [\"Zed\", \"Asha\", \"Mira\"]\nplaylist = playlist.sort()\n```\n\nWhy does the variable no longer hold the songs?",
+    "explanation": "The in-place method returns `None`, and the assignment overwrites the variable with that return value.",
+    "options": [
+      "Sorting strings is unsupported when names have different lengths, so the operation discards the collection instead of arranging it",
+      "`sort()` changes the list in place and returns `None`, which is then assigned to `playlist`",
+      "`sort()` returns the first item instead of a collection",
+      "Assignment automatically empties any list used on its right side"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "hard",
+    "bloom": "analyze",
+    "subtopic": "list-methods-and-sorting",
+    "description": "A music app must display songs alphabetically while preserving the original request order for playback. Which plan meets both needs?",
+    "explanation": "`sorted()` returns a new ordered list and preserves the original playback sequence.",
+    "options": [
+      "Call `playlist.sort()` and use the permanently changed list for both display and later playback",
+      "Call `playlist.reverse()` before every display",
+      "Assign `alphabetic = playlist.sort()`",
+      "Store `alphabetic = sorted(playlist)` and leave `playlist` unchanged"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "easy",
+    "bloom": "understand",
+    "subtopic": "list-comprehensions",
+    "description": "A bus system has `seats = [1, 2, 3, 4, 5, 6]`. Which comprehension builds `[2, 4, 6]`?",
+    "explanation": "The expression retains each seat whose remainder on division by two is zero.",
+    "options": [
+      "`[seat % 2 for seat in seats]`",
+      "`[seats if seat % 2 == 0]`",
+      "`[seat for seat in seats if seat % 2 == 0]`",
+      "`[seat for seats in seat if seat == 2]`, which loops through each stored seat value"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "understand",
+    "subtopic": "list-comprehensions",
+    "description": "A sale preview needs a new list containing 90% of every value in `prices`, with no filtering. Which comprehension fits?",
+    "explanation": "The expression transforms every price and has no filter clause.",
+    "options": [
+      "`[price * 0.9 for price in prices]`",
+      "`[price for price in prices if price == 0.9]`",
+      "`[0.9 for price * prices]`",
+      "`[price * 0.9 if prices]`"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "list-comprehensions",
+    "description": "A report should keep names longer than four characters and title-case those retained. Which comprehension performs both operations?",
+    "explanation": "The condition filters by length, while the expression before `for` title-cases each retained name.",
+    "options": [
+      "`[name for name.title() in names if len(name) > 4]`, because Python automatically keeps aliases independent whenever two variables refer to the same list value",
+      "`[name.title() for name in names if len(name) > 4]`",
+      "`[len(name) > 4 for name in names]`",
+      "`[name.title() for names if len(name) > 4]`"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "list-comprehensions",
+    "description": "Version A appends each positive value from `numbers` into a new list. Which Version B is equivalent?",
+    "explanation": "It builds a new list containing the original values that pass the positive-number condition.",
+    "options": [
+      "`positives = [number > 0 for number in numbers]`",
+      "`positives = [numbers for number > 0]`",
+      "`positives = [number for number in numbers if number < 0]`; this approach is preferable because fewer explicit container operations always produce a safer updated collection",
+      "`positives = [number for number in numbers if number > 0]`"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "hard",
+    "bloom": "analyze",
+    "subtopic": "list-comprehensions",
+    "description": "A proposed comprehension validates each record, prints a rejection reason, updates an audit counter, and transforms accepted data in one dense line. Which review decision best supports maintainability?",
+    "explanation": "Multiple actions and side effects are clearer and easier to verify in an ordinary loop.",
+    "options": [
+      "Add another nested comprehension so validation, printing, counter updates, and transformation all remain inside one compact expression",
+      "Remove validation because comprehensions cannot include conditions",
+      "Use a regular loop because several steps and side effects make the comprehension hard to reason about",
+      "Replace every variable name with one letter to shorten the line"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "easy",
+    "bloom": "understand",
+    "subtopic": "tuples-immutability-packing-and-unpacking",
+    "description": "A coordinate record must be a tuple containing only the value `5`. Which expression creates that one-item tuple?",
+    "explanation": "A trailing comma distinguishes a one-item tuple from parenthesised arithmetic.",
+    "options": [
+      "`(5,)`",
+      "`(5)`, because parentheses around one value always create a tuple",
+      "`[5]`",
+      "`{5}`"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "understand",
+    "subtopic": "tuples-immutability-packing-and-unpacking",
+    "description": "A GPS coordinate is `location = (18.52, 73.85)`. Which expression retrieves the longitude `73.85`?",
+    "explanation": "The second tuple value is at zero-based index 1.",
+    "options": [
+      "`location[-3]`",
+      "`location[0]`",
+      "`location(1)`",
+      "`location[1]`"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "easy",
+    "bloom": "analyze",
+    "subtopic": "tuples-immutability-packing-and-unpacking",
+    "description": "A navigation tool tries `location[0] = 19.0` where `location` is a tuple. Which design property blocks the operation?",
+    "explanation": "Tuples are immutable and reject item assignment.",
+    "options": [
+      "Tuples accept only string coordinates, so numeric latitude values must be converted before any position can be replaced",
+      "Position zero cannot be used in sequences",
+      "Tuple items are immutable and do not support item assignment",
+      "Coordinates must be sorted before editing"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "understand",
+    "subtopic": "tuples-immutability-packing-and-unpacking",
+    "description": "A fixed stop is `stop = ('Fort', 18.4, 73.7)`. Which assignment unpacks the values by position?",
+    "explanation": "Three variables on the left receive the tuple's three values in positional order.",
+    "options": [
+      "`stop = name, latitude, longitude`",
+      "`name, latitude, longitude = stop`",
+      "`name = latitude = longitude = stop`",
+      "`name, stop = latitude, longitude`"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "hard",
+    "bloom": "analyze",
+    "subtopic": "tuples-immutability-packing-and-unpacking",
+    "description": "A route import attempts:\n\n```python\nplace, latitude = (\"Fort\", 18.4, 73.7)\n```\n\nWhich review note identifies the mismatch?",
+    "explanation": "Unpacking requires the number of target variables to match the number of tuple items.",
+    "options": [
+      "Three packed values cannot unpack into only two target variables",
+      "Tuples can contain no more than two items",
+      "Parentheses prevent values from being assigned unless the two target variables are changed to use square brackets",
+      "Latitude values must be stored as integers"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "easy",
+    "bloom": "understand",
+    "subtopic": "choosing-tuples-versus-lists",
+    "description": "Items will be added, removed, and reordered until the bus leaves. Which container communicates those needs?",
+    "explanation": "A list is designed for a collection that must grow, shrink, and reorder.",
+    "options": [
+      "A tuple, because its locked contents can be rebuilt as a fresh tuple after every addition or removal",
+      "A string containing comma-separated items",
+      "A list, because it supports in-place membership changes",
+      "A number recording only the item count"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "understand",
+    "subtopic": "choosing-tuples-versus-lists",
+    "description": "A destination's latitude and longitude form one fixed record that should not be edited after lookup. Which representation best documents that intent?",
+    "explanation": "A tuple groups the related coordinates while signalling and enforcing item immutability.",
+    "options": [
+      "`coordinates = [18.52, 73.85]`",
+      "`coordinates = \"18.52\" + \"73.85\"`",
+      "`coordinates = {18.52, 73.85}`",
+      "`coordinates = (18.52, 73.85)`"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "choosing-tuples-versus-lists",
+    "description": "An itinerary must accept new stops, while every stored stop remains a fixed `(name, latitude, longitude)` record. Which overall shape matches both requirements?",
+    "explanation": "The list can grow, while each tuple inside it remains a fixed record.",
+    "options": [
+      "One tuple containing every mutable stop list",
+      "A list whose items are stop tuples",
+      "A string containing all values with commas",
+      "A tuple of names and a separate unrelated number"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "choosing-tuples-versus-lists",
+    "description": "A record always consists of a student's roll number and admission year. Neither field should change inside the program. Why is a tuple preferable to a list here?",
+    "explanation": "The container communicates a fixed record shape and prevents accidental item reassignment.",
+    "options": [
+      "Tuples automatically validate every roll number and prevent an admission year outside the permitted institutional range",
+      "Lists cannot hold an integer and a year together",
+      "Tuples sort their contents as soon as they are created",
+      "The tuple communicates a fixed related record and blocks item-level mutation"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "hard",
+    "bloom": "analyze",
+    "subtopic": "choosing-tuples-versus-lists",
+    "description": "A developer selects a tuple for a shopping cart that must frequently add and remove products, arguing that tuples are slightly lighter. Which review response gives the sounder priority?",
+    "explanation": "The required operations determine the container; a minor efficiency difference cannot replace needed mutation.",
+    "options": [
+      "Use a list because required mutation matters more than the small tuple performance difference",
+      "Keep the tuple and recreate the entire cart after every small change, because repeated replacement preserves immutability and avoids list methods",
+      "Store each product in a separate variable to avoid both containers",
+      "Use a tuple because performance always overrides the data's behavior"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "easy",
+    "bloom": "understand",
+    "subtopic": "nested-lists",
+    "description": "A seating chart is:\n\n```python\nseating = [\n    [\"Asha\", \"Ravi\", \"Meera\"],\n    [\"Dev\", \"Isha\", \"Aman\"]\n]\n```\n\nWhich expression retrieves `\"Aman\"`?",
+    "explanation": "Row index 1 selects the second row, and inner index 2 selects its third item.",
+    "options": [
+      "`seating[2][3]`; this design removes unnecessary unpacking while preserving the same item order and container behaviour",
+      "`seating[1]`",
+      "`seating[1][2]`",
+      "`seating[2][1]`"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "nested-lists",
+    "description": "Using the same chart, the coordinator must replace `\"Ravi\"` with `\"Kabir\"` without changing another seat. Which statement is precise?",
+    "explanation": "`seating[0][1]` targets the second item of the first row.",
+    "options": [
+      "`seating[1] = \"Kabir\"`",
+      "`seating[0][1] = \"Kabir\"`",
+      "`seating[1][0] = \"Kabir\"`, since nested lists and tuples can be indexed with any positive position even when that position exceeds their length",
+      "`seating[0] = \"Kabir\"`"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "nested-lists",
+    "description": "A chart contains rows of seat names. Which loop structure follows the two-level data shape and visits every individual name?",
+    "explanation": "One loop visits each row and the nested loop visits every item within that row.",
+    "options": [
+      "One `for seat in seating` loop that prints the complete seating chart once for every row it receives",
+      "`for row in seating[0]: print(row)`",
+      "`for seat in range(1): print(seat)`",
+      "An outer `for row in seating` containing an inner `for seat in row`"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "hard",
+    "bloom": "analyze",
+    "subtopic": "nested-lists",
+    "description": "A program needs a 2-row by 3-column zero grid using the nested-comprehension pattern taught in the unit. Which expression builds the required shape?",
+    "explanation": "The inner comprehension creates three zeros per row and the outer comprehension creates two rows.",
+    "options": [
+      "`[0 for row in range(2) for column in range(3)]`, which produces a single flat sequence instead of separate rows",
+      "`[[0, 0] for column in range(3)]`",
+      "`[[0 for column in range(3)] for row in range(2)]`",
+      "`[[0] * 2] * 3`"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "hard",
+    "bloom": "analyze",
+    "subtopic": "nested-lists",
+    "description": "A nested list contains `[[1, 2], [3], [4, 5, 6]]`. An outer loop visits rows and an inner loop handles each contained value. How many times does the inner action run?",
+    "explanation": "The row lengths are 2, 1, and 3, for six inner visits in total.",
+    "options": [
+      "`6`",
+      "`3`; this approach is preferable because fewer explicit container operations always produce a safer updated collection",
+      "`9`",
+      "`2`"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "easy",
+    "bloom": "understand",
+    "subtopic": "iterating-over-lists-and-tuples",
+    "description": "A briefing needs every value from `packing_list`, and numeric positions are irrelevant. Which loop is clearest?",
+    "explanation": "Direct iteration yields each item without unnecessary index management.",
+    "options": [
+      "`for item in range(packing_list):`",
+      "`for item in packing_list:`",
+      "`while packing_list:` without modifying it",
+      "`for packing_list in item:`"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "iterating-over-lists-and-tuples",
+    "description": "A public itinerary should label its first stored plan as Day 1 rather than Day 0. Which loop obtains number and plan together?",
+    "explanation": "`enumerate` supplies both values, and `start=1` creates human-friendly numbering.",
+    "options": [
+      "`for day, plan in enumerate(itinerary, start=1):`",
+      "`for day, plan in itinerary:`",
+      "`for day in range(itinerary):`",
+      "`for plan in enumerate(1, itinerary):`, because the visible starting value must be supplied before the collection"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "iterating-over-lists-and-tuples",
+    "description": "A route is a list of `(name, latitude, longitude)` tuples. Which loop header gives readable variables on every pass?",
+    "explanation": "The loop header unpacks each three-value tuple into three named variables.",
+    "options": [
+      "`for stop in name, latitude, longitude:`, which iterates across the three variable names before reading the route",
+      "`for name, latitude, longitude in route:`",
+      "`for route in name:`",
+      "`for name in latitude in longitude:`"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "iterating-over-lists-and-tuples",
+    "description": "`names` contains four students, while `seats` contains three seat numbers. A loop uses `zip(names, seats)`. How many pairs will it process?",
+    "explanation": "`zip` ends as soon as the shorter three-item list is exhausted.",
+    "options": [
+      "`4`, with the last seat stored as `None`",
+      "`7`, because both lengths are added",
+      "`0`, because `zip` rejects unequal lengths before producing any paired values",
+      "`3`, because `zip` stops with the shorter input"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "hard",
+    "bloom": "analyze",
+    "subtopic": "iterating-over-lists-and-tuples",
+    "description": "An itinerary stores tuples such as `(\"Day 1\", \"Museum\")`. The briefing needs a sequence number plus both fields. Which loop header combines `enumerate` and tuple unpacking correctly?",
+    "explanation": "`enumerate` yields a number and one tuple, whose two elements are unpacked by the nested target.",
+    "options": [
+      "`for number, day, plan in enumerate(itinerary, start=1):`, because `enumerate` expands each inner tuple into separate loop variables automatically",
+      "`for (number, day), plan in itinerary:`",
+      "`for number, (day, plan) in enumerate(itinerary, start=1):`",
+      "`for number in enumerate(day, plan):`\n\n---"
+    ],
+    "answer": "C"
+  }
+]

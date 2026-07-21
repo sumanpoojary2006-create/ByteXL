@@ -6,6 +6,22 @@ The sales director's newest request needs a genuinely different range, a 3-month
 
 **Definition:** A window frame, written with `ROWS BETWEEN ... AND ...`, controls exactly which rows a `window function` considers for each calculation, and changing it turns the same `SUM` or `AVG` from a full running total into a fixed-size moving calculation or a centered average.
 
+<!--
+IMAGE PROMPT  ->  generate as images/05_intro_running_totals_moving_averages_and_window_frames.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: The running total from earlier in this chapter, built with SUM(amount) OVER (PARTITION BY salesperson ORDER BY saledate), quietly relied on a default behavior Leela never had to name explicitly: it summed every row from the start of the partition up through.
+
+ON-IMAGE TEXT: show a short bold title "Running Totals Moving Averages And Window Frames" plus only these few labels, large and legible: Row, Where, Order. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for running totals moving averages and window frames](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_running_totals_moving_averages_and_window_frames.png)
+
 ## The Default Frame Behind a Running Total
 
 The `monthly_sales` `table` tracks one `row` per salesperson per month.
@@ -95,7 +111,7 @@ Expected output:
 - `ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW` names the frame directly: start from the first `row` available (`UNBOUNDED PRECEDING`) and end at the current `row` (`CURRENT ROW`).
 - This produces an identical result to the shorthand version, but writing it explicitly is what makes it possible to change the frame to something other than the default.
 
-![A window frame spanning from the first row to the current row](images/09_window_frame_start_to_current.png)
+![A window frame spanning from the first row to the current row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_window_frame_start_to_current.png)
 
 ## Building a Moving Average with a Custom Frame
 
@@ -124,7 +140,7 @@ Expected output:
 
 January's moving average is just 18000.00, its own value, since only zero `rows` precede it. February's is the average of January and February, two `rows`. From March onward, every `row`'s moving average is built from exactly three months: itself and the two immediately before it, sliding forward one month at a time as `sale_month` increases, which is exactly the smoothing effect a moving average is meant to produce.
 
-![A three-row moving average frame sliding across monthly rows](images/10_moving_average_three_row_frame.png)
+![A three-row moving average frame sliding across monthly rows](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_moving_average_three_row_frame.png)
 
 ## A Frame That Looks Both Backward and Forward
 

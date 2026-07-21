@@ -4,6 +4,10 @@ Rohit is going through this term's address updates. One student, Varun Nair, has
 
 The tool for that job is **`UPDATE`**, the statement that modifies values already sitting in a `table`, and Rohit is about to learn that of everything he has typed so far, this is the one that deserves the most care before he presses enter.
 
+**Definition:** The **`UPDATE` statement** changes values in existing table rows; its `SET` clause specifies the new values, and its `WHERE` clause limits which rows are changed.
+
+![Intro visual for update modifying existing rows safely](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_update_modifying_existing_rows_safely.png)
+
 ## Checking Before Changing
 
 The `students` `table` holds this data:
@@ -37,7 +41,7 @@ The OneCompiler exercise uses two files. `init.sql` creates and populates the st
 
 First, `init.sql` prepares the source `tables`:
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE students (
     student_id INTEGER PRIMARY KEY,
     full_name TEXT,
@@ -80,11 +84,12 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 
 Then the active query file checks the target `row`:
 
-```postgresql with=init.sql
-SELECT student_id, full_name, city
-FROM students
-WHERE student_id = 3;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafqcm" 
+ width="100%"
+></iframe>
 
 ## The Shape of UPDATE
 
@@ -107,21 +112,18 @@ Before this `UPDATE`, that `row` read Chennai. Confirming afterward with `SELECT
 - `SET` is the new part, and it says which `column` changes and what it changes to.
 - Everything else about the `row`, his name, his email, his join date, is left exactly as it was, because `UPDATE` only touches the `columns` named after `SET`.
 
-![Safe UPDATE habit: select the target row first, then update the same row with the same WHERE condition](images/03_update_select_first_same_where.png)
+![Safe UPDATE habit: select the target row first, then update the same row with the same WHERE condition](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_update_select_first_same_where.png)
 
 ### Hands-On Practice: Run the UPDATE
 
 Keep the same `init.sql` file and change only the active query file. It runs the `UPDATE` and then confirms the changed `row`:
 
-```postgresql with=init.sql
-UPDATE students
-SET city = 'Bengaluru'
-WHERE student_id = 3;
-
-SELECT student_id, full_name, city
-FROM students
-WHERE student_id = 3;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafqvc" 
+ width="100%"
+></iframe>
 
 ## Why WHERE Is Not Optional
 
@@ -158,20 +160,18 @@ Every single student now shows Bengaluru as their city, not just Varun. Rohit me
 - There is no confirmation prompt, no warning about how many `rows` are about to change, and no undo button once the statement finishes.
 - A `WHERE` clause that is too broad causes the exact same damage as no `WHERE` clause at all: writing `WHERE city = 'Chennai'` when the intent was `WHERE student_id = 3` would have updated every student living in Chennai, not the one student Rohit actually meant.
 
-![UPDATE without WHERE changing every row in the table](images/04_update_without_where_every_row.png)
+![UPDATE without WHERE changing every row in the table](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_update_without_where_every_row.png)
 
 ### Hands-On Practice: See the Danger
 
 Keep the same `init.sql` file and change only the active query file. This intentionally omits `WHERE` so you can see it overwrite every `row`:
 
-```postgresql with=init.sql
-UPDATE students
-SET city = 'Bengaluru';
-
-SELECT student_id, full_name, city
-FROM students
-ORDER BY student_id;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafr6b" 
+ width="100%"
+></iframe>
 
 ## Making the Safety Habit Concrete
 
@@ -195,19 +195,12 @@ The closing `SELECT` confirms Ishita now shows Chennai and nobody else's `row` m
 
 Keep the same `init.sql` file and change only the active query file. The three statements check the `row`, change it, and confirm it in one go:
 
-```postgresql with=init.sql
-SELECT student_id, full_name, city
-FROM students
-WHERE student_id = 6;
-
-UPDATE students
-SET city = 'Chennai'
-WHERE student_id = 6;
-
-SELECT student_id, full_name, city
-FROM students
-WHERE student_id = 6;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafrnq" 
+ width="100%"
+></iframe>
 
 ## Updating More Than One Column at Once
 
@@ -229,15 +222,12 @@ Yusuf Khan's city and phone both update in one pass, and both changes are covere
 
 Keep the same `init.sql` file and change only the active query file:
 
-```postgresql with=init.sql
-UPDATE students
-SET city = 'Mumbai', phone = '9845099999'
-WHERE student_id = 5;
-
-SELECT student_id, full_name, city, phone
-FROM students
-WHERE student_id = 5;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafs5j" 
+ width="100%"
+></iframe>
 
 ## UPDATE at a Glance
 
@@ -272,9 +262,12 @@ WHERE student_id = 5;
 
 Siddharth Rao has moved from Hyderabad to Pune. Check which `row` this touches first, then update it, then confirm.
 
-```postgresql with=init.sql
--- Check, update, then confirm below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafsey" 
+ width="100%"
+></iframe>
 
 A working answer runs `SELECT student_id, full_name, city FROM students WHERE student_id = 4;`, then `UPDATE students SET city = 'Pune' WHERE student_id = 4;`, then the same `SELECT` again. Before:
 

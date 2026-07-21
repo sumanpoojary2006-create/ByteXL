@@ -4,6 +4,10 @@ Opening a `connection` has a real cost, covered when connecting from application
 
 Opening and closing a brand new `connection` for every single one of those requests would mean paying that `connection` cost constantly, and it would also risk overwhelming the `database` server, which can only sustain a limited number of simultaneous `connections`. **`Connection pooling`** solves both problems: instead of opening a fresh `connection` per request, an application keeps a pool of already-open `connections` ready to be borrowed, used, and returned.
 
+**Definition:** `Connection pooling` reuses a fixed set of already-open `connections` across many requests instead of opening and closing one per request, avoiding both the repeated `connection` cost and the risk of exhausting the `database`'s shared `max_connections` limit, with careful attention needed to ensure a `connection` is always returned to the pool in a clean, `transaction`-free state.
+
+![Intro visual for connection pooling](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_connection_pooling.png)
+
 ## Why a Database Cannot Handle Unlimited Connections
 
 Every open `connection` consumes real memory and resources on the `database` server itself, which is why PostgreSQL enforces a hard limit on how many `connections` it will accept at once.
@@ -23,7 +27,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     status TEXT
@@ -34,11 +38,12 @@ INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'in_tr
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-SHOW max_connections;
-
-SELECT count(*) AS current_connections FROM pg_stat_activity;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakkkp" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
@@ -49,20 +54,12 @@ Expected observation: PostgreSQL returns live server metadata. Values differ acr
 
 A `connection pool` maintains a fixed, modest number of already-open `connections`, and application code borrows one from the pool when it needs to run a `query`, then returns it when finished, rather than closing it.
 
-```postgresql with=init.sql
--- Conceptually, application code using a pool looks like this pseudocode,
--- shown alongside the SQL it wraps:
--- connection = pool.borrow_connection()
--- try:
-BEGIN;
-UPDATE shipments SET status = 'delivered' WHERE shipment_id = 1;
-SELECT * FROM shipments;
-COMMIT;
--- finally:
---     pool.return_connection(connection)
--- The connection itself was never closed; it goes back into the pool,
--- already open and authenticated, ready for the next request to borrow it.
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakkwf" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -79,19 +76,18 @@ The pool typically maintains a fixed size, say 20 `connections`, regardless of h
 
 2. Each individual `query` has to finish quickly and return its `connection` promptly for that to hold.
 
-![A connection pool lets requests borrow, use, and return already-open connections](images/07_connection_pool_borrow_use_return.png)
+![A connection pool lets requests borrow, use, and return already-open connections](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_connection_pool_borrow_use_return.png)
 
 ## Why a Connection Must Be Returned in a Clean State
 
 A returned `connection` has to be ready for a completely different, unrelated request to borrow next, which means it must never be handed back mid-`transaction` or holding onto leftover session state from whatever the previous request was doing.
 
-```postgresql with=init.sql
-BEGIN;
-UPDATE shipments SET status = 'cancelled' WHERE shipment_id = 2;
--- Imagine the connection being returned to the pool right here, before COMMIT or ROLLBACK.
-
-SELECT pid, state FROM pg_stat_activity WHERE state = 'idle in transaction';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakm7h" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
@@ -99,23 +95,27 @@ The "idle in `transaction`" danger covered in the previous lesson becomes especi
 
 This makes the bug hard to trace, because the request seeing the strange behavior is not the request that caused it.
 
-```postgresql with=init.sql
-ROLLBACK;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakmh3" 
+ width="100%"
+></iframe>
 
 Expected result: `ROLLBACK` discards shipment 2's uncommitted `'cancelled'` update and releases its `lock`s, returning the `connection` to a clean state, exactly what must happen before that `connection` goes back into the pool for another request to borrow.
 
-![A pooled connection must be returned clean, with no open transaction or leftover locks](images/08_return_pooled_connection_clean.png)
+![A pooled connection must be returned clean, with no open transaction or leftover locks](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_return_pooled_connection_clean.png)
 
 ## Pool Size Is a Deliberate Trade-off
 
 A pool that is too small forces requests to wait for a `connection` to become available, adding latency under load. A pool that is too large risks exhausting the `database`'s `max_connections` limit, especially once multiple application instances each maintain their own pool against the same `database` server.
 
-```postgresql with=init.sql
-SELECT usename, count(*) AS connections_per_user
-FROM pg_stat_activity
-GROUP BY usename;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakmw5" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
@@ -158,9 +158,12 @@ In a real production setup, this kind of `query`, grouping open `connections` by
 
 Check the current `max_connections` setting and the current number of active `connections`, then write a comment estimating what percentage of the limit is currently in use.
 
-```postgresql with=init.sql
--- Write your queries and comment below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakn75" 
+ width="100%"
+></iframe>
 
 Running `SHOW max_connections;` alongside `SELECT count(*) FROM pg_stat_activity;` gives both numbers needed to compute this percentage directly; in a real production system, alerting is typically configured once this percentage crosses a threshold like 80%, giving operators time to investigate before `connections` actually start being refused.
 

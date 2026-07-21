@@ -4,6 +4,10 @@ Asha orders dinner through a food delivery app on a Tuesday evening, a small, un
 
 Most people, Asha included, never think about what happens to their data once the food arrives. Following her one order from start to finish reveals a pattern every piece of data in every `database` eventually goes through, called its **lifecycle**.
 
+**Definition:** Every piece of data in a `database` moves through the same rough arc: it is created once, read far more often than it is changed, updated as circumstances shift, and eventually deleted or set aside once it stops earning its place among the actively used records.
+
+![Intro visual for the lifecycle of data from creation to query](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_intro_the_lifecycle_of_data_from_creation_to_query_to.png)
+
 ## Creation: The Order Is Born
 
 The moment Asha taps "confirm order," a new record is created, holding:
@@ -43,7 +47,7 @@ Eventually, though, very old orders are either deleted outright or moved into lo
 
 Which choice a system makes, delete outright or archive quietly, depends on why the data might still matter later: a bank keeps `transaction` records for years because law and trust demand it, while a temporary discount code might be deleted the day it expires because nothing will ever need to look at it again.
 
-![One order record moving through creation, many reads, status updates, and final archival or deletion](images/15_order_data_lifecycle.png)
+![One order record moving through creation, many reads, status updates, and final archival or deletion](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/15_order_data_lifecycle.png)
 
 ## The Lifecycle at a Glance
 
@@ -85,7 +89,7 @@ This same shape, created once, queried constantly, updated occasionally, and eve
 
 A bank `transaction` is created once, queried whenever a statement is generated, essentially never updated once it is confirmed, and retained for years before any thought of deletion. Recognizing which stage a given piece of data is usually sitting in helps explain why some systems are built to answer reads blazingly fast, while others are built to guard every single update far more carefully.
 
-![Dinner orders, student records, and bank transactions sharing a lifecycle across different timescales](images/16_lifecycle_across_timescales.png)
+![Dinner orders, student records, and bank transactions sharing a lifecycle across different timescales](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/16_lifecycle_across_timescales.png)
 
 ## Your Turn: Trace the Lifecycle
 

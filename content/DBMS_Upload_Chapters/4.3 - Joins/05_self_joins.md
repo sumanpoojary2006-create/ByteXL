@@ -4,6 +4,10 @@ The delivery startup runs a mentorship program for new riders: every experienced
 
 There is only one `table` involved, `riders`, but the report still needs two names sitting side by side on one line, which is exactly the shape a `join` produces. The twist is that both sides of this `join` come from the same `table`. That is a **self `join`**: a `table` joined to a copy of itself.
 
+**Definition:** A self `join` is not a different kind of `join` mechanically, it is the same `JOIN`, `LEFT JOIN`, or any other `join` type covered so far, applied to one `table` referenced twice under two different aliases, which is exactly what a hierarchy or a peer relationship stored in a single `table` needs.
+
+![Intro visual for self joins](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_self_joins.png)
+
 ## Why One Table Needs to Act Like Two
 
 The `riders` `table` stores every rider once, with a `mentor_id` `column` that is `NULL` for riders who have no assigned mentor.
@@ -27,7 +31,7 @@ The OneCompiler activity keeps setup and practice separate. `init.sql` creates a
 
 ## Hands-On Setup: Prepare the Data
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE riders (
     rider_id INTEGER PRIMARY KEY,
     rider_name TEXT,
@@ -45,9 +49,12 @@ INSERT INTO riders (rider_id, rider_name, mentor_id) VALUES
 
 Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
 
-```postgresql with=init.sql
-SELECT * FROM riders;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahqv4" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -66,11 +73,12 @@ Reading this `table` `row` by `row` is already possible, since a human can trace
 
 The trick to a self `join` is giving the same `table` two different names, or aliases, so the `join` condition can tell them apart.
 
-```postgresql with=init.sql
-SELECT mentee.rider_name AS rider, mentor.rider_name AS mentor
-FROM riders mentee
-JOIN riders mentor ON mentee.mentor_id = mentor.rider_id;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahr6w" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -88,19 +96,20 @@ Expected output:
 
 The `join` condition, `mentee.mentor_id = mentor.rider_id`, matches each mentee's `mentor_id` against the mentor's own `rider_id`, exactly the same logic used to `join` two genuinely different `tables` in earlier lessons. The `database` has no trouble treating one physical `table` as two separate references, as long as the aliases keep them distinguishable in the `query`.
 
-![A self join using two aliases so one riders table can act as mentee and mentor](images/09_self_join_two_alias_roles.png)
+![A self join using two aliases so one riders table can act as mentee and mentor](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_self_join_two_alias_roles.png)
 
 ## Including Riders With No Mentor
 
 An `INNER JOIN` self `join`, like the one above, drops Suresh and Arjun entirely, since their `mentor_id` is `NULL` and finds no match. If the report needs to show every rider, mentored or not, a `LEFT JOIN` self `join` solves it the same way it solved the unmatched-`row` problem for two different `tables`.
 
-![LEFT SELF JOIN keeping riders even when their mentor value is NULL](images/10_left_self_join_keeps_no_mentor.png)
+![LEFT SELF JOIN keeping riders even when their mentor value is NULL](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_left_self_join_keeps_no_mentor.png)
 
-```postgresql with=init.sql
-SELECT mentee.rider_name AS rider, mentor.rider_name AS mentor
-FROM riders mentee
-LEFT JOIN riders mentor ON mentee.mentor_id = mentor.rider_id;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahrgx" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -154,11 +163,12 @@ Now all 6 riders appear, and Suresh and Arjun show `NULL` in the `mentor` `colum
 
 A self `join` can also answer a different kind of question: which riders currently mentor someone, listed once per rider regardless of how many mentees they have?
 
-```postgresql with=init.sql
-SELECT DISTINCT mentor.rider_name AS is_a_mentor
-FROM riders mentee
-JOIN riders mentor ON mentee.mentor_id = mentor.rider_id;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahrtv" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -208,9 +218,12 @@ Expected output:
 
 Zoya wants to know which riders share the same mentor as Farhan Iqbal, not including Farhan himself. Write a `query` against the `riders` `table` above that returns the names of Farhan's mentorship-siblings.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahs6a" 
+ width="100%"
+></iframe>
 
 If your `query` `joins` `riders` to itself on matching `mentor_id` values, filtering for `rows` where one side's name is 'Farhan Iqbal' and excluding that same name from the result, it returns Deepa Krishnan, since both she and Farhan are mentored by Suresh Pillai.
 

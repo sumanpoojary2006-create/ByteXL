@@ -6,6 +6,22 @@ This helps teams respond before users are affected, instead of diagnosing the pr
 
 **Definition:** Continuous monitoring of `connection` usage, `table` bloat, cache hit ratio, and long-running or blocked `queries` turns the diagnostic tools used reactively throughout this course into an early-warning system, catching degrading health before it becomes a full outage, rather than only after users are already affected.
 
+<!--
+IMAGE PROMPT  ->  generate as images/04_intro_database_monitoring.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Every diagnostic tool used across this course, EXPLAIN ANALYZE, pgstatactivity, pgrelationsize, has been reached for reactively, after a specific query was already suspected of being slow. Database monitoring flips that around: continuously watching key.
+
+ON-IMAGE TEXT: show a short bold title "Database Monitoring" plus only these few labels, large and legible: Table, Key, Query. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for database monitoring](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_database_monitoring.png)
+
 ## Watching Connection Usage Over Time
 
 The `connection pooling` lesson introduced checking current `connections` against `max_connections` as a one-time check; monitoring turns that same check into something tracked continuously.
@@ -90,7 +106,7 @@ A healthy, well-provisioned `database` typically sustains a cache hit ratio well
 
 A ratio that drops noticeably, tracked over time rather than as a single snapshot, can signal that the `database`'s available memory is no longer large enough for its actual working data set, a capacity signal worth acting on before it manifests as widespread `query` slowdowns.
 
-![Database monitoring continuously tracks connections, dead tuples, cache hit ratio, and long queries](images/07_monitoring_database_health_metrics.png)
+![Database monitoring continuously tracks connections, dead tuples, cache hit ratio, and long queries](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_monitoring_database_health_metrics.png)
 
 ## Watching for Long-Running and Blocked Queries
 
@@ -108,7 +124,7 @@ Expected observation: PostgreSQL returns live server metadata. Values differ acr
 - `wait_event_type` and `wait_event` reveal specifically what a `query` is stuck waiting on, if anything, such as a `lock` held by another `transaction`, exactly the kind of contention the concurrency control unit covered.
 - A monitoring system alerting on `queries` that exceed a reasonable running-time threshold, tuned to what "reasonable" actually means for a given application, catches runaway or blocked `queries` early, rather than letting them silently degrade the whole system's responsiveness.
 
-![Monitoring alerts can catch blocked or long-running queries before users are affected](images/08_monitoring_blocked_query_alert.png)
+![Monitoring alerts can catch blocked or long-running queries before users are affected](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_monitoring_blocked_query_alert.png)
 
 ## Database Monitoring at a Glance
 

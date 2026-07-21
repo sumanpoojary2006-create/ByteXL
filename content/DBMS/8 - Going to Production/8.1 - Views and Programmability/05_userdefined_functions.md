@@ -6,6 +6,22 @@ Unlike marking a shipment delivered, this is not a "run these statements togethe
 
 **Definition:** A user-defined `function` computes and returns a value, or a set of `rows`, and is called from within a `query` rather than as a standalone action, always running as part of the caller's own `transaction` rather than managing one of its own, which is the defining difference from the `procedures` covered in the previous lesson.
 
+<!--
+IMAGE PROMPT  ->  generate as images/05_intro_userdefined_functions.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Devraj's shipping cost calculation has grown complicated: a base rate depending on distance, a surcharge for oversized packages, and a discount for high-volume drivers, logic currently copy-pasted, slightly differently, into three different reports. Unlike.
+
+ON-IMAGE TEXT: show a short bold title "Userdefined Functions" plus only these few labels, large and legible: Select, Userdefined, Functions. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for userdefined functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_userdefined_functions.png)
+
 ## Creating a Simple Function
 
 The `shipments` `table` holds the raw data a shipping-cost calculation depends on.
@@ -101,7 +117,7 @@ Expected output:
 - `calculate_shipping_cost(distance_km, is_oversized)` runs once per `row`, taking that `row`'s own `column` values as arguments, and its result appears as an ordinary computed `column`, just like any built-in `function` would.
 - This is the behavior that makes `functions` so useful for exactly Devraj's problem: the shipping-cost logic now lives in one place, and every report that needs it simply calls the `function` rather than re-deriving the formula.
 
-![A user-defined function takes inputs and returns a value inside a SELECT](images/09_user_defined_function_inputs_to_value.png)
+![A user-defined function takes inputs and returns a value inside a SELECT](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_user_defined_function_inputs_to_value.png)
 
 ## Functions Cannot Manage Their Own Transactions
 
@@ -136,7 +152,7 @@ This restriction exists precisely because a `function` is meant to be called fro
 
 This is the clearest practical distinction between a `function` and the `procedure` from the previous lesson: a `function` computes a value inside a larger statement, a `procedure` performs a standalone, `transaction`-managing action.
 
-![Functions return values inside SELECT, while procedures perform actions through CALL](images/10_function_vs_procedure_select_vs_call.png)
+![Functions return values inside SELECT, while procedures perform actions through CALL](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_function_vs_procedure_select_vs_call.png)
 
 ## Functions Can Also Return a Set of Rows
 

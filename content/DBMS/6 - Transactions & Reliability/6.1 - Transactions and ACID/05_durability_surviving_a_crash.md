@@ -6,6 +6,22 @@ The fourth letter in ACID, **durability**, is the guarantee that once a `transac
 
 **Definition:** Durability closes the loop that atomicity, consistency, and isolation open: once a `transaction` commits, its result is guaranteed permanent, surviving any crash, because the `database` records it somewhere durable before ever reporting success.
 
+<!--
+IMAGE PROMPT  ->  generate as images/05_intro_durability_surviving_a_crash.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Rahul's transfer feature now groups statements atomically, keeps the data consistent, and isolates concurrent transactions from each other's in-progress work. One question remains, and it is the one that matters most the instant something actually goes wrong.
+
+ON-IMAGE TEXT: show a short bold title "Durability Surviving A Crash" plus only these few labels, large and legible: Transaction, Commit, Durability. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for durability surviving a crash](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_durability_surviving_a_crash.png)
+
 ## COMMIT Means Permanent, Not Just Visible
 
 The `accounts` `table` is the same one used throughout this chapter.
@@ -59,7 +75,7 @@ Expected output:
 
 Once `COMMIT` finishes here, durability guarantees this new balance is not sitting only in server memory, waiting to disappear the moment power is lost. The `database` has already made sure this change is recorded somewhere that survives a crash, before it ever reported success back to Rahul's application.
 
-![COMMIT writing a transaction result to durable storage so it survives a crash](images/09_durability_commit_survives_crash.png)
+![COMMIT writing a transaction result to durable storage so it survives a crash](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_durability_commit_survives_crash.png)
 
 This is a meaningfully different promise from isolation:
 
@@ -131,7 +147,7 @@ Durability only ever protects a `transaction` once it has fully committed. A `tr
   </tbody>
 </table>
 
-![The four ACID properties supporting a safe transaction](images/10_acid_four_properties_summary.png)
+![The four ACID properties supporting a safe transaction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_acid_four_properties_summary.png)
 
 ## Your Turn
 

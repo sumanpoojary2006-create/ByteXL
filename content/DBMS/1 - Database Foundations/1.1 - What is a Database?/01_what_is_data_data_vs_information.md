@@ -13,7 +13,7 @@ Nobody looking at the bare number can say.
 
 That difference is the whole idea behind this lesson. The raw numbers on the form are **data**, and the organised, meaningful summary on the screen is **information**. Data is the raw material; information is what you get once that raw material is structured, labelled, and connected to context that lets a person or a program actually use it.
 
-![Raw marks becoming meaningful subject results after a database organizes them](images/01_data_to_information.png)
+![Raw marks becoming meaningful subject results after a database organizes them](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_data_to_information.png)
 
 **Definition:** Data is the raw fact; information is that fact once it has been organised, labelled, and connected to something a person can use.
 
@@ -60,7 +60,7 @@ Think about what Priya's office would look like without that structure. Every ti
 
 A well-organised `database`, by contrast, keeps roll number, name, subject, and marks tied together as structured data, so producing the information "Ananya scored 85 in Physics" is a matter of asking a precise question and getting an instant, correct answer.
 
-![Priya comparing a slow search through paper forms with an instant database query](images/02_manual_files_vs_database_query.png)
+![Priya comparing a slow search through paper forms with an instant database query](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_manual_files_vs_database_query.png)
 
 ## Data vs. Information at a Glance
 

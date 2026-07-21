@@ -4,7 +4,7 @@ Neha is checking which courses are worth the heavier workload before she registe
 
 Both questions lean on the same family of tools, the **comparison operators**, which let `WHERE` ask "greater than," "less than," or "not equal to," instead of only "equal to."
 
-![A credits greater than 3 comparison keeping only 4-credit course cards](images/03_comparison_credits_greater_than.png)
+![A credits greater than 3 comparison keeping only 4-credit course cards](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_comparison_credits_greater_than.png)
 
 **Definition:** Comparison operators let `WHERE` reach past plain equality into ordering: greater than, less than, and their inclusive cousins, all working across numbers, dates, and text.
 
@@ -82,7 +82,7 @@ Expected output:
 - These are the only two courses starting before 5 February.
 - Because `starts_on` is typed `DATE`, PostgreSQL compares calendar order rather than treating the dates as arbitrary text.
 
-![A date comparison timeline keeping courses before the 2025-02-05 cutoff](images/04_date_comparison_timeline.png)
+![A date comparison timeline keeping courses before the 2025-02-05 cutoff](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_date_comparison_timeline.png)
 
 Not-equal-to has two spellings that mean the same thing:
 

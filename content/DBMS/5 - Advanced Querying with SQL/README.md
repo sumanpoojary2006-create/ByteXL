@@ -4,9 +4,9 @@
 
 Goal of this unit: Solve sophisticated data retrieval problems using advanced SQL features.
 
-![A CTE names a temporary result for a clearer multi-step query](images/01_cte_named_result_overview.png)
+![A CTE names a temporary result for a clearer multi-step query](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_cte_named_result_overview.png)
 
-![A window function keeps each row while adding an analytic total](images/02_window_function_overview.png)
+![A window function keeps each row while adding an analytic total](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_window_function_overview.png)
 
 ## Chapters and Topics (teach in order)
 
@@ -99,24 +99,5 @@ Goal of this unit: Solve sophisticated data retrieval problems using advanced SQ
 </table>
 
 Each lesson follows the house style: a standardized **Introduction** heading (no page-title H1), a story-led flow with real-world examples under natural headings, runnable SQL examples embedded via OneCompiler, and a closing **Conclusion**. No emojis, no em dashes, no forward or backward references to other units or chapters.
-
-## Mini Project
-
-Reading material, worked through after the chapters above.
-
-<table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
-  <thead>
-    <tr>
-      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Project</th>
-      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">File</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr style="background-color: #ffffff;">
-      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Employee Hierarchy and Leaderboard</td>
-      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><a href="employee_hierarchy_and_leaderboard.md">employee_hierarchy_and_leaderboard.md</a></td>
-    </tr>
-  </tbody>
-</table>
 
 _Status: all 12 lessons authored and reviewed._

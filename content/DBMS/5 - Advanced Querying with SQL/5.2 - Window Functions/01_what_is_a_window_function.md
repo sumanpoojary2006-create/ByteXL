@@ -7,6 +7,22 @@
 
 **Definition:** A **window function** in SQL **performs a calculation across a specific set of table rows that are related to the current row, without collapsing the result set into a single row.** The related rows form a *window*, and SQL returns the calculated value alongside each original row.
 
+<!--
+IMAGE PROMPT  ->  generate as images/01_intro_what_is_a_window_function.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: - Leela tracks performance for a small sales team, and the sales table holds one row per sale, with the salesperson's name and the amount. - GROUP BY and SUM can easily tell her each salesperson's total, but the moment she groups, she loses the individual.
+
+ON-IMAGE TEXT: show a short bold title "What Is A Window Function" plus only these few labels, large and legible: Table, Row, Group. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for what is a window function](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_what_is_a_window_function.png)
+
 ## The Problem GROUP BY Cannot Solve Alone
 
 The `sales` `table` records individual sales made by three team members.
@@ -125,7 +141,7 @@ Expected output:
 
 Nikhil's three `rows` all show 29700.00, his total across all three sales, sitting right next to each individual sale amount. The `SUM` here works exactly like the `aggregate function` it already is; the difference is entirely in `OVER (...)`, which tells the `database` to compute the aggregate across a related group of `rows` without collapsing the result down to one `row` per group.
 
-![A window function adding a total beside each row while keeping the original sale rows](images/01_window_function_keeps_rows_with_total.png)
+![A window function adding a total beside each row while keeping the original sale rows](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_window_function_keeps_rows_with_total.png)
 
 ## What OVER Actually Does
 
@@ -153,7 +169,7 @@ Expected output:
 
 Leaving the parentheses after `OVER` completely empty means the window is the entire result set, with no partitioning at all, so every `row` shows the same company-wide total, 61700.00, alongside its own individual sale amount. This is the simplest possible window: one big window covering everything.
 
-![GROUP BY collapsing rows while OVER keeps detail rows and adds a calculation](images/02_group_by_collapses_over_keeps_rows.png)
+![GROUP BY collapsing rows while OVER keeps detail rows and adds a calculation](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_group_by_collapses_over_keeps_rows.png)
 
 ## Window Functions Run After Grouping and Filtering
 

@@ -5,6 +5,10 @@
 - The reason is about timing: `WHERE` filters individual `rows` before grouping happens, but Priya's condition depends on a sum that only exists after grouping happens.
 - SQL has a separate clause for exactly this situation, **`HAVING`**, which filters groups after they have already been summarized.
 
+**Definition:** `HAVING` fills the exact gap `WHERE` cannot: filtering on values that only exist after grouping and aggregation have already run.
+
+![Intro visual for filtering groups](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_filtering_groups.png)
+
 ## Why WHERE Cannot Filter on an Aggregate
 
 The `orders` `table` is the same one used for grouping.
@@ -30,7 +34,7 @@ The OneCompiler activity keeps setup and practice separate. `init.sql` creates a
 
 ## Hands-On Setup: Prepare the Data
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
     customer_name TEXT,
@@ -59,12 +63,12 @@ INSERT INTO orders (order_id, customer_name, category, amount, order_date) VALUE
 
 Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
 
-```postgresql with=init.sql
-SELECT customer_name, SUM(amount) AS total_spent
-FROM orders
-GROUP BY customer_name
-HAVING SUM(amount) > 1000;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajp7s" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -110,19 +114,18 @@ This groups every order by `customer_name`, computes each customer's total, and 
 
 Ishita Rao, Vivek Menon, and Sonal Deshpande survive the filter; Aman Gupta, whose total falls under 1000, is dropped from the result entirely, group and all.
 
-![HAVING filtering summarized customer total groups after aggregation](images/05_having_filters_group_totals.png)
+![HAVING filtering summarized customer total groups after aggregation](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_having_filters_group_totals.png)
 
 ## Combining WHERE and HAVING in the Same Query
 
 `WHERE` and `HAVING` are not interchangeable, but they work well together, since each one filters at a different stage. `WHERE` can narrow down the `rows` before grouping even happens, which is often cheaper than grouping everything first and discarding groups afterward.
 
-```postgresql with=init.sql
-SELECT customer_name, SUM(amount) AS total_spent
-FROM orders
-WHERE category != 'Children'
-GROUP BY customer_name
-HAVING SUM(amount) > 500;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajpgx" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -142,18 +145,18 @@ This `query` runs in three clean stages:
 
 The two clauses divide the work cleanly: `WHERE` picks which `rows` count, `HAVING` picks which resulting groups are worth keeping.
 
-![WHERE filtering individual rows before GROUP BY and HAVING filtering groups after aggregation](images/06_where_vs_having_timing.png)
+![WHERE filtering individual rows before GROUP BY and HAVING filtering groups after aggregation](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_where_vs_having_timing.png)
 
 ## Filtering on Count Instead of Sum
 
 `HAVING` works with any `aggregate function`, not just `SUM`. A common use is filtering on how many `rows` landed in a group.
 
-```postgresql with=init.sql
-SELECT customer_name, COUNT(*) AS orders_placed
-FROM orders
-GROUP BY customer_name
-HAVING COUNT(*) >= 3;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajpt8" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -191,9 +194,12 @@ This surfaces only the customers who placed 3 or more orders, which is a differe
 
 The founders want to see only the product categories that generated less than 1000 in total revenue, so the team can decide whether to keep stocking them. Write a `query` against the `orders` `table` above that returns `category` and `total_revenue`, showing only categories under that threshold.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajq3u" 
+ width="100%"
+></iframe>
 
 If your `query` groups by `category` with `SUM(amount) AS total_revenue` and filters with `HAVING SUM(amount) < 1000`, only the Children's category appears, with a combined total of 385.00.
 

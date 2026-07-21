@@ -8,7 +8,9 @@ What Meenal is doing has a name, a **`schema` design review**, reading a propose
 
 The draft in front of her is a single `table` called `booking`, and by the time she finishes her second pass, she has found six separate problems in it, each one a mistake worth recognising on sight, because each one shows up again and again across real `schemas` built by developers in a hurry.
 
-![Schema review checklist catching key, naming, money, timestamp, and duplicate-data problems before launch](images/11_schema_review_checklist.png)
+![Schema review checklist catching key, naming, money, timestamp, and duplicate-data problems before launch](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_schema_review_checklist.png)
+
+**Definition:** A **schema design review** is a structured examination of tables, keys, relationships, constraints, data types, and naming choices to find integrity and maintainability problems before the schema is deployed.
 
 ## The Flawed Draft
 
@@ -97,7 +99,7 @@ Because this identifier is meant to be public-facing, an unguessable identifier,
 
 Here is the flawed draft as runnable DDL, exactly as Meenal's colleague first proposed it, followed by the corrected two-table design so the difference is visible in code, not just prose.
 
-```postgresql file=flawed.sql
+```postgresql
 CREATE TABLE booking (
     StudentName TEXT,
     StudentEmail TEXT,
@@ -116,7 +118,7 @@ Running `SELECT * FROM booking;` against this table shows every one of Meenal's 
 
 The corrected design splits students from bookings and fixes every naming and type issue Meenal flagged:
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE students (
     student_id  INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     full_name   TEXT NOT NULL,
@@ -142,12 +144,12 @@ INSERT INTO bookings (student_id, event_title, event_date, ticket_price, seat_no
     (1, 'Cultural Night', '2026-08-15', 149.00, 'B04');
 ```
 
-```postgresql with=init.sql
-SELECT b.booking_id, s.full_name, b.event_title, b.ticket_price
-FROM bookings b
-JOIN students s ON b.student_id = s.student_id
-ORDER BY b.booking_id;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaj8j6" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -162,7 +164,7 @@ Naina's name and email now exist exactly once, in `students`, no matter how many
 
 After Meenal's notes, the single flawed `table` becomes two well-formed ones.
 
-![Corrected booking design splitting one crowded table into students and bookings linked by student_id](images/12_corrected_booking_schema_split.png)
+![Corrected booking design splitting one crowded table into students and bookings linked by student_id](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_corrected_booking_schema_split.png)
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
   <thead>

@@ -8,7 +8,9 @@ Every guarantee covered so far in this unit, atomicity, consistency, isolation, 
 
 A `database`'s `recovery` system exists to survive all of these, but each one demands a different response, which is why the first step in understanding `recovery` is naming the different kinds of **`database` failures** clearly.
 
-![Three database failure scopes: transaction failure, system crash, and media failure](images/01_database_failure_types_scope.png)
+![Three database failure scopes: transaction failure, system crash, and media failure](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_database_failure_types_scope.png)
+
+**Definition:** Transaction failures, system crashes, and media failures each affect a different scope of the system and call for a different defense, from a simple rollback to `write-ahead log` replay to physical redundancy, and recognizing which kind of failure is in play is the first step toward understanding how a `database` actually recovers from it.
 
 ## Transaction Failure: The Smallest Kind of Failure
 
@@ -28,7 +30,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
     balance NUMERIC(10, 2) CHECK (balance >= 0)
@@ -39,15 +41,12 @@ INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00);
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
--- This transaction would fail because the CHECK constraint
--- prevents the balance from becoming negative:
--- BEGIN;
--- UPDATE accounts SET balance = balance - 8000.00 WHERE account_id = 1;
--- COMMIT;
-
-SELECT balance FROM accounts WHERE account_id = 1;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaf6rw" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -63,11 +62,12 @@ This `transaction` fails because it would push the balance negative, violating t
 
 A system crash is more serious: the entire `database` server process, or the machine it runs on, stops unexpectedly, whether from a power outage, an operating system crash, or the `database` software itself crashing. Anything that existed only in memory at that instant, including any `transaction` that was mid-flight, is gone the moment power returns and the process restarts.
 
-```postgresql with=init.sql
-BEGIN;
-UPDATE accounts SET balance = balance - 1000.00 WHERE account_id = 1;
--- Imagine a total power loss right here, before COMMIT.
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaf73a" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL completes the transaction-control statements. Use the following explanation and any closing `SELECT` to verify whether the changes were committed or rolled back.
 
@@ -79,9 +79,12 @@ The harder question a system crash raises is about the other side of the coin: `
 
 The most serious kind of failure is a media failure: the physical storage itself, a hard drive or solid-state disk, is damaged or fails, potentially destroying data that had already been safely written and committed, not just data that was in memory. Unlike a system crash, where the data files themselves are intact and just need replaying up to date, a media failure can mean the data files are genuinely gone.
 
-```postgresql with=init.sql
-SELECT balance FROM accounts WHERE account_id = 1;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaf7cb" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -103,7 +106,7 @@ System crash `recovery` is handled by the `write-ahead log`, replaying and undoi
 
 Confusing these three, or assuming one mechanism covers all of them, is a common and costly mistake in real systems.
 
-![Different recovery tools for transaction failure, system crash, and media failure](images/02_failure_type_recovery_tool_mapping.png)
+![Different recovery tools for transaction failure, system crash, and media failure](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_failure_type_recovery_tool_mapping.png)
 
 ## Database Failures at a Glance
 
@@ -138,19 +141,23 @@ Confusing these three, or assuming one mechanism covers all of them, is a common
 
 Using the `accounts` `table` above, write a `transaction` that intentionally violates the `balance >= 0` `constraint`, confirming it is a `transaction` failure that leaves the rest of the `table` untouched, and add a comment distinguishing why this is different in scope from a full system crash.
 
-```postgresql with=init.sql
--- Write your transaction and comment below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaf7p6" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 
 A `transaction` like:
 
-```sql
-BEGIN;
-UPDATE accounts SET balance = -1.00 WHERE account_id = 1;
-COMMIT;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/mysql/44vkaf822" 
+ width="100%"
+></iframe>
 
 is rejected outright, and because it is a `transaction` failure, nothing beyond this one statement is affected, unlike a system crash, which would require the `database` to recover its state across every `transaction` that was in progress anywhere on the server at the moment of the crash.
 

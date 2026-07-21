@@ -11,7 +11,9 @@ Aisha thinks about it and realises the two answers are completely different:
 
 Both of these are true at once, and the relationship's cardinality alone never told Aisha that. What she has just worked out is called **participation `constraint`**, the question of whether every instance of an entity is required to take part in a relationship, or whether some instances are allowed to sit outside it.
 
-![Orders requiring customers while customers may validly have zero orders](images/07_total_vs_partial_participation.png)
+![Orders requiring customers while customers may validly have zero orders](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_total_vs_partial_participation.png)
+
+**Definition:** Participation `constraint` asks a question cardinality never answers on its own: whether every instance of an entity is required to take part in a relationship, called total participation, or whether some instances are free to exist outside it, called partial participation.
 
 ## Total Participation: Every Instance Must Take Part
 
@@ -127,7 +129,7 @@ Cardinality answers "how many," participation answers "is it required at all." A
 
 Knowing both facts about a relationship, its cardinality and its participation, is what lets a design faithfully capture every rule the real business actually follows, rather than only the easy half of it.
 
-![Cardinality answering how many while participation answers whether the relationship is required](images/08_cardinality_vs_participation_checker.png)
+![Cardinality answering how many while participation answers whether the relationship is required](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_cardinality_vs_participation_checker.png)
 
 ## Participation Constraints at a Glance
 

@@ -9,7 +9,9 @@ Two `columns` stop him cold:
 - He types "price" and pauses. Is that a whole number, since some products are priced in flat rupee amounts? Or does it need to hold fractions, since other products are priced at 499.50?
 - He types "product_name" and pauses again. How long can a name possibly get, and does the `column` need to reserve that much space for every `row`, even for a name that is four characters long? Arjun's manager, watching him hesitate, tells him what she wishes someone had told her early on: picking the right **data type** for a `column`, the exact kind and shape of value it is allowed to store, is not a formality to rush through. It is a decision a `schema` is hard to walk back once real `rows` depend on it.
 
-![Column cards being matched to suitable data types such as decimal, integer, boolean, and datetime](images/01_data_type_column_matching.png)
+![Column cards being matched to suitable data types such as decimal, integer, boolean, and datetime](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_data_type_column_matching.png)
+
+**Definition:** Choosing a data type is really choosing a promise: what a `column` will and will not accept, and how precisely it will hold on to the values it is given.
 
 ## Whole Numbers, Decimals, and the Trap of Storing Money as a Float
 
@@ -21,7 +23,7 @@ The fix is a type built specifically for exact decimal amounts, one that stores 
 
 Quantities belong in a plain whole-number type, since nobody orders 2.5 units of a product sold as a single item. The rule Arjun writes at the top of his notes is simple: whole counts get a whole-number type; money or anything needing exact fractional precision gets a fixed-precision decimal type, never an approximate floating type.
 
-![Float money calculation drifting while decimal calculation keeps the exact total](images/02_decimal_not_float_for_money.png)
+![Float money calculation drifting while decimal calculation keeps the exact total](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_decimal_not_float_for_money.png)
 
 ## Fixed-Length vs Variable-Length Text
 
@@ -55,7 +57,7 @@ A `column` meant to hold a two-letter country code but declared with room for an
 
 Putting these decisions together, Arjun's draft for the Products `table` starts to look like a considered design rather than a guess. Here is that design as real, runnable PostgreSQL, showing TEXT versus a length-capped VARCHAR, a whole-number INTEGER versus an exact NUMERIC for money, a DATE for the catalog date, and a BOOLEAN for availability, all in one `CREATE TABLE`.
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE products (
     product_id      INTEGER PRIMARY KEY,
     sku             CHAR(8) NOT NULL,
@@ -77,11 +79,12 @@ VALUES
 
 The active query checks that each type held on to exactly what it was given, no rounding on the price, no truncation on the name, and a clean true/false on availability:
 
-```postgresql with=init.sql
-SELECT sku, name, price, stock_quantity, is_available, added_on
-FROM products
-ORDER BY product_id;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaj6rf" 
+ width="100%"
+></iframe>
 
 Expected output:
 

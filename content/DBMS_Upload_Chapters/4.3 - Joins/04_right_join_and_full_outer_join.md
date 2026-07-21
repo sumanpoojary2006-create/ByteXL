@@ -4,6 +4,10 @@ Zoya now understands `LEFT JOIN` well enough to solve it a different way: instea
 
 There is also a third option, a **`FULL OUTER JOIN`**, for the rarer case where unmatched `rows` on both sides need to stay visible at the same time, not just one side or the other.
 
+**Definition:** `RIGHT JOIN` mirrors `LEFT JOIN` from the opposite `table`, and `FULL OUTER JOIN` protects both sides of a `join` at once, together completing the full family of ways two `tables` can be combined based on whether unmatched `rows` should be kept or dropped, and on which side.
+
+![Intro visual for right join and full outer join](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_right_join_and_full_outer_join.png)
+
 ## RIGHT JOIN as the Mirror of LEFT JOIN
 
 The same delivery `schema` applies here, with Neha Bhatt having no orders and Taco Town having no orders.
@@ -46,7 +50,7 @@ The OneCompiler activity keeps setup and practice separate. `init.sql` creates a
 
 ## Hands-On Setup: Prepare the Data
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE customers (
     customer_id INTEGER PRIMARY KEY,
     customer_name TEXT,
@@ -91,11 +95,12 @@ INSERT INTO orders (order_id, customer_id, restaurant_id, amount, order_date) VA
 
 Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
 
-```postgresql with=init.sql
-SELECT orders.order_id, restaurants.restaurant_name
-FROM orders
-RIGHT JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahggr" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -113,7 +118,7 @@ Every one of the 4 restaurants appears here, including Taco Town, whose `row` sh
 
 In practice, most SQL style guides, and most of the lessons in this course, prefer `LEFT JOIN` over `RIGHT JOIN` for readability, since it reads left to right in the same order the `tables` are typically listed, but both exist and behave as exact mirrors of each other.
 
-![RIGHT JOIN protecting every row from the right table even when no matching order exists](images/07_right_join_keeps_right_rows.png)
+![RIGHT JOIN protecting every row from the right table even when no matching order exists](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_right_join_keeps_right_rows.png)
 
 ## Rewriting a RIGHT JOIN as a LEFT JOIN
 
@@ -123,11 +128,12 @@ Because a `RIGHT JOIN` is only ever the mirror of a `LEFT JOIN`, any `query` usi
 
 2. Swap `RIGHT JOIN` for `LEFT JOIN`.
 
-```postgresql with=init.sql
-SELECT orders.order_id, restaurants.restaurant_name
-FROM restaurants
-LEFT JOIN orders ON restaurants.restaurant_id = orders.restaurant_id;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahgsj" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -147,11 +153,12 @@ This produces the identical result to the `RIGHT JOIN` version above. Since `LEF
 
 Neither `LEFT JOIN` nor `RIGHT JOIN` can show unmatched `rows` from both `customers` and `restaurants`-style `tables` in the same result; each one only protects a single side. `FULL OUTER JOIN` protects both sides simultaneously, keeping every `row` from either `table`, matched or not.
 
-```postgresql with=init.sql
-SELECT customers.customer_name, orders.order_id
-FROM customers
-FULL OUTER JOIN orders ON customers.customer_id = orders.customer_id;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahh3u" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -167,18 +174,18 @@ Expected output:
 
 This result includes Neha Bhatt with `NULL` order `columns`, exactly as a `LEFT JOIN` would, and it would also include any order `row` with no matching customer, exactly as a `RIGHT JOIN` would, though in this particular data every order does have a valid customer. A `FULL OUTER JOIN` is essentially a `LEFT JOIN` and a `RIGHT JOIN` combined into a single result, with no `row` from either side left out.
 
-![FULL OUTER JOIN keeping unmatched rows from both tables in one result](images/08_full_outer_join_keeps_both_sides.png)
+![FULL OUTER JOIN keeping unmatched rows from both tables in one result](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_full_outer_join_keeps_both_sides.png)
 
 ## Finding Rows Unmatched on Either Side
 
 The same `IS NULL` filtering pattern from the `LEFT JOIN` lesson still applies, just checking both sides now.
 
-```postgresql with=init.sql
-SELECT customers.customer_name, orders.order_id
-FROM customers
-FULL OUTER JOIN orders ON customers.customer_id = orders.customer_id
-WHERE customers.customer_id IS NULL OR orders.order_id IS NULL;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahhdd" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -226,9 +233,12 @@ This surfaces every `row` that is missing a partner on either side, in one `quer
 
 Zoya wants a single audit report showing every restaurant and every order, with no restaurant left out even if it has zero orders. Write that `query` against `restaurants` and `orders` above using whichever `join` type guarantees every restaurant appears, ordering the result by `restaurant_name`.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahhpg" 
+ width="100%"
+></iframe>
 
 If your `query` uses `restaurants LEFT JOIN orders ON restaurants.restaurant_id = orders.restaurant_id ORDER BY restaurants.restaurant_name`, all four restaurants appear, with Taco Town showing `NULL` order details since it has none.
 

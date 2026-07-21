@@ -4,6 +4,10 @@ Knowing that `rows` live in pages raises a natural next question: in what order 
 
 There are a few standard strategies for how a `table`'s file can be organized, and PostgreSQL's default, called a heap, is deliberately the simplest and least structured of them. Understanding what a heap is, and the alternatives to it, explains why some `queries` that seem like they should be fast are not, without an `index` in the picture at all.
 
+**Definition:** A heap places `rows` wherever space is free, with no ordering guarantee, sorted or clustered organization keeps `rows` physically near others with similar values in a chosen `column`, and hashed organization groups `rows` by a computed bucket for fast exact-match lookups, each with a different trade-off between write simplicity and read speed for a particular kind of `query`.
+
+![Intro visual for file organization heap sorted and hashed files](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_file_organization_heap_sorted_and_hashed_files.png)
+
 ## Heap Organization: Rows Land Wherever There Is Room
 
 By default, PostgreSQL stores a `table` as a heap, meaning new `rows` are simply placed wherever there happens to be free space, with no guaranteed ordering by any `column` at all.
@@ -25,7 +29,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
     customer_name TEXT,
@@ -41,9 +45,12 @@ INSERT INTO orders (order_id, customer_name, amount) VALUES
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-SELECT ctid, order_id, customer_name FROM orders;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajmq8" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -58,18 +65,18 @@ Even though these `rows` were inserted with `order_id` values 5, 2, 8, then 1, t
 
 This means a `query` that wants "every order with `order_id` between 1 and 4" cannot assume those `rows` sit near each other on disk. A heap offers no such guarantee, and finding them without help requires checking every page, a `full table scan`, the subject of the next lesson.
 
-![Heap organization places rows wherever there is space while clustered organization keeps nearby keys together](images/03_heap_vs_sorted_clustered_layout.png)
+![Heap organization places rows wherever there is space while clustered organization keeps nearby keys together](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_heap_vs_sorted_clustered_layout.png)
 
 ## Sorted (Clustered) Organization: Rows Kept in Physical Order
 
 An alternative organization keeps `rows` physically sorted by a chosen `column`, so that `rows` with nearby values in that `column` also sit near each other on disk. PostgreSQL does not maintain this automatically the way a heap works by default, but it can be requested explicitly with `CLUSTER`, which physically reorders an existing `table`'s `rows` to match an `index`'s order, as a one-time operation.
 
-```postgresql with=init.sql
-CREATE INDEX idx_orders_id ON orders (order_id);
-CLUSTER orders USING idx_orders_id;
-
-SELECT ctid, order_id, customer_name FROM orders;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajmzd" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL confirms that the index was created. The command does not return business rows; its effect is verified by rerunning the related query or `EXPLAIN` statement.
 
@@ -88,12 +95,12 @@ A third strategy, hashing, places each `row` into one of a fixed number of "buck
 
 The mechanism is directly visible using `hashtext`, one of PostgreSQL's built-in hash `functions`, mapping each name into one of eight buckets:
 
-```postgresql with=init.sql
-SELECT customer_name,
-       abs(hashtext(customer_name)) % 8 AS bucket
-FROM orders
-ORDER BY customer_name;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajna3" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -108,15 +115,14 @@ With the names listed alphabetically, the bucket numbers jump around with no pat
 
 PostgreSQL does not organize whole `tables` this way, but it offers `hash indexes`, which apply exactly this idea to speed up equality lookups specifically, at the cost of being unable to help at all with range `queries` like "greater than" or "between."
 
-![Hashed organization sends an exact-match key to one bucket but cannot preserve ranges](images/04_hash_bucket_exact_match_layout.png)
+![Hashed organization sends an exact-match key to one bucket but cannot preserve ranges](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_hash_bucket_exact_match_layout.png)
 
-```postgresql with=init.sql
-CREATE INDEX idx_orders_hash ON orders USING hash (customer_name);
-
-SELECT order_id, customer_name, amount
-FROM orders
-WHERE customer_name = 'Kavya Nair';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajnjt" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL confirms that the index was created. The command does not return business rows; its effect is verified by rerunning the related query or `EXPLAIN` statement.
 
@@ -159,9 +165,12 @@ This creates a hash-organized structure specifically for looking up an exact `cu
 
 Using the `idx_orders_id` `index` and clustered layout already set up earlier in this lesson, insert three more orders with `order_id` values 3, 6, and 9, check every `row`'s `ctid`, and note in a comment whether the new `rows` were interleaved into sorted position or simply placed wherever free space happened to be.
 
-```postgresql with=init.sql
--- Write your queries and comment below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajnuq" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

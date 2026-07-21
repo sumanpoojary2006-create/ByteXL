@@ -8,6 +8,22 @@ SQL provides different operators, **`IN`**, **`ANY`**, and **`ALL`**, specifical
 
 **Definition:** A subquery inside `WHERE` can compare against a single value directly, or against a whole list of values using `IN`, `NOT IN`, `ANY`, or `ALL`, each suited to a different shape of question, with `NOT IN` needing an explicit guard against `NULL` that `NOT EXISTS` does not.
 
+<!--
+IMAGE PROMPT  ->  generate as images/02_intro_subqueries_in_where.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Kabir's average-salary subquery worked because it returned exactly one value, a single number that could sit on the right side of a > comparison. His next question does not have that shape: "which employees work in the same department as Rajat Bhatia or Vikas.
+
+ON-IMAGE TEXT: show a short bold title "Subqueries In Where" plus only these few labels, large and legible: Row, Where, Subqueries. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for subqueries in where](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_subqueries_in_where.png)
+
 ## A Subquery Returning Exactly One Value
 
 The `employees` `table` from the previous lesson is the setup here again.
@@ -65,7 +81,7 @@ Expected output:
 
 `MAX(salary)` always returns exactly one number, so this comparison with a plain `=` works without any special handling: it finds whichever employee earns the single highest salary in the `table`.
 
-![WHERE subqueries using one scalar value or many values with IN](images/03_where_scalar_vs_in_list_subquery.png)
+![WHERE subqueries using one scalar value or many values with IN](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_where_scalar_vs_in_list_subquery.png)
 
 ## Using IN When a Subquery Returns Multiple Rows
 
@@ -131,7 +147,7 @@ Expected output:
 - `salary > ALL (subquery)` is stricter: it is only true if the outer `row`'s salary beats every single value the subquery returns.
 - Here, that means beating both 65000.00 and 58000.00, so this returns only employees earning more than the higher Sales salary, a shorter list than the `ANY` version.
 
-![ANY checking at least one returned value while ALL checks every returned value](images/04_any_vs_all_subquery_comparison.png)
+![ANY checking at least one returned value while ALL checks every returned value](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_any_vs_all_subquery_comparison.png)
 
 ## Why NOT IN Needs Extra Care
 

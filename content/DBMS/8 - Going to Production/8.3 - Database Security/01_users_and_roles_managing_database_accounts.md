@@ -6,6 +6,22 @@ PostgreSQL's answer to this is **`role`s**, the unified mechanism it uses to rep
 
 **Definition:** A `role` in PostgreSQL can represent either an individually authenticating account or a non-login group used to bundle permissions, and structuring access around distinct `role`s per person and per service, rather than a single shared login, is what makes accountability and precise permission management possible at all.
 
+<!--
+IMAGE PROMPT  ->  generate as images/01_intro_users_and_roles_managing_database_accounts.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Every query in this course has run under a single, implicit database account, with no attention paid to who or what is actually connecting. A production database serves many different consumers at once, a reporting dashboard, a background job, individual.
+
+ON-IMAGE TEXT: show a short bold title "Users And Roles Managing Database Accounts" plus only these few labels, large and legible: Query, Role, Users. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for users and roles managing database accounts](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_users_and_roles_managing_database_accounts.png)
+
 ## Creating a Role
 
 A `role` can represent a login-capable user or a non-login group, and the same `CREATE ROLE` command handles both, differing only in the options supplied.
@@ -65,7 +81,7 @@ Expected result: PostgreSQL completes the definition or privilege command withou
 - `GRANT shipment_readers TO reporting_app` adds `reporting_app` as a member of that group, and any permission granted to `shipment_readers` as a whole, covered in the next lesson, automatically applies to every member.
 - This is the standard pattern for managing permissions at scale: define what a group of accounts should be allowed to do once, on the group `role`, rather than repeating the same permission grants individually on every single user `role`.
 
-![Login roles can inherit a group role that bundles permissions](images/01_login_roles_and_group_role_permissions.png)
+![Login roles can inherit a group role that bundles permissions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_login_roles_and_group_role_permissions.png)
 
 ## Why Shared Logins Are a Security Anti-Pattern
 
@@ -88,7 +104,7 @@ Expected observation: PostgreSQL returns live server metadata. Values differ acr
 - If every developer and every application connected as one single, shared account, there would be no way to answer "who ran this slow `query`" or "which service made this change" after the fact, since the log would show only the one shared name for every single action, regardless of who or what actually took it.
 - Separate `role`s per person and per service are what make that kind of accountability possible at all.
 
-![Shared logins hide who performed an action, while separate roles preserve accountability](images/02_shared_login_loses_accountability.png)
+![Shared logins hide who performed an action, while separate roles preserve accountability](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_shared_login_loses_accountability.png)
 
 ## Altering and Dropping Roles
 

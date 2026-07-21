@@ -7,6 +7,22 @@ An earlier unit covered the discipline of wrapping related statements in `BEGIN`
 
 **Definition:** A `transaction` belongs to exactly one `connection` and must always reach a `COMMIT` or `ROLLBACK`, since a `connection` left "idle in `transaction`" holds its `lock`s indefinitely and can block other work, and savepoints give application code a way to discard just one problematic step inside a larger `transaction` without losing everything else already done.
 
+<!--
+IMAGE PROMPT  ->  generate as images/03_intro_managing_transactions_from_your_application.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: An earlier unit covered the discipline of wrapping related statements in BEGIN and COMMIT, catching errors, and rolling back on failure. That covered the overall shape of the pattern; this lesson looks specifically at two more practical concerns: - How a.
+
+ON-IMAGE TEXT: show a short bold title "Managing Transactions From Your Application" plus only these few labels, large and legible: Transaction, Commit, Managing. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for managing transactions from your application](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_managing_transactions_from_your_application.png)
+
 ## A Transaction Belongs to Exactly One Connection
 
 A `transaction` is tied entirely to the specific `connection` it was started on; it is not a general, `database`-wide state, and no other `connection` can see, join, or affect it.
@@ -54,7 +70,7 @@ The `state` `column` changes from `idle` to `active` (or briefly `idle in transa
 
 If an application opened a second, separate `connection` at this exact moment, that second `connection` would have no visibility into this in-progress `transaction` at all, and could not accidentally commit or roll it back; each `connection` manages its own `transaction` independently.
 
-![A transaction belongs to exactly one database connection](images/05_transaction_belongs_to_one_connection.png)
+![A transaction belongs to exactly one database connection](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_transaction_belongs_to_one_connection.png)
 
 ## The Danger of a Connection Left "Idle in Transaction"
 
@@ -111,7 +127,7 @@ Expected output:
 - `ROLLBACK TO SAVEPOINT before_risky_step` undoes only the changes made after that point, shipment 2's incorrect update, while keeping everything before it, shipment 1's valid update, fully intact and still part of the `transaction`.
 - The final `COMMIT` then commits shipment 1's change alone, since shipment 2's change was already discarded by the savepoint rollback before the `transaction` ever finished.
 
-![A savepoint lets an application roll back one risky step while keeping earlier work](images/06_savepoint_partial_rollback.png)
+![A savepoint lets an application roll back one risky step while keeping earlier work](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_savepoint_partial_rollback.png)
 
 ## Why Savepoints Matter for Application Code
 

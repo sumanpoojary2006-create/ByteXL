@@ -6,6 +6,22 @@ The only real defense against losing data entirely is having a separate copy of 
 
 **Definition:** A `backup` strategy is the deliberate answer to how, how often, and where a `database`'s data is copied somewhere safe, with logical `backups` like `pg_dump` offering portability and physical `backups` like `pg_basebackup` offering speed, and full versus incremental approaches trading simplicity against storage and time efficiency, all shaped by how much data loss is actually acceptable and how far back a `restore` might realistically need to reach.
 
+<!--
+IMAGE PROMPT  ->  generate as images/02_intro_backup_strategies.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: The recovery mechanisms covered in an earlier unit, write-ahead logging, checkpoints, redo and undo, all protect against a server crash where the data files themselves remain intact. They offer no protection at all against the media failure named in that same.
+
+ON-IMAGE TEXT: show a short bold title "Backup Strategies" plus only these few labels, large and legible: Table, Backup, Transaction. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for backup strategies](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_backup_strategies.png)
+
 ## Logical Backups: A Portable Copy of the Data Itself
 
 A logical `backup` captures the actual data and `schema` as a set of SQL statements or a portable data format, independent of the specific server it came from. PostgreSQL's `pg_dump` is the standard tool for this, run from outside the `database` as a command-line utility rather than as SQL itself.
@@ -83,7 +99,7 @@ Expected observation: PostgreSQL completes the statement, and the explanation be
 
 `current_setting('data_directory')` reports where PostgreSQL's actual physical data files live on this server, the same files a physical `backup` would copy directly, in contrast to a logical `backup`'s portable, `database`-independent SQL text.
 
-![Logical backups capture portable data, while physical backups copy the database files](images/03_logical_vs_physical_backups.png)
+![Logical backups capture portable data, while physical backups copy the database files](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_logical_vs_physical_backups.png)
 
 ## Full Backups vs. Incremental Backups
 
@@ -99,7 +115,7 @@ Expected result: PostgreSQL returns the rows described below. Compare the visibl
 
 The `write-ahead log` position, covered in depth in the `recovery` unit, is exactly what makes incremental, point-in-time `backup` strategies possible: rather than repeatedly copying the entire `database`, an incremental approach can archive just the log records generated since the last `backup`, later replaying them forward from a known full-`backup` starting point to reconstruct any specific moment in time.
 
-![A full backup plus incremental WAL backups forms a recoverable timeline](images/04_full_backup_incremental_wal_chain.png)
+![A full backup plus incremental WAL backups forms a recoverable timeline](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_full_backup_incremental_wal_chain.png)
 
 ## Choosing a Backup Frequency and Retention Policy
 

@@ -4,6 +4,10 @@ Durability, covered earlier in this unit, promised that a committed `transaction
 
 This ordering, log first, data files second, is the entire foundation of how a `database` recovers correctly after a crash, and it is worth understanding exactly why the order matters.
 
+**Definition:** `Write-ahead logging` guarantees that a durable record of every change exists before the change is considered complete, which is what allows a `database` to safely defer the slower work of updating actual data files while still guaranteeing that a crash can never lose a committed `transaction`'s effect.
+
+![Intro visual for writeahead logging](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_writeahead_logging.png)
+
 ## Why Writing Directly to Data Files Is Not Enough
 
 It might seem simpler for a `database` to just write a change straight to its data files the moment a `transaction` commits. The problem is that updating a data file on disk is not instantaneous or atomic at the hardware level:
@@ -27,7 +31,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
     balance NUMERIC(10, 2)
@@ -38,9 +42,12 @@ INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00);
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-SELECT pg_current_wal_lsn();
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaf34n" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL returns a WAL location such as `0/16B6C50`. The exact value is server-specific; after a committed write, a later location should be equal to or ahead of the earlier one.
 
@@ -51,13 +58,12 @@ Expected observation: PostgreSQL returns a WAL location such as `0/16B6C50`. The
 
 The core rule of `write-ahead logging` is simple to state: a change to a data page is never written to permanent storage until the log record describing that change has already been written to permanent storage first.
 
-```postgresql with=init.sql
-BEGIN;
-UPDATE accounts SET balance = balance - 500.00 WHERE account_id = 1;
-COMMIT;
-
-SELECT pg_current_wal_lsn();
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaf3gt" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL returns a WAL location such as `0/16B6C50`. The exact value is server-specific; after a committed write, a later location should be equal to or ahead of the earlier one.
 
@@ -65,7 +71,7 @@ By the time this `COMMIT` returns success to the caller, PostgreSQL guarantees t
 
 This is why `COMMIT` can safely report success immediately: the log, not the data file, is what `recovery` actually depends on.
 
-![Write-ahead logging records the log before the data page is written](images/03_wal_log_before_data_page.png)
+![Write-ahead logging records the log before the data page is written](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_wal_log_before_data_page.png)
 
 ## Why Logging First Makes Recovery Possible
 
@@ -77,18 +83,18 @@ If the server crashes at any point after `COMMIT` returns, the data file on disk
 
 This is exactly how durability is delivered in practice: not by guaranteeing every data file write happens instantly, but by guaranteeing the log record exists first and can always be replayed if needed.
 
-![WAL replay restoring committed changes after a crash](images/04_wal_replay_after_crash.png)
+![WAL replay restoring committed changes after a crash](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_wal_replay_after_crash.png)
 
 ## What Gets Written to the Log
 
 Every change-making statement, `INSERT`, `UPDATE`, `DELETE`, and even structural changes like `CREATE TABLE`, generates a log record describing exactly what changed, before that change is considered complete.
 
-```postgresql with=init.sql
-INSERT INTO accounts (account_id, balance) VALUES (2, 3000.00);
-DELETE FROM accounts WHERE account_id = 2;
-
-SELECT pg_current_wal_lsn();
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaf3te" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL returns a WAL location such as `0/16B6C50`. The exact value is server-specific; after a committed write, a later location should be equal to or ahead of the earlier one.
 
@@ -127,9 +133,12 @@ Both the `INSERT` and the `DELETE` here each generate their own log entry, and t
 
 Check the current `WAL` position, run a `transaction` that inserts a new account and commits, and check the `WAL` position again, confirming it has advanced.
 
-```postgresql with=init.sql
--- Write your queries below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaf44g" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

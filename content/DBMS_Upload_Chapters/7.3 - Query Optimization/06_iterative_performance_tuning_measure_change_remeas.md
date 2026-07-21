@@ -4,6 +4,10 @@ Every technique covered in this unit, storage layout, `indexes`, `EXPLAIN`, `joi
 
 This final lesson walks through that full loop, start to finish, on one `query`.
 
+**Definition:** Iterative tuning, measure with `EXPLAIN ANALYZE`, make one deliberate change, re-measure to confirm it actually helped, and repeat, is the discipline that ties every technique in this unit together into a real, evidence-based process, rather than a collection of tricks applied on faith.
+
+![Intro visual for iterative performance tuning measure change remeas](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_iterative_performance_tuning_measure_change_reme.png)
+
 ## Step One: Measure the Starting Point
 
 Before changing anything, the first step is always establishing an honest baseline with `EXPLAIN ANALYZE`, the actual-execution tool covered earlier in this chapter.
@@ -28,7 +32,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
     customer_id INTEGER,
@@ -47,14 +51,12 @@ FROM generate_series(1, 60000) AS i;
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-EXPLAIN ANALYZE
-SELECT customer_id, SUM(amount) AS total_refunded
-FROM orders
-WHERE status = 'refunded' AND order_date > '2025-06-01'
-GROUP BY customer_id
-ORDER BY total_refunded DESC;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajz9q" 
+ width="100%"
+></iframe>
 
 Expected output (baseline, before any new index):
 
@@ -75,15 +77,18 @@ Expected output (baseline, before any new index):
 
 This baseline plan, with no supporting `index` on either `status` or `order_date`, shows a `Seq Scan` across all 60000 `rows`, discarding 59930 of them, before filtering down to the small refunded, recent subset (70 `rows`) the `query` actually cares about. Recording this baseline's actual time, 39.021 ms, is essential, since without it, there is no way to later confirm whether a change genuinely helped or made no real difference.
 
-![Iterative tuning starts by measuring a baseline before making changes](images/13_iterative_tuning_measure_change_remeasure.png)
+![Iterative tuning starts by measuring a baseline before making changes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/13_iterative_tuning_measure_change_remeasure.png)
 
 ## Step Two: Make One Deliberate Change
 
 Rather than adding several `indexes` at once, the disciplined approach is one change at a time, so its individual effect can be measured cleanly. A `composite index` matching both filter `columns` together, the technique covered in the `indexes` chapter, is a reasonable first attempt here.
 
-```postgresql with=init.sql
-CREATE INDEX idx_orders_status_date ON orders (status, order_date);
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajzjm" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL confirms that the index was created. The command does not return business rows; its effect is verified by rerunning the related query or `EXPLAIN` statement.
 
@@ -91,14 +96,12 @@ This single, targeted change is the entire first iteration, nothing else about t
 
 ## Step Three: Re-measure and Compare
 
-```postgresql with=init.sql
-EXPLAIN ANALYZE
-SELECT customer_id, SUM(amount) AS total_refunded
-FROM orders
-WHERE status = 'refunded' AND order_date > '2025-06-01'
-GROUP BY customer_id
-ORDER BY total_refunded DESC;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkak24x" 
+ width="100%"
+></iframe>
 
 Expected output (after adding `idx_orders_status_date`):
 
@@ -121,21 +124,18 @@ Comparing this plan's actual time directly against the baseline's is the entire 
 - The plan now shows an `Index Scan` on `idx_orders_status_date` instead of a `Seq Scan`, and the total `Execution Time` dropped from 39.021 ms to 1.298 ms, roughly a 30x improvement, confirming the change as a real improvement, not just a plausible-sounding guess.
 - Had the actual time barely moved, or had the optimizer still chosen a `sequential scan` anyway, perhaps because the filtered `rows` are not selective enough for the `index` to be worth using, that would be equally important information, and it would mean the next iteration should try a different change rather than assuming this one worked.
 
-![Compare baseline time with after-change time to prove whether tuning helped](images/14_baseline_vs_after_change_actual_time.png)
+![Compare baseline time with after-change time to prove whether tuning helped](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/14_baseline_vs_after_change_actual_time.png)
 
 ## Step Four: Repeat, One Change at a Time
 
 If the first change helped but the `query` is still slower than needed, the loop continues: identify the next likely bottleneck from what `EXPLAIN ANALYZE` now shows, make one more targeted change, and measure again.
 
-```postgresql with=init.sql
-EXPLAIN ANALYZE
-SELECT customer_id, SUM(amount) AS total_refunded
-FROM orders
-WHERE status = 'refunded' AND order_date > '2025-06-01'
-GROUP BY customer_id
-ORDER BY total_refunded DESC
-LIMIT 10;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkak2fg" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -195,9 +195,12 @@ Measuring first, changing one thing, and measuring again is what turns tuning fr
 
 Using the `orders` `table` above, measure the baseline for a `query` filtering `WHERE customer_id = 4000`, add an appropriate `index`, and re-measure to confirm the improvement, following the same measure-change-re-measure discipline covered in this lesson.
 
-```postgresql with=init.sql
--- Write your queries below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkak2sc" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

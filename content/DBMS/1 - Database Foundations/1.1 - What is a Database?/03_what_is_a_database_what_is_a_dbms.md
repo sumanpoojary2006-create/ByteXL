@@ -6,6 +6,22 @@ The vendor's proposal document lands on Meera's desk, she is the office manager,
 
 **Definition:** A `database` is the organized data, and a DBMS is the separate software built specifically to manage that data safely on its behalf, and the two words are never interchangeable no matter how often vendors blur them together.
 
+<!--
+IMAGE PROMPT  ->  generate as images/03_intro_what_is_a_database_what_is_a_dbms.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: The lost interview slots are the final straw, and Priya's admissions office gets approval to buy proper software. The vendor's proposal document lands on Meera's desk, she is the office manager, and two words appear side by side throughout it: "database" and.
+
+ON-IMAGE TEXT: show a short bold title "What Is A Database What Is A DBMS" plus only these few labels, large and legible: Interview, Slots, Final. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for what is a database what is a dbms](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_what_is_a_database_what_is_a_dbms.png)
+
 ## A Database Is the Organized Data Itself
 
 A **`database`** is an organized collection of related data, structured so it can be stored, retrieved, and updated reliably. For Meera's office, that means the actual facts, held together as one coordinated collection instead of scattered across `applicants.xlsx`, `documents.xlsx`, and `interviews.xlsx` with nothing enforcing how they relate to each other:
@@ -24,7 +40,7 @@ It is the program that will sit between Kabir's team and those records, refusing
 
 PostgreSQL, MySQL, and SQLite are three real, separate pieces of software that each do this same job, each capable of managing a `database`, and each speaking a very similar language to do it, the language this course reaches directly once `tables` are on the `table`.
 
-![Users work through a DBMS that reads, writes, protects, and shares access to the separate database](images/05_database_vs_dbms.png)
+![Users work through a DBMS that reads, writes, protects, and shares access to the separate database](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_database_vs_dbms.png)
 
 ## Database vs. DBMS at a Glance
 
@@ -66,7 +82,7 @@ Before Meera signs anything, she asks the vendor a pointed question: if the coll
 
 A vendor who blurs "`database`" and "DBMS" together is quietly steering Meera toward worrying about the wrong thing. Her real concern should be whether the data itself survives any future change untouched, not which brand happens to be managing it this year.
 
-![Replacing one DBMS with another while the same database records remain unchanged](images/06_replace_dbms_keep_data.png)
+![Replacing one DBMS with another while the same database records remain unchanged](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_replace_dbms_keep_data.png)
 
 ## What Buying a Real DBMS Actually Buys
 

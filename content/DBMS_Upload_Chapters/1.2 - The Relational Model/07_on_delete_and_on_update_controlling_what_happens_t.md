@@ -12,6 +12,10 @@ Sanjay realises this is not a question the Orders `table` can answer by accident
 
 This is exactly the dilemma every relational `database` has to face wherever a `foreign key` exists, and it is a decision the `database` lets a designer make in advance, rather than leaving it to chance the day a real customer actually asks to be deleted.
 
+**Definition:** Every `foreign key` eventually forces the same honest question: if the `row` being pointed at disappears or changes, what should happen to the `rows` depending on it, and a relational `database` lets that answer be blocking, cascading, or clearing the link, chosen deliberately for each relationship rather than left to chance.
+
+![Intro visual for on delete and on update controlling what happens](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_intro_on_delete_and_on_update_controlling_what_happens.png)
+
 ## The Dilemma, In Plain Terms
 
 Whenever a `foreign key` connects a child `row` to a parent `row`, as an order connects to the customer who placed it, two kinds of change to the parent can leave the child stranded:
@@ -42,7 +46,7 @@ A bookstore that needs to keep sales figures and inventory history intact, even 
 
 The very same three choices apply, separately, to the case where a parent `row`'s identifying value changes rather than the `row` being deleted outright. If customer IDs were ever renumbered during a system migration, the bookstore would again have to decide whether dependent orders should block that renumbering, automatically update to follow the new ID, or have their link cleared instead.
 
-![Block, cascade, and set-empty choices for orders that depend on a deleted customer row](images/13_on_delete_parent_child_choices.png)
+![Block, cascade, and set-empty choices for orders that depend on a deleted customer row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/13_on_delete_parent_child_choices.png)
 
 ## Matching the Choice to the Real-World Relationship
 
@@ -89,7 +93,7 @@ Notice the pattern. Cascading suits relationships where the child `row`'s entire
 
 Setting the link empty sits in between, useful when the dependent `rows` should survive on their own even after losing their `connection` to the parent.
 
-![Choosing a foreign-key policy based on whether child rows should block, disappear, detach, or follow an ID update](images/14_choose_foreign_key_policy.png)
+![Choosing a foreign-key policy based on whether child rows should block, disappear, detach, or follow an ID update](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/14_choose_foreign_key_policy.png)
 
 ## A Decision Every Database Lets You Make Deliberately
 

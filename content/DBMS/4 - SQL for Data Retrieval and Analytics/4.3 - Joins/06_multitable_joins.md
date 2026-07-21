@@ -6,6 +6,22 @@ Zoya's dispatch manager wants exactly that: one line per order showing the custo
 
 **Definition:** `Joining` three or more `tables` is just the same `JOIN` clause repeated once per additional `table`, each one widening the working result before the next `join`, filter, or grouping step runs, with aliases keeping the `query` readable as the `table` count grows.
 
+<!--
+IMAGE PROMPT  ->  generate as images/06_intro_multitable_joins.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Every join so far has combined exactly two table references at a time, but a real order in the delivery system touches four different tables at once: the customer who ordered, the restaurant that cooked it, the rider who delivered it, and the order row that.
+
+ON-IMAGE TEXT: show a short bold title "Multitable Joins" plus only these few labels, large and legible: Table, Row, Join. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for multitable joins](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_multitable_joins.png)
+
 ## Setting Up Four Related Tables
 
 `orders` now references three other `tables` at once: `customers`, `restaurants`, and `riders`.
@@ -127,7 +143,7 @@ Each `JOIN` clause attaches one more `table` to the result, and the `database` p
 
 By the time all three `JOIN` clauses have run, every order `row` carries a customer name, a restaurant name, and a rider name in the same line.
 
-![A multi-table join chain widening one order row with customer restaurant and rider details](images/11_multitable_join_chain_widens_order.png)
+![A multi-table join chain widening one order row with customer restaurant and rider details](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_multitable_join_chain_widens_order.png)
 
 ## Using Table Aliases to Keep a Multi-Table Query Readable
 
@@ -180,7 +196,7 @@ Expected output:
 - Every order still requires a valid customer and a valid restaurant to appear, since those two `joins` stay as strict `INNER JOIN`, but an order would still show up even with a `NULL` rider name if its `rider_id` did not match anything in `riders`.
 - Mixing `join` types like this lets a `query` express exactly which relationships are mandatory and which are optional, all in one statement.
 
-![Mixed join types requiring customer and restaurant matches while allowing an optional rider](images/12_mixed_join_types_optional_rider.png)
+![Mixed join types requiring customer and restaurant matches while allowing an optional rider](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_mixed_join_types_optional_rider.png)
 
 ## Filtering and Grouping Across a Multi-Table Join
 

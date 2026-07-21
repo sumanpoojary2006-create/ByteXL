@@ -14,6 +14,10 @@ These three situations turn out to be common enough that the relational model gi
 - A key that only becomes unique once two or more `columns` are combined together is a **`composite key`**.
 - An artificial, invented `column` added purely to give a `table` a reliable identity, when nothing natural exists, is a **`surrogate key`**.
 
+**Definition:** Candidate keys widen the lens from "the one `primary key`" to every `column` that honestly could have filled that `role`.
+
+![Intro visual for candidate keys composite keys and surrogate keys](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_candidate_keys_composite_keys_and_surrogate_keys.png)
+
 ## Candidate Keys: The Ones That Could Have Been Chosen
 
 Look at Aisha's Books `table`.
@@ -131,7 +135,7 @@ Here, Feedback ID is not a natural attribute of the feedback itself, nobody wrot
 
 A `column` like this, an artificial identifier created solely to serve as a `primary key`, is called a **`surrogate key`**. Surrogate keys are extremely common in practice, not only when nothing unique exists, but also when the natural `candidate keys` available are inconvenient, unstable, or unpleasant to work with as an identifier.
 
-![Candidate, composite, and surrogate keys solving three different identity problems in a library database](images/09_candidate_composite_surrogate_keys.png)
+![Candidate, composite, and surrogate keys solving three different identity problems in a library database](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_candidate_composite_surrogate_keys.png)
 
 ## Choosing Among the Three
 
@@ -168,7 +172,7 @@ A practical habit worth building is to look at any new `table` and ask, in order
 
 And if truly nothing in the real-world data can be trusted to stay unique, inventing a `surrogate key` is often the simplest, safest way forward.
 
-![A key-selection decision path from natural unique columns to composite or surrogate keys](images/10_key_selection_decision_path.png)
+![A key-selection decision path from natural unique columns to composite or surrogate keys](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_key_selection_decision_path.png)
 
 ## Your Turn: Classify the Keys
 

@@ -8,6 +8,22 @@ A **`database` migration** is a versioned, ordered, tracked script that applies 
 
 **Definition:** A `database` migration is a small, versioned, tracked script that applies exactly one `schema` change, recorded in a dedicated `table` so the same set of migrations can be safely and consistently applied across a developer's laptop, a testing environment, and production, with structure-preserving statements protecting existing data rather than destructive shortcuts that discard it.
 
+<!--
+IMAGE PROMPT  ->  generate as images/06_intro_database_migrations_and_schema_versioning.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Every CREATE TABLE and ALTER TABLE in this course has been run once, by hand, against a single database. A real application's schema changes constantly over its lifetime, new columns, new tables, new constraints, and that schema has to change consistently.
+
+ON-IMAGE TEXT: show a short bold title "Database Migrations And Schema Versioning" plus only these few labels, large and legible: Table, Schema, Migrations. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for database migrations and schema versioning](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_database_migrations_and_schema_versioning.png)
+
 ## The Problem Migrations Solve
 
 Without any tracking, it is easy to lose track of which environment has which `schema` changes already applied.
@@ -83,7 +99,7 @@ Every migration gets a unique, ordered identifier, here `0001_create_shipments` 
 - If a version is already recorded, that migration is skipped, since it has already been applied.
 - If it is missing, the tool runs it and then records it. This is what makes it safe to run the exact same migration tool command against a fresh `database`, a testing `database` with some migrations already applied, and production, all at once, since each one only ever runs the migrations it is genuinely missing.
 
-![Migrations apply ordered schema changes consistently across dev, test, and production](images/11_migrations_versioned_across_environments.png)
+![Migrations apply ordered schema changes consistently across dev, test, and production](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_migrations_versioned_across_environments.png)
 
 ## Writing a Migration as a Deliberate, Reviewable Step
 
@@ -162,7 +178,7 @@ Expected output (from the `SELECT` earlier in this block, before the structure-p
 
 The final `ALTER TABLE shipments ADD COLUMN new_notes TEXT` returns no rows of its own; it just adds the `column` while leaving every existing `row` intact, in contrast with the commented-out `DROP TABLE` shortcut above it. This distinction, preserving data versus discarding it, is the single most important discipline in writing a safe migration, and it is exactly why migrations against a production `database` always deserve careful review before being applied, the same caution this course has emphasized around any `DROP` or `DELETE` since the modifying-data chapter early on.
 
-![Safe migrations preserve existing data, while drop-and-recreate shortcuts destroy it](images/12_safe_migration_preserves_data.png)
+![Safe migrations preserve existing data, while drop-and-recreate shortcuts destroy it](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_safe_migration_preserves_data.png)
 
 ## Database Migrations at a Glance
 

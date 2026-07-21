@@ -8,6 +8,10 @@ Tanvi's next request from the marketing team is more specific than a merged mail
 - `UNION` cannot answer either question, since it only combines everything from both sides.
 - What Tanvi needs now are two more set operations: **`INTERSECT`**, which returns only the `rows` common to both `queries`, and **`EXCEPT`**, which returns `rows` from the first `query` that do not appear in the second.
 
+**Definition:** `INTERSECT` isolates exactly the `rows` two `queries` have in common, and `EXCEPT` isolates the `rows` one `query` has that the other does not, with `EXCEPT` alone being sensitive to which `query` is written first.
+
+![Intro visual for intersect and except](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_intersect_and_except.png)
+
 ## Finding Rows Common to Both Queries
 
 The same two customer `tables` from the `UNION` lesson apply here.
@@ -36,7 +40,7 @@ The OneCompiler activity keeps setup and practice separate. `init.sql` creates a
 
 ## Hands-On Setup: Prepare the Data
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE online_customers (
     customer_name TEXT,
     email TEXT
@@ -60,11 +64,12 @@ INSERT INTO store_customers (customer_name, email) VALUES
 
 Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
 
-```postgresql with=init.sql
-SELECT customer_name, email FROM online_customers
-INTERSECT
-SELECT customer_name, email FROM store_customers;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahvnv" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -76,17 +81,18 @@ Expected output:
 - Here, that means a `row` must have the exact same `customer_name` and `email` in both `online_customers` and `store_customers` to survive.
 - Only Kavya Nair qualifies, since she is the one customer whose full `row` appears identically in both `tables`, which is exactly the cross-channel shopper list Tanvi needs for the loyalty reward.
 
-![INTERSECT keeping only the customer row that appears in both result sets](images/03_intersect_common_rows.png)
+![INTERSECT keeping only the customer row that appears in both result sets](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intersect_common_rows.png)
 
 ## Finding Rows in One Query but Not the Other
 
 `EXCEPT` (called `MINUS` in some `databases`, though PostgreSQL and MySQL both use `EXCEPT`) takes the first `query`'s results and removes anything that also appears in the second `query`'s results, keeping only what is left over.
 
-```postgresql with=init.sql
-SELECT customer_name, email FROM online_customers
-EXCEPT
-SELECT customer_name, email FROM store_customers;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahvyn" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -97,17 +103,18 @@ Expected output:
 
 This returns Aditi Kulkarni and Rohan Das, the two online customers who do not appear anywhere in `store_customers`, exactly the list the "visit us in person" campaign needs. Order matters with `EXCEPT`: this `query` starts from `online_customers` and subtracts `store_customers`, which is a different question from starting with `store_customers` and subtracting `online_customers`.
 
-![EXCEPT returning rows from the first customer list after subtracting the second list](images/04_except_first_minus_second.png)
+![EXCEPT returning rows from the first customer list after subtracting the second list](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_except_first_minus_second.png)
 
 ## Why EXCEPT Is Not Symmetric
 
 Reversing the two `queries` in an `EXCEPT` statement produces a different, not merely reordered, result.
 
-```postgresql with=init.sql
-SELECT customer_name, email FROM store_customers
-EXCEPT
-SELECT customer_name, email FROM online_customers;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahwav" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -122,11 +129,12 @@ This returns Imran Sheikh and Neha Bhatt instead, the store customers who have n
 
 `INTERSECT` and `EXCEPT` follow the identical `column` requirements covered for `UNION`: both `queries` must return the same number of `columns`, in compatible types, in the same order, and the comparison happens across the whole `row`, not `column` by `column` independently.
 
-```postgresql with=init.sql
-SELECT customer_name FROM online_customers
-INTERSECT
-SELECT customer_name FROM store_customers;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahwmh" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -166,9 +174,12 @@ Expected output:
 
 Tanvi wants to confirm the loyalty reward list a different way: find every store customer who is also an online customer, using `INTERSECT`, but starting the `query` from `store_customers` this time instead of `online_customers`.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahwxa" 
+ width="100%"
+></iframe>
 
 If your `query` is `SELECT customer_name, email FROM store_customers INTERSECT SELECT customer_name, email FROM online_customers;`, it still returns just Kavya Nair, confirming that unlike `EXCEPT`, swapping the order of the two `queries` in an `INTERSECT` does not change which `rows` come back.
 

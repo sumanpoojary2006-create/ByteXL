@@ -6,6 +6,22 @@ Opening and closing a brand new `connection` for every single one of those reque
 
 **Definition:** `Connection pooling` reuses a fixed set of already-open `connections` across many requests instead of opening and closing one per request, avoiding both the repeated `connection` cost and the risk of exhausting the `database`'s shared `max_connections` limit, with careful attention needed to ensure a `connection` is always returned to the pool in a clean, `transaction`-free state.
 
+<!--
+IMAGE PROMPT  ->  generate as images/04_intro_connection_pooling.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Opening a connection has a real cost, covered when connecting from application code was first introduced, and a busy web application might handle hundreds of requests per second, each one potentially wanting to talk to the database. Opening and closing a.
+
+ON-IMAGE TEXT: show a short bold title "Connection Pooling" plus only these few labels, large and legible: Connection, Pooling, Opening. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for connection pooling](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_connection_pooling.png)
+
 ## Why a Database Cannot Handle Unlimited Connections
 
 Every open `connection` consumes real memory and resources on the `database` server itself, which is why PostgreSQL enforces a hard limit on how many `connections` it will accept at once.
@@ -81,7 +97,7 @@ The pool typically maintains a fixed size, say 20 `connections`, regardless of h
 
 2. Each individual `query` has to finish quickly and return its `connection` promptly for that to hold.
 
-![A connection pool lets requests borrow, use, and return already-open connections](images/07_connection_pool_borrow_use_return.png)
+![A connection pool lets requests borrow, use, and return already-open connections](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_connection_pool_borrow_use_return.png)
 
 ## Why a Connection Must Be Returned in a Clean State
 
@@ -107,7 +123,7 @@ ROLLBACK;
 
 Expected result: `ROLLBACK` discards shipment 2's uncommitted `'cancelled'` update and releases its `lock`s, returning the `connection` to a clean state, exactly what must happen before that `connection` goes back into the pool for another request to borrow.
 
-![A pooled connection must be returned clean, with no open transaction or leftover locks](images/08_return_pooled_connection_clean.png)
+![A pooled connection must be returned clean, with no open transaction or leftover locks](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_return_pooled_connection_clean.png)
 
 ## Pool Size Is a Deliberate Trade-off
 

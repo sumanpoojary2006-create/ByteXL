@@ -4,6 +4,10 @@ Devraj's `active_shipments` `view` has been used for `SELECT` `queries` so far, 
 
 A `view` built simply enough can be genuinely **updatable**, passing writes straight through to its underlying `table`, while a `view` involving a `join`, an aggregate, or certain other constructs cannot be written to directly at all.
 
+**Definition:** A `view` built from a single `table` with no aggregation is updatable automatically, since a `row` in the `view` maps unambiguously to one `row` in one underlying `table`, while a `view` involving a `join` or an aggregate cannot be written to directly, since that mapping becomes ambiguous or nonexistent, though `INSTEAD OF` `trigger`s exist as a deliberate way to bridge that gap when genuinely needed.
+
+![Intro visual for updatable views and their limitations](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_updatable_views_and_their_limitations.png)
+
 ## A Simple View Is Updatable by Default
 
 A `view` built from a single `table`, with a straightforward `SELECT` and no aggregation, is updatable without any special setup.
@@ -24,7 +28,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     driver_id INTEGER,
@@ -45,11 +49,12 @@ WHERE status = 'in_transit';
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-UPDATE in_transit_shipments SET destination = 'Thane' WHERE shipment_id = 1;
-
-SELECT * FROM shipments WHERE shipment_id = 1;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaguu2" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -63,30 +68,18 @@ The `UPDATE` was issued against `in_transit_shipments`, the `view`, not `shipmen
 
 2. There is no doubt about which `row` in `shipments` this update was meant for.
 
-![A simple view can pass an update through to exactly one base table row](images/03_simple_updatable_view_one_to_one_mapping.png)
+![A simple view can pass an update through to exactly one base table row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_simple_updatable_view_one_to_one_mapping.png)
 
 ## A View with a Join Is Generally Not Updatable
 
 The `active_shipments` `view` from the previous lesson `join`s `shipments` to `drivers`, and that `join` is exactly what breaks direct updatability, since a single `row` in the `view`'s result could conceptually correspond to changes in either underlying `table`, and the `database` has no reliable way to know which one was intended.
 
-```postgresql with=init.sql
-CREATE TABLE drivers (
-    driver_id INTEGER PRIMARY KEY,
-    driver_name TEXT
-);
-
-INSERT INTO drivers (driver_id, driver_name) VALUES (1, 'Manoj Yadav'), (2, 'Farah Ali');
-
-CREATE VIEW shipments_with_driver AS
-SELECT s.shipment_id, d.driver_name, s.destination
-FROM shipments s
-JOIN drivers d ON s.driver_id = d.driver_id;
-
--- This update would fail because the joined view is not directly updatable:
--- UPDATE shipments_with_driver SET destination = 'Thane' WHERE shipment_id = 1;
-
-SELECT * FROM shipments_with_driver;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagv5g" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -102,34 +95,12 @@ This `UPDATE` fails, since PostgreSQL refuses to guess how to translate a write 
 
 A `view` built with `GROUP BY` or an `aggregate function` faces an even more fundamental problem: a single `row` in its result may represent many underlying `rows` collapsed together, so there is no single `row` to even target with a write.
 
-```postgresql with=init.sql
-CREATE TABLE drivers (
-    driver_id INTEGER PRIMARY KEY,
-    driver_name TEXT
-);
-
-INSERT INTO drivers (driver_id, driver_name) VALUES (1, 'Manoj Yadav'), (2, 'Farah Ali');
-
-CREATE VIEW shipments_with_driver AS
-SELECT s.shipment_id, d.driver_name, s.destination
-FROM shipments s
-JOIN drivers d ON s.driver_id = d.driver_id;
-
--- This update would fail because the joined view is not directly updatable:
--- UPDATE shipments_with_driver SET destination = 'Thane' WHERE shipment_id = 1;
-
-SELECT * FROM shipments_with_driver;
-
-CREATE VIEW driver_shipment_counts AS
-SELECT driver_id, COUNT(*) AS shipment_count
-FROM shipments
-GROUP BY driver_id;
-
--- This update would fail because shipment_count is computed:
--- UPDATE driver_shipment_counts SET shipment_count = 5 WHERE driver_id = 1;
-
-SELECT * FROM driver_shipment_counts;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagvj2" 
+ width="100%"
+></iframe>
 
 Expected output (from the final `SELECT`, against `driver_shipment_counts`):
 
@@ -140,7 +111,7 @@ Expected output (from the final `SELECT`, against `driver_shipment_counts`):
 
 This fails for a more fundamental reason than the `join` case: `shipment_count` is not a stored value at all, it is calculated fresh from however many `rows` currently match, so "setting" it to 5 is not a meaningful operation the `database` could even attempt to translate into a real change.
 
-![Joined and aggregate views are not directly updatable because the target row is ambiguous or computed](images/04_join_and_aggregate_views_not_directly_updatable.png)
+![Joined and aggregate views are not directly updatable because the target row is ambiguous or computed](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_join_and_aggregate_views_not_directly_updatable.png)
 
 ## Making a Join-Based View Writable with INSTEAD OF Triggers
 
@@ -181,36 +152,12 @@ This is a deliberate, hand-written escape hatch rather than something PostgreSQL
 
 Create a simple, single-`table` `view` named `delivered_shipments` filtering `shipments` for `status = 'delivered'`, then update a shipment's `destination` through that `view`, and confirm the change landed on the underlying `shipments` `table`.
 
-```postgresql with=init.sql
-CREATE TABLE drivers (
-    driver_id INTEGER PRIMARY KEY,
-    driver_name TEXT
-);
-
-INSERT INTO drivers (driver_id, driver_name) VALUES (1, 'Manoj Yadav'), (2, 'Farah Ali');
-
-CREATE VIEW shipments_with_driver AS
-SELECT s.shipment_id, d.driver_name, s.destination
-FROM shipments s
-JOIN drivers d ON s.driver_id = d.driver_id;
-
--- This update would fail because the joined view is not directly updatable:
--- UPDATE shipments_with_driver SET destination = 'Thane' WHERE shipment_id = 1;
-
-SELECT * FROM shipments_with_driver;
-
-CREATE VIEW driver_shipment_counts AS
-SELECT driver_id, COUNT(*) AS shipment_count
-FROM shipments
-GROUP BY driver_id;
-
--- This update would fail because shipment_count is computed:
--- UPDATE driver_shipment_counts SET shipment_count = 5 WHERE driver_id = 1;
-
-SELECT * FROM driver_shipment_counts;
-
--- Write your view and update below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagvtx" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

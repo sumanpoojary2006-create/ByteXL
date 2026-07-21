@@ -8,7 +8,9 @@ The honest answer is that PostgreSQL is a small, ongoing **server process**, a p
 
 Understanding that one idea makes the rest of installing it far less mysterious, because everything else, the installer, the default user, the port number, exists to get that background process running reliably and to give Ananya a safe way to reach it.
 
-![PostgreSQL installed as a background server process with port 5432 and a postgres role](images/03_postgresql_server_process_port_role.png)
+![PostgreSQL installed as a background server process with port 5432 and a postgres role](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_postgresql_server_process_port_role.png)
+
+**Definition:** Installing PostgreSQL, stripped of wizard screens and package-manager syntax, comes down to the same few ideas everywhere: get the server software onto the machine, set up a default administrative account to manage it, agree on a port for tools to connect through, and confirm the whole thing actually worked with a quick version check.
 
 ## What an Install Actually Sets Up
 
@@ -75,7 +77,7 @@ Installing PostgreSQL on your own machine is absolutely worth doing, and most of
 
 Get comfortable typing `queries` and seeing real results first, in whichever environment is in front of you, and treat a local install as a milestone to reach once the basics of talking to a `database` no longer feel unfamiliar.
 
-![Local PostgreSQL version check and browser SQL runner shown as two ways to start practicing](images/04_verify_install_or_browser_sql.png)
+![Local PostgreSQL version check and browser SQL runner shown as two ways to start practicing](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_verify_install_or_browser_sql.png)
 
 ## Installing PostgreSQL at a Glance
 

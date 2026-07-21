@@ -6,6 +6,22 @@ A **`materialized view`** solves this by actually storing the `query`'s result o
 
 **Definition:** A `materialized view` stores its `query`'s result physically rather than recomputing it on every read, dramatically speeding up expensive aggregate or summary `queries`, at the cost of only being as current as its most recent explicit refresh, with `REFRESH MATERIALIZED VIEW CONCURRENTLY` available when the `view` needs to stay readable during that refresh.
 
+<!--
+IMAGE PROMPT  ->  generate as images/03_intro_materialized_views.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Devraj's ordinary views, covered so far in this chapter, always re-run their underlying query on every single SELECT, which is exactly what keeps them current, but it also means a view built on a genuinely expensive aggregate, summarizing millions of.
+
+ON-IMAGE TEXT: show a short bold title "Materialized Views" plus only these few labels, large and legible: Query, View, Select. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for materialized views](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_materialized_views.png)
+
 ## Creating a Materialized View
 
 The setup mirrors the ordinary `view` from earlier in this chapter, but the underlying data here represents a much larger, slower-to-aggregate history.
@@ -81,7 +97,7 @@ Expected output:
 
 Selecting from `monthly_shipment_summary` afterward reads that stored result directly, the same way reading from a real `table` would, without recomputing the `GROUP BY` and `COUNT` over all 5000 `rows` again.
 
-![A materialized view stores an expensive query result for faster reads](images/05_materialized_view_stored_result_fast_reads.png)
+![A materialized view stores an expensive query result for faster reads](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_materialized_view_stored_result_fast_reads.png)
 
 ## A Materialized View Does Not Automatically Stay Current
 
@@ -112,7 +128,7 @@ This new delayed shipment for June does not appear in `monthly_shipment_summary`
 
 This staleness is not a bug; it is the entire point of a `materialized view`, avoiding the cost of recomputing the aggregate on every read, in exchange for accepting that reads may be out of date until a refresh runs.
 
-![A materialized view stays stale until REFRESH recomputes its stored result](images/06_materialized_view_stale_until_refresh.png)
+![A materialized view stays stale until REFRESH recomputes its stored result](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_materialized_view_stale_until_refresh.png)
 
 ## Refreshing a Materialized View
 

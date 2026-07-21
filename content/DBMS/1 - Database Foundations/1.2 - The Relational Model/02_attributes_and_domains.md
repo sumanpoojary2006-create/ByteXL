@@ -10,7 +10,7 @@ That personality is exactly what a `database` means by a `column`'s **domain**. 
 
 An "Email" `column`'s domain is the set of text values shaped like a valid email address. Understanding attributes and domains is what lets a `database` catch a nonsense entry before it ever becomes a `row`.
 
-![Kabir adding domain gates so only valid age, phone, and email values enter the Members table](images/03_attribute_domain_entry_gates.png)
+![Kabir adding domain gates so only valid age, phone, and email values enter the Members table](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_attribute_domain_entry_gates.png)
 
 **Definition:** An attribute is a `column`'s name, but its domain is the promise behind that name, the exact boundary of values the `column` will ever legitimately hold.
 
@@ -73,7 +73,7 @@ A `column` for **marks out of 100** should only hold numbers from 0 to 100, sinc
 
 Notice that a domain is not just about the type of value, whole number versus text, it is also about which values within that type actually make sense. Both -5 and 25 are whole numbers, but only one of them belongs in Age.
 
-![Whole-number values filtered by narrower age and marks domains](images/04_type_vs_domain_boundaries.png)
+![Whole-number values filtered by narrower age and marks domains](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_type_vs_domain_boundaries.png)
 
 ## Why Domains Matter Before a Single Row Is Ever Entered
 

@@ -4,6 +4,10 @@ Karthik has just been given read access to his college's student records `databa
 
 He is not filtering anything, not searching for one particular person, not doing any arithmetic. He just wants everything a `table` is holding, laid out as `rows` and `columns` he can read. That plain request, "show me what is in this `table`," is exactly what the **`SELECT` statement** answers, and it is the single most used piece of SQL a person will ever type.
 
+**Definition:** The `SELECT` statement is the starting point of nearly every piece of SQL anyone writes: name the `columns` you want, name the `table` they live in, and the `database` hands back exactly that slice of data.
+
+![Intro visual for the select statement](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_the_select_statement.png)
+
 ## Asking For Everything in a Table
 
 The students `table` already exists in the college's `database`, with one `row` per student and `columns` for their ID, name, email, city, phone number, and the date they joined. This is the data Karthik is working with:
@@ -23,7 +27,7 @@ Karthik's first `query` asks for all of this, every `column`, every `row`, with 
 
 For hands-on practice, `init.sql` creates and populates the displayed `students` table:
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE students (
     student_id INTEGER PRIMARY KEY,
     full_name TEXT,
@@ -46,9 +50,12 @@ INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALU
 
 The active query file contains the statement being practised:
 
-```postgresql with=init.sql
-SELECT * FROM students;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkah4vz" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -66,15 +73,18 @@ Expected output:
 - Running this returns all eight `rows` and all six `columns`, exactly as they are stored - the output is identical to the source `table` because nothing was filtered or narrowed.
 - Karthik gets his orientation list in one line, and for a quick, throwaway look at a small `table`, that is a perfectly reasonable way to work.
 
-![SELECT star returning all columns and all rows from the students table](images/01_select_star_all_rows_columns.png)
+![SELECT star returning all columns and all rows from the students table](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_select_star_all_rows_columns.png)
 
 ## Asking For Only What You Need
 
 A few minutes later, the coordinator asks a narrower question: "I just need names and cities, for the seating arrangement." Pulling every `column` again and mentally ignoring the ones that do not matter would work, but it is not what a careful `query` looks like. Karthik instead names exactly the `columns` he wants, separated by commas, in the order he wants them to appear. The query is `SELECT full_name, city FROM students;`.
 
-```postgresql with=init.sql
-SELECT full_name, city FROM students;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkah56v" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -91,9 +101,12 @@ Expected output:
 
 The result now has exactly two `columns`, `full_name` and `city`, for all eight students. Naming `columns` explicitly is not just shorter to read, it tells anyone looking at the `query`, including Karthik himself a month from now, precisely what data the `query` depends on. He can add `email` to the list just as easily with `SELECT full_name, email, city FROM students;`.
 
-```postgresql with=init.sql
-SELECT full_name, email, city FROM students;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkah5j7" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -110,7 +123,7 @@ Expected output:
 
 The `column` list can hold as many or as few `columns` as the task needs, in any order, and that order is exactly how they will appear in the result, regardless of how the `table` itself was created.
 
-![Selecting only full_name and city instead of every column](images/02_select_specific_columns.png)
+![Selecting only full_name and city instead of every column](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_select_specific_columns.png)
 
 ## Why Not Always Use SELECT *
 
@@ -158,9 +171,12 @@ A `query` that names its `columns` explicitly keeps returning exactly what it al
 
 The coordinator now wants a phone contact sheet: just the name and the phone number for every student. Write a `query` against the students `table` above that returns exactly those two `columns`, in that order.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkah5uz" 
+ width="100%"
+></iframe>
 
 If your `query` starts with `SELECT full_name, phone FROM students;`, you are done. Expected output:
 

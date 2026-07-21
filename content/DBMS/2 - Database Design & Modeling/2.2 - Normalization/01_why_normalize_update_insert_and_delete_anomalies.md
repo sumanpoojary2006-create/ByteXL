@@ -12,6 +12,22 @@ She fixed that `row` and moved on, not yet realizing she was looking at a sympto
 
 **Definition:** An update anomaly, an insert anomaly, and a `delete anomaly` are three different symptoms of the same underlying disease: a `table` that mixes facts about several different real-world things into one set of `rows`, so that a single fact ends up copied wherever it is needed.
 
+<!--
+IMAGE PROMPT  ->  generate as images/01_intro_why_normalize_update_insert_and_delete_anomalies.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Priya runs the order desk at Sunrise Traders, a wholesale stationery distributor that supplies notebooks, pens, and files to retail shops across the city. When she joined, she inherited a single spreadsheet-turned-table that recorded everything about every.
+
+ON-IMAGE TEXT: show a short bold title "Why Normalize Update Insert And Delete Anomalies" plus only these few labels, large and legible: Table, Order, Normalize. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for why normalize update insert and delete anomalies](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_why_normalize_update_insert_and_delete_anomalies.png)
+
 ## One Table Trying to Hold Three Different Stories
 
 Here is a trimmed version of the Orders `table` Priya was working from:
@@ -86,7 +102,7 @@ Look closely and three separate stories are tangled into one `table`:
 
 Every time a customer places another order, their name, address, and phone number get retyped into a new `row`. Every time a product is ordered again, its name and price get retyped too. This is exactly the kind of redundancy that causes trouble the moment anyone tries to change, add, or remove anything, and those three kinds of trouble each have a name.
 
-![One wide orders table mixing customer, product, and order facts, creating update, insert, and delete anomalies](images/01_mixed_orders_table_anomalies.png)
+![One wide orders table mixing customer, product, and order facts, creating update, insert, and delete anomalies](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_mixed_orders_table_anomalies.png)
 
 ## Update Anomaly: One Fact, Many Places to Fix
 
@@ -145,7 +161,7 @@ All three anomalies share one root cause: the Orders `table` is asking a single 
 
 The fix Priya eventually reaches for is not a clever trick or a stricter data-entry policy, it is a disciplined way of reorganizing the `table` so that each fact is stored exactly once, attached to the one thing it actually describes.
 
-![Normalization splitting the messy orders table into customers, products, orders, and order items](images/02_normalization_splits_facts_by_topic.png)
+![Normalization splitting the messy orders table into customers, products, orders, and order items](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_normalization_splits_facts_by_topic.png)
 
 ## Your Turn: Spot the Anomaly
 

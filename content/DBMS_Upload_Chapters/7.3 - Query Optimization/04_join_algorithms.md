@@ -8,6 +8,10 @@ Every `join` covered earlier in this course, `INNER JOIN`, `LEFT JOIN`, and the 
 
 Each has a different performance profile depending on `table` sizes and whether a useful `index` or sort order is available.
 
+**Definition:** Nested loop, `hash join`, and `merge join` are three genuinely different strategies for finding matching `rows` between two `tables`, each favored by the optimizer under different conditions, small filtered inputs with a good `index`, large unsorted inputs on both sides, or already-sorted inputs respectively, and none of them is a fixed rule so much as the outcome of the same cost-based reasoning covered earlier in this chapter.
+
+![Intro visual for join algorithms](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_join_algorithms.png)
+
 ## Nested Loop: Simple, Best for Small Inputs
 
 A `nested loop` `join` works exactly the way its name suggests: for every `row` in the outer `table`, it scans, or `index`-looks-up, the inner `table` to find matches, one outer `row` at a time.
@@ -39,7 +43,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE customers (
     customer_id INTEGER PRIMARY KEY,
     customer_name TEXT
@@ -63,12 +67,12 @@ CREATE INDEX idx_orders_customer_id ON orders (customer_id);
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-EXPLAIN SELECT c.customer_name, o.amount
-FROM customers c
-JOIN orders o ON c.customer_id = o.customer_id
-WHERE c.customer_id BETWEEN 1 AND 3;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajurx" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -84,17 +88,18 @@ Expected output:
 
 For this narrow filter, matching only 3 customers, the optimizer favors a "Nested Loop": for each of those 3 customer `rows`, it uses `idx_orders_customer_id` to directly look up that customer's orders. With so few outer `rows`, repeating a fast, targeted lookup 3 times is cheap. A `nested loop` shines exactly here, a small outer input paired with an efficient way to look up matches for each one, typically via an `index`.
 
-![A nested loop join repeats an inner lookup for each outer row](images/07_nested_loop_join_repeated_inner_lookup.png)
+![A nested loop join repeats an inner lookup for each outer row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_nested_loop_join_repeated_inner_lookup.png)
 
 ## Hash Join: Best When Neither Side Is Small
 
 When both sides of a `join` are large, and no useful `index` narrows either one down first, PostgreSQL often prefers a `hash join`: build an in-memory hash `table` from one side, keyed by the `join` `column`, then scan the other side once, probing the hash `table` for each `row`.
 
-```postgresql with=init.sql
-EXPLAIN SELECT c.customer_name, o.amount
-FROM customers c
-JOIN orders o ON c.customer_id = o.customer_id;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajv39" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -112,18 +117,18 @@ With no filter narrowing either `table` down, the plan favors a "Hash Join": it 
 
 This avoids the `nested loop`'s repeated lookups entirely, since scanning `orders` once and doing an in-memory hash lookup per `row` is far cheaper here than repeating an `index` lookup 5000 times, once per customer.
 
-![A hash join builds a hash table from one side and probes it with the other](images/08_hash_join_build_and_probe.png)
+![A hash join builds a hash table from one side and probes it with the other](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_hash_join_build_and_probe.png)
 
 ## Merge Join: Best When Both Sides Are Already Sorted
 
 A `merge join` takes advantage of both inputs already being sorted by the `join` `column`, walking through both sorted lists together in lockstep, similar to how the earlier lesson on set operations conceptually combines two already-ordered sequences.
 
-```postgresql with=init.sql
-EXPLAIN SELECT c.customer_name, o.amount
-FROM customers c
-JOIN orders o ON c.customer_id = o.customer_id
-ORDER BY c.customer_id;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajvcb" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -140,21 +145,18 @@ If both `customers` and `orders` can be efficiently produced in `customer_id` or
 
 This is particularly efficient when the `query` already needs the result sorted by the `join` `column` anyway, since the `merge join` produces that order as a natural side effect of how it works.
 
-![A merge join walks two sorted inputs forward together](images/09_merge_join_sorted_streams_walk_together.png)
+![A merge join walks two sorted inputs forward together](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_merge_join_sorted_streams_walk_together.png)
 
 ## The Optimizer Picks Based on Estimated Cost, Not a Fixed Rule
 
 None of these three algorithms is universally "the best" one; the optimizer, using exactly the cost-estimation process covered earlier in this chapter, picks whichever it expects to be cheapest for the specific `tables`, filters, and available `indexes` involved in a given `query`.
 
-```postgresql with=init.sql
-SET enable_hashjoin = off;
-
-EXPLAIN SELECT c.customer_name, o.amount
-FROM customers c
-JOIN orders o ON c.customer_id = o.customer_id;
-
-SET enable_hashjoin = on;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajvng" 
+ width="100%"
+></iframe>
 
 Expected output (with `enable_hashjoin` off, for the unfiltered join):
 
@@ -204,9 +206,12 @@ Temporarily disabling hash joins with `SET enable_hashjoin = off` forces the opt
 
 Filter the `join` `query` above down to a single customer, `customer_id = 42`, and check which `join` algorithm the optimizer chooses, comparing it to the unfiltered `join`'s choice.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajvxz" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

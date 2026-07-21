@@ -10,6 +10,22 @@ Her tech lead, reviewing the incident afterward, explains what should have been 
 
 **Definition:** Audit `columns` and soft deletes both answer the same underlying worry: that a `database`, left to simply overwrite and erase without a trace, remembers nothing about its own past.
 
+<!--
+IMAGE PROMPT  ->  generate as images/04_intro_audit_columns_and_soft_deletes.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Farah works on the support team at a subscription meal-kit service, and her Tuesday morning starts with an angry phone call. A customer named Rekha Menon says her account was deleted by mistake during a cleanup script the engineering team ran over the.
+
+ON-IMAGE TEXT: show a short bold title "Audit Columns And Soft Deletes" plus only these few labels, large and legible: Table, Row, Order. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for audit columns and soft deletes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_audit_columns_and_soft_deletes.png)
+
 ## Audit Columns: A Quiet Record of When Things Happened
 
 An audit `column` is a `column` added to a `table` purely to track the history of the `row` itself, rather than any business fact about the customer, the order, or the product the `row` represents. The two most common are:
@@ -21,7 +37,7 @@ Their value shows up constantly once they exist. A support agent investigating a
 
 An engineer debugging a data inconsistency can sort a `table` by `updated_at` to see which `rows` changed most recently, right around the time a suspicious script ran. None of this is possible after the fact if the `columns` were never there to begin with, which is exactly Farah's problem with Rekha's vanished `row`: there was no record of when it was created, let alone any trace of it being removed.
 
-![Audit columns stamping a row with created_at and updated_at timestamps](images/07_audit_columns_created_updated.png)
+![Audit columns stamping a row with created_at and updated_at timestamps](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_audit_columns_created_updated.png)
 
 ## Soft Deletes: Marking a Row Gone Without Actually Erasing It
 
@@ -35,7 +51,7 @@ Had Rekha's `row` used a `deleted_at` `column`, the weekend cleanup script would
 
 The order history, preferences, and loyalty progress would never have been at risk, because none of it was ever actually gone.
 
-![Soft delete hiding a row with deleted_at and restoring it instead of erasing it permanently](images/08_soft_delete_deleted_at_restore.png)
+![Soft delete hiding a row with deleted_at and restoring it instead of erasing it permanently](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_soft_delete_deleted_at_restore.png)
 
 Here is a Customers table with all three audit columns Farah's tech lead wishes had existed before Rekha's account vanished, followed by the soft delete itself and the query that keeps deleted customers out of everyday view.
 

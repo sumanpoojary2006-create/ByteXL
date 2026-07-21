@@ -6,6 +6,22 @@ This lesson connects those two facts directly to something Priya can actually se
 
 **Definition:** Without a supporting structure on the `column` being filtered, a heap-organized `table` forces a `query` into a `full table scan`, reading every single page and checking every single `row`, with cost that scales directly with `table` size regardless of how few `rows` the `query` actually needs; the `primary key` search escaped this fate only because PostgreSQL quietly built an `index` for it.
 
+<!--
+IMAGE PROMPT  ->  generate as images/03_intro_why_storage_layout_affects_query_speed.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: The previous two lessons established two physical facts: data is read in whole pages, not individual rows, and a heap, PostgreSQL's default organization, offers no guarantee about which rows end up on which pages. This lesson connects those two facts directly.
+
+ON-IMAGE TEXT: show a short bold title "Why Storage Layout Affects Query Speed" plus only these few labels, large and legible: Table, Row, Query. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for why storage layout affects query speed](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_why_storage_layout_affects_query_speed.png)
+
 ## Watching a Full Table Scan Happen
 
 A larger `table` makes the cost of a full scan easy to observe directly.
@@ -72,7 +88,7 @@ Expected output:
 
 Using the same page-number extraction from the first lesson, this counts how many distinct pages the `table` occupies a `sequential scan` has to read every single one of them, even for this single-`row` lookup, because a `sequential scan`'s cost scales with the size of the whole `table`, not with how many `rows` the `query` actually needs, whether that need is 1 `row` or 1000.
 
-![A full table scan checks every page even when only one target row is needed](images/05_full_scan_checks_every_page.png)
+![A full table scan checks every page even when only one target row is needed](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_full_scan_checks_every_page.png)
 
 ## Why the Primary Key Search Behaves Differently
 
@@ -97,7 +113,7 @@ The physical reality is that a `primary key` `constraint` does not change how `r
 
 Nothing about the `table`'s layout changed between these two `queries`; the only difference is that one `column` has a supporting structure and the other does not. That structure, the `index`, is exactly what the next chapter covers in depth.
 
-![An index gives the database a shortcut to the page instead of scanning many pages](images/06_index_scan_jumps_to_page.png)
+![An index gives the database a shortcut to the page instead of scanning many pages](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_index_scan_jumps_to_page.png)
 
 ## How Table Size Directly Predicts Scan Cost
 
@@ -127,7 +143,7 @@ Doubling the `row` count roughly doubles the reported `table` size, and a full s
 
 This is precisely why "it worked fine on my small test `table`" is not evidence that a `query` will stay fast once real data volume arrives; a `full table scan`'s cost is a direct, predictable `function` of `table` size.
 
-![As more rows create more pages, a full scan has more pages to read](images/07_more_rows_more_pages_full_scan_cost.png)
+![As more rows create more pages, a full scan has more pages to read](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_more_rows_more_pages_full_scan_cost.png)
 
 ## What a Full Table Scan Is and Is Not
 

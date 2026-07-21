@@ -8,6 +8,22 @@ The short version is that `joins` combine `columns` from two `tables` side by si
 
 **Definition:** `Joins` widen `rows` by attaching `columns` from a matching `table`, set operations stack or compare whole `rows` across similarly shaped `queries`, and `EXISTS` checks for a match without pulling in any `columns` at all, and recognizing which shape a question actually needs is what decides between them.
 
+<!--
+IMAGE PROMPT  ->  generate as images/03_intro_when_to_use_set_operations_vs_joins.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Tanvi noticed something while building her cross-channel shopper list: the INTERSECT query from the last lesson and a NOT EXISTS-based anti join from the joins chapter both seem to be answering similar "does this row also appear elsewhere" questions, just.
+
+ON-IMAGE TEXT: show a short bold title "When To Use Set Operations Vs Joins" plus only these few labels, large and legible: Row, Query, Join. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for when to use set operations vs joins](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_when_to_use_set_operations_vs_joins.png)
+
 ## The Core Difference: Sideways vs. Stacked
 
 A `join` widens a `row`, pulling in extra `columns` from a second `table` for each match. A set operation never adds `columns`; it only ever stacks, filters, or intersects whole `rows` that already have the same shape.
@@ -76,7 +92,7 @@ This `join` produces a `row` with `columns` from both `tables` side by side, `cu
 
 Both `queries` can answer "who shops in both channels," but only the `join` naturally supports pulling in extra, non-matching `columns` from either side, such as a loyalty tier stored only on the store side.
 
-![JOIN widening rows sideways while set operations stack or compare same-shaped rows](images/05_join_vs_set_operation_shape.png)
+![JOIN widening rows sideways while set operations stack or compare same-shaped rows](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_join_vs_set_operation_shape.png)
 
 ## Rewriting an Anti Join as an EXCEPT
 
@@ -114,7 +130,7 @@ Both return Aditi Kulkarni and Rohan Das. The two read differently, and that dif
 - The `NOT EXISTS` version reads naturally as "keep this `row` if no match exists," and generalizes easily to conditions involving other `tables` or `columns` beyond a simple whole-`row` comparison.
 - The `EXCEPT` version reads naturally as "everything in the first list, minus everything in the second," and is often the more direct choice when the comparison genuinely is a whole-`row` match between two similarly shaped `queries`, exactly the situation Tanvi has here.
 
-![Choosing EXISTS for match checks and EXCEPT for subtracting same-shaped result sets](images/06_exists_vs_except_choose_by_question.png)
+![Choosing EXISTS for match checks and EXCEPT for subtracting same-shaped result sets](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_exists_vs_except_choose_by_question.png)
 
 ## When a Join Is the Right Choice
 

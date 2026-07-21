@@ -10,6 +10,22 @@ A timestamp is a single value, but the questions above need it pulled apart, com
 
 **Definition:** Date and time `functions` turn a single stored timestamp into whatever shape a question needs: `NOW()` and `CURRENT_DATE` for a reference point, interval arithmetic for shifting dates forward or measuring spans, and `EXTRACT` for pulling out just a weekday or an hour.
 
+<!--
+IMAGE PROMPT  ->  generate as images/03_intro_date_and_time_functions.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Divya runs the front desk software for a small clinic, and the appointments table logs every visit with a timestamp. Doctors keep asking questions that a raw timestamp cannot answer by itself: - "How many days ago was this patient's last visit?" - "Which.
+
+ON-IMAGE TEXT: show a short bold title "Date And Time Functions" plus only these few labels, large and legible: Table, Functions, Divya. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for date and time functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_date_and_time_functions.png)
+
 ## Getting the Current Moment
 
 Every date calculation eventually needs to know what "now" is, so that is the natural starting point.
@@ -63,7 +79,7 @@ Expected output shape:
 
 `NOW()` returns the exact current timestamp the `database` sees at `query` time, down to the second, while `CURRENT_DATE` returns just today's date with no time component. Divya will use `NOW()` as the anchor point for every "how long ago" question the clinic asks.
 
-![NOW, CURRENT_DATE, and INTERVAL using the current moment to suggest a follow-up date](images/05_now_current_date_interval_followup.png)
+![NOW, CURRENT_DATE, and INTERVAL using the current moment to suggest a follow-up date](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_now_current_date_interval_followup.png)
 
 ## Doing Arithmetic on Dates
 
@@ -118,7 +134,7 @@ Expected output:
 - `DOW` (day of week) returns 0 for Sunday through 6 for Saturday, and `HOUR` returns the hour in 24-hour format.
 - Grouping later by `EXTRACT(HOUR FROM visit_time)` is how Divya would eventually find the clinic's busiest hour, one topic ahead once grouping is introduced.
 
-![EXTRACT pulling hour and day-of-week parts from a visit timestamp](images/06_extract_timestamp_parts.png)
+![EXTRACT pulling hour and day-of-week parts from a visit timestamp](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_extract_timestamp_parts.png)
 
 ## Comparing Two Dates Directly
 
@@ -145,6 +161,8 @@ Expected output shape:
 
 - `visit_time::DATE` converts the timestamp to a plain date first, dropping the time-of-day portion so the subtraction returns a clean whole number of days rather than a mixed interval.
 - Ordering by that computed `column` puts the most recent visits first, which is exactly the list the front desk checks each morning.
+
+![Subtracting a start timestamp from an end timestamp produces an elapsed duration](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06b_timestamp_difference_elapsed_time.png)
 
 ## EXTRACT Fields Worth Knowing
 

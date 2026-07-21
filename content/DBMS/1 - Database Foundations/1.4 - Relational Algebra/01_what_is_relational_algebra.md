@@ -10,6 +10,22 @@ This formal toolkit, the mathematical foundation beneath every question a relati
 
 **Definition:** `Relational algebra` is the formal, mathematical toolkit underneath every question a relational `database` answers: a small set of operations, each one taking relations in and producing a relation out, that together give a `database` a precise language for expressing and comparing ways of finding an answer.
 
+<!--
+IMAGE PROMPT  ->  generate as images/01_intro_what_is_relational_algebra.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Devika is three weeks into her internship at a bookstore chain's data team, and her manager has just asked her a question that catches her off guard: "The reporting tool says it can answer any question about our inventory. How does it actually decide what to.
+
+ON-IMAGE TEXT: show a short bold title "What Is Relational Algebra" plus only these few labels, large and legible: Relational, Algebra, Devika. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for what is relational algebra](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_what_is_relational_algebra.png)
+
 ## A Relation In, A Relation Out
 
 Start with what a "relation" actually is in this context: it is simply the formal name for a `table`, a set of `rows` sharing the same `columns`. Suppose the bookstore's system stores a relation called Books, looking something like this:
@@ -61,7 +77,7 @@ Start with what a "relation" actually is in this context: it is simply the forma
 - `Relational algebra` works the same way.
 - Because every operation's output is again a relation, the output of one operation can always become the input to another, and a whole chain of small, simple steps can be strung together to answer a genuinely complicated question, one step at a time.
 
-![Relational algebra as a toolkit where each operation takes a relation in and returns a relation out](images/01_relational_algebra_operation_toolkit.png)
+![Relational algebra as a toolkit where each operation takes a relation in and returns a relation out](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_relational_algebra_operation_toolkit.png)
 
 ## Why a Formal Language Matters at All
 
@@ -87,7 +103,7 @@ None of these operations is complicated in isolation. What makes `relational alg
 
 A dashboard listing "mystery books under 400 rupees, sorted by title" and a report listing "every customer who ordered a travel book this month" both reduce, underneath the wording, to short chains of the very same handful of operations.
 
-![Relational algebra operations chaining together because every output remains a relation](images/02_closure_chaining_relations.png)
+![Relational algebra operations chaining together because every output remains a relation](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_closure_chaining_relations.png)
 
 ## Relational Algebra at a Glance
 

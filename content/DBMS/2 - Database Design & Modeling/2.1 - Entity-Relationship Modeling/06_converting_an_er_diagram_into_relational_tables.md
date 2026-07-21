@@ -9,6 +9,22 @@ Naina realises that everything so far has been a picture of the world, not yet a
 
 **Definition:** Converting an ER diagram into relational `tables` follows a small, dependable set of rules: every entity becomes a `table` with its simple attributes as `columns` and its identifying attribute as the `primary key`, every one-to-many relationship is implemented by placing a `foreign key` on the `table` representing the "many" side, every one-to-one relationship places a unique `foreign key` on one side or merges the two `tables` outright, and every many-to-many relationship requires a new junction `table` holding a `foreign key` pointing to each of the two entities it connects.
 
+<!--
+IMAGE PROMPT  ->  generate as images/06_intro_converting_an_er_diagram_into_relational_tables.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Naina has finally finished the ER diagram for the college's course-registration system: rectangles for Student, Course, and Instructor, ovals hanging off each one for their attributes, and diamonds capturing how a student enrols in a course and how an.
+
+ON-IMAGE TEXT: show a short bold title "Converting An Er Diagram Into Relational Tables" plus only these few labels, large and legible: Converting, Diagram, Relational. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for converting an er diagram into relational tables](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_converting_an_er_diagram_into_relational_tables.png)
+
 ## Rule One: Every Entity Becomes a Table
 
 The first rule is the most intuitive. Every rectangle in the diagram, every entity, becomes its own `table`, and every simple attribute hanging off that entity becomes a `column` in that `table`. The attribute that was underlined in the diagram, the identifying one, becomes the `table`'s `primary key`, the `column` guaranteed to hold a different value in every `row`.
@@ -46,7 +62,7 @@ Roll Number, the underlined attribute in the diagram, sits as the `primary key` 
 
 A composite attribute, like an address split into Street, City, and Pincode, simply becomes three separate `columns` rather than one, and a derived attribute like age is typically left out of the `table` entirely, since it can always be recalculated from date of birth whenever it is actually needed.
 
-![Student entity and attributes mapped into a Students table with a primary key](images/11_entities_to_tables_mapping.png)
+![Student entity and attributes mapped into a Students table with a primary key](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_entities_to_tables_mapping.png)
 
 ## Rule Two: One-to-Many Becomes a Foreign Key on the "Many" Side
 
@@ -160,7 +176,7 @@ Look closely at what this `table` allows. Roll Number 20456 appears twice, once 
 
 If the relationship itself carried its own attribute, say an enrolment date recording exactly when the student joined that course, that attribute would live directly inside this same junction `table`, since the date describes the enrolment, not the student or the course individually.
 
-![One-to-many relationships becoming foreign keys and many-to-many relationships becoming junction tables](images/12_relationships_to_foreign_keys_and_junctions.png)
+![One-to-many relationships becoming foreign keys and many-to-many relationships becoming junction tables](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_relationships_to_foreign_keys_and_junctions.png)
 
 ## Mapping Rules at a Glance
 

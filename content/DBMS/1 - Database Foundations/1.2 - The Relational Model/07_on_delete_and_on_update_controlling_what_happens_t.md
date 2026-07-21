@@ -14,6 +14,22 @@ This is exactly the dilemma every relational `database` has to face wherever a `
 
 **Definition:** Every `foreign key` eventually forces the same honest question: if the `row` being pointed at disappears or changes, what should happen to the `rows` depending on it, and a relational `database` lets that answer be blocking, cascading, or clearing the link, chosen deliberately for each relationship rather than left to chance.
 
+<!--
+IMAGE PROMPT  ->  generate as images/07_intro_on_delete_and_on_update_controlling_what_happens.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Sanjay handles account closures for a small online bookstore in Chennai, and one Tuesday a customer, Naina Kapoor, writes in asking for her account to be permanently deleted. Sanjay opens the Customers table, finds her row, and is about to remove it, when a.
+
+ON-IMAGE TEXT: show a short bold title "On Delete And On Update Controlling What Happens" plus only these few labels, large and legible: Table, Row, Key. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for on delete and on update controlling what happens](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_intro_on_delete_and_on_update_controlling_what_happens.png)
+
 ## The Dilemma, In Plain Terms
 
 Whenever a `foreign key` connects a child `row` to a parent `row`, as an order connects to the customer who placed it, two kinds of change to the parent can leave the child stranded:
@@ -44,7 +60,7 @@ A bookstore that needs to keep sales figures and inventory history intact, even 
 
 The very same three choices apply, separately, to the case where a parent `row`'s identifying value changes rather than the `row` being deleted outright. If customer IDs were ever renumbered during a system migration, the bookstore would again have to decide whether dependent orders should block that renumbering, automatically update to follow the new ID, or have their link cleared instead.
 
-![Block, cascade, and set-empty choices for orders that depend on a deleted customer row](images/13_on_delete_parent_child_choices.png)
+![Block, cascade, and set-empty choices for orders that depend on a deleted customer row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/13_on_delete_parent_child_choices.png)
 
 ## Matching the Choice to the Real-World Relationship
 
@@ -91,7 +107,7 @@ Notice the pattern. Cascading suits relationships where the child `row`'s entire
 
 Setting the link empty sits in between, useful when the dependent `rows` should survive on their own even after losing their `connection` to the parent.
 
-![Choosing a foreign-key policy based on whether child rows should block, disappear, detach, or follow an ID update](images/14_choose_foreign_key_policy.png)
+![Choosing a foreign-key policy based on whether child rows should block, disappear, detach, or follow an ID update](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/14_choose_foreign_key_policy.png)
 
 ## A Decision Every Database Lets You Make Deliberately
 

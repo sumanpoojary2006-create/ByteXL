@@ -4,6 +4,10 @@ The previous chapter left Priya with a precise problem: a `full table scan` chec
 
 Finding "Rathi, Sanjay" in a phone book does not mean reading every entry from the first page onward; the book is alphabetically sorted, so a reader can jump straight to the R section and narrow in from there. A `database` **`index`** does exactly this for a `table`: a separate structure, built on one or more `columns`, that lets the `database` jump directly to matching `rows` instead of checking every one.
 
+**Definition:** An `index` is a separate, sorted structure built on one or more `columns` that lets the `database` jump directly to matching `rows` instead of scanning the whole `table`, trading extra storage and slightly slower writes for dramatically faster reads on the `indexed` `column`, the same trade a phone book's alphabetical sorting makes over a randomly ordered list of names.
+
+![Intro visual for what is an index](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_what_is_an_index.png)
+
 ## Searching Without an Index
 
 The `orders` `table` from the storage chapter, large enough for the cost difference to be visible, sets up the comparison. The closing `ANALYZE` statement refreshes the statistics the `query planner` uses to estimate how many `rows` a condition will match; every setup in this chapter runs it after loading data, and it returns in full detail alongside `EXPLAIN` in the next chapter.
@@ -26,7 +30,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
     customer_name TEXT,
@@ -42,9 +46,12 @@ ANALYZE orders;
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-EXPLAIN SELECT * FROM orders WHERE customer_name = 'Customer 7500';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkag5hp" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -57,17 +64,18 @@ Expected output:
 
 There is no structure supporting a search on `customer_name`, so the plan reports a `sequential scan`, checking all 10000 `rows` to find the one whose name matches, exactly the phone-book equivalent of reading every page from the beginning because nothing is organized to help.
 
-![Without an index the database scans all rows; with an index it jumps to the match](images/01_without_index_vs_with_index_shortcut.png)
+![Without an index the database scans all rows; with an index it jumps to the match](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_without_index_vs_with_index_shortcut.png)
 
 ## Creating an Index and Watching the Plan Change
 
 `CREATE INDEX` builds a separate structure that keeps track of where `rows` with each value of a `column` can be found, without physically reordering the `table` itself.
 
-```postgresql with=init.sql
-CREATE INDEX idx_orders_customer_name ON orders (customer_name);
-
-EXPLAIN SELECT * FROM orders WHERE customer_name = 'Customer 7500';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkag5tk" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -80,7 +88,7 @@ Expected output:
 
 The plan changes to an "`Index Scan`," using `idx_orders_customer_name` to jump almost directly to the matching `row`, rather than checking all 10000. The `index` itself is sorted by `customer_name`, the same way a phone book is sorted by last name, so the `database` can narrow down to the matching entries the same way a reader flips to the right section of a phone book instead of starting from page one.
 
-![An index stores key values with pointers back to the full table rows](images/02_index_key_plus_pointer.png)
+![An index stores key values with pointers back to the full table rows](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_index_key_plus_pointer.png)
 
 ## What an Index Actually Is
 
@@ -91,12 +99,12 @@ An `index` is not a copy of the `table`. It is:
 
 Looking up a value in the `index` gives the `database` the exact physical location to fetch, instead of checking every `row`'s actual data to find a match.
 
-```postgresql with=init.sql
-CREATE INDEX idx_orders_customer_name ON orders (customer_name);
-
-SELECT pg_size_pretty(pg_relation_size('orders')) AS table_size,
-       pg_size_pretty(pg_relation_size('idx_orders_customer_name')) AS index_size;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkag64b" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -110,17 +118,12 @@ The `index` takes up its own disk space, separate from the `table`, since it is 
 
 Because an `index` is a separate structure that must stay in sync with the `table`, every `INSERT`, `UPDATE`, or `DELETE` that touches an `indexed` `column` has to update the `index` too, not just the `table`.
 
-```postgresql with=init.sql
-CREATE INDEX idx_orders_customer_name ON orders (customer_name);
-
-SELECT pg_size_pretty(pg_relation_size('idx_orders_customer_name')) AS index_size_before;
-
-INSERT INTO orders (order_id, customer_name, amount)
-SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
-FROM generate_series(10001, 20000) AS i;
-
-SELECT pg_size_pretty(pg_relation_size('idx_orders_customer_name')) AS index_size_after;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkag6dh" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -173,9 +176,12 @@ This cost is usually small for one `index` on one `row`, but it is the reason `i
 
 Create an `index` on the `amount` `column` of the `orders` `table` above, then run `EXPLAIN` on a `query` filtering for `amount = 5000.00`, confirming the plan now uses an `index scan` instead of a `sequential scan`.
 
-```postgresql with=init.sql
--- Write your queries below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkag6pb" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

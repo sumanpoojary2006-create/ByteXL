@@ -6,6 +6,22 @@ Priya's team, excited after seeing `indexes` fix several slow reports, wants to 
 
 **Definition:** Every `index` carries a real, ongoing cost in storage and write performance, paid on every insert, update, and delete, regardless of how often that `index` actually gets used to speed up a read, which means `indexing` should be a deliberate decision matched to actual `query` patterns, not a reflexive habit applied to every `column`.
 
+<!--
+IMAGE PROMPT  ->  generate as images/05_intro_when_not_to_index_the_cost_of_overindexing.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Every lesson in this chapter so far has shown an index making a query faster, which could easily leave the impression that more indexes are always better. They are not. Every index adds real, ongoing cost, extra storage, and extra work on every write that.
+
+ON-IMAGE TEXT: show a short bold title "When Not To Index The Cost Of Overindexing" plus only these few labels, large and legible: Column, Query, Index. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for when not to index the cost of overindexing](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_when_not_to_index_the_cost_of_overindexing.png)
+
 ## The Write Cost of Every Additional Index
 
 Each `index` on a `table` means each `INSERT` has to do that much more work, updating every one of them, not just writing the `row` itself.
@@ -108,7 +124,7 @@ Expected output:
 - `EXPLAIN ANALYZE`, unlike plain `EXPLAIN`, actually executes the statement and reports real measured timings.
 - The same 5000 `rows`, inserted into two identically shaped `tables`, take measurably longer against `orders_many_indexes`: 47.734 ms versus 22.156 ms, more than double, visible by comparing the `Execution Time` reported at the bottom of each plan, since that insert has to additionally update three separate `index` structures for every single `row`, on top of writing the `row` itself. `orders_few_indexes` only has its `primary key`'s automatic `index` to maintain, and finishes with noticeably less total work.
 
-![Every extra index adds more maintenance work to each insert](images/12_overindexing_more_indexes_more_write_work.png)
+![Every extra index adds more maintenance work to each insert](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_overindexing_more_indexes_more_write_work.png)
 
 ## Redundant Indexes Add Cost Without Adding Benefit
 
@@ -131,7 +147,7 @@ The `query planner` is free to choose either `idx_many_name` or the leading port
 
 Keeping both means paying the storage and write cost of two overlapping structures for a benefit neither one provides over the other for this particular `query` shape. Reviewing a `schema`'s `indexes` for this kind of overlap, and removing the ones that add cost without adding a distinct capability, is a normal part of keeping a system healthy as it grows.
 
-![Redundant and low-cardinality indexes can add cost without enough benefit](images/13_redundant_and_low_cardinality_indexes.png)
+![Redundant and low-cardinality indexes can add cost without enough benefit](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/13_redundant_and_low_cardinality_indexes.png)
 
 ## Indexing Columns That Are Rarely Filtered On Wastes the Investment
 

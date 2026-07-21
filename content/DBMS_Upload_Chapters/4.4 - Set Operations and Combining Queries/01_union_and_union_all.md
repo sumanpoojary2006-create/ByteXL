@@ -4,6 +4,10 @@ Tanvi runs marketing for a retail brand that sells both through its website and 
 
 This is not a `join`, since she is not trying to match `rows` between the two `tables` and widen them with extra `columns`; she wants to stack the `rows` from both `tables` on top of each other into one combined list. SQL's **`UNION`** and **`UNION ALL`** are built for exactly that: combining the results of two `queries` vertically.
 
+**Definition:** `UNION` and `UNION ALL` combine the results of two or more `queries` vertically into one result set, with `UNION` removing exact duplicates and `UNION ALL` keeping every `row`, both requiring the same number and type of `columns` from each `query` involved.
+
+![Intro visual for union and union all](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_union_and_union_all.png)
+
 ## Stacking Two Result Sets Into One
 
 Both customer `tables` share the same shape, a name and an email, which is a requirement for combining them this way.
@@ -32,7 +36,7 @@ The OneCompiler activity keeps setup and practice separate. `init.sql` creates a
 
 ## Hands-On Setup: Prepare the Data
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE online_customers (
     customer_name TEXT,
     email TEXT
@@ -56,11 +60,12 @@ INSERT INTO store_customers (customer_name, email) VALUES
 
 Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
 
-```postgresql with=init.sql
-SELECT customer_name, email FROM online_customers
-UNION
-SELECT customer_name, email FROM store_customers;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahsjw" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -108,17 +113,18 @@ Expected output:
 - Kavya Nair appears in both source `tables`, since she shops both online and in-store, but she only appears once in the combined output.
 - `UNION` automatically removes exact duplicate `rows` across the two result sets, which is precisely the behavior Tanvi wants for a mailing list, since sending Kavya the same announcement twice would be an obvious mistake.
 
-![UNION stacking two customer lists while removing an exact duplicate row](images/01_union_removes_duplicates.png)
+![UNION stacking two customer lists while removing an exact duplicate row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_union_removes_duplicates.png)
 
 ## Keeping Duplicates with UNION ALL
 
 Sometimes the duplicate itself is meaningful, not a mistake to clean up. If Tanvi instead wants to know exactly how many total customer records exist across both channels, including counting Kavya twice since she is genuinely a customer of both, `UNION ALL` keeps every `row` from both `queries` with no deduplication.
 
-```postgresql with=init.sql
-SELECT customer_name, email FROM online_customers
-UNION ALL
-SELECT customer_name, email FROM store_customers;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahsvp" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -136,18 +142,19 @@ This returns 6 `rows` instead of 5, with Kavya Nair listed twice, once from each
 - When duplicates genuinely do not matter for the question being asked, `UNION ALL` is the more accurate choice.
 - It is also the more efficient one, since skipping the duplicate check saves real work.
 
-![UNION ALL stacking two customer lists while keeping duplicate rows](images/02_union_all_keeps_duplicates.png)
+![UNION ALL stacking two customer lists while keeping duplicate rows](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_union_all_keeps_duplicates.png)
 
 ## The Column Rules UNION Requires
 
 - Both `SELECT` statements combined with `UNION` or `UNION ALL` must return the same number of `columns`, in compatible data types, in the same order.
 - The `column` names in the final result come from the first `SELECT` statement, regardless of what the second one calls them.
 
-```postgresql with=init.sql
-SELECT customer_name AS person, email AS contact_email, 'online' AS source FROM online_customers
-UNION ALL
-SELECT customer_name, email, 'store' FROM store_customers;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaht6h" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -168,12 +175,12 @@ Expected output:
 
 `ORDER BY` can only appear once, at the very end of the combined `query`, and it sorts the final stacked result rather than either `query` individually.
 
-```postgresql with=init.sql
-SELECT customer_name, email FROM online_customers
-UNION
-SELECT customer_name, email FROM store_customers
-ORDER BY customer_name;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahtgw" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -215,9 +222,12 @@ Placing `ORDER BY` after both `SELECT` statements sorts the entire combined list
 
 Tanvi wants a single list of every unique email address across both channels, with no names, sorted alphabetically. Write that `query` against `online_customers` and `store_customers` above.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahttc" 
+ width="100%"
+></iframe>
 
 If your `query` is `SELECT email FROM online_customers UNION SELECT email FROM store_customers ORDER BY email;`, it returns 5 unique email addresses, with `kavya.nair@example.com` appearing only once despite being present in both source `tables`.
 

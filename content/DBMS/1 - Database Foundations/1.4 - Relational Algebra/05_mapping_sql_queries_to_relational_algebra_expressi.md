@@ -10,6 +10,22 @@ The request breaks apart into exactly the same handful of moves he has spent the
 
 **Definition:** Every structured `query` a person writes against a relational `database` is, underneath its wording, a short chain of the same handful of operations: selection to narrow `rows`, projection to narrow `columns`, `join` to combine relations on a shared value, and set operations to combine or compare relations of the same shape.
 
+<!--
+IMAGE PROMPT  ->  generate as images/05_intro_mapping_sql_queries_to_relational_algebra_expres.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Arjun has just been handed his first real assignment at a food delivery startup's data team: write a report that lists the names of every restaurant partner in the "fast food" category, along with the delivery zone each one belongs to, joining a Restaurants.
+
+ON-IMAGE TEXT: show a short bold title "Mapping SQL Queries To Relational Algebra Expressi" plus only these few labels, large and legible: Query, Fast, Mapping. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for mapping sql queries to relational algebra expressi](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_mapping_sql_queries_to_relational_algebra_expres.png)
+
 ## Restaurants and Zones: Arjun's Two Relations
 
 Here is what Arjun is working with, trimmed to the `columns` his report needs:
@@ -171,7 +187,7 @@ Notice the order these operations happened in Arjun's head: selection narrowed R
 
 This is the exact report Arjun was asked for, reached in three small, ordinary steps rather than one leap: selection, then join, then a closing projection.
 
-![A fast-food restaurant report flowing through WHERE selection, zone join, and SELECT projection](images/09_sql_query_as_algebra_chain.png)
+![A fast-food restaurant report flowing through WHERE selection, zone join, and SELECT projection](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_sql_query_as_algebra_chain.png)
 
 ## UNION and the Set Operations
 
@@ -196,7 +212,7 @@ This is precisely why `relational algebra` was worth learning before touching a 
 
 Once the underlying moves are familiar, learning the exact wording and punctuation of a structured `query` becomes a matter of vocabulary, not a matter of relearning how to think about data.
 
-![SQL clauses mapped to the relational algebra operations they express](images/10_sql_clauses_to_algebra_operations.png)
+![SQL clauses mapped to the relational algebra operations they express](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_sql_clauses_to_algebra_operations.png)
 
 ## Query Clauses and Their Algebra Counterparts
 

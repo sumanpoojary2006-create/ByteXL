@@ -11,6 +11,22 @@ Both requests sound like they want "a version of the catalogue," but they want c
 
 **Definition:** **Selection** chooses the rows of a relation that satisfy a condition, while **projection** chooses which columns appear in the result.
 
+<!--
+IMAGE PROMPT  ->  generate as images/02_intro_selection.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Rohan manages the campus library's digitised catalogue, and this week two very different requests land on his desk within an hour of each other. The first is from a librarian who wants to see every book that costs less than 300 rupees, so she can plan a.
+
+ON-IMAGE TEXT: show a short bold title "Selection" plus only these few labels, large and legible: Selection, Rohan, Manages. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for selection](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_selection.png)
+
 ## The Catalogue Rohan Is Working With
 
 Everything that follows works off one small relation, a simplified slice of Rohan's Books `table`:
@@ -132,7 +148,7 @@ Applied to the same Books relation, only one `row` survives:
 
 Whether the condition is a single check or several joined together, the operation is still sigma, still working `row` by `row`, still leaving every `column` exactly as it was.
 
-![Selection keeps matching rows while projection keeps chosen columns](images/03_selection_vs_projection.png)
+![Selection keeps matching rows while projection keeps chosen columns](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_selection_vs_projection.png)
 
 ## Projection: Keeping the Columns That Matter
 
@@ -204,7 +220,7 @@ Then projection strips that narrowed relation down to just the title `column`:
 
 This chaining is exactly the "closure" idea put to work: because sigma's output is a relation and pi's input is a relation, the two snap together cleanly, one operation feeding directly into the next, with no special glue code required in between.
 
-![A selection for mystery books feeding into a projection of only the title column](images/04_selection_then_projection_chain.png)
+![A selection for mystery books feeding into a projection of only the title column](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_selection_then_projection_chain.png)
 
 ## Selection and Projection at a Glance
 

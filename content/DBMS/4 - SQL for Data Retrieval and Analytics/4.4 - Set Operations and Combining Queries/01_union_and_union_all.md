@@ -6,6 +6,22 @@ This is not a `join`, since she is not trying to match `rows` between the two `t
 
 **Definition:** `UNION` and `UNION ALL` combine the results of two or more `queries` vertically into one result set, with `UNION` removing exact duplicates and `UNION ALL` keeping every `row`, both requiring the same number and type of `columns` from each `query` involved.
 
+<!--
+IMAGE PROMPT  ->  generate as images/01_intro_union_and_union_all.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Tanvi runs marketing for a retail brand that sells both through its website and through physical stores, and each channel keeps its own customer list in a separate table, onlinecustomers and storecustomers. For an upcoming sale announcement, she needs one.
+
+ON-IMAGE TEXT: show a short bold title "Union And Union All" plus only these few labels, large and legible: Table, Join, Union. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for union and union all](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_union_and_union_all.png)
+
 ## Stacking Two Result Sets Into One
 
 Both customer `tables` share the same shape, a name and an email, which is a requirement for combining them this way.
@@ -110,7 +126,7 @@ Expected output:
 - Kavya Nair appears in both source `tables`, since she shops both online and in-store, but she only appears once in the combined output.
 - `UNION` automatically removes exact duplicate `rows` across the two result sets, which is precisely the behavior Tanvi wants for a mailing list, since sending Kavya the same announcement twice would be an obvious mistake.
 
-![UNION stacking two customer lists while removing an exact duplicate row](images/01_union_removes_duplicates.png)
+![UNION stacking two customer lists while removing an exact duplicate row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_union_removes_duplicates.png)
 
 ## Keeping Duplicates with UNION ALL
 
@@ -138,7 +154,7 @@ This returns 6 `rows` instead of 5, with Kavya Nair listed twice, once from each
 - When duplicates genuinely do not matter for the question being asked, `UNION ALL` is the more accurate choice.
 - It is also the more efficient one, since skipping the duplicate check saves real work.
 
-![UNION ALL stacking two customer lists while keeping duplicate rows](images/02_union_all_keeps_duplicates.png)
+![UNION ALL stacking two customer lists while keeping duplicate rows](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_union_all_keeps_duplicates.png)
 
 ## The Column Rules UNION Requires
 

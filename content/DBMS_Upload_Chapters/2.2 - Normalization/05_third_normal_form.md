@@ -45,6 +45,10 @@ CustomerCity is repeated three times for CustomerID C12, once for every order th
 
 The problem here is not partial dependency at all, it is a different, sneakier pattern, and untangling it is the job of **Third `Normal Form`**, or 3NF.
 
+**Definition:** Third `Normal Form` closes a gap that Second `Normal Form` cannot reach on its own: a `table` can have the simplest possible key, a single `column`, and still repeat data endlessly if some non-key `column` is really describing a different non-key `column` instead of the key itself.
+
+![Intro visual for third normal form](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_third_normal_form.png)
+
 ## A Dependency With a Detour
 
 Naina traces exactly how CustomerCity connects back to the `primary key`, OrderID, in two hops:
@@ -61,7 +65,7 @@ This two-step chain is a **transitive dependency**, a non-key `column` depending
 
 That is precisely why it keeps repeating, every new order for C12 drags another copy of "Bengaluru" along with it, and if Ilyas Bakery Supplies ever relocates, every one of those repeated copies needs to be tracked down and corrected, the exact update anomaly Priya first ran into, resurfacing here in a `table` that already passed the 2NF check cleanly.
 
-![Third Normal Form showing the transitive dependency OrderID to CustomerID to CustomerCity](images/09_third_normal_form_transitive_dependency.png)
+![Third Normal Form showing the transitive dependency OrderID to CustomerID to CustomerCity](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_third_normal_form_transitive_dependency.png)
 
 ## Third Normal Form Builds on Second Normal Form
 
@@ -130,7 +134,7 @@ Customers, keyed by CustomerID, holding the city fact where it truly belongs:
 
 CustomerCity now exists exactly once per customer, no matter how many orders that customer places over the years. Naina can update Ilyas Bakery Supplies' city in a single `row` of Customers, and every order that references CustomerID C12 stays correctly, automatically associated with the right city, because the city is looked up through the relationship rather than copied onto every order.
 
-![Fixing 3NF by moving CustomerCity into Customers while Orders keeps only OrderID, CustomerID, and OrderDate](images/10_third_normal_form_split_customers.png)
+![Fixing 3NF by moving CustomerCity into Customers while Orders keeps only OrderID, CustomerID, and OrderDate](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_third_normal_form_split_customers.png)
 
 ## Telling Partial and Transitive Dependency Apart
 

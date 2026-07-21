@@ -8,6 +8,22 @@ Left unmanaged, this leftover space accumulates, and **`database` maintenance** 
 
 **Definition:** Because PostgreSQL keeps old `row` versions around to support concurrent, isolated reads, routine maintenance, reclaiming dead tuple space with `VACUUM` and keeping the optimizer's statistics current with `ANALYZE`, is essential to keeping a `database` healthy over time, and autovacuum handles this automatically for the large majority of real-world cases without manual intervention.
 
+<!--
+IMAGE PROMPT  ->  generate as images/01_intro_database_maintenance.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Every UPDATE and DELETE covered across this entire course has been described as if the old row's space simply disappears the moment the statement finishes. In PostgreSQL specifically, that is not quite what happens: an updated or deleted row's old version is.
+
+ON-IMAGE TEXT: show a short bold title "Database Maintenance" plus only these few labels, large and legible: Row, Maintenance, Every. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for database maintenance](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_database_maintenance.png)
+
 ## Why Updates and Deletes Leave Behind Dead Rows
 
 PostgreSQL's approach to updates, called `MVCC`, multiversion concurrency control, is what makes isolation between concurrent `transactions` possible in the first place, and it has a direct physical consequence.
@@ -56,7 +72,7 @@ Even though this `UPDATE` did not add a single new `row`, the `table`'s physical
 - PostgreSQL writes each updated `row` as a new version alongside the old one, rather than overwriting it in place.
 - The old, no-longer-current versions, called dead tuples, keep occupying disk space until something explicitly reclaims it.
 
-![VACUUM cleans up dead tuples and marks their space reusable](images/01_dead_tuples_vacuum_reusable_space.png)
+![VACUUM cleans up dead tuples and marks their space reusable](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_dead_tuples_vacuum_reusable_space.png)
 
 ## Reclaiming Space with VACUUM
 
@@ -88,7 +104,7 @@ Expected observation: PostgreSQL returns live server metadata. Values differ acr
 - `ANALYZE` refreshes PostgreSQL's internal statistics about the `table`'s data distribution, and `n_live_tup` and `n_dead_tup` in `pg_stat_user_tables` show, respectively, the estimated count of current, valid `rows` and dead, reclaimable `rows` PostgreSQL is currently tracking.
 - Stale statistics, left unrefreshed after significant data changes, can mislead the optimizer into choosing a worse plan than it otherwise would, exactly the risk noted when the optimizer was first introduced.
 
-![ANALYZE refreshes table statistics so the optimizer can choose better plans](images/02_analyze_fresh_stats_autovacuum.png)
+![ANALYZE refreshes table statistics so the optimizer can choose better plans](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_analyze_fresh_stats_autovacuum.png)
 
 ## Autovacuum: Maintenance Running Automatically
 

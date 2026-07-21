@@ -4,6 +4,10 @@ Every lesson in this chapter so far has shown an `index` making a `query` faster
 
 Priya's team, excited after seeing `indexes` fix several slow reports, wants to add an `index` to every `column` in the `orders` `table` "just in case." This lesson is about why that instinct, taken too far, makes the system slower overall, not faster.
 
+**Definition:** Every `index` carries a real, ongoing cost in storage and write performance, paid on every insert, update, and delete, regardless of how often that `index` actually gets used to speed up a read, which means `indexing` should be a deliberate decision matched to actual `query` patterns, not a reflexive habit applied to every `column`.
+
+![Intro visual for when not to index the cost of overindexing](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_when_not_to_index_the_cost_of_overindexing.png)
+
 ## The Write Cost of Every Additional Index
 
 Each `index` on a `table` means each `INSERT` has to do that much more work, updating every one of them, not just writing the `row` itself.
@@ -36,7 +40,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE orders_few_indexes (
     order_id INTEGER PRIMARY KEY,
     customer_name TEXT,
@@ -67,12 +71,12 @@ ANALYZE orders_many_indexes;
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-EXPLAIN ANALYZE
-INSERT INTO orders_few_indexes (order_id, customer_name, amount)
-SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
-FROM generate_series(5001, 10000) AS i;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkag8fd" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -85,12 +89,12 @@ Expected output:
  Execution Time: 22.156 ms
 ```
 
-```postgresql with=init.sql
-EXPLAIN ANALYZE
-INSERT INTO orders_many_indexes (order_id, customer_name, amount)
-SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
-FROM generate_series(5001, 10000) AS i;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkag8rt" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -106,15 +110,18 @@ Expected output:
 - `EXPLAIN ANALYZE`, unlike plain `EXPLAIN`, actually executes the statement and reports real measured timings.
 - The same 5000 `rows`, inserted into two identically shaped `tables`, take measurably longer against `orders_many_indexes`: 47.734 ms versus 22.156 ms, more than double, visible by comparing the `Execution Time` reported at the bottom of each plan, since that insert has to additionally update three separate `index` structures for every single `row`, on top of writing the `row` itself. `orders_few_indexes` only has its `primary key`'s automatic `index` to maintain, and finishes with noticeably less total work.
 
-![Every extra index adds more maintenance work to each insert](images/12_overindexing_more_indexes_more_write_work.png)
+![Every extra index adds more maintenance work to each insert](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_overindexing_more_indexes_more_write_work.png)
 
 ## Redundant Indexes Add Cost Without Adding Benefit
 
 The `composite index` `idx_many_name_amount` in the setup above already sorts by `customer_name` first, which means it can serve most of what `idx_many_name` alone would serve, making `idx_many_name` at least partially redundant.
 
-```postgresql with=init.sql
-EXPLAIN SELECT * FROM orders_many_indexes WHERE customer_name = 'Customer 2500';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkag933" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -129,7 +136,7 @@ The `query planner` is free to choose either `idx_many_name` or the leading port
 
 Keeping both means paying the storage and write cost of two overlapping structures for a benefit neither one provides over the other for this particular `query` shape. Reviewing a `schema`'s `indexes` for this kind of overlap, and removing the ones that add cost without adding a distinct capability, is a normal part of keeping a system healthy as it grows.
 
-![Redundant and low-cardinality indexes can add cost without enough benefit](images/13_redundant_and_low_cardinality_indexes.png)
+![Redundant and low-cardinality indexes can add cost without enough benefit](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/13_redundant_and_low_cardinality_indexes.png)
 
 ## Indexing Columns That Are Rarely Filtered On Wastes the Investment
 
@@ -138,11 +145,12 @@ An `index` only pays for itself if `queries` actually use it often enough, throu
 - A `column` that exists in the `table` but is essentially never filtered or sorted on gains nothing from being `indexed`.
 - It still pays the full write-side cost on every insert or update, regardless.
 
-```postgresql with=init.sql
-SELECT indexname, pg_size_pretty(pg_relation_size(indexname::regclass)) AS index_size
-FROM pg_indexes
-WHERE tablename = 'orders_many_indexes';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkag9c5" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -196,9 +204,12 @@ The `partial index` technique from earlier in this chapter is often a better fit
 
 Compare the total `index` storage on `orders_many_indexes` against `orders_few_indexes`, and write a comment identifying which of the three `indexes` on `orders_many_indexes` looks the most redundant given the `composite index` already present.
 
-```postgresql with=init.sql
--- Write your query and comment below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkag9p4" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

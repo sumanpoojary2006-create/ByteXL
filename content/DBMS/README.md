@@ -1,10 +1,10 @@
 # Database Management Systems
 
-9 units, each broken into chapters, each chapter into topics (lessons). Source of truth: `content/Curriculum/DBMS/Course Blueprint for RDBMS.xlsx`, sheet `Syllabus`. Coding-question scope: `content/Curriculum/DBMS/DBMS Coding-Question Scope.md`.
+8 teaching units, each broken into chapters and topics (lessons), plus two dedicated project chapters. Source of truth: `content/Curriculum/DBMS/Course Blueprint for RDBMS.xlsx`, sheet `Syllabus`. Coding-question scope: `content/Curriculum/DBMS/DBMS Coding-Question Scope.md`.
 
-![DBMS course roadmap from foundations through production](images/01_dbms_course_roadmap.png)
+![DBMS course roadmap from foundations through production](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_dbms_course_roadmap.png)
 
-![DBMS course stack connecting data modeling, SQL, transactions, indexes, security, and operations](images/02_dbms_course_stack.png)
+![DBMS course stack connecting data modeling, SQL, transactions, indexes, security, and operations](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_dbms_course_stack.png)
 
 ## Units
 
@@ -75,14 +75,16 @@
       <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">23</td>
       <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><a href="8%20-%20Going%20to%20Production/">Going to Production</a></td>
     </tr>
-    <tr style="background-color: #ffffff;">
-      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">9</td>
-      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Capstone Projects</td>
-      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">1</td>
-      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">1</td>
-      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><a href="9%20-%20Capstone%20Projects/">Capstone Projects</a></td>
-    </tr>
   </tbody>
 </table>
+
+## Project Chapters
+
+Projects are collected separately from the teaching units so they can be assigned at the appropriate point in the course without being nested inside a concept unit.
+
+| Chapter | Projects | Folder |
+|---------|----------|--------|
+| Mini Projects | 7 | [Mini Projects](Mini%20Projects/) |
+| Capstone Projects | 1 | [Capstone Projects](Capstone%20Projects/) |
 
 **Style:** professional, beginner-friendly, no emojis, no em dashes; standardized Introduction heading, narrative flow, no cross-unit/cross-chapter references.

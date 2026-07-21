@@ -8,6 +8,10 @@ The `mark_shipment_delivered` `procedure` from earlier in this chapter guarantee
 
 A **`trigger`** delivers exactly this: a piece of logic the `database` runs automatically whenever a specified event, an insert, update, or delete, happens on a `table`, with no possibility of a caller forgetting to invoke it.
 
+**Definition:** A `trigger` runs automatically in response to an insert, update, or delete, with `BEFORE` `trigger`s able to validate or reject a change before it happens, `AFTER` `trigger`s able to react once a change has completed, and `INSTEAD OF` `trigger`s able to make an otherwise non-writable `view` accept writes, all without requiring any cooperation from whoever issues the original statement.
+
+![Intro visual for triggers](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_triggers.png)
+
 ## Creating a Trigger Function and Attaching It
 
 A `trigger` is built from two pieces: a special kind of `function` describing what to do, and a `CREATE TRIGGER` statement attaching that `function` to a specific `table` and event.
@@ -39,7 +43,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     status TEXT
@@ -58,23 +62,12 @@ INSERT INTO shipments (shipment_id, status) VALUES (1, 'in_transit'), (2, 'in_tr
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-CREATE FUNCTION log_status_change()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    INSERT INTO shipment_log (shipment_id, old_status, new_status)
-    VALUES (NEW.shipment_id, OLD.status, NEW.status);
-    RETURN NEW;
-END;
-$$;
-
-CREATE TRIGGER trg_log_status_change
-AFTER UPDATE ON shipments
-FOR EACH ROW
-EXECUTE FUNCTION log_status_change();
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagmvp" 
+ width="100%"
+></iframe>
 
 Expected result: `CREATE FUNCTION` and `CREATE TRIGGER` return no rows; they arm the logging `trigger` on `shipments` without touching any data yet. The next section fires an `UPDATE` and shows the row it writes into `shipment_log`.
 
@@ -86,27 +79,12 @@ Expected result: `CREATE FUNCTION` and `CREATE TRIGGER` return no rows; they arm
 
 Once created, the `trigger` requires no cooperation from whoever writes the `UPDATE`; it fires regardless of how the update was issued.
 
-```postgresql with=init.sql
-CREATE FUNCTION log_status_change()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    INSERT INTO shipment_log (shipment_id, old_status, new_status)
-    VALUES (NEW.shipment_id, OLD.status, NEW.status);
-    RETURN NEW;
-END;
-$$;
-
-CREATE TRIGGER trg_log_status_change
-AFTER UPDATE ON shipments
-FOR EACH ROW
-EXECUTE FUNCTION log_status_change();
-
-UPDATE shipments SET status = 'delivered' WHERE shipment_id = 1;
-
-SELECT * FROM shipment_log;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagn74" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -116,51 +94,18 @@ Expected output:
 
 A plain `UPDATE`, with no `procedure`, no special syntax, no cooperation from Devraj's colleague required, produced a log entry automatically, capturing both the old status, `in_transit`, and the new one, `delivered`. This is the core advantage a `trigger` has over the `procedure` from earlier in this chapter: the logging behavior is now a property of the `table` itself, impossible to accidentally skip.
 
-![A trigger automatically creates a log entry when the table is updated](images/11_trigger_update_creates_log_automatically.png)
+![A trigger automatically creates a log entry when the table is updated](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_trigger_update_creates_log_automatically.png)
 
 ## BEFORE Triggers Can Validate or Modify a Row
 
 An `AFTER` `trigger`, like the one above, runs once a change has already happened, suitable for logging. A `BEFORE` `trigger` runs before the change is applied, and can inspect, reject, or even alter the incoming `row`.
 
-```postgresql with=init.sql
-CREATE FUNCTION log_status_change()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    INSERT INTO shipment_log (shipment_id, old_status, new_status)
-    VALUES (NEW.shipment_id, OLD.status, NEW.status);
-    RETURN NEW;
-END;
-$$;
-
-CREATE TRIGGER trg_log_status_change
-AFTER UPDATE ON shipments
-FOR EACH ROW
-EXECUTE FUNCTION log_status_change();
-
-CREATE FUNCTION prevent_invalid_status()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    IF NEW.status NOT IN ('in_transit', 'delivered', 'delayed', 'cancelled') THEN
-        RAISE EXCEPTION 'Invalid status: %', NEW.status;
-    END IF;
-    RETURN NEW;
-END;
-$$;
-
-CREATE TRIGGER trg_validate_status
-BEFORE INSERT OR UPDATE ON shipments
-FOR EACH ROW
-EXECUTE FUNCTION prevent_invalid_status();
-
--- This update would fail with "Invalid status: lost_in_space":
--- UPDATE shipments SET status = 'lost_in_space' WHERE shipment_id = 2;
-
-SELECT shipment_id, status FROM shipments WHERE shipment_id = 2;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagngp" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -174,67 +119,12 @@ Shipment 2 is still shown at its original status because the invalid `UPDATE` ab
 
 The `INSTEAD OF` `trigger` mentioned when updatable `view`s were covered earlier in this chapter is simply a third `trigger` timing, used specifically on `view`s rather than `tables`, replacing the write entirely with custom logic instead of running before or after it.
 
-```postgresql with=init.sql
-CREATE FUNCTION log_status_change()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    INSERT INTO shipment_log (shipment_id, old_status, new_status)
-    VALUES (NEW.shipment_id, OLD.status, NEW.status);
-    RETURN NEW;
-END;
-$$;
-
-CREATE TRIGGER trg_log_status_change
-AFTER UPDATE ON shipments
-FOR EACH ROW
-EXECUTE FUNCTION log_status_change();
-
-CREATE FUNCTION prevent_invalid_status()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    IF NEW.status NOT IN ('in_transit', 'delivered', 'delayed', 'cancelled') THEN
-        RAISE EXCEPTION 'Invalid status: %', NEW.status;
-    END IF;
-    RETURN NEW;
-END;
-$$;
-
-CREATE TRIGGER trg_validate_status
-BEFORE INSERT OR UPDATE ON shipments
-FOR EACH ROW
-EXECUTE FUNCTION prevent_invalid_status();
-
--- This update would fail with "Invalid status: lost_in_space":
--- UPDATE shipments SET status = 'lost_in_space' WHERE shipment_id = 2;
-
-SELECT shipment_id, status FROM shipments WHERE shipment_id = 2;
-
-CREATE VIEW shipment_status_view AS
-SELECT shipment_id, status FROM shipments;
-
-CREATE FUNCTION handle_view_update()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    UPDATE shipments SET status = NEW.status WHERE shipment_id = OLD.shipment_id;
-    RETURN NEW;
-END;
-$$;
-
-CREATE TRIGGER trg_instead_of_update
-INSTEAD OF UPDATE ON shipment_status_view
-FOR EACH ROW
-EXECUTE FUNCTION handle_view_update();
-
-UPDATE shipment_status_view SET status = 'delayed' WHERE shipment_id = 1;
-
-SELECT * FROM shipments WHERE shipment_id = 1;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagnt5" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -244,7 +134,7 @@ Expected output:
 
 The `UPDATE` against `shipment_status_view` never touches the `view` directly; `trg_instead_of_update` intercepts it and runs the underlying `UPDATE shipments SET status = 'delayed' WHERE shipment_id = 1` instead, so `shipments` itself now shows shipment 1 as `delayed`. Here `shipment_status_view` is a simple enough `view` to be updatable on its own, but the pattern generalizes directly to the `join`-based `view`s that cannot be, letting an `INSTEAD OF` `trigger` define exactly how a write against a complex `view` should be translated into changes on the real underlying `tables`.
 
-![Trigger timing options: BEFORE validates, AFTER audits, and INSTEAD OF redirects view writes](images/12_trigger_timing_before_after_instead_of.png)
+![Trigger timing options: BEFORE validates, AFTER audits, and INSTEAD OF redirects view writes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_trigger_timing_before_after_instead_of.png)
 
 ## Triggers at a Glance
 
@@ -279,69 +169,12 @@ The `UPDATE` against `shipment_status_view` never touches the `view` directly; `
 
 Create an `AFTER INSERT` `trigger` on `shipments` that logs new shipments into `shipment_log`, with `old_status` as `NULL` and `new_status` set to the newly inserted status, then insert a new shipment and confirm the log entry.
 
-```postgresql with=init.sql
-CREATE FUNCTION log_status_change()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    INSERT INTO shipment_log (shipment_id, old_status, new_status)
-    VALUES (NEW.shipment_id, OLD.status, NEW.status);
-    RETURN NEW;
-END;
-$$;
-
-CREATE TRIGGER trg_log_status_change
-AFTER UPDATE ON shipments
-FOR EACH ROW
-EXECUTE FUNCTION log_status_change();
-
-CREATE FUNCTION prevent_invalid_status()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    IF NEW.status NOT IN ('in_transit', 'delivered', 'delayed', 'cancelled') THEN
-        RAISE EXCEPTION 'Invalid status: %', NEW.status;
-    END IF;
-    RETURN NEW;
-END;
-$$;
-
-CREATE TRIGGER trg_validate_status
-BEFORE INSERT OR UPDATE ON shipments
-FOR EACH ROW
-EXECUTE FUNCTION prevent_invalid_status();
-
--- This update would fail with "Invalid status: lost_in_space":
--- UPDATE shipments SET status = 'lost_in_space' WHERE shipment_id = 2;
-
-SELECT shipment_id, status FROM shipments WHERE shipment_id = 2;
-
-CREATE VIEW shipment_status_view AS
-SELECT shipment_id, status FROM shipments;
-
-CREATE FUNCTION handle_view_update()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    UPDATE shipments SET status = NEW.status WHERE shipment_id = OLD.shipment_id;
-    RETURN NEW;
-END;
-$$;
-
-CREATE TRIGGER trg_instead_of_update
-INSTEAD OF UPDATE ON shipment_status_view
-FOR EACH ROW
-EXECUTE FUNCTION handle_view_update();
-
-UPDATE shipment_status_view SET status = 'delayed' WHERE shipment_id = 1;
-
-SELECT * FROM shipments WHERE shipment_id = 1;
-
--- Write your trigger function, trigger, and insert below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagp45" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

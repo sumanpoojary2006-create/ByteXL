@@ -6,6 +6,22 @@ A production system serving real, sustained traffic eventually outgrows what one
 
 **Definition:** Replication streams a primary `database`'s `write-ahead log` to one or more `replicas`, which replay it to stay continuously in sync, enabling both read scaling, directing tolerant read traffic away from the primary, and availability, standing ready to take over if the primary fails, at the cost of a small, measurable lag that every application using a `replica` has to account for.
 
+<!--
+IMAGE PROMPT  ->  generate as images/05_intro_replication_and_read_replicas.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Every lesson in this course has run against a single database server. A production system serving real, sustained traffic eventually outgrows what one server can comfortably handle, and it also cannot afford for that one server to be a single point of total.
+
+ON-IMAGE TEXT: show a short bold title "Replication And Read Replicas" plus only these few labels, large and legible: Replication, Replicas, Every. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for replication and read replicas](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_replication_and_read_replicas.png)
+
 ## How Streaming Replication Works, Conceptually
 
 PostgreSQL's standard replication approach relies on exactly the mechanism covered in the `recovery` unit: the `write-ahead log`. A `replica` continuously receives the same `WAL` records the primary server generates, and replays them, effectively performing the same redo process `recovery` uses after a crash, except continuously, in near real time, against a running, healthy primary.
@@ -49,7 +65,7 @@ Every change made on the primary, this `INSERT` included, generates `WAL` record
 
 This is why replication is often described as `recovery`'s mechanism, run continuously against a live server rather than only after a crash.
 
-![Streaming replication sends WAL from the primary to replicas, which replay it](images/09_streaming_replication_wal_to_replicas.png)
+![Streaming replication sends WAL from the primary to replicas, which replay it](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_streaming_replication_wal_to_replicas.png)
 
 ## Monitoring Replication from the Primary
 
@@ -88,7 +104,7 @@ Expected output:
 
 This is why `replicas` are typically used for read traffic that can tolerate a small amount of staleness, dashboards, analytics, reporting, exactly the kind of workload this course has repeatedly used as its running examples, while writes, and any read that absolutely requires the most current possible data, continue to go to the primary.
 
-![Writes go to the primary, while read-heavy dashboards can query replicas with some lag](images/10_read_replicas_reads_primary_writes_lag.png)
+![Writes go to the primary, while read-heavy dashboards can query replicas with some lag](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_read_replicas_reads_primary_writes_lag.png)
 
 ## Read Replicas for Scaling, Failover for Availability
 

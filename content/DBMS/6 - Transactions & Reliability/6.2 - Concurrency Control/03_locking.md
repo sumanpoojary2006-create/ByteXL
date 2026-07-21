@@ -6,6 +6,22 @@ The fix is not clever application logic checking timestamps after the fact; it i
 
 **Definition:** `Locking` gives a `transaction` exclusive claim over a `row` it intends to change, forcing other `transactions` that want to touch the same `row` to wait until the `lock` is released, which is what actually prevents `lost updates` and similar conflicts rather than just naming them.
 
+<!--
+IMAGE PROMPT  ->  generate as images/03_intro_locking.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: The lost update from the previous lesson happened because two transactions both read the same stock count and both wrote a new value based on that same stale reading, with neither transaction aware the other was doing the same thing at the same time. The fix.
+
+ON-IMAGE TEXT: show a short bold title "Locking" plus only these few labels, large and legible: Transaction, Locking, Update. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for locking](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_locking.png)
+
 ## Locking a Row for Update
 
 The `inventory` `table` from the previous lesson is the setup again.
@@ -68,7 +84,7 @@ Expected output 2:
 - `FOR UPDATE`, added to the end of a `SELECT`, tells the `database` that this `transaction` intends to modify the `row` it just read, and claims a `lock` on that `row` immediately.
 - Any other `transaction` that also tries one of these is forced to wait until this `transaction` either commits or rolls back and releases the `lock`:
 
-![SELECT FOR UPDATE placing an exclusive row lock while another transaction waits](images/06_select_for_update_row_lock.png)
+![SELECT FOR UPDATE placing an exclusive row lock while another transaction waits](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_select_for_update_row_lock.png)
 
 - `SELECT ... FOR UPDATE` on the same `row`
 - An `UPDATE` directly against it If a second sale `transaction` had tried to `lock` and read product 1's stock count while this `transaction` was still open, it would simply pause, then proceed only once this one finished, at which point it would correctly see 45, not the stale 50, avoiding the `lost update` entirely.
@@ -128,7 +144,7 @@ Expected output:
 
 This `row`-level scope is what makes `locking` practical at real-world scale: a busy inventory system can have thousands of concurrent `transactions`, each safely `locking` only the specific `rows` it touches, without the whole `table` grinding to a halt waiting on unrelated updates.
 
-![Row-level locking blocking product 1 while unrelated product rows continue](images/07_row_level_lock_scope.png)
+![Row-level locking blocking product 1 while unrelated product rows continue](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_row_level_lock_scope.png)
 
 ## Locking at a Glance
 

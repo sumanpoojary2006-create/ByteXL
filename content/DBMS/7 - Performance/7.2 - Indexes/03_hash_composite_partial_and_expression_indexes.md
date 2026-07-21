@@ -11,6 +11,22 @@ Each of these has a dedicated `index` type suited to it.
 
 **Definition:** `Hash indexes` optimize equality at the cost of range support, `composite indexes` serve `queries` that filter on the same multiple `columns` together, `partial indexes` shrink an `index` down to only the `rows` a `query` actually cares about, and `expression indexes` make a computed or transformed value searchable, each one a deliberate specialization beyond what a plain B-tree offers.
 
+<!--
+IMAGE PROMPT  ->  generate as images/03_intro_hash_composite_partial_and_expression_indexes.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: A B-tree is an excellent default, but it is not the only shape an index can take, and a few specialized variants solve problems a plain B-tree either cannot solve at all or solves less efficiently than a purpose-built alternative. Priya's reporting queries.
+
+ON-IMAGE TEXT: show a short bold title "Hash Composite Partial And Expression Indexes" plus only these few labels, large and legible: Table, Index, Composite. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for hash composite partial and expression indexes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_hash_composite_partial_and_expression_indexes.png)
+
 ## A Table Large Enough to Need Them
 
 Demonstrating these variants takes a `table` with more `columns` and enough `rows` that the planner genuinely prefers an `index` over a `sequential scan`: 10000 orders with unique customer names, four regions, and a `status` where only 1 order in 100 is still active and another 1 in 100 is cancelled.
@@ -85,7 +101,7 @@ The plan reports an "Index Scan" using `idx_orders_name_hash`: the `database` ha
 
 In practice, a B-tree `index` handles equality just as well as a `hash index` while also supporting ranges, which is why `hash indexes` see limited use; they matter mainly as a reminder that "sorted" and "searchable by equality" are not the same requirement.
 
-![A hash index supports equality lookups but not range searches](images/08_hash_index_equality_only.png)
+![A hash index supports equality lookups but not range searches](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_hash_index_equality_only.png)
 
 ## Composite Indexes: Covering More Than One Column
 
@@ -110,7 +126,7 @@ The plan shows `idx_orders_status_region` narrowing straight down to the roughly
 
 Column order in a `composite index` matters: this same `index` can still help a `query` that filters on `status` alone, since `status` is the leading `column`, but it offers little help to a `query` that filters on `region` alone without mentioning `status`, since the `index` is not separately sorted by `region` on its own.
 
-![A composite index is sorted by the first column, then by the next column](images/05_composite_index_column_order.png)
+![A composite index is sorted by the first column, then by the next column](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_composite_index_column_order.png)
 
 ## Partial Indexes: Indexing Only the Rows That Matter
 
@@ -136,7 +152,7 @@ Notice there is no separate `Filter: (status = 'active')` line, since the `parti
 - `idx_orders_active_amount` only ever contains the roughly 100 `rows` where `status = 'active'`, entirely excluding the other 9900 completed and cancelled orders, and the plan shows it being used to satisfy this `query`, since the `query`'s filter matches the `index`'s condition.
 - Inserting a completed order never touches this `index` at all, and the size saving is directly visible next to a full `index` on the same `column`:
 
-![A partial index stores only the rows matching the query condition](images/06_partial_index_active_rows_only.png)
+![A partial index stores only the rows matching the query condition](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_partial_index_active_rows_only.png)
 
 ```postgresql with=init.sql
 CREATE INDEX idx_orders_amount_full ON orders (amount);
@@ -179,7 +195,7 @@ A plain B-tree on `customer_name` would not help a `query` filtering on `LOWER(c
 
 The extra `ANALYZE` is there because an expression `index` keeps its own statistics on the computed values, gathered the next time `ANALYZE` runs.
 
-![An expression index stores a computed value such as LOWER(customer_name)](images/07_expression_index_computed_value.png)
+![An expression index stores a computed value such as LOWER(customer_name)](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_expression_index_computed_value.png)
 
 ## Index Types at a Glance
 

@@ -4,6 +4,10 @@ Kabir's next report needs a two-step calculation: first, find the average salary
 
 A subquery does not have to sit inside `WHERE` producing a single value or a list; it can also sit inside `FROM`, standing in for an entire `table`. This kind of subquery is often called a **derived `table`**.
 
+**Definition:** A subquery in `FROM`, or derived `table`, lets a `query` treat an intermediate result, especially a grouped or aggregated one, as if it were a real `table`, complete with the ability to filter, `join`, or select from it further.
+
+![Intro visual for subqueries in from](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_subqueries_in_from.png)
+
 ## Treating a Query's Result as a Table
 
 The `employees` `table` is the same one used throughout this chapter.
@@ -27,7 +31,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE employees (
     employee_id INTEGER PRIMARY KEY,
     employee_name TEXT,
@@ -47,11 +51,12 @@ INSERT INTO employees (employee_id, employee_name, department, salary, manager_i
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-SELECT department, AVG(salary) AS department_avg
-FROM employees
-GROUP BY department;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafymp" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -63,15 +68,12 @@ Expected output:
 
 This is the first step on its own: three `rows`, one average per department. Now that same `query` becomes the `FROM` clause of an outer `query`, wrapped in parentheses and given an alias.
 
-```postgresql with=init.sql
-SELECT department, department_avg
-FROM (
-    SELECT department, AVG(salary) AS department_avg
-    FROM employees
-    GROUP BY department
-) AS dept_averages
-WHERE department_avg > (SELECT AVG(salary) FROM employees);
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafywu" 
+ width="100%"
+></iframe>
 
 The subquery in `FROM`, aliased here as `dept_averages`, runs first and produces a small three-`row` result:
 
@@ -102,20 +104,18 @@ Expected output:
 
 The outer `query` then treats `dept_averages` exactly like a real `table`, filtering its `rows` with a `WHERE` clause that compares `department_avg`, a `column` that only exists because the inner `query` computed it, against the company-wide average of 73000.00 from a second subquery. Engineering is the only department whose average clears the company-wide bar.
 
-![A FROM subquery producing a derived table that the outer query can filter](images/05_from_subquery_derived_table.png)
+![A FROM subquery producing a derived table that the outer query can filter](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_from_subquery_derived_table.png)
 
 ## Why a FROM Subquery Needs an Alias
 
 Every subquery used in `FROM` must be given a name, since the outer `query` needs some way to refer to it, the same way any real `table` needs a name to be selected from.
 
-```postgresql with=init.sql
-SELECT department, department_avg
-FROM (
-    SELECT department, AVG(salary) AS department_avg
-    FROM employees
-    GROUP BY department
-) AS dept_averages;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafz7q" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -127,22 +127,18 @@ Expected output:
 
 Leaving off `AS dept_averages` here would cause an error in most `databases`; a derived `table` without a name is not something the outer `query` can reference, even implicitly. This is one clear difference from a `WHERE` subquery, which never needs a name since it is only ever compared against, never selected from.
 
-![A derived table needing an alias name before the outer query can use it](images/06_from_subquery_requires_alias.png)
+![A derived table needing an alias name before the outer query can use it](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_from_subquery_requires_alias.png)
 
 ## Joining a Derived Table to a Real Table
 
 A `FROM` subquery can be `joined` to a normal `table` exactly like any other `table`, which is useful when a report needs both raw, `row`-level detail and a pre-computed summary side by side.
 
-```postgresql with=init.sql
-SELECT e.employee_name, e.salary, dept_averages.department_avg,
-       e.salary - dept_averages.department_avg AS diff_from_dept_avg
-FROM employees e
-JOIN (
-    SELECT department, AVG(salary) AS department_avg
-    FROM employees
-    GROUP BY department
-) AS dept_averages ON e.department = dept_averages.department;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafzh5" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -193,9 +189,12 @@ Here, `dept_averages` is `joined` to `employees` on the shared `department` `col
 
 Kabir wants to find the single department with the highest average salary, showing just its name and that average. Write a `query` using a `FROM` subquery against `employees` above, ordering the derived `table`'s results and keeping only the top `row`.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafzsy" 
+ width="100%"
+></iframe>
 
 If your `query` wraps `SELECT department, AVG(salary) AS department_avg FROM employees GROUP BY department` as a derived `table`, then applies `ORDER BY department_avg DESC LIMIT 1` on the outer `query`, it returns Engineering as the top-paying department.
 

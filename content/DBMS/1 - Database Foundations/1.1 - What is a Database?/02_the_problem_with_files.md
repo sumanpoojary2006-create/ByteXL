@@ -14,6 +14,22 @@ None of this happened because Kabir or his colleagues were careless. It happened
 
 **Definition:** Redundancy creeps in because the same fact has to be retyped wherever it is needed, inconsistency follows because updating one copy never guarantees the others get updated too, and `lost updates` happen because a plain file cannot merge two people's honest changes into one.
 
+<!--
+IMAGE PROMPT  ->  generate as images/02_intro_the_problem_with_files.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Kabir joined Priya's admissions office as a scholarship coordinator three weeks ago, and his job so far has felt manageable: track every scholarship applicant across three spreadsheets, applicants.xlsx for personal details, documents.xlsx for uploaded.
+
+ON-IMAGE TEXT: show a short bold title "The Problem With Files" plus only these few labels, large and legible: Problem, Files, Kabir. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for the problem with files](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_the_problem_with_files.png)
+
 ## Redundancy: The Same Fact, Typed More Than Once
 
 Redundancy means a single fact gets stored in more than one place. Rohan's phone number is retyped into every file that needs to be read on its own, without anyone flipping between three tabs:
@@ -33,7 +49,7 @@ By itself, that repetition causes no damage. It just means one true fact about R
 - Ask a simple question now: which category is Rohan actually in? `applicants.xlsx` says General merit. `interviews.xlsx` says SC.
 - Both files claim to hold the truth, and they disagree, which is exactly what **inconsistency** means: redundant copies of the same fact, updated in one place and left untouched in another, until nobody can say with confidence which one is correct.
 
-![Updating one of three redundant spreadsheet copies leaves the files in conflict](images/03_redundancy_creates_inconsistency.png)
+![Updating one of three redundant spreadsheet copies leaves the files in conflict](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_redundancy_creates_inconsistency.png)
 
 ## Lost Updates: When Two Changes Collide
 
@@ -43,7 +59,7 @@ The shared drive has no way to merge their two edits into one file that reflects
 
 This is a **`lost update`**: two valid, simultaneous changes to the same shared file, where only one survives and the other vanishes with no warning at all.
 
-![Two coordinators save valid changes to one spreadsheet, but the last save overwrites the first](images/04_lost_update_last_save_wins.png)
+![Two coordinators save valid changes to one spreadsheet, but the last save overwrites the first](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_lost_update_last_save_wins.png)
 
 ## The Three Symptoms at a Glance
 

@@ -6,6 +6,22 @@ Most people, Asha included, never think about what happens to their data once th
 
 **Definition:** Every piece of data in a `database` moves through the same rough arc: it is created once, read far more often than it is changed, updated as circumstances shift, and eventually deleted or set aside once it stops earning its place among the actively used records.
 
+<!--
+IMAGE PROMPT  ->  generate as images/08_intro_the_lifecycle_of_data_from_creation_to_query_to.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Asha orders dinner through a food delivery app on a Tuesday evening, a small, unremarkable action she has repeated hundreds of times. Somewhere behind that one tap, a single row of data is born, and over the next few hours, weeks, and eventually months, that.
+
+ON-IMAGE TEXT: show a short bold title "The Lifecycle Of Data From Creation To Query" plus only these few labels, large and legible: Row, Query, Order. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for the lifecycle of data from creation to query](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_intro_the_lifecycle_of_data_from_creation_to_query_to.png)
+
 ## Creation: The Order Is Born
 
 The moment Asha taps "confirm order," a new record is created, holding:
@@ -45,7 +61,7 @@ Eventually, though, very old orders are either deleted outright or moved into lo
 
 Which choice a system makes, delete outright or archive quietly, depends on why the data might still matter later: a bank keeps `transaction` records for years because law and trust demand it, while a temporary discount code might be deleted the day it expires because nothing will ever need to look at it again.
 
-![One order record moving through creation, many reads, status updates, and final archival or deletion](images/15_order_data_lifecycle.png)
+![One order record moving through creation, many reads, status updates, and final archival or deletion](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/15_order_data_lifecycle.png)
 
 ## The Lifecycle at a Glance
 
@@ -87,7 +103,7 @@ This same shape, created once, queried constantly, updated occasionally, and eve
 
 A bank `transaction` is created once, queried whenever a statement is generated, essentially never updated once it is confirmed, and retained for years before any thought of deletion. Recognizing which stage a given piece of data is usually sitting in helps explain why some systems are built to answer reads blazingly fast, while others are built to guard every single update far more carefully.
 
-![Dinner orders, student records, and bank transactions sharing a lifecycle across different timescales](images/16_lifecycle_across_timescales.png)
+![Dinner orders, student records, and bank transactions sharing a lifecycle across different timescales](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/16_lifecycle_across_timescales.png)
 
 ## Your Turn: Trace the Lifecycle
 

@@ -10,6 +10,10 @@ Somewhere inside the `database`, one part has to understand the request "find al
 
 Those three jobs, roughly, are what the three boxes on the whiteboard do. Understanding a **DBMS's internal components** is what turns "the `database`" from a black box into a system Meera can reason about.
 
+**Definition:** A DBMS is not one monolithic piece of software but a small society of specialists working together: a `query` processor that interprets and plans, a storage manager that reads and writes the physical data, and a `transaction` manager that keeps everything correct when many requests collide at once.
+
+![Intro visual for components of a dbms query processor storage manag](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_components_of_a_dbms_query_processor_storage_man.png)
+
 ## The Query Processor: Understanding What You Asked For
 
 When a request like "find all available seats in the front section" reaches the `database`, something has to make sense of it before any data gets touched. That is the job of the **`query` processor**. It takes the `query` as written, checks that it is grammatically valid, works out what the `query` is actually asking for, and decides on a sensible way to go and get that answer.
@@ -37,7 +41,7 @@ The **`transaction` manager** is the component responsible for preventing exactl
 
 When two people try to book seat A12 in the same instant, the `transaction` manager ensures one booking goes through cleanly and the other is told, correctly, that the seat is already taken.
 
-![A DBMS control room where the query processor, storage manager, and transaction manager cooperate on ticket booking](images/05_dbms_internal_components_ticket_booking.png)
+![A DBMS control room where the query processor, storage manager, and transaction manager cooperate on ticket booking](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_dbms_internal_components_ticket_booking.png)
 
 ## The Three Components At A Glance
 
@@ -76,7 +80,7 @@ By giving each concern its own dedicated component, a DBMS keeps the same discip
 
 For Meera, the payoff of this week's reading is not that she will ever write a `query` processor herself. It is that the next time a `query` runs slowly, or two bookings conflict unexpectedly, she has a mental map of which component is actually responsible, rather than treating the whole `database` as one indivisible mystery.
 
-![Slow queries, disk reads, and double booking problems routed to the right DBMS component](images/06_component_responsibility_diagnostic_map.png)
+![Slow queries, disk reads, and double booking problems routed to the right DBMS component](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_component_responsibility_diagnostic_map.png)
 
 ## Your Turn: Route the Complaint
 

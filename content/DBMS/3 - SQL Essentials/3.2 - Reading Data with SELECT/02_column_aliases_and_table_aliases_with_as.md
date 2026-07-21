@@ -6,6 +6,22 @@ For her own work that is fine, but this sheet is going in front of people who ha
 
 **Definition:** Aliases let a `query` speak in whatever words are most useful to whoever is reading the result, without ever touching the underlying `table`.
 
+<!--
+IMAGE PROMPT  ->  generate as images/02_intro_column_aliases_and_table_aliases_with_as.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Divya is putting together a one-page summary for the Dean's office, and she needs the student list to look presentable, not like a raw database dump. She writes a quick query, SELECT fullname, city FROM students;, and the result comes back correctly, but the.
+
+ON-IMAGE TEXT: show a short bold title "Column Aliases And Table Aliases With As" plus only these few labels, large and legible: Table, Column, Query. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for column aliases and table aliases with as](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_column_aliases_and_table_aliases_with_as.png)
+
 ## Renaming a Column With AS
 
 The `students` `table` holds this data:
@@ -70,7 +86,7 @@ Expected output:
 - `AS` sits between the real `column` and the label Divya wants in its place, and the label only exists for this one result, it never renames anything inside the actual `table`.
 - Run `SELECT * FROM students;` again separately and the `column` is still called `full_name` there, untouched.
 
-![Column aliases changing raw headers into friendlier output names using AS](images/03_column_alias_as_output_headers.png)
+![Column aliases changing raw headers into friendlier output names using AS](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_column_alias_as_output_headers.png)
 
 ## AS Is Optional, But Worth Keeping
 
@@ -102,7 +118,7 @@ Here `students AS s` tells PostgreSQL that `s` now stands for the students `tabl
 
 Divya keeps it in her own `queries` because it reads more clearly to anyone who has not seen the `query` before.
 
-![A students table receiving the short table alias s for use in one query](images/04_table_alias_short_name.png)
+![A students table receiving the short table alias s for use in one query](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_table_alias_short_name.png)
 
 ## Aliases and Table Aliases at a Glance
 

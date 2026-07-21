@@ -6,6 +6,22 @@ The second letter in ACID, **consistency**, is the guarantee that a `transaction
 
 **Definition:** Consistency guarantees that a `transaction` can only ever move a `database` from one valid state to another, with every declared `constraint`, `CHECK`, `foreign key`, `NOT NULL`, or `UNIQUE`, acting as the `database`'s own definition of what "valid" means, while business rules that were never expressed as a `constraint` remain the application's responsibility to protect.
 
+<!--
+IMAGE PROMPT  ->  generate as images/03_intro_consistency_valid_states_only.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Atomicity guarantees a transaction commits entirely or not at all, but it says nothing about whether the resulting data actually makes sense. A transaction could atomically commit a balance of -500.00 if nothing was stopping it, perfectly all-or-nothing, and.
+
+ON-IMAGE TEXT: show a short bold title "Consistency Valid States Only" plus only these few labels, large and legible: Transaction, Commit, Consistency. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for consistency valid states only](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_consistency_valid_states_only.png)
+
 ## Constraints Are What Define a Valid State
 
 The `accounts` `table`, with a `constraint` restored from the previous lesson, defines exactly what counts as valid.
@@ -62,7 +78,7 @@ Expected output:
 - This `transaction` tries to push Meera's balance to -10000.00, and the `database` refuses to let that become the committed state, rejecting the statement and, through atomicity, rolling back the whole `transaction` along with it.
 - The final `SELECT` shows Meera's balance unchanged.
 
-![A CHECK constraint blocking an invalid negative balance from becoming committed data](images/05_consistency_check_constraint_blocks_invalid.png)
+![A CHECK constraint blocking an invalid negative balance from becoming committed data](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_consistency_check_constraint_blocks_invalid.png)
 
 This is consistency and atomicity working together:
 
@@ -101,7 +117,7 @@ SELECT * FROM orders;
 - The `database` rejects it, the `transaction` fails, and `orders` remains empty.
 - Consistency here means the `database` will never contain an order referencing a customer that is not really there, regardless of what any individual `transaction` tries to do.
 
-![A foreign key allowing valid references and blocking orders with missing customers](images/06_consistency_foreign_key_valid_link.png)
+![A foreign key allowing valid references and blocking orders with missing customers](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_consistency_foreign_key_valid_link.png)
 
 ## Consistency Also Depends on the Application
 

@@ -6,6 +6,10 @@ His next question does not have that shape: "which employees work in the same de
 
 SQL provides different operators, **`IN`**, **`ANY`**, and **`ALL`**, specifically for subqueries that return more than one `row`.
 
+**Definition:** A subquery inside `WHERE` can compare against a single value directly, or against a whole list of values using `IN`, `NOT IN`, `ANY`, or `ALL`, each suited to a different shape of question, with `NOT IN` needing an explicit guard against `NULL` that `NOT EXISTS` does not.
+
+![Intro visual for subqueries in where](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_subqueries_in_where.png)
+
 ## A Subquery Returning Exactly One Value
 
 The `employees` `table` from the previous lesson is the setup here again.
@@ -29,7 +33,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE employees (
     employee_id INTEGER PRIMARY KEY,
     employee_name TEXT,
@@ -49,11 +53,12 @@ INSERT INTO employees (employee_id, employee_name, department, salary, manager_i
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-SELECT employee_name, salary
-FROM employees
-WHERE salary = (SELECT MAX(salary) FROM employees);
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafwtn" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -63,19 +68,18 @@ Expected output:
 
 `MAX(salary)` always returns exactly one number, so this comparison with a plain `=` works without any special handling: it finds whichever employee earns the single highest salary in the `table`.
 
-![WHERE subqueries using one scalar value or many values with IN](images/03_where_scalar_vs_in_list_subquery.png)
+![WHERE subqueries using one scalar value or many values with IN](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_where_scalar_vs_in_list_subquery.png)
 
 ## Using IN When a Subquery Returns Multiple Rows
 
 Finding "employees in the same department as Rajat or Vikas" needs a subquery that can return more than one department.
 
-```postgresql with=init.sql
-SELECT employee_name, department
-FROM employees
-WHERE department IN (
-    SELECT department FROM employees WHERE employee_name IN ('Rajat Bhatia', 'Vikas Malhotra')
-);
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafx55" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -92,11 +96,12 @@ The inner `query` returns two departments, Engineering and Marketing, and `IN` c
 
 `IN` only checks for equality against a list. `ANY` and `ALL` extend the same idea to other comparison operators, such as `>` or `<`, against every value a subquery returns.
 
-```postgresql with=init.sql
-SELECT employee_name, salary
-FROM employees
-WHERE salary > ANY (SELECT salary FROM employees WHERE department = 'Sales');
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafxek" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -112,11 +117,12 @@ Expected output:
 
 The Sales department's salaries are 65000.00 and 58000.00, so this returns everyone earning more than the lower of those two figures, since beating just one of them is enough to satisfy `ANY`.
 
-```postgresql with=init.sql
-SELECT employee_name, salary
-FROM employees
-WHERE salary > ALL (SELECT salary FROM employees WHERE department = 'Sales');
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafxrx" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -129,19 +135,18 @@ Expected output:
 - `salary > ALL (subquery)` is stricter: it is only true if the outer `row`'s salary beats every single value the subquery returns.
 - Here, that means beating both 65000.00 and 58000.00, so this returns only employees earning more than the higher Sales salary, a shorter list than the `ANY` version.
 
-![ANY checking at least one returned value while ALL checks every returned value](images/04_any_vs_all_subquery_comparison.png)
+![ANY checking at least one returned value while ALL checks every returned value](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_any_vs_all_subquery_comparison.png)
 
 ## Why NOT IN Needs Extra Care
 
 `NOT IN` is the negated form of `IN`, but it carries the same risk covered when anti `joins` were introduced: if the subquery can return a `NULL`, `NOT IN` silently returns no `rows` at all, for every outer `row`, with no error to signal the problem.
 
-```postgresql with=init.sql
-SELECT employee_name
-FROM employees
-WHERE employee_id NOT IN (
-    SELECT manager_id FROM employees WHERE manager_id IS NOT NULL
-);
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafy2s" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -202,9 +207,12 @@ The `WHERE manager_id IS NOT NULL` filter inside the subquery is not optional he
 
 Kabir wants every employee who earns less than the lowest salary in Engineering. Write a `query` against `employees` above using `ALL` to express this.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafybb" 
+ width="100%"
+></iframe>
 
 If your `query` is `SELECT employee_name, salary FROM employees WHERE salary < ALL (SELECT salary FROM employees WHERE department = 'Engineering');`, it returns Sameer Khan, Pooja Reddy, and Vikas Malhotra, since all three earn less than every Engineering salary, including the lowest one at 78000.00.
 

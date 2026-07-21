@@ -47,6 +47,22 @@ The problem here is not partial dependency at all, it is a different, sneakier p
 
 **Definition:** Third `Normal Form` closes a gap that Second `Normal Form` cannot reach on its own: a `table` can have the simplest possible key, a single `column`, and still repeat data endlessly if some non-key `column` is really describing a different non-key `column` instead of the key itself.
 
+<!--
+IMAGE PROMPT  ->  generate as images/05_intro_third_normal_form.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Naina picks up the Orders table next, the one left over after Tara and Arjun cleaned up phone numbers and order lines. It looks, at first glance, perfectly reasonable, a single-column primary key, no composite key to worry about, nothing that should trip the.
+
+ON-IMAGE TEXT: show a short bold title "Third Normal Form" plus only these few labels, large and legible: Table, Column, Key. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for third normal form](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_third_normal_form.png)
+
 ## A Dependency With a Detour
 
 Naina traces exactly how CustomerCity connects back to the `primary key`, OrderID, in two hops:
@@ -63,7 +79,7 @@ This two-step chain is a **transitive dependency**, a non-key `column` depending
 
 That is precisely why it keeps repeating, every new order for C12 drags another copy of "Bengaluru" along with it, and if Ilyas Bakery Supplies ever relocates, every one of those repeated copies needs to be tracked down and corrected, the exact update anomaly Priya first ran into, resurfacing here in a `table` that already passed the 2NF check cleanly.
 
-![Third Normal Form showing the transitive dependency OrderID to CustomerID to CustomerCity](images/09_third_normal_form_transitive_dependency.png)
+![Third Normal Form showing the transitive dependency OrderID to CustomerID to CustomerCity](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_third_normal_form_transitive_dependency.png)
 
 ## Third Normal Form Builds on Second Normal Form
 
@@ -132,7 +148,7 @@ Customers, keyed by CustomerID, holding the city fact where it truly belongs:
 
 CustomerCity now exists exactly once per customer, no matter how many orders that customer places over the years. Naina can update Ilyas Bakery Supplies' city in a single `row` of Customers, and every order that references CustomerID C12 stays correctly, automatically associated with the right city, because the city is looked up through the relationship rather than copied onto every order.
 
-![Fixing 3NF by moving CustomerCity into Customers while Orders keeps only OrderID, CustomerID, and OrderDate](images/10_third_normal_form_split_customers.png)
+![Fixing 3NF by moving CustomerCity into Customers while Orders keeps only OrderID, CustomerID, and OrderDate](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_third_normal_form_split_customers.png)
 
 ## Telling Partial and Transitive Dependency Apart
 

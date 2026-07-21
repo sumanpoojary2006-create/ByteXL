@@ -4,6 +4,10 @@ Every `query` in this course has been written as raw SQL, typed directly. Much r
 
 Neither approach is universally correct; each trades away something the other offers, and knowing what that trade-off actually is matters more than picking a side.
 
+**Definition:** An ORM speeds up routine, everyday `database` operations by letting a developer work in objects rather than SQL text, at the cost of sometimes hiding real `query` costs, most notoriously the N+1 pattern, while raw SQL offers full visibility and control at the cost of more code to write directly, and most real applications end up using both, an ORM for the routine cases and raw SQL for anything complex or performance-critical enough to need precise control.
+
+![Intro visual for orm vs raw sql](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_orm_vs_raw_sql.png)
+
 ## What an ORM Actually Generates
 
 An ORM's core promise is translating object-oriented code into SQL automatically, without the developer writing SQL text directly.
@@ -24,7 +28,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     driver_id INTEGER,
@@ -40,14 +44,12 @@ INSERT INTO shipments (shipment_id, driver_id, status, destination) VALUES
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
--- ORM-style code, in pseudocode, might read like:
--- shipments = Shipment.objects.filter(status='in_transit')
--- Behind the scenes, this generates and runs SQL equivalent to:
-SELECT shipment_id, driver_id, status, destination
-FROM shipments
-WHERE status = 'in_transit';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakgms" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -61,26 +63,18 @@ The generated SQL here is clean and matches exactly what a developer would have 
 - The developer never has to write or think about SQL text at all.
 - Work happens entirely in terms of objects and method calls in their own programming language, with the library handling the translation.
 
-![An ORM translates object-style application code into SQL behind the scenes](images/09_orm_translates_objects_to_sql.png)
+![An ORM translates object-style application code into SQL behind the scenes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_orm_translates_objects_to_sql.png)
 
 ## Where an ORM's Convenience Can Hide a Real Cost
 
 The `N+1 query` problem, covered in the performance unit, is the single most common way ORM-generated code goes wrong, precisely because the object-oriented style makes looping over related objects look completely innocent.
 
-```postgresql with=init.sql
--- ORM-style code that looks perfectly reasonable:
--- shipments = Shipment.objects.all()
--- for shipment in shipments:
---     print(shipment.driver.driver_name)
--- Depending on the ORM's configuration, accessing `.driver` inside this loop
--- can silently trigger one additional query PER shipment, exactly the
--- N+1 pattern covered earlier in this course:
-SELECT shipment_id, driver_id, status, destination FROM shipments;
--- followed by one of these per row:
--- SELECT * FROM drivers WHERE driver_id = 1;
--- SELECT * FROM drivers WHERE driver_id = 2;
--- SELECT * FROM drivers WHERE driver_id = 1;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakgwx" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -93,20 +87,18 @@ Expected output:
 - Nothing about the object-oriented loop above looks like a `database` performance hazard; `shipment.driver.driver_name` reads like ordinary property access, not a `database` call.
 - This is exactly the danger: an ORM's abstraction can hide the fact that a `query` is happening at all, making it easy to write code that is correct but silently slow, unless the developer specifically knows to ask the ORM to fetch related data eagerly, in one combined `query`, rather than one at a time as each object is touched.
 
-![ORM convenience can hide N+1 queries, while raw SQL makes one-query control explicit](images/10_orm_n_plus_one_vs_raw_sql.png)
+![ORM convenience can hide N+1 queries, while raw SQL makes one-query control explicit](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_orm_n_plus_one_vs_raw_sql.png)
 
 ## Where Raw SQL Is the More Direct Choice
 
 For a genuinely complex report, involving several `join`s, `window functions`, and careful aggregation, exactly the kind of `query` built up across earlier chapters of this course, writing raw SQL directly is often more straightforward than coaxing an ORM's object-oriented interface into generating that same precise `query`.
 
-```postgresql with=init.sql
-SELECT driver_id, COUNT(*) AS active_shipments
-FROM shipments
-WHERE status = 'in_transit'
-GROUP BY driver_id
-HAVING COUNT(*) > 0
-ORDER BY active_shipments DESC;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakh9t" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -162,9 +154,12 @@ Raw SQL trades that convenience for full visibility into exactly what `query` ru
 
 Using the `shipments` `table` above, write the raw SQL a developer might reach for directly instead of relying on an ORM's default behavior, to fetch every shipment along with a count of how many other shipments share the same `driver_id`, in one single `query` rather than one `query` per shipment.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakhkg" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

@@ -15,6 +15,10 @@ That Customer ID `column` sitting inside the Orders `table`, referring back to a
 - It is a `column` in one `table` that points to the `primary key` of another `table`.
 - It is the mechanism that lets separate `tables` stay connected to each other instead of existing as unrelated, disconnected piles of `rows`.
 
+**Definition:** A `foreign key` is how one `table` reaches out and anchors itself to a specific, real `row` living inside another `table`, turning two separate grids of data into one connected, trustworthy structure.
+
+![Intro visual for foreign keys linking tables together](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_foreign_keys_linking_tables_together.png)
+
 ## Two Tables That Need to Talk to Each Other
 
 Look at Ravi's two `tables` side by side.
@@ -85,7 +89,7 @@ Customer ID is the `primary key` of the Customers `table`, the value that unique
 
 It is reaching across into the Customers `table` and saying, plainly, "this particular order belongs to whichever customer holds this ID." Order 5001 and order 5003 both carry Customer ID 1042, so both orders belong to Meera Pillai, even though they are two separate `rows` in a completely separate `table`.
 
-![Orders using Customer ID as a foreign key to point back to Meera's customer row](images/07_foreign_key_links_orders_to_customers.png)
+![Orders using Customer ID as a foreign key to point back to Meera's customer row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_foreign_key_links_orders_to_customers.png)
 
 ## What Makes a Column a Foreign Key
 
@@ -95,7 +99,7 @@ This relationship carries a quiet but important promise: every Customer ID that 
 
 A `foreign key` is the `database`'s way of refusing to let that dangling, meaningless reference happen in the first place.
 
-![A foreign key gate accepting orders with real customers and rejecting an orphan order](images/08_foreign_key_rejects_orphans.png)
+![A foreign key gate accepting orders with real customers and rejecting an orphan order](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_foreign_key_rejects_orphans.png)
 
 ## Why This Matters Beyond One Shop
 

@@ -16,6 +16,22 @@ These three situations turn out to be common enough that the relational model gi
 
 **Definition:** Candidate keys widen the lens from "the one `primary key`" to every `column` that honestly could have filled that `role`.
 
+<!--
+IMAGE PROMPT  ->  generate as images/05_intro_candidate_keys_composite_keys_and_surrogate_keys.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Aisha is designing a table for her college library's book collection, and she quickly notices something curious. Both the ISBN and the Accession Number in her draft table are unique for every single book, no two books ever share either value. Only one of them.
+
+ON-IMAGE TEXT: show a short bold title "Candidate Keys Composite Keys And Surrogate Keys" plus only these few labels, large and legible: Table, Column, Key. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for candidate keys composite keys and surrogate keys](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_candidate_keys_composite_keys_and_surrogate_keys.png)
+
 ## Candidate Keys: The Ones That Could Have Been Chosen
 
 Look at Aisha's Books `table`.
@@ -133,7 +149,7 @@ Here, Feedback ID is not a natural attribute of the feedback itself, nobody wrot
 
 A `column` like this, an artificial identifier created solely to serve as a `primary key`, is called a **`surrogate key`**. Surrogate keys are extremely common in practice, not only when nothing unique exists, but also when the natural `candidate keys` available are inconvenient, unstable, or unpleasant to work with as an identifier.
 
-![Candidate, composite, and surrogate keys solving three different identity problems in a library database](images/09_candidate_composite_surrogate_keys.png)
+![Candidate, composite, and surrogate keys solving three different identity problems in a library database](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_candidate_composite_surrogate_keys.png)
 
 ## Choosing Among the Three
 
@@ -170,7 +186,7 @@ A practical habit worth building is to look at any new `table` and ask, in order
 
 And if truly nothing in the real-world data can be trusted to stay unique, inventing a `surrogate key` is often the simplest, safest way forward.
 
-![A key-selection decision path from natural unique columns to composite or surrogate keys](images/10_key_selection_decision_path.png)
+![A key-selection decision path from natural unique columns to composite or surrogate keys](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_key_selection_decision_path.png)
 
 ## Your Turn: Classify the Keys
 

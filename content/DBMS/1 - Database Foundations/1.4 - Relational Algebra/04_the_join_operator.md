@@ -15,6 +15,22 @@ Neither `table`, alone, can answer the parent's question.
 
 **Definition:** A `join` takes two relations that each hold part of an answer and combines them into one, by first considering every possible pairing of `rows` and then keeping only the pairings whose matching condition genuinely holds, most commonly that a shared `column` agrees between the two sides.
 
+<!--
+IMAGE PROMPT  ->  generate as images/04_intro_the_join_operator.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Farah runs the administrative side of a small coding bootcamp, and she keeps two separate relations: one listing her students, and another listing which courses each student has enrolled in. A parent calls asking, "Which course is Kabir Singh actually.
+
+ON-IMAGE TEXT: show a short bold title "The Join Operator" plus only these few labels, large and legible: Table, Join, Operator. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for the join operator](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_the_join_operator.png)
+
 ## Farah's Two Relations
 
 Here are simplified versions of what Farah is working with:
@@ -144,6 +160,8 @@ To understand `join`, it helps to first see the blunt operation it is built on t
 
 Three students paired with three enrollment `rows` produces nine combined `rows`, and most of them are nonsense. The `row` pairing Kabir Singh with ST02's PY101 enrollment claims a `connection` between Kabir and an enrollment that actually belongs to Meenal, which is not true at all. The cartesian product does not know or care which pairings are meaningful, it simply produces every combination and leaves the sorting out to whatever comes next.
 
+![A Cartesian product creates every possible row pairing before a join keeps the matching pairs](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07b_cartesian_product_all_pairs.png)
+
 ## Join: A Filtered Cartesian Product
 
 - The `join` operator takes that same starting point, every possible pairing of `rows`, and immediately filters it down to only the pairings where a chosen condition holds, typically that the matching `columns` from each relation are actually equal.
@@ -182,7 +200,7 @@ Notice that Dev Sharma, student ST03, does not appear anywhere in the `joined` r
 
 Conceptually, then, a `join` is nothing more exotic than "pair everything with everything, then keep only the pairings where the condition I care about is true." The cartesian product supplies every possibility, and the `join`'s matching condition, most often equality between a shared `column` like student_id, decides which of those possibilities are worth keeping.
 
-![A join pairing every student with every enrollment, then keeping only matching student IDs](images/07_join_filters_cartesian_product.png)
+![A join pairing every student with every enrollment, then keeping only matching student IDs](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_join_filters_cartesian_product.png)
 
 ## Why This Matters Beyond Farah's Bootcamp
 
@@ -191,7 +209,7 @@ Conceptually, then, a `join` is nothing more exotic than "pair everything with e
 - The tradeoff is that any question spanning both ideas, "which course is this named student taking," cannot be answered by looking at one relation alone.
 - `Join` is the operation that pays back that tradeoff, letting the `database` recombine cleanly separated relations on demand, exactly when a question genuinely needs both.
 
-![A join recombining cleanly separated Students and Enrollments tables only when a cross-table answer is needed](images/08_join_recombines_clean_tables.png)
+![A join recombining cleanly separated Students and Enrollments tables only when a cross-table answer is needed](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_join_recombines_clean_tables.png)
 
 ## The Join Operator at a Glance
 

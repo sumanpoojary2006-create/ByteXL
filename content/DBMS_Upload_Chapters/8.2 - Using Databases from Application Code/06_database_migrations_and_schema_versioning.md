@@ -6,6 +6,10 @@ A real application's `schema` changes constantly over its lifetime, new `columns
 
 A **`database` migration** is a versioned, ordered, tracked script that applies exactly one `schema` change, and the discipline built around running them is called `schema` versioning.
 
+**Definition:** A `database` migration is a small, versioned, tracked script that applies exactly one `schema` change, recorded in a dedicated `table` so the same set of migrations can be safely and consistently applied across a developer's laptop, a testing environment, and production, with structure-preserving statements protecting existing data rather than destructive shortcuts that discard it.
+
+![Intro visual for database migrations and schema versioning](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_database_migrations_and_schema_versioning.png)
+
 ## The Problem Migrations Solve
 
 Without any tracking, it is easy to lose track of which environment has which `schema` changes already applied.
@@ -25,7 +29,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     status TEXT
@@ -34,12 +38,12 @@ CREATE TABLE shipments (
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
--- A developer, working directly, might run this by hand on their laptop:
-ALTER TABLE shipments ADD COLUMN priority TEXT DEFAULT 'normal';
-
-SELECT * FROM shipments;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakew8" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -57,17 +61,12 @@ Without a system tracking exactly which changes have been applied where, the hon
 
 The standard solution is a dedicated `table`, present in every environment, that records exactly which migrations have already run there.
 
-```postgresql with=init.sql
-CREATE TABLE schema_migrations (
-    version TEXT PRIMARY KEY,
-    applied_at TIMESTAMP DEFAULT NOW()
-);
-
-INSERT INTO schema_migrations (version) VALUES ('0001_create_shipments');
-INSERT INTO schema_migrations (version) VALUES ('0002_add_priority_column');
-
-SELECT * FROM schema_migrations ORDER BY version;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakfab" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -81,31 +80,18 @@ Every migration gets a unique, ordered identifier, here `0001_create_shipments` 
 - If a version is already recorded, that migration is skipped, since it has already been applied.
 - If it is missing, the tool runs it and then records it. This is what makes it safe to run the exact same migration tool command against a fresh `database`, a testing `database` with some migrations already applied, and production, all at once, since each one only ever runs the migrations it is genuinely missing.
 
-![Migrations apply ordered schema changes consistently across dev, test, and production](images/11_migrations_versioned_across_environments.png)
+![Migrations apply ordered schema changes consistently across dev, test, and production](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_migrations_versioned_across_environments.png)
 
 ## Writing a Migration as a Deliberate, Reviewable Step
 
 A migration is typically a small, single-purpose script, reviewed like any other code change, rather than an ad-hoc command typed directly against a live `database`.
 
-```postgresql with=init.sql
-CREATE TABLE schema_migrations (
-    version TEXT PRIMARY KEY,
-    applied_at TIMESTAMP DEFAULT NOW()
-);
-
-INSERT INTO schema_migrations (version) VALUES ('0001_create_shipments');
-INSERT INTO schema_migrations (version) VALUES ('0002_add_priority_column');
-
-SELECT * FROM schema_migrations ORDER BY version;
-
--- Migration 0003_add_delivery_deadline.sql
-ALTER TABLE shipments ADD COLUMN delivery_deadline DATE;
-
-INSERT INTO schema_migrations (version) VALUES ('0003_add_delivery_deadline');
-
-SELECT * FROM shipments;
-SELECT * FROM schema_migrations ORDER BY version;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakfm3" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -131,25 +117,12 @@ A tempting but dangerous migration pattern is dropping and recreating a `table` 
 
 A properly written migration changes structure while preserving data, using `ALTER TABLE ADD COLUMN`, `ALTER TABLE ALTER COLUMN`, and similar structure-preserving statements, exactly the commands covered when SQL data definition was first introduced early in this course, rather than `DROP TABLE` followed by a fresh `CREATE TABLE`.
 
-```postgresql with=init.sql
-CREATE TABLE schema_migrations (
-    version TEXT PRIMARY KEY,
-    applied_at TIMESTAMP DEFAULT NOW()
-);
-
-INSERT INTO schema_migrations (version) VALUES ('0001_create_shipments');
-INSERT INTO schema_migrations (version) VALUES ('0002_add_priority_column');
-
-SELECT * FROM schema_migrations ORDER BY version;
-
--- A dangerous shortcut, never appropriate for a production migration:
--- DROP TABLE shipments;
--- CREATE TABLE shipments (shipment_id INTEGER PRIMARY KEY, status TEXT, priority TEXT);
--- This silently destroys every existing row.
-
--- The safe, structure-preserving alternative, already demonstrated above:
-ALTER TABLE shipments ADD COLUMN new_notes TEXT;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakfwe" 
+ width="100%"
+></iframe>
 
 Expected output (from the `SELECT` earlier in this block, before the structure-preserving `ALTER TABLE` runs):
 
@@ -160,7 +133,7 @@ Expected output (from the `SELECT` earlier in this block, before the structure-p
 
 The final `ALTER TABLE shipments ADD COLUMN new_notes TEXT` returns no rows of its own; it just adds the `column` while leaving every existing `row` intact, in contrast with the commented-out `DROP TABLE` shortcut above it. This distinction, preserving data versus discarding it, is the single most important discipline in writing a safe migration, and it is exactly why migrations against a production `database` always deserve careful review before being applied, the same caution this course has emphasized around any `DROP` or `DELETE` since the modifying-data chapter early on.
 
-![Safe migrations preserve existing data, while drop-and-recreate shortcuts destroy it](images/12_safe_migration_preserves_data.png)
+![Safe migrations preserve existing data, while drop-and-recreate shortcuts destroy it](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_safe_migration_preserves_data.png)
 
 ## Database Migrations at a Glance
 
@@ -195,19 +168,12 @@ The final `ALTER TABLE shipments ADD COLUMN new_notes TEXT` returns no rows of i
 
 Write a migration named `0004_add_carrier_column` that adds a `carrier` text `column` to `shipments`, and record it in `schema_migrations`, following the pattern established above.
 
-```postgresql with=init.sql
-CREATE TABLE schema_migrations (
-    version TEXT PRIMARY KEY,
-    applied_at TIMESTAMP DEFAULT NOW()
-);
-
-INSERT INTO schema_migrations (version) VALUES ('0001_create_shipments');
-INSERT INTO schema_migrations (version) VALUES ('0002_add_priority_column');
-
-SELECT * FROM schema_migrations ORDER BY version;
-
--- Write your migration below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakgaz" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

@@ -4,6 +4,10 @@ Kabir's department-average report from the `FROM` subquery lesson worked correct
 
 SQL offers a cleaner way to write exactly the same logic: a **`Common Table Expression`**, written with a `WITH` clause, which names an intermediate result up front and lets the rest of the `query` read top to bottom in the order the logic actually happens.
 
+**Definition:** A CTE, written with `WITH`, names an intermediate `query` result up front so the rest of a statement can read top to bottom instead of inside out, and several CTEs can be chained together, each one building on the last, without losing clarity as the logic grows more layered.
+
+![Intro visual for common table expressions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_common_table_expressions.png)
+
 ## Rewriting a Subquery as a CTE
 
 The `employees` `table` is the same one used throughout this chapter.
@@ -27,7 +31,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE employees (
     employee_id INTEGER PRIMARY KEY,
     employee_name TEXT,
@@ -49,15 +53,12 @@ Before running each active statement, predict which rows, database objects, or s
 
 Here is the derived-`table` version from an earlier lesson, for comparison.
 
-```postgresql with=init.sql
-SELECT department, department_avg
-FROM (
-    SELECT department, AVG(salary) AS department_avg
-    FROM employees
-    GROUP BY department
-) AS dept_averages
-WHERE department_avg > (SELECT AVG(salary) FROM employees);
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafsrg" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -67,16 +68,12 @@ Expected output:
 
 And here is the same logic rewritten with a CTE.
 
-```postgresql with=init.sql
-WITH dept_averages AS (
-    SELECT department, AVG(salary) AS department_avg
-    FROM employees
-    GROUP BY department
-)
-SELECT department, department_avg
-FROM dept_averages
-WHERE department_avg > (SELECT AVG(salary) FROM employees);
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaft2p" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -87,25 +84,18 @@ Expected output:
 - `WITH dept_averages AS (...)` names the inner `query` before the main `query` even begins, and the main `query` afterward simply reads `FROM dept_averages`, exactly as if it were a real `table`.
 - The two versions produce an identical result, Engineering as the only department above the company average, but the CTE version reads in the order a person would naturally explain it out loud: "first compute department averages, then find the ones above the company average."
 
-![A CTE naming a temporary result so the main query can read from it](images/09_cte_named_temporary_result.png)
+![A CTE naming a temporary result so the main query can read from it](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_cte_named_temporary_result.png)
 
 ## Chaining Several CTEs Together
 
 A single `WITH` clause can define more than one CTE, separated by commas, and later CTEs are allowed to reference earlier ones, building up a multi-step calculation one readable piece at a time.
 
-```postgresql with=init.sql
-WITH dept_averages AS (
-    SELECT department, AVG(salary) AS department_avg
-    FROM employees
-    GROUP BY department
-),
-company_average AS (
-    SELECT AVG(salary) AS company_avg FROM employees
-)
-SELECT dept_averages.department, dept_averages.department_avg, company_average.company_avg
-FROM dept_averages, company_average
-WHERE dept_averages.department_avg > company_average.company_avg;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaftc7" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -118,7 +108,7 @@ Expected output:
 - It makes it far easier to check each piece in isolation, since the whole first CTE can be run on its own, just by selecting from it directly, before it is ever plugged into the larger `query`.
 - It documents what each intermediate result actually represents, for anyone reading the `query` later.
 
-![Multiple CTEs chained as named steps before the final report](images/10_cte_chain_multiple_steps.png)
+![Multiple CTEs chained as named steps before the final report](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_cte_chain_multiple_steps.png)
 
 ## Why CTEs Are Often Preferred Over Nested Subqueries
 
@@ -130,16 +120,12 @@ For any `query` with more than one layer of subquery, reaching for a CTE instead
 
 CTEs are not limited to replacing `FROM` subqueries; any subquery, including the correlated and list-based ones from earlier lessons, can be pulled out into a named CTE if doing so makes the `query` easier to follow.
 
-```postgresql with=init.sql
-WITH high_earners AS (
-    SELECT employee_id, employee_name, salary
-    FROM employees
-    WHERE salary > (SELECT AVG(salary) FROM employees)
-)
-SELECT employee_name, salary
-FROM high_earners
-ORDER BY salary DESC;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaftnq" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -184,9 +170,12 @@ This is a small example, but the pattern scales: as soon as a `WHERE` subquery's
 
 Rewrite the `correlated subquery` from the previous lesson, finding employees whose salary exceeds their own department's average, as a CTE-based `query` instead of a `WHERE`-embedded subquery.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaftza" 
+ width="100%"
+></iframe>
 
 One valid answer defines `WITH dept_averages AS (SELECT department, AVG(salary) AS department_avg FROM employees GROUP BY department)` and then `joins` `employees` to `dept_averages` on `department`, filtering with `WHERE employees.salary > dept_averages.department_avg`, returning Ananya Sharma, whose 95000.00 clears Engineering's 85000.00 average, and Sameer Khan, whose 65000.00 clears Sales's 61500.00 average.
 

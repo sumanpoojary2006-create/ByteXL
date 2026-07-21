@@ -4,6 +4,10 @@ Divya is putting together a one-page summary for the Dean's office, and she need
 
 For her own work that is fine, but this sheet is going in front of people who have never seen a `database` `table` in their life. She wants the headers to read "Student Name" and "Location" instead. Renaming a `column` in the output, without touching the actual `table`, is what a **`column` alias** does, and SQL gives her a clean way to write it: the `AS` keyword.
 
+**Definition:** Aliases let a `query` speak in whatever words are most useful to whoever is reading the result, without ever touching the underlying `table`.
+
+![Intro visual for column aliases and table aliases with as](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_column_aliases_and_table_aliases_with_as.png)
+
 ## Renaming a Column With AS
 
 The `students` `table` holds this data:
@@ -23,7 +27,7 @@ Divya wants the `full_name` and `city` `columns`, but labelled "Student Name" an
 
 For hands-on practice, `init.sql` creates and populates the displayed `students` table:
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE students (
     student_id INTEGER PRIMARY KEY,
     full_name TEXT,
@@ -46,10 +50,12 @@ INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALU
 
 The active query file contains the aliased statement being practised:
 
-```postgresql with=init.sql
-SELECT full_name AS student_name, city AS location
-FROM students;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkah669" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -68,16 +74,18 @@ Expected output:
 - `AS` sits between the real `column` and the label Divya wants in its place, and the label only exists for this one result, it never renames anything inside the actual `table`.
 - Run `SELECT * FROM students;` again separately and the `column` is still called `full_name` there, untouched.
 
-![Column aliases changing raw headers into friendlier output names using AS](images/03_column_alias_as_output_headers.png)
+![Column aliases changing raw headers into friendlier output names using AS](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_column_alias_as_output_headers.png)
 
 ## AS Is Optional, But Worth Keeping
 
 SQL allows a shorter form: dropping the word `AS` entirely and just writing the alias right after the `column` name. The query is `SELECT full_name student_name, city location FROM students;`.
 
-```postgresql with=init.sql
-SELECT full_name student_name, city location
-FROM students;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkah6f4" 
+ width="100%"
+></iframe>
 
 This produces the exact same output table shown above, `student_name` and `location` headers included. PostgreSQL is happy to accept either form, so why bother typing the extra word?
 
@@ -89,10 +97,12 @@ The two extra characters buy real clarity, which is why it is worth the habit ev
 
 Aliases are not only for `columns`. A `table` can be given a short alias too, and once it has one, that alias can be used anywhere else in the same `query` in place of the full `table` name. It looks unnecessary on a `query` this small, but the habit pays off the moment a `query` starts pulling from more than one `table`, which is exactly where the students, courses, and enrollments `tables` are eventually headed together. The query is `SELECT s.full_name AS student_name, s.city AS location FROM students AS s;`.
 
-```postgresql with=init.sql
-SELECT s.full_name AS student_name, s.city AS location
-FROM students AS s;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkah6th" 
+ width="100%"
+></iframe>
 
 Expected output is identical to the two `queries` above, the same `student_name` and `location` `columns` for all eight students; only the `query` text changed, not the answer it produces.
 
@@ -100,7 +110,7 @@ Here `students AS s` tells PostgreSQL that `s` now stands for the students `tabl
 
 Divya keeps it in her own `queries` because it reads more clearly to anyone who has not seen the `query` before.
 
-![A students table receiving the short table alias s for use in one query](images/04_table_alias_short_name.png)
+![A students table receiving the short table alias s for use in one query](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_table_alias_short_name.png)
 
 ## Aliases and Table Aliases at a Glance
 
@@ -140,9 +150,12 @@ Divya keeps it in her own `queries` because it reads more clearly to anyone who 
 
 Divya's next request from the Dean's office is a sheet with headers "Full Name" and "Email Address" instead of the raw `column` names, using a `table` alias `s` for students along the way. Write that `query`.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkah78k" 
+ width="100%"
+></iframe>
 
 A working answer looks like `SELECT s.full_name AS "Full Name", s.email AS "Email Address" FROM students AS s;`. Expected output:
 

@@ -4,6 +4,22 @@
 
 **Definition:** The principle of `least privilege` means granting a `role` exactly the access its actual, current responsibilities require, and nothing broader, since every unnecessary privilege granted is unnecessary risk carried indefinitely, whether that `role` represents an automated service or an individual developer, and periodically reviewing existing grants is what keeps this discipline from quietly eroding over time.
 
+<!--
+IMAGE PROMPT  ->  generate as images/03_intro_principle_of_least_privilege.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: GRANT and REVOKE, covered in the previous lesson, are just tools; they say nothing about how much access any given role should actually have. The principle of least privilege answers that question directly: every role should be granted exactly the access it.
+
+ON-IMAGE TEXT: show a short bold title "Principle Of Least Privilege" plus only these few labels, large and legible: Role, Principle, Least. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for principle of least privilege](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_principle_of_least_privilege.png)
+
 ## The Tempting Shortcut, and Why It Is a Real Risk
 
 Granting broad, unrestricted access up front avoids the friction of figuring out exactly what a `role` needs, but it turns every `role` into a much larger liability than it needs to be.
@@ -77,7 +93,7 @@ Expected result: PostgreSQL completes the definition or privilege command withou
 - `reporting_app` can now read `shipments`, exactly what a reporting dashboard needs, and nothing else; it has no access to `payroll` at all, and no ability to modify `shipments` either, since `INSERT`, `UPDATE`, and `DELETE` were never granted.
 - If this service's credentials were ever compromised, the worst an attacker could do through this specific account is read shipment data, not touch payroll, not delete anything, a dramatically smaller blast radius than the broad grant above.
 
-![Least privilege gives a role only the access it needs, reducing the blast radius](images/05_least_privilege_smaller_blast_radius.png)
+![Least privilege gives a role only the access it needs, reducing the blast radius](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_least_privilege_smaller_blast_radius.png)
 
 ## Least Privilege Applies to People, Not Just Services
 
@@ -115,7 +131,7 @@ Expected output:
 
 This block only grants `SELECT` and `UPDATE` to `dev_alia`; `reporting_app` was created by `init.sql` but was never granted anything in this fresh session, so filtering `role_table_grants` for `reporting_app` correctly comes back empty here. In a real, long-running `database`, this same `query` is exactly how a team would spot that `reporting_app` unexpectedly does, or does not, hold a grant it should. `information_schema.role_table_grants` lists every privilege currently held by a given `role`, across every `table`, a direct way to check whether `reporting_app`'s actual granted permissions still match what it genuinely needs, or whether some stale grant from an earlier, now-irrelevant task is still sitting there, unnoticed, quietly widening that account's blast radius.
 
-![Periodic grant review compares current permissions with current need and removes stale access](images/06_review_grants_revoke_stale_access.png)
+![Periodic grant review compares current permissions with current need and removes stale access](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_review_grants_revoke_stale_access.png)
 
 ## Least Privilege at a Glance
 

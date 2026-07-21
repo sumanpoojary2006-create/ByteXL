@@ -6,6 +6,22 @@ A senior developer reviewing her work points out that PostgreSQL can hand that c
 
 **Definition:** `RETURNING` turns a modification into its own confirmation, handing back exactly the `row` an `INSERT` just created, an `UPDATE` just changed, or a `DELETE` just removed, without a second statement needed to check the result.
 
+<!--
+IMAGE PROMPT  ->  generate as images/04_intro_returning_getting_back_what_you_just_changed.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Zara has been running her INSERT, UPDATE, and DELETE statements the way Alia, Rohit, and Priyanka all did before her: type the change, then type a separate SELECT afterward just to see what actually happened. It works, but it always feels like one statement.
+
+ON-IMAGE TEXT: show a short bold title "Returning Getting Back What You Just Changed" plus only these few labels, large and legible: Select, Returning, Getting. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for returning getting back what you just changed](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_returning_getting_back_what_you_just_changed.png)
+
 ## RETURNING After INSERT
 
 The `enrollments` `table` holds this data:
@@ -33,7 +49,7 @@ The output shows enrollment_id 6, student_id 5, course_id 101, and the enrolled_
 - `RETURNING` is how the caller learns what value the `database` actually chose.
 - That happens at the exact moment the `row` is created, rather than by guessing or querying again a moment later.
 
-![RETURNING producing an immediate receipt for a row changed by INSERT or UPDATE](images/07_returning_change_receipt.png)
+![RETURNING producing an immediate receipt for a row changed by INSERT or UPDATE](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_returning_change_receipt.png)
 
 ### Hands-On Practice: INSERT with RETURNING
 
@@ -143,7 +159,7 @@ Expected output, directly from the `RETURNING` clause, the row's last snapshot b
 
 The output shows enrollment_id 5, student_id 4, course_id 104, grade B, the last `view` anyone gets of that `row` before it is gone from the `table` for good. This is often more useful than it first sounds: a support workflow that lets a student drop a course can log exactly what was removed using this single result, without needing to have queried the `row` moments earlier and hoped nothing changed in between.
 
-![DELETE RETURNING giving back a snapshot of the removed row](images/08_returning_deleted_row_snapshot.png)
+![DELETE RETURNING giving back a snapshot of the removed row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_returning_deleted_row_snapshot.png)
 
 ### Hands-On Practice: DELETE with RETURNING
 

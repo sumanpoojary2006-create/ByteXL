@@ -6,6 +6,22 @@ There is only one `table` involved, `riders`, but the report still needs two nam
 
 **Definition:** A self `join` is not a different kind of `join` mechanically, it is the same `JOIN`, `LEFT JOIN`, or any other `join` type covered so far, applied to one `table` referenced twice under two different aliases, which is exactly what a hierarchy or a peer relationship stored in a single `table` needs.
 
+<!--
+IMAGE PROMPT  ->  generate as images/05_intro_self_joins.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: The delivery startup runs a mentorship program for new riders: every experienced rider is paired with a couple of newer riders to show them the ropes, and that pairing is stored right inside the riders table itself, as a mentorid column pointing to another.
+
+ON-IMAGE TEXT: show a short bold title "Self Joins" plus only these few labels, large and legible: Table, Column, Joins. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for self joins](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_self_joins.png)
+
 ## Why One Table Needs to Act Like Two
 
 The `riders` `table` stores every rider once, with a `mentor_id` `column` that is `NULL` for riders who have no assigned mentor.
@@ -90,13 +106,13 @@ Expected output:
 
 The `join` condition, `mentee.mentor_id = mentor.rider_id`, matches each mentee's `mentor_id` against the mentor's own `rider_id`, exactly the same logic used to `join` two genuinely different `tables` in earlier lessons. The `database` has no trouble treating one physical `table` as two separate references, as long as the aliases keep them distinguishable in the `query`.
 
-![A self join using two aliases so one riders table can act as mentee and mentor](images/09_self_join_two_alias_roles.png)
+![A self join using two aliases so one riders table can act as mentee and mentor](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_self_join_two_alias_roles.png)
 
 ## Including Riders With No Mentor
 
 An `INNER JOIN` self `join`, like the one above, drops Suresh and Arjun entirely, since their `mentor_id` is `NULL` and finds no match. If the report needs to show every rider, mentored or not, a `LEFT JOIN` self `join` solves it the same way it solved the unmatched-`row` problem for two different `tables`.
 
-![LEFT SELF JOIN keeping riders even when their mentor value is NULL](images/10_left_self_join_keeps_no_mentor.png)
+![LEFT SELF JOIN keeping riders even when their mentor value is NULL](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_left_self_join_keeps_no_mentor.png)
 
 ```postgresql with=init.sql
 SELECT mentee.rider_name AS rider, mentor.rider_name AS mentor

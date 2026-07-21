@@ -6,6 +6,22 @@
 
 **Definition:** `EXPLAIN ANALYZE` actually runs a `query` and reports real measured time and real `row` counts alongside the optimizer's original estimates, making it possible to see exactly where a plan's assumptions matched reality and where they did not, with `loops=N` and a `ROLLBACK`-wrapped `transaction` as two details worth remembering when reading or running it.
 
+<!--
+IMAGE PROMPT  ->  generate as images/03_intro_reading_explain_analyze.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: - Plain EXPLAIN, covered in the previous lesson, only ever reports what the optimizer expects to happen, an estimate produced without actually running the query. - Those estimates can be wrong, sometimes significantly, when the database's statistics are stale.
+
+ON-IMAGE TEXT: show a short bold title "Reading Explain Analyze" plus only these few labels, large and legible: Row, Query, Reading. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for reading explain analyze](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_reading_explain_analyze.png)
+
 ## Estimated vs. Actual, Side by Side
 
 The same `orders` `table`, with a deliberately skewed distribution, sets up a case where an estimate and reality can diverge.
@@ -66,7 +82,7 @@ The output now includes both the familiar `cost=` and `rows=` estimates from pla
 - **`actual time`**: reports genuinely measured milliseconds, not internal cost units.
 - **`rows=N`** (in the actual section): reports how many `rows` this step genuinely returned when actually run, which can be compared directly against the earlier estimate on the same line.
 
-![EXPLAIN ANALYZE compares estimated rows with the actual rows returned](images/05_explain_analyze_estimated_vs_actual_rows.png)
+![EXPLAIN ANALYZE compares estimated rows with the actual rows returned](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_explain_analyze_estimated_vs_actual_rows.png)
 
 ## When Estimates and Reality Disagree
 
@@ -128,7 +144,7 @@ Expected output:
 
 This plan runs its inner scan of `orders` once per matching customer, so `loops=5` appears on that inner `Index Scan` step. The `actual time=0.008..1.612` shown there is the *average per loop*, not the total, so the true total time contributed by that step is roughly `1.612 x 5 ≈ 8.06 ms`, not `1.612 ms` alone. Likewise, `rows=3020` is the average rows returned per loop; the inner step returned about 3020 `orders` rows on each of its 5 executions, one heavily loaded execution for `customer_id = 1` (roughly 15000 rows) and four lighter ones for `customer_id` 2 through 5 (roughly 25 rows each), averaging out to the reported figure. Missing this detail is a common way to misread `EXPLAIN ANALYZE` output, understating how expensive a repeatedly executed inner step actually was in total.
 
-![loops=N means an inner plan step repeats and the total work adds up](images/06_explain_analyze_loops_repeat_inner_step.png)
+![loops=N means an inner plan step repeats and the total work adds up](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_explain_analyze_loops_repeat_inner_step.png)
 
 ## Why EXPLAIN ANALYZE Should Be Used with Care
 
@@ -156,6 +172,8 @@ Expected output:
 The `Update on orders` node's own `rows=0` is normal, an `UPDATE` node does not return `rows` to the client the way a `SELECT` does; the `rows=15000` that matter are reported one level down, on the `Seq Scan` that found the `rows` to modify. The `Execution Time: 6.812 ms` reflects the real cost of updating all 15000 matching `rows`, and because the statement runs inside `BEGIN` / `ROLLBACK`, none of those changes are kept once the `transaction` ends.
 
 Wrapping the `EXPLAIN ANALYZE UPDATE` in a `transaction` that ends with `ROLLBACK` instead of `COMMIT` is the standard, safe way to measure a write statement's real `execution plan` and timing without letting its actual changes persist, exactly the transactional safety net covered in the previous unit.
+
+![EXPLAIN ANALYZE executes an UPDATE for real, so BEGIN and ROLLBACK provide a safety loop](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06b_explain_analyze_executes_writes.png)
 
 ## EXPLAIN vs. EXPLAIN ANALYZE at a Glance
 

@@ -4,7 +4,9 @@ Tara is a second-year student waiting for her dinner order to arrive, half-watch
 
 Curious, Tara opens her banking app to check her balance, then the same college portal she uses every morning to see her attendance, and starts noticing the same pattern everywhere she looks. Three apps, ten minutes, and every one of them is quietly built on a `database` doing real work behind a screen she never has to think about.
 
-![Food, banking, and college apps each reading and writing their own database behind the visible screen](images/07_databases_behind_everyday_apps.png)
+![Food, banking, and college apps each reading and writing their own database behind the visible screen](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_databases_behind_everyday_apps.png)
+
+**Definition:** Databases are not machinery reserved for banks or large corporations, they sit invisibly behind almost every app that remembers anything from one visit to the next, from a plate of biryani to a bank transfer to a set of exam marks.
 
 ## The Food Delivery App: A Race Against Itself
 
@@ -19,7 +21,7 @@ A `database` is what stops two customers, both ordering the restaurant's last pl
 
 Picture that same moment running on plain shared files instead. Two orders save at nearly the same instant, one overwrites the other's stock count, and the kitchen ends up promising a dish it no longer has, discovered only once a rider is already three streets away. That is the same lost-update failure a growing pile of spreadsheets runs into, just wearing a restaurant's apron.
 
-![A database safely gives the last biryani to the first order and tells the second customer it is sold out](images/08_last_biryani_safe_ordering.png)
+![A database safely gives the last biryani to the first order and tells the second customer it is sold out](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_last_biryani_safe_ordering.png)
 
 ## The Banking App: Where a Mistake Costs Real Money
 

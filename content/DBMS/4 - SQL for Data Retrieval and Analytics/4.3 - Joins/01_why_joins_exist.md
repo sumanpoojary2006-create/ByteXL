@@ -8,6 +8,22 @@ This is precisely the problem a **`join`** solves: combining `rows` from two or 
 
 **Definition:** `Joins` exist because normalized `tables` intentionally keep related facts apart, one customer stored once, one restaurant stored once, and a `query` is what pulls those separated facts back together into a single readable result.
 
+<!--
+IMAGE PROMPT  ->  generate as images/01_intro_why_joins_exist.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Zoya is building order reports for a food delivery startup, and her very first attempt at a report exposes a problem the earlier chapters never had to deal with. The orders table stores a customerid and a restaurantid on every row, but not a single customer.
+
+ON-IMAGE TEXT: show a short bold title "Why Joins Exist" plus only these few labels, large and legible: Table, Row, Order. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for why joins exist](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_why_joins_exist.png)
+
 ## Seeing the Problem Without a Join
 
 Three small `tables` model the food delivery system: customers who place orders, restaurants that fulfill them, and the orders that connect the two.
@@ -145,7 +161,7 @@ Expected output:
 
 2. It produces one combined `row` carrying `columns` from both `tables`, which is how `customer_name`, a `column` that does not exist on `orders` at all, ends up in this result.
 
-![A join using matching customer_id values to bring the customer name into an order report](images/01_join_lookup_ids_to_names.png)
+![A join using matching customer_id values to bring the customer name into an order report](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_join_lookup_ids_to_names.png)
 
 ## What a Join Actually Produces
 
@@ -204,7 +220,7 @@ This `joins` three `tables` at once, and the result reads like a single flat `ta
 
 Nothing was changed in `orders`, `customers`, or `restaurants` themselves; the `join` only affects what this one `query` returns.
 
-![A join producing a temporary wider result table without changing the source tables](images/02_join_temporary_wider_result.png)
+![A join producing a temporary wider result table without changing the source tables](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_join_temporary_wider_result.png)
 
 ## Why Joins Exist, in One Line
 

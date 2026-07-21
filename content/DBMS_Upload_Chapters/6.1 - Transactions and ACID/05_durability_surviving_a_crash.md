@@ -4,6 +4,10 @@ Rahul's transfer feature now groups statements atomically, keeps the data consis
 
 The fourth letter in ACID, **durability**, is the guarantee that once a `transaction` has committed, its changes are permanent, surviving a crash, a power loss, or a restart, even if the change had only existed in memory a moment before.
 
+**Definition:** Durability closes the loop that atomicity, consistency, and isolation open: once a `transaction` commits, its result is guaranteed permanent, surviving any crash, because the `database` records it somewhere durable before ever reporting success.
+
+![Intro visual for durability surviving a crash](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_durability_surviving_a_crash.png)
+
 ## COMMIT Means Permanent, Not Just Visible
 
 The `accounts` `table` is the same one used throughout this chapter.
@@ -23,7 +27,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
     owner_name TEXT,
@@ -37,14 +41,12 @@ INSERT INTO accounts (account_id, owner_name, balance) VALUES
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-BEGIN;
-UPDATE accounts SET balance = balance - 5000.00 WHERE account_id = 1;
-UPDATE accounts SET balance = balance + 5000.00 WHERE account_id = 2;
-COMMIT;
-
-SELECT account_id, balance FROM accounts;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaj28a" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -57,7 +59,7 @@ Expected output:
 
 Once `COMMIT` finishes here, durability guarantees this new balance is not sitting only in server memory, waiting to disappear the moment power is lost. The `database` has already made sure this change is recorded somewhere that survives a crash, before it ever reported success back to Rahul's application.
 
-![COMMIT writing a transaction result to durable storage so it survives a crash](images/09_durability_commit_survives_crash.png)
+![COMMIT writing a transaction result to durable storage so it survives a crash](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_durability_commit_survives_crash.png)
 
 This is a meaningfully different promise from isolation:
 
@@ -74,9 +76,12 @@ If the server crashes immediately after, that log is what the `database` replays
 
 Durability is not free; forcing every commit to wait for a disk write takes real time, which is why some `databases` expose a setting to relax this guarantee for performance-sensitive situations. PostgreSQL's `synchronous_commit` setting is one example, and checking it shows how explicit this trade-off is.
 
-```postgresql with=init.sql
-SHOW synchronous_commit;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaj2h7" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL returns one row containing the current server or transaction setting. The exact value depends on the OneCompiler PostgreSQL environment, so compare the setting name and meaning rather than memorizing a particular value.
 
@@ -88,13 +93,12 @@ This setting is not something a banking application should ever turn off, but it
 
 It is worth being precise about the boundary here. Everything before `COMMIT` is provisional, and a crash during an uncommitted `transaction` is expected to lose that `transaction`'s work entirely, which is exactly what atomicity already promises, an incomplete `transaction` should never partially survive.
 
-```postgresql with=init.sql
-BEGIN;
-UPDATE accounts SET balance = balance - 1000.00 WHERE account_id = 1;
--- A crash here, before COMMIT, is expected to lose this change entirely.
--- Durability makes no promise about uncommitted work; atomicity already
--- guarantees it should not survive in a half-applied state.
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaj2tu" 
+ width="100%"
+></iframe>
 
 Expected observation: PostgreSQL completes the transaction-control statements. Use the following explanation and any closing `SELECT` to verify whether the changes were committed or rolled back.
 
@@ -129,26 +133,29 @@ Durability only ever protects a `transaction` once it has fully committed. A `tr
   </tbody>
 </table>
 
-![The four ACID properties supporting a safe transaction](images/10_acid_four_properties_summary.png)
+![The four ACID properties supporting a safe transaction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_acid_four_properties_summary.png)
 
 ## Your Turn
 
 Check the current `synchronous_commit` setting, then run a committed `transaction` that adds 500.00 to Sanjay's balance, and confirm the change is reflected with a final `SELECT`, reasoning through why that result would still hold even if the server crashed the instant after `COMMIT` returned.
 
-```postgresql with=init.sql
--- Write your queries below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaj35a" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 
 If you run `SHOW synchronous_commit;` followed by:
 
-```sql
-BEGIN;
-UPDATE accounts SET balance = balance + 500.00 WHERE account_id = 2;
-COMMIT;
-SELECT balance FROM accounts WHERE account_id = 2;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/mysql/44vkaj3e6" 
+ width="100%"
+></iframe>
 
 the balance shows 12500.00, and durability is the reason that value can be trusted to still be there even after an immediate crash, since `COMMIT` would not have returned successfully until the change was already recorded somewhere a crash cannot erase.
 

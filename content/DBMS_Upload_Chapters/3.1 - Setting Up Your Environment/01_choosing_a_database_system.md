@@ -14,6 +14,10 @@ What Ishaan actually needs is not a ranking of which `database` is "best" in som
 
 He needs to understand what a **relational `database` management system**, a piece of software that stores data in structured `tables` and lets him ask precise questions of it using a shared `query` language, is built to do well, and which of the several relational systems on offer make the most sense for someone learning the craft from scratch. That question has a much calmer answer than the forum threads suggest.
 
+**Definition:** Choosing a `database` system is not about finding one flawless option and discarding the rest, it is about matching a system's actual design to the shape of the problem in front of you.
+
+![Intro visual for choosing a database system](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_choosing_a_database_system.png)
+
 ## The Relational Family Ishaan Keeps Running Into
 
 Almost every name Ishaan encountered belongs to one of two broad families. The first is the relational family: PostgreSQL, MySQL, SQLite, Oracle, and SQL Server all organize data into `rows` and `columns` inside named `tables`, and all of them understand the same general `query` language, with small dialect differences between them.
@@ -24,7 +28,7 @@ Ishaan's robotics club data, members, events, attendance records, and the relati
 
 That is precisely the kind of structured, interrelated data a relational system was designed to hold, so Ishaan can set the NoSQL family aside for now and focus his attention on the relational options in front of him.
 
-![Robotics club members, events, and attendance fitting naturally into structured relational tables](images/01_relational_database_for_club_data.png)
+![Robotics club members, events, and attendance fitting naturally into structured relational tables](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_relational_database_for_club_data.png)
 
 ## PostgreSQL, MySQL, and SQLite Compared
 
@@ -50,7 +54,7 @@ MySQL       -> full server, free, extremely popular, slightly different feature 
 SQLite      -> no server at all, one file, perfect for small or embedded use, not for shared multi-user systems
 ```
 
-![PostgreSQL, MySQL, and SQLite shown as different relational database choices for different needs](images/02_postgresql_mysql_sqlite_use_cases.png)
+![PostgreSQL, MySQL, and SQLite shown as different relational database choices for different needs](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_postgresql_mysql_sqlite_use_cases.png)
 
 ## Database Systems at a Glance
 

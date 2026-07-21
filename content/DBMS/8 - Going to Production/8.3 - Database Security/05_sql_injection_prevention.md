@@ -6,6 +6,22 @@ This attack has a name, **SQL injection**, and it remains one of the most common
 
 **Definition:** SQL injection happens when untrusted input is allowed to become part of a `query`'s structure rather than staying confined to a value being compared or inserted, and `prepared statements` prevent this by construction, keeping structure and data permanently separate, with input validation and `least privilege` serving as valuable additional layers rather than substitutes for that primary defense.
 
+<!--
+IMAGE PROMPT  ->  generate as images/05_intro_sql_injection_prevention.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: The prepared statements lesson, back in the application-code chapter, briefly demonstrated what happens when untrusted input is pasted directly into a SQL string: a query's actual logic can be hijacked entirely. This attack has a name, SQL injection, and it.
+
+ON-IMAGE TEXT: show a short bold title "SQL Injection Prevention" plus only these few labels, large and legible: Query, Injection, Prevention. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for sql injection prevention](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_sql_injection_prevention.png)
+
 ## A More Damaging Injection Example
 
 The earlier example returned extra `rows`; a real injection can go much further, touching data the `query` was never meant to involve at all.
@@ -59,7 +75,7 @@ This `SELECT` itself runs safely; the commented-out lines above it illustrate wh
 - It can delete, modify, or destroy data entirely.
 - Depending on the `database` account's granted privileges, it can reach into `tables` the application was never designed to touch at all, exactly the blast radius the least-privilege lesson in this chapter warned about.
 
-![SQL injection happens when input is allowed to change the query structure](images/09_sql_injection_changes_query_structure.png)
+![SQL injection happens when input is allowed to change the query structure](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_sql_injection_changes_query_structure.png)
 
 ## Prepared Statements Prevent Injection by Construction
 
@@ -131,7 +147,7 @@ A `web_app` `role` granted only `SELECT` and `INSERT` on `shipments`, with no `D
 
 This is exactly why layered defenses matter: `prepared statements` should make injection impossible in the first place, and `least privilege` limits the damage in case some other, unanticipated flaw ever slips through.
 
-![Prepared statements, input validation, and least privilege form defense in depth](images/10_sql_injection_defense_in_depth.png)
+![Prepared statements, input validation, and least privilege form defense in depth](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_sql_injection_defense_in_depth.png)
 
 ## SQL Injection Prevention at a Glance
 

@@ -4,6 +4,10 @@
 - `ORDER BY` alone can sort a result, but it cannot label each `row` with its rank, and it has no built-in way to decide what should happen to the rank numbers that follow a tie.
 - SQL provides three dedicated **ranking `functions`**, `ROW_NUMBER`, `RANK`, and `DENSE_RANK`, each a `window function` used with `OVER (ORDER BY ...)`, and each with a different, precise rule for handling ties.
 
+**Definition:** `ROW_NUMBER`, `RANK`, and `DENSE_RANK` each turn an ordered set of `rows` into rank numbers, differing only in how they handle ties, strict sequencing with no ties, ranking with gaps after a tie, or ranking with no gaps at all.
+
+![Intro visual for ranking functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_ranking_functions.png)
+
 ## Numbering Rows with ROW_NUMBER
 
 The `sales` `table` again holds individual sales, this time including a tie for illustration.
@@ -26,7 +30,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE sales (
     sale_id INTEGER PRIMARY KEY,
     salesperson TEXT,
@@ -44,11 +48,12 @@ INSERT INTO sales (sale_id, salesperson, region, amount) VALUES
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-SELECT salesperson, amount,
-       ROW_NUMBER() OVER (ORDER BY amount DESC) AS row_num
-FROM sales;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagjwc" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -65,17 +70,18 @@ Expected output:
 - Sana Fatima and Tarun Bakshi both have 21000.00.
 - `ROW_NUMBER` still gives them different numbers, 2 and 3, arbitrarily breaking the tie based on whatever order the `database` happens to process them in. This makes `ROW_NUMBER` useful for a strict, no-ties-allowed sequence, but not ideal for a leaderboard where a genuine tie should probably be reflected as one.
 
-![ROW_NUMBER assigning a strict sequence even when two values are tied](images/05_row_number_strict_sequence.png)
+![ROW_NUMBER assigning a strict sequence even when two values are tied](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_row_number_strict_sequence.png)
 
 ## Ranking with Gaps Using RANK
 
 `RANK()` gives tied `rows` the exact same rank number, and then skips ahead by the number of tied `rows` before continuing.
 
-```postgresql with=init.sql
-SELECT salesperson, amount,
-       RANK() OVER (ORDER BY amount DESC) AS rank_position
-FROM sales;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagk7f" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -96,11 +102,12 @@ Sana and Tarun both land on rank 2, correctly reflecting their tie, but the next
 
 `DENSE_RANK()` also gives tied `rows` the same rank, but it does not skip any numbers afterward, keeping the rank sequence consecutive.
 
-```postgresql with=init.sql
-SELECT salesperson, amount,
-       DENSE_RANK() OVER (ORDER BY amount DESC) AS dense_rank_position
-FROM sales;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagkkm" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -114,7 +121,7 @@ Expected output:
 
 Sana and Tarun again both land on rank 2, but Priya Bose now gets rank 3, not 4, since `DENSE_RANK` treats the tie as consuming only one rank position, not two. Whether `RANK` or `DENSE_RANK` is the right choice depends entirely on what the ranking is meant to represent:
 
-![RANK leaving a gap after a tie while DENSE_RANK keeps ranks consecutive](images/06_rank_vs_dense_rank_ties.png)
+![RANK leaving a gap after a tie while DENSE_RANK keeps ranks consecutive](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_rank_vs_dense_rank_ties.png)
 
 - **`RANK`**: use it if the count of people above someone genuinely matters.
 - **`DENSE_RANK`**: use it if only the relative tier matters.
@@ -123,13 +130,12 @@ Sana and Tarun again both land on rank 2, but Priya Bose now gets rank 3, not 4,
 
 Placing all three ranking `functions` in the same `query` makes the difference between them immediately visible.
 
-```postgresql with=init.sql
-SELECT salesperson, amount,
-       ROW_NUMBER() OVER (ORDER BY amount DESC) AS row_num,
-       RANK() OVER (ORDER BY amount DESC) AS rank_position,
-       DENSE_RANK() OVER (ORDER BY amount DESC) AS dense_rank_position
-FROM sales;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagkva" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -147,11 +153,12 @@ For the tied pair, `row_num` shows 2 and 3, `rank_position` shows 2 and 2, and `
 
 Ranking `functions` combine naturally with `PARTITION BY`, ranking `rows` separately within each group rather than across the whole `table`, the same partitioning behavior covered for aggregate `window functions`. The `sales` `table` above already carries a `region` `column`, North or South, so the director can ask for a rank within each region instead of one flat company-wide ranking.
 
-```postgresql with=init.sql
-SELECT salesperson, region, amount,
-       RANK() OVER (PARTITION BY region ORDER BY amount DESC) AS region_rank
-FROM sales;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagm8e" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -198,9 +205,12 @@ Expected output:
 
 The sales director wants a leaderboard using `DENSE_RANK`, showing only salespeople ranked in the top 3 tiers. Write a `query` against the `sales` `table` above that computes `DENSE_RANK` and filters to ranks 1 through 3.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagmhd" 
+ width="100%"
+></iframe>
 
 Filtering directly with `WHERE DENSE_RANK() OVER (...) <= 3` is not allowed, since `window functions` cannot be referenced in `WHERE`, the same restriction that applies to `aggregate functions`. Instead, wrap the ranking in a CTE first, then filter the CTE's result: `WITH ranked AS (SELECT salesperson, amount, DENSE_RANK() OVER (ORDER BY amount DESC) AS dense_rank_position FROM sales) SELECT * FROM ranked WHERE dense_rank_position <= 3;`, which returns the top four `rows` since two people share the second tier.
 

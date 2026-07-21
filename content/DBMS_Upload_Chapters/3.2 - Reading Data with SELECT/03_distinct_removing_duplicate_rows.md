@@ -4,6 +4,10 @@ Simran has been asked a question that sounds like it should have a short answer:
 
 She scrolls through the list herself, mentally crossing off repeats, to work out that there are really only five distinct cities represented. That is exactly the kind of tedious, error-prone work a `database` should be doing for her. The tool for it is **`DISTINCT`**, a keyword that tells PostgreSQL to collapse repeated values in a result down to one appearance each.
 
+**Definition:** `DISTINCT` strips a result down to its genuinely unique `rows`, whether uniqueness is judged on a single `column` or on the combination of every `column` named in the `SELECT` list.
+
+![Intro visual for distinct removing duplicate rows](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_distinct_removing_duplicate_rows.png)
+
 ## The Repeated-Rows Problem
 
 Before reaching for `DISTINCT`, it helps to see the problem it solves in plain output. The `students` `table` holds this data:
@@ -23,7 +27,7 @@ Simran asks for just the `city` `column`, one value per student, with no `DISTIN
 
 For hands-on practice, `init.sql` creates and populates the displayed `students` table:
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE students (
     student_id INTEGER PRIMARY KEY,
     full_name TEXT,
@@ -46,9 +50,12 @@ INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALU
 
 The active query file contains the statement being practised:
 
-```postgresql with=init.sql
-SELECT city FROM students;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagyw3" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -68,15 +75,18 @@ The result has eight `rows`, matching the eight students, and Bengaluru, Chennai
 - It is faithfully reporting one city per student.
 - It does not answer Simran's actual question, which is about the set of cities involved, not the list of students.
 
-![Selecting city returns repeated city values because each student row contributes one value](images/05_repeated_values_before_distinct.png)
+![Selecting city returns repeated city values because each student row contributes one value](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_repeated_values_before_distinct.png)
 
 ## Collapsing Repeats With DISTINCT
 
 Adding the word `DISTINCT` right after `SELECT` changes the question from "what city does each student live in" to "what cities appear at all." The query is `SELECT DISTINCT city FROM students;`.
 
-```postgresql with=init.sql
-SELECT DISTINCT city FROM students;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagz6z" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -90,7 +100,7 @@ Expected output:
 
 This time the result has exactly five `rows`: Bengaluru, Chennai, Pune, Hyderabad, and Mysuru, each listed once no matter how many students share it. PostgreSQL builds the full list first and then throws away any `row` whose value is an exact repeat of one already kept. Simran gets the answer to her real question directly, without counting anything by hand.
 
-![DISTINCT filtering duplicate city cards into unique city values](images/06_distinct_unique_values.png)
+![DISTINCT filtering duplicate city cards into unique city values](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_distinct_unique_values.png)
 
 ## DISTINCT Across More Than One Column
 
@@ -112,7 +122,7 @@ The query is `SELECT DISTINCT department, credits FROM courses;`, asking which d
 
 For hands-on practice, a second setup file, `init_002.sql`, creates and populates the displayed `courses` table:
 
-```postgresql file=init_002.sql
+```postgresql
 CREATE TABLE courses (
     course_id INTEGER PRIMARY KEY,
     title TEXT,
@@ -130,9 +140,12 @@ INSERT INTO courses (course_id, title, department, credits) VALUES
 
 The active query file contains the multi-column DISTINCT being practised:
 
-```postgresql with=init_002.sql
-SELECT DISTINCT department, credits FROM courses;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagzfv" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -175,9 +188,12 @@ Expected output:
 
 The registrar wants to know which departments the college currently offers courses in, listed once each, with no repeats. Write a `query` against the courses `table` above that returns just that.
 
-```postgresql with=init_002.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagzrw" 
+ width="100%"
+></iframe>
 
 `SELECT DISTINCT department FROM courses;` gets there in one line. Expected output:
 

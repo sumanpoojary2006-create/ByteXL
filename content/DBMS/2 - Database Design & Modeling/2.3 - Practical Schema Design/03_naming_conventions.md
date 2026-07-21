@@ -10,7 +10,7 @@ By Thursday, Sanjay has spent more time asking teammates "wait, which `table` do
 
 What Sanjay is living through is the practical cost of ignoring **naming conventions**, the agreed-upon rules a team follows for how `tables` and `columns` are named, so that a name alone tells a reader what it holds and how it relates to everything else, without anyone needing to ask.
 
-![Messy database names being reorganized into consistent naming conventions](images/05_naming_conventions_messy_vs_consistent.png)
+![Messy database names being reorganized into consistent naming conventions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_naming_conventions_messy_vs_consistent.png)
 
 **Definition:** A naming convention is a small, almost invisible kind of documentation, one that lives inside the names themselves rather than in a separate document nobody reads.
 
@@ -45,7 +45,7 @@ A well-named `foreign key` states plainly what it points to: `customer_id` insid
 
 Sanjay's rule of thumb going forward is that a `foreign key` `column` should always be named after the `table` it references, in the singular, followed by `_id`.
 
-![A foreign key named orders.customer_id clearly pointing to customers.customer_id](images/06_foreign_key_name_points_to_parent.png)
+![A foreign key named orders.customer_id clearly pointing to customers.customer_id](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_foreign_key_name_points_to_parent.png)
 
 ## Abbreviations That Only the Original Author Understood
 

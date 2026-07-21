@@ -4,6 +4,10 @@ Back in the `LEFT JOIN` lesson, Zoya found customers with no orders by joining `
 
 There is a more direct way to ask "does a matching `row` exist" or "does no matching `row` exist," using `EXISTS` and `NOT EXISTS`. These patterns are known as a **semi `join`**, which returns `rows` from one `table` where a match exists elsewhere without pulling in any `columns` from that other `table`, and an **anti `join`**, which returns `rows` where no match exists.
 
+**Definition:** Semi `joins` and anti `joins` answer "does a match exist" and "does no match exist" directly, using `EXISTS`, `NOT EXISTS`, `IN`, or `NOT IN`, without pulling in `columns` from the other `table` or risking duplicated `rows` the way an `INNER JOIN` or `LEFT JOIN` can.
+
+![Intro visual for semi joins and anti joins](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_intro_semi_joins_and_anti_joins.png)
+
 ## Finding Rows That Have a Match, Without Pulling in Columns
 
 The same delivery `schema` applies here, with Neha Bhatt having no orders and Taco Town having no orders.
@@ -46,7 +50,7 @@ The OneCompiler activity keeps setup and practice separate. `init.sql` creates a
 
 ## Hands-On Setup: Prepare the Data
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE customers (
     customer_id INTEGER PRIMARY KEY,
     customer_name TEXT,
@@ -91,13 +95,12 @@ INSERT INTO orders (order_id, customer_id, restaurant_id, amount, order_date) VA
 
 Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
 
-```postgresql with=init.sql
-SELECT customer_name
-FROM customers c
-WHERE EXISTS (
-    SELECT 1 FROM orders o WHERE o.customer_id = c.customer_id
-);
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahmpj" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -118,19 +121,18 @@ This behaves differently from an `INNER JOIN` in one important way:
 
 This returns four customers, everyone except Neha Bhatt.
 
-![EXISTS acting like a semi join by returning matching customers once without order columns](images/13_exists_semi_join_no_duplicates.png)
+![EXISTS acting like a semi join by returning matching customers once without order columns](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/13_exists_semi_join_no_duplicates.png)
 
 ## Finding Rows That Have No Match
 
 `NOT EXISTS` flips the same idea around, keeping only the `rows` where the inner `query` finds nothing at all.
 
-```postgresql with=init.sql
-SELECT customer_name
-FROM customers c
-WHERE NOT EXISTS (
-    SELECT 1 FROM orders o WHERE o.customer_id = c.customer_id
-);
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahmyg" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -141,17 +143,18 @@ Expected output:
 - This returns exactly one `row`, Neha Bhatt, the same answer the `LEFT JOIN ... WHERE order_id IS NULL` pattern produced earlier, but arrived at without ever `joining` a single column from `orders` into the result.
 - For a pure existence check like this one, `NOT EXISTS` states the intent more directly: "keep this customer only if no order references them," rather than "`join` every order, then throw away everything except the empty matches."
 
-![NOT EXISTS acting like an anti join by returning rows with no matching order](images/14_not_exists_anti_join_no_match.png)
+![NOT EXISTS acting like an anti join by returning rows with no matching order](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/14_not_exists_anti_join_no_match.png)
 
 ## Using IN as a Simpler Alternative for Single-Column Checks
 
 When the check only involves a single `column` with no other condition tying the two `queries` together, `IN` and `NOT IN` offer a shorter alternative to `EXISTS` and `NOT EXISTS`.
 
-```postgresql with=init.sql
-SELECT customer_name
-FROM customers
-WHERE customer_id IN (SELECT customer_id FROM orders);
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahna7" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -162,11 +165,12 @@ Expected output:
 | Kavya Nair |
 | Imran Sheikh |
 
-```postgresql with=init.sql
-SELECT customer_name
-FROM customers
-WHERE customer_id NOT IN (SELECT customer_id FROM orders WHERE customer_id IS NOT NULL);
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahnkm" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -222,9 +226,12 @@ Despite the name, semi and anti `joins` are not written using `JOIN`, `LEFT JOIN
 
 Zoya wants to find every restaurant that has never received an order, using an existence check rather than a `LEFT JOIN`. Write a `query` against `restaurants` and `orders` above using `NOT EXISTS`.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahnvt" 
+ width="100%"
+></iframe>
 
 If your `query` is `SELECT restaurant_name FROM restaurants r WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.restaurant_id = r.restaurant_id);`, it returns Taco Town, the one restaurant with no matching orders.
 

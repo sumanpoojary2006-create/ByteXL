@@ -2,9 +2,7 @@
 
 **Semester 2: Advanced Python Concepts**
 
-Turn the library system into an installable Python package that anyone can run with a single pip command.
-
-**Character thread:** The whole team returns — Tara, Nadia, Sam, Raj, Miguel, Yuna, Priya, and Dev — each contributing their unit's work to the final capstone package.
+Structure, document, build, and distribute an installable Python package.
 
 ## Lessons
 
@@ -15,6 +13,5 @@ Turn the library system into an installable Python package that anyone can run w
 | 03 | [03_virtual_environments_and_uv.md](03_virtual_environments_and_uv.md) | Virtual Environments and uv |
 | 04 | [04_building_and_publishing.md](04_building_and_publishing.md) | Building Wheels and Publishing to PyPI |
 | 05 | [05_documentation.md](05_documentation.md) | Docstrings and README Documentation |
-| 06 | [06_capstone_project.md](06_capstone_project.md) | Capstone: The Complete Library System Package |
 
-_Status: all 6 lessons authored and verified._
+_Status: all 5 lessons authored and verified._

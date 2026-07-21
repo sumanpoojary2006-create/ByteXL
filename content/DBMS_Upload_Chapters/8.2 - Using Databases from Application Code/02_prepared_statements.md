@@ -4,6 +4,10 @@ Once a `connection` is open, an application still has to decide exactly how to s
 
 This is a genuine hazard, both for correctness and for security, and the fix is a mechanism nearly every `database` and client library supports directly: a **`prepared statement`**, which sends the `query` structure and its runtime values as two separate things, rather than one combined string.
 
+**Definition:** A `prepared statement` separates a `query`'s fixed structure from the runtime values it operates on, letting an application safely handle untrusted input as pure data that can never alter what the `query` actually does, while also allowing the `database` to reuse a parsed and planned `query` across repeated executions.
+
+![Intro visual for prepared statements](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_prepared_statements.png)
+
 ## The Problem with Building SQL by Pasting in Values
 
 The `shipments` `table` sets up a simple lookup that an application might naively build by string concatenation.
@@ -24,7 +28,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE shipments (
     shipment_id INTEGER PRIMARY KEY,
     destination TEXT
@@ -36,20 +40,12 @@ INSERT INTO shipments (shipment_id, destination) VALUES
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
--- Imagine application code building this string directly:
--- user_input = "1"
--- sql_text = "SELECT * FROM shipments WHERE shipment_id = " + user_input
--- This happens to work fine when user_input is a clean number:
-SELECT * FROM shipments WHERE shipment_id = 1;
-
--- But if user_input were instead something like "1 OR 1=1", the pasted-together
--- string would become:
--- SELECT * FROM shipments WHERE shipment_id = 1 OR 1=1
--- which returns every row in the table, not just shipment 1, since the
--- pasted-in text was interpreted as SQL syntax rather than a single value.
-SELECT * FROM shipments WHERE shipment_id = 1 OR 1=1;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakhxp" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -75,12 +71,12 @@ This category of problem, letting untrusted input change a `query`'s structure, 
 
 PostgreSQL supports `prepared statements` directly in SQL, and the same mechanism is what every `database` client library uses under the hood when it offers "parameterized `queries`."
 
-```postgresql with=init.sql
-PREPARE get_shipment (INTEGER) AS
-SELECT * FROM shipments WHERE shipment_id = $1;
-
-EXECUTE get_shipment(1);
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakjbr" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -95,21 +91,18 @@ This splits the `query` into two separate pieces:
 
 Even if the supplied value were a maliciously crafted string, it would be handled purely as data, a single value being compared against `shipment_id`, never as SQL syntax that could change what the `query` does; the injection demonstrated above becomes structurally impossible.
 
-![Prepared statements keep query structure separate from runtime values](images/03_prepared_statement_separates_structure_and_value.png)
+![Prepared statements keep query structure separate from runtime values](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_prepared_statement_separates_structure_and_value.png)
 
 ## Running the Same Prepared Statement with Different Values
 
 The whole point of separating structure from value is that the same `prepared statement` can be executed repeatedly, with different values, without redefining the `query` each time.
 
-```postgresql with=init.sql
-PREPARE get_shipment (INTEGER) AS
-SELECT * FROM shipments WHERE shipment_id = $1;
-
-EXECUTE get_shipment(1);
-
-EXECUTE get_shipment(2);
-EXECUTE get_shipment(3);
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakjmh" 
+ width="100%"
+></iframe>
 
 Expected output, one result set per `EXECUTE`:
 
@@ -127,20 +120,18 @@ Expected output, one result set per `EXECUTE`:
 
 Each `EXECUTE` reuses the exact same prepared `query` structure, only the value plugged into `$1` changes, exactly the pattern a real application follows when handling many different incoming requests for different shipment IDs, using the same underlying `prepared statement` each time.
 
-![One prepared statement can be executed many times with different values](images/04_prepared_statement_reuse_many_values.png)
+![One prepared statement can be executed many times with different values](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_prepared_statement_reuse_many_values.png)
 
 ## The Performance Benefit Alongside the Safety Benefit
 
 Beyond safety, a `prepared statement` lets the `database` parse and plan the `query`'s structure once, then reuse that same plan across multiple executions with different values, skipping the repeated parsing and planning cost a fresh, newly-built SQL string would incur every single time.
 
-```postgresql with=init.sql
-PREPARE get_shipment (INTEGER) AS
-SELECT * FROM shipments WHERE shipment_id = $1;
-
-EXECUTE get_shipment(1);
-
-DEALLOCATE get_shipment;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakjwx" 
+ width="100%"
+></iframe>
 
 Expected output (from `EXECUTE get_shipment(1)`, before `DEALLOCATE` runs):
 
@@ -183,14 +174,12 @@ Expected output (from `EXECUTE get_shipment(1)`, before `DEALLOCATE` runs):
 
 Prepare a statement named `get_by_destination` that takes a `TEXT` parameter and selects shipments matching that destination, then execute it for `'Pune'`.
 
-```postgresql with=init.sql
-PREPARE get_shipment (INTEGER) AS
-SELECT * FROM shipments WHERE shipment_id = $1;
-
-EXECUTE get_shipment(1);
-
--- Write your prepared statement and execution below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakkas" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

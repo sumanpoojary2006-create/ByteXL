@@ -9,7 +9,7 @@ Two `columns` stop him cold:
 - He types "price" and pauses. Is that a whole number, since some products are priced in flat rupee amounts? Or does it need to hold fractions, since other products are priced at 499.50?
 - He types "product_name" and pauses again. How long can a name possibly get, and does the `column` need to reserve that much space for every `row`, even for a name that is four characters long? Arjun's manager, watching him hesitate, tells him what she wishes someone had told her early on: picking the right **data type** for a `column`, the exact kind and shape of value it is allowed to store, is not a formality to rush through. It is a decision a `schema` is hard to walk back once real `rows` depend on it.
 
-![Column cards being matched to suitable data types such as decimal, integer, boolean, and datetime](images/01_data_type_column_matching.png)
+![Column cards being matched to suitable data types such as decimal, integer, boolean, and datetime](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_data_type_column_matching.png)
 
 **Definition:** Choosing a data type is really choosing a promise: what a `column` will and will not accept, and how precisely it will hold on to the values it is given.
 
@@ -23,7 +23,7 @@ The fix is a type built specifically for exact decimal amounts, one that stores 
 
 Quantities belong in a plain whole-number type, since nobody orders 2.5 units of a product sold as a single item. The rule Arjun writes at the top of his notes is simple: whole counts get a whole-number type; money or anything needing exact fractional precision gets a fixed-precision decimal type, never an approximate floating type.
 
-![Float money calculation drifting while decimal calculation keeps the exact total](images/02_decimal_not_float_for_money.png)
+![Float money calculation drifting while decimal calculation keeps the exact total](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_decimal_not_float_for_money.png)
 
 ## Fixed-Length vs Variable-Length Text
 
@@ -44,6 +44,8 @@ Storing a date as plain text instead might look fine in a spreadsheet, but it th
 The second, availability, is a true-or-false question with exactly two possible states, and a dedicated boolean type says so directly. Some designers are tempted to store this as a whole number, 1 for available and 0 for not, or worse, as text like "Yes" and "No," which invites typos such as "yess" that a boolean type simply cannot produce.
 
 A flag that can only ever be true or false should be declared as exactly that.
+
+![Database columns matched to timestamp, boolean, text, and integer types according to their meaning](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02b_match_type_to_meaning.png)
 
 ## When the Type Is Too Narrow, and When It Is Too Generous
 

@@ -8,6 +8,22 @@ A **`recursive CTE`** solves this by repeating its own logic against its own gro
 
 **Definition:** A `recursive CTE` repeats its own logic against a growing result set until no new `rows` appear, which is exactly the tool needed for hierarchies and graphs whose depth is not known in advance, whether that means walking up an org chart to find every manager above a person or walking down to find every report beneath one.
 
+<!--
+IMAGE PROMPT  ->  generate as images/06_intro_recursive_ctes_querying_hierarchies_and_graphs.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Kabir's employees table has a managerid column, and a self join can pair each employee with their direct manager, one level up. But the company's actual org chart runs deeper than one level: an intern reports to a team lead, who reports to a director, who.
+
+ON-IMAGE TEXT: show a short bold title "Recursive Ctes Querying Hierarchies And Graphs" plus only these few labels, large and legible: Table, Column, Join. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for recursive ctes querying hierarchies and graphs](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_recursive_ctes_querying_hierarchies_and_graphs.png)
+
 ## The Shape of the Hierarchy
 
 The `employees` `table` now includes a few more reporting levels to make the hierarchy worth walking.
@@ -105,7 +121,7 @@ Expected output:
 
 The `database` repeats the recursive case automatically, each round adding one more level up the chain, and stops on its own the moment a round produces no new `rows`, which happens once it tries to find a manager for Ananya and finds none.
 
-![A recursive CTE walking upward through a manager chain one level at a time](images/11_recursive_cte_walks_up_manager_chain.png)
+![A recursive CTE walking upward through a manager chain one level at a time](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_recursive_cte_walks_up_manager_chain.png)
 
 ## Why RECURSIVE and UNION ALL Are Both Required
 
@@ -148,7 +164,7 @@ Expected output:
 
 Starting from Ananya at level 1, the recursive case now matches `e.manager_id = team_below.employee_id`, finding everyone who reports to whoever was just added, which walks down the org chart instead of up it. This returns all six employees, since every person in the `table` eventually traces back to Ananya, with `level` showing how many steps down from her each one sits.
 
-![A recursive CTE walking downward through the team tree from a manager](images/12_recursive_cte_walks_down_team_tree.png)
+![A recursive CTE walking downward through the team tree from a manager](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_recursive_cte_walks_down_team_tree.png)
 
 ## Recursive CTEs at a Glance
 

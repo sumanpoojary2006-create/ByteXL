@@ -6,6 +6,22 @@ Given a SQL `query`, there is often more than one valid way to actually execute 
 
 **Definition:** The `query optimizer` evaluates multiple valid ways to execute the same SQL `query`, estimating the cost of each using statistics about the data rather than actually running every option, and chooses whichever it estimates will be cheapest, which is why the same `index` can be used in one `query` and skipped entirely in another depending on how selective the condition actually is.
 
+<!--
+IMAGE PROMPT  ->  generate as images/01_intro_inside_the_query_optimizer.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Every EXPLAIN output used so far in this unit was treated as a simple fact: "the plan uses a sequential scan" or "the plan uses an index scan." Behind that single line of output sits a piece of the database that has quietly done real work before ever touching.
+
+ON-IMAGE TEXT: show a short bold title "Inside The Query Optimizer" plus only these few labels, large and legible: Table, Row, Query. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for inside the query optimizer](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_inside_the_query_optimizer.png)
+
 ## The Same Query, More Than One Valid Plan
 
 A `join` between two `tables` can be executed by starting with either `table` first, and the optimizer has to pick one.
@@ -82,7 +98,7 @@ The optimizer starts from `customers`, the smaller `table`, uses its `primary ke
 
 The optimizer decides this, not the order the `tables` happen to appear in the written SQL.
 
-![The query optimizer compares multiple valid plans and chooses the cheapest estimate](images/01_optimizer_compares_candidate_plans.png)
+![The query optimizer compares multiple valid plans and chooses the cheapest estimate](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_optimizer_compares_candidate_plans.png)
 
 ## How the Optimizer Estimates Cost
 
@@ -128,7 +144,7 @@ Expected output:
 
 Since every `row` in `orders` satisfies `customer_id > 0`, using the `index` would mean reading almost every `index` entry and then fetching almost every `row` from the `table` anyway, extra work compared to just scanning the `table` directly in one pass. The optimizer correctly recognizes this and chooses a `sequential scan` instead, despite a usable `index` existing, because for this particular condition, the `index` would actually be slower, not faster.
 
-![When most rows match, the optimizer may skip the index and choose a sequential scan](images/02_optimizer_skips_index_when_most_rows_match.png)
+![When most rows match, the optimizer may skip the index and choose a sequential scan](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_optimizer_skips_index_when_most_rows_match.png)
 
 ## The Optimizer's Job, Summarized
 

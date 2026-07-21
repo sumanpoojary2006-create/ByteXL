@@ -6,6 +6,10 @@ She now wants to know when to reach for a `join`, when to reach for `EXISTS`, an
 
 The short version is that `joins` combine `columns` from two `tables` side by side, while set operations combine entire `rows` from two `queries` stacked vertically, and that structural difference is what decides which tool actually fits a given question.
 
+**Definition:** `Joins` widen `rows` by attaching `columns` from a matching `table`, set operations stack or compare whole `rows` across similarly shaped `queries`, and `EXISTS` checks for a match without pulling in any `columns` at all, and recognizing which shape a question actually needs is what decides between them.
+
+![Intro visual for when to use set operations vs joins](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_when_to_use_set_operations_vs_joins.png)
+
 ## The Core Difference: Sideways vs. Stacked
 
 A `join` widens a `row`, pulling in extra `columns` from a second `table` for each match. A set operation never adds `columns`; it only ever stacks, filters, or intersects whole `rows` that already have the same shape.
@@ -34,7 +38,7 @@ The OneCompiler activity keeps setup and practice separate. `init.sql` creates a
 
 ## Hands-On Setup: Prepare the Data
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE online_customers (
     customer_name TEXT,
     email TEXT
@@ -58,11 +62,12 @@ INSERT INTO store_customers (customer_name, email) VALUES
 
 Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
 
-```postgresql with=init.sql
-SELECT o.customer_name, o.email, s.customer_name AS store_side_name
-FROM online_customers o
-JOIN store_customers s ON o.email = s.email;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahu75" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -74,18 +79,18 @@ This `join` produces a `row` with `columns` from both `tables` side by side, `cu
 
 Both `queries` can answer "who shops in both channels," but only the `join` naturally supports pulling in extra, non-matching `columns` from either side, such as a loyalty tier stored only on the store side.
 
-![JOIN widening rows sideways while set operations stack or compare same-shaped rows](images/05_join_vs_set_operation_shape.png)
+![JOIN widening rows sideways while set operations stack or compare same-shaped rows](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_join_vs_set_operation_shape.png)
 
 ## Rewriting an Anti Join as an EXCEPT
 
 The `NOT EXISTS`-based anti `join` from the `joins` chapter and an `EXCEPT`-based `query` can produce identical results for a single-`table`, single-condition case like this one.
 
-```postgresql with=init.sql
-SELECT customer_name, email FROM online_customers o
-WHERE NOT EXISTS (
-    SELECT 1 FROM store_customers s WHERE s.email = o.email
-);
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahukz" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -94,11 +99,12 @@ Expected output:
 | Aditi Kulkarni | aditi.k@example.com |
 | Rohan Das | rohan.das@example.com |
 
-```postgresql with=init.sql
-SELECT customer_name, email FROM online_customers
-EXCEPT
-SELECT customer_name, email FROM store_customers;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahux7" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -112,7 +118,7 @@ Both return Aditi Kulkarni and Rohan Das. The two read differently, and that dif
 - The `NOT EXISTS` version reads naturally as "keep this `row` if no match exists," and generalizes easily to conditions involving other `tables` or `columns` beyond a simple whole-`row` comparison.
 - The `EXCEPT` version reads naturally as "everything in the first list, minus everything in the second," and is often the more direct choice when the comparison genuinely is a whole-`row` match between two similarly shaped `queries`, exactly the situation Tanvi has here.
 
-![Choosing EXISTS for match checks and EXCEPT for subtracting same-shaped result sets](images/06_exists_vs_except_choose_by_question.png)
+![Choosing EXISTS for match checks and EXCEPT for subtracting same-shaped result sets](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_exists_vs_except_choose_by_question.png)
 
 ## When a Join Is the Right Choice
 
@@ -165,9 +171,12 @@ Reach for `EXISTS` or `NOT EXISTS` when the existence check involves a condition
 
 Using the `online_customers` and `store_customers` `tables` above, find every customer name that appears in exactly one of the two `tables`, not both, the customers who shop through only one channel. This needs `EXCEPT` run once in each direction, then stitched together with `UNION ALL`.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahv9p" 
+ width="100%"
+></iframe>
 
 One valid answer is `(SELECT customer_name FROM online_customers EXCEPT SELECT customer_name FROM store_customers) UNION ALL (SELECT customer_name FROM store_customers EXCEPT SELECT customer_name FROM online_customers);`, which returns Aditi Kulkarni, Rohan Das, Imran Sheikh, and Neha Bhatt, everyone who shops through exactly one channel.
 

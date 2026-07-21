@@ -4,7 +4,9 @@ Yusuf is trying to list every enrollment that has already been graded, so he wri
 
 He has just run into the one place where SQL's usual comparison rules quietly stop applying: **`NULL`**, the marker for a value that is missing or not yet known.
 
-![NULL as an unknown value where grade equals NULL is wrong and grade IS NULL is correct](images/09_null_requires_is_null.png)
+![NULL as an unknown value where grade equals NULL is wrong and grade IS NULL is correct](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_null_requires_is_null.png)
+
+**Definition:** `NULL` represents an unknown or missing value, not zero or empty text.
 
 ## Why grade = NULL Never Works
 
@@ -35,7 +37,7 @@ Yusuf's attempted query is `SELECT enrollment_id, student_id, course_id, grade F
 
 For hands-on practice, `init.sql` creates and populates only the displayed `enrollments` table:
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE enrollments (
     enrollment_id INTEGER PRIMARY KEY,
     student_id INTEGER,
@@ -59,11 +61,12 @@ INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grad
 
 The active query file contains only the query being tested:
 
-```postgresql with=init.sql
-SELECT enrollment_id, student_id, course_id, grade
-FROM enrollments
-WHERE grade = NULL;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkak8rh" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -77,11 +80,12 @@ A condition that comes out unknown is treated exactly like one that came out fal
 
 Because `=` cannot test for `NULL`, SQL provides a dedicated pair of operators for exactly this question: `IS NULL` and `IS NOT NULL`.
 
-```postgresql with=init.sql
-SELECT enrollment_id, student_id, course_id, grade
-FROM enrollments
-WHERE grade IS NULL;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkak92n" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -94,11 +98,12 @@ Expected output:
 - This time three `rows` come back, enrollment 3, 5, and 7, the courses that are still in progress and have not been assigned a grade yet.
 - `IS NULL` does not compare the `column` to anything; it asks the `column` directly whether it is holding a value at all, which is a different kind of question from `=` and the only one that reliably finds missing data.
 
-```postgresql with=init.sql
-SELECT enrollment_id, student_id, course_id, grade
-FROM enrollments
-WHERE grade IS NOT NULL;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkak9dm" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -119,11 +124,12 @@ This returns the other seven enrollments, every `row` where a grade has actually
 - Sometimes the goal is not to filter `NULL` out but to display something more readable in its place.
 - `COALESCE` takes a list of values and returns the first one that is not `NULL`, which makes it useful for substituting a fallback label directly in a `SELECT` list.
 
-```postgresql with=init.sql
-SELECT enrollment_id, course_id, COALESCE(grade, 'In Progress') AS grade_display
-FROM enrollments
-ORDER BY enrollment_id;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkak9pj" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -142,7 +148,7 @@ Expected output:
 
 Every `row` that already had a grade shows that grade unchanged, since `COALESCE` only reaches for its fallback when the first value is `NULL`. Enrollments 3, 5, and 7 now show `In Progress` instead of a blank grade, which reads far better in a report than an empty cell that could just as easily be mistaken for a data entry mistake.
 
-![COALESCE replacing a NULL grade with the fallback label In Progress for display](images/10_coalesce_null_fallback.png)
+![COALESCE replacing a NULL grade with the fallback label In Progress for display](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_coalesce_null_fallback.png)
 
 ## NULL at a Glance
 
@@ -182,11 +188,12 @@ Every `row` that already had a grade shows that grade unchanged, since `COALESCE
 
 Write a query that lists the enrollment ID and course ID for every enrollment whose grade has not yet been recorded. The required condition is `grade IS NULL`.
 
-```postgresql with=init.sql
-SELECT enrollment_id, course_id
-FROM enrollments
-WHERE grade IS NULL;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkak9zu" 
+ width="100%"
+></iframe>
 
 Expected output:
 

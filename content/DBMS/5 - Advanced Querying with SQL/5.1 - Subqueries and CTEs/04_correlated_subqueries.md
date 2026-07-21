@@ -8,6 +8,22 @@ A subquery that reaches back into the outer `query`'s current `row` like this is
 
 **Definition:** A `correlated subquery` reaches into the outer `query`'s current `row`, recalculating its result for every `row` rather than running once and reusing a fixed answer, which makes it the right tool whenever a comparison needs to be relative to each `row`'s own context, such as its own department or its own manager.
 
+<!--
+IMAGE PROMPT  ->  generate as images/04_intro_correlated_subqueries.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Every subquery Kabir has written so far runs completely on its own: the average-salary subquery does not care which employee the outer query happens to be looking at, and it would return the exact same single number no matter what. His next question breaks.
+
+ON-IMAGE TEXT: show a short bold title "Correlated Subqueries" plus only these few labels, large and legible: Row, Query, Correlated. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for correlated subqueries](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_correlated_subqueries.png)
+
 ## A Subquery That References the Outer Row
 
 The `employees` `table` is the same one used throughout this chapter.
@@ -77,7 +93,7 @@ The inner `query`'s condition, `e2.department = e1.department`, reaches out to `
 
 A regular, uncorrelated subquery, like the ones from earlier lessons, runs exactly once, and its single result is reused for every `row` the outer `query` checks. A `correlated subquery` conceptually reruns once per outer `row`, because its result depends on a value, `e1.department` here, that changes from `row` to `row`.
 
-![A correlated subquery recalculating relative to the current outer row](images/07_correlated_subquery_per_outer_row.png)
+![A correlated subquery recalculating relative to the current outer row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_correlated_subquery_per_outer_row.png)
 
 ```postgresql with=init.sql
 SELECT e1.employee_name,
@@ -119,7 +135,7 @@ Expected output:
 
 The inner `query` checks, for each candidate `row` `e1`, whether any other employee `e2` lists `e1`'s `employee_id` as their `manager_id`. This correlated `EXISTS` returns everyone who manages at least one other employee, Ananya and Sameer, without needing a self `join` or a `GROUP BY`, since it only asks a yes-or-no question per `row` rather than pulling in matching `columns`.
 
-![Correlated EXISTS checking whether the current employee manages anyone](images/08_correlated_exists_manager_check.png)
+![Correlated EXISTS checking whether the current employee manages anyone](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_correlated_exists_manager_check.png)
 
 ## Why Correlated Subqueries Can Be Slower
 

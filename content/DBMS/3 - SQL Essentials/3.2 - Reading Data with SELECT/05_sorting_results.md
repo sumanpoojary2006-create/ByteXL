@@ -8,6 +8,22 @@ The clause that asks for one is **`ORDER BY`**, and it is what turns an unpredic
 
 **Definition:** `ORDER BY` replaces an unpredictable `row` order with one you actually chose, ascending by default or reversed with DESC, and it can chain several `columns` together so later ones only settle ties left by earlier ones.
 
+<!--
+IMAGE PROMPT  ->  generate as images/05_intro_sorting_results.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Rhea is preparing a printed roster for orientation day, and she wants the students listed alphabetically by name so the volunteers checking people in can find a name quickly instead of scanning a jumbled list. She runs a plain SELECT fullname, city FROM.
+
+ON-IMAGE TEXT: show a short bold title "Sorting Results" plus only these few labels, large and legible: Table, Query, Select. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for sorting results](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_sorting_results.png)
+
 ## Sorting Ascending, the Default
 
 The `students` `table` holds this data, in no particular order:
@@ -75,7 +91,7 @@ The result now starts with Aditya Kulkarni and ends with Sneha Gowda, running al
 - For numbers, it means smallest to largest.
 - For dates, it means earliest to latest.
 
-![ORDER BY arranging unordered student names alphabetically from A to Z](images/09_order_by_ascending.png)
+![ORDER BY arranging unordered student names alphabetically from A to Z](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_order_by_ascending.png)
 
 ## Sorting Descending
 
@@ -131,7 +147,7 @@ The result groups all of Bengaluru's students together, sorted alphabetically wi
 
 Each `column` in the list can carry its own direction too, so `ORDER BY city, full_name DESC` would keep cities grouped in ascending order while listing names within each city from Z to A.
 
-![ORDER BY city first and full_name second grouping rows by city and sorting names inside each group](images/10_order_by_multiple_columns.png)
+![ORDER BY city first and full_name second grouping rows by city and sorting names inside each group](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_order_by_multiple_columns.png)
 
 ## Sorting Results at a Glance
 

@@ -8,6 +8,10 @@ Aisha had assumed, before this week, that a `query` is basically answered the mo
 
 Tracing **how a `query` travels from SQL to a result set** is what finally makes the whole architecture of a `database` click into place for her, all the pieces she had studied separately now moving together in one continuous story.
 
+**Definition:** The **query-processing pipeline** is the sequence through which a DBMS parses SQL, validates it, chooses an execution plan, reads the required data, and returns the final result set.
+
+![Intro visual for how a query travels from sql to result](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_how_a_query_travels_from_sql_to_result_set.png)
+
 ## Step One: The Request Arrives as Plain SQL
 
 The moment Tara taps "View Result," the portal's backend sends a `query` to the `database` asking, in effect, for the marks belonging to her roll number. At this stage, the `query` is nothing more than text, a precisely structured sentence written in SQL. The `database` has not yet decided whether this request even makes sense, and it has certainly not gone anywhere near the actual stored marks.
@@ -46,7 +50,7 @@ Only now, after validation, planning, and execution, does an actual answer exist
 
 This is the **result set**, and it travels back up through the same layers it came down through, arriving at the portal's backend as structured data, which the portal then renders as the tidy little screen Tara has been staring at this whole time, still with no idea that any of this happened.
 
-![A SQL request moving through arrival, catalog check, planning, execution, and result-set return](images/09_sql_to_result_set_pipeline.png)
+![A SQL request moving through arrival, catalog check, planning, execution, and result-set return](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_sql_to_result_set_pipeline.png)
 
 ## The Journey At A Glance
 
@@ -87,7 +91,7 @@ This is the **result set**, and it travels back up through the same layers it ca
   </tbody>
 </table>
 
-![Catalog errors, slow plans, and transaction conflicts appearing at different stages of the query journey](images/10_query_journey_troubleshooting_points.png)
+![Catalog errors, slow plans, and transaction conflicts appearing at different stages of the query journey](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_query_journey_troubleshooting_points.png)
 
 ## Your Turn: Find the Stalled Stage
 

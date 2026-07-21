@@ -11,6 +11,22 @@ None of those questions can be answered by looking at one `row` of the `orders` 
 
 **Definition:** `COUNT`, `SUM`, `AVG`, `MIN`, and `MAX` collapse an entire result set into single summary numbers, answering exactly the kind of whole-business questions raw `rows` cannot answer on their own.
 
+<!--
+IMAGE PROMPT  ->  generate as images/01_intro_aggregate_functions.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Priya handles finance reporting for a small online bookstore, and every question she gets from the founders is about the whole business, not any single row: - "How many orders did we get this month?" - "What is our total revenue?" - "What is the average order.
+
+ON-IMAGE TEXT: show a short bold title "Aggregate Functions" plus only these few labels, large and legible: Table, Row, Order. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for aggregate functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_aggregate_functions.png)
+
 ## Counting Rows
 
 The `orders` `table` holds one `row` per order placed on the bookstore's site.
@@ -72,7 +88,7 @@ Expected output:
 - `COUNT(*)` counts every `row` in the result set, regardless of what any `column` contains, and here it answers Priya's first question directly: the bookstore received 8 orders.
 - `COUNT(column_name)` behaves slightly differently, counting only the `rows` where that specific `column` is not `NULL`, which matters once a `table` has optional fields.
 
-![COUNT star counting every order row into one total order count](images/01_count_rows_total_orders.png)
+![COUNT star counting every order row into one total order count](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_count_rows_total_orders.png)
 
 ## Totaling and Averaging a Column
 
@@ -93,7 +109,7 @@ Expected output:
 - `AVG` divides that same sum by the count of `rows` automatically, giving the average order value without Priya having to calculate it by hand from the other two numbers.
 - Both `functions` ignore `NULL` values in the `column` they are summarizing, rather than treating a `NULL` as zero.
 
-![SUM and AVG collapsing order amounts into total revenue and average order value](images/02_sum_avg_order_amounts.png)
+![SUM and AVG collapsing order amounts into total revenue and average order value](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_sum_avg_order_amounts.png)
 
 ## Finding the Smallest and Largest Values
 

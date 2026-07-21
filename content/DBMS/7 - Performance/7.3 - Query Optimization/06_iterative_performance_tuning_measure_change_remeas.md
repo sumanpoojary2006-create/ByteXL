@@ -6,6 +6,22 @@ This final lesson walks through that full loop, start to finish, on one `query`.
 
 **Definition:** Iterative tuning, measure with `EXPLAIN ANALYZE`, make one deliberate change, re-measure to confirm it actually helped, and repeat, is the discipline that ties every technique in this unit together into a real, evidence-based process, rather than a collection of tricks applied on faith.
 
+<!--
+IMAGE PROMPT  ->  generate as images/06_intro_iterative_performance_tuning_measure_change_reme.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Every technique covered in this unit, storage layout, indexes, EXPLAIN, join algorithms, and common bottlenecks, is a piece of a single repeatable process, not a checklist to apply once and forget. Real performance tuning is iterative: measure how a query.
+
+ON-IMAGE TEXT: show a short bold title "Iterative Performance Tuning Measure Change Remeas" plus only these few labels, large and legible: Query, Join, Iterative. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for iterative performance tuning measure change remeas](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_iterative_performance_tuning_measure_change_reme.png)
+
 ## Step One: Measure the Starting Point
 
 Before changing anything, the first step is always establishing an honest baseline with `EXPLAIN ANALYZE`, the actual-execution tool covered earlier in this chapter.
@@ -77,7 +93,7 @@ Expected output (baseline, before any new index):
 
 This baseline plan, with no supporting `index` on either `status` or `order_date`, shows a `Seq Scan` across all 60000 `rows`, discarding 59930 of them, before filtering down to the small refunded, recent subset (70 `rows`) the `query` actually cares about. Recording this baseline's actual time, 39.021 ms, is essential, since without it, there is no way to later confirm whether a change genuinely helped or made no real difference.
 
-![Iterative tuning starts by measuring a baseline before making changes](images/13_iterative_tuning_measure_change_remeasure.png)
+![Iterative tuning starts by measuring a baseline before making changes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/13_iterative_tuning_measure_change_remeasure.png)
 
 ## Step Two: Make One Deliberate Change
 
@@ -123,7 +139,7 @@ Comparing this plan's actual time directly against the baseline's is the entire 
 - The plan now shows an `Index Scan` on `idx_orders_status_date` instead of a `Seq Scan`, and the total `Execution Time` dropped from 39.021 ms to 1.298 ms, roughly a 30x improvement, confirming the change as a real improvement, not just a plausible-sounding guess.
 - Had the actual time barely moved, or had the optimizer still chosen a `sequential scan` anyway, perhaps because the filtered `rows` are not selective enough for the `index` to be worth using, that would be equally important information, and it would mean the next iteration should try a different change rather than assuming this one worked.
 
-![Compare baseline time with after-change time to prove whether tuning helped](images/14_baseline_vs_after_change_actual_time.png)
+![Compare baseline time with after-change time to prove whether tuning helped](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/14_baseline_vs_after_change_actual_time.png)
 
 ## Step Four: Repeat, One Change at a Time
 

@@ -9,6 +9,10 @@ Neither of these exists as a `column`. Nothing needs to be added to the `table` 
 
 A value built this way, out of `columns` and operators rather than read directly off disk, is called an **expression**, and when it is given a name in the output, it behaves exactly like a calculated `column`.
 
+**Definition:** Expressions turn a `SELECT` list from a plain menu of stored `columns` into a small calculator that runs once per `row`: arithmetic operators combine numbers, `||` combines text, and `AS` gives the result a name worth keeping.
+
+![Intro visual for expressions and calculated columns](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_expressions_and_calculated_columns.png)
+
 ## Doing Arithmetic in a SELECT List
 
 The `courses` `table` holds this data:
@@ -25,7 +29,7 @@ The `credits` `column` is stored as a plain integer. Nikhil wants a doubled vers
 
 For hands-on practice, `init.sql` creates and populates the displayed `courses` table:
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE courses (
     course_id INTEGER PRIMARY KEY,
     title TEXT,
@@ -43,10 +47,12 @@ INSERT INTO courses (course_id, title, department, credits) VALUES
 
 The active query file contains the arithmetic expression being practised:
 
-```postgresql with=init.sql
-SELECT title, credits, credits * 2 AS double_credits
-FROM courses;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagxhb" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -62,16 +68,18 @@ The result carries a third `column`, `double_credits`, holding 8, 8, 6, 6, and 6
 
 The usual arithmetic operators all work the same way inside a `SELECT` list: `+`, `-`, `*`, `/`, and `%` for remainder.
 
-![An arithmetic expression turning credits into a calculated double_credits value](images/07_expression_arithmetic_calculated_column.png)
+![An arithmetic expression turning credits into a calculated double_credits value](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_expression_arithmetic_calculated_column.png)
 
 ## Combining Text With Concatenation
 
 Numbers are not the only thing an expression can build. PostgreSQL lets you glue pieces of text together using the `||` operator, called concatenation, which is exactly what Nikhil needs for his combined label. The query is `SELECT department || ': ' || title AS course_label FROM courses;`.
 
-```postgresql with=init.sql
-SELECT department || ': ' || title AS course_label
-FROM courses;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagxtk" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -85,16 +93,18 @@ Expected output:
 
 Each row now returns a single text value: "Computer Science: Database Systems", "Computer Science: Data Structures", "Mathematics: Linear Algebra", and so on. `||` takes whatever sits on its left and right, department and a literal string in this case, and joins them into one piece of text, left to right. A literal piece of text written directly in the query, like `': '` here, is just a fixed value in single quotes; it is not read from any column, it is simply inserted as-is between the two real column values, giving the colon-and-space separator its shape.
 
-![Text concatenation joining department, a separator, and title into one course label](images/08_expression_text_concatenation.png)
+![Text concatenation joining department, a separator, and title into one course label](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_expression_text_concatenation.png)
 
 ## Mixing Expressions With Ordinary Columns
 
 An expression does not have to stand alone. It sits in the `SELECT` list exactly like any real `column`, so a single `query` can freely mix calculated values with `columns` pulled straight from the `table`. The query is `SELECT course_id, title, credits, credits * 2 AS double_credits, department || ': ' || title AS course_label FROM courses;`.
 
-```postgresql with=init.sql
-SELECT course_id, title, credits, credits * 2 AS double_credits, department || ': ' || title AS course_label
-FROM courses;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagy4g" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -141,9 +151,12 @@ This single `query` returns five `columns`: two untouched `columns` straight off
 
 The catalog page also needs a "credit hours per week" figure, assuming each credit corresponds to roughly 15 contact hours across a term, shown alongside the course title. Write a `query` that returns `title` and a calculated `column` named `contact_hours`, equal to `credits * 15`.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkagydf" 
+ width="100%"
+></iframe>
 
 `SELECT title, credits * 15 AS contact_hours FROM courses;` produces exactly that. Expected output:
 

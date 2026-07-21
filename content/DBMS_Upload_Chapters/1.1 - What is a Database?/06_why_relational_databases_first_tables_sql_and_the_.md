@@ -6,6 +6,10 @@ The second engineer wants to store each shipment as a flexible bundle of key-val
 
 Which one could literally any developer at this company sit down and `query` correctly on their very first day, without asking you a single question?" That question is really about the **relational model**, and specifically about why `tables` and a shared, standard `query` language remain the default starting point for building a serious `database` system, even when other shapes of storage exist.
 
+**Definition:** Relational `databases` earn their place as the default starting point because `tables` are a shape people already understand, and SQL is a language that transfers across systems, jobs, and years instead of expiring the moment one particular product falls out of fashion.
+
+![Intro visual for why relational databases first tables sql and the](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_why_relational_databases_first_tables_sql_and_th.png)
+
 ## Tables Are Something Everyone Already Understands
 
 A relational `table` is not a clever invention that requires special training to read. It is a grid, `rows` and `columns`, the same shape as a spreadsheet, an attendance register, or a printed timetable. Anyone who has ever glanced at a class list with names down the side and subjects across the top already has the right mental model for a relational `table` before they write a single line of code.
@@ -14,7 +18,7 @@ That familiarity has a real, practical payoff. When Farhan's manager reviews the
 
 Compare that to the flexible bundle-of-fields approach, where one shipment record might carry a field the next record does not, and understanding what "a shipment" even looks like requires reading through many examples first, or asking the person who designed it. A shape that everyone already understands is a shape that fewer people get wrong.
 
-![Uniform shipment records becoming familiar rows and columns that different team members can read](images/11_real_records_become_table_rows.png)
+![Uniform shipment records becoming familiar rows and columns that different team members can read](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_real_records_become_table_rows.png)
 
 ## SQL: One Language, Understood Everywhere
 
@@ -24,7 +28,7 @@ This matters enormously for Farhan's company. A developer who already knows SQL 
 
 Compare that to a storage system with its own unique `query` syntax invented specifically for that one product; every new hire has to learn that syntax before they can be trusted to touch production data, and that knowledge rarely transfers anywhere else.
 
-![The same standard SQL query working across three relational database systems](images/12_sql_standard_across_systems.png)
+![The same standard SQL query working across three relational database systems](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_sql_standard_across_systems.png)
 
 ## Why "Industry Standard" Is Not Just a Slogan
 

@@ -11,6 +11,22 @@ A value built this way, out of `columns` and operators rather than read directly
 
 **Definition:** Expressions turn a `SELECT` list from a plain menu of stored `columns` into a small calculator that runs once per `row`: arithmetic operators combine numbers, `||` combines text, and `AS` gives the result a name worth keeping.
 
+<!--
+IMAGE PROMPT  ->  generate as images/04_intro_expressions_and_calculated_columns.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Nikhil is building a small course catalog page, and the design calls for two things the courses table does not actually store: - A combined label like "Computer Science: Database Systems" for each row - A "workload score" that doubles the credit value to.
+
+ON-IMAGE TEXT: show a short bold title "Expressions And Calculated Columns" plus only these few labels, large and legible: Table, Row, Column. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for expressions and calculated columns](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_expressions_and_calculated_columns.png)
+
 ## Doing Arithmetic in a SELECT List
 
 The `courses` `table` holds this data:
@@ -64,7 +80,7 @@ The result carries a third `column`, `double_credits`, holding 8, 8, 6, 6, and 6
 
 The usual arithmetic operators all work the same way inside a `SELECT` list: `+`, `-`, `*`, `/`, and `%` for remainder.
 
-![An arithmetic expression turning credits into a calculated double_credits value](images/07_expression_arithmetic_calculated_column.png)
+![An arithmetic expression turning credits into a calculated double_credits value](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_expression_arithmetic_calculated_column.png)
 
 ## Combining Text With Concatenation
 
@@ -87,7 +103,7 @@ Expected output:
 
 Each row now returns a single text value: "Computer Science: Database Systems", "Computer Science: Data Structures", "Mathematics: Linear Algebra", and so on. `||` takes whatever sits on its left and right, department and a literal string in this case, and joins them into one piece of text, left to right. A literal piece of text written directly in the query, like `': '` here, is just a fixed value in single quotes; it is not read from any column, it is simply inserted as-is between the two real column values, giving the colon-and-space separator its shape.
 
-![Text concatenation joining department, a separator, and title into one course label](images/08_expression_text_concatenation.png)
+![Text concatenation joining department, a separator, and title into one course label](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_expression_text_concatenation.png)
 
 ## Mixing Expressions With Ordinary Columns
 

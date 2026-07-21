@@ -14,6 +14,22 @@ The two `Orders` `tables` collide, and nobody notices until a report quietly pul
 
 **Definition:** A `schema`, in this sense, is less about how any single `table` is shaped and more about how a whole `database` full of `tables` is kept organized once more than one team is building on top of it.
 
+<!--
+IMAGE PROMPT  ->  generate as images/05_intro_database_schemas_and_namespaces.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Kiran now leads platform engineering at a mid-sized retail company, three years after her first internship taught her that not every system stores data the same way. The company has grown from a single small team into three: - A sales team building the.
+
+ON-IMAGE TEXT: show a short bold title "Database Schemas And Namespaces" plus only these few labels, large and legible: Schemas, Namespaces, Kiran. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for database schemas and namespaces](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_database_schemas_and_namespaces.png)
+
 ## A Schema Is a Folder, Not a Table Design
 
 The word "`schema`" is used two different ways in `database` work, and Kiran is careful to keep them apart when she explains this to new hires. One meaning, the one usually covered first, refers to the structure of a single `table`, its `columns`, types, and keys, the blueprint for what a `row` looks like.
@@ -22,7 +38,7 @@ The meaning at stake here is different: a `schema` as a named container that gro
 
 A retail company's single physical `database` can hold a `sales` `schema`, an `inventory` `schema`, and a `reporting` `schema` side by side, each one free to contain its own `Orders` `table` without the two ever being confused, because a `table`'s true identity is really the pair of its `schema` name and its `table` name together, `sales.Orders` and `inventory.Orders`, not the `table` name alone.
 
-![Database schemas shown as folders where sales.Orders and inventory.Orders do not collide](images/09_schemas_as_folders_namespaces.png)
+![Database schemas shown as folders where sales.Orders and inventory.Orders do not collide](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_schemas_as_folders_namespaces.png)
 
 ## Why Grouping Tables Prevents Collisions and Confusion
 
@@ -100,7 +116,7 @@ The sales team, by contrast, gets full read-and-write access to its own `sales` 
 
 This is the same instinct behind giving each team its own labeled drawer rather than one shared drawer everyone digs through: a team that only ever reaches into its own `schema` is far less likely to accidentally break something that belongs to someone else.
 
-![Schema-level permissions granting reporting read access while blocking write access](images/10_schema_level_permissions.png)
+![Schema-level permissions granting reporting read access while blocking write access](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_schema_level_permissions.png)
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
   <thead>

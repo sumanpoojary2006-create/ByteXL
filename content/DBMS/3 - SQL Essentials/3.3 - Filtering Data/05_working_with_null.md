@@ -4,7 +4,7 @@ Yusuf is trying to list every enrollment that has already been graded, so he wri
 
 He has just run into the one place where SQL's usual comparison rules quietly stop applying: **`NULL`**, the marker for a value that is missing or not yet known.
 
-![NULL as an unknown value where grade equals NULL is wrong and grade IS NULL is correct](images/09_null_requires_is_null.png)
+![NULL as an unknown value where grade equals NULL is wrong and grade IS NULL is correct](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_null_requires_is_null.png)
 
 **Definition:** `NULL` represents an unknown or missing value, not zero or empty text.
 
@@ -144,7 +144,7 @@ Expected output:
 
 Every `row` that already had a grade shows that grade unchanged, since `COALESCE` only reaches for its fallback when the first value is `NULL`. Enrollments 3, 5, and 7 now show `In Progress` instead of a blank grade, which reads far better in a report than an empty cell that could just as easily be mistaken for a data entry mistake.
 
-![COALESCE replacing a NULL grade with the fallback label In Progress for display](images/10_coalesce_null_fallback.png)
+![COALESCE replacing a NULL grade with the fallback label In Progress for display](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_coalesce_null_fallback.png)
 
 ## NULL at a Glance
 

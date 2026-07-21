@@ -12,7 +12,7 @@ Three `columns` on the form each hide a different problem:
 
 Meera's manager, watching her frown at the form, explains that this is a well-known problem with a name: not every **attribute** behaves the same way. Attributes come in a small number of recognisable types, and knowing which type an attribute is, before it ever reaches a `table`, determines how it needs to be stored.
 
-![Simple, composite, derived, and multivalued attributes on a gym member form](images/03_attribute_types_gym_form.png)
+![Simple, composite, derived, and multivalued attributes on a gym member form](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_attribute_types_gym_form.png)
 
 **Definition:** **Attribute types** describe how an entity's facts are structured: simple attributes hold one indivisible value, composite attributes contain meaningful parts, derived attributes are calculated from other data, and multivalued attributes can hold several values for one entity.
 
@@ -184,7 +184,7 @@ Meera's redesigned form now separates date of birth from age, breaks address int
 
 That distinction carries forward directly into how a `database` eventually gets built, because a composite attribute usually becomes several `columns`, a derived attribute usually becomes no `column` at all, and a multivalued attribute usually needs a structure of its own rather than a single cramped field.
 
-![Attribute types flowing into different storage decisions](images/04_attribute_storage_decision_flow.png)
+![Attribute types flowing into different storage decisions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_attribute_storage_decision_flow.png)
 
 ## Your Turn: Classify the Attributes
 

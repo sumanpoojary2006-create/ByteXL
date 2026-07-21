@@ -4,6 +4,10 @@ Every `join` so far has combined exactly two `table` references at a time, but a
 
 Zoya's dispatch manager wants exactly that: one line per order showing the customer's name, the restaurant's name, and the rider's name, side by side. This does not need a new kind of `join`, just more of the same `JOIN` clauses chained one after another, each one attaching another `table` to the growing result.
 
+**Definition:** `Joining` three or more `tables` is just the same `JOIN` clause repeated once per additional `table`, each one widening the working result before the next `join`, filter, or grouping step runs, with aliases keeping the `query` readable as the `table` count grows.
+
+![Intro visual for multitable joins](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_multitable_joins.png)
+
 ## Setting Up Four Related Tables
 
 `orders` now references three other `tables` at once: `customers`, `restaurants`, and `riders`.
@@ -50,7 +54,7 @@ The OneCompiler activity keeps setup and practice separate. `init.sql` creates a
 
 ## Hands-On Setup: Prepare the Data
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE customers (
     customer_id INTEGER PRIMARY KEY,
     customer_name TEXT
@@ -93,17 +97,12 @@ INSERT INTO orders (order_id, customer_id, restaurant_id, rider_id, amount) VALU
 
 Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
 
-```postgresql with=init.sql
-SELECT orders.order_id,
-       customers.customer_name,
-       restaurants.restaurant_name,
-       riders.rider_name,
-       orders.amount
-FROM orders
-JOIN customers ON orders.customer_id = customers.customer_id
-JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id
-JOIN riders ON orders.rider_id = riders.rider_id;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahhz8" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -125,19 +124,18 @@ Each `JOIN` clause attaches one more `table` to the result, and the `database` p
 
 By the time all three `JOIN` clauses have run, every order `row` carries a customer name, a restaurant name, and a rider name in the same line.
 
-![A multi-table join chain widening one order row with customer restaurant and rider details](images/11_multitable_join_chain_widens_order.png)
+![A multi-table join chain widening one order row with customer restaurant and rider details](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_multitable_join_chain_widens_order.png)
 
 ## Using Table Aliases to Keep a Multi-Table Query Readable
 
 As the number of joined `tables` grows, writing the full `table` name in front of every `column` gets noisy. Aliases, introduced briefly with self `joins`, keep a multi-`table` `query` readable.
 
-```postgresql with=init.sql
-SELECT o.order_id, c.customer_name, r.restaurant_name, d.rider_name, o.amount
-FROM orders o
-JOIN customers c ON o.customer_id = c.customer_id
-JOIN restaurants r ON o.restaurant_id = r.restaurant_id
-JOIN riders d ON o.rider_id = d.rider_id;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahja3" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -157,13 +155,12 @@ Expected output:
 - A multi-`table` `query` does not have to use the same `join` type for every `table`.
 - If the dispatch manager wants every order shown even for a rider who has somehow not yet been assigned, one `JOIN` in the chain can become a `LEFT JOIN` while the others stay as `INNER JOIN`.
 
-```postgresql with=init.sql
-SELECT o.order_id, c.customer_name, r.restaurant_name, d.rider_name
-FROM orders o
-JOIN customers c ON o.customer_id = c.customer_id
-JOIN restaurants r ON o.restaurant_id = r.restaurant_id
-LEFT JOIN riders d ON o.rider_id = d.rider_id;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahjkq" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -178,19 +175,18 @@ Expected output:
 - Every order still requires a valid customer and a valid restaurant to appear, since those two `joins` stay as strict `INNER JOIN`, but an order would still show up even with a `NULL` rider name if its `rider_id` did not match anything in `riders`.
 - Mixing `join` types like this lets a `query` express exactly which relationships are mandatory and which are optional, all in one statement.
 
-![Mixed join types requiring customer and restaurant matches while allowing an optional rider](images/12_mixed_join_types_optional_rider.png)
+![Mixed join types requiring customer and restaurant matches while allowing an optional rider](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_mixed_join_types_optional_rider.png)
 
 ## Filtering and Grouping Across a Multi-Table Join
 
 Once several `tables` are joined, `WHERE`, `GROUP BY`, and `aggregate functions` all work exactly as they did on a single `table` or a two-`table` `join`, just with more `columns` available to filter or group by.
 
-```postgresql with=init.sql
-SELECT d.rider_name, COUNT(*) AS deliveries, SUM(o.amount) AS total_delivered_value
-FROM orders o
-JOIN riders d ON o.rider_id = d.rider_id
-GROUP BY d.rider_name
-ORDER BY deliveries DESC;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahjwa" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -235,9 +231,12 @@ This groups by rider name after the `join` has already attached each order to it
 
 The dispatch manager wants a report showing, for every order over 300 in amount, the customer's name and the rider's name only, ordered by amount descending. Write that `query` against the `orders`, `customers`, and `riders` `tables` above.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahk7c" 
+ width="100%"
+></iframe>
 
 If your `query` `joins` `orders` to `customers` and `riders`, filters with `WHERE o.amount > 300`, and orders by `o.amount DESC`, Rohan Das's order delivered by Suresh Pillai comes out on top at 620.00.
 

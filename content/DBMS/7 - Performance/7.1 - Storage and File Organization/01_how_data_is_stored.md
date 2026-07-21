@@ -8,6 +8,22 @@ Priya, the finance analyst from earlier reporting lessons, has started noticing 
 
 **Definition:** A `table` is physically stored as a sequence of fixed-size pages, each holding many `rows`, and every read has to fetch a whole page at a time rather than a single `row` in isolation, which is the physical fact underneath every performance question this unit is about to explore.
 
+<!--
+IMAGE PROMPT  ->  generate as images/01_intro_how_data_is_stored.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Every table queried so far in this course has been treated as an abstract grid of rows and columns, and that abstraction is exactly what SQL is designed to let a person work with, without ever thinking about disks or bytes. Underneath that abstraction.
+
+ON-IMAGE TEXT: show a short bold title "How Data Is Stored" plus only these few labels, large and legible: Table, Query, Stored. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for how data is stored](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_how_data_is_stored.png)
+
 ## Rows Live Inside Pages, Not Loose on Disk
 
 A `database` does not read or write one `row` at a time from disk; it reads and writes in fixed-size blocks called pages, typically 8 kilobytes each in PostgreSQL, with many `rows` packed into each page.
@@ -59,7 +75,7 @@ Expected output:
 
 That size is not 500 individual files, one per `row` it is a small number of 8 kilobyte pages, each holding dozens of `rows` packed together, which is why reading many `rows` that happen to sit on the same page is so much cheaper than reading the same number of `rows` scattered across many different pages.
 
-![Rows are packed inside database pages rather than stored loose on disk](images/01_rows_packed_inside_pages.png)
+![Rows are packed inside database pages rather than stored loose on disk](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_rows_packed_inside_pages.png)
 
 ## Every Row Has a Physical Address
 
@@ -85,7 +101,7 @@ The `ctid` values here look like `(0,1)`, meaning page 0, position 1 within that
 
 This is the physical reality behind every `query`: reading a `row` means finding its page and reading that whole page off disk, not teleporting directly to one `row`'s bytes.
 
-![A ctid points to the page number and slot position of a row](images/02_ctid_page_slot_address.png)
+![A ctid points to the page number and slot position of a row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_ctid_page_slot_address.png)
 
 ## Why Reading a Page Costs More Than Reading a Row
 

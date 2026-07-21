@@ -8,7 +8,9 @@ The new architecture breaks that assumption. With two data centers each capable 
 
 Now there are two." What Devika is being asked to solve is a **`primary key` strategy** question, deciding not just that a `table` needs a `primary key`, but which kind of value is actually the right one to generate it from, given how and where `rows` get created.
 
-![Auto-increment primary keys from one database compared with UUIDs created safely by many systems](images/03_auto_increment_vs_uuid_primary_keys.png)
+![Auto-increment primary keys from one database compared with UUIDs created safely by many systems](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_auto_increment_vs_uuid_primary_keys.png)
+
+**Definition:** An auto-incrementing integer and a UUID both satisfy the basic requirement of a `primary key`: a value that is unique for every `row`.
 
 ## Auto-Incrementing Integers: Simple, Compact, and Fast
 
@@ -36,7 +38,7 @@ In exchange, a UUID gives Devika two things an integer cannot: safe generation a
 
 Here are the two strategies side by side as real PostgreSQL. The first table mints IDs the old, single-database way Vaanam used to rely on; the second mints them the way two independent data centers safely can, with no shared counter at all.
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE shipments_internal (
     shipment_id  INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     destination  TEXT NOT NULL
@@ -60,9 +62,12 @@ INSERT INTO shipments_public (destination) VALUES
 
 The active query shows what each strategy actually hands back as the key value:
 
-```postgresql with=init.sql
-SELECT shipment_id, destination FROM shipments_internal ORDER BY shipment_id;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaj72b" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -72,9 +77,12 @@ Expected output:
 | 2 | Pune Hub |
 | 3 | Kochi Warehouse |
 
-```postgresql with=init.sql
-SELECT shipment_uuid, destination FROM shipments_public ORDER BY destination;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaj7bx" 
+ width="100%"
+></iframe>
 
 Expected output (actual UUID values vary on every run):
 
@@ -97,7 +105,7 @@ There is a middle case worth naming too: identifiers that will be shown to the o
 
 Even inside a single `database` with no distribution problem at all, a team might still choose a UUID, or a similar unguessable identifier, for anything customer-facing, purely so that a curious or malicious visitor cannot increment a number in the address bar and quietly browse through every other customer's order by simply changing "order/4501" to "order/4502."
 
-![Public integer IDs being guessed by changing a URL, contrasted with an unguessable UUID link](images/04_public_ids_should_be_unguessable.png)
+![Public integer IDs being guessed by changing a URL, contrasted with an unguessable UUID link](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_public_ids_should_be_unguessable.png)
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
   <thead>

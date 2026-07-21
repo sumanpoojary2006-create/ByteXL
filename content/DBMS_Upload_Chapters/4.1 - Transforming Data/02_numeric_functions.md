@@ -8,7 +8,9 @@ Arjun manages pricing for a small electronics store, and the `products` `table` 
 
 SQL's built-in **numeric `functions`** handle exactly this kind of cleanup, right inside the `query`.
 
-![ROUND turning an over-precise selling price into a customer-ready price](images/03_round_price_display_precision.png)
+![ROUND turning an over-precise selling price into a customer-ready price](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_round_price_display_precision.png)
+
+**Definition:** Numeric `functions` turn raw, over-precise, or oddly signed numbers into values fit for a report or a receipt: `ROUND` for display precision, `CEIL` and `FLOOR` for deliberate rounding direction, `ABS` for magnitude regardless of sign, and `MOD` for remainders.
 
 ## Rounding to a Sensible Precision
 
@@ -32,7 +34,7 @@ The OneCompiler exercise uses two files. `init.sql` creates and populates the di
 
 First, `init.sql` prepares the dataset:
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE products (
     product_id INTEGER PRIMARY KEY,
     product_name TEXT,
@@ -54,10 +56,12 @@ Then the active query file rounds each selling price:
 
 Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
 
-```postgresql with=init.sql
-SELECT product_name, selling_price, ROUND(selling_price, 0) AS rounded_price
-FROM products;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakyre" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -78,12 +82,12 @@ Sometimes a plain round is the wrong choice. If Arjun is calculating how many bo
 
 He compares both directions with `SELECT product_name, stock_weight_kg, CEIL(stock_weight_kg) AS boxes_needed_if_1kg_each, FLOOR(stock_weight_kg) AS full_kg_only FROM products;`. `CEIL` answers the capacity question, while `FLOOR` counts only complete kilograms.
 
-```postgresql with=init.sql
-SELECT product_name, stock_weight_kg,
-       CEIL(stock_weight_kg) AS boxes_needed_if_1kg_each,
-       FLOOR(stock_weight_kg) AS full_kg_only
-FROM products;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakz3w" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -102,11 +106,12 @@ Expected output:
 
 The webcam `row` has a `selling_price` of -1249.0000, a data-entry mistake from a refund adjustment that got applied to the wrong `column`. Before fixing the source data, Arjun wants to measure its distance from zero. The query is `SELECT product_name, selling_price, ABS(selling_price) AS positive_price FROM products WHERE selling_price < 0;`.
 
-```postgresql with=init.sql
-SELECT product_name, selling_price, ABS(selling_price) AS positive_price
-FROM products
-WHERE selling_price < 0;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakzd3" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -116,10 +121,12 @@ Expected output:
 
 Arjun also packs stock into cartons of six units. The query `SELECT product_name, stock_units, stock_units % 6 AS units_left_over FROM products;` returns the remainder after forming as many complete cartons as possible.
 
-```postgresql with=init.sql
-SELECT product_name, stock_units, stock_units % 6 AS units_left_over
-FROM products;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakzp8" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -134,7 +141,7 @@ Expected output:
 - `ABS` strips the sign off a number, turning -1249.0000 into 1249.0000, which is what flagged the webcam `row` as suspicious in the first place: a price should never be negative.
 - The `%` operator, also written as `MOD(a, b)` in some `databases`, returns the remainder of a division. A remainder of 0 means every unit fits into complete cartons of six; a remainder of 1 means one unit is left over.
 
-![CEIL, FLOOR, ABS, and remainder reshaping numeric values for reports](images/04_numeric_functions_rounding_abs_mod.png)
+![CEIL, FLOOR, ABS, and remainder reshaping numeric values for reports](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_numeric_functions_rounding_abs_mod.png)
 
 ## A Few Values Worked Out by Hand
 
@@ -216,9 +223,12 @@ Arjun needs a margin report: for every product, show the product name and the pr
 
 The calculation happens before rounding: `ROUND(selling_price - cost_price, 2)` subtracts the stored cost from the selling price and then keeps two decimal places.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakzyu" 
+ width="100%"
+></iframe>
 
 If your `query` is `SELECT product_name, ROUND(selling_price - cost_price, 2) AS margin FROM products;`, the webcam `row` will show a large negative margin, one more confirmation that its price needs a manual fix.
 

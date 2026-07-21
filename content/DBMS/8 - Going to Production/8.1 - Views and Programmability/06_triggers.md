@@ -10,6 +10,22 @@ A **`trigger`** delivers exactly this: a piece of logic the `database` runs auto
 
 **Definition:** A `trigger` runs automatically in response to an insert, update, or delete, with `BEFORE` `trigger`s able to validate or reject a change before it happens, `AFTER` `trigger`s able to react once a change has completed, and `INSTEAD OF` `trigger`s able to make an otherwise non-writable `view` accept writes, all without requiring any cooperation from whoever issues the original statement.
 
+<!--
+IMAGE PROMPT  ->  generate as images/06_intro_triggers.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: The markshipmentdelivered procedure from earlier in this chapter guarantees a log entry is created, but only if every caller remembers to use that procedure instead of writing a plain UPDATE directly against shipments. Devraj wants a stronger guarantee: no.
+
+ON-IMAGE TEXT: show a short bold title "Triggers" plus only these few labels, large and legible: Triggers, Shipment, Delivered. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for triggers](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_triggers.png)
+
 ## Creating a Trigger Function and Attaching It
 
 A `trigger` is built from two pieces: a special kind of `function` describing what to do, and a `CREATE TRIGGER` statement attaching that `function` to a specific `table` and event.
@@ -118,7 +134,7 @@ Expected output:
 
 A plain `UPDATE`, with no `procedure`, no special syntax, no cooperation from Devraj's colleague required, produced a log entry automatically, capturing both the old status, `in_transit`, and the new one, `delivered`. This is the core advantage a `trigger` has over the `procedure` from earlier in this chapter: the logging behavior is now a property of the `table` itself, impossible to accidentally skip.
 
-![A trigger automatically creates a log entry when the table is updated](images/11_trigger_update_creates_log_automatically.png)
+![A trigger automatically creates a log entry when the table is updated](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_trigger_update_creates_log_automatically.png)
 
 ## BEFORE Triggers Can Validate or Modify a Row
 
@@ -246,7 +262,9 @@ Expected output:
 
 The `UPDATE` against `shipment_status_view` never touches the `view` directly; `trg_instead_of_update` intercepts it and runs the underlying `UPDATE shipments SET status = 'delayed' WHERE shipment_id = 1` instead, so `shipments` itself now shows shipment 1 as `delayed`. Here `shipment_status_view` is a simple enough `view` to be updatable on its own, but the pattern generalizes directly to the `join`-based `view`s that cannot be, letting an `INSTEAD OF` `trigger` define exactly how a write against a complex `view` should be translated into changes on the real underlying `tables`.
 
-![Trigger timing options: BEFORE validates, AFTER audits, and INSTEAD OF redirects view writes](images/12_trigger_timing_before_after_instead_of.png)
+![Trigger timing options: BEFORE validates, AFTER audits, and INSTEAD OF redirects view writes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_trigger_timing_before_after_instead_of.png)
+
+![A visible trigger side effect turns one UPDATE into an automatic second write to an audit log](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12b_trigger_side_effect_visible.png)
 
 ## Triggers at a Glance
 

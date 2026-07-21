@@ -6,6 +6,22 @@ Alia has spent the last few weeks only ever looking at data on screen, running `
 
 **Definition:** The **`INSERT` statement** adds one or more new rows to a table by supplying values for the table's columns.
 
+<!--
+IMAGE PROMPT  ->  generate as images/01_intro_insert_adding_new_rows.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Alia handles admissions for a small college, and it is the first week of term. A new student has just finished paying fees and needs to appear in the system before she can be given a timetable or a login. Alia has spent the last few weeks only ever looking at.
+
+ON-IMAGE TEXT: show a short bold title "Insert Adding New Rows" plus only these few labels, large and legible: Table, Row, Select. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for insert adding new rows](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_insert_adding_new_rows.png)
+
 ## The Anatomy of INSERT INTO
 
 Before the `INSERT`, the `students` `table` holds these eight `rows`, with no Diya Kulkarni yet:
@@ -41,7 +57,7 @@ Expected output, after the `INSERT`:
 
 Alia's new student, Diya Kulkarni, now has a `row` of her own. The `column` list right after the `table` name tells the `database` exactly which `column` each value in `VALUES` belongs to, so no value ever gets misread as something it isn't. The final `SELECT` is not part of the `INSERT` itself; it is Alia simply confirming that the `row` landed the way she expects.
 
-![INSERT adding Diya as a new row in the students table](images/01_insert_adds_new_row.png)
+![INSERT adding Diya as a new row in the students table](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_insert_adds_new_row.png)
 
 ### Hands-On Practice: Add the First Row
 
@@ -169,7 +185,7 @@ This works, and the new course lands correctly, but only because Alia happened t
 - If a future change to the `table` adds a `column` in the middle, or if two `column` values are simply written in the wrong order by mistake, a positional `INSERT` places every later value into the wrong `column` with no error at all, since the `database` has no way to know that "Computer Science" was meant to be a department and not a title.
 - Naming the `columns` explicitly, as the earlier examples did, removes that guesswork entirely: the statement keeps working correctly even if the `table`'s `column` order changes later, and a reader checking the statement months from now can see exactly what value was intended for what `column` without needing to look up the `table` definition first.
 
-![INSERT column names aligned with matching values to avoid positional mistakes](images/02_insert_name_columns_match_values.png)
+![INSERT column names aligned with matching values to avoid positional mistakes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_insert_name_columns_match_values.png)
 
 ### Hands-On Practice: Insert Without a Column List
 

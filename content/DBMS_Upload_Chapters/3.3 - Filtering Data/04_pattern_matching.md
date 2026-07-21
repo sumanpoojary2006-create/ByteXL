@@ -4,7 +4,9 @@ Siddharth has been asked to pull together a list of everyone still using their c
 
 What he needs is a way to match a partial shape of text rather than an exact value, and that is what **pattern matching** with `LIKE` is for.
 
-![LIKE with percent wildcard matching any email that ends in campusmail.edu](images/07_like_percent_email_pattern.png)
+![LIKE with percent wildcard matching any email that ends in campusmail.edu](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_like_percent_email_pattern.png)
+
+**Definition:** `LIKE` turns `WHERE` from a tool that only recognises exact values into one that can recognise the shape of text.
 
 ## Matching Part of a String with LIKE
 
@@ -30,7 +32,7 @@ Siddharth needs addresses that end with the college domain. The query is `SELECT
 
 For hands-on practice, `init.sql` creates and populates only the visual `students` table:
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE students (
     student_id INTEGER PRIMARY KEY,
     full_name TEXT,
@@ -53,11 +55,12 @@ INSERT INTO students (student_id, full_name, email, city, phone, joined_on) VALU
 
 The active query file contains only the pattern-matching query:
 
-```postgresql with=init.sql
-SELECT full_name, email
-FROM students
-WHERE email LIKE '%campusmail.edu';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkak72k" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -77,11 +80,12 @@ Expected output:
 
 `%` is not limited to the end of a pattern. Placing it at the start checks a suffix, placing it in the middle checks that two fragments both appear in order, and leaving it off one side anchors the match to that side.
 
-```postgresql with=init.sql
-SELECT full_name
-FROM students
-WHERE full_name LIKE 'S%';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkak7cj" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -98,11 +102,12 @@ Expected output:
 
 `_` is stricter than `%`. It stands for exactly one character, no more and no fewer, which makes it useful when you know the shape of the text but not one specific letter in it.
 
-```postgresql with=init.sql
-SELECT full_name
-FROM students
-WHERE full_name LIKE '_a%';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkak7py" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -116,17 +121,18 @@ Expected output:
 - The pattern says "any single character, followed by the letter a, followed by anything," and all three names happen to have `a` as their second letter.
 - Compare this with `full_name LIKE 'a%'`, which would look for names starting with `a` itself, a completely different and, in this data, empty result.
 
-![LIKE patterns showing percent for many characters and underscore for exactly one character](images/08_like_percent_and_underscore_wildcards.png)
+![LIKE patterns showing percent for many characters and underscore for exactly one character](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_like_percent_and_underscore_wildcards.png)
 
 ## Case-Insensitive Matching with ILIKE
 
 `LIKE` is case-sensitive by default, so a pattern written in uppercase will not match lowercase text. PostgreSQL offers `ILIKE` as a convenience that matches regardless of letter case, which is handy when you are not sure how something was typed in.
 
-```postgresql with=init.sql
-SELECT full_name, email
-FROM students
-WHERE email ILIKE '%GMAIL%';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkak7zk" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -183,11 +189,12 @@ Expected output:
 
 Write a `query` that finds every student whose email address contains the text "verma", regardless of where it appears in the address.
 
-```postgresql with=init.sql
-SELECT full_name, email
-FROM students
-WHERE email LIKE '%verma%';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkak8e6" 
+ width="100%"
+></iframe>
 
 Expected output:
 

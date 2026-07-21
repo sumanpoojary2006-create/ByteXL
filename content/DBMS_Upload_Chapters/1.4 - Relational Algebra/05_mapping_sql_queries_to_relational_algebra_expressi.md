@@ -8,6 +8,10 @@ Staring at that outline, Arjun notices something he did not expect.
 
 The request breaks apart into exactly the same handful of moves he has spent the last few weeks learning: narrow down to certain `rows`, keep only certain `columns`, and combine two relations where a value matches. **Mapping a structured `query` onto `relational algebra`** is what finally shows Arjun that the `query` language he is about to learn is not a new set of ideas at all, it is a familiar set of ideas wearing a different outfit.
 
+**Definition:** Every structured `query` a person writes against a relational `database` is, underneath its wording, a short chain of the same handful of operations: selection to narrow `rows`, projection to narrow `columns`, `join` to combine relations on a shared value, and set operations to combine or compare relations of the same shape.
+
+![Intro visual for mapping sql queries to relational algebra expressi](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_mapping_sql_queries_to_relational_algebra_expres.png)
+
 ## Restaurants and Zones: Arjun's Two Relations
 
 Here is what Arjun is working with, trimmed to the `columns` his report needs:
@@ -169,7 +173,7 @@ Notice the order these operations happened in Arjun's head: selection narrowed R
 
 This is the exact report Arjun was asked for, reached in three small, ordinary steps rather than one leap: selection, then join, then a closing projection.
 
-![A fast-food restaurant report flowing through WHERE selection, zone join, and SELECT projection](images/09_sql_query_as_algebra_chain.png)
+![A fast-food restaurant report flowing through WHERE selection, zone join, and SELECT projection](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_sql_query_as_algebra_chain.png)
 
 ## UNION and the Set Operations
 
@@ -194,7 +198,7 @@ This is precisely why `relational algebra` was worth learning before touching a 
 
 Once the underlying moves are familiar, learning the exact wording and punctuation of a structured `query` becomes a matter of vocabulary, not a matter of relearning how to think about data.
 
-![SQL clauses mapped to the relational algebra operations they express](images/10_sql_clauses_to_algebra_operations.png)
+![SQL clauses mapped to the relational algebra operations they express](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_sql_clauses_to_algebra_operations.png)
 
 ## Query Clauses and Their Algebra Counterparts
 

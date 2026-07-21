@@ -4,9 +4,9 @@
 
 Goal of this unit: Model real-world systems using ER diagrams, design well-structured relational `schemas`, and apply normalization principles to minimize redundancy and maintain data integrity.
 
-![ER model entities mapped into relational tables](images/01_er_model_to_tables_overview.png)
+![ER model entities mapped into relational tables](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_er_model_to_tables_overview.png)
 
-![Normalization splits facts by topic to reduce redundancy](images/02_normalization_splits_facts_overview.png)
+![Normalization splits facts by topic to reduce redundancy](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_normalization_splits_facts_overview.png)
 
 ## Chapters and Topics (teach in order)
 
@@ -148,24 +148,5 @@ Goal of this unit: Model real-world systems using ER diagrams, design well-struc
 </table>
 
 Each lesson follows the house style: a standardized **Introduction** heading (no page-title H1), a story-led flow with real-world examples under natural headings, and a closing **Conclusion**. This unit precedes SQL Essentials, so `schema` and normalization ideas are illustrated with prose and Markdown `tables` of sample data rather than runnable SQL. No emojis, no em dashes, no forward or backward references to other units or chapters.
-
-## Mini Project
-
-Reading material, worked through after the chapters above.
-
-<table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
-  <thead>
-    <tr>
-      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Project</th>
-      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">File</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr style="background-color: #ffffff;">
-      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Designing a Library Database</td>
-      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;"><a href="library_database_design.md">library_database_design.md</a></td>
-    </tr>
-  </tbody>
-</table>
 
 _Status: all 19 lessons authored and reviewed._

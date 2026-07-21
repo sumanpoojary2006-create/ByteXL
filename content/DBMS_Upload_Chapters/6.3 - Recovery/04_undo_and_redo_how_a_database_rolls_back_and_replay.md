@@ -4,6 +4,10 @@ When a `database` restarts after a crash, the log holds a record of everything t
 
 Committed work must be preserved, durability demands it. Uncommitted work must be discarded, atomicity demands it. This is the job of **redo** and **undo**, the two passes `recovery` makes over the log every time a `database` restarts after an unclean shutdown.
 
+**Definition:** Redo reapplies every committed `transaction`'s changes to guarantee durability, and undo reverses every uncommitted `transaction`'s changes to guarantee atomicity, and together the two passes are what actually turn a crashed, potentially inconsistent set of data files back into an exact, correct reflection of every `transaction` that had genuinely finished before the crash.
+
+![Intro visual for undo and redo how a database rolls back](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_undo_and_redo_how_a_database_rolls_back_and_repl.png)
+
 ## Redo: Replaying Committed Work That Never Made It to Disk
 
 Recall from the `write-ahead logging` lesson that a `COMMIT` can return success once its log record is durable, even before the actual data file has been updated. If a crash happens in that gap, the change is safely logged but not yet reflected in the data files.
@@ -28,7 +32,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE accounts (
     account_id INTEGER PRIMARY KEY,
     balance NUMERIC(10, 2)
@@ -39,15 +43,12 @@ INSERT INTO accounts (account_id, balance) VALUES (1, 5000.00);
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-BEGIN;
-UPDATE accounts SET balance = balance - 1000.00 WHERE account_id = 1;
-COMMIT;
--- Imagine a crash right here, after COMMIT returned success, but before
--- this change was necessarily written out to the accounts table's data file.
-
-SELECT balance FROM accounts WHERE account_id = 1;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaf4fb" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -59,7 +60,7 @@ The `SELECT` here shows 4000.00, because in this running session nothing actuall
 
 But conceptually, if power had been lost right after that `COMMIT`, PostgreSQL's redo pass on restart would read the log, see that this `transaction` committed, and reapply the balance change to the data file, guaranteeing the balance reads as 4000.00 once the `database` comes back online, exactly the durability guarantee from earlier in this unit, now explained in terms of the actual mechanism that delivers it.
 
-![REDO replaying committed log records into the data file](images/07_redo_replays_committed_log.png)
+![REDO replaying committed log records into the data file](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_redo_replays_committed_log.png)
 
 ## Undo: Reversing Work That Never Committed
 
@@ -67,14 +68,12 @@ The opposite case is a `transaction` that was still open, uncommitted, at the mo
 
 Undo is the pass that walks through the log looking for `transactions` with no matching commit record, and reverses any of their changes that made it into the data files before the crash.
 
-```postgresql with=init.sql
-BEGIN;
-UPDATE accounts SET balance = balance - 2000.00 WHERE account_id = 1;
--- Imagine a crash right here, with no COMMIT ever issued.
-ROLLBACK;
-
-SELECT balance FROM accounts WHERE account_id = 1;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaf4s9" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -86,7 +85,7 @@ The explicit `ROLLBACK` here demonstrates the same outcome undo would achieve au
 
 In a genuine crash scenario, no `ROLLBACK` would ever be issued by anyone, since the whole application vanished along with the server, but PostgreSQL's undo pass performs the identical reversal automatically during `recovery`, simply by recognizing that this `transaction`'s log entries have no corresponding commit record.
 
-![UNDO reversing uncommitted log records back to the before state](images/08_undo_reverses_uncommitted_log.png)
+![UNDO reversing uncommitted log records back to the before state](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_undo_reverses_uncommitted_log.png)
 
 ## Why Redo Runs Before Undo
 
@@ -127,9 +126,12 @@ Redoing everything first, including eventually-undone work, might sound wasteful
 
 Using the `accounts` `table` above, run one `transaction` that commits a balance change and a second `transaction` that makes a change but rolls back instead, then write a comment explaining which pass, redo or undo, would be responsible for each one's outcome if this had instead been a genuine crash rather than explicit `COMMIT`/`ROLLBACK` commands.
 
-```postgresql with=init.sql
--- Write your transactions and comment below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaf549" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

@@ -8,7 +8,7 @@ Every guarantee covered so far in this unit, atomicity, consistency, isolation, 
 
 A `database`'s `recovery` system exists to survive all of these, but each one demands a different response, which is why the first step in understanding `recovery` is naming the different kinds of **`database` failures** clearly.
 
-![Three database failure scopes: transaction failure, system crash, and media failure](images/01_database_failure_types_scope.png)
+![Three database failure scopes: transaction failure, system crash, and media failure](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_database_failure_types_scope.png)
 
 **Definition:** Transaction failures, system crashes, and media failures each affect a different scope of the system and call for a different defense, from a simple rollback to `write-ahead log` replay to physical redundancy, and recognizing which kind of failure is in play is the first step toward understanding how a `database` actually recovers from it.
 
@@ -105,7 +105,7 @@ System crash `recovery` is handled by the `write-ahead log`, replaying and undoi
 
 Confusing these three, or assuming one mechanism covers all of them, is a common and costly mistake in real systems.
 
-![Different recovery tools for transaction failure, system crash, and media failure](images/02_failure_type_recovery_tool_mapping.png)
+![Different recovery tools for transaction failure, system crash, and media failure](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_failure_type_recovery_tool_mapping.png)
 
 ## Database Failures at a Glance
 

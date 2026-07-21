@@ -1,0 +1,602 @@
+[
+  {
+    "set": 1,
+    "difficulty": "medium",
+    "bloom": "understand",
+    "subtopic": "syntax-runtime-and-logic-errors",
+    "description": "A scheduling script contains this condition and refuses to start.\n```python\nif age >= 18\n    print('Eligible')\n```\nWhat kind of error does this produce, and when does Python report it?",
+    "explanation": "A missing colon violates Python's grammar, so this raises a `SyntaxError` before any code runs at all, not even the print statement, since Python checks an entire file's grammar before executing any of it.",
+    "options": [
+      "A `ValueError`, after the print runs",
+      "No error occurs and the print runs normally",
+      "`SyntaxError` before execution",
+      "A logic error, after printing the wrong result"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 1,
+    "difficulty": "easy",
+    "bloom": "understand",
+    "subtopic": "try-except",
+    "description": "A registration script calls a function that might fail on bad user input, and the developer wants one failure not to crash the whole program. Which structure correctly wraps risky code so a failure does not crash the whole program?",
+    "explanation": "Code that might fail goes inside a try block, and code that should run only if it actually fails goes inside a matching except block; if the try succeeds, the except is simply skipped.",
+    "options": [
+      "except: ... try: ...",
+      "catch: ... try: ...",
+      "`try` / `except`",
+      "if `risky()`: ... else: ... - conditionals cannot catch exceptions, so `risky()` still crashes on failure"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 1,
+    "difficulty": "easy",
+    "bloom": "understand",
+    "subtopic": "custom-exceptions",
+    "description": "A developer wants invalid-age input to raise a distinct, specifically catchable error instead of a generic ValueError. Which code correctly defines a usable custom exception type?",
+    "explanation": "A custom exception is a class that inherits from Python's built-in `Exception` class; a bare pass is enough for a complete, usable exception type, giving it everything it needs to behave like any built-in exception.",
+    "options": [
+      "class `InvalidAgeError(Exception)`: pass",
+      "class InvalidAgeError: pass",
+      "def `InvalidAgeError()`: pass",
+      "InvalidAgeError = `ValueError` - just aliases `ValueError` instead of defining a new, distinct subclassed exception"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 1,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "traceback-analysis",
+    "description": "A reporting function receives an empty list and crashes.\n```python\ndef get_average(numbers):\n    total = sum(numbers)\n    return total / len(numbers)\ndef report(numbers):\n    avg = get_average(numbers)\n    print('Average:', avg)\nreport([])\n```\nWhat exception appears at the bottom of the traceback?",
+    "explanation": "Calling `sum([])` gives 0 and `len([])` gives 0, so total / `len(numbers)` divides by zero, raising a `ZeroDivisionError` at the bottom of the traceback, with report and the module-level call shown above it as the chain that led there.",
+    "options": [
+      "`ValueError`: invalid literal",
+      "`IndexError`: list index out of range - wrong exception type entirely, no indexing occurs before the zero-division happens",
+      "`ZeroDivisionError`",
+      "`TypeError`: unsupported operand"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 1,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "exception-handling-patterns",
+    "description": "A bill-splitting form receives two user entries.\n```python\ntry:\n    total = int(input())\n    people = int(input())\n    print(total / people)\nexcept ValueError:\n    print('Please enter whole numbers only.')\nexcept ZeroDivisionError:\n    print('Number of people cannot be zero.')\n```\nIf the user enters 100 and then 0, which message prints?",
+    "explanation": "Both inputs convert successfully, so no `ValueError` occurs, but dividing by 0 raises a `ZeroDivisionError`, which is caught by the second except clause, printing 'Number of people cannot be zero.'",
+    "options": [
+      "Both exception messages print one after another",
+      "Please enter whole numbers only.",
+      "Neither message prints, the program crashes",
+      "Number of people cannot be zero."
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 1,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "raising-exceptions",
+    "description": "A signup form's validation function could quietly return `None` when a user's age input is invalid, instead of alerting anything upstream. Why is raising usually the better choice?",
+    "explanation": "Returning `None` or printing a message hides the problem from the caller, who might forget to check for it or mistake a placeholder value for a genuinely valid answer; raising makes the failure impossible to silently ignore and forces the caller to explicitly handle it.",
+    "options": [
+      "Returning `None` is technically not allowed inside Python functions at all - incorrectly claims returning `None` is disallowed, which is valid Python everywhere",
+      "Raising makes the failure impossible to silently ignore, forcing explicit handling",
+      "raise technically and automatically logs the error to a file somewhere",
+      "Raising is technically always faster than simply returning a value"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 1,
+    "difficulty": "medium",
+    "bloom": "understand",
+    "subtopic": "defensive-programming",
+    "description": "A signup form repeatedly asks for an age.\n```python\ndef ask_for_age():\n    while True:\n        text = input('Enter your age: ')\n        try:\n            age = int(text)\n        except ValueError:\n            print('Please enter a valid whole number.')\n            continue\n        if age < 1 or age > 120:\n            print('Out of range.')\n            continue\n        return age\n```\nWhich three tools combine here to form defensive input validation?",
+    "explanation": "This combines a while `True` loop to keep re-asking after a rejected attempt, try/except to guard the conversion that conditions alone cannot fully anticipate, and a plain if to enforce the business rule of an acceptable range once conversion has already succeeded.",
+    "options": [
+      "A custom exception combined with finally, with no loop involved - misidentifies the tools used - no custom exception or finally here, and a loop is present",
+      "Only a plain for loop combined with the `range()` function",
+      "Only try/except is technically needed here, nothing else at all",
+      "A while loop, try/except for conversion, and if for the business rule"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 1,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "defensive-programming",
+    "description": "Using `ask_for_age()` from the previous pattern, what happens if the user types 'abc', then '0', then '30'?",
+    "explanation": "The first attempt, 'abc', fails `int()` conversion and triggers the except, continuing the loop; the second attempt, 0, converts fine but fails the range check, continuing again; the third attempt, 30, converts successfully and passes the range check, so the function returns 30.",
+    "options": [
+      "The function crashes on '0' since 0 is falsy",
+      "The function loops through all three attempts and finally returns 30",
+      "The function returns immediately after 'abc' fails",
+      "The function returns 'abc' as a string since conversion was never required"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 1,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "custom-exceptions",
+    "description": "A registration system raises a named validation problem.\n```python\nclass EmptyNameError(Exception):\n    pass\ntry:\n    raise EmptyNameError('Name cannot be empty.')\nexcept Exception as error:\n    print('Caught:', error)\n```\nDoes this except `Exception` clause catch the custom EmptyNameError?",
+    "explanation": "Because every custom exception still inherits from `Exception` either directly or indirectly, a broad except `Exception`: continues to catch it too, though this loses the specific, separate handling a named except clause would have given.",
+    "options": [
+      "Yes, since every custom exception still inherits from `Exception`",
+      "No, this raises a `TypeError` because EmptyNameError is not built-in",
+      "No, custom exceptions can only be caught by their own exact type",
+      "Yes, but only if EmptyNameError defines a special catch method"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 1,
+    "difficulty": "hard",
+    "bloom": "analyze",
+    "subtopic": "try-except",
+    "description": "A cleanup message must print even when a calculation fails.\n```python\ntry:\n    result = 10 / 0\nfinally:\n    print('Closing connection.')\n```\nWith no except clause present, what happens when this code runs?",
+    "explanation": "finally still runs even if no except clause catches the exception; 'Closing connection.' prints first, and then the `ZeroDivisionError` continues propagating upward and crashes the program, since nothing actually caught it.",
+    "options": [
+      "'Closing connection.' never prints since there is no except clause - wrongly assumes `finally` needs an `except` clause present to run",
+      "The program crashes immediately, with no cleanup message shown",
+      "finally silently swallows the ZeroDivisionError, hiding it",
+      "'Closing connection.' prints, and then the `ZeroDivisionError` still propagates and crashes the program"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "easy",
+    "bloom": "understand",
+    "subtopic": "syntax-runtime-and-logic-errors",
+    "description": "A developer typos a colon while writing an age-check condition in a facility attendance app and Python refuses to run the file at all. Which category of error stops Python before any code runs at all, caught by Python's own grammar check?",
+    "explanation": "A syntax error means the code does not follow Python's grammar, so Python refuses to run any of it, not even lines that would otherwise be fine.",
+    "options": [
+      "A silent logic error in the completed calculation",
+      "Syntax error",
+      "Runtime error",
+      "Import error"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "understand",
+    "subtopic": "syntax-runtime-and-logic-errors",
+    "description": "A gym membership sign-up form expects a numeric age but a user types a word instead:\n```python\nage = int(input('Enter your age: '))\n```\nThis raises a `ValueError` when the user types 'twenty'. What kind of error is this?",
+    "explanation": "The code is grammatically valid and starts running successfully, but fails partway through on a specific bad input, which is exactly the definition of a runtime error.",
+    "options": [
+      "A pre-execution syntax error",
+      "A silent logic error",
+      "Indentation error",
+      "Runtime error"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "hard",
+    "bloom": "analyze",
+    "subtopic": "syntax-runtime-and-logic-errors",
+    "description": "A pricing tool for a retail app has a bug that returns the wrong average price with no crash at all:\n```python\ndef average(a, b):\n    return a + b / 2\n```\nCalling `average(10, 20)` returns 20.0 instead of the intended 15.0. What kind of error is this?",
+    "explanation": "The program runs perfectly with no error message and simply produces the wrong answer, which is the definition of a logic error; here operator precedence made b / 2 happen before the addition.",
+    "options": [
+      "A syntax error that prevents execution",
+      "Logic error",
+      "Runtime error",
+      "A data type error raised during execution"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "easy",
+    "bloom": "understand",
+    "subtopic": "syntax-runtime-and-logic-errors",
+    "description": "A team lead is explaining to new hires why their bug-tracking system only wraps certain kinds of mistakes in try/except blocks. Why does exception handling specifically target runtime errors rather than syntax or logic errors?",
+    "explanation": "Syntax errors are caught by Python before anything runs, and logic errors need tracing and testing rather than error-handling syntax; runtime errors are the ones that happen mid-execution and can actually be anticipated and handled with try/except.",
+    "options": [
+      "Because runtime errors happen mid-execution and can be anticipated and handled, unlike the other two",
+      "Because syntax and logic errors cannot occur in Python",
+      "Because logic errors are fixed automatically by Python",
+      "Because runtime errors are the only ones with a message - falsely claims only runtime errors produce messages; syntax errors show messages too"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "understand",
+    "subtopic": "traceback-analysis",
+    "description": "A developer debugging a crashed payroll script opens a long traceback and isn't sure where to start reading it. Why should a traceback be read starting from the bottom rather than the top?",
+    "explanation": "A traceback is ordered as a call stack, with the most recent and most specific event listed last; starting at the top shows the broadest, least specific context first, which is backwards from how you actually diagnose a failure.",
+    "options": [
+      "Because reading top-down technically causes a second separate error - reading order doesn't create errors, it only affects how easily the cause is found",
+      "Because the most specific, most useful information sits at the very bottom",
+      "Because Python prints tracebacks upside down by mistake",
+      "Because the very top line is technically always completely blank"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "traceback-analysis",
+    "description": "A developer investigating a crash in an inventory system sees a `ZeroDivisionError` traceback that points exactly at the line `total / len(numbers)`. What does it NOT tell you directly?",
+    "explanation": "The traceback tells you precisely where the failure occurred, but not why `report([])` was called with an empty list in the first place; finding that root cause means tracing backward through your own logic from the line the traceback points to.",
+    "options": [
+      "The exact type of the exception that occurred",
+      "The exact line where the actual failure occurred here",
+      "The name of the function where the failure originally occurred here - incorrect - tracebacks do list the function name at each call frame",
+      "The root cause of why the function received bad data in the first place"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "hard",
+    "bloom": "analyze",
+    "subtopic": "exception-handling-patterns",
+    "description": "A form lists a broad handler before a specific handler.\n```python\ntry:\n    value = int(input('Enter a number: '))\nexcept Exception:\n    print('Something went wrong.')\nexcept ValueError:\n    print('Please enter a valid number.')\n```\nWhat is wrong with this code?",
+    "explanation": "`Exception` is a broad category that includes `ValueError`, and since the broad except is listed first, it always matches first and wins, making the more specific `ValueError` clause beneath it completely unreachable.",
+    "options": [
+      "Nothing is technically wrong at all, both clauses will run as expected",
+      "`Exception` is technically not a valid exception type in Python at all",
+      "This code technically raises a `SyntaxError` because of the exact clause order used here every time - wrong error category - clause ordering is a logic issue, not a `SyntaxError`",
+      "The `ValueError` clause is unreachable because the broader `Exception` clause above it always matches first"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "understand",
+    "subtopic": "traceback-analysis",
+    "description": "A developer debugging a failed checkout on an e-commerce site sees this line in the middle of a traceback:\n```\nFile \"checkout.py\", line 42, in apply_discount\n```\nWhat does this single line tell the developer?",
+    "explanation": "Each frame line in a traceback names the file, the exact line number, and the function involved at that step of the call chain - here, line 42 of checkout.py inside apply_discount.",
+    "options": [
+      "The file, line number, and function involved at this step of the call chain",
+      "The total number of errors in checkout.py - a single frame line doesn't tally errors, it names one location in the call chain",
+      "The value of every variable on line 42",
+      "The type of exception that was raised"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "try-except",
+    "description": "A valid stored age is converted inside a protected block.\n```python\ntry:\n    age = int('20')\n    print('You are', age, 'years old.')\nexcept ValueError:\n    print(\"That doesn't look like a valid number.\")\n```\nWhat is printed?",
+    "explanation": "Converting '20' succeeds with no exception, so the try block completes normally, prints 'You are 20 years old.', and the except block is skipped entirely since it only runs on failure.",
+    "options": [
+      "That doesn't look like a valid number.",
+      "Both messages print",
+      "Nothing prints",
+      "You are 20 years old."
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "understand",
+    "subtopic": "try-except",
+    "description": "```python\nage = int(input('Enter your age: '))\nprint('You are', age, 'years old.')\n```\nIf the user types 'twenty' with no try/except protecting this code, what happens?",
+    "explanation": "With no try/except, `int('twenty')` raises an unhandled `ValueError` and the program stops immediately with a traceback; the same failure that try/except would have caught instead ends the whole program.",
+    "options": [
+      "Python silently skips the print statement",
+      "The program stops immediately with an unhandled `ValueError`",
+      "The program prints 'You are twenty years old.' - wrongly assumes `int()` converts 'twenty' instead of raising an unhandled `ValueError`",
+      "The program asks for input again automatically"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "try-except",
+    "description": "A stored age contains invalid text inside a protected block.\n```python\ntry:\n    age = int('twenty')\n    print('You are', age, 'years old.')\nexcept ValueError:\n    print('Invalid input, defaulting to 0.')\n    age = 0\nprint('Proceeding with age:', age)\n```\nWhat is printed, in order?",
+    "explanation": "`int('twenty')` raises a `ValueError` immediately, so Python jumps straight to the except block, prints 'Invalid input, defaulting to 0.', sets age to 0, and then execution continues normally to the final print, showing 'Proceeding with age: 0'.",
+    "options": [
+      "Proceeding with age: 0 then Invalid input, defaulting to 0.",
+      "Only Invalid input, defaulting to 0., the program then stops",
+      "Invalid input, defaulting to 0. then Proceeding with age: 0",
+      "You are twenty years old. then Proceeding with age: twenty"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "understand",
+    "subtopic": "traceback-analysis",
+    "description": "A developer debugging a multi-function crash in a hotel booking system opens a traceback showing three stacked call blocks followed by a final error line. What does each block above the bottom line represent?",
+    "explanation": "Each block further up the traceback retraces one step further back in the chain of calls, showing how execution reached the point of failure, ending at the very top with where the whole chain originally started.",
+    "options": [
+      "A warning message that can safely be ignored entirely",
+      "A duplicate copy of the very bottom line shown",
+      "One step further back in the chain of calls that led to the failure",
+      "A completely separate, unrelated error happening entirely - misreads stacked frames as unrelated errors, not steps in one call chain"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "understand",
+    "subtopic": "try-except",
+    "description": "```python\ntry:\n    risky_value = int(input('Enter a number: '))\nexcept:\n    print('Something went wrong.')\n```\nWhy is this bare except usually considered a bad habit?",
+    "explanation": "A bare except with no exception type catches every kind of failure indiscriminately, including ones never anticipated, which can silently swallow real bugs that would otherwise have been noticed immediately from a crash.",
+    "options": [
+      "It catches every kind of failure indiscriminately, potentially hiding real bugs",
+      "It makes the program run twice as slow",
+      "It only works correctly with ValueError",
+      "It is considered a syntax error in Python - bare `except:` is valid syntax, the concern is scope, not legality"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "hard",
+    "bloom": "analyze",
+    "subtopic": "try-except",
+    "description": "A helper returns a value but also performs guaranteed cleanup.\n```python\ndef get_value():\n    try:\n        return 10\n    finally:\n        print('cleanup ran')\n```\nWhat happens when `get_value()` is called?",
+    "explanation": "A finally block is guaranteed to run no matter what, even when the try block contains a return statement; Python executes the finally block's code before the function actually returns, so 'cleanup ran' prints and then 10 is returned.",
+    "options": [
+      "Only finally runs; the return value is lost",
+      "Cleanup prints, then 10 returns",
+      "The function raises an error because finally cannot follow a return",
+      "The function returns 10 immediately and finally never runs, since return exits early"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "easy",
+    "bloom": "understand",
+    "subtopic": "exception-handling-patterns",
+    "description": "A checkout script for an online store needs one identical error message whether the user enters non-numeric text or a quantity of zero. Which syntax correctly catches both `ValueError` and `ZeroDivisionError` with one identical response?",
+    "explanation": "Grouping several exception types in one except clause uses a tuple of types, written as except (`ValueError`, `ZeroDivisionError`):, which is appropriate when every grouped failure deserves the exact same response.",
+    "options": [
+      "except [`ValueError`, `ZeroDivisionError`]:",
+      "except `ValueError`, `ZeroDivisionError`:",
+      "except (`ValueError`, `ZeroDivisionError`):",
+      "except `ValueError` and `ZeroDivisionError`:"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "understand",
+    "subtopic": "exception-handling-patterns",
+    "description": "A converter captures a specific failure for diagnostics.\n```python\ntry:\n    int('abc')\nexcept ValueError as error:\n    print('Conversion failed:', error)\n```\nWhat does the `as` keyword provide here?",
+    "explanation": "The as keyword captures the actual exception object raised, letting you read Python's own message about what happened, such as the specific text describing why `int()` conversion failed.",
+    "options": [
+      "It renames the except block",
+      "It re-raises the exception with a new name",
+      "It converts the exception into a string automatically and discards it",
+      "It captures the actual exception object so its message can be read"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "understand",
+    "subtopic": "try-except",
+    "description": "A signup form separates success-only code from its risky conversion.\n```python\ntry:\n    age = int(input('Enter your age: '))\nexcept ValueError:\n    print('Not valid.')\nelse:\n    print(f'Thanks, you are {age} years old.')\n```\nWhen does the else block run?",
+    "explanation": "An else clause attached to a try runs only if the try block completed with no exception at all; if the try fails and the except runs instead, else is skipped entirely.",
+    "options": [
+      "Only if both try and except run",
+      "Every single time, regardless of outcome - confuses `else` with `finally` - `else` only runs when `try` succeeds",
+      "Only if an exception was caught",
+      "Only if the try block succeeded with no exception"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "understand",
+    "subtopic": "try-except",
+    "description": "A registration attempt must always print an audit message.\n```python\ntry:\n    age = int(input('Enter your age: '))\nexcept ValueError:\n    print('Not valid.')\nfinally:\n    print('Registration attempt finished.')\n```\nWhether the input is valid or invalid, what happens to the finally block's message?",
+    "explanation": "A finally clause runs every single time, whether the try block succeeded, failed and was caught, or even failed in a way no except caught at all, making it the right place for guaranteed cleanup.",
+    "options": [
+      "It prints in both cases, since finally always runs",
+      "It only prints if the input was invalid",
+      "It never prints unless explicitly called - wrongly claims `finally` needs to be called explicitly instead of running automatically",
+      "It only prints if the input was valid"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "easy",
+    "bloom": "understand",
+    "subtopic": "exception-handling-patterns",
+    "description": "A developer building a payment-processing module is writing several except clauses for error types that inherit from one another. What is the correct rule for ordering multiple except clauses that have an inheritance relationship?",
+    "explanation": "`Exception` types form a hierarchy where some are broader categories that include more specific ones; the most specific types should always be listed first, with any broad catch-everything-else type listed last, otherwise the broad clause silently steals every match.",
+    "options": [
+      "Order technically does not matter at all in Python here",
+      "`Exception` types technically must be listed in alphabetical order - invents an alphabetical rule; ordering actually depends on the inheritance hierarchy",
+      "The most specific exception types should be listed first, broad types last",
+      "Broad exception types should always be listed first"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "try-except",
+    "description": "A transaction converts valid stored values and reports completion.\n```python\ntry:\n    price = float('19.99')\n    quantity = int('3')\n    total = price * quantity\nexcept ValueError:\n    print('Please enter valid numbers.')\nelse:\n    print(f'Total cost: {total:.2f}')\nfinally:\n    print('Transaction attempt complete.')\n```\nWhat prints, in order, for this valid input?",
+    "explanation": "Both conversions succeed, so no exception occurs; the try block completes, else runs printing the total cost since the try block succeeded cleanly, and finally always runs last, printing the completion message regardless of outcome.",
+    "options": [
+      "Transaction attempt complete. then Total cost: 59.97",
+      "Please enter valid numbers. then Transaction attempt complete.",
+      "Total cost: 59.97 then Transaction attempt complete.",
+      "Please enter valid numbers. only"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "understand",
+    "subtopic": "raising-exceptions",
+    "description": "A cost-sharing function enforces its own input contract.\n```python\ndef split_cost(total, people):\n    if people <= 0:\n        raise ValueError('Number of people must be greater than zero.')\n    return total / people\n```\nWhy does `split_cost` raise instead of handling the error itself?",
+    "explanation": "The whole point of raising is that the caller, not the function itself, decides how to respond; `split_cost` stays simple and trustworthy, refusing bad input unconditionally, while the calling code decides what handling it gracefully actually looks like using try/except.",
+    "options": [
+      "So the caller, not the function, can decide how to respond via try/except",
+      "Because functions in Python cannot contain try/except",
+      "Because it technically makes the function run without any arguments - unrelated to arguments, raising is about letting the caller decide how to respond",
+      "Because raising is required syntax for every function"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "hard",
+    "bloom": "analyze",
+    "subtopic": "raising-exceptions",
+    "description": "A cost-sharing function logs a division failure before passing it onward.\n```python\ndef split_cost(total, people):\n    try:\n        return total / people\n    except ZeroDivisionError:\n        print('Logging: zero people.')\n        raise\n```\nWhat does the bare raise do here?",
+    "explanation": "A bare raise inside an except block re-raises the exact exception that was just caught, unchanged; the print runs as a log entry, and then the original `ZeroDivisionError` continues propagating onward exactly as if this except had never caught it.",
+    "options": [
+      "It silently swallows the exception after logging it",
+      "It creates a brand new, unrelated exception",
+      "It re-raises the exact exception that was just caught, unchanged",
+      "It converts the `ZeroDivisionError` into a `ValueError` - a bare `raise` re-raises the original exception unchanged, it doesn't convert the type"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "easy",
+    "bloom": "understand",
+    "subtopic": "raising-exceptions",
+    "description": "A function rejects a non-positive people count before division.\n```python\ndef split_cost(total, people):\n    if people <= 0:\n        raise ValueError('Number of people must be greater than zero.')\n    return total / people\n```\nWhat happens when `split_cost(1200, 0)` is called?",
+    "explanation": "raise immediately triggers a `ValueError` with the given message the instant the function is called with an invalid headcount, stopping execution right there rather than letting it proceed to fail later with a less helpful `ZeroDivisionError`.",
+    "options": [
+      "It raises a `ValueError` immediately, before any division happens",
+      "It prints a warning message and returns 0 - the function raises immediately here, it never prints a warning or returns silently",
+      "It raises a ZeroDivisionError instead",
+      "It returns None silently instead"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "custom-exceptions",
+    "description": "A signup form for an event-ticketing site raises a plain `ValueError` for three genuinely different problems: a negative age, an unreasonably large age, and an empty name. What is the downside of this approach?",
+    "explanation": "Every one of these problems looks identical to whoever is catching it, since they are all just generic ValueErrors with the actual difference buried inside the message text, making it impossible to catch one specific problem without fragile manual checks on the message itself.",
+    "options": [
+      "Each invalid field automatically produces a warning instead",
+      "All three failures are converted into syntax errors",
+      "The caller cannot distinguish the problems by exception type",
+      "Python prevents the errors from carrying useful messages"
+    ],
+    "answer": "C"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "custom-exceptions",
+    "description": "A registration function raises a custom age error.\n```python\nclass InvalidAgeError(Exception):\n    pass\ndef register(age):\n    if age < 0 or age > 120:\n        raise InvalidAgeError('Age must be between 0 and 120.')\ntry:\n    register(200)\nexcept InvalidAgeError as error:\n    print('Registration failed:', error)\n```\nWhat is printed?",
+    "explanation": "`register(200)` raises InvalidAgeError since 200 is out of range, which is caught specifically by the except InvalidAgeError clause, printing 'Registration failed: Age must be between 0 and 120.'",
+    "options": [
+      "Registration failed: Age must be between 0 and 120.",
+      "Age must be between 0 and 120. printed alone - drops the 'Registration failed:' prefix that the except clause's print always includes",
+      "Nothing at all, the entire program crashes",
+      "Registration failed: `None` printed instead"
+    ],
+    "answer": "A"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "apply",
+    "subtopic": "custom-exceptions",
+    "description": "A developer building a membership registration system needs to raise a different, specifically catchable error for an empty name versus an invalid age, so each can get its own tailored response. What is the best design?",
+    "explanation": "Define two separate custom exception classes, such as `EmptyNameError(Exception)` and `InvalidAgeError(Exception)`, each inheriting from `Exception`, so calling code can list two distinct except clauses and respond completely differently to each genuinely different problem.",
+    "options": [
+      "Define one class that inherits from both problems simultaneously",
+      "Define two separate classes, each inheriting from `Exception`, with a clearly distinct name",
+      "Raise the same `ValueError` for both problems, using only different message text - keeps both errors indistinguishable by type, defeating the goal of separate handling",
+      "Use return codes instead of any exception at all"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "understand",
+    "subtopic": "defensive-programming",
+    "description": "A signup page for a fitness app checks user input like this before accepting it:\n```python\nage = input('Enter your age: ')\nif not age.isdigit():\n    print('Please enter digits only.')\nelse:\n    print('Thank you.')\n```\nWhat real limitation does this condition-only approach have?",
+    "explanation": "This rejects bad input with a clear message, but it never asks again; a user who mistypes once is simply done, forced to rerun the entire script from the top, since there is no loop to re-prompt for valid input.",
+    "options": [
+      "It technically accepts any input at all regardless of validity",
+      "It technically raises a `SyntaxError` whenever bad input is entered",
+      "It technically cannot detect invalid input of any kind at all",
+      "It rejects bad input but never asks again, since there is no loop"
+    ],
+    "answer": "D"
+  },
+  {
+    "set": 2,
+    "difficulty": "hard",
+    "bloom": "analyze",
+    "subtopic": "defensive-programming",
+    "description": "A developer building a food-delivery app's age-verification step is deciding how to validate numeric input most safely. Why might try/except around `int()` conversion be more robust than relying only on a `.isdigit()` condition check beforehand?",
+    "explanation": "The `.isdigit()` check quietly assumes a very specific kind of bad input, text instead of digits, but does not protect against every possible failure a more complex conversion might hit; try/except is often more general and robust than chaining condition after condition trying to anticipate every bad shape in advance.",
+    "options": [
+      "try/except runs faster in every case",
+      "try/except is more general, since `.isdigit()` only anticipates one specific kind of bad input",
+      "`isdigit()` is deprecated and no longer works in modern Python - false - `isdigit()` still works fine, it's simply narrower in what it catches",
+      "`isdigit()` cannot be used inside a while loop"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "medium",
+    "bloom": "analyze",
+    "subtopic": "defensive-programming",
+    "description": "A payment calculation in a ride-sharing app's fare estimator receives a negative amount due to what looks like a bug deep in the calling code. According to robust design principles, what is usually the better choice?",
+    "explanation": "Robust design is not about catching everything; an unexpected, unanticipated bug deep in your own logic is usually best left to fail loudly during development, since a clear crash and traceback is more useful and honest than silently catching it and hiding the real diagnostic information.",
+    "options": [
+      "Retry the calculation three times before giving up",
+      "Usually let it fail loudly, since a clear crash is more useful than hiding an unanticipated bug",
+      "Convert it into a custom exception type and ignore it - defining a custom exception then ignoring it still hides the underlying bug",
+      "Catch it silently and substitute a default of zero"
+    ],
+    "answer": "B"
+  },
+  {
+    "set": 2,
+    "difficulty": "hard",
+    "bloom": "analyze",
+    "subtopic": "exception-handling-patterns",
+    "description": "A converter catches broad `Exception`, hiding unrelated programming errors. What is the smallest correct change when invalid numeric text is the expected failure?",
+    "explanation": "Catching `ValueError` handles the anticipated conversion failure while allowing unrelated defects to remain visible.",
+    "options": [
+      "Replace `except Exception` with `except ValueError`",
+      "Catch every possible base exception and silently return `None`",
+      "Delete the conversion and accept every input as valid text",
+      "Rewrite the whole application around return codes"
+    ],
+    "answer": "A"
+  }
+]

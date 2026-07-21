@@ -18,6 +18,22 @@ Learning to think in `tables`, `rows`, and `columns`, rather than in loose freef
 
 **Definition:** A relational `database` is, at its heart, nothing more mysterious than Meera's ruled grid: a named `table` holding `rows` of the same kind of thing, with `columns` that describe one consistent fact about every single `row`.
 
+<!--
+IMAGE PROMPT  ->  generate as images/01_intro_tables_rows_and_columns_the_relational_way_of_th.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Meera teaches Class 10 at a school in Pune, and every exam season she ends up with the same forty loose sheets of paper on her desk, one per student, each filled in by hand: a name at the top, then Maths, Science, and English marks scribbled underneath in.
+
+ON-IMAGE TEXT: show a short bold title "Tables Rows And Columns The Relational Way Of" plus only these few labels, large and legible: Order, Tables, Columns. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for tables rows and columns the relational way of](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_tables_rows_and_columns_the_relational_way_of_th.png)
+
 ## From a Pile of Sheets to a Table
 
 Here is roughly what Meera's grid looks like once she has ruled it out properly.
@@ -68,7 +84,7 @@ Notice what this small grid buys her. Every student's information lives in exact
 
 This is precisely what a relational `database` does at a much larger scale. Instead of forty loose sheets, it might hold four hundred thousand student records, and instead of a ruled notebook page, it stores the grid as a proper structure the software understands. But the underlying idea is identical to what Meera arrived at with a pencil and a ruler.
 
-![Loose student mark sheets becoming a uniform Students table that Meera can scan quickly](images/01_pile_of_sheets_to_students_table.png)
+![Loose student mark sheets becoming a uniform Students table that Meera can scan quickly](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_pile_of_sheets_to_students_table.png)
 
 ## A Table Is a Named Collection of the Same Kind of Thing
 
@@ -81,7 +97,7 @@ Two ideas fall out of this naturally:
 - A **`row`** is one specific instance of the thing the `table` is about. In the grid above, the `row` for roll number 103 is Divya Nair specifically, her marks and nobody else's. Add a new student to the class, and you add exactly one new `row`. Databases sometimes call a `row` a "record" or a "tuple," but the idea stays the same: one `row`, one instance.
 - A **`column`** is one named attribute that every `row` in the `table` has, whether or not that particular `row`'s value is exciting. Every student has a Maths score, even the student who scored zero. Every student has a Name, even if two students happen to share one. A `column` defines a slot that exists for every `row`, consistently, so that the same question ("what is this student's Science mark?") always has a predictable place to be answered from.
 
-![A Students table showing the table, one row, one column, and the cell where they meet](images/02_table_row_column_cell_anatomy.png)
+![A Students table showing the table, one row, one column, and the cell where they meet](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_table_row_column_cell_anatomy.png)
 
 ## Why Rows Must Stay Uniform
 

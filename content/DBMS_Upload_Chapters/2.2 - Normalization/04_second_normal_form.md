@@ -51,7 +51,9 @@ Every `row` here is already in 1NF, each cell holds one atomic value, no comma-s
 - Quantity genuinely depends on both OrderID and ProductID together, since the same product ordered in two different orders can have two completely different quantities.
 - ProductName and ProductPrice, though, do not care about OrderID at all, they are fully settled by ProductID alone. This mismatch, where some `columns` lean on only part of a `composite key` rather than the whole thing, is exactly what **Second `Normal Form`**, or 2NF, exists to catch and correct.
 
-![Second Normal Form showing ProductName and ProductPrice depending only on ProductID, not the full composite key](images/07_second_normal_form_partial_dependency.png)
+![Second Normal Form showing ProductName and ProductPrice depending only on ProductID, not the full composite key](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_second_normal_form_partial_dependency.png)
+
+**Definition:** Second `Normal Form` asks a `table` with a `composite key` one pointed question: does every non-key `column` genuinely need the whole key, or is some `column` really only attached to part of it?
 
 ## Second Normal Form Builds Directly on First Normal Form
 
@@ -167,7 +169,7 @@ Now A4 Notebook's name and price exist exactly once, in one `row` of Products, n
 
 OrderItems still records exactly what each order actually needs, which product, in what quantity, tied to which order, without dragging along facts that were never really about the order line in the first place.
 
-![Fixing 2NF by moving ProductName and ProductPrice into a Products table keyed by ProductID](images/08_second_normal_form_split_products.png)
+![Fixing 2NF by moving ProductName and ProductPrice into a Products table keyed by ProductID](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_second_normal_form_split_products.png)
 
 ## Why This Matters Only When the Key Is Composite
 

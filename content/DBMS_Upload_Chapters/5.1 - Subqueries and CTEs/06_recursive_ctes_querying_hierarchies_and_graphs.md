@@ -6,6 +6,10 @@ A self `join` can only ever reach exactly one level up per `join` written, so an
 
 A **`recursive CTE`** solves this by repeating its own logic against its own growing result, one level at a time, until nothing new is left to add.
 
+**Definition:** A `recursive CTE` repeats its own logic against a growing result set until no new `rows` appear, which is exactly the tool needed for hierarchies and graphs whose depth is not known in advance, whether that means walking up an org chart to find every manager above a person or walking down to find every report beneath one.
+
+![Intro visual for recursive ctes querying hierarchies and graphs](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_recursive_ctes_querying_hierarchies_and_graphs.png)
+
 ## The Shape of the Hierarchy
 
 The `employees` `table` now includes a few more reporting levels to make the hierarchy worth walking.
@@ -29,7 +33,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE employees (
     employee_id INTEGER PRIMARY KEY,
     employee_name TEXT,
@@ -53,22 +57,12 @@ Ananya sits at the top with no manager, Rajat and Meghna report to her, Karan an
 
 A `recursive CTE` has two parts `joined` by `UNION ALL`: a base case that starts the recursion, and a recursive case that repeats, each time building on the previous round's result.
 
-```postgresql with=init.sql
-WITH RECURSIVE reporting_chain AS (
-    SELECT employee_id, employee_name, manager_id, 1 AS level
-    FROM employees
-    WHERE employee_id = 6
-
-    UNION ALL
-
-    SELECT e.employee_id, e.employee_name, e.manager_id, reporting_chain.level + 1
-    FROM employees e
-    JOIN reporting_chain ON e.employee_id = reporting_chain.manager_id
-)
-SELECT employee_name, level
-FROM reporting_chain
-ORDER BY level;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafvtr" 
+ width="100%"
+></iframe>
 
 The base case, `WHERE employee_id = 6`, starts with just Farhan Sheikh, at level 1. The recursive case then `joins` `employees` back to `reporting_chain` itself, `e.employee_id = reporting_chain.manager_id`, finding whoever manages the person just added, and that newly found manager becomes part of `reporting_chain` for the next round:
 
@@ -103,7 +97,7 @@ Expected output:
 
 The `database` repeats the recursive case automatically, each round adding one more level up the chain, and stops on its own the moment a round produces no new `rows`, which happens once it tries to find a manager for Ananya and finds none.
 
-![A recursive CTE walking upward through a manager chain one level at a time](images/11_recursive_cte_walks_up_manager_chain.png)
+![A recursive CTE walking upward through a manager chain one level at a time](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_recursive_cte_walks_up_manager_chain.png)
 
 ## Why RECURSIVE and UNION ALL Are Both Required
 
@@ -116,22 +110,12 @@ Two pieces of syntax are both required, for different reasons:
 
 The same recursive structure works in the opposite direction, finding every employee under a given manager instead of every manager above a given employee, just by flipping which side of the `join` condition matches which `column`.
 
-```postgresql with=init.sql
-WITH RECURSIVE team_below AS (
-    SELECT employee_id, employee_name, manager_id, 1 AS level
-    FROM employees
-    WHERE employee_id = 1
-
-    UNION ALL
-
-    SELECT e.employee_id, e.employee_name, e.manager_id, team_below.level + 1
-    FROM employees e
-    JOIN team_below ON e.manager_id = team_below.employee_id
-)
-SELECT employee_name, level
-FROM team_below
-ORDER BY level;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafw64" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -146,7 +130,7 @@ Expected output:
 
 Starting from Ananya at level 1, the recursive case now matches `e.manager_id = team_below.employee_id`, finding everyone who reports to whoever was just added, which walks down the org chart instead of up it. This returns all six employees, since every person in the `table` eventually traces back to Ananya, with `level` showing how many steps down from her each one sits.
 
-![A recursive CTE walking downward through the team tree from a manager](images/12_recursive_cte_walks_down_team_tree.png)
+![A recursive CTE walking downward through the team tree from a manager](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_recursive_cte_walks_down_team_tree.png)
 
 ## Recursive CTEs at a Glance
 
@@ -185,9 +169,12 @@ Starting from Ananya at level 1, the recursive case now matches `e.manager_id = 
 
 Find every employee who reports, directly or indirectly, to Rajat Bhatia, including how many levels below him each one sits. Write a `recursive CTE` against the `employees` `table` above, starting from Rajat.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafwf8" 
+ width="100%"
+></iframe>
 
 If your `query` bases the recursion on `WHERE employee_id = 2` and recurses with `e.manager_id = team_below.employee_id`, it returns Rajat himself at level 1, Karan and Divya at level 2, and Farhan at level 3, correctly walking down every branch under Rajat regardless of depth.
 

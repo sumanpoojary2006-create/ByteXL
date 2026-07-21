@@ -4,7 +4,7 @@ Omkar is pulling together a report of Computer Science offerings for his advisor
 
 What he actually needs is a way to tell the `database` "only hand me back the `rows` where this is true," and that instruction has a name: the **`WHERE` clause**.
 
-![WHERE acting as a filter gate that keeps matching Computer Science rows and blocks other rows](images/01_where_filter_keeps_matching_rows.png)
+![WHERE acting as a filter gate that keeps matching Computer Science rows and blocks other rows](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_where_filter_keeps_matching_rows.png)
 
 **Definition:** The `WHERE` clause is what turns a `table` dump into an actual answer: it sits between `FROM` and `ORDER BY`, and it tests every `row` against a condition before deciding what makes it into the result.
 
@@ -95,7 +95,7 @@ WHERE department = 'Mathematics'
 ORDER BY title;
 ```
 
-![SQL clause order showing WHERE filtering rows before ORDER BY sorts and LIMIT trims](images/02_where_clause_order.png)
+![SQL clause order showing WHERE filtering rows before ORDER BY sorts and LIMIT trims](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_where_clause_order.png)
 
 ## Clauses at a Glance
 

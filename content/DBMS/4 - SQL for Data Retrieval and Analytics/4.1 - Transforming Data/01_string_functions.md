@@ -8,7 +8,7 @@ Meera runs the online ordering system for a chain of five restaurants, and the `
 
 None of this needs a new `column` or a data-entry fix from head office. It needs SQL to reshape the text on the way out, using a set of built-in **string `functions`** that every relational `database` ships with.
 
-![CONCAT joining branch name and locality into one restaurant display name](images/01_concat_branch_locality_display_name.png)
+![CONCAT joining branch name and locality into one restaurant display name](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_concat_branch_locality_display_name.png)
 
 **Definition:** String `functions` let a `query` reshape text as it leaves the `table`, joining `columns` together, normalizing case, stripping stray whitespace, and pulling out just the substring that matters, all without ever editing the stored data.
 
@@ -119,7 +119,7 @@ Expected output:
 - `TRIM` removes whitespace from both ends of a string, and `LENGTH` counts characters, which is how Meera confirmed the raw `column` had extra characters an eyeball check could not catch.
 - Comparing `raw_length` against `clean_length` for each `row` makes the hidden whitespace visible instead of invisible.
 
-![LOWER and TRIM cleaning a messy email into a normalized contact address](images/02_lower_trim_clean_email.png)
+![LOWER and TRIM cleaning a messy email into a normalized contact address](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_lower_trim_clean_email.png)
 
 ## Pulling Out Part of a String
 

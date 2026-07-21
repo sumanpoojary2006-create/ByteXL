@@ -9,6 +9,22 @@ Both gaps are stored as `NULL`, and both cause the same problem once Vikram trie
 
 **Definition:** `COALESCE` and `NULLIF` are small `functions` that solve a large, recurring problem: real data has gaps, and a `query` that ignores those gaps produces blank cells, broken math, or misleading duplicates.
 
+<!--
+IMAGE PROMPT  ->  generate as images/04_intro_nullhandling_functions.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Vikram maintains the employee directory for a mid-sized company, and the employees table has two honest gaps: - Not every employee has a secondary phone number on file. - Not every employee reports to a manager, since the CEO does not report to anyone. Both.
+
+ON-IMAGE TEXT: show a short bold title "Nullhandling Functions" plus only these few labels, large and legible: Table, Nullhandling, Functions. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for nullhandling functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_nullhandling_functions.png)
+
 ## Filling In a Default When a Value Is Missing
 
 The directory needs a phone number to display for every employee, even the ones with no secondary number recorded, Rather than leaving those `rows` blank, Vikram wants to fall back to the primary number, and if even that is missing, fall back to a placeholder.
@@ -70,7 +86,7 @@ Expected output:
 - For Ayesha, both phone `columns` are `NULL`, so it falls all the way through to the literal text `'Not on file'`.
 - This is the standard pattern for showing a sensible default instead of a blank space.
 
-![COALESCE choosing the first available phone value as a contact number](images/07_coalesce_first_available_fallback.png)
+![COALESCE choosing the first available phone value as a contact number](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_coalesce_first_available_fallback.png)
 
 Tracing a few employees through the fallback chain makes the left-to-right scan concrete:
 
@@ -129,7 +145,7 @@ Expected output:
 - For Manoj, `secondary_phone` equals `primary_phone`, so the result is `NULL` instead of a duplicate number.
 - For every other employee, the two phone values differ, so `real_secondary_phone` just passes through whatever `secondary_phone` already held.
 
-![NULLIF turning a duplicated secondary phone into NULL](images/08_nullif_duplicate_to_null.png)
+![NULLIF turning a duplicated secondary phone into NULL](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_nullif_duplicate_to_null.png)
 
 ## Combining Both to Handle Messy Real Data
 

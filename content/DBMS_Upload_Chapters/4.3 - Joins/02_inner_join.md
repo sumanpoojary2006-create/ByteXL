@@ -5,6 +5,10 @@
 - What matters is understanding exactly what "inner" means: an inner `join` keeps a `row` in the result only when a match is found on both sides of the `join` condition.
 - Rows with no match on either side are silently left out, and that quiet exclusion is worth understanding precisely before relying on it.
 
+**Definition:** `INNER JOIN`, and its shorthand `JOIN`, keeps only the `rows` where both sides of the `join` condition find a partner, quietly dropping everything else, which makes it the right choice whenever unmatched `rows` carry no useful information for the question at hand.
+
+![Intro visual for inner join](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_inner_join.png)
+
 ## Confirming the Match-Only Behavior
 
 The same delivery `schema` from the previous lesson is the setup here, with one detail worth noticing: customer 5, Neha Bhatt, has never placed an order, and restaurant 4, Taco Town, has never received one.
@@ -47,7 +51,7 @@ The OneCompiler activity keeps setup and practice separate. `init.sql` creates a
 
 ## Hands-On Setup: Prepare the Data
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE customers (
     customer_id INTEGER PRIMARY KEY,
     customer_name TEXT,
@@ -92,11 +96,12 @@ INSERT INTO orders (order_id, customer_id, restaurant_id, amount, order_date) VA
 
 Before running the active query, read its `SELECT` list and clauses against the displayed source rows. Then compare the returned values with the expected output to see exactly what the function or operation changed.
 
-```postgresql with=init.sql
-SELECT customers.customer_name, orders.order_id, orders.amount
-FROM customers
-INNER JOIN orders ON customers.customer_id = orders.customer_id;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahp6s" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -111,15 +116,18 @@ Expected output:
 
 This returns six `rows`, one per order, but Neha Bhatt never appears anywhere in the output, even though she is a perfectly valid `row` in `customers`. She has no matching `row` in `orders`, so the inner `join` excludes her entirely rather than showing her with blank order `columns`. This is the defining trait of `INNER JOIN`: no match means no `row` in the result, on either side.
 
-![INNER JOIN keeping only rows that have a matching partner on both sides](images/03_inner_join_matched_only.png)
+![INNER JOIN keeping only rows that have a matching partner on both sides](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_inner_join_matched_only.png)
 
 ## Checking the Row Count Before and After
 
 It helps to compare the `row` count of a `table` alone against the `row` count after joining, to see exactly how many `rows` an inner `join` keeps.
 
-```postgresql with=init.sql
-SELECT COUNT(*) AS total_customers FROM customers;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahpfu" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -127,11 +135,12 @@ Expected output:
 | --- |
 | 5 |
 
-```postgresql with=init.sql
-SELECT COUNT(*) AS customers_with_orders
-FROM customers
-INNER JOIN orders ON customers.customer_id = orders.customer_id;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahps9" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -182,19 +191,18 @@ That number is higher than 5 because Aditi Kulkarni and Rohan Das each placed mo
 
 The inner `join` `row` count depends entirely on how many matches exist, not on how many `rows` either original `table` has.
 
-![INNER JOIN producing two joined rows when one customer matches two orders](images/04_inner_join_one_to_many_rows.png)
+![INNER JOIN producing two joined rows when one customer matches two orders](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_inner_join_one_to_many_rows.png)
 
 ## Adding a WHERE Clause on Top of an Inner Join
 
 Once `tables` are joined, `WHERE` filters the combined `rows` exactly the way it filters a single `table`, since after the `join` runs, the `database` is working with one wide result set.
 
-```postgresql with=init.sql
-SELECT customers.customer_name, restaurants.restaurant_name, orders.amount
-FROM orders
-INNER JOIN customers ON orders.customer_id = customers.customer_id
-INNER JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id
-WHERE orders.amount > 400;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahq3b" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -249,9 +257,12 @@ The next lesson introduces a `join` type built for the opposite situation, when 
 
 Zoya wants a list of every restaurant that has actually received at least one order, with no duplicates needed, just the restaurant names that appear in `orders`. Write a `query` against `orders` and `restaurants` above using `INNER JOIN` and `DISTINCT` together.
 
-```postgresql with=init.sql
--- Write your query below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkahqjb" 
+ width="100%"
+></iframe>
 
 If your `query` is `SELECT DISTINCT restaurants.restaurant_name FROM orders INNER JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id;`, it returns Pizza Palace, Sushi Central, and Burger Barn, and Taco Town is correctly missing, since it has never matched an order.
 

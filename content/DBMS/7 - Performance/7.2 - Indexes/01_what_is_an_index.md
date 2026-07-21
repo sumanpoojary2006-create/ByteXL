@@ -6,6 +6,22 @@ Finding "Rathi, Sanjay" in a phone book does not mean reading every entry from t
 
 **Definition:** An `index` is a separate, sorted structure built on one or more `columns` that lets the `database` jump directly to matching `rows` instead of scanning the whole `table`, trading extra storage and slightly slower writes for dramatically faster reads on the `indexed` `column`, the same trade a phone book's alphabetical sorting makes over a randomly ordered list of names.
 
+<!--
+IMAGE PROMPT  ->  generate as images/01_intro_what_is_an_index.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: The previous chapter left Priya with a precise problem: a full table scan checks every row, and its cost grows with table size, even when a query only needs a tiny handful of matching rows. An old-fashioned phone book solves a strikingly similar problem.
+
+ON-IMAGE TEXT: show a short bold title "What Is An Index" plus only these few labels, large and legible: Table, Row, Query. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for what is an index](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_what_is_an_index.png)
+
 ## Searching Without an Index
 
 The `orders` `table` from the storage chapter, large enough for the cost difference to be visible, sets up the comparison. The closing `ANALYZE` statement refreshes the statistics the `query planner` uses to estimate how many `rows` a condition will match; every setup in this chapter runs it after loading data, and it returns in full detail alongside `EXPLAIN` in the next chapter.
@@ -59,7 +75,7 @@ Expected output:
 
 There is no structure supporting a search on `customer_name`, so the plan reports a `sequential scan`, checking all 10000 `rows` to find the one whose name matches, exactly the phone-book equivalent of reading every page from the beginning because nothing is organized to help.
 
-![Without an index the database scans all rows; with an index it jumps to the match](images/01_without_index_vs_with_index_shortcut.png)
+![Without an index the database scans all rows; with an index it jumps to the match](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_without_index_vs_with_index_shortcut.png)
 
 ## Creating an Index and Watching the Plan Change
 
@@ -82,7 +98,7 @@ Expected output:
 
 The plan changes to an "`Index Scan`," using `idx_orders_customer_name` to jump almost directly to the matching `row`, rather than checking all 10000. The `index` itself is sorted by `customer_name`, the same way a phone book is sorted by last name, so the `database` can narrow down to the matching entries the same way a reader flips to the right section of a phone book instead of starting from page one.
 
-![An index stores key values with pointers back to the full table rows](images/02_index_key_plus_pointer.png)
+![An index stores key values with pointers back to the full table rows](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_index_key_plus_pointer.png)
 
 ## What an Index Actually Is
 

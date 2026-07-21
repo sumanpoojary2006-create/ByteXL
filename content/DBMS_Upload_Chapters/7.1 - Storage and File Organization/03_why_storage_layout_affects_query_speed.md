@@ -4,6 +4,10 @@ The previous two lessons established two physical facts: data is read in whole p
 
 This lesson connects those two facts directly to something Priya can actually see happen: without any help, finding `rows` in a heap `table` means reading every single page, checking every single `row`, an approach called a `full table scan`, and it gets slower in direct proportion to how large the `table` grows.
 
+**Definition:** Without a supporting structure on the `column` being filtered, a heap-organized `table` forces a `query` into a `full table scan`, reading every single page and checking every single `row`, with cost that scales directly with `table` size regardless of how few `rows` the `query` actually needs; the `primary key` search escaped this fate only because PostgreSQL quietly built an `index` for it.
+
+![Intro visual for why storage layout affects query speed](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_why_storage_layout_affects_query_speed.png)
+
 ## Watching a Full Table Scan Happen
 
 A larger `table` makes the cost of a full scan easy to observe directly.
@@ -26,7 +30,7 @@ The OneCompiler activity keeps preparation and practice separate. `init.sql` cre
 
 ## Hands-On Setup: Prepare the Database
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE orders (
     order_id INTEGER PRIMARY KEY,
     customer_name TEXT,
@@ -40,9 +44,12 @@ FROM generate_series(1, 5000) AS i;
 
 Before running each active statement, predict which rows, database objects, or server behavior should change. Then compare the result with the expected output or observation supplied beneath the statement.
 
-```postgresql with=init.sql
-EXPLAIN SELECT * FROM orders WHERE customer_name = 'Customer 3000';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajk5j" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -57,10 +64,12 @@ Expected output:
 - The plan here reports a "Seq Scan," short for `sequential scan`, meaning the `database` intends to read the `table` page by page, from the beginning, checking every `row`'s `customer_name` against 'Customer 3000' until it reaches the end.
 - Even though this `query` is only interested in exactly one `row` out of 5000, the heap organization from the previous lesson gives the `database` no shortcut, no way to know in advance which page holds that customer without checking.
 
-```postgresql with=init.sql
-SELECT COUNT(DISTINCT (ctid::text::point)[0]) AS pages_a_full_scan_must_read
-FROM orders;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajkeu" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -70,15 +79,18 @@ Expected output:
 
 Using the same page-number extraction from the first lesson, this counts how many distinct pages the `table` occupies a `sequential scan` has to read every single one of them, even for this single-`row` lookup, because a `sequential scan`'s cost scales with the size of the whole `table`, not with how many `rows` the `query` actually needs, whether that need is 1 `row` or 1000.
 
-![A full table scan checks every page even when only one target row is needed](images/05_full_scan_checks_every_page.png)
+![A full table scan checks every page even when only one target row is needed](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_full_scan_checks_every_page.png)
 
 ## Why the Primary Key Search Behaves Differently
 
 Running the same shape of `query`, but filtering on `order_id`, the `table`'s `primary key`, produces a completely different plan.
 
-```postgresql with=init.sql
-EXPLAIN SELECT * FROM orders WHERE order_id = 3000;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajkqw" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -95,21 +107,18 @@ The physical reality is that a `primary key` `constraint` does not change how `r
 
 Nothing about the `table`'s layout changed between these two `queries`; the only difference is that one `column` has a supporting structure and the other does not. That structure, the `index`, is exactly what the next chapter covers in depth.
 
-![An index gives the database a shortcut to the page instead of scanning many pages](images/06_index_scan_jumps_to_page.png)
+![An index gives the database a shortcut to the page instead of scanning many pages](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_index_scan_jumps_to_page.png)
 
 ## How Table Size Directly Predicts Scan Cost
 
 Doubling the number of `rows` in a heap `table` roughly doubles the number of pages it occupies, and a full scan reads every page, so a full scan's cost grows linearly with `table` size, a relationship worth being able to reason about directly.
 
-```postgresql with=init.sql
-SELECT pg_size_pretty(pg_relation_size('orders')) AS current_size;
-
-INSERT INTO orders (order_id, customer_name, amount)
-SELECT i, 'Customer ' || i, (i * 12.5)::NUMERIC(10,2)
-FROM generate_series(5001, 10000) AS i;
-
-SELECT pg_size_pretty(pg_relation_size('orders')) AS size_after_doubling_rows;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajm2y" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -125,7 +134,7 @@ Doubling the `row` count roughly doubles the reported `table` size, and a full s
 
 This is precisely why "it worked fine on my small test `table`" is not evidence that a `query` will stay fast once real data volume arrives; a `full table scan`'s cost is a direct, predictable `function` of `table` size.
 
-![As more rows create more pages, a full scan has more pages to read](images/07_more_rows_more_pages_full_scan_cost.png)
+![As more rows create more pages, a full scan has more pages to read](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_more_rows_more_pages_full_scan_cost.png)
 
 ## What a Full Table Scan Is and Is Not
 
@@ -167,9 +176,12 @@ A full scan is not always the wrong choice:
 
 Run `EXPLAIN` on a `query` filtering the `orders` `table` above for `amount > 120000`, a condition only a small fraction of `rows` will satisfy (`amount` tops out at 125000.00 for `order_id = 10000`), and note in a comment whether the plan shows a `sequential scan` and why that is expected given everything covered in this lesson.
 
-```postgresql with=init.sql
--- Write your query and comment below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkajmed" 
+ width="100%"
+></iframe>
 
 Expected result and verification:
 

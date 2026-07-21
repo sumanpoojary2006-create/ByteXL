@@ -6,6 +6,22 @@
 
 **Definition:** `PARTITION BY` decides which `rows` share a window, and `ORDER BY` inside that same `OVER (...)` clause decides the sequence within it, together turning a flat per-group total into a `row`-by-`row` running calculation.
 
+<!--
+IMAGE PROMPT  ->  generate as images/02_intro_over_partition_by_and_order_by.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: - Leela's partitioned totals from the previous lesson treat every row in a salesperson's window as equally weighted, with no sense of sequence. - Her next request needs sequence to matter: "show me each of Nikhil's sales next to his running total up to and.
+
+ON-IMAGE TEXT: show a short bold title "Over Partition By And Order By" plus only these few labels, large and legible: Row, Order, Partition. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for over partition by and order by](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_over_partition_by_and_order_by.png)
+
 ## Ordering Rows Within a Window
 
 The same `sales` `table` applies here.
@@ -84,7 +100,7 @@ His June 5 sale shows 20500.00, the first two sales combined, and his June 10 sa
 - `PARTITION BY` decides which `rows` belong together at all.
 - `ORDER BY` decides the sequence within each of those groups.
 
-![PARTITION BY splitting rows into lanes and ORDER BY arranging each lane by date](images/03_partition_by_order_by_window_lanes.png)
+![PARTITION BY splitting rows into lanes and ORDER BY arranging each lane by date](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_partition_by_order_by_window_lanes.png)
 
 ```postgresql with=init.sql
 SELECT salesperson, sale_date, amount,
@@ -107,7 +123,7 @@ Expected output:
 
 Showing both `window functions` side by side makes the difference concrete: `running_total` grows `row` by `row` within each salesperson's partition, while `salesperson_total`, with no `ORDER BY`, stays fixed at that salesperson's grand total on every one of their `rows`. Both are legitimate `window functions` computed over the same partition; only the presence of `ORDER BY` changes what each `row`'s window actually includes.
 
-![A running total growing row by row in the order defined inside the window](images/04_running_total_ordered_window.png)
+![A running total growing row by row in the order defined inside the window](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_running_total_ordered_window.png)
 
 ## A Window With No PARTITION BY But With ORDER BY
 

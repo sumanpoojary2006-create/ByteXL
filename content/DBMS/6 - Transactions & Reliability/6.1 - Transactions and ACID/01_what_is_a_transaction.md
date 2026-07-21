@@ -8,6 +8,22 @@ The `database`'s answer to this problem is the **`transaction`**: a group of one
 
 **Definition:** A `transaction` groups one or more statements into a single unit that either commits entirely or rolls back entirely, closing the gap where a partial failure could otherwise leave data in a broken, half-changed state.
 
+<!--
+IMAGE PROMPT  ->  generate as images/01_intro_what_is_a_transaction.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Rahul is building the money-transfer feature for a banking app, and the logic sounds simple: subtract the amount from one account, add it to another. Written as two separate UPDATE statements, it works perfectly in every test he runs, until he imagines the.
+
+ON-IMAGE TEXT: show a short bold title "What Is A Transaction" plus only these few labels, large and legible: Transaction, Rahul, Building. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for what is a transaction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_what_is_a_transaction.png)
+
 ## Two Statements That Need to Move as One
 
 The `accounts` `table` holds a simple balance per account, the starting point for Rahul's transfer feature.
@@ -87,7 +103,7 @@ Expected output:
 
 The two `UPDATE` statements are now bound together by `BEGIN` and `COMMIT`. If anything went wrong between them, a crash, a `constraint` violation, an explicit cancellation, the `database` guarantees that neither change takes effect, not just the first one, not just the second. Only once `COMMIT` runs successfully does either change become permanent and visible to anyone else looking at the `table`.
 
-![A transaction wrapping debit and credit updates so they move as one unit](images/01_transaction_wraps_debit_credit.png)
+![A transaction wrapping debit and credit updates so they move as one unit](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_transaction_wraps_debit_credit.png)
 
 ## Undoing a Transaction with ROLLBACK
 
@@ -126,7 +142,7 @@ Expected output 2:
 
 The `SELECT` immediately after the two `UPDATE` statements, while still inside the `transaction`, shows the changed balances, 45000.00 and 17000.00, because within the same `transaction`, a `connection` can see its own uncommitted changes. But once `ROLLBACK` runs, those changes are discarded entirely, and the final `SELECT` shows both accounts back at their original values, 50000.00 and 12000.00, exactly as if the `transaction` had never happened.
 
-![ROLLBACK undoing provisional changes before they are committed](images/02_rollback_undoes_uncommitted_changes.png)
+![ROLLBACK undoing provisional changes before they are committed](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_rollback_undoes_uncommitted_changes.png)
 
 ## Why Transactions Matter Beyond Money
 

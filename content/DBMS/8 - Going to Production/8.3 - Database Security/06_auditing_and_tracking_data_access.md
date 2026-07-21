@@ -4,6 +4,22 @@ The security mechanisms covered so far, `roles`, privileges, `least privilege`, 
 
 **Definition:** Auditing, typically built on the `trigger` mechanism for writes and server-level logging for reads, records who did what and when, providing the after-the-fact trail that prevention mechanisms like `row-level security` and `least privilege` cannot offer on their own, valuable for detecting misuse, investigating incidents, and meeting compliance requirements.
 
+<!--
+IMAGE PROMPT  ->  generate as images/06_intro_auditing_and_tracking_data_access.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: The security mechanisms covered so far, roles, privileges, least privilege, row-level security, and injection prevention, all work to prevent unwanted access before it happens. Auditing is the complementary discipline for after the fact: recording who did.
+
+ON-IMAGE TEXT: show a short bold title "Auditing And Tracking Data Access" plus only these few labels, large and legible: Row, Auditing, Tracking. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for auditing and tracking data access](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_auditing_and_tracking_data_access.png)
+
 ## Recording Who Changed a Row, Using a Trigger
 
 The `trigger` mechanism from earlier in this course is the natural building block for an audit trail, extended here to capture which `role` made a change, not just what changed.
@@ -128,7 +144,7 @@ Expected output:
 
 The audit entry shows `action = 'UPDATE'`, `changed_by` recording exactly which `role` made the change, and both the `row`'s state before, `status: in_transit`, and after, `status: delivered`, preserved in `old_data` and `new_data`. This is a complete, precise record: not just that something changed, but exactly what changed, who changed it, and when.
 
-![A trigger-based audit log records who changed a row and the old and new values](images/11_audit_trigger_records_who_old_new.png)
+![A trigger-based audit log records who changed a row and the old and new values](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_audit_trigger_records_who_old_new.png)
 
 ## Auditing Reads, Not Just Writes
 
@@ -173,7 +189,7 @@ An audit trail does not stop an unauthorized action from happening; `row-level s
 - Investigating an incident after the fact to understand exactly what happened
 - Satisfying compliance requirements that specifically demand a record of who touched sensitive data, independent of whether that access was ultimately appropriate
 
-![Prevention blocks unwanted access, while auditing records activity for later investigation](images/12_auditing_complements_prevention.png)
+![Prevention blocks unwanted access, while auditing records activity for later investigation](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_auditing_complements_prevention.png)
 
 ## Auditing at a Glance
 

@@ -10,6 +10,22 @@ Vivek is not seeing a bug. He is running into the honest cost of the very discip
 
 **Definition:** Normalization and denormalization are not rival philosophies where one side is simply right, they are two ends of a genuine trade-off between safe, anomaly-free writes and fast, uncombined reads, and a mature `schema` uses each where it earns its keep.
 
+<!--
+IMAGE PROMPT  ->  generate as images/07_intro_when_to_denormalize_tradeoffs_in_practice.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Vivek leads operations reporting at Sunrise Traders, and he is, on paper, thrilled with what Priya, Meera, Tara, Arjun, Naina, and Dev have built together. Customers, Products, Orders, OrderItems, InspectorSpecialty, every fact now lives in exactly one place.
+
+ON-IMAGE TEXT: show a short bold title "When To Denormalize Tradeoffs In Practice" plus only these few labels, large and legible: Table, Denormalize, Tradeoffs. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for when to denormalize tradeoffs in practice](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_intro_when_to_denormalize_tradeoffs_in_practice.png)
+
 ## What Normalization Cost Sunrise Traders, in Exchange for What It Fixed
 
 Every split Priya's team performed traded one thing for another. The old combined Orders `table` was fast to read from, because everything needed for a report sat in a single `table` with no combining required, but it was dangerous to write to, because the same fact was repeated everywhere and could quietly fall out of sync.
@@ -40,7 +56,7 @@ The new, normalized `schema` is the mirror image, safe to write to, because each
 
 Neither design is simply "correct" in isolation. Normalization is the right default because most everyday work against a `database`, placing an order, updating a customer's address, adding a new product, is a write, and writes are exactly where anomalies do their damage. But Vivek's monthly report is overwhelmingly a read, run against months of accumulated history, and reads are where the cost of combining many small `tables` becomes most visible.
 
-![Normalization and denormalization compared as a tradeoff between safe writes and fast reads](images/13_denormalization_tradeoff_scale.png)
+![Normalization and denormalization compared as a tradeoff between safe writes and fast reads](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/13_denormalization_tradeoff_scale.png)
 
 ## Denormalization: Paying With Redundancy to Buy Back Speed
 
@@ -83,7 +99,7 @@ The danger in all of this is treating denormalization as an excuse to skip the c
 
 The difference is that Vivek is choosing that risk deliberately, for one specific, measured bottleneck, rather than backing into it by accident the way the original combined Orders `table` did. A few habits keep the trade-off honest:
 
-![Disciplined denormalization using normalized source-of-truth tables and a refreshed reporting summary copy](images/14_disciplined_denormalization_refresh_copy.png)
+![Disciplined denormalization using normalized source-of-truth tables and a refreshed reporting summary copy](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/14_disciplined_denormalization_refresh_copy.png)
 
 - **Normalize first, always**, as the default shape of a `schema`, because most of what a system does day to day is write data, and writes are exactly where redundancy causes real damage.
 - **Denormalize only after a genuine, measured slowdown shows up**, not because combining `tables` sounds slow in theory. Vivek only built his reporting summary after finance's monthly report was demonstrably too slow against the properly normalized `tables`, not before.

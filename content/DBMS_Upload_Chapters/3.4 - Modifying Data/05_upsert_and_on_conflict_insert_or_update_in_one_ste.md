@@ -6,6 +6,10 @@ Worse, he cannot tell which is which until he checks, and checking first with a 
 
 What Aditya needs is a single statement that inserts a `row` if it is new and updates it if it already exists, and PostgreSQL provides exactly that with **`ON CONFLICT`**, the clause behind what is commonly called an upsert.
 
+**Definition:** An **upsert** is a single operation that inserts a new row when no matching row exists or updates the existing row when a uniqueness conflict occurs; PostgreSQL implements it with `INSERT ... ON CONFLICT`.
+
+![Intro visual for upsert and on conflict insert or update in](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_upsert_and_on_conflict_insert_or_update_in_one_s.png)
+
 ## Setting Up a Uniqueness Rule to Conflict Against
 
 The `students`, `courses`, and `enrollments` `tables` hold this data:
@@ -30,7 +34,7 @@ The `students`, `courses`, and `enrollments` `tables` hold this data:
 
 A setup file builds this starting point with `CREATE TABLE` and `INSERT INTO`. An upsert only makes sense once the `database` has a rule to check a new `row` against, so the `enrollments` `table` is created with a `UNIQUE (student_id, course_id)` `constraint`, which states plainly that the same student cannot be enrolled in the same course twice. That constraint line is what gives `ON CONFLICT` something concrete to react to; without it, PostgreSQL would have no rule saying two `rows` with the same student_id and course_id are a problem, and there would be nothing for an upsert to "conflict" against at all.
 
-![A UNIQUE student_id plus course_id rule detecting a duplicate enrollment conflict](images/09_upsert_unique_conflict_rule.png)
+![A UNIQUE student_id plus course_id rule detecting a duplicate enrollment conflict](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_upsert_unique_conflict_rule.png)
 
 ### Hands-On Practice: Prepare the Tables
 
@@ -38,7 +42,7 @@ The OneCompiler exercise uses two files. `init.sql` creates and populates the st
 
 First, `init.sql` prepares the source `tables`:
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE students (
     student_id INTEGER PRIMARY KEY,
     full_name TEXT,
@@ -104,13 +108,12 @@ PostgreSQL processed this in three steps:
 
 Keep the same `init.sql` file and change only the active query file:
 
-```postgresql with=init.sql
-INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade)
-VALUES (4, 2, 101, '2025-02-02', 'B+')
-ON CONFLICT (student_id, course_id)
-DO UPDATE SET grade = EXCLUDED.grade
-RETURNING enrollment_id, student_id, course_id, grade;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafh5v" 
+ width="100%"
+></iframe>
 
 ## The Same Statement, Genuinely Inserting
 
@@ -126,19 +129,18 @@ This time enrollment_id 5 appears in the result, a genuinely new `row`, because 
 
 The exact same statement Aditya used a moment ago to update an existing `row` here performs a plain insert instead, because `ON CONFLICT` only changes behavior when a conflict is actually detected; otherwise the `INSERT` proceeds exactly as it would have without the clause at all.
 
-![ON CONFLICT branching to INSERT when there is no conflict and UPDATE when there is one](images/10_upsert_insert_or_update_branch.png)
+![ON CONFLICT branching to INSERT when there is no conflict and UPDATE when there is one](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_upsert_insert_or_update_branch.png)
 
 ### Hands-On Practice: Upsert That Inserts
 
 Keep the same `init.sql` file and change only the active query file:
 
-```postgresql with=init.sql
-INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade)
-VALUES (5, 3, 102, '2025-02-10', NULL)
-ON CONFLICT (student_id, course_id)
-DO UPDATE SET grade = EXCLUDED.grade
-RETURNING enrollment_id, student_id, course_id, grade;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafhev" 
+ width="100%"
+></iframe>
 
 ## ON CONFLICT DO NOTHING for the Simpler Case
 
@@ -154,13 +156,12 @@ Nothing comes back from `RETURNING` at all, because student_id 1 and course_id 1
 
 Keep the same `init.sql` file and change only the active query file:
 
-```postgresql with=init.sql
-INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade)
-VALUES (6, 1, 101, '2025-02-01', 'A')
-ON CONFLICT (student_id, course_id)
-DO NOTHING
-RETURNING enrollment_id, student_id, course_id, grade;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafhrf" 
+ width="100%"
+></iframe>
 
 ## Why Not Just Check First, Then Decide
 
@@ -201,9 +202,12 @@ RETURNING enrollment_id, student_id, course_id, grade;
 
 Omkar Rane's Linear Algebra grade needs to be recorded for the first time as A-, using an upsert in case it was already partially submitted.
 
-```postgresql with=init.sql
--- Write an INSERT ... ON CONFLICT ... RETURNING below
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkafj8f" 
+ width="100%"
+></iframe>
 
 A working answer is `INSERT INTO enrollments (enrollment_id, student_id, course_id, enrolled_on, grade) VALUES (7, 1, 103, '2025-02-11', 'A-') ON CONFLICT (student_id, course_id) DO UPDATE SET grade = EXCLUDED.grade RETURNING enrollment_id, student_id, course_id, grade;`. Expected output, directly from the `RETURNING` clause:
 

@@ -4,7 +4,9 @@ Omkar is pulling together a report of Computer Science offerings for his advisor
 
 What he actually needs is a way to tell the `database` "only hand me back the `rows` where this is true," and that instruction has a name: the **`WHERE` clause**.
 
-![WHERE acting as a filter gate that keeps matching Computer Science rows and blocks other rows](images/01_where_filter_keeps_matching_rows.png)
+![WHERE acting as a filter gate that keeps matching Computer Science rows and blocks other rows](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_where_filter_keeps_matching_rows.png)
+
+**Definition:** The `WHERE` clause is what turns a `table` dump into an actual answer: it sits between `FROM` and `ORDER BY`, and it tests every `row` against a condition before deciding what makes it into the result.
 
 ## Filtering Rows Instead of Reading All of Them
 
@@ -43,7 +45,7 @@ The OneCompiler exercise uses two files. `init.sql` creates and populates only t
 
 First, `init.sql` prepares the dataset:
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE courses (
     course_id INTEGER PRIMARY KEY,
     title TEXT,
@@ -61,11 +63,12 @@ INSERT INTO courses (course_id, title, department, credits) VALUES
 
 Then the active query file applies the filter:
 
-```postgresql with=init.sql
-SELECT title, department, credits
-FROM courses
-WHERE department = 'Computer Science';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakbxp" 
+ width="100%"
+></iframe>
 
 Run the active query file. OneCompiler loads `init.sql` beside it, and the result contains the same two Computer Science courses shown above.
 
@@ -86,14 +89,14 @@ Both Mathematics courses survive the filter. `Discrete Mathematics` appears firs
 
 Try the explained query in the active file while keeping the same `init.sql` setup:
 
-```postgresql with=init.sql
-SELECT title, department
-FROM courses
-WHERE department = 'Mathematics'
-ORDER BY title;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakc9g" 
+ width="100%"
+></iframe>
 
-![SQL clause order showing WHERE filtering rows before ORDER BY sorts and LIMIT trims](images/02_where_clause_order.png)
+![SQL clause order showing WHERE filtering rows before ORDER BY sorts and LIMIT trims](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_where_clause_order.png)
 
 ## Clauses at a Glance
 
@@ -149,11 +152,12 @@ Every one of those is really the same idea underneath, a test that a `row` eithe
 
 Using the same `courses` table, write a query that returns the `title`, `department`, and `credits` of every Economics course. The condition to apply is `department = 'Economics'`.
 
-```postgresql with=init.sql
-SELECT title, department, credits
-FROM courses
-WHERE department = 'Economics';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakckh" 
+ width="100%"
+></iframe>
 
 Expected output:
 

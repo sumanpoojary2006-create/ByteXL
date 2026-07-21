@@ -48,6 +48,22 @@ The reason a `table` can pass 1NF, 2NF, and 3NF and still hide this kind of repe
 
 **Definition:** Boyce-Codd `Normal Form` closes the one gap 3NF leaves open: a `table` can satisfy every earlier rule and still repeat data whenever a functional dependency's determinant is not itself a `candidate key`, especially when the dependent `column` happens to be part of the `primary key` rather than sitting outside it.
 
+<!--
+IMAGE PROMPT  ->  generate as images/06_intro_boycecodd_normal_form.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Dev runs quality inspection at Sunrise Traders' warehouse, where every outgoing order gets checked before it ships. A single order can include several product categories, notebooks fall under Paper Goods, pens fall under Writing Instruments, and each category.
+
+ON-IMAGE TEXT: show a short bold title "Boycecodd Normal Form" plus only these few labels, large and legible: Table, Where, Order. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for boycecodd normal form](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_boycecodd_normal_form.png)
+
 ## The Rule Everyone at Sunrise Traders Already Knows About This Warehouse
 
 Dev knows one more fact about how the warehouse actually operates, a fact that never made it into the `table`'s structure: each inspector specializes in exactly one product category.
@@ -76,7 +92,7 @@ No. Inspector alone cannot uniquely identify a `row`, since the same inspector a
 
 Inspector determines ProductCategory perfectly well, but Inspector is not a `candidate key`, and that single mismatch is a BCNF violation, even though the `table` already satisfied every earlier rule.
 
-![BCNF violation where Inspector determines ProductCategory but Inspector is not a candidate key](images/11_bcnf_determinant_candidate_key_rule.png)
+![BCNF violation where Inspector determines ProductCategory but Inspector is not a candidate key](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_bcnf_determinant_candidate_key_rule.png)
 
 ## Splitting Along the True Determinant
 
@@ -138,7 +154,7 @@ InspectorSpecialty, recording each inspector's one product category:
 
 In InspectorSpecialty, Inspector is now the whole `primary key`, so Inspector -> ProductCategory no longer breaks any rule, the determinant is finally a `candidate key`. Dev can look up which category any order-and-inspector pair covers by `joining` the two `tables`, and "Rakesh specializes in Paper Goods" now lives in exactly one `row`, however many orders Rakesh ever inspects.
 
-![Fixing BCNF by splitting InspectorSpecialty so Inspector becomes the key for ProductCategory](images/12_bcnf_split_inspector_specialty.png)
+![Fixing BCNF by splitting InspectorSpecialty so Inspector becomes the key for ProductCategory](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_bcnf_split_inspector_specialty.png)
 
 ## Boyce-Codd Normal Form at a Glance
 

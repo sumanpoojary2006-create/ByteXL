@@ -8,6 +8,10 @@ Farah escalates to engineering, and the response she gets back is not reassuring
 
 Her tech lead, reviewing the incident afterward, explains what should have been in place from the start, a pair of practices called **audit `columns` and soft deletes**, a small set of extra `columns` that record when a `row` was created and changed, and a way of "deleting" a `row` that keeps it recoverable instead of erasing it outright.
 
+**Definition:** Audit `columns` and soft deletes both answer the same underlying worry: that a `database`, left to simply overwrite and erase without a trace, remembers nothing about its own past.
+
+![Intro visual for audit columns and soft deletes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_audit_columns_and_soft_deletes.png)
+
 ## Audit Columns: A Quiet Record of When Things Happened
 
 An audit `column` is a `column` added to a `table` purely to track the history of the `row` itself, rather than any business fact about the customer, the order, or the product the `row` represents. The two most common are:
@@ -19,7 +23,7 @@ Their value shows up constantly once they exist. A support agent investigating a
 
 An engineer debugging a data inconsistency can sort a `table` by `updated_at` to see which `rows` changed most recently, right around the time a suspicious script ran. None of this is possible after the fact if the `columns` were never there to begin with, which is exactly Farah's problem with Rekha's vanished `row`: there was no record of when it was created, let alone any trace of it being removed.
 
-![Audit columns stamping a row with created_at and updated_at timestamps](images/07_audit_columns_created_updated.png)
+![Audit columns stamping a row with created_at and updated_at timestamps](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_audit_columns_created_updated.png)
 
 ## Soft Deletes: Marking a Row Gone Without Actually Erasing It
 
@@ -33,11 +37,11 @@ Had Rekha's `row` used a `deleted_at` `column`, the weekend cleanup script would
 
 The order history, preferences, and loyalty progress would never have been at risk, because none of it was ever actually gone.
 
-![Soft delete hiding a row with deleted_at and restoring it instead of erasing it permanently](images/08_soft_delete_deleted_at_restore.png)
+![Soft delete hiding a row with deleted_at and restoring it instead of erasing it permanently](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_soft_delete_deleted_at_restore.png)
 
 Here is a Customers table with all three audit columns Farah's tech lead wishes had existed before Rekha's account vanished, followed by the soft delete itself and the query that keeps deleted customers out of everyday view.
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE customers (
     customer_id  INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     full_name    TEXT NOT NULL,
@@ -53,19 +57,21 @@ INSERT INTO customers (full_name) VALUES
 
 The active file performs the soft delete, the weekend cleanup script's job done safely this time, only marking `deleted_at`, never removing the row:
 
-```postgresql with=init.sql
-UPDATE customers
-SET deleted_at = NOW()
-WHERE full_name = 'Rekha Menon';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaj7mk" 
+ width="100%"
+></iframe>
 
 Now the everyday application query filters the soft-deleted row out, exactly the habit every future read has to remember:
 
-```postgresql with=init.sql
-SELECT customer_id, full_name, created_at, deleted_at
-FROM customers
-WHERE deleted_at IS NULL;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkaj7wg" 
+ width="100%"
+></iframe>
 
 Expected output:
 

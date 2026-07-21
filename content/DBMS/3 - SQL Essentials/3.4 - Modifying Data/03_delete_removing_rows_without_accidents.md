@@ -6,6 +6,22 @@ The statement for this is **`DELETE`**, and Priyanka already knows, from watchin
 
 **Definition:** The **`DELETE` statement** removes existing rows from a table, with the `WHERE` clause determining which rows are removed.
 
+<!--
+IMAGE PROMPT  ->  generate as images/03_intro_delete_removing_rows_without_accidents.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Priyanka is closing out add-drop week. One student, Rahul Verma, registered for Linear Algebra and then decided, well within the deadline, to drop it. His enrollment row now needs to be removed from the table entirely, not marked, not changed, simply gone.
+
+ON-IMAGE TEXT: show a short bold title "Delete Removing Rows Without Accidents" plus only these few labels, large and legible: Table, Row, Delete. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for delete removing rows without accidents](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_delete_removing_rows_without_accidents.png)
+
 ## Finding the Row Before Removing It
 
 The `enrollments` `table` holds this data:
@@ -131,7 +147,7 @@ Confirming afterward with `SELECT enrollment_id, student_id, course_id FROM enro
 - Unlike `UPDATE`, `DELETE` has no `SET` clause, because there is nothing to set, a deleted `row` simply stops existing in the `table`.
 - `WHERE` is doing the identical job it always does: picking out which `rows` the statement applies to.
 
-![Safe DELETE habit: select the target row first, then delete that exact row](images/05_delete_select_target_first.png)
+![Safe DELETE habit: select the target row first, then delete that exact row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_delete_select_target_first.png)
 
 ### Hands-On Practice: Run the DELETE
 
@@ -174,7 +190,7 @@ The second `SELECT` returns nothing at all, because every single enrollment `row
 - No `WHERE` clause at all: there was no warning, no count of `rows` about to disappear, and once the statement finishes there is no ordinary way to bring those `rows` back.
 - A `WHERE` clause that is merely too broad: writing `WHERE course_id = 103` when the intent was `WHERE enrollment_id = 9` removes every enrollment in Linear Algebra across every student, not the one `row` Rahul actually dropped.
 
-![DELETE without WHERE removing all rows from the enrollments table](images/06_delete_without_where_all_rows.png)
+![DELETE without WHERE removing all rows from the enrollments table](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_delete_without_where_all_rows.png)
 
 ### Hands-On Practice: See the Danger
 

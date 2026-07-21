@@ -8,6 +8,22 @@ Same `database`, same single day, three completely different relationships to it
 
 **Definition:** **Database users** include end users who work through applications, developers who write the software and queries that access the data, and database administrators who manage security, availability, backups, and performance.
 
+<!--
+IMAGE PROMPT  ->  generate as images/07_intro_who_uses_a_database_end_users_developers_and_adm.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Ravi, a first-year student, types a professor's name into his college portal's search box and gets office hours and a contact email back in under a second. He never wonders how that search actually works, and he never needs to, he has already moved on to.
+
+ON-IMAGE TEXT: show a short bold title "Who Uses A Database End Users Developers And" plus only these few labels, large and legible: Users, Developers, First. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for who uses a database end users developers and](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_intro_who_uses_a_database_end_users_developers_and_adm.png)
+
 ## End Users: People Who Never See the Data Directly
 
 An **end user** interacts with a `database` only through an application's screen, never through the `database` itself. Ravi typed a professor's name into a search box and read a result, he has no idea, and no need to have any idea, whether that search ran against a relational `database` or something else entirely.
@@ -37,7 +53,7 @@ None of this work shows up as a feature anyone can point to. Nobody thanks Aisha
 
 It is only the rare bad week, a server that crashes during exam result uploads, or a `backup` that silently failed for a month, that makes her job visible at all, which is precisely why colleges and companies alike are willing to pay for someone to do it full time.
 
-![An end user works through an app, a developer builds the database bridge, and a DBA protects system health](images/13_end_user_developer_dba_roles.png)
+![An end user works through an app, a developer builds the database bridge, and a DBA protects system health](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/13_end_user_developer_dba_roles.png)
 
 ## The Three Roles at a Glance
 
@@ -76,7 +92,7 @@ What matters is not the headcount but recognizing, moment by moment, which relat
 
 Aisha needed to understand `backups` and access rules that neither of the other two had any reason to think about that day.
 
-![One person covering developer and DBA responsibilities in a small team compared with specialized large teams](images/14_roles_small_vs_large_team.png)
+![One person covering developer and DBA responsibilities in a small team compared with specialized large teams](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/14_roles_small_vs_large_team.png)
 
 ## Your Turn: Whose Job Is It?
 

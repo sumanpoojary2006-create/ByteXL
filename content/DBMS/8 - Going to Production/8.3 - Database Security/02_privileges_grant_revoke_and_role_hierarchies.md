@@ -4,6 +4,22 @@ Creating a `role`, covered in the previous lesson, establishes an identity, but 
 
 **Definition:** `GRANT` adds a specific privilege for a specific `role` on a specific object, `REVOKE` removes one without disturbing others, and granting privileges to a group `role` rather than individual login `role`s lets an entire team's permissions be managed in one place, changes that propagate automatically to every member.
 
+<!--
+IMAGE PROMPT  ->  generate as images/02_intro_privileges_grant_revoke_and_role_hierarchies.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Creating a role, covered in the previous lesson, establishes an identity, but by default a freshly created role can do almost nothing beyond connect. reportingapp cannot read a single row until it is explicitly told it is allowed to. GRANT and REVOKE are the.
+
+ON-IMAGE TEXT: show a short bold title "Privileges Grant Revoke And Role Hierarchies" plus only these few labels, large and legible: Row, Role, Privileges. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for privileges grant revoke and role hierarchies](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_privileges_grant_revoke_and_role_hierarchies.png)
+
 ## Granting a Specific Privilege on a Specific Table
 
 The `shipments` `table` sets up a concrete case: `reporting_app` needs to read shipment data, but should never be able to change it.
@@ -67,7 +83,7 @@ Expected result: PostgreSQL completes the definition or privilege command withou
 - After these two statements, `reporting_app` can read and insert new shipment `rows`, but the specific `UPDATE` privilege, granted a moment earlier, has been removed again, leaving `SELECT` and `INSERT` intact.
 - `REVOKE` is precise in exactly this way: it removes only the named privilege, never accidentally sweeping away other permissions the `role` was separately granted.
 
-![GRANT and REVOKE act like precise permission switches on a table](images/03_grant_revoke_specific_privileges.png)
+![GRANT and REVOKE act like precise permission switches on a table](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_grant_revoke_specific_privileges.png)
 
 ## Granting Privileges Through a Role Hierarchy
 
@@ -86,7 +102,7 @@ Expected result: PostgreSQL completes the definition or privilege command withou
 - `dev_alia` was never directly granted `SELECT` on `shipments`; the privilege exists only on `shipment_readers`, and `dev_alia` inherits it purely through membership.
 - This is the payoff of the group-`role` pattern: granting a new privilege to `shipment_readers` in the future instantly applies to every current and future member, without needing to remember and repeat the grant individually for each one.
 
-![Granting a privilege once to a group role lets members inherit it](images/04_group_role_members_inherit_privileges.png)
+![Granting a privilege once to a group role lets members inherit it](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_group_role_members_inherit_privileges.png)
 
 ## Column-Level and Fine-Grained Privileges
 

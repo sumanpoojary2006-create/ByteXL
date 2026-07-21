@@ -6,6 +6,22 @@ That extra jump, from `index` entry to `table` page, is called a heap fetch, and
 
 **Definition:** A `covering index`, built with `INCLUDE`, stores extra `columns` alongside the `indexed` key so that a matching `query` can be answered entirely from the `index`, skipping the heap fetch a regular `index scan` still requires, at the cost of a larger `index` and more write overhead.
 
+<!--
+IMAGE PROMPT  ->  generate as images/04_intro_covering_indexes_and_indexonly_scans.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: An index scan, covered throughout this chapter, is already far cheaper than a sequential scan, but it is not free: after finding a matching entry in the index, the database still has to jump over to the actual table to fetch the rest of that row's columns.
+
+ON-IMAGE TEXT: show a short bold title "Covering Indexes And Indexonly Scans" plus only these few labels, large and legible: Table, Row, Column. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for covering indexes and indexonly scans](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_covering_indexes_and_indexonly_scans.png)
+
 ## Watching a Heap Fetch Happen
 
 The `orders` `table` sets up a `query` that needs more than just the `indexed` `column`. Only 20 of its 10000 orders are still active, the selective situation an `index` is best at, and the closing `VACUUM ANALYZE` both refreshes the planner's statistics and marks the `table`'s pages as stable, something `index`-only scans, this lesson's subject, specifically depend on.
@@ -63,7 +79,7 @@ Expected output:
 
 The plan shows `idx_orders_status` finding the 20 matching `rows`, but that is not the whole story: `idx_orders_status` only stores `status` values and pointers back to matching `rows`, so for every match, the `database` still has to fetch that `row` from the actual `table`'s heap to retrieve `order_id` and `amount`, `columns` the `index` itself does not contain. This heap fetch step is exactly the extra cost a `covering index` is built to remove.
 
-![A regular index scan still performs heap fetches for missing columns](images/09_regular_index_scan_heap_fetch.png)
+![A regular index scan still performs heap fetches for missing columns](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_regular_index_scan_heap_fetch.png)
 
 ## Building a Covering Index with INCLUDE
 
@@ -89,7 +105,7 @@ The plan now reports an "Index Only Scan" instead of a scan that visits the heap
 
 Every `column` the `query` asks for, both in `WHERE` and in `SELECT`, is now available directly from `idx_orders_status_covering`, which is exactly what "covering" the `query` means: the `index` alone is enough to answer it completely.
 
-![A covering index can answer the query from the index alone](images/10_covering_index_index_only_scan.png)
+![A covering index can answer the query from the index alone](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_covering_index_index_only_scan.png)
 
 ## Why This Is Not Automatic for Every Index
 
@@ -135,7 +151,7 @@ Expected output:
 - The `covering index` is noticeably larger than the plain one, since it duplicates `order_id` and `amount` alongside every entry, storage that exists purely to avoid heap fetches for a specific, known `query` pattern.
 - `Covering indexes` are worth building for genuinely hot, frequently run `queries` where the read-speed benefit clearly outweighs the extra storage and write cost, not applied indiscriminately to every `index` in a `schema`.
 
-![INCLUDE columns are stored in the index for reading, but are not the main search key](images/11_include_columns_stored_for_reading.png)
+![INCLUDE columns are stored in the index for reading, but are not the main search key](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_include_columns_stored_for_reading.png)
 
 ## Covering Indexes at a Glance
 

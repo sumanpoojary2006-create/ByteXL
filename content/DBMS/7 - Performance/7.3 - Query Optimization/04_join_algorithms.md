@@ -10,6 +10,22 @@ Each has a different performance profile depending on `table` sizes and whether 
 
 **Definition:** Nested loop, `hash join`, and `merge join` are three genuinely different strategies for finding matching `rows` between two `tables`, each favored by the optimizer under different conditions, small filtered inputs with a good `index`, large unsorted inputs on both sides, or already-sorted inputs respectively, and none of them is a fixed rule so much as the outcome of the same cost-based reasoning covered earlier in this chapter.
 
+<!--
+IMAGE PROMPT  ->  generate as images/04_intro_join_algorithms.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Every join covered earlier in this course, INNER JOIN, LEFT JOIN, and the rest, describes what result a query should produce, matching rows from two tables based on a condition. It says nothing about how the database should actually go about finding those.
+
+ON-IMAGE TEXT: show a short bold title "Join Algorithms" plus only these few labels, large and legible: Query, Join, Result. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for join algorithms](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_join_algorithms.png)
+
 ## Nested Loop: Simple, Best for Small Inputs
 
 A `nested loop` `join` works exactly the way its name suggests: for every `row` in the outer `table`, it scans, or `index`-looks-up, the inner `table` to find matches, one outer `row` at a time.
@@ -86,7 +102,7 @@ Expected output:
 
 For this narrow filter, matching only 3 customers, the optimizer favors a "Nested Loop": for each of those 3 customer `rows`, it uses `idx_orders_customer_id` to directly look up that customer's orders. With so few outer `rows`, repeating a fast, targeted lookup 3 times is cheap. A `nested loop` shines exactly here, a small outer input paired with an efficient way to look up matches for each one, typically via an `index`.
 
-![A nested loop join repeats an inner lookup for each outer row](images/07_nested_loop_join_repeated_inner_lookup.png)
+![A nested loop join repeats an inner lookup for each outer row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_nested_loop_join_repeated_inner_lookup.png)
 
 ## Hash Join: Best When Neither Side Is Small
 
@@ -114,7 +130,7 @@ With no filter narrowing either `table` down, the plan favors a "Hash Join": it 
 
 This avoids the `nested loop`'s repeated lookups entirely, since scanning `orders` once and doing an in-memory hash lookup per `row` is far cheaper here than repeating an `index` lookup 5000 times, once per customer.
 
-![A hash join builds a hash table from one side and probes it with the other](images/08_hash_join_build_and_probe.png)
+![A hash join builds a hash table from one side and probes it with the other](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_hash_join_build_and_probe.png)
 
 ## Merge Join: Best When Both Sides Are Already Sorted
 
@@ -142,7 +158,7 @@ If both `customers` and `orders` can be efficiently produced in `customer_id` or
 
 This is particularly efficient when the `query` already needs the result sorted by the `join` `column` anyway, since the `merge join` produces that order as a natural side effect of how it works.
 
-![A merge join walks two sorted inputs forward together](images/09_merge_join_sorted_streams_walk_together.png)
+![A merge join walks two sorted inputs forward together](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_merge_join_sorted_streams_walk_together.png)
 
 ## The Optimizer Picks Based on Estimated Cost, Not a Fixed Rule
 

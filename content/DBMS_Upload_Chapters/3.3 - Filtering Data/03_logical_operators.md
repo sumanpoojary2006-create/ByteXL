@@ -4,7 +4,9 @@ Varun wants a shortlist of courses worth registering for: something that is eith
 
 The problem is that SQL read his conditions in an order he did not intend, and fixing it means learning how the **logical operators**, `AND`, `OR`, and `NOT`, actually combine.
 
-![AND and OR shown as gates where AND needs all checks true and OR needs at least one](images/05_and_or_logical_gates.png)
+![AND and OR shown as gates where AND needs all checks true and OR needs at least one](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_and_or_logical_gates.png)
+
+**Definition:** `AND`, `OR`, and `NOT` let a single `WHERE` clause weigh several conditions at once.
 
 ## Combining Conditions with AND and OR
 
@@ -36,7 +38,7 @@ Both rows satisfy both conditions. The Mathematics courses fail the department t
 
 For hands-on practice, `init.sql` creates and populates only the displayed table:
 
-```postgresql file=init.sql
+```postgresql
 CREATE TABLE courses (
     course_id INTEGER PRIMARY KEY,
     title TEXT,
@@ -54,19 +56,21 @@ INSERT INTO courses (course_id, title, department, credits) VALUES
 
 The active query file contains the logical condition:
 
-```postgresql with=init.sql
-SELECT title, department, credits
-FROM courses
-WHERE department = 'Computer Science' AND credits = 4;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakcw5" 
+ width="100%"
+></iframe>
 
 Now compare `AND` with `OR`. The query `SELECT title, department FROM courses WHERE department = 'Mathematics' OR department = 'Economics';` keeps a row when either department check is true.
 
-```postgresql with=init.sql
-SELECT title, department
-FROM courses
-WHERE department = 'Mathematics' OR department = 'Economics';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakd92" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -82,11 +86,12 @@ This returns three `rows`: `Linear Algebra`, `Discrete Mathematics`, and `Microe
 
 Here is the `query` Varun originally wrote for his shortlist, exactly as he typed it.
 
-```postgresql with=init.sql
-SELECT title, department, credits
-FROM courses
-WHERE department = 'Computer Science' AND credits > 3 OR department = 'Economics';
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakdnp" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -102,11 +107,12 @@ Expected output:
 
 Adding parentheses around the department check fixes it, because it forces the `OR` to be settled first, and only then does `AND` check the credit requirement against that combined result.
 
-```postgresql with=init.sql
-SELECT title, department, credits
-FROM courses
-WHERE (department = 'Computer Science' OR department = 'Economics') AND credits > 3;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakdy3" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -119,17 +125,18 @@ Expected output:
 - `Microeconomics` is correctly dropped, since it fails the `credits > 3` test once that test is applied to the right group of `rows`.
 - The SQL text barely changed, four characters, but the meaning changed completely, which is exactly why relying on operator precedence to do the right thing by accident is worth avoiding whenever `AND` and `OR` appear in the same `WHERE` clause.
 
-![Parentheses grouping department choices before applying the credits greater than 3 condition](images/06_parentheses_group_conditions.png)
+![Parentheses grouping department choices before applying the credits greater than 3 condition](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_parentheses_group_conditions.png)
 
 ## NOT Reverses a Condition
 
 `NOT` flips a condition's truth value: `rows` that would have matched are excluded, and `rows` that would not have matched are included instead.
 
-```postgresql with=init.sql
-SELECT title, credits
-FROM courses
-WHERE NOT credits > 3;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkake9e" 
+ width="100%"
+></iframe>
 
 Expected output:
 
@@ -179,11 +186,12 @@ This returns `Linear Algebra`, `Discrete Mathematics`, and `Microeconomics`, the
 
 Write a `query` against `courses` for departments that are Mathematics or Computer Science, restricted to courses worth at least four credits, and use parentheses so the grouping is unambiguous.
 
-```postgresql with=init.sql
-SELECT title, department, credits
-FROM courses
-WHERE (department = 'Mathematics' OR department = 'Computer Science') AND credits >= 4;
-```
+<iframe
+ frameBorder="0"
+ height="350px"  
+ src="https://onecompiler.com/embed/postgresql/44vkakem4" 
+ width="100%"
+></iframe>
 
 Expected output:
 

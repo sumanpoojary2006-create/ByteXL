@@ -6,6 +6,22 @@ He cannot type `WHERE salary > AVG(salary)` directly, since `aggregate functions
 
 **Definition:** A subquery is an ordinary `SELECT` statement nested inside another `query`, computed first and substituted in as a value, letting a `query` depend on a number, a list, or a `table` that only exists once that inner `query` has run.
 
+<!--
+IMAGE PROMPT  ->  generate as images/01_intro_what_is_a_subquery.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Kabir is analyzing salaries at a mid-sized company, and his manager asks a simple-sounding question: "who earns more than the company average?" Kabir knows how to find the company average with AVG(salary), and he knows how to filter rows with WHERE, but the.
+
+ON-IMAGE TEXT: show a short bold title "What Is A Subquery" plus only these few labels, large and legible: Query, Where, Result. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for what is a subquery](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_what_is_a_subquery.png)
+
 ## A Query Inside a Query
 
 The `employees` `table` holds one `row` per employee, with a salary and a department.
@@ -69,7 +85,7 @@ WHERE salary > (SELECT AVG(salary) FROM employees);
 
 The parentheses around `SELECT AVG(salary) FROM employees` mark it as a subquery, sometimes called an inner `query`, nested inside the outer `query`'s `WHERE` clause. The `database` runs the inner `query` first, gets back a single number, and then substitutes that number directly into the outer `query`'s condition, as if Kabir had typed the average in by hand:
 
-![A subquery running inside an outer query and providing one average salary value](images/01_subquery_inner_query_value.png)
+![A subquery running inside an outer query and providing one average salary value](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_subquery_inner_query_value.png)
 
 Expected output:
 
@@ -120,7 +136,7 @@ This happens to return the same three `rows` today, but it is fragile in a way t
 
 The subquery version recalculates the average fresh every time the outer `query` runs, so it can never drift out of sync with the data it depends on.
 
-![A live subquery recalculating while a hardcoded average becomes stale](images/02_subquery_recalculates_vs_hardcoded.png)
+![A live subquery recalculating while a hardcoded average becomes stale](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_subquery_recalculates_vs_hardcoded.png)
 
 ## Subqueries Are Not a New Kind of Syntax
 

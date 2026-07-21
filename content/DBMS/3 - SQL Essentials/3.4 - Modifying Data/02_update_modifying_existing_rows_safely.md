@@ -6,6 +6,22 @@ The tool for that job is **`UPDATE`**, the statement that modifies values alread
 
 **Definition:** The **`UPDATE` statement** changes values in existing table rows; its `SET` clause specifies the new values, and its `WHERE` clause limits which rows are changed.
 
+<!--
+IMAGE PROMPT  ->  generate as images/02_intro_update_modifying_existing_rows_safely.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Rohit is going through this term's address updates. One student, Varun Nair, has moved from Chennai to Bengaluru for an internship and emailed the registrar's office asking for his city to be corrected on file. This is not a new row and not a row to be.
+
+ON-IMAGE TEXT: show a short bold title "Update Modifying Existing Rows Safely" plus only these few labels, large and legible: Table, Row, Update. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for update modifying existing rows safely](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_update_modifying_existing_rows_safely.png)
+
 ## Checking Before Changing
 
 The `students` `table` holds this data:
@@ -109,7 +125,7 @@ Before this `UPDATE`, that `row` read Chennai. Confirming afterward with `SELECT
 - `SET` is the new part, and it says which `column` changes and what it changes to.
 - Everything else about the `row`, his name, his email, his join date, is left exactly as it was, because `UPDATE` only touches the `columns` named after `SET`.
 
-![Safe UPDATE habit: select the target row first, then update the same row with the same WHERE condition](images/03_update_select_first_same_where.png)
+![Safe UPDATE habit: select the target row first, then update the same row with the same WHERE condition](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_update_select_first_same_where.png)
 
 ### Hands-On Practice: Run the UPDATE
 
@@ -160,7 +176,7 @@ Every single student now shows Bengaluru as their city, not just Varun. Rohit me
 - There is no confirmation prompt, no warning about how many `rows` are about to change, and no undo button once the statement finishes.
 - A `WHERE` clause that is too broad causes the exact same damage as no `WHERE` clause at all: writing `WHERE city = 'Chennai'` when the intent was `WHERE student_id = 3` would have updated every student living in Chennai, not the one student Rohit actually meant.
 
-![UPDATE without WHERE changing every row in the table](images/04_update_without_where_every_row.png)
+![UPDATE without WHERE changing every row in the table](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_update_without_where_every_row.png)
 
 ### Hands-On Practice: See the Danger
 
@@ -240,6 +256,8 @@ SELECT student_id, full_name, city, phone
 FROM students
 WHERE student_id = 5;
 ```
+
+![One safe UPDATE changes two columns together while targeting only one row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04b_update_multiple_columns_one_statement.png)
 
 ## UPDATE at a Glance
 

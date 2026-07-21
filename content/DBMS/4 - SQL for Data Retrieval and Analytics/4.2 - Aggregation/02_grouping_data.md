@@ -6,6 +6,22 @@ What Priya actually needs is the `table` split into separate buckets, one per ca
 
 **Definition:** `GROUP BY` is what turns a single flat summary into a per-category, per-customer, or per-combination breakdown, by partitioning `rows` before the `aggregate functions` run over them.
 
+<!--
+IMAGE PROMPT  ->  generate as images/02_intro_grouping_data.png   (16:9 cinematic hero image, place here, right after the Introduction)
+
+CHARACTER & THEME: DBMS course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and database problem from the Introduction.
+
+STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue database forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
+
+SCENE: A simple visual of the Introduction: Priya's one-number summaries answered the founders' first round of questions, but the very next question was sharper: "which category earns us the most, Fiction, Non-Fiction, or Children's books?" A single SUM(amount) across the whole orders table cannot.
+
+ON-IMAGE TEXT: show a short bold title "Grouping Data" plus only these few labels, large and legible: Table, Group, Grouping. Keep text minimal, no sentences.
+
+GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
+-->
+
+![Intro visual for grouping data](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_grouping_data.png)
+
 ## Splitting Rows Into Groups
 
 The `orders` `table` from `aggregate functions` is the starting point again.
@@ -94,7 +110,7 @@ Expected output:
 
 Fiction, Non-Fiction, and Children's books each get their own `row` in the result, and the founders' question is answered directly: Non-Fiction earns the most.
 
-![GROUP BY category sorting order rows into separate category revenue buckets](images/03_group_by_category_buckets.png)
+![GROUP BY category sorting order rows into separate category revenue buckets](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_group_by_category_buckets.png)
 
 ## Why Every Selected Column Must Be Grouped or Aggregated
 
@@ -130,7 +146,7 @@ The rule that follows from this: every `column` in the `SELECT` list must do one
 
 Either way, the `database` always knows exactly one value to produce per group.
 
-![GROUP BY selected column rule showing grouped columns and aggregate functions as allowed](images/04_group_by_selected_column_rule.png)
+![GROUP BY selected column rule showing grouped columns and aggregate functions as allowed](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_group_by_selected_column_rule.png)
 
 ## Grouping by More Than One Column
 

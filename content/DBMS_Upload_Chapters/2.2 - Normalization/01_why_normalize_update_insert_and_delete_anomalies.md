@@ -10,6 +10,10 @@ A shop owner named Ilyas Bakery Supplies called to say Sunrise Traders had sent 
 
 She fixed that `row` and moved on, not yet realizing she was looking at a symptom of something much bigger, a design flaw that `database` designers have a name for: the `table` needed to be **normalized**, split apart so that each fact about the business lives in exactly one place instead of scattered across every `row` that happens to mention it.
 
+**Definition:** An update anomaly, an insert anomaly, and a `delete anomaly` are three different symptoms of the same underlying disease: a `table` that mixes facts about several different real-world things into one set of `rows`, so that a single fact ends up copied wherever it is needed.
+
+![Intro visual for why normalize update insert and delete anomalies](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_why_normalize_update_insert_and_delete_anomalies.png)
+
 ## One Table Trying to Hold Three Different Stories
 
 Here is a trimmed version of the Orders `table` Priya was working from:
@@ -84,7 +88,7 @@ Look closely and three separate stories are tangled into one `table`:
 
 Every time a customer places another order, their name, address, and phone number get retyped into a new `row`. Every time a product is ordered again, its name and price get retyped too. This is exactly the kind of redundancy that causes trouble the moment anyone tries to change, add, or remove anything, and those three kinds of trouble each have a name.
 
-![One wide orders table mixing customer, product, and order facts, creating update, insert, and delete anomalies](images/01_mixed_orders_table_anomalies.png)
+![One wide orders table mixing customer, product, and order facts, creating update, insert, and delete anomalies](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_mixed_orders_table_anomalies.png)
 
 ## Update Anomaly: One Fact, Many Places to Fix
 
@@ -143,7 +147,7 @@ All three anomalies share one root cause: the Orders `table` is asking a single 
 
 The fix Priya eventually reaches for is not a clever trick or a stricter data-entry policy, it is a disciplined way of reorganizing the `table` so that each fact is stored exactly once, attached to the one thing it actually describes.
 
-![Normalization splitting the messy orders table into customers, products, orders, and order items](images/02_normalization_splits_facts_by_topic.png)
+![Normalization splitting the messy orders table into customers, products, orders, and order items](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_normalization_splits_facts_by_topic.png)
 
 ## Your Turn: Spot the Anomaly
 

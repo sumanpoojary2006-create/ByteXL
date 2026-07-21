@@ -8,6 +8,10 @@ Her manager walks her through it. Underneath every dashboard, every report, and 
 
 This formal toolkit, the mathematical foundation beneath every question a relational `database` can answer, is called **`relational algebra`**, and understanding it is what finally lets Devika see the machinery behind the dashboard instead of just trusting it blindly.
 
+**Definition:** `Relational algebra` is the formal, mathematical toolkit underneath every question a relational `database` answers: a small set of operations, each one taking relations in and producing a relation out, that together give a `database` a precise language for expressing and comparing ways of finding an answer.
+
+![Intro visual for what is relational algebra](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_what_is_relational_algebra.png)
+
 ## A Relation In, A Relation Out
 
 Start with what a "relation" actually is in this context: it is simply the formal name for a `table`, a set of `rows` sharing the same `columns`. Suppose the bookstore's system stores a relation called Books, looking something like this:
@@ -59,7 +63,7 @@ Start with what a "relation" actually is in this context: it is simply the forma
 - `Relational algebra` works the same way.
 - Because every operation's output is again a relation, the output of one operation can always become the input to another, and a whole chain of small, simple steps can be strung together to answer a genuinely complicated question, one step at a time.
 
-![Relational algebra as a toolkit where each operation takes a relation in and returns a relation out](images/01_relational_algebra_operation_toolkit.png)
+![Relational algebra as a toolkit where each operation takes a relation in and returns a relation out](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_relational_algebra_operation_toolkit.png)
 
 ## Why a Formal Language Matters at All
 
@@ -85,7 +89,7 @@ None of these operations is complicated in isolation. What makes `relational alg
 
 A dashboard listing "mystery books under 400 rupees, sorted by title" and a report listing "every customer who ordered a travel book this month" both reduce, underneath the wording, to short chains of the very same handful of operations.
 
-![Relational algebra operations chaining together because every output remains a relation](images/02_closure_chaining_relations.png)
+![Relational algebra operations chaining together because every output remains a relation](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_closure_chaining_relations.png)
 
 ## Relational Algebra at a Glance
 
