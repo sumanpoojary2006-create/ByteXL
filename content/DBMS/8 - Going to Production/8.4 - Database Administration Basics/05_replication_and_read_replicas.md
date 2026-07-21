@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Replication And Read Replicas" plus only
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for replication and read replicas](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_replication_and_read_replicas_clean_20502d58.png)
+![Intro visual for replication and read replicas](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_replication_and_read_replicas_actual3d_1d3ac4b5.png)
 
 ## How Streaming Replication Works, Conceptually
 
