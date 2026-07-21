@@ -24,7 +24,7 @@ ON-IMAGE TEXT: show a short bold title "Join Algorithms" plus only these few lab
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for join algorithms](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_join_algorithms_clean_49acd96d.png)
+![Intro visual for join algorithms](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_join_algorithms_actual3d_59b98cf9.png)
 
 ## Nested Loop: Simple, Best for Small Inputs
 

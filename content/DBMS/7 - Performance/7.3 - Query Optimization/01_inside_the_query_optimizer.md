@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Inside The Query Optimizer" plus only th
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for inside the query optimizer](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_inside_the_query_optimizer_clean_c0597477.png)
+![Intro visual for inside the query optimizer](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_inside_the_query_optimizer_actual3d_4816b928.png)
 
 ## The Same Query, More Than One Valid Plan
 

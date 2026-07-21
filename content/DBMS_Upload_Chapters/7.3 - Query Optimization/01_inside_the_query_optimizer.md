@@ -6,7 +6,7 @@ Given a SQL query, there is often more than one valid way to actually execute it
 
 **Definition:** The `query optimizer` evaluates multiple valid ways to execute the same SQL query, estimating the cost of each using statistics about the data rather than actually running every option, and chooses whichever it estimates will be cheapest, which is why the same index can be used in one query and skipped entirely in another depending on how selective the condition actually is.
 
-![Intro visual for inside the query optimizer](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_inside_the_query_optimizer_clean_c0597477.png)
+![Intro visual for inside the query optimizer](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_inside_the_query_optimizer_actual3d_4816b928.png)
 
 ## The Same Query, More Than One Valid Plan
 
