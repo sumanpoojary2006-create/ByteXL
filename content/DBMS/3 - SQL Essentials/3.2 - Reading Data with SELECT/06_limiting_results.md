@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Limiting Results" plus only these few la
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for limiting results](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_limiting_results.png)
+![Intro visual for limiting results](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_limiting_results_matched_a958b78a.png)
 
 ## Cutting a Result Down to N Rows
 

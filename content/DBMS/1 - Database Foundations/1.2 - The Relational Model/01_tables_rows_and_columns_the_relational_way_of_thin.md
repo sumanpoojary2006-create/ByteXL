@@ -32,7 +32,7 @@ ON-IMAGE TEXT: show a short bold title "Tables Rows And Columns The Relational W
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for tables rows and columns the relational way of](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_tables_rows_and_columns_the_relational_way_of_th.png)
+![Intro visual for tables rows and columns the relational way of](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_tables_rows_and_columns_the_relational_way_of_th_matched_5486a1b6.png)
 
 ## From a Pile of Sheets to a Table
 

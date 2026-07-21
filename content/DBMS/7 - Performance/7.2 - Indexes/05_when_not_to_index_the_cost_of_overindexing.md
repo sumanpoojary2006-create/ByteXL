@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "When Not To Index The Cost Of Overindexi
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for when not to index the cost of overindexing](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_when_not_to_index_the_cost_of_overindexing.png)
+![Intro visual for when not to index the cost of overindexing](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_when_not_to_index_the_cost_of_overindexing_matched_4db691e4.png)
 
 ## The Write Cost of Every Additional Index
 

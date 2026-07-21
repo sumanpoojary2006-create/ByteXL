@@ -12,7 +12,7 @@ She fixed that row and moved on, not yet realizing she was looking at a symptom 
 
 **Definition:** An update anomaly, an insert anomaly, and a `delete anomaly` are three different symptoms of the same underlying disease: a table that mixes facts about several different real-world things into one set of rows, so that a single fact ends up copied wherever it is needed.
 
-![Intro visual for why normalize update insert and delete anomalies](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_why_normalize_update_insert_and_delete_anomalies.png)
+![Intro visual for why normalize update insert and delete anomalies](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_why_normalize_update_insert_and_delete_anomalies_matched_575176ee.png)
 
 ## One Table Trying to Hold Three Different Stories
 

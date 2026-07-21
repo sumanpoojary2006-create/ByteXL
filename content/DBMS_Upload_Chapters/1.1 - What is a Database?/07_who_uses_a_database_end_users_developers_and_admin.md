@@ -8,7 +8,7 @@ Same database, same single day, three completely different relationships to it.
 
 **Definition:** **Database users** include end users who work through applications, developers who write the software and queries that access the data, and database administrators who manage security, availability, backups, and performance.
 
-![Intro visual for who uses a database end users developers and](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_intro_who_uses_a_database_end_users_developers_and_adm.png)
+![Intro visual for who uses a database end users developers and](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_intro_who_uses_a_database_end_users_developers_and_adm_matched_c82dc517.png)
 
 ## End Users: People Who Never See the Data Directly
 

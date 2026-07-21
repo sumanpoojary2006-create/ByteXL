@@ -6,7 +6,7 @@ For her own work that is fine, but this sheet is going in front of people who ha
 
 **Definition:** Aliases let a query speak in whatever words are most useful to whoever is reading the result, without ever touching the underlying table.
 
-![Intro visual for column aliases and table aliases with as](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_column_aliases_and_table_aliases_with_as.png)
+![Intro visual for column aliases and table aliases with as](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_column_aliases_and_table_aliases_with_as_matched_b6e26810.png)
 
 ## Renaming a Column With AS
 

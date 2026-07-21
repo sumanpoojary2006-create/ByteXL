@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Offset Functions Lag And Lead" plus only
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for offset functions lag and lead](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_offset_functions_lag_and_lead.png)
+![Intro visual for offset functions lag and lead](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_offset_functions_lag_and_lead_matched_b9cab167.png)
 
 ## Looking Back at the Previous Row with LAG
 

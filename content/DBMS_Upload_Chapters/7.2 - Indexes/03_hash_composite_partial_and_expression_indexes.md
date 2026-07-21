@@ -11,7 +11,7 @@ Each of these has a dedicated index type suited to it.
 
 **Definition:** `Hash indexes` optimize equality at the cost of range support, `composite indexes` serve queries that filter on the same multiple columns together, `partial indexes` shrink an index down to only the rows a query actually cares about, and `expression indexes` make a computed or transformed value searchable, each one a deliberate specialization beyond what a plain B-tree offers.
 
-![Intro visual for hash composite partial and expression indexes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_hash_composite_partial_and_expression_indexes.png)
+![Intro visual for hash composite partial and expression indexes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_hash_composite_partial_and_expression_indexes_matched_4753a7a6.png)
 
 ## A Table Large Enough to Need Them
 

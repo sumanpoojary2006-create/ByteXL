@@ -10,7 +10,7 @@ Vivek is not seeing a bug. He is running into the honest cost of the very discip
 
 **Definition:** Normalization and denormalization are not rival philosophies where one side is simply right, they are two ends of a genuine trade-off between safe, anomaly-free writes and fast, uncombined reads, and a mature schema uses each where it earns its keep.
 
-![Intro visual for when to denormalize tradeoffs in practice](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_intro_when_to_denormalize_tradeoffs_in_practice.png)
+![Intro visual for when to denormalize tradeoffs in practice](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_intro_when_to_denormalize_tradeoffs_in_practice_matched_8dd52de1.png)
 
 ## What Normalization Cost Sunrise Traders, in Exchange for What It Fixed
 

@@ -24,7 +24,7 @@ ON-IMAGE TEXT: show a short bold title "What Is Relational Algebra" plus only th
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for what is relational algebra](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_what_is_relational_algebra.png)
+![Intro visual for what is relational algebra](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_what_is_relational_algebra_matched_01cf92c1.png)
 
 ## A Relation In, A Relation Out
 

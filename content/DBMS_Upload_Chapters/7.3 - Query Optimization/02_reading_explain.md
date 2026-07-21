@@ -5,7 +5,7 @@
 
 **Definition:** `EXPLAIN` output names the chosen operation for each step of a query, an estimated relative cost, an estimated row count, and an estimated row width, nested to show which steps feed into which, and none of those cost numbers represent actual measured time, only the optimizer's own relative comparison between candidate plans.
 
-![Intro visual for reading explain](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_reading_explain.png)
+![Intro visual for reading explain](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_reading_explain_matched_3dbbbc35.png)
 
 ## The Basic Shape of an EXPLAIN Plan
 

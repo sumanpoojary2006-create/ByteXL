@@ -14,7 +14,7 @@ This is exactly the dilemma every relational database has to face wherever a `fo
 
 **Definition:** Every `foreign key` eventually forces the same honest question: if the row being pointed at disappears or changes, what should happen to the rows depending on it, and a relational database lets that answer be blocking, cascading, or clearing the link, chosen deliberately for each relationship rather than left to chance.
 
-![Intro visual for on delete and on update controlling what happens](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_intro_on_delete_and_on_update_controlling_what_happens.png)
+![Intro visual for on delete and on update controlling what happens](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_intro_on_delete_and_on_update_controlling_what_happens_matched_6b035eaa.png)
 
 ## The Dilemma, In Plain Terms
 

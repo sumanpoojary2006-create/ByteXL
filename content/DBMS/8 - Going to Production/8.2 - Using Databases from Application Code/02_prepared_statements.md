@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Prepared Statements" plus only these few
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for prepared statements](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_prepared_statements.png)
+![Intro visual for prepared statements](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_prepared_statements_matched_9d9cd509.png)
 
 ## The Problem with Building SQL by Pasting in Values
 

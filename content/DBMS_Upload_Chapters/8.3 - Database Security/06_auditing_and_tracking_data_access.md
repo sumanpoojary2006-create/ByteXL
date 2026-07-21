@@ -4,7 +4,7 @@ The security mechanisms covered so far, roles, privileges, `least privilege`, `r
 
 **Definition:** Auditing, typically built on the trigger mechanism for writes and server-level logging for reads, records who did what and when, providing the after-the-fact trail that prevention mechanisms like `row-level security` and `least privilege` cannot offer on their own, valuable for detecting misuse, investigating incidents, and meeting compliance requirements.
 
-![Intro visual for auditing and tracking data access](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_auditing_and_tracking_data_access.png)
+![Intro visual for auditing and tracking data access](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_auditing_and_tracking_data_access_matched_d59d93f0.png)
 
 ## Recording Who Changed a Row, Using a Trigger
 

@@ -6,7 +6,7 @@ This is a genuine hazard, both for correctness and for security, and the fix is 
 
 **Definition:** A `prepared statement` separates a query's fixed structure from the runtime values it operates on, letting an application safely handle untrusted input as pure data that can never alter what the query actually does, while also allowing the database to reuse a parsed and planned query across repeated executions.
 
-![Intro visual for prepared statements](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_prepared_statements.png)
+![Intro visual for prepared statements](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_prepared_statements_matched_9d9cd509.png)
 
 ## The Problem with Building SQL by Pasting in Values
 

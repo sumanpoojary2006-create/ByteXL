@@ -9,7 +9,7 @@
 
 **Definition:** Atomicity guarantees that every statement inside a transaction commits together or fails together, whether the failure comes from an explicit `ROLLBACK` or an unplanned error like a constraint violation, though it is still up to the application to decide which statements belong grouped together in the first place.
 
-![Intro visual for atomicity all or nothing](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_atomicity_all_or_nothing.png)
+![Intro visual for atomicity all or nothing](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_atomicity_all_or_nothing_matched_f9a2e29f.png)
 
 ## Atomicity Protects Against More Than Explicit Rollbacks
 

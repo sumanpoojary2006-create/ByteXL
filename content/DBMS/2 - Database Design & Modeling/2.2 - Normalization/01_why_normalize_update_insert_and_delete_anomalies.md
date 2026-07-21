@@ -26,7 +26,7 @@ ON-IMAGE TEXT: show a short bold title "Why Normalize Update Insert And Delete A
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for why normalize update insert and delete anomalies](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_why_normalize_update_insert_and_delete_anomalies.png)
+![Intro visual for why normalize update insert and delete anomalies](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_why_normalize_update_insert_and_delete_anomalies_matched_575176ee.png)
 
 ## One Table Trying to Hold Three Different Stories
 

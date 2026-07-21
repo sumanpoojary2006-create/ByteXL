@@ -6,7 +6,7 @@ Alia has spent the last few weeks only ever looking at data on screen, running `
 
 **Definition:** The **`INSERT` statement** adds one or more new rows to a table by supplying values for the table's columns.
 
-![Intro visual for insert adding new rows](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_insert_adding_new_rows.png)
+![Intro visual for insert adding new rows](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_insert_adding_new_rows_matched_0a0b06df.png)
 
 ## The Anatomy of INSERT INTO
 

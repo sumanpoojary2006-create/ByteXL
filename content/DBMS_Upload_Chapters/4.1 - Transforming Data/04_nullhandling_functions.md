@@ -9,7 +9,7 @@ Both gaps are stored as `NULL`, and both cause the same problem once Vikram trie
 
 **Definition:** `COALESCE` and `NULLIF` are small functions that solve a large, recurring problem: real data has gaps, and a query that ignores those gaps produces blank cells, broken math, or misleading duplicates.
 
-![Intro visual for nullhandling functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_nullhandling_functions.png)
+![Intro visual for nullhandling functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_nullhandling_functions_matched_061f3c24.png)
 
 ## Filling In a Default When a Value Is Missing
 

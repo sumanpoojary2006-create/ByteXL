@@ -6,7 +6,7 @@ Finding "Rathi, Sanjay" in a phone book does not mean reading every entry from t
 
 **Definition:** An index is a separate, sorted structure built on one or more columns that lets the database jump directly to matching rows instead of scanning the whole table, trading extra storage and slightly slower writes for dramatically faster reads on the `indexed` column, the same trade a phone book's alphabetical sorting makes over a randomly ordered list of names.
 
-![Intro visual for what is an index](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_what_is_an_index.png)
+![Intro visual for what is an index](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_what_is_an_index_matched_12adb909.png)
 
 ## Searching Without an Index
 

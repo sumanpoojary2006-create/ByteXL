@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Types Of Databases" plus only these few 
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for types of databases](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_types_of_databases.png)
+![Intro visual for types of databases](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_types_of_databases_matched_5dd8524f.png)
 
 ## The Relational Model: Neat Rows and Columns
 

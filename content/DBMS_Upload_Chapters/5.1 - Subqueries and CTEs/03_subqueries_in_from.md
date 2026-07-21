@@ -6,7 +6,7 @@ A subquery does not have to sit inside `WHERE` producing a single value or a lis
 
 **Definition:** A subquery in `FROM`, or derived table, lets a query treat an intermediate result, especially a grouped or aggregated one, as if it were a real table, complete with the ability to filter, join, or select from it further.
 
-![Intro visual for subqueries in from](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_subqueries_in_from.png)
+![Intro visual for subqueries in from](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_subqueries_in_from_matched_f9460b22.png)
 
 ## Treating a Query's Result as a Table
 

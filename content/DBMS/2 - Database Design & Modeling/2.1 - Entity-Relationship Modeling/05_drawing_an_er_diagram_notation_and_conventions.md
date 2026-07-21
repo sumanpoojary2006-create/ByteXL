@@ -26,7 +26,7 @@ ON-IMAGE TEXT: show a short bold title "Drawing An Er Diagram Notation And Conve
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for drawing an er diagram notation and conventions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_drawing_an_er_diagram_notation_and_conventions.png)
+![Intro visual for drawing an er diagram notation and conventions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_drawing_an_er_diagram_notation_and_conventions_matched_1b9b1e12.png)
 
 ## The Core Shapes and What Each One Means
 

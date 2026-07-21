@@ -22,7 +22,7 @@ ON-IMAGE TEXT: show a short bold title "Common Bottlenecks Missing Indexes N1 Qu
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for common bottlenecks missing indexes n1 queries larg](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_common_bottlenecks_missing_indexes_n1_queries_la.png)
+![Intro visual for common bottlenecks missing indexes n1 queries larg](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_common_bottlenecks_missing_indexes_n1_queries_la_matched_0dcaaad5.png)
 
 ## Bottleneck One: A Missing Index on a Selective Column
 

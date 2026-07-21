@@ -10,7 +10,7 @@ The request breaks apart into exactly the same handful of moves he has spent the
 
 **Definition:** Every structured query a person writes against a relational database is, underneath its wording, a short chain of the same handful of operations: selection to narrow rows, projection to narrow columns, join to combine relations on a shared value, and set operations to combine or compare relations of the same shape.
 
-![Intro visual for mapping sql queries to relational algebra expressi](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_mapping_sql_queries_to_relational_algebra_expres.png)
+![Intro visual for mapping sql queries to relational algebra expressi](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_mapping_sql_queries_to_relational_algebra_expres_matched_75b37e24.png)
 
 ## Restaurants and Zones: Arjun's Two Relations
 

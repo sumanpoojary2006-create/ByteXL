@@ -26,7 +26,7 @@ ON-IMAGE TEXT: show a short bold title "Components Of A DBMS Query Processor Sto
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for components of a dbms query processor storage manag](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_components_of_a_dbms_query_processor_storage_man.png)
+![Intro visual for components of a dbms query processor storage manag](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_components_of_a_dbms_query_processor_storage_man_matched_d09d0ce5.png)
 
 ## The Query Processor: Understanding What You Asked For
 

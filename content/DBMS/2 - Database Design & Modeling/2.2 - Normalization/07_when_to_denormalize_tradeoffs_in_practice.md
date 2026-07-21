@@ -24,7 +24,7 @@ ON-IMAGE TEXT: show a short bold title "When To Denormalize Tradeoffs In Practic
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for when to denormalize tradeoffs in practice](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_intro_when_to_denormalize_tradeoffs_in_practice.png)
+![Intro visual for when to denormalize tradeoffs in practice](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_intro_when_to_denormalize_tradeoffs_in_practice_matched_8dd52de1.png)
 
 ## What Normalization Cost Sunrise Traders, in Exchange for What It Fixed
 

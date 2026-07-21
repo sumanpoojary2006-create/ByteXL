@@ -22,7 +22,7 @@ ON-IMAGE TEXT: show a short bold title "Who Uses A Database End Users Developers
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for who uses a database end users developers and](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_intro_who_uses_a_database_end_users_developers_and_adm.png)
+![Intro visual for who uses a database end users developers and](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_intro_who_uses_a_database_end_users_developers_and_adm_matched_c82dc517.png)
 
 ## End Users: People Who Never See the Data Directly
 

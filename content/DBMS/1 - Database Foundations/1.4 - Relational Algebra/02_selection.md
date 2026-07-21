@@ -25,7 +25,7 @@ ON-IMAGE TEXT: show a short bold title "Selection" plus only these few labels, l
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for selection](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_selection.png)
+![Intro visual for selection](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_selection_matched_da5ec764.png)
 
 ## The Catalogue Rohan Is Working With
 

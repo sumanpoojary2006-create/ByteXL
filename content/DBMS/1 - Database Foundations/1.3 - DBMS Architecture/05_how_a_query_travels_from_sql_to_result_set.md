@@ -24,7 +24,7 @@ ON-IMAGE TEXT: show a short bold title "How A Query Travels From SQL To Result" 
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for how a query travels from sql to result](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_how_a_query_travels_from_sql_to_result_set.png)
+![Intro visual for how a query travels from sql to result](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_how_a_query_travels_from_sql_to_result_set_matched_ed9f1906.png)
 
 ## Step One: The Request Arrives as Plain SQL
 

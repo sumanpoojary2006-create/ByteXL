@@ -12,7 +12,7 @@ That shared language is the **ER diagram**, a standardised way of drawing entiti
 
 **Definition:** An ER diagram gives a design a shared visual vocabulary: rectangles for entities, ovals for attributes, diamonds for relationships, with underlines, dashes, and double outlines layered on to capture identifying, derived, and multivalued attributes, and with labelled or crow's-foot lines capturing cardinality and participation together.
 
-![Intro visual for drawing an er diagram notation and conventions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_drawing_an_er_diagram_notation_and_conventions.png)
+![Intro visual for drawing an er diagram notation and conventions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_drawing_an_er_diagram_notation_and_conventions_matched_1b9b1e12.png)
 
 ## The Core Shapes and What Each One Means
 

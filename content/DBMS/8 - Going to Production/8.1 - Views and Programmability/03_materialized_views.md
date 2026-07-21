@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Materialized Views" plus only these few 
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for materialized views](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_materialized_views.png)
+![Intro visual for materialized views](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_materialized_views_matched_ea961611.png)
 
 ## Creating a Materialized View
 

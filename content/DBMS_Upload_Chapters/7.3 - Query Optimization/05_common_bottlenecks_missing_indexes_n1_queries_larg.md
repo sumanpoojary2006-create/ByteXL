@@ -8,7 +8,7 @@ Most real-world performance problems trace back to a small handful of recurring 
 
 **Definition:** A missing index on a selective column, the `N+1 query` pattern hiding in application code, and a function or cast silently defeating an otherwise-useful index are three of the most common ways a real system slows down, and all three are diagnosable with the same tools covered across this unit: `EXPLAIN`, `EXPLAIN ANALYZE`, and a clear understanding of what each plan node actually means.
 
-![Intro visual for common bottlenecks missing indexes n1 queries larg](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_common_bottlenecks_missing_indexes_n1_queries_la.png)
+![Intro visual for common bottlenecks missing indexes n1 queries larg](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_common_bottlenecks_missing_indexes_n1_queries_la_matched_0dcaaad5.png)
 
 ## Bottleneck One: A Missing Index on a Selective Column
 

@@ -8,7 +8,7 @@ Left unmanaged, this leftover space accumulates, and **database maintenance** is
 
 **Definition:** Because PostgreSQL keeps old row versions around to support concurrent, isolated reads, routine maintenance, reclaiming dead tuple space with `VACUUM` and keeping the optimizer's statistics current with `ANALYZE`, is essential to keeping a database healthy over time, and autovacuum handles this automatically for the large majority of real-world cases without manual intervention.
 
-![Intro visual for database maintenance](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_database_maintenance.png)
+![Intro visual for database maintenance](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_database_maintenance_matched_d36192d2.png)
 
 ## Why Updates and Deletes Leave Behind Dead Rows
 

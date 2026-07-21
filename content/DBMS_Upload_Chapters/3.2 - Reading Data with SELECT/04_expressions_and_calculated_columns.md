@@ -11,7 +11,7 @@ A value built this way, out of columns and operators rather than read directly o
 
 **Definition:** Expressions turn a `SELECT` list from a plain menu of stored columns into a small calculator that runs once per row: arithmetic operators combine numbers, `||` combines text, and `AS` gives the result a name worth keeping.
 
-![Intro visual for expressions and calculated columns](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_expressions_and_calculated_columns.png)
+![Intro visual for expressions and calculated columns](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_expressions_and_calculated_columns_matched_50527773.png)
 
 ## Doing Arithmetic in a SELECT List
 

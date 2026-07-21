@@ -6,7 +6,7 @@ What Priya actually needs is the table split into separate buckets, one per cate
 
 **Definition:** `GROUP BY` is what turns a single flat summary into a per-category, per-customer, or per-combination breakdown, by partitioning rows before the `aggregate functions` run over them.
 
-![Intro visual for grouping data](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_grouping_data.png)
+![Intro visual for grouping data](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_grouping_data_matched_3f9cd987.png)
 
 ## Splitting Rows Into Groups
 

@@ -6,7 +6,7 @@ PostgreSQL's answer to this is **roles**, the unified mechanism it uses to repre
 
 **Definition:** A role in PostgreSQL can represent either an individually authenticating account or a non-login group used to bundle permissions, and structuring access around distinct roles per person and per service, rather than a single shared login, is what makes accountability and precise permission management possible at all.
 
-![Intro visual for users and roles managing database accounts](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_users_and_roles_managing_database_accounts.png)
+![Intro visual for users and roles managing database accounts](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_users_and_roles_managing_database_accounts_matched_a874abd1.png)
 
 ## Creating a Role
 

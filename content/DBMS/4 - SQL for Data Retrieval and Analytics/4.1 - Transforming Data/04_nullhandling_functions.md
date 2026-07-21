@@ -23,7 +23,7 @@ ON-IMAGE TEXT: show a short bold title "Nullhandling Functions" plus only these 
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for nullhandling functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_nullhandling_functions.png)
+![Intro visual for nullhandling functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_nullhandling_functions_matched_061f3c24.png)
 
 ## Filling In a Default When a Value Is Missing
 

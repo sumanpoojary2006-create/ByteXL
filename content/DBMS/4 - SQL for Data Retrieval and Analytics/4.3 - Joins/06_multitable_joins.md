@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Multitable Joins" plus only these few la
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for multitable joins](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_multitable_joins.png)
+![Intro visual for multitable joins](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_multitable_joins_matched_ceeaabe9.png)
 
 ## Setting Up Four Related Tables
 

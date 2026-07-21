@@ -14,7 +14,7 @@ The two `Orders` tables collide, and nobody notices until a report quietly pulls
 
 **Definition:** A schema, in this sense, is less about how any single table is shaped and more about how a whole database full of tables is kept organized once more than one team is building on top of it.
 
-![Intro visual for database schemas and namespaces](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_database_schemas_and_namespaces.png)
+![Intro visual for database schemas and namespaces](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_database_schemas_and_namespaces_matched_b4b4fe49.png)
 
 ## A Schema Is a Folder, Not a Table Design
 

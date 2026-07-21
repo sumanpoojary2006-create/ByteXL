@@ -62,7 +62,7 @@ ON-IMAGE TEXT: show a short bold title "Boycecodd Normal Form" plus only these f
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for boycecodd normal form](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_boycecodd_normal_form.png)
+![Intro visual for boycecodd normal form](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_boycecodd_normal_form_matched_a0c08858.png)
 
 ## The Rule Everyone at Sunrise Traders Already Knows About This Warehouse
 

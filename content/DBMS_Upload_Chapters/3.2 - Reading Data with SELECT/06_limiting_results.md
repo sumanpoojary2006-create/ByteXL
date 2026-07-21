@@ -6,7 +6,7 @@ Pulling the whole table and cutting it down to five rows in whatever code render
 
 **Definition:** `LIMIT` trims a result down to a manageable number of rows, and `OFFSET` lets a query skip past rows already handled, together making dashboard previews and paginated views practical without ever pulling more data than a screen can use.
 
-![Intro visual for limiting results](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_limiting_results.png)
+![Intro visual for limiting results](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_limiting_results_matched_a958b78a.png)
 
 ## Cutting a Result Down to N Rows
 

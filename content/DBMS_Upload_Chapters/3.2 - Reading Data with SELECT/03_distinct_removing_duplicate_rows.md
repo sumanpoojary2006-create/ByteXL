@@ -6,7 +6,7 @@ She scrolls through the list herself, mentally crossing off repeats, to work out
 
 **Definition:** `DISTINCT` strips a result down to its genuinely unique rows, whether uniqueness is judged on a single column or on the combination of every column named in the `SELECT` list.
 
-![Intro visual for distinct removing duplicate rows](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_distinct_removing_duplicate_rows.png)
+![Intro visual for distinct removing duplicate rows](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_distinct_removing_duplicate_rows_matched_f7a213f9.png)
 
 ## The Repeated-Rows Problem
 

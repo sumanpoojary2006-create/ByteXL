@@ -24,7 +24,7 @@ ON-IMAGE TEXT: show a short bold title "Date And Time Functions" plus only these
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for date and time functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_date_and_time_functions.png)
+![Intro visual for date and time functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_date_and_time_functions_matched_22ebb29b.png)
 
 ## Getting the Current Moment
 

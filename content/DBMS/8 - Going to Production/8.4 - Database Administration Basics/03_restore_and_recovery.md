@@ -22,7 +22,7 @@ ON-IMAGE TEXT: show a short bold title "Restore And Recovery" plus only these fe
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for restore and recovery](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_restore_and_recovery.png)
+![Intro visual for restore and recovery](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_restore_and_recovery_matched_97f937a8.png)
 
 ## Restoring from a Logical Backup
 

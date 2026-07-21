@@ -22,7 +22,7 @@ ON-IMAGE TEXT: show a short bold title "How Data Is Stored" plus only these few 
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for how data is stored](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_how_data_is_stored.png)
+![Intro visual for how data is stored](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_how_data_is_stored_matched_a6bb9a0e.png)
 
 ## Rows Live Inside Pages, Not Loose on Disk
 

@@ -8,7 +8,7 @@ A **database migration** is a versioned, ordered, tracked script that applies ex
 
 **Definition:** A database migration is a small, versioned, tracked script that applies exactly one schema change, recorded in a dedicated table so the same set of migrations can be safely and consistently applied across a developer's laptop, a testing environment, and production, with structure-preserving statements protecting existing data rather than destructive shortcuts that discard it.
 
-![Intro visual for database migrations and schema versioning](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_database_migrations_and_schema_versioning.png)
+![Intro visual for database migrations and schema versioning](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_database_migrations_and_schema_versioning_matched_3e34de5a.png)
 
 ## The Problem Migrations Solve
 

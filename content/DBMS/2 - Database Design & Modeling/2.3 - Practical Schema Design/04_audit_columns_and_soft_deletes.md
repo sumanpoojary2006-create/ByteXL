@@ -24,7 +24,7 @@ ON-IMAGE TEXT: show a short bold title "Audit Columns And Soft Deletes" plus onl
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for audit columns and soft deletes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_audit_columns_and_soft_deletes.png)
+![Intro visual for audit columns and soft deletes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_audit_columns_and_soft_deletes_matched_42b7a466.png)
 
 ## Audit Columns: A Quiet Record of When Things Happened
 

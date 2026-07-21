@@ -6,7 +6,7 @@ That label does not exist anywhere in the table, it depends on a rule applied to
 
 **Definition:** `CASE` turns a raw column value into whatever label, category, or calculated result a business question actually needs, checking conditions in order and returning the first match, with `ELSE` as a safety net for everything else.
 
-![Intro visual for conditional logic](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_conditional_logic.png)
+![Intro visual for conditional logic](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_conditional_logic_matched_bc6048dc.png)
 
 ## Writing a Simple CASE Expression
 

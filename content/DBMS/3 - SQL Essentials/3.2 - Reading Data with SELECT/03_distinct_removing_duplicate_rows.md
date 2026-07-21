@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Distinct Removing Duplicate Rows" plus o
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for distinct removing duplicate rows](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_distinct_removing_duplicate_rows.png)
+![Intro visual for distinct removing duplicate rows](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_distinct_removing_duplicate_rows_matched_f7a213f9.png)
 
 ## The Repeated-Rows Problem
 

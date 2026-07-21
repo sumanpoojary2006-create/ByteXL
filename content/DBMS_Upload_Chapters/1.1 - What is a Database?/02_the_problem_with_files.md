@@ -14,7 +14,7 @@ None of this happened because Kabir or his colleagues were careless. It happened
 
 **Definition:** Redundancy creeps in because the same fact has to be retyped wherever it is needed, inconsistency follows because updating one copy never guarantees the others get updated too, and `lost updates` happen because a plain file cannot merge two people's honest changes into one.
 
-![Intro visual for the problem with files](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_the_problem_with_files.png)
+![Intro visual for the problem with files](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_the_problem_with_files_matched_b8bd866d.png)
 
 ## Redundancy: The Same Fact, Typed More Than Once
 

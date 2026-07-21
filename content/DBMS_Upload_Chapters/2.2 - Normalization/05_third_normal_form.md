@@ -47,7 +47,7 @@ The problem here is not partial dependency at all, it is a different, sneakier p
 
 **Definition:** Third `Normal Form` closes a gap that Second `Normal Form` cannot reach on its own: a table can have the simplest possible key, a single column, and still repeat data endlessly if some non-key column is really describing a different non-key column instead of the key itself.
 
-![Intro visual for third normal form](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_third_normal_form.png)
+![Intro visual for third normal form](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_third_normal_form_matched_f6f9d60e.png)
 
 ## A Dependency With a Detour
 

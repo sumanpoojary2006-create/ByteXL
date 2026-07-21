@@ -19,7 +19,7 @@ ON-IMAGE TEXT: show a short bold title "Reading Explain" plus only these few lab
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for reading explain](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_reading_explain.png)
+![Intro visual for reading explain](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_reading_explain_matched_3dbbbc35.png)
 
 ## The Basic Shape of an EXPLAIN Plan
 

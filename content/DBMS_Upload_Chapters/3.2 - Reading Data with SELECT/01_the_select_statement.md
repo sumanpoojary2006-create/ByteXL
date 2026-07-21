@@ -6,7 +6,7 @@ He is not filtering anything, not searching for one particular person, not doing
 
 **Definition:** The `SELECT` statement is the starting point of nearly every piece of SQL anyone writes: name the columns you want, name the table they live in, and the database hands back exactly that slice of data.
 
-![Intro visual for the select statement](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_the_select_statement.png)
+![Intro visual for the select statement](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_the_select_statement_matched_e1a9a149.png)
 
 ## Asking For Everything in a Table
 

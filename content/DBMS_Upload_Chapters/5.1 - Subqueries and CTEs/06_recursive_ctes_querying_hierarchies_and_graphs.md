@@ -8,7 +8,7 @@ A **`recursive CTE`** solves this by repeating its own logic against its own gro
 
 **Definition:** A `recursive CTE` repeats its own logic against a growing result set until no new rows appear, which is exactly the tool needed for hierarchies and graphs whose depth is not known in advance, whether that means walking up an org chart to find every manager above a person or walking down to find every report beneath one.
 
-![Intro visual for recursive ctes querying hierarchies and graphs](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_recursive_ctes_querying_hierarchies_and_graphs.png)
+![Intro visual for recursive ctes querying hierarchies and graphs](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_recursive_ctes_querying_hierarchies_and_graphs_matched_7a98d9a2.png)
 
 ## The Shape of the Hierarchy
 

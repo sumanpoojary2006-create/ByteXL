@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "What Is A Database What Is A DBMS" plus 
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for what is a database what is a dbms](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_what_is_a_database_what_is_a_dbms.png)
+![Intro visual for what is a database what is a dbms](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_what_is_a_database_what_is_a_dbms_matched_0434128b.png)
 
 ## A Database Is the Organized Data Itself
 

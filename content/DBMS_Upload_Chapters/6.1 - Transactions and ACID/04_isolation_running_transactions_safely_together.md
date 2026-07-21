@@ -6,7 +6,7 @@ The third letter in ACID, **isolation**, is the guarantee that concurrently runn
 
 **Definition:** Isolation guarantees that concurrently running transactions do not see each other's uncommitted, potentially-to-be-rolled-back changes, keeping a transaction's in-progress work private until it actually commits, which is what makes it safe for a real system to run many transactions against the same data at once.
 
-![Intro visual for isolation running transactions safely together](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_isolation_running_transactions_safely_together.png)
+![Intro visual for isolation running transactions safely together](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_isolation_running_transactions_safely_together_matched_22b21919.png)
 
 ## What a Transaction Can See of Its Own Changes
 

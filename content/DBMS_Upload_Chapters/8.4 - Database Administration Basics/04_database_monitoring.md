@@ -6,7 +6,7 @@ This helps teams respond before users are affected, instead of diagnosing the pr
 
 **Definition:** Continuous monitoring of connection usage, table bloat, cache hit ratio, and long-running or blocked queries turns the diagnostic tools used reactively throughout this course into an early-warning system, catching degrading health before it becomes a full outage, rather than only after users are already affected.
 
-![Intro visual for database monitoring](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_database_monitoring.png)
+![Intro visual for database monitoring](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_database_monitoring_matched_800fc814.png)
 
 ## Watching Connection Usage Over Time
 

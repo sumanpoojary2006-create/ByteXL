@@ -7,7 +7,7 @@
 
 **Definition:** `INNER JOIN`, and its shorthand JOIN, keeps only the rows where both sides of the join condition find a partner, quietly dropping everything else, which makes it the right choice whenever unmatched rows carry no useful information for the question at hand.
 
-![Intro visual for inner join](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_inner_join.png)
+![Intro visual for inner join](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_inner_join_matched_59125b6c.png)
 
 ## Confirming the Match-Only Behavior
 

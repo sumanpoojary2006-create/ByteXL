@@ -25,7 +25,7 @@ ON-IMAGE TEXT: show a short bold title "Concurrency Problems" plus only these fe
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for concurrency problems](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_concurrency_problems.png)
+![Intro visual for concurrency problems](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_concurrency_problems_matched_466ea4ac.png)
 
 ## Dirty Reads: Seeing Data That Was Never Actually Committed
 

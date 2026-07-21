@@ -23,7 +23,7 @@ ON-IMAGE TEXT: show a short bold title "Converting An Er Diagram Into Relational
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for converting an er diagram into relational tables](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_converting_an_er_diagram_into_relational_tables.png)
+![Intro visual for converting an er diagram into relational tables](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_converting_an_er_diagram_into_relational_tables_matched_2ba9af3b.png)
 
 ## Rule One: Every Entity Becomes a Table
 

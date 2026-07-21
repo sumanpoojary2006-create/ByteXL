@@ -16,7 +16,7 @@ He needs to understand what a **relational database management system**, a piece
 
 **Definition:** Choosing a database system is not about finding one flawless option and discarding the rest, it is about matching a system's actual design to the shape of the problem in front of you.
 
-![Intro visual for choosing a database system](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_choosing_a_database_system.png)
+![Intro visual for choosing a database system](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_choosing_a_database_system_matched_498092cc.png)
 
 ## The Relational Family Ishaan Keeps Running Into
 

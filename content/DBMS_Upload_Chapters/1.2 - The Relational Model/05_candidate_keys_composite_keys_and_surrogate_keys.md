@@ -16,7 +16,7 @@ These three situations turn out to be common enough that the relational model gi
 
 **Definition:** Candidate keys widen the lens from "the one `primary key`" to every column that honestly could have filled that role.
 
-![Intro visual for candidate keys composite keys and surrogate keys](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_candidate_keys_composite_keys_and_surrogate_keys.png)
+![Intro visual for candidate keys composite keys and surrogate keys](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_candidate_keys_composite_keys_and_surrogate_keys_matched_88200436.png)
 
 ## Candidate Keys: The Ones That Could Have Been Chosen
 

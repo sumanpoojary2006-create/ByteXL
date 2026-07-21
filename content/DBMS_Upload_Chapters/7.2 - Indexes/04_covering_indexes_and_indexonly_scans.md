@@ -6,7 +6,7 @@ That extra jump, from index entry to table page, is called a heap fetch, and for
 
 **Definition:** A `covering index`, built with `INCLUDE`, stores extra columns alongside the `indexed` key so that a matching query can be answered entirely from the index, skipping the heap fetch a regular `index scan` still requires, at the cost of a larger index and more write overhead.
 
-![Intro visual for covering indexes and indexonly scans](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_covering_indexes_and_indexonly_scans.png)
+![Intro visual for covering indexes and indexonly scans](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_covering_indexes_and_indexonly_scans_matched_5a0933ed.png)
 
 ## Watching a Heap Fetch Happen
 

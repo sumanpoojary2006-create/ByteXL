@@ -9,7 +9,7 @@ Naina realises that everything so far has been a picture of the world, not yet a
 
 **Definition:** Converting an ER diagram into relational tables follows a small, dependable set of rules: every entity becomes a table with its simple attributes as columns and its identifying attribute as the `primary key`, every one-to-many relationship is implemented by placing a `foreign key` on the table representing the "many" side, every one-to-one relationship places a unique `foreign key` on one side or merges the two tables outright, and every many-to-many relationship requires a new junction table holding a `foreign key` pointing to each of the two entities it connects.
 
-![Intro visual for converting an er diagram into relational tables](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_converting_an_er_diagram_into_relational_tables.png)
+![Intro visual for converting an er diagram into relational tables](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_converting_an_er_diagram_into_relational_tables_matched_2ba9af3b.png)
 
 ## Rule One: Every Entity Becomes a Table
 

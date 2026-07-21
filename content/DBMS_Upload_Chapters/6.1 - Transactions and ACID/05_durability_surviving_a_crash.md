@@ -6,7 +6,7 @@ The fourth letter in ACID, **durability**, is the guarantee that once a transact
 
 **Definition:** Durability closes the loop that atomicity, consistency, and isolation open: once a transaction commits, its result is guaranteed permanent, surviving any crash, because the database records it somewhere durable before ever reporting success.
 
-![Intro visual for durability surviving a crash](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_durability_surviving_a_crash.png)
+![Intro visual for durability surviving a crash](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_durability_surviving_a_crash_matched_33aa4771.png)
 
 ## COMMIT Means Permanent, Not Just Visible
 

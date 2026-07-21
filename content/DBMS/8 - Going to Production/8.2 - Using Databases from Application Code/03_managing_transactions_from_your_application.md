@@ -21,7 +21,7 @@ ON-IMAGE TEXT: show a short bold title "Managing Transactions From Your Applicat
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for managing transactions from your application](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_managing_transactions_from_your_application.png)
+![Intro visual for managing transactions from your application](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_managing_transactions_from_your_application_matched_bba7e5ea.png)
 
 ## A Transaction Belongs to Exactly One Connection
 

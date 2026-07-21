@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Covering Indexes And Indexonly Scans" pl
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for covering indexes and indexonly scans](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_covering_indexes_and_indexonly_scans.png)
+![Intro visual for covering indexes and indexonly scans](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_covering_indexes_and_indexonly_scans_matched_5a0933ed.png)
 
 ## Watching a Heap Fetch Happen
 

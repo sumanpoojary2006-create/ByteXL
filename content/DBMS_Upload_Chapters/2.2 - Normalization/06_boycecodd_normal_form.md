@@ -48,7 +48,7 @@ The reason a table can pass 1NF, 2NF, and 3NF and still hide this kind of repeti
 
 **Definition:** Boyce-Codd `Normal Form` closes the one gap 3NF leaves open: a table can satisfy every earlier rule and still repeat data whenever a functional dependency's determinant is not itself a `candidate key`, especially when the dependent column happens to be part of the `primary key` rather than sitting outside it.
 
-![Intro visual for boycecodd normal form](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_boycecodd_normal_form.png)
+![Intro visual for boycecodd normal form](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_boycecodd_normal_form_matched_a0c08858.png)
 
 ## The Rule Everyone at Sunrise Traders Already Knows About This Warehouse
 

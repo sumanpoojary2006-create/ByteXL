@@ -6,7 +6,7 @@
 
 **Definition:** `ROW_NUMBER`, `RANK`, and `DENSE_RANK` each turn an ordered set of rows into rank numbers, differing only in how they handle ties, strict sequencing with no ties, ranking with gaps after a tie, or ranking with no gaps at all.
 
-![Intro visual for ranking functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_ranking_functions.png)
+![Intro visual for ranking functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_ranking_functions_matched_4ab7ae48.png)
 
 ## Numbering Rows with ROW_NUMBER
 

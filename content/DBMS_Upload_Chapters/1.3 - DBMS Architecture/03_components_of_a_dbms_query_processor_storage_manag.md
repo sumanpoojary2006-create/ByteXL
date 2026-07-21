@@ -12,7 +12,7 @@ Those three jobs, roughly, are what the three boxes on the whiteboard do. Unders
 
 **Definition:** A DBMS is not one monolithic piece of software but a small society of specialists working together: a query processor that interprets and plans, a storage manager that reads and writes the physical data, and a transaction manager that keeps everything correct when many requests collide at once.
 
-![Intro visual for components of a dbms query processor storage manag](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_components_of_a_dbms_query_processor_storage_man.png)
+![Intro visual for components of a dbms query processor storage manag](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_components_of_a_dbms_query_processor_storage_man_matched_d09d0ce5.png)
 
 ## The Query Processor: Understanding What You Asked For
 

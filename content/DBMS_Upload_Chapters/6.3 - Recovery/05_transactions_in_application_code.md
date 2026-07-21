@@ -6,7 +6,7 @@ Closing out this unit means connecting everything learned about transactions, AC
 
 **Definition:** Every guarantee this unit has built, atomicity, consistency, isolation, durability, concurrency control, and crash recovery, ultimately exists so that application code can follow one simple, disciplined pattern: begin a transaction around exactly the statements that must succeed or fail together, commit only when all of them succeed, roll back on any failure, keep the transaction short, and retry safely when a deadlock is the cause.
 
-![Intro visual for transactions in application code](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_transactions_in_application_code.png)
+![Intro visual for transactions in application code](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_transactions_in_application_code_matched_cfe7af0d.png)
 
 ## Auto-commit: The Default Behavior Worth Knowing About
 

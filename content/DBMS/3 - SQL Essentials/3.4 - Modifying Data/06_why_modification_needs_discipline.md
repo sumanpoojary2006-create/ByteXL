@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Why Modification Needs Discipline" plus 
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for why modification needs discipline](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_why_modification_needs_discipline.png)
+![Intro visual for why modification needs discipline](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_why_modification_needs_discipline_matched_e9f7c873.png)
 
 ## Why a SELECT Mistake and a Modification Mistake Are Not the Same
 

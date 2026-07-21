@@ -15,7 +15,7 @@ Neither table, alone, can answer the parent's question.
 
 **Definition:** A join takes two relations that each hold part of an answer and combines them into one, by first considering every possible pairing of rows and then keeping only the pairings whose matching condition genuinely holds, most commonly that a shared column agrees between the two sides.
 
-![Intro visual for the join operator](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_the_join_operator.png)
+![Intro visual for the join operator](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_the_join_operator_matched_50e70f3c.png)
 
 ## Farah's Two Relations
 

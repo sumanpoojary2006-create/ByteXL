@@ -10,7 +10,7 @@ Tracing **how a query travels from SQL to a result set** is what finally makes t
 
 **Definition:** The **query-processing pipeline** is the sequence through which a DBMS parses SQL, validates it, chooses an execution plan, reads the required data, and returns the final result set.
 
-![Intro visual for how a query travels from sql to result](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_how_a_query_travels_from_sql_to_result_set.png)
+![Intro visual for how a query travels from sql to result](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_how_a_query_travels_from_sql_to_result_set_matched_ed9f1906.png)
 
 ## Step One: The Request Arrives as Plain SQL
 

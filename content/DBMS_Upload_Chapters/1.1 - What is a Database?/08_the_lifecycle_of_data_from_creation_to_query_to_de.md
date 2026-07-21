@@ -6,7 +6,7 @@ Most people, Asha included, never think about what happens to their data once th
 
 **Definition:** Every piece of data in a database moves through the same rough arc: it is created once, read far more often than it is changed, updated as circumstances shift, and eventually deleted or set aside once it stops earning its place among the actively used records.
 
-![Intro visual for the lifecycle of data from creation to query](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_intro_the_lifecycle_of_data_from_creation_to_query_to.png)
+![Intro visual for the lifecycle of data from creation to query](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_intro_the_lifecycle_of_data_from_creation_to_query_to_matched_b8bb307d.png)
 
 ## Creation: The Order Is Born
 

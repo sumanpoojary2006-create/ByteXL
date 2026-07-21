@@ -22,7 +22,7 @@ ON-IMAGE TEXT: show a short bold title "Correlated Subqueries" plus only these f
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for correlated subqueries](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_correlated_subqueries.png)
+![Intro visual for correlated subqueries](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_correlated_subqueries_matched_fa566438.png)
 
 ## A Subquery That References the Outer Row
 

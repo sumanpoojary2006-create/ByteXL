@@ -28,7 +28,7 @@ ON-IMAGE TEXT: show a short bold title "On Delete And On Update Controlling What
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for on delete and on update controlling what happens](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_intro_on_delete_and_on_update_controlling_what_happens.png)
+![Intro visual for on delete and on update controlling what happens](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_intro_on_delete_and_on_update_controlling_what_happens_matched_6b035eaa.png)
 
 ## The Dilemma, In Plain Terms
 

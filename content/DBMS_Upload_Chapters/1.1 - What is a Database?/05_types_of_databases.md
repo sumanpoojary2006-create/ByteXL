@@ -6,7 +6,7 @@ He laughs, not unkindly, and pulls up three very different systems already runni
 
 **Definition:** A **database type** is a category based on how data is organized and related. Relational databases use tables, document databases store flexible documents, key-value databases pair unique keys with values, and graph databases represent data as connected nodes and edges.
 
-![Intro visual for types of databases](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_types_of_databases.png)
+![Intro visual for types of databases](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_types_of_databases_matched_5dd8524f.png)
 
 ## The Relational Model: Neat Rows and Columns
 

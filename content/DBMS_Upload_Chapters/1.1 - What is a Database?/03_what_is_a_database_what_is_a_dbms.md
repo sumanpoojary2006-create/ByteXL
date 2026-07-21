@@ -6,7 +6,7 @@ The vendor's proposal document lands on Meera's desk, she is the office manager,
 
 **Definition:** A database is the organized data, and a DBMS is the separate software built specifically to manage that data safely on its behalf, and the two words are never interchangeable no matter how often vendors blur them together.
 
-![Intro visual for what is a database what is a dbms](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_what_is_a_database_what_is_a_dbms.png)
+![Intro visual for what is a database what is a dbms](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_what_is_a_database_what_is_a_dbms_matched_0434128b.png)
 
 ## A Database Is the Organized Data Itself
 

@@ -8,7 +8,7 @@ Which one could literally any developer at this company sit down and query corre
 
 **Definition:** Relational databases earn their place as the default starting point because tables are a shape people already understand, and SQL is a language that transfers across systems, jobs, and years instead of expiring the moment one particular product falls out of fashion.
 
-![Intro visual for why relational databases first tables sql and the](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_why_relational_databases_first_tables_sql_and_th.png)
+![Intro visual for why relational databases first tables sql and the](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_why_relational_databases_first_tables_sql_and_th_matched_167b56ab.png)
 
 ## Tables Are Something Everyone Already Understands
 

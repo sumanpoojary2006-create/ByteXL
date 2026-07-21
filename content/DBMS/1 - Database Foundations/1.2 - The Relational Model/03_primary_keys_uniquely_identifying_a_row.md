@@ -28,7 +28,7 @@ ON-IMAGE TEXT: show a short bold title "Primary Keys Uniquely Identifying A Row"
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for primary keys uniquely identifying a row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_primary_keys_uniquely_identifying_a_row.png)
+![Intro visual for primary keys uniquely identifying a row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_primary_keys_uniquely_identifying_a_row_matched_1aa226db.png)
 
 ## Why "Just Search by Name" Falls Apart
 

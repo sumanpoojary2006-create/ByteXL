@@ -26,7 +26,7 @@ ON-IMAGE TEXT: show a short bold title "Database Constraints" plus only these fe
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for database constraints](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_database_constraints.png)
+![Intro visual for database constraints](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_database_constraints_matched_92c8b41d.png)
 
 ## A Constraint Is a Rule the Database Enforces For You
 

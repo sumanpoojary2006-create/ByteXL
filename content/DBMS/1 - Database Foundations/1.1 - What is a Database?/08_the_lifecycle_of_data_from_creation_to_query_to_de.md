@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "The Lifecycle Of Data From Creation To Q
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for the lifecycle of data from creation to query](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_intro_the_lifecycle_of_data_from_creation_to_query_to.png)
+![Intro visual for the lifecycle of data from creation to query](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_intro_the_lifecycle_of_data_from_creation_to_query_to_matched_b8bb307d.png)
 
 ## Creation: The Order Is Born
 

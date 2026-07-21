@@ -14,7 +14,7 @@ What Tara stumbled into is one of the most important ideas in the relational mod
 
 **Definition:** A `primary key` is the column, or combination of columns, a table leans on to guarantee that every row can always be told apart from every other row, no matter how large the table grows or how many rows happen to share the same name, city, or course.
 
-![Intro visual for primary keys uniquely identifying a row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_primary_keys_uniquely_identifying_a_row.png)
+![Intro visual for primary keys uniquely identifying a row](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_primary_keys_uniquely_identifying_a_row_matched_1aa226db.png)
 
 ## Why "Just Search by Name" Falls Apart
 

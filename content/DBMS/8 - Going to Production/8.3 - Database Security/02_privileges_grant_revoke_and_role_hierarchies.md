@@ -18,7 +18,7 @@ ON-IMAGE TEXT: show a short bold title "Privileges Grant Revoke And Role Hierarc
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for privileges grant revoke and role hierarchies](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_privileges_grant_revoke_and_role_hierarchies.png)
+![Intro visual for privileges grant revoke and role hierarchies](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_privileges_grant_revoke_and_role_hierarchies_matched_1d298495.png)
 
 ## Granting a Specific Privilege on a Specific Table
 

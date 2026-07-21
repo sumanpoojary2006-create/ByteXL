@@ -17,7 +17,7 @@ That Customer ID column sitting inside the Orders table, referring back to a row
 
 **Definition:** A `foreign key` is how one table reaches out and anchors itself to a specific, real row living inside another table, turning two separate grids of data into one connected, trustworthy structure.
 
-![Intro visual for foreign keys linking tables together](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_foreign_keys_linking_tables_together.png)
+![Intro visual for foreign keys linking tables together](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_foreign_keys_linking_tables_together_matched_459f430e.png)
 
 ## Two Tables That Need to Talk to Each Other
 

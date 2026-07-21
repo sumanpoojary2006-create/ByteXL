@@ -31,7 +31,7 @@ ON-IMAGE TEXT: show a short bold title "Foreign Keys Linking Tables Together" pl
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for foreign keys linking tables together](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_foreign_keys_linking_tables_together.png)
+![Intro visual for foreign keys linking tables together](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_foreign_keys_linking_tables_together_matched_459f430e.png)
 
 ## Two Tables That Need to Talk to Each Other
 

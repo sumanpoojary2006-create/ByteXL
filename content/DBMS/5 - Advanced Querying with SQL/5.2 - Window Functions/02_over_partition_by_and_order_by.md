@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Over Partition By And Order By" plus onl
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for over partition by and order by](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_over_partition_by_and_order_by.png)
+![Intro visual for over partition by and order by](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_over_partition_by_and_order_by_matched_02699f00.png)
 
 ## Ordering Rows Within a Window
 

@@ -6,7 +6,7 @@ Naveen realizes that everything he has learned about `INSERT`, `UPDATE`, `DELETE
 
 **Definition:** **Disciplined data modification** means identifying the exact rows a write statement will affect, protecting related changes with transactions when necessary, and verifying the result so accidental or partial changes do not damage the data.
 
-![Intro visual for why modification needs discipline](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_why_modification_needs_discipline.png)
+![Intro visual for why modification needs discipline](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_why_modification_needs_discipline_matched_e9f7c873.png)
 
 ## Why a SELECT Mistake and a Modification Mistake Are Not the Same
 

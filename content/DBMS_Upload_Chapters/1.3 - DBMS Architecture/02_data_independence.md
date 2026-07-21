@@ -12,7 +12,7 @@ A few months later, the product team asks for something different: every order r
 
 **Definition:** Data independence works because a database is not one flat structure but a set of separated levels, and a change confined to one level does not have to ripple through the others.
 
-![Intro visual for data independence](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_data_independence.png)
+![Intro visual for data independence](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_data_independence_matched_b9ad9e67.png)
 
 ## Physical Data Independence: Changing the Storage Without Touching the Apps
 

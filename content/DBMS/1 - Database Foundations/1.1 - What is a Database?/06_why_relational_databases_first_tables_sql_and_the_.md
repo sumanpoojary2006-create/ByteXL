@@ -22,7 +22,7 @@ ON-IMAGE TEXT: show a short bold title "Why Relational Databases First Tables SQ
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for why relational databases first tables sql and the](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_why_relational_databases_first_tables_sql_and_th.png)
+![Intro visual for why relational databases first tables sql and the](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_why_relational_databases_first_tables_sql_and_th_matched_167b56ab.png)
 
 ## Tables Are Something Everyone Already Understands
 

@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Returning Getting Back What You Just Cha
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for returning getting back what you just changed](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_returning_getting_back_what_you_just_changed.png)
+![Intro visual for returning getting back what you just changed](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_returning_getting_back_what_you_just_changed_matched_86a2ad52.png)
 
 ## RETURNING After INSERT
 

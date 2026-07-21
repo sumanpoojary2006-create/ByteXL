@@ -61,7 +61,7 @@ ON-IMAGE TEXT: show a short bold title "Third Normal Form" plus only these few l
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for third normal form](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_third_normal_form.png)
+![Intro visual for third normal form](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_third_normal_form_matched_f6f9d60e.png)
 
 ## A Dependency With a Detour
 

@@ -5,7 +5,7 @@
 
 **Definition:** A checkpoint marks a point where every previously logged change is guaranteed to already be written to the actual data files, giving recovery a recent, known starting point instead of forcing it to replay a database's entire history after every crash, at the cost of periodic disk activity that has to be balanced against how quickly the system needs to recover.
 
-![Intro visual for checkpoints bounding how far back recovery must go](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_checkpoints_bounding_how_far_back_recovery_must.png)
+![Intro visual for checkpoints bounding how far back recovery must go](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_checkpoints_bounding_how_far_back_recovery_must_matched_7240fe83.png)
 
 ## What a Checkpoint Actually Does
 

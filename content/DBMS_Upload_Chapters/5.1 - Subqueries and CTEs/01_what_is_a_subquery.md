@@ -6,7 +6,7 @@ He cannot type `WHERE salary > AVG(salary)` directly, since `aggregate functions
 
 **Definition:** A subquery is an ordinary `SELECT` statement nested inside another query, computed first and substituted in as a value, letting a query depend on a number, a list, or a table that only exists once that inner query has run.
 
-![Intro visual for what is a subquery](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_what_is_a_subquery.png)
+![Intro visual for what is a subquery](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_what_is_a_subquery_matched_05333c74.png)
 
 ## A Query Inside a Query
 

@@ -6,7 +6,7 @@ Opening and closing a brand new connection for every single one of those request
 
 **Definition:** `Connection pooling` reuses a fixed set of already-open connections across many requests instead of opening and closing one per request, avoiding both the repeated connection cost and the risk of exhausting the database's shared `max_connections` limit, with careful attention needed to ensure a connection is always returned to the pool in a clean, transaction-free state.
 
-![Intro visual for connection pooling](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_connection_pooling.png)
+![Intro visual for connection pooling](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_connection_pooling_matched_f6417918.png)
 
 ## Why a Database Cannot Handle Unlimited Connections
 

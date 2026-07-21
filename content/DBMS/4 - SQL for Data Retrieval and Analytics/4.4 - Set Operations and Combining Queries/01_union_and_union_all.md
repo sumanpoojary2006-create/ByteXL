@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Union And Union All" plus only these few
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for union and union all](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_union_and_union_all.png)
+![Intro visual for union and union all](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_union_and_union_all_matched_7a005c4c.png)
 
 ## Stacking Two Result Sets Into One
 

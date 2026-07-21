@@ -22,7 +22,7 @@ ON-IMAGE TEXT: show a short bold title "Upsert And On Conflict Insert Or Update 
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for upsert and on conflict insert or update in](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_upsert_and_on_conflict_insert_or_update_in_one_s.png)
+![Intro visual for upsert and on conflict insert or update in](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_upsert_and_on_conflict_insert_or_update_in_one_s_matched_93f336b5.png)
 
 ## Setting Up a Uniqueness Rule to Conflict Against
 

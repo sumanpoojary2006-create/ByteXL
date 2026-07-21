@@ -22,7 +22,7 @@ ON-IMAGE TEXT: show a short bold title "When To Use Set Operations Vs Joins" plu
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for when to use set operations vs joins](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_when_to_use_set_operations_vs_joins.png)
+![Intro visual for when to use set operations vs joins](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_when_to_use_set_operations_vs_joins_matched_c2b141d3.png)
 
 ## The Core Difference: Sideways vs. Stacked
 

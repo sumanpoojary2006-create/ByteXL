@@ -12,7 +12,7 @@ Type -3 into the age field, and the system will not accept it. These automatic, 
 
 **Definition:** A constraint is a promise the database itself keeps on every single row, automatically and without exception, so that the trustworthiness of a table never depends on how careful, or how tired, the person entering the data happens to be that day.
 
-![Intro visual for database constraints](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_database_constraints.png)
+![Intro visual for database constraints](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_database_constraints_matched_92c8b41d.png)
 
 ## A Constraint Is a Rule the Database Enforces For You
 

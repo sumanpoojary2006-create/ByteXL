@@ -29,7 +29,7 @@ ON-IMAGE TEXT: show a short bold title "Set Operations" plus only these few labe
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for set operations](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_set_operations.png)
+![Intro visual for set operations](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_set_operations_matched_2f5af747.png)
 
 ## The Two Club Relations
 

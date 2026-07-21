@@ -6,7 +6,7 @@ A view built simply enough can be genuinely **updatable**, passing writes straig
 
 **Definition:** A view built from a single table with no aggregation is updatable automatically, since a row in the view maps unambiguously to one row in one underlying table, while a view involving a join or an aggregate cannot be written to directly, since that mapping becomes ambiguous or nonexistent, though `INSTEAD OF` triggers exist as a deliberate way to bridge that gap when genuinely needed.
 
-![Intro visual for updatable views and their limitations](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_updatable_views_and_their_limitations.png)
+![Intro visual for updatable views and their limitations](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_updatable_views_and_their_limitations_matched_99c00476.png)
 
 ## A Simple View Is Updatable by Default
 

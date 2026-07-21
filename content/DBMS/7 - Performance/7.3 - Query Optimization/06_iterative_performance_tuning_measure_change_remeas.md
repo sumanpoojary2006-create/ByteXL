@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Iterative Performance Tuning Measure Cha
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for iterative performance tuning measure change remeas](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_iterative_performance_tuning_measure_change_reme.png)
+![Intro visual for iterative performance tuning measure change remeas](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_iterative_performance_tuning_measure_change_reme_matched_92d63cb2.png)
 
 ## Step One: Measure the Starting Point
 

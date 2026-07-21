@@ -6,7 +6,7 @@
 
 **Definition:** `Isolation levels` let a transaction choose exactly how much protection against concurrency problems it needs, trading stricter guarantees for more waiting and potential retries, with `READ COMMITTED` as a sensible everyday default and `SERIALIZABLE` reserved for operations where any interference at all is unacceptable.
 
-![Intro visual for isolation levels](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_isolation_levels.png)
+![Intro visual for isolation levels](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_isolation_levels_matched_92abdbb7.png)
 
 ## The Four Standard Isolation Levels
 

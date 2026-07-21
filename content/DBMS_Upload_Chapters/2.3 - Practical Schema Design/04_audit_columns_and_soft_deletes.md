@@ -10,7 +10,7 @@ Her tech lead, reviewing the incident afterward, explains what should have been 
 
 **Definition:** Audit columns and soft deletes both answer the same underlying worry: that a database, left to simply overwrite and erase without a trace, remembers nothing about its own past.
 
-![Intro visual for audit columns and soft deletes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_audit_columns_and_soft_deletes.png)
+![Intro visual for audit columns and soft deletes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_audit_columns_and_soft_deletes_matched_42b7a466.png)
 
 ## Audit Columns: A Quiet Record of When Things Happened
 

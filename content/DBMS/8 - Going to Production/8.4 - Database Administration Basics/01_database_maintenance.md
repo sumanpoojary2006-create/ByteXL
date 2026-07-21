@@ -22,7 +22,7 @@ ON-IMAGE TEXT: show a short bold title "Database Maintenance" plus only these fe
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for database maintenance](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_database_maintenance.png)
+![Intro visual for database maintenance](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_database_maintenance_matched_d36192d2.png)
 
 ## Why Updates and Deletes Leave Behind Dead Rows
 

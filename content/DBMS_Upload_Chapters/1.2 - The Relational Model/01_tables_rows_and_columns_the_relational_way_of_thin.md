@@ -18,7 +18,7 @@ Learning to think in tables, rows, and columns, rather than in loose freeform no
 
 **Definition:** A relational database is, at its heart, nothing more mysterious than Meera's ruled grid: a named table holding rows of the same kind of thing, with columns that describe one consistent fact about every single row.
 
-![Intro visual for tables rows and columns the relational way of](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_tables_rows_and_columns_the_relational_way_of_th.png)
+![Intro visual for tables rows and columns the relational way of](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_tables_rows_and_columns_the_relational_way_of_th_matched_5486a1b6.png)
 
 ## From a Pile of Sheets to a Table
 

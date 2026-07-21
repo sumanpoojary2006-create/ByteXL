@@ -28,7 +28,7 @@ ON-IMAGE TEXT: show a short bold title "The Problem With Files" plus only these 
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for the problem with files](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_the_problem_with_files.png)
+![Intro visual for the problem with files](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_the_problem_with_files_matched_b8bd866d.png)
 
 ## Redundancy: The Same Fact, Typed More Than Once
 
