@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Insert Adding New Rows" plus only these 
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for insert adding new rows](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_insert_adding_new_rows_matched_0a0b06df.png)
+![Intro visual for insert adding new rows](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44sjn9mdv/01_intro_insert_adding_new_rows.png)
 
 ## The Anatomy of INSERT INTO
 

@@ -6,7 +6,7 @@ The tool for that job is **`UPDATE`**, the statement that modifies values alread
 
 **Definition:** The **`UPDATE` statement** changes values in existing table rows; its `SET` clause specifies the new values, and its `WHERE` clause limits which rows are changed.
 
-![Intro visual for update modifying existing rows safely](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_update_modifying_existing_rows_safely_matched_fe39b977.png)
+![Intro visual for update modifying existing rows safely](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44sjn9mdv/02_intro_update_modifying_existing_rows_safely.png)
 
 ## Checking Before Changing
 

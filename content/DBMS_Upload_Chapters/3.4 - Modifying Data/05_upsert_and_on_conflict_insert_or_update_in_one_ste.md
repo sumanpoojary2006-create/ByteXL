@@ -8,7 +8,7 @@ What Aditya needs is a single statement that inserts a row if it is new and upda
 
 **Definition:** An **upsert** is a single operation that inserts a new row when no matching row exists or updates the existing row when a uniqueness conflict occurs; PostgreSQL implements it with `INSERT ... ON CONFLICT`.
 
-![Intro visual for upsert and on conflict insert or update in](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_upsert_and_on_conflict_insert_or_update_in_one_s_matched_93f336b5.png)
+![Intro visual for upsert and on conflict insert or update in](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44sjn9mdv/05_intro_upsert_and_on_conflict_insert_or_update_in_one_s.png)
 
 ## Setting Up a Uniqueness Rule to Conflict Against
 

@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Update Modifying Existing Rows Safely" p
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for update modifying existing rows safely](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_update_modifying_existing_rows_safely_matched_fe39b977.png)
+![Intro visual for update modifying existing rows safely](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44sjn9mdv/02_intro_update_modifying_existing_rows_safely.png)
 
 ## Checking Before Changing
 

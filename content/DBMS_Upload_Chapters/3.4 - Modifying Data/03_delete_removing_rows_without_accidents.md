@@ -6,7 +6,7 @@ The statement for this is **`DELETE`**, and Priyanka already knows, from watchin
 
 **Definition:** The **`DELETE` statement** removes existing rows from a table, with the `WHERE` clause determining which rows are removed.
 
-![Intro visual for delete removing rows without accidents](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_delete_removing_rows_without_accidents_matched_c7d32733.png)
+![Intro visual for delete removing rows without accidents](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44sjn9mdv/03_intro_delete_removing_rows_without_accidents.png)
 
 ## Finding the Row Before Removing It
 

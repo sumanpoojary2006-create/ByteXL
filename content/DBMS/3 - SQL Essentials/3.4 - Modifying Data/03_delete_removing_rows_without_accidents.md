@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Delete Removing Rows Without Accidents" 
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for delete removing rows without accidents](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_delete_removing_rows_without_accidents_matched_c7d32733.png)
+![Intro visual for delete removing rows without accidents](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44sjn9mdv/03_intro_delete_removing_rows_without_accidents.png)
 
 ## Finding the Row Before Removing It
 

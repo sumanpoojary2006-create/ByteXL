@@ -6,7 +6,7 @@ A senior developer reviewing her work points out that PostgreSQL can hand that c
 
 **Definition:** `RETURNING` turns a modification into its own confirmation, handing back exactly the row an `INSERT` just created, an `UPDATE` just changed, or a `DELETE` just removed, without a second statement needed to check the result.
 
-![Intro visual for returning getting back what you just changed](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_returning_getting_back_what_you_just_changed_matched_86a2ad52.png)
+![Intro visual for returning getting back what you just changed](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44sjn9mdv/04_intro_returning_getting_back_what_you_just_changed.png)
 
 ## RETURNING After INSERT
 
