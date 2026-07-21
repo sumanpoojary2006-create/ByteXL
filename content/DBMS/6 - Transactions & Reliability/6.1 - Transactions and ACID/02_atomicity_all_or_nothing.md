@@ -23,7 +23,7 @@ ON-IMAGE TEXT: show a short bold title "Atomicity All Or Nothing" plus only thes
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for atomicity all or nothing](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_atomicity_all_or_nothing_clean_2dfc56e5.png)
+![Intro visual for atomicity all or nothing](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_atomicity_all_or_nothing_actual3d_fa767ec0.png)
 
 ## Atomicity Protects Against More Than Explicit Rollbacks
 

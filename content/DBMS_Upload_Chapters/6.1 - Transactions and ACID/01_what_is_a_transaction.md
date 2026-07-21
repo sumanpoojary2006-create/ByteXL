@@ -8,7 +8,7 @@ The database's answer to this problem is the **transaction**: a group of one or 
 
 **Definition:** A transaction groups one or more statements into a single unit that either commits entirely or rolls back entirely, closing the gap where a partial failure could otherwise leave data in a broken, half-changed state.
 
-![Intro visual for what is a transaction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_what_is_a_transaction_clean_44a6a6e8.png)
+![Intro visual for what is a transaction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_what_is_a_transaction_actual3d_6992629a.png)
 
 ## Two Statements That Need to Move as One
 

@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Isolation Running Transactions Safely To
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for isolation running transactions safely together](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_isolation_running_transactions_safely_together_clean_07664144.png)
+![Intro visual for isolation running transactions safely together](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_isolation_running_transactions_safely_together_actual3d_11c6b763.png)
 
 ## What a Transaction Can See of Its Own Changes
 

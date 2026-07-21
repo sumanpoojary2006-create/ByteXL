@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Consistency Valid States Only" plus only
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for consistency valid states only](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_consistency_valid_states_only_clean_03d16541.png)
+![Intro visual for consistency valid states only](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_consistency_valid_states_only_actual3d_6fc25661.png)
 
 ## Constraints Are What Define a Valid State
 

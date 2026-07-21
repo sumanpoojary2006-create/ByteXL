@@ -6,7 +6,7 @@ The second letter in ACID, **consistency**, is the guarantee that a transaction 
 
 **Definition:** Consistency guarantees that a transaction can only ever move a database from one valid state to another, with every declared constraint, `CHECK`, `foreign key`, `NOT NULL`, or `UNIQUE`, acting as the database's own definition of what "valid" means, while business rules that were never expressed as a constraint remain the application's responsibility to protect.
 
-![Intro visual for consistency valid states only](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_consistency_valid_states_only_clean_03d16541.png)
+![Intro visual for consistency valid states only](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_consistency_valid_states_only_actual3d_6fc25661.png)
 
 ## Constraints Are What Define a Valid State
 
