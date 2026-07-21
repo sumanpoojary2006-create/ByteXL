@@ -6,7 +6,7 @@ SQL offers a cleaner way to write exactly the same logic: a **`Common Table Expr
 
 **Definition:** A CTE, written with `WITH`, names an intermediate query result up front so the rest of a statement can read top to bottom instead of inside out, and several CTEs can be chained together, each one building on the last, without losing clarity as the logic grows more layered.
 
-![Intro visual for common table expressions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_common_table_expressions_clean_752f6b5e.png)
+![Intro visual for common table expressions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_common_table_expressions_actual3d_9defc187.png)
 
 ## Rewriting a Subquery as a CTE
 

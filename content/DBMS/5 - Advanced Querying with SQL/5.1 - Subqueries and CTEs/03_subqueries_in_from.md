@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Subqueries In From" plus only these few 
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for subqueries in from](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_subqueries_in_from_clean_126d3ca3.png)
+![Intro visual for subqueries in from](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_subqueries_in_from_actual3d_2de484e5.png)
 
 ## Treating a Query's Result as a Table
 

@@ -22,7 +22,7 @@ ON-IMAGE TEXT: show a short bold title "Recursive Ctes Querying Hierarchies And 
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for recursive ctes querying hierarchies and graphs](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_recursive_ctes_querying_hierarchies_and_graphs_clean_e3c87a9b.png)
+![Intro visual for recursive ctes querying hierarchies and graphs](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_recursive_ctes_querying_hierarchies_and_graphs_actual3d_9dadf035.png)
 
 ## The Shape of the Hierarchy
 

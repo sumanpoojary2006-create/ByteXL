@@ -22,7 +22,7 @@ ON-IMAGE TEXT: show a short bold title "Subqueries In Where" plus only these few
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for subqueries in where](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_subqueries_in_where_clean_8cb67b18.png)
+![Intro visual for subqueries in where](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_subqueries_in_where_actual3d_b4b07b9e.png)
 
 ## A Subquery Returning Exactly One Value
 

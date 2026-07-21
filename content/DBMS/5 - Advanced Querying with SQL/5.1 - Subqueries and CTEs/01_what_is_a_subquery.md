@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "What Is A Subquery" plus only these few 
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for what is a subquery](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_what_is_a_subquery_clean_113c90b0.png)
+![Intro visual for what is a subquery](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_what_is_a_subquery_actual3d_791b0571.png)
 
 ## A Query Inside a Query
 
