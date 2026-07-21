@@ -11,7 +11,7 @@ None of those questions can be answered by looking at one row of the `orders` ta
 
 **Definition:** `COUNT`, `SUM`, `AVG`, `MIN`, and `MAX` collapse an entire result set into single summary numbers, answering exactly the kind of whole-business questions raw rows cannot answer on their own.
 
-![Intro visual for aggregate functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_aggregate_functions_clean_279265b4.png)
+![Intro visual for aggregate functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_aggregate_functions_actual3d_41e7a5d6.png)
 
 ## Counting Rows
 

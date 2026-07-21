@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Grouping Data" plus only these few label
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for grouping data](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_grouping_data_clean_182f8b97.png)
+![Intro visual for grouping data](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_grouping_data_actual3d_ce7391cf.png)
 
 ## Splitting Rows Into Groups
 

@@ -26,7 +26,7 @@ ON-IMAGE TEXT: show a short bold title "Combining Aggregation With Sorting Filte
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for combining aggregation with sorting filtering and j](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_combining_aggregation_with_sorting_filtering_and_clean_ec663671.png)
+![Intro visual for combining aggregation with sorting filtering and j](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_combining_aggregation_with_sorting_filtering_and_actual3d_eb3b0029.png)
 
 ## Setting Up a Second Table to Join
 

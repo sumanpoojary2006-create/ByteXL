@@ -25,7 +25,7 @@ ON-IMAGE TEXT: show a short bold title "Aggregate Functions" plus only these few
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for aggregate functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_aggregate_functions_clean_279265b4.png)
+![Intro visual for aggregate functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_aggregate_functions_actual3d_41e7a5d6.png)
 
 ## Counting Rows
 

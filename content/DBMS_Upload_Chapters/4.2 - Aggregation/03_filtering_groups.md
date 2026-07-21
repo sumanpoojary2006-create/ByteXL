@@ -7,7 +7,7 @@
 
 **Definition:** `HAVING` fills the exact gap `WHERE` cannot: filtering on values that only exist after grouping and aggregation have already run.
 
-![Intro visual for filtering groups](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_filtering_groups_clean_691c0fc9.png)
+![Intro visual for filtering groups](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_filtering_groups_actual3d_7d8608ec.png)
 
 ## Why WHERE Cannot Filter on an Aggregate
 
