@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Durability Surviving A Crash" plus only 
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for durability surviving a crash](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_durability_surviving_a_crash_actual3d_13b4a95a.png)
+![Intro visual for durability surviving a crash](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/44sjn9mdv/05_intro_durability_surviving_a_crash.png)
 
 ## COMMIT Means Permanent, Not Just Visible
 
