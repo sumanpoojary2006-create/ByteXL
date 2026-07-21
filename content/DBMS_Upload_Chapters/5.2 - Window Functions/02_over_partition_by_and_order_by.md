@@ -6,7 +6,7 @@
 
 **Definition:** `PARTITION BY` decides which rows share a window, and `ORDER BY` inside that same `OVER (...)` clause decides the sequence within it, together turning a flat per-group total into a row-by-row running calculation.
 
-![Intro visual for over partition by and order by](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_over_partition_by_and_order_by_clean_9731d4b4.png)
+![Intro visual for over partition by and order by](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_over_partition_by_and_order_by_actual3d_8f59fb70.png)
 
 ## Ordering Rows Within a Window
 

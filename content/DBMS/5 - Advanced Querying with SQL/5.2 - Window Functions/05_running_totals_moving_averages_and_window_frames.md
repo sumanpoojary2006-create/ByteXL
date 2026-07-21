@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Running Totals Moving Averages And Windo
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for running totals moving averages and window frames](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_running_totals_moving_averages_and_window_frames_clean_16ef764c.png)
+![Intro visual for running totals moving averages and window frames](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_running_totals_moving_averages_and_window_frames_actual3d_5e080401.png)
 
 ## The Default Frame Behind a Running Total
 

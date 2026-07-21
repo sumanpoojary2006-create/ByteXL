@@ -6,7 +6,7 @@ Ranking functions alone cannot filter, since `window functions` are not allowed 
 
 **Definition:** A top-N-per-group report combines a ranking function partitioned by the grouping column with a CTE that makes the rank filterable, and the choice between `ROW_NUMBER`, `RANK`, and `DENSE_RANK` decides exactly how ties are handled in the result.
 
-![Intro visual for topn per group](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_topn_per_group_clean_65c2828c.png)
+![Intro visual for topn per group](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_topn_per_group_actual3d_441094cd.png)
 
 ## Ranking Within Each Region
 

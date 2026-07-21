@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Topn Per Group" plus only these few labe
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for topn per group](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_topn_per_group_clean_65c2828c.png)
+![Intro visual for topn per group](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_topn_per_group_actual3d_441094cd.png)
 
 ## Ranking Within Each Region
 
