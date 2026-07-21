@@ -6,7 +6,7 @@ This final lesson walks through that full loop, start to finish, on one query.
 
 **Definition:** Iterative tuning, measure with `EXPLAIN ANALYZE`, make one deliberate change, re-measure to confirm it actually helped, and repeat, is the discipline that ties every technique in this unit together into a real, evidence-based process, rather than a collection of tricks applied on faith.
 
-![Intro visual for iterative performance tuning measure change remeas](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_iterative_performance_tuning_measure_change_reme_matched_92d63cb2.png)
+![Intro visual for iterative performance tuning measure change remeas](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_iterative_performance_tuning_measure_change_reme_clean_b3787e9d.png)
 
 ## Step One: Measure the Starting Point
 

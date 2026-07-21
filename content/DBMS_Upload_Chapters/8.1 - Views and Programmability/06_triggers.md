@@ -10,7 +10,7 @@ A **trigger** delivers exactly this: a piece of logic the database runs automati
 
 **Definition:** A trigger runs automatically in response to an insert, update, or delete, with `BEFORE` triggers able to validate or reject a change before it happens, `AFTER` triggers able to react once a change has completed, and `INSTEAD OF` triggers able to make an otherwise non-writable view accept writes, all without requiring any cooperation from whoever issues the original statement.
 
-![Intro visual for triggers](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_triggers_matched_b6862029.png)
+![Intro visual for triggers](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_triggers_clean_da9655ea.png)
 
 ## Creating a Trigger Function and Attaching It
 

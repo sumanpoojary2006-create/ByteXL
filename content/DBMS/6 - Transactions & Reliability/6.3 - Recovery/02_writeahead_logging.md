@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Writeahead Logging" plus only these few 
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for writeahead logging](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_writeahead_logging_matched_a05659ea.png)
+![Intro visual for writeahead logging](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_writeahead_logging_clean_31131ca8.png)
 
 ## Why Writing Directly to Data Files Is Not Enough
 

@@ -6,7 +6,7 @@ There is a more direct way to ask "does a matching row exist" or "does no matchi
 
 **Definition:** Semi joins and anti joins answer "does a match exist" and "does no match exist" directly, using `EXISTS`, `NOT EXISTS`, `IN`, or `NOT IN`, without pulling in columns from the other table or risking duplicated rows the way an `INNER JOIN` or `LEFT JOIN` can.
 
-![Intro visual for semi joins and anti joins](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_intro_semi_joins_and_anti_joins_matched_91ed1952.png)
+![Intro visual for semi joins and anti joins](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_intro_semi_joins_and_anti_joins_clean_246a2ec5.png)
 
 ## Finding Rows That Have a Match, Without Pulling in Columns
 

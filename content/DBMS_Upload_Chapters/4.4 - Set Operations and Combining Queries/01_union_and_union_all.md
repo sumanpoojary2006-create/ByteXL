@@ -6,7 +6,7 @@ This is not a join, since she is not trying to match rows between the two tables
 
 **Definition:** `UNION` and `UNION ALL` combine the results of two or more queries vertically into one result set, with `UNION` removing exact duplicates and `UNION ALL` keeping every row, both requiring the same number and type of columns from each query involved.
 
-![Intro visual for union and union all](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_union_and_union_all_matched_7a005c4c.png)
+![Intro visual for union and union all](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_union_and_union_all_clean_96bb5706.png)
 
 ## Stacking Two Result Sets Into One
 

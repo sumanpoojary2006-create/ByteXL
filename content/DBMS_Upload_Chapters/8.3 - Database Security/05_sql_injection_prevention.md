@@ -6,7 +6,7 @@ This attack has a name, **SQL injection**, and it remains one of the most common
 
 **Definition:** SQL injection happens when untrusted input is allowed to become part of a query's structure rather than staying confined to a value being compared or inserted, and `prepared statements` prevent this by construction, keeping structure and data permanently separate, with input validation and `least privilege` serving as valuable additional layers rather than substitutes for that primary defense.
 
-![Intro visual for sql injection prevention](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_sql_injection_prevention_matched_ee44e152.png)
+![Intro visual for sql injection prevention](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_sql_injection_prevention_clean_f42c1aab.png)
 
 ## A More Damaging Injection Example
 

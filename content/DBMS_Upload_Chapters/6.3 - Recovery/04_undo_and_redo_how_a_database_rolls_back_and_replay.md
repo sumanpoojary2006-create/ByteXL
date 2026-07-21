@@ -6,7 +6,7 @@ Committed work must be preserved, durability demands it. Uncommitted work must b
 
 **Definition:** Redo reapplies every committed transaction's changes to guarantee durability, and undo reverses every uncommitted transaction's changes to guarantee atomicity, and together the two passes are what actually turn a crashed, potentially inconsistent set of data files back into an exact, correct reflection of every transaction that had genuinely finished before the crash.
 
-![Intro visual for undo and redo how a database rolls back](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_undo_and_redo_how_a_database_rolls_back_and_repl_matched_f18530a2.png)
+![Intro visual for undo and redo how a database rolls back](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_undo_and_redo_how_a_database_rolls_back_and_repl_clean_1011bf80.png)
 
 ## Redo: Replaying Committed Work That Never Made It to Disk
 

@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "ORM Vs Raw SQL" plus only these few labe
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for orm vs raw sql](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_orm_vs_raw_sql_matched_0b83a42b.png)
+![Intro visual for orm vs raw sql](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_orm_vs_raw_sql_clean_bcb28a01.png)
 
 ## What an ORM Actually Generates
 

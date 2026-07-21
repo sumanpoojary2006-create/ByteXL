@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Connection Pooling" plus only these few 
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for connection pooling](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_connection_pooling_matched_f6417918.png)
+![Intro visual for connection pooling](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_connection_pooling_clean_4f4176dc.png)
 
 ## Why a Database Cannot Handle Unlimited Connections
 

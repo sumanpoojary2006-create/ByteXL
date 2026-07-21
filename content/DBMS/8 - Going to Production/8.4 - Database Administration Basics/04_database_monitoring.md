@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Database Monitoring" plus only these few
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for database monitoring](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_database_monitoring_matched_800fc814.png)
+![Intro visual for database monitoring](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_database_monitoring_clean_0a66a5c3.png)
 
 ## Watching Connection Usage Over Time
 

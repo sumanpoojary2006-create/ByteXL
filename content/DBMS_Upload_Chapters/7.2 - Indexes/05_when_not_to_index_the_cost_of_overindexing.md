@@ -6,7 +6,7 @@ Priya's team, excited after seeing indexes fix several slow reports, wants to ad
 
 **Definition:** Every index carries a real, ongoing cost in storage and write performance, paid on every insert, update, and delete, regardless of how often that index actually gets used to speed up a read, which means `indexing` should be a deliberate decision matched to actual query patterns, not a reflexive habit applied to every column.
 
-![Intro visual for when not to index the cost of overindexing](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_when_not_to_index_the_cost_of_overindexing_matched_4db691e4.png)
+![Intro visual for when not to index the cost of overindexing](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_when_not_to_index_the_cost_of_overindexing_clean_9dc5642b.png)
 
 ## The Write Cost of Every Additional Index
 

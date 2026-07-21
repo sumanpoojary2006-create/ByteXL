@@ -8,7 +8,7 @@ Priya, the finance analyst from earlier reporting lessons, has started noticing 
 
 **Definition:** A table is physically stored as a sequence of fixed-size pages, each holding many rows, and every read has to fetch a whole page at a time rather than a single row in isolation, which is the physical fact underneath every performance question this unit is about to explore.
 
-![Intro visual for how data is stored](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_how_data_is_stored_matched_a6bb9a0e.png)
+![Intro visual for how data is stored](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_how_data_is_stored_clean_5649880d.png)
 
 ## Rows Live Inside Pages, Not Loose on Disk
 

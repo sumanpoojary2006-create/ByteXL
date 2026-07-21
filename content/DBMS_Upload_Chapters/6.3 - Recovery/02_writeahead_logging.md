@@ -6,7 +6,7 @@ This ordering, log first, data files second, is the entire foundation of how a d
 
 **Definition:** `Write-ahead logging` guarantees that a durable record of every change exists before the change is considered complete, which is what allows a database to safely defer the slower work of updating actual data files while still guaranteeing that a crash can never lose a committed transaction's effect.
 
-![Intro visual for writeahead logging](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_writeahead_logging_matched_a05659ea.png)
+![Intro visual for writeahead logging](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_writeahead_logging_clean_31131ca8.png)
 
 ## Why Writing Directly to Data Files Is Not Enough
 

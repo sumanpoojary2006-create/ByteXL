@@ -22,7 +22,7 @@ ON-IMAGE TEXT: show a short bold title "Why Joins Exist" plus only these few lab
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for why joins exist](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_why_joins_exist_matched_c5d1c43f.png)
+![Intro visual for why joins exist](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_why_joins_exist_clean_fe7a2042.png)
 
 ## Seeing the Problem Without a Join
 

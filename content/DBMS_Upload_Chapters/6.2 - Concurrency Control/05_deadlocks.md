@@ -7,7 +7,7 @@
 
 **Definition:** A deadlock forms when two transactions each hold a lock the other needs, a cycle the database detects automatically and breaks by rolling back one of the two transactions, leaving the application to retry, and the most reliable prevention is `locking` multiple rows in a consistent order across every transaction in the system.
 
-![Intro visual for deadlocks](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_deadlocks_matched_70ddd4a0.png)
+![Intro visual for deadlocks](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_deadlocks_clean_11584030.png)
 
 ## How a Deadlock Forms
 

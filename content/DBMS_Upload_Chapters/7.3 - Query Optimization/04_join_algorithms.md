@@ -10,7 +10,7 @@ Each has a different performance profile depending on table sizes and whether a 
 
 **Definition:** Nested loop, `hash join`, and `merge join` are three genuinely different strategies for finding matching rows between two tables, each favored by the optimizer under different conditions, small filtered inputs with a good index, large unsorted inputs on both sides, or already-sorted inputs respectively, and none of them is a fixed rule so much as the outcome of the same cost-based reasoning covered earlier in this chapter.
 
-![Intro visual for join algorithms](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_join_algorithms_matched_90e6c63d.png)
+![Intro visual for join algorithms](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_join_algorithms_clean_49acd96d.png)
 
 ## Nested Loop: Simple, Best for Small Inputs
 

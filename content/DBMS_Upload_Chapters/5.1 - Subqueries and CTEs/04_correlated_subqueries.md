@@ -8,7 +8,7 @@ A subquery that reaches back into the outer query's current row like this is cal
 
 **Definition:** A `correlated subquery` reaches into the outer query's current row, recalculating its result for every row rather than running once and reusing a fixed answer, which makes it the right tool whenever a comparison needs to be relative to each row's own context, such as its own department or its own manager.
 
-![Intro visual for correlated subqueries](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_correlated_subqueries_matched_fa566438.png)
+![Intro visual for correlated subqueries](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_correlated_subqueries_clean_f48f7e0f.png)
 
 ## A Subquery That References the Outer Row
 

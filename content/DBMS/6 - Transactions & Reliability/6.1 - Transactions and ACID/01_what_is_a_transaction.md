@@ -22,7 +22,7 @@ ON-IMAGE TEXT: show a short bold title "What Is A Transaction" plus only these f
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for what is a transaction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_what_is_a_transaction_matched_50c73dfb.png)
+![Intro visual for what is a transaction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_what_is_a_transaction_clean_44a6a6e8.png)
 
 ## Two Statements That Need to Move as One
 

@@ -18,7 +18,7 @@ ON-IMAGE TEXT: show a short bold title "Auditing And Tracking Data Access" plus 
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for auditing and tracking data access](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_auditing_and_tracking_data_access_matched_d59d93f0.png)
+![Intro visual for auditing and tracking data access](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_auditing_and_tracking_data_access_clean_6155b11f.png)
 
 ## Recording Who Changed a Row, Using a Trigger
 

@@ -21,7 +21,7 @@ ON-IMAGE TEXT: show a short bold title "What Is A Window Function" plus only the
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for what is a window function](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_what_is_a_window_function_matched_43888eec.png)
+![Intro visual for what is a window function](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_what_is_a_window_function_clean_4c9482fd.png)
 
 ## The Problem GROUP BY Cannot Solve Alone
 

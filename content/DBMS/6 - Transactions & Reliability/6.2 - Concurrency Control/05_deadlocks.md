@@ -21,7 +21,7 @@ ON-IMAGE TEXT: show a short bold title "Deadlocks" plus only these few labels, l
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for deadlocks](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_deadlocks_matched_70ddd4a0.png)
+![Intro visual for deadlocks](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_deadlocks_clean_11584030.png)
 
 ## How a Deadlock Forms
 

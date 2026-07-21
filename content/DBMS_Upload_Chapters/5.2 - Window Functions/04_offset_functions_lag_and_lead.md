@@ -6,7 +6,7 @@ SQL's **offset functions**, `LAG` and `LEAD`, are `window functions` purpose-bui
 
 **Definition:** `LAG` and `LEAD` pull a value from a neighboring row, before or after the current one within an ordered window, turning row-to-row comparisons like month-over-month change into a straightforward calculation on a single row instead of a self join across two.
 
-![Intro visual for offset functions lag and lead](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_offset_functions_lag_and_lead_matched_b9cab167.png)
+![Intro visual for offset functions lag and lead](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_offset_functions_lag_and_lead_clean_f81ffb72.png)
 
 ## Looking Back at the Previous Row with LAG
 

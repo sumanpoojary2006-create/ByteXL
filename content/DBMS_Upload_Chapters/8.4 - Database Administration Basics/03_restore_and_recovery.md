@@ -8,7 +8,7 @@
 
 **Definition:** Restoring a backup, whether a logical `restore` reapplying a dump script or a `point-in-time recovery` replaying archived write-ahead logs to an exact moment, is only genuinely useful if it has actually been tested and verified ahead of time, since an unverified backup offers only the appearance of safety rather than the real thing.
 
-![Intro visual for restore and recovery](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_restore_and_recovery_matched_97f937a8.png)
+![Intro visual for restore and recovery](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_restore_and_recovery_clean_66d1c378.png)
 
 ## Restoring from a Logical Backup
 

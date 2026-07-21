@@ -6,7 +6,7 @@ Unlike marking a shipment delivered, this is not a "run these statements togethe
 
 **Definition:** A user-defined function computes and returns a value, or a set of rows, and is called from within a query rather than as a standalone action, always running as part of the caller's own transaction rather than managing one of its own, which is the defining difference from the procedures covered in the previous lesson.
 
-![Intro visual for userdefined functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_userdefined_functions_matched_1397d37d.png)
+![Intro visual for userdefined functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_userdefined_functions_clean_6f5d7f89.png)
 
 ## Creating a Simple Function
 

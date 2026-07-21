@@ -25,7 +25,7 @@ ON-IMAGE TEXT: show a short bold title "Hash Composite Partial And Expression In
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for hash composite partial and expression indexes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_hash_composite_partial_and_expression_indexes_matched_4753a7a6.png)
+![Intro visual for hash composite partial and expression indexes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_hash_composite_partial_and_expression_indexes_clean_a39d4fd4.png)
 
 ## A Table Large Enough to Need Them
 

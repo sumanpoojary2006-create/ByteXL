@@ -6,7 +6,7 @@ What Zoya needs is a join that keeps every row from `customers` regardless of wh
 
 **Definition:** `LEFT JOIN` guarantees every row from the first-named table survives the join, filling in `NULL` for the other side when no match exists, which makes it the right tool whenever "customers with no orders" or "restaurants with no orders" is itself the question.
 
-![Intro visual for left join](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_left_join_matched_a3a063e1.png)
+![Intro visual for left join](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_left_join_clean_02b47b94.png)
 
 ## Keeping Every Row From the Left Table
 

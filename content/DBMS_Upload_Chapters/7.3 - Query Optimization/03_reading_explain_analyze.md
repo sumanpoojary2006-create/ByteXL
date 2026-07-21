@@ -6,7 +6,7 @@
 
 **Definition:** `EXPLAIN ANALYZE` actually runs a query and reports real measured time and real row counts alongside the optimizer's original estimates, making it possible to see exactly where a plan's assumptions matched reality and where they did not, with `loops=N` and a `ROLLBACK`-wrapped transaction as two details worth remembering when reading or running it.
 
-![Intro visual for reading explain analyze](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_reading_explain_analyze_matched_9dd7819f.png)
+![Intro visual for reading explain analyze](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_reading_explain_analyze_clean_b2532f35.png)
 
 ## Estimated vs. Actual, Side by Side
 

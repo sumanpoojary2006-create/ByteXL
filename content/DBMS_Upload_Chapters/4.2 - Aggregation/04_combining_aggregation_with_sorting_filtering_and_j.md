@@ -12,7 +12,7 @@ None of these pieces are new on their own; what is new is seeing exactly how the
 
 **Definition:** Joins, row filters, grouping, group filters, and sorting are not separate skills; they are stages of one pipeline that runs in a fixed order regardless of how the query is written, and understanding that order explains every rule about what each clause is and is not allowed to reference.
 
-![Intro visual for combining aggregation with sorting filtering and j](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_combining_aggregation_with_sorting_filtering_and_matched_260a2726.png)
+![Intro visual for combining aggregation with sorting filtering and j](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_combining_aggregation_with_sorting_filtering_and_clean_ec663671.png)
 
 ## Setting Up a Second Table to Join
 

@@ -6,7 +6,7 @@ The sales director's newest request needs a genuinely different range, a 3-month
 
 **Definition:** A window frame, written with `ROWS BETWEEN ... AND ...`, controls exactly which rows a `window function` considers for each calculation, and changing it turns the same `SUM` or `AVG` from a full running total into a fixed-size moving calculation or a centered average.
 
-![Intro visual for running totals moving averages and window frames](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_running_totals_moving_averages_and_window_frames_matched_e56f27ea.png)
+![Intro visual for running totals moving averages and window frames](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_running_totals_moving_averages_and_window_frames_clean_16ef764c.png)
 
 ## The Default Frame Behind a Running Total
 

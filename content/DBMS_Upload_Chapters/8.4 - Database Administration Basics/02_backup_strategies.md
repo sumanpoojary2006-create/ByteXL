@@ -6,7 +6,7 @@ The only real defense against losing data entirely is having a separate copy of 
 
 **Definition:** A backup strategy is the deliberate answer to how, how often, and where a database's data is copied somewhere safe, with logical backups like `pg_dump` offering portability and physical backups like `pg_basebackup` offering speed, and full versus incremental approaches trading simplicity against storage and time efficiency, all shaped by how much data loss is actually acceptable and how far back a `restore` might realistically need to reach.
 
-![Intro visual for backup strategies](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_backup_strategies_matched_8f44aa23.png)
+![Intro visual for backup strategies](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_backup_strategies_clean_8f450529.png)
 
 ## Logical Backups: A Portable Copy of the Data Itself
 

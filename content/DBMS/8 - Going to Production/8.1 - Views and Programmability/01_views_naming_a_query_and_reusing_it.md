@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Views Naming A Query And Reusing It" plu
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for views naming a query and reusing it](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_views_naming_a_query_and_reusing_it_matched_661c6db3.png)
+![Intro visual for views naming a query and reusing it](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_views_naming_a_query_and_reusing_it_clean_7e6863b4.png)
 
 ## Creating a View from an Existing Query
 

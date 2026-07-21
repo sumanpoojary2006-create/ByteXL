@@ -6,7 +6,7 @@ It means changing the shipment's status, and also inserting a row into a separat
 
 **Definition:** A `stored procedure`, invoked with `CALL`, wraps multiple statements into a single, named, reusable routine defined once inside the database, capable of managing its own transaction boundaries including mid-procedure commits, which guarantees every caller gets identical, correct behavior without reimplementing the same logic client by client.
 
-![Intro visual for stored procedures](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_stored_procedures_matched_1c78e0ee.png)
+![Intro visual for stored procedures](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_stored_procedures_clean_3c780f06.png)
 
 ## Creating a Simple Procedure
 

@@ -6,7 +6,7 @@ A production system serving real, sustained traffic eventually outgrows what one
 
 **Definition:** Replication streams a primary database's `write-ahead log` to one or more replicas, which replay it to stay continuously in sync, enabling both read scaling, directing tolerant read traffic away from the primary, and availability, standing ready to take over if the primary fails, at the cost of a small, measurable lag that every application using a replica has to account for.
 
-![Intro visual for replication and read replicas](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_replication_and_read_replicas_matched_ee2b7ffe.png)
+![Intro visual for replication and read replicas](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_replication_and_read_replicas_clean_20502d58.png)
 
 ## How Streaming Replication Works, Conceptually
 

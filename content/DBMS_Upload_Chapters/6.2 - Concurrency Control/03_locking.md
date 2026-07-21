@@ -6,7 +6,7 @@ The fix is not clever application logic checking timestamps after the fact; it i
 
 **Definition:** `Locking` gives a transaction exclusive claim over a row it intends to change, forcing other transactions that want to touch the same row to wait until the lock is released, which is what actually prevents `lost updates` and similar conflicts rather than just naming them.
 
-![Intro visual for locking](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_locking_matched_922cd857.png)
+![Intro visual for locking](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_locking_clean_56c910bb.png)
 
 ## Locking a Row for Update
 

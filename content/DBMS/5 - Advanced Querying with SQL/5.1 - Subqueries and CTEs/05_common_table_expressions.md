@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Common Table Expressions" plus only thes
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for common table expressions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_common_table_expressions_matched_ff4b069e.png)
+![Intro visual for common table expressions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_common_table_expressions_clean_752f6b5e.png)
 
 ## Rewriting a Subquery as a CTE
 

@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Btree Indexes" plus only these few label
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for btree indexes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_btree_indexes_matched_048a80ab.png)
+![Intro visual for btree indexes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_btree_indexes_clean_e68609c4.png)
 
 ## Why CREATE INDEX Defaults to a B-Tree
 

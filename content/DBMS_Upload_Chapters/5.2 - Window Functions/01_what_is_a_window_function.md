@@ -7,7 +7,7 @@
 
 **Definition:** A **window function** in SQL **performs a calculation across a specific set of table rows that are related to the current row, without collapsing the result set into a single row.** The related rows form a *window*, and SQL returns the calculated value alongside each original row.
 
-![Intro visual for what is a window function](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_what_is_a_window_function_matched_43888eec.png)
+![Intro visual for what is a window function](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_what_is_a_window_function_clean_4c9482fd.png)
 
 ## The Problem GROUP BY Cannot Solve Alone
 

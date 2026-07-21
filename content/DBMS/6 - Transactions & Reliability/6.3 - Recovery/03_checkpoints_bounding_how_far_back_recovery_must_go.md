@@ -19,7 +19,7 @@ ON-IMAGE TEXT: show a short bold title "Checkpoints Bounding How Far Back Recove
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for checkpoints bounding how far back recovery must go](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_checkpoints_bounding_how_far_back_recovery_must_matched_7240fe83.png)
+![Intro visual for checkpoints bounding how far back recovery must go](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_checkpoints_bounding_how_far_back_recovery_must_clean_a7001b25.png)
 
 ## What a Checkpoint Actually Does
 
