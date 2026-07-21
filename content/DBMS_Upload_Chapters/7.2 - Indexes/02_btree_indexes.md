@@ -6,7 +6,7 @@ PostgreSQL's default index type, and the default in nearly every relational data
 
 **Definition:** A B-tree keeps an index's entries in a balanced, sorted tree structure, so that even huge tables can be searched in just a handful of steps, and its sorted nature means the same structure naturally supports equality lookups, range queries, sorting, and minimum or maximum searches, all without a separate scan.
 
-![Intro visual for btree indexes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_btree_indexes_clean_e68609c4.png)
+![Intro visual for btree indexes](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_btree_indexes_actual3d_83debf09.png)
 
 ## Why CREATE INDEX Defaults to a B-Tree
 
