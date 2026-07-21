@@ -8,7 +8,7 @@ The clause that asks for one is **`ORDER BY`**, and it is what turns an unpredic
 
 **Definition:** `ORDER BY` replaces an unpredictable row order with one you actually chose, ascending by default or reversed with DESC, and it can chain several columns together so later ones only settle ties left by earlier ones.
 
-![Intro visual for sorting results](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_sorting_results_matched_3dd52b38.png)
+![Intro visual for sorting results](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_sorting_results_actual3d_4201d397.png)
 
 ## Sorting Ascending, the Default
 

@@ -25,7 +25,7 @@ ON-IMAGE TEXT: show a short bold title "Expressions And Calculated Columns" plus
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for expressions and calculated columns](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_expressions_and_calculated_columns_matched_50527773.png)
+![Intro visual for expressions and calculated columns](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_expressions_and_calculated_columns_actual3d_3ec650f9.png)
 
 ## Doing Arithmetic in a SELECT List
 

@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Column Aliases And Table Aliases With As
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for column aliases and table aliases with as](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_column_aliases_and_table_aliases_with_as_matched_b6e26810.png)
+![Intro visual for column aliases and table aliases with as](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_column_aliases_and_table_aliases_with_as_actual3d_75d1fd35.png)
 
 ## Renaming a Column With AS
 

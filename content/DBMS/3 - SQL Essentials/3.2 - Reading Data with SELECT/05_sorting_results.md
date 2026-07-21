@@ -22,7 +22,7 @@ ON-IMAGE TEXT: show a short bold title "Sorting Results" plus only these few lab
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for sorting results](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_sorting_results_matched_3dd52b38.png)
+![Intro visual for sorting results](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_sorting_results_actual3d_4201d397.png)
 
 ## Sorting Ascending, the Default
 

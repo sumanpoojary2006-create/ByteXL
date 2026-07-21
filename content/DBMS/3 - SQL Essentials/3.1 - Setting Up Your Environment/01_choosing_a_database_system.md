@@ -30,7 +30,7 @@ ON-IMAGE TEXT: show a short bold title "Choosing A Database System" plus only th
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for choosing a database system](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_choosing_a_database_system_matched_498092cc.png)
+![Intro visual for choosing a database system](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_choosing_a_database_system_actual3d_8781f80c.png)
 
 ## The Relational Family Ishaan Keeps Running Into
 
