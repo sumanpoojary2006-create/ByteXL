@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Serializability" plus only these few lab
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for serializability](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_serializability_clean_f61e6661.png)
+![Intro visual for serializability](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_serializability_actual3d_b0fd0be2.png)
 
 ## What "Equivalent to Some Serial Order" Means
 

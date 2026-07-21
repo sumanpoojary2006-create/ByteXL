@@ -11,7 +11,7 @@ Naming each one clearly is what makes the next lessons, on `locking` and `isolat
 
 **Definition:** `Dirty reads`, non-repeatable reads, phantom reads, and lost updates each name a specific way concurrent transactions can interfere with each other, giving a precise vocabulary for problems that would otherwise all just look like unpredictable bugs under load.
 
-![Intro visual for concurrency problems](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_concurrency_problems_clean_7c74ff1e.png)
+![Intro visual for concurrency problems](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_concurrency_problems_actual3d_842b861b.png)
 
 ## Dirty Reads: Seeing Data That Was Never Actually Committed
 

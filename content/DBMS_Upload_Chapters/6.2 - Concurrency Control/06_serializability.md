@@ -6,7 +6,7 @@ This standard has a name, **serializability**, and understanding it precisely is
 
 **Definition:** Serializability is the standard every mechanism in this chapter ultimately serves: a guarantee that concurrent transactions, however they actually interleave in real time, produce a result equivalent to running them one at a time in some order, and `locking`, `isolation levels`, and deadlock detection are all the practical machinery a database uses to approach or fully guarantee that standard.
 
-![Intro visual for serializability](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_serializability_clean_f61e6661.png)
+![Intro visual for serializability](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_serializability_actual3d_b0fd0be2.png)
 
 ## What "Equivalent to Some Serial Order" Means
 
