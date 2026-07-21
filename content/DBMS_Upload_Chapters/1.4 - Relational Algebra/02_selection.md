@@ -11,7 +11,7 @@ Both requests sound like they want "a version of the catalogue," but they want c
 
 **Definition:** **Selection** chooses the rows of a relation that satisfy a condition, while **projection** chooses which columns appear in the result.
 
-![Intro visual for selection](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_selection_matched_da5ec764.png)
+![Intro visual for selection](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_selection_actual3d_2d33d365.png)
 
 ## The Catalogue Rohan Is Working With
 

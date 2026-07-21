@@ -15,7 +15,7 @@ What Meera is really asking for are three classic comparisons between two relati
 
 **Definition:** Union, intersection, and difference let a database compare two relations the way set theory compares two collections, but only once those relations are union-compatible, meaning they agree on the number of columns and the domain each column draws from.
 
-![Intro visual for set operations](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_set_operations_matched_2f5af747.png)
+![Intro visual for set operations](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_set_operations_actual3d_2bbb0d8e.png)
 
 ## The Two Club Relations
 

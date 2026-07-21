@@ -10,7 +10,7 @@ This formal toolkit, the mathematical foundation beneath every question a relati
 
 **Definition:** `Relational algebra` is the formal, mathematical toolkit underneath every question a relational database answers: a small set of operations, each one taking relations in and producing a relation out, that together give a database a precise language for expressing and comparing ways of finding an answer.
 
-![Intro visual for what is relational algebra](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_what_is_relational_algebra_matched_01cf92c1.png)
+![Intro visual for what is relational algebra](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_what_is_relational_algebra_actual3d_970b3829.png)
 
 ## A Relation In, A Relation Out
 

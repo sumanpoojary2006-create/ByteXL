@@ -29,7 +29,7 @@ ON-IMAGE TEXT: show a short bold title "The Join Operator" plus only these few l
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for the join operator](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_the_join_operator_matched_50e70f3c.png)
+![Intro visual for the join operator](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_the_join_operator_actual3d_552bb704.png)
 
 ## Farah's Two Relations
 

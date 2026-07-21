@@ -24,7 +24,7 @@ ON-IMAGE TEXT: show a short bold title "Mapping SQL Queries To Relational Algebr
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for mapping sql queries to relational algebra expressi](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_mapping_sql_queries_to_relational_algebra_expres_matched_75b37e24.png)
+![Intro visual for mapping sql queries to relational algebra expressi](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_mapping_sql_queries_to_relational_algebra_expres_actual3d_3bd553f2.png)
 
 ## Restaurants and Zones: Arjun's Two Relations
 
