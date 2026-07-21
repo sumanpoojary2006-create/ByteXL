@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "SQL Injection Prevention" plus only thes
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for sql injection prevention](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_sql_injection_prevention_clean_f42c1aab.png)
+![Intro visual for sql injection prevention](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_sql_injection_prevention_actual3d_ccc356f3.png)
 
 ## A More Damaging Injection Example
 

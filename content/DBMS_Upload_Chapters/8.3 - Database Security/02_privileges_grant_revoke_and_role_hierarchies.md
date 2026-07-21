@@ -4,7 +4,7 @@ Creating a role, covered in the previous lesson, establishes an identity, but by
 
 **Definition:** `GRANT` adds a specific privilege for a specific role on a specific object, `REVOKE` removes one without disturbing others, and granting privileges to a group role rather than individual login roles lets an entire team's permissions be managed in one place, changes that propagate automatically to every member.
 
-![Intro visual for privileges grant revoke and role hierarchies](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_privileges_grant_revoke_and_role_hierarchies_clean_c0d2bd34.png)
+![Intro visual for privileges grant revoke and role hierarchies](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_privileges_grant_revoke_and_role_hierarchies_actual3d_f028a44b.png)
 
 ## Granting a Specific Privilege on a Specific Table
 

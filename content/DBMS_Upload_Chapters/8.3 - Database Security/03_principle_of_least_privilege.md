@@ -4,7 +4,7 @@
 
 **Definition:** The principle of `least privilege` means granting a role exactly the access its actual, current responsibilities require, and nothing broader, since every unnecessary privilege granted is unnecessary risk carried indefinitely, whether that role represents an automated service or an individual developer, and periodically reviewing existing grants is what keeps this discipline from quietly eroding over time.
 
-![Intro visual for principle of least privilege](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_principle_of_least_privilege_clean_6443e574.png)
+![Intro visual for principle of least privilege](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_principle_of_least_privilege_actual3d_cded6360.png)
 
 ## The Tempting Shortcut, and Why It Is a Real Risk
 

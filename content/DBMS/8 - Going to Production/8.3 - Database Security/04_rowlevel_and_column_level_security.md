@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Rowlevel And Column Level Security" plus
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for rowlevel and column level security](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_rowlevel_and_column_level_security_clean_beceb7e9.png)
+![Intro visual for rowlevel and column level security](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_rowlevel_and_column_level_security_actual3d_7c068c57.png)
 
 ## The Problem Without Row-Level Security
 

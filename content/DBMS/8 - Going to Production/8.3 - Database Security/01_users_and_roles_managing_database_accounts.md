@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Users And Roles Managing Database Accoun
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for users and roles managing database accounts](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_users_and_roles_managing_database_accounts_clean_086cba44.png)
+![Intro visual for users and roles managing database accounts](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_users_and_roles_managing_database_accounts_actual3d_b1dc7c0a.png)
 
 ## Creating a Role
 

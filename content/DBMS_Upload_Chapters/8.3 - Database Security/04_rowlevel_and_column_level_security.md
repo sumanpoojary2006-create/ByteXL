@@ -6,7 +6,7 @@ PostgreSQL's **`row-level security`**, or RLS, makes exactly this possible, enfo
 
 **Definition:** `Row-level security`, enabled with `ALTER TABLE ... ENABLE ROW LEVEL SECURITY` and defined through `CREATE POLICY`, restricts which specific rows a role can see.
 
-![Intro visual for rowlevel and column level security](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_rowlevel_and_column_level_security_clean_beceb7e9.png)
+![Intro visual for rowlevel and column level security](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_rowlevel_and_column_level_security_actual3d_7c068c57.png)
 
 ## The Problem Without Row-Level Security
 

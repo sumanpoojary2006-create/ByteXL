@@ -18,7 +18,7 @@ ON-IMAGE TEXT: show a short bold title "Principle Of Least Privilege" plus only 
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for principle of least privilege](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_principle_of_least_privilege_clean_6443e574.png)
+![Intro visual for principle of least privilege](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_principle_of_least_privilege_actual3d_cded6360.png)
 
 ## The Tempting Shortcut, and Why It Is a Real Risk
 
