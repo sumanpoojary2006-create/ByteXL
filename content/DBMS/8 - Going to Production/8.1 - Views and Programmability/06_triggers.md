@@ -24,7 +24,7 @@ ON-IMAGE TEXT: show a short bold title "Triggers" plus only these few labels, la
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for triggers](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_triggers_clean_da9655ea.png)
+![Intro visual for triggers](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_intro_triggers_actual3d_92969e37.png)
 
 ## Creating a Trigger Function and Attaching It
 

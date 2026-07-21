@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Stored Procedures" plus only these few l
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for stored procedures](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_stored_procedures_clean_3c780f06.png)
+![Intro visual for stored procedures](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_intro_stored_procedures_actual3d_de10d39e.png)
 
 ## Creating a Simple Procedure
 

@@ -6,7 +6,7 @@ A **`materialized view`** solves this by actually storing the query's result on 
 
 **Definition:** A `materialized view` stores its query's result physically rather than recomputing it on every read, dramatically speeding up expensive aggregate or summary queries, at the cost of only being as current as its most recent explicit refresh, with `REFRESH MATERIALIZED VIEW CONCURRENTLY` available when the view needs to stay readable during that refresh.
 
-![Intro visual for materialized views](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_materialized_views_clean_da4987f0.png)
+![Intro visual for materialized views](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_materialized_views_actual3d_0fddd17b.png)
 
 ## Creating a Materialized View
 

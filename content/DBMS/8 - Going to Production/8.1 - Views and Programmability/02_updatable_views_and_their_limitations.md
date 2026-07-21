@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Updatable Views And Their Limitations" p
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for updatable views and their limitations](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_updatable_views_and_their_limitations_clean_57db0a2c.png)
+![Intro visual for updatable views and their limitations](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_updatable_views_and_their_limitations_actual3d_49d4fdde.png)
 
 ## A Simple View Is Updatable by Default
 

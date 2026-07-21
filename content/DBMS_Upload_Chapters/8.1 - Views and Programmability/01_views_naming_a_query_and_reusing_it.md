@@ -6,7 +6,7 @@ A **view** solves this by giving a query a permanent name in the database itself
 
 **Definition:** A view saves a query under a reusable name, always re-running against current data rather than storing a snapshot, which turns a frequently repeated, error-prone query into a single, consistently defined building block every downstream report can rely on.
 
-![Intro visual for views naming a query and reusing it](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_views_naming_a_query_and_reusing_it_clean_7e6863b4.png)
+![Intro visual for views naming a query and reusing it](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_intro_views_naming_a_query_and_reusing_it_actual3d_aae48486.png)
 
 ## Creating a View from an Existing Query
 

@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Userdefined Functions" plus only these f
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for userdefined functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_userdefined_functions_clean_6f5d7f89.png)
+![Intro visual for userdefined functions](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_intro_userdefined_functions_actual3d_23574ed4.png)
 
 ## Creating a Simple Function
 
