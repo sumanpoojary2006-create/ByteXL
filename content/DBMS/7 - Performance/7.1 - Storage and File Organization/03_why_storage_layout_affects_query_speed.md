@@ -20,7 +20,7 @@ ON-IMAGE TEXT: show a short bold title "Why Storage Layout Affects Query Speed" 
 GOAL: make the opening idea instantly clear and engaging while matching the existing DBMS reading-material image standards.
 -->
 
-![Intro visual for why storage layout affects query speed](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_why_storage_layout_affects_query_speed_clean_2b5f93cc.png)
+![Intro visual for why storage layout affects query speed](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_why_storage_layout_affects_query_speed_actual3d_3488150b.png)
 
 ## Watching a Full Table Scan Happen
 

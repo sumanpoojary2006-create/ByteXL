@@ -6,7 +6,7 @@ There are a few standard strategies for how a table's file can be organized, and
 
 **Definition:** A heap places rows wherever space is free, with no ordering guarantee, sorted or clustered organization keeps rows physically near others with similar values in a chosen column, and hashed organization groups rows by a computed bucket for fast exact-match lookups, each with a different trade-off between write simplicity and read speed for a particular kind of query.
 
-![Intro visual for file organization heap sorted and hashed files](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_file_organization_heap_sorted_and_hashed_files_clean_6aae821c.png)
+![Intro visual for file organization heap sorted and hashed files](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_intro_file_organization_heap_sorted_and_hashed_files_actual3d_41c7b27e.png)
 
 ## Heap Organization: Rows Land Wherever There Is Room
 

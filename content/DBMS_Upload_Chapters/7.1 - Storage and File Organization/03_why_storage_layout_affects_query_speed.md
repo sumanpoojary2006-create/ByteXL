@@ -6,7 +6,7 @@ This lesson connects those two facts directly to something Priya can actually se
 
 **Definition:** Without a supporting structure on the column being filtered, a heap-organized table forces a query into a `full table scan`, reading every single page and checking every single row, with cost that scales directly with table size regardless of how few rows the query actually needs; the `primary key` search escaped this fate only because PostgreSQL quietly built an index for it.
 
-![Intro visual for why storage layout affects query speed](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_why_storage_layout_affects_query_speed_clean_2b5f93cc.png)
+![Intro visual for why storage layout affects query speed](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_intro_why_storage_layout_affects_query_speed_actual3d_3488150b.png)
 
 ## Watching a Full Table Scan Happen
 
