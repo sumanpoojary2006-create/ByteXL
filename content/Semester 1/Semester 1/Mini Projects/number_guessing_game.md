@@ -6,6 +6,16 @@ The computer picks a random number and you have to guess it. Simple idea — but
 
 A CLI game where the computer picks a secret number between 1 and 100 and the player has 7 attempts to guess it. After each guess, the game says whether the guess is too high, too low, or correct.
 
+## Learning Objectives
+
+By the end of this project, you will be able to:
+- Generate a secret value with `random.randint()`
+- Combine a loop with `if`/`elif`/`else` to drive interactive branching
+- Validate user input and reject bad values without consuming an attempt
+- Structure a replayable game with an outer play-again loop
+
+**Difficulty:** Beginner · **Estimated time:** 1–1.5 hours
+
 ## Tasks
 
 ### Task 1: The Basic Game
@@ -29,10 +39,45 @@ A CLI game where the computer picks a secret number between 1 and 100 and the pl
 2. If yes, start a new game with a new random number.
 3. If no, say goodbye and exit.
 
+## Sample Run
+
+```
+===== Number Guessing Game =====
+I'm thinking of a number between 1 and 100.
+You have 7 attempts.
+
+Attempt 1/7 — Enter your guess: 50
+Too high! Attempts remaining: 6
+Attempt 2/7 — Enter your guess: abc
+That's not a number. Try again.
+Attempt 2/7 — Enter your guess: 25
+Too low! Attempts remaining: 5
+Attempt 3/7 — Enter your guess: 37
+Correct! You got it in 3 attempts.
+
+Play again? (yes/no): no
+Goodbye!
+```
+
 **Answer these questions after completing all tasks:**
 - What happens if the player enters "abc" instead of a number? Did your program crash the first time you tried this, and what did you add to fix it?
 - If the player types "YES" or "Yes" instead of "yes" for the play again prompt, does your program handle it? Fix it if not.
 - Try playing the game yourself. With 7 attempts, is it easy or hard to guess a number between 1 and 100? What strategy did you use?
+
+## Deliverables & Rubric
+
+Submit your `.py` file along with written answers to the reflection questions above.
+
+Your project is assessed out of 10:
+
+| Criteria | Points |
+|---|---|
+| Core game works: secret number, 7 attempts, high/low/correct feedback | 4 |
+| Play-again loop starts a fresh game correctly | 2 |
+| Input validation (non-numbers and out-of-range) without wasting an attempt | 2 |
+| Code readability & organization | 1 |
+| Reflection questions answered thoughtfully | 1 |
+| **Total** | **10** |
 
 ## Where to Build This Project
 

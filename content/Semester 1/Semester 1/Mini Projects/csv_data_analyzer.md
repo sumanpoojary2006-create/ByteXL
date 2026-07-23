@@ -6,6 +6,16 @@ CSV files are one of the most common ways data is shared — spreadsheets, expor
 
 A CLI tool that loads a CSV file, lets the user explore its contents, filter records by column value, and view basic statistics.
 
+## Learning Objectives
+
+By the end of this project, you will be able to:
+- Read CSV data into a list of dictionaries with `csv.DictReader`
+- Convert string fields to numeric types safely
+- Filter records case-insensitively by column value
+- Compute aggregate statistics (average, min, max, counts)
+
+**Difficulty:** Intermediate · **Estimated time:** 2 hours
+
 ## Dataset
 
 Use the following CSV file for this project — create it manually and save it as `students.csv`:
@@ -62,10 +72,50 @@ Ravi,ECE,6.1,2,No
 
 2. Display the stats in a clean format.
 
+## Sample Run
+
+```
+===== CSV Analyzer =====
+1. View All Records
+2. Filter by Branch
+3. Filter by Placement
+4. View Statistics
+5. Exit
+========================
+Choose an option: 2
+Branch: cse
+Ananya   CSE  8.7  0  Yes
+Karan    CSE  9.1  0  Yes
+Arjun    CSE  8.0  0  Yes
+
+Choose an option: 4
+Total students     : 10
+Placed / Not placed: 6 / 4
+Average CGPA        : 7.73
+Highest CGPA        : 9.4 (Fatima)
+Lowest CGPA         : 5.9 (Siddharth)
+Zero backlogs       : 5
+```
+
 **Answer these questions after completing all tasks:**
 - When you read CGPA from the CSV, it comes in as a string. At what point did you convert it to a float, and what happens if a row has a missing or invalid CGPA value?
 - Your filter by branch is case-insensitive. Try filtering for "cse" — does it return the CSE students correctly? What did you add to make this work?
 - Add one more student row directly to `students.csv` using a text editor. Rerun the program. Does it pick up the new row automatically without any code changes? Why?
+
+## Deliverables & Rubric
+
+Submit your `.py` file **and** the `students.csv` file, along with written answers to the reflection questions above.
+
+Your project is assessed out of 10:
+
+| Criteria | Points |
+|---|---|
+| Load with `DictReader`, display records, handle a missing file | 4 |
+| Statistics computed correctly (average, highest/lowest, counts) | 2 |
+| Filters by branch and placement work case-insensitively | 2 |
+| Code readability & organization | 1 |
+| Reflection questions answered thoughtfully | 1 |
+| **Total** | **10** |
 
 ## Where to Build This Project
 

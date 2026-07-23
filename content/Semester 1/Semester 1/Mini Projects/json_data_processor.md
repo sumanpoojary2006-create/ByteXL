@@ -6,6 +6,16 @@ Real-world JSON rarely arrives clean. Files go missing, fields get renamed, a pr
 
 A CLI tool that loads a JSON inventory file, validates every record, reports which ones are broken and why, and computes summary statistics for the valid ones — without ever crashing, no matter how badly the file is broken.
 
+## Learning Objectives
+
+By the end of this project, you will be able to:
+- Load and parse JSON safely with `json.load()` and targeted `except` blocks
+- Define and raise a custom exception for invalid records
+- Validate and coerce field types per record without stopping on failure
+- Aggregate statistics over only the valid records
+
+**Difficulty:** Intermediate–Advanced · **Estimated time:** 2.5 hours
+
 ## Dataset
 
 Create this file manually and save it as `inventory.json`. Keep the errors exactly as shown — they are intentional:
@@ -62,10 +72,49 @@ Create this file manually and save it as `inventory.json`. Keep the errors exact
 
 3. Give the user the option to re-run the whole tool on a different filename, so they can test it against a file that does not exist.
 
+## Sample Run
+
+```
+Loading inventory.json...
+7 records found.
+
+VALID RECORDS: 4
+INVALID RECORDS: 3
+  - Record 4: missing required field 'name'
+  - Record 5: price is negative (-199)
+  - Record 6: quantity is not a valid number ('unknown')
+
+----- SUMMARY -----
+Valid products       : 4
+Total inventory value: ₹ 53,360
+Highest-priced       : Charger (₹599)
+Per category:
+  Stationery  : 2
+  Electronics : 2
+Processing complete
+
+Run again on a different file? (Y/N): N
+```
+
 **Answer these questions after completing all tasks:**
 - Record 2 has a price of `"10"` (a string) rather than `10`. Your `validate_record()` is expected to convert it and overwrite the record so it holds a real number. If you checked convertibility but forgot the overwrite, what happens when Task 3 computes price × quantity for this record — does it crash, or produce a silently wrong number? Test it by removing the overwrite line and rerunning.
 - You catch `InvalidRecordError` per-record inside the loop, but `FileNotFoundError` and `json.JSONDecodeError` stop the whole program. Why is a bad individual record recoverable while a missing file is not?
 - Add an eighth record to `inventory.json` with `price` as `null`. Run your program without changing any code. What happens, and which of your existing `except` blocks — if any — catches it?
+
+## Deliverables & Rubric
+
+Submit your `.py` file **and** the `inventory.json` file, along with written answers to the reflection questions above.
+
+Your project is assessed out of 10:
+
+| Criteria | Points |
+|---|---|
+| Safe loading with separate `FileNotFoundError` / `JSONDecodeError` handling | 3 |
+| Custom `InvalidRecordError`, per-record validation, and value coercion | 3 |
+| Statistics on valid records with `try/except/else/finally` and re-run option | 2 |
+| Code readability & organization | 1 |
+| Reflection questions answered thoughtfully | 1 |
+| **Total** | **10** |
 
 ## Where to Build This Project
 

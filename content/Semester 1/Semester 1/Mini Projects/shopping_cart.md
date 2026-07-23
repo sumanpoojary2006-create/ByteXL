@@ -6,6 +6,16 @@ Every time you add something to a cart on Flipkart or Amazon, a program is track
 
 A CLI shopping cart where the user can add items, remove items, view the cart, and checkout with a final bill.
 
+## Learning Objectives
+
+By the end of this project, you will be able to:
+- Model structured data with nested dictionaries
+- Update quantities and look up product details by key
+- Use a set to derive the unique categories in the cart
+- Compute a bill with conditional discount logic
+
+**Difficulty:** Intermediate · **Estimated time:** 2 hours
+
 ## Tasks
 
 ### Task 1: The Product Catalogue
@@ -60,10 +70,52 @@ A CLI shopping cart where the user can add items, remove items, view the cart, a
 
 5. After checkout, clear the cart.
 
+## Sample Run
+
+```
+1. View Catalogue
+2. Add Item to Cart
+3. Remove Item from Cart
+4. View Cart
+5. Checkout
+6. Exit
+Choose an option: 2
+Product ID: P001
+Quantity: 2
+Added 2 x Notebook to cart.
+
+Choose an option: 5
+======= YOUR BILL =======
+Notebook  x2   ₹  90.00
+Pen       x3   ₹  30.00
+-------------------------
+Subtotal       ₹ 120.00
+Discount       ₹   0.00
+-------------------------
+Total          ₹ 120.00
+=========================
+Shopping across: Stationery
+```
+
 **Answer these questions after completing all tasks:**
 - Your cart stores product IDs and quantities. To display the cart, you look up the product name and price from the catalogue using the product ID. What happens if someone deletes a product from the catalogue while it is still in the cart?
 - The discount applies only above ₹500. Test the boundary: add items worth exactly ₹500. Does the discount apply? Should it?
 - Use a set to collect all unique categories of items currently in the cart. Display this as "Shopping across: Stationery, Electronics, ..." — how did you build this set from the cart contents?
+
+## Deliverables & Rubric
+
+Submit your `.py` file along with written answers to the reflection questions above.
+
+Your project is assessed out of 10:
+
+| Criteria | Points |
+|---|---|
+| Catalogue display, add/remove/view cart with correct quantity handling | 4 |
+| Checkout bill: subtotal, discount rule, and clearing the cart | 2 |
+| Error handling (unknown product ID) and the unique-categories set | 2 |
+| Code readability & organization | 1 |
+| Reflection questions answered thoughtfully | 1 |
+| **Total** | **10** |
 
 ## Where to Build This Project
 
