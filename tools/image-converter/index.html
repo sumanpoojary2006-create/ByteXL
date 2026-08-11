@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="/config.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -771,10 +772,32 @@
 
   const supportedExts = new Set([".png",".jpg",".jpeg",".gif",".webp",".svg"]);
   const mimeTypes = {".png":"image/png",".jpg":"image/jpeg",".jpeg":"image/jpeg",".gif":"image/gif",".webp":"image/webp",".svg":"image/svg+xml"};
-  const IMAGE_UPLOAD_CONCURRENCY = 6;
+  // Keep pressure modest. Do not automatically resend a complete image.
+  const IMAGE_UPLOAD_CONCURRENCY = 2;
+  const IMAGE_UPLOAD_ATTEMPTS = 1;
+  const IMAGE_UPLOAD_CACHE_KEY = "bytexl-image-uploads-v2";
+  const IMAGE_UPLOAD_CACHE_LIMIT = 2500;
+  const IMAGE_OPTIMIZE_MIN_BYTES = 256 * 1024;
+  const IMAGE_OPTIMIZE_MAX_DIMENSION = 1920;
+  const IMAGE_OPTIMIZE_QUALITY = 0.86;
 
   const $ = id => document.getElementById(id);
-  const apiBase = location.protocol === "file:" ? "http://127.0.0.1:8000" : "";
+
+  function externalApiBase() {
+    const configured = location.protocol === "file:"
+      ? "http://127.0.0.1:8000"
+      : String(window.IMAGE_CONVERTER_CONFIG?.apiBase || "").trim();
+    if (!configured) throw new Error("The update API is not configured.");
+
+    const api = new URL(configured, location.href);
+    const isVercel = api.hostname === "vercel.app" || api.hostname.endsWith(".vercel.app");
+    if (api.origin === location.origin || isVercel) {
+      throw new Error("Uploads and product updates cannot use Vercel. Configure an external API host.");
+    }
+    return api.origin;
+  }
+
+  const apiBase = externalApiBase();
   const uploadImageUrl = apiBase + "/upload-image";
   const oneCompilerWorkspaceUrl = apiBase + "/onecompiler/workspace";
   const readingMaterialsUrl = apiBase + "/reading-materials";
@@ -959,15 +982,110 @@
     return { zipBlob:converted, outputName:outputFileName(shouldConvertImages,shouldConvertCode), stats, shouldConvertImages, shouldConvertCode, uploadFiles };
   }
 
-  async function uploadImage(imgPath, bytes) {
+  function readImageUploadCache() {
+    try {
+      const value = JSON.parse(localStorage.getItem(IMAGE_UPLOAD_CACHE_KEY)||"{}");
+      return value && typeof value === "object" ? value : {};
+    } catch (_) {
+      return {};
+    }
+  }
+
+  function cacheUploadedImage(digest, url) {
+    try {
+      const cache = readImageUploadCache();
+      delete cache[digest];
+      cache[digest] = url;
+      const entries = Object.entries(cache);
+      localStorage.setItem(IMAGE_UPLOAD_CACHE_KEY, JSON.stringify(Object.fromEntries(entries.slice(-IMAGE_UPLOAD_CACHE_LIMIT))));
+    } catch (_) {
+      // Upload success must not depend on browser storage being available.
+    }
+  }
+
+  async function imageDigest(bytes) {
+    if (!crypto.subtle) return null;
+    try {
+      const digest = await crypto.subtle.digest("SHA-256", bytes);
+      return Array.from(new Uint8Array(digest), b => b.toString(16).padStart(2,"0")).join("");
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function canvasToBlob(canvas, type, quality) {
+    return new Promise(resolve => canvas.toBlob(resolve, type, quality));
+  }
+
+  async function optimizeImageForUpload(imgPath, bytes) {
     const ext = extName(imgPath);
-    const fd = new FormData();
-    fd.append("subtype", slugify(parentName(imgPath)||"content"));
-    fd.append("file", new Blob([bytes],{type:mimeTypes[ext]||"application/octet-stream"}), baseName(imgPath));
-    const r = await fetch(uploadImageUrl,{method:"POST",body:fd});
-    if (r.status===413) throw new Error(`${baseName(imgPath)} is too large.`);
-    if (!r.ok) { const d = await r.json().catch(()=>({})); throw new Error(d.detail||`Upload failed for ${baseName(imgPath)}.`); }
-    return (await r.json()).url||null;
+    const original = new Blob([bytes], {type:mimeTypes[ext]||"application/octet-stream"});
+    if (!new Set([".png",".jpg",".jpeg"]).has(ext) || original.size < IMAGE_OPTIMIZE_MIN_BYTES) {
+      return {blob:original, filename:baseName(imgPath)};
+    }
+
+    try {
+      const bitmap = await createImageBitmap(original);
+      const scale = Math.min(1, IMAGE_OPTIMIZE_MAX_DIMENSION / Math.max(bitmap.width, bitmap.height));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+      canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+      canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+      bitmap.close();
+      const optimized = await canvasToBlob(canvas, "image/webp", IMAGE_OPTIMIZE_QUALITY);
+      if (optimized && optimized.size < original.size * 0.9) {
+        const filename = baseName(imgPath).replace(/\.[^.]+$/, "") + ".webp";
+        return {blob:optimized, filename};
+      }
+    } catch (_) {
+      // Unsupported/corrupt images continue through the original upload path.
+    }
+    return {blob:original, filename:baseName(imgPath)};
+  }
+
+  async function uploadImage(imgPath, bytes) {
+    const digest = await imageDigest(bytes);
+    const cachedUrl = digest ? readImageUploadCache()[digest] : null;
+    if (cachedUrl) {
+      setProgress(`Reusing previously uploaded ${baseName(imgPath)}…`);
+      return cachedUrl;
+    }
+
+    const payload = await optimizeImageForUpload(imgPath, bytes);
+    if (payload.blob.size < bytes.byteLength) {
+      const saving = Math.round((1 - payload.blob.size / bytes.byteLength) * 100);
+      setProgress(`Optimized ${baseName(imgPath)} by ${saving}% before upload…`);
+    }
+
+    let lastError = null;
+    for (let attempt = 1; attempt <= IMAGE_UPLOAD_ATTEMPTS; attempt++) {
+      const fd = new FormData();
+      fd.append("subtype", slugify(parentName(imgPath)||"content"));
+      fd.append("file", payload.blob, payload.filename);
+      try {
+        const r = await fetch(uploadImageUrl,{method:"POST",body:fd});
+        if (r.status===413) throw new Error(`${baseName(imgPath)} is too large.`);
+        if (r.ok) {
+          const url = (await r.json()).url||null;
+          if (url && digest) cacheUploadedImage(digest, url);
+          return url;
+        }
+
+        const d = await r.json().catch(()=>({}));
+        const message = d.detail||`Upload failed with HTTP ${r.status}.`;
+        lastError = new Error(`${baseName(imgPath)}: ${message}`);
+        if (r.status!==429 && r.status<500) throw lastError;
+      } catch (err) {
+        lastError = err instanceof Error ? err : new Error(String(err));
+        if (/too large/i.test(lastError.message)) throw lastError;
+      }
+
+      if (attempt < IMAGE_UPLOAD_ATTEMPTS) {
+        setProgress(`Retrying ${baseName(imgPath)} (${attempt + 1}/${IMAGE_UPLOAD_ATTEMPTS})…`);
+        await new Promise(resolve => setTimeout(resolve, 750 * (2 ** (attempt - 1))));
+      }
+    }
+    throw lastError||new Error(`Upload failed for ${baseName(imgPath)}.`);
   }
 
   async function uploadImagesConcurrently(imgFiles, zip, urlMap, stats) {

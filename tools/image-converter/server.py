@@ -1,4 +1,6 @@
 import io
+import hashlib
+import json
 import os
 import posixpath
 import re
@@ -14,16 +16,44 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 
 app = FastAPI()
+frontend_origins = [
+    origin.strip()
+    for origin in os.getenv(
+        "FRONTEND_ORIGINS",
+        "https://image-converter-pi-rouge.vercel.app,http://127.0.0.1:8000,http://localhost:8000",
+    ).split(",")
+    if origin.strip()
+]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=frontend_origins,
     allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["Content-Disposition", "X-Stats"],
 )
 
-BYTEXL_UPLOAD_URL = os.getenv("BYTEXL_UPLOAD_URL", "https://bytexl.app/api/upload/s3")
-BYTEXL_API_BASE = os.getenv("BYTEXL_API_BASE", "https://bytexl.app").rstrip("/")
+def canonical_bytexl_url(url: str) -> str:
+    """Move legacy bytexl.app URLs to the current API host.
+
+    The legacy host returns HTTP 301 for API calls. HTTP clients commonly turn a
+    redirected POST into a GET, which drops image multipart bodies and JSON payloads.
+    Normalize even explicitly configured legacy URLs so existing deployments recover
+    without requiring an environment-variable change first.
+    """
+    return re.sub(
+        r"^https://(?:www\.)?bytexl\.app(?=/|$)",
+        "https://app.bytexl.ai",
+        str(url or "").strip(),
+        flags=re.IGNORECASE,
+    )
+
+
+BYTEXL_UPLOAD_URL = canonical_bytexl_url(
+    os.getenv("BYTEXL_UPLOAD_URL", "https://app.bytexl.ai/api/upload/s3")
+)
+BYTEXL_API_BASE = canonical_bytexl_url(
+    os.getenv("BYTEXL_API_BASE", "https://app.bytexl.ai")
+).rstrip("/")
 DEFAULT_READING_ID = os.getenv("BYTEXL_READING_ID", "44sqshkgw")
 ONECOMPILER_WEB_BASE = os.getenv("ONECOMPILER_WEB_BASE", "https://onecompiler.com").rstrip("/")
 SUPPORTED = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg"}
@@ -215,7 +245,7 @@ def bytexl_get(path: str) -> Any:
         raise HTTPException(502, "ByteXL returned an invalid response") from exc
 
 
-def bytexl_post(path: str, payload: dict[str, Any]) -> Any:
+def bytexl_post(path: str, payload: Any) -> Any:
     try:
         resp = requests.post(f"{BYTEXL_API_BASE}{path}", json=payload, headers=auth_headers(), timeout=90)
         resp.raise_for_status()
@@ -224,6 +254,310 @@ def bytexl_post(path: str, payload: dict[str, Any]) -> Any:
         raise HTTPException(502, f"ByteXL update failed: {exc}") from exc
     except ValueError as exc:
         raise HTTPException(502, "ByteXL returned an invalid response") from exc
+
+
+def validate_questions_with_bytexl(questions: list[dict[str, Any]]) -> tuple[Any, Optional[str]]:
+    """Validate questions upstream, falling back only when the validator is unavailable.
+
+    ByteXL's batch validator is an advisory preflight check. Question creation uses a
+    separate endpoint, so a server-side failure in the validator must not make the
+    uploader unusable after the sheet has passed its local checks.
+    """
+    try:
+        resp = requests.post(
+            f"{BYTEXL_API_BASE}/api/questions/batch-validate",
+            json=questions,
+            headers=auth_headers(),
+            timeout=90,
+        )
+        resp.raise_for_status()
+        return resp.json(), None
+    except requests.RequestException as exc:
+        upstream_response = getattr(exc, "response", None)
+        upstream_status = getattr(upstream_response, "status_code", None)
+        if upstream_status is not None and upstream_status < 500:
+            raise HTTPException(502, f"ByteXL validation failed: {exc}") from exc
+
+        warning = (
+            "ByteXL validation is temporarily unavailable; "
+            "the sheet passed local validation and upload can continue."
+        )
+        return [{"errors": []} for _ in questions], warning
+    except ValueError:
+        warning = (
+            "ByteXL validation returned an invalid response; "
+            "the sheet passed local validation and upload can continue."
+        )
+        return [{"errors": []} for _ in questions], warning
+
+
+def duplicate_question_id(result: Any) -> Optional[str]:
+    if not isinstance(result, dict):
+        return None
+    message = str(result.get("message") or "")
+    match = re.search(r"Duplicate:\s*question:\s*id:\s*([A-Za-z0-9_-]+)", message, re.IGNORECASE)
+    return match.group(1) if match else None
+
+
+def validation_results_for_upsert(result: Any) -> Any:
+    if not isinstance(result, list):
+        return result
+
+    cleaned = []
+    for item in result:
+        if not isinstance(item, dict):
+            cleaned.append(item)
+            continue
+
+        duplicate_id = None
+        remaining_errors = []
+        for error in item.get("errors") or []:
+            if not isinstance(error, dict):
+                remaining_errors.append(error)
+                continue
+            is_duplicate = str(error.get("code") or "").lower() == "duplicate"
+            is_question = str(error.get("field") or "").lower() == "question"
+            match = re.search(r"\bid:\s*([A-Za-z0-9_-]+)", str(error.get("message") or ""), re.IGNORECASE)
+            if is_duplicate and is_question and match:
+                duplicate_id = match.group(1)
+            else:
+                remaining_errors.append(error)
+
+        cleaned.append(
+            {
+                **item,
+                "errors": remaining_errors,
+                **({"duplicateQuestionId": duplicate_id, "uploadAction": "update"} if duplicate_id else {}),
+            }
+        )
+    return cleaned
+
+
+def has_non_duplicate_error(result: Any) -> bool:
+    if not isinstance(result, dict):
+        return True
+    message = str(result.get("message") or "")
+    remaining = re.sub(
+        r"Duplicate:\s*question:\s*id:\s*[A-Za-z0-9_-]+\s*,?",
+        "",
+        message,
+        flags=re.IGNORECASE,
+    ).strip(" ,")
+    return bool(remaining)
+
+
+def update_duplicate_question(question_id: str, question: dict[str, Any]) -> dict[str, Any]:
+    response = bytexl_get(f"/api/questions/_edit/{question_id}")
+    existing = response.get("data") if isinstance(response, dict) else None
+    if not isinstance(existing, dict) or not existing:
+        raise HTTPException(502, f"ByteXL duplicate question {question_id} could not be loaded")
+
+    if existing.get("status") == "archived":
+        bytexl_post(f"/api/questions-vault/restore/{question_id}", {})
+
+    merged = {**existing, **question, "_id": question_id}
+    updated = bytexl_post("/api/questions", merged)
+    item = updated.get("data") if isinstance(updated, dict) and isinstance(updated.get("data"), dict) else updated
+    if not isinstance(item, dict):
+        item = {}
+    return {**item, "_id": item.get("_id") or question_id, "uploadAction": "updated"}
+
+
+UPDATE_CONTROL_FIELDS = {"questionId", "expectedRevision"}
+
+
+def assessment_update_question_id(question: Any) -> str:
+    if not isinstance(question, dict):
+        return ""
+    return str(question.get("questionId") or "").strip()
+
+
+def assessment_update_payload(question: dict[str, Any]) -> dict[str, Any]:
+    return {key: value for key, value in question.items() if key not in UPDATE_CONTROL_FIELDS and key != "_id"}
+
+
+def assessment_question_revision(question: dict[str, Any]) -> str:
+    canonical = json.dumps(question, sort_keys=True, separators=(",", ":"), default=str, ensure_ascii=False)
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def assessment_changed_fields(existing: dict[str, Any], incoming: dict[str, Any]) -> list[str]:
+    return sorted(key for key, value in incoming.items() if existing.get(key) != value)
+
+
+def load_assessment_question(question_id: str) -> dict[str, Any]:
+    response = bytexl_get(f"/api/questions/_edit/{question_id}")
+    existing = response.get("data") if isinstance(response, dict) else None
+    if not isinstance(existing, dict) or not existing:
+        raise HTTPException(404, f"ByteXL question {question_id} was not found")
+    return existing
+
+
+def assessment_update_identity_errors(
+    question_id: str,
+    existing: dict[str, Any],
+    incoming: dict[str, Any],
+) -> list[str]:
+    errors: list[str] = []
+    incoming_title = str(incoming.get("title") or "").strip()
+    existing_title = str(existing.get("title") or "").strip()
+    if incoming_title != existing_title:
+        errors.append(
+            f'Title mismatch for {question_id}: ByteXL has "{existing_title}" but the sheet has "{incoming_title}".'
+        )
+    incoming_type = str(incoming.get("type") or "").strip()
+    existing_type = str(existing.get("type") or "").strip()
+    if incoming_type and existing_type and incoming_type != existing_type:
+        errors.append(
+            f"Type mismatch for {question_id}: ByteXL has {existing_type} but the sheet has {incoming_type}."
+        )
+    if str(existing.get("status") or "").lower() == "archived":
+        errors.append(f"Question {question_id} is archived. Restore it in ByteXL before updating it.")
+    return errors
+
+
+def validate_existing_assessment_updates(questions: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    results: list[dict[str, Any]] = []
+    seen_ids: set[str] = set()
+    for question in questions:
+        question_id = assessment_update_question_id(question)
+        errors: list[str] = []
+        if not question_id:
+            errors.append("questionId is required in update mode.")
+        elif not re.fullmatch(r"[A-Za-z0-9_-]+", question_id):
+            errors.append("questionId contains unsupported characters.")
+        elif question_id in seen_ids:
+            errors.append(f"Duplicate questionId in this sheet: {question_id}.")
+        if question_id:
+            seen_ids.add(question_id)
+
+        if errors:
+            results.append({"questionId": question_id, "errors": errors, "changedFields": []})
+            continue
+
+        try:
+            existing = load_assessment_question(question_id)
+        except HTTPException as exc:
+            results.append(
+                {"questionId": question_id, "errors": [str(exc.detail)], "changedFields": []}
+            )
+            continue
+
+        incoming = assessment_update_payload(question)
+        errors.extend(assessment_update_identity_errors(question_id, existing, incoming))
+        changed_fields = assessment_changed_fields(existing, incoming)
+        results.append(
+            {
+                "questionId": question_id,
+                "currentTitle": existing.get("title") or "",
+                "changedFields": changed_fields,
+                "expectedRevision": assessment_question_revision(existing),
+                "uploadAction": "update" if changed_fields else "unchanged",
+                "errors": errors,
+            }
+        )
+    return results
+
+
+def update_existing_assessment_questions(questions: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    results: list[dict[str, Any]] = []
+    seen_ids: set[str] = set()
+    for question in questions:
+        question_id = assessment_update_question_id(question)
+        if not question_id:
+            results.append({"status": "failed", "message": "questionId is required in update mode."})
+            continue
+        if question_id in seen_ids:
+            results.append(
+                {"status": "failed", "questionId": question_id, "message": f"Duplicate questionId: {question_id}."}
+            )
+            continue
+        seen_ids.add(question_id)
+
+        try:
+            existing = load_assessment_question(question_id)
+            incoming = assessment_update_payload(question)
+            identity_errors = assessment_update_identity_errors(question_id, existing, incoming)
+            if identity_errors:
+                results.append(
+                    {"status": "failed", "questionId": question_id, "message": " ".join(identity_errors)}
+                )
+                continue
+
+            expected_revision = str(question.get("expectedRevision") or "").strip()
+            current_revision = assessment_question_revision(existing)
+            if not expected_revision or expected_revision != current_revision:
+                results.append(
+                    {
+                        "status": "conflict",
+                        "questionId": question_id,
+                        "message": "Question changed after validation. Validate the sheet again before updating.",
+                    }
+                )
+                continue
+
+            changed_fields = assessment_changed_fields(existing, incoming)
+            if not changed_fields:
+                results.append(
+                    {
+                        "_id": question_id,
+                        "uploadAction": "unchanged",
+                        "changedFields": [],
+                    }
+                )
+                continue
+
+            merged = {**existing, **incoming, "_id": question_id}
+            updated = bytexl_post("/api/questions", merged)
+            item = updated.get("data") if isinstance(updated, dict) and isinstance(updated.get("data"), dict) else updated
+            if not isinstance(item, dict):
+                item = {}
+            updated_id = item.get("_id") or question_id
+            if updated_id != question_id:
+                results.append(
+                    {
+                        "status": "failed",
+                        "questionId": question_id,
+                        "message": "ByteXL returned a different question ID; update was not accepted.",
+                    }
+                )
+                continue
+            results.append(
+                {
+                    **item,
+                    "_id": question_id,
+                    "uploadAction": "updated",
+                    "changedFields": changed_fields,
+                }
+            )
+        except HTTPException as exc:
+            results.append(
+                {"status": "failed", "questionId": question_id, "message": str(exc.detail)}
+            )
+    return results
+
+
+def upsert_assessment_questions(questions: list[dict[str, Any]]) -> list[Any]:
+    results = bytexl_post("/api/questions/batch", questions)
+    if not isinstance(results, list):
+        raise HTTPException(502, "ByteXL returned an unexpected batch upload response")
+
+    upserted: list[Any] = []
+    for index, result in enumerate(results):
+        if isinstance(result, dict) and result.get("_id"):
+            upserted.append({**result, "uploadAction": "created"})
+            continue
+
+        duplicate_id = duplicate_question_id(result)
+        if duplicate_id and not has_non_duplicate_error(result) and index < len(questions):
+            try:
+                upserted.append(update_duplicate_question(duplicate_id, questions[index]))
+            except HTTPException as exc:
+                upserted.append({"status": "failed", "message": str(exc.detail)})
+            continue
+
+        upserted.append(result)
+    return upserted
 
 
 def get_bytexl_id() -> str:
@@ -238,7 +572,7 @@ def get_bytexl_id() -> str:
     return value
 
 
-def upload_to_s3(filename: str, data: bytes, subtype: str) -> Optional[str]:
+def upload_to_s3(filename: str, data: bytes, subtype: str) -> str:
     token = get_upload_token()
     if not token:
         raise RuntimeError("BYTEXL_UPLOAD_TOKEN is not configured")
@@ -254,10 +588,25 @@ def upload_to_s3(filename: str, data: bytes, subtype: str) -> Optional[str]:
         )
         resp.raise_for_status()
         result = resp.json()
-    except (requests.RequestException, ValueError):
-        return None
+    except requests.RequestException as exc:
+        upstream_response = getattr(exc, "response", None)
+        detail = ""
+        if upstream_response is not None:
+            detail = str(getattr(upstream_response, "text", "") or "").strip()[:300]
+            if detail.lower().startswith(("<!doctype html", "<html")):
+                detail = f"upstream returned HTTP {upstream_response.status_code}"
+        suffix = f": {detail}" if detail else f": {exc}"
+        raise HTTPException(502, f"ByteXL image upload failed{suffix}") from exc
+    except ValueError as exc:
+        raise HTTPException(502, "ByteXL image upload returned an invalid response") from exc
 
-    return result.get("url") if result.get("status") == "success" else None
+    if not isinstance(result, dict):
+        raise HTTPException(502, "ByteXL image upload returned an invalid response")
+    url = result.get("url")
+    if result.get("status") != "success" or not url:
+        message = result.get("message") or result.get("error") or "no image URL was returned"
+        raise HTTPException(502, f"ByteXL image upload failed: {message}")
+    return url
 
 
 def slugify(text: str) -> str:
@@ -915,8 +1264,49 @@ async def assessment_validate(payload: dict[str, Any] = Body(...)):
     if not isinstance(questions, list) or not questions:
         raise HTTPException(400, "No assessment questions were provided")
 
-    result = bytexl_post("/api/questions/batch-validate", questions)
+    result, warning = validate_questions_with_bytexl(questions)
+    return {
+        "status": "success",
+        "result": validation_results_for_upsert(result),
+        "validationMode": "local-fallback" if warning else "bytexl",
+        "warning": warning,
+    }
+
+
+@app.post("/assessment/upload")
+async def assessment_upload(payload: dict[str, Any] = Body(...)):
+    questions = payload.get("questions") or []
+    if not isinstance(questions, list) or not questions:
+        raise HTTPException(400, "No assessment questions were provided")
+
+    result = upsert_assessment_questions(questions)
     return {"status": "success", "result": result}
+
+
+@app.post("/assessment/update/validate")
+async def assessment_update_validate(payload: dict[str, Any] = Body(...)):
+    questions = payload.get("questions") or []
+    if not isinstance(questions, list) or not questions:
+        raise HTTPException(400, "No assessment questions were provided")
+    if not all(isinstance(question, dict) for question in questions):
+        raise HTTPException(400, "Every assessment question must be an object")
+
+    result = validate_existing_assessment_updates(questions)
+    return {"status": "success", "result": result, "created": 0}
+
+
+@app.post("/assessment/update")
+async def assessment_update(payload: dict[str, Any] = Body(...)):
+    if payload.get("confirm") is not True:
+        raise HTTPException(400, "Validate first, then confirm the update")
+    questions = payload.get("questions") or []
+    if not isinstance(questions, list) or not questions:
+        raise HTTPException(400, "No assessment questions were provided")
+    if not all(isinstance(question, dict) for question in questions):
+        raise HTTPException(400, "Every assessment question must be an object")
+
+    result = update_existing_assessment_questions(questions)
+    return {"status": "success", "result": result, "created": 0}
 
 
 @app.post("/assessment/upload-one")
@@ -925,7 +1315,7 @@ async def assessment_upload_one(payload: dict[str, Any] = Body(...)):
     if not isinstance(question, dict) or not question:
         raise HTTPException(400, "No assessment question was provided")
 
-    result = bytexl_post("/api/questions/batch", [question])
+    result = upsert_assessment_questions([question])
     return {"status": "success", "result": result}
 
 

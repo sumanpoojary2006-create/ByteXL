@@ -1,0 +1,15 @@
+.env
+.env.*
+__pycache__/
+*.pyc
+.DS_Store
+.vercel
+DEPLOY.md
+Dockerfile
+Procfile
+render.yaml
+requirements.txt
+run.py
+server.py
+tests/
+.python-version
