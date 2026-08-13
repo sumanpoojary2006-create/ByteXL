@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Activation Explorer</title>
+<style>
+  :root {
+    --bg: #12161d; --line: #2c3542; --text: #e6ebf2; --muted: #8b97a8;
+    --accent: #f2994a; --dim: #3a4453;
+    --sig: #f2994a; --tanh: #5b8def; --relu: #56c288;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .wrap { padding: 18px 20px 20px; max-width: 900px; margin: 0 auto; }
+  .title { font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--muted); text-align: center; }
+  .formula { text-align: center; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 15px; margin: 6px 0 14px;
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 20px; }
+  .formula span { white-space: nowrap; }
+  .swatch { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; }
+  .readout { background: #0d1117; border: 1px solid var(--line); border-radius: 6px;
+    padding: 9px 12px; font-family: ui-monospace, Menlo, monospace;
+    font-size: 13px; text-align: center; }
+  .verdict { text-align: center; font-size: 13px; line-height: 1.5;
+    margin: 10px 0 14px; min-height: 38px; color: var(--accent); }
+  .control { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .control label { font-family: ui-monospace, Menlo, monospace; font-size: 13px;
+    color: var(--muted); white-space: nowrap; }
+  .control output { font-family: ui-monospace, Menlo, monospace; font-size: 13px;
+    width: 46px; text-align: right; color: var(--accent); }
+  input[type=range] { flex: 1; -webkit-appearance: none; appearance: none; height: 4px;
+    border-radius: 2px; background: var(--dim); outline: none; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none;
+    width: 15px; height: 15px; border-radius: 50%; background: var(--accent); cursor: pointer; }
+  input[type=range]::-moz-range-thumb { width: 15px; height: 15px; border: 0;
+    border-radius: 50%; background: var(--accent); cursor: pointer; }
+  .grid { display: grid; grid-template-columns: 1fr 250px; gap: 20px; align-items: start; }
+  @media (max-width: 700px) { .grid { grid-template-columns: 1fr; }
+    .formula { font-size: 13px; } .wrap { padding: 14px 14px 16px; } }
+  svg { width: 100%; display: block; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 14px; }
+  th, td { padding: 5px 6px; text-align: right; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 500; }
+  td:first-child, th:first-child { text-align: left; }
+  .num { font-family: ui-monospace, Menlo, monospace; font-variant-numeric: tabular-nums; }
+  .sub { font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 6px; }
+  .note { font-size: 11px; color: var(--muted); line-height: 1.5; margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="title">Activation Explorer</div>
+  <div class="formula">
+    <span><i class="swatch" style="background:var(--sig)"></i>sigmoid</span>
+    <span><i class="swatch" style="background:var(--tanh)"></i>tanh</span>
+    <span><i class="swatch" style="background:var(--relu)"></i>ReLU</span>
+  </div>
+
+  <div class="readout" id="readout"></div>
+  <div class="verdict" id="verdict"></div>
+
+  <div class="control">
+    <label for="z">weighted sum z</label>
+    <input type="range" id="z" min="-8" max="8" step="0.1" value="0">
+    <output id="zOut">0.0</output>
+  </div>
+
+  <div class="grid">
+    <div>
+      <svg id="chart" viewBox="0 0 560 260" role="img"
+           aria-label="Activation outputs and slopes against the weighted sum"></svg>
+    </div>
+
+    <div>
+      <div class="sub">At this z</div>
+      <table>
+        <tr><th></th><th>output</th><th>slope</th></tr>
+        <tbody id="now"></tbody>
+      </table>
+
+      <div class="sub">Correction left after N layers</div>
+      <table>
+        <tr><th>layers</th><th>sigmoid</th><th>ReLU</th></tr>
+        <tbody id="decay"></tbody>
+      </table>
+
+      <div class="note">
+        A correction is multiplied by each layer's slope on its way back.
+        ReLU's slope is exactly 1 wherever the neuron is active, at any size
+        of input, which is why depth stopped being self-defeating.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const sigmoid = z => 1 / (1 + Math.exp(-z));
+const FUNCS = [
+  { name: "sigmoid", colour: "var(--sig)",
+    f: sigmoid,           slope: z => sigmoid(z) * (1 - sigmoid(z)) },
+  { name: "tanh",    colour: "var(--tanh)",
+    f: Math.tanh,         slope: z => 1 - Math.tanh(z) ** 2 },
+  { name: "ReLU",    colour: "var(--relu)",
+    f: z => Math.max(0, z), slope: z => (z > 0 ? 1 : 0) }
+];
+
+const NS = "http://www.w3.org/2000/svg";
+const chart = document.getElementById("chart");
+function el(name, attrs, text) {
+  const node = document.createElementNS(NS, name);
+  for (const k in attrs) node.setAttribute(k, attrs[k]);
+  if (text !== undefined) node.textContent = text;
+  return node;
+}
+
+const L = 40, R = 548, W = R - L, ZMIN = -8, ZMAX = 8;
+const xOf = z => L + ((z - ZMIN) / (ZMAX - ZMIN)) * W;
+// Top strip: outputs, -1.1 to 1.1. Bottom strip: slopes, 0 to 1.05.
+const OUT = { y: 22, h: 96, lo: -1.1, hi: 1.1 };
+const SLP = { y: 152, h: 74, lo: 0, hi: 1.05 };
+const yIn = (strip, v) => strip.y + strip.h - ((v - strip.lo) / (strip.hi - strip.lo)) * strip.h;
+
+function path(strip, fn) {
+  const pts = [];
+  for (let i = 0; i <= 260; i += 1) {
+    const z = ZMIN + (i / 260) * (ZMAX - ZMIN);
+    const v = fn(z);
+    // Clip rather than let ReLU shoot far off the top of the strip.
+    if (v > strip.hi) { pts.push(null); continue; }
+    pts.push([xOf(z), yIn(strip, Math.max(strip.lo, v))]);
+  }
+  let d = "", pen = false;
+  for (const p of pts) {
+    if (!p) { pen = false; continue; }
+    d += (pen ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1) + " ";
+    pen = true;
+  }
+  return d;
+}
+
+function draw(z) {
+  chart.textContent = "";
+
+  for (const strip of [OUT, SLP]) {
+    const zeroY = yIn(strip, Math.min(Math.max(0, strip.lo), strip.hi));
+    chart.appendChild(el("line", { x1: L, y1: zeroY, x2: R, y2: zeroY,
+      stroke: "var(--line)", "stroke-width": 1 }));
+  }
+  chart.appendChild(el("text", { x: L, y: OUT.y - 7, fill: "var(--muted)",
+    "font-size": "11px" }, "output, with ReLU clipped at the top because it keeps rising"));
+  chart.appendChild(el("text", { x: L, y: SLP.y - 7, fill: "var(--muted)",
+    "font-size": "11px" }, "slope, which is how much a weight change matters"));
+
+  for (const fn of FUNCS) {
+    chart.appendChild(el("path", { d: path(OUT, fn.f), fill: "none",
+      stroke: fn.colour, "stroke-width": 2 }));
+    chart.appendChild(el("path", { d: path(SLP, fn.slope), fill: "none",
+      stroke: fn.colour, "stroke-width": 2 }));
+  }
+  const x = xOf(z);
+  chart.appendChild(el("line", { x1: x, y1: OUT.y - 4, x2: x, y2: SLP.y + SLP.h,
+    stroke: "#ffffff", "stroke-width": 1.5, "stroke-dasharray": "4 3" }));
+  for (const fn of FUNCS) {
+    const out = fn.f(z);
+    if (out <= OUT.hi) {
+      chart.appendChild(el("circle", { cx: x, cy: yIn(OUT, out), r: 3.5, fill: fn.colour }));
+    }
+    chart.appendChild(el("circle", { cx: x, cy: yIn(SLP, fn.slope(z)), r: 3.5, fill: fn.colour }));
+  }
+
+  for (const tick of [-8, -4, 0, 4, 8]) {
+    chart.appendChild(el("text", { x: xOf(tick), y: 244, fill: "var(--muted)",
+      "font-size": "10px", "text-anchor": "middle" }, tick));
+  }
+  chart.appendChild(el("text", { x: (L + R) / 2, y: 257, fill: "var(--muted)",
+    "font-size": "10px", "text-anchor": "middle" }, "z, the neuron's weighted sum"));
+}
+
+function verdictFor(z) {
+  const s = FUNCS[0].slope(z);
+  if (Math.abs(z) >= 6) {
+    return "Sigmoid's slope here is " + s.toFixed(5) +
+           ". This neuron is saturated: it still produces an output and has stopped learning.";
+  }
+  if (Math.abs(z) <= 0.4) {
+    return "Sigmoid is at its steepest anywhere, and that steepest is still only 0.25.";
+  }
+  return "Sigmoid slope " + s.toFixed(3) + ", ReLU slope " +
+         FUNCS[2].slope(z).toFixed(1) + ". Drag towards either edge and watch the S-curves flatten.";
+}
+
+function update() {
+  const z = parseFloat(document.getElementById("z").value);
+  document.getElementById("zOut").textContent = z.toFixed(1);
+
+  document.getElementById("readout").textContent =
+    "z = " + z.toFixed(1) + "   →   " +
+    FUNCS.map(fn => fn.name + " " + fn.f(z).toFixed(3)).join(",  ");
+  document.getElementById("verdict").textContent = verdictFor(z);
+
+  document.getElementById("now").innerHTML = FUNCS.map(fn =>
+    '<tr><td><i class="swatch" style="background:' + fn.colour + '"></i>' + fn.name +
+    '</td><td class="num">' + fn.f(z).toFixed(3) +
+    '</td><td class="num">' + fn.slope(z).toFixed(5) + '</td></tr>').join("");
+
+  const sigSlope = FUNCS[0].slope(z);
+  document.getElementById("decay").innerHTML = [1, 5, 10, 20].map(n => {
+    const left = Math.pow(sigSlope, n);
+    return '<tr><td class="num">' + n + '</td><td class="num">' +
+      (left < 0.001 ? left.toExponential(1) : left.toFixed(3)) +
+      '</td><td class="num">1.0</td></tr>';
+  }).join("");
+
+  draw(z);
+}
+
+document.getElementById("z").addEventListener("input", update);
+update();
+</script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>k-means Explorer</title>
+<style>
+  :root {
+    --bg: #12161d; --line: #2c3542; --text: #e6ebf2; --muted: #8b97a8;
+    --accent: #f2994a; --dim: #3a4453;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .wrap { padding: 18px 20px 20px; max-width: 900px; margin: 0 auto; }
+  .title { font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--muted); text-align: center; }
+  .formula { text-align: center; font-family: ui-monospace, Menlo, monospace;
+    font-size: 14px; margin: 6px 0 14px;
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 18px; }
+  .formula span { white-space: nowrap; }
+  .readout { background: #0d1117; border: 1px solid var(--line); border-radius: 6px;
+    padding: 9px 12px; font-family: ui-monospace, Menlo, monospace;
+    font-size: 13px; text-align: center; }
+  .verdict { text-align: center; font-size: 13px; line-height: 1.5;
+    margin: 10px 0 14px; min-height: 38px; color: var(--accent); }
+  .controls { display: flex; flex-wrap: wrap; align-items: center;
+    gap: 10px 14px; margin-bottom: 16px; }
+  .controls label { font-family: ui-monospace, Menlo, monospace; font-size: 13px;
+    color: var(--muted); white-space: nowrap; }
+  .controls output { font-family: ui-monospace, Menlo, monospace; font-size: 13px;
+    width: 16px; text-align: right; color: var(--accent); }
+  input[type=range] { flex: 1; min-width: 130px; -webkit-appearance: none; appearance: none;
+    height: 4px; border-radius: 2px; background: var(--dim); outline: none; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none;
+    width: 15px; height: 15px; border-radius: 50%; background: var(--accent); cursor: pointer; }
+  input[type=range]::-moz-range-thumb { width: 15px; height: 15px; border: 0;
+    border-radius: 50%; background: var(--accent); cursor: pointer; }
+  .toggle { display: flex; border: 1px solid var(--line); border-radius: 5px; overflow: hidden; }
+  .toggle button { background: transparent; border: 0; color: var(--muted); cursor: pointer;
+    font-family: ui-monospace, Menlo, monospace; font-size: 12px; padding: 6px 11px; }
+  .toggle button[aria-pressed=true] { background: var(--accent); color: #12161d; }
+  .grid { display: grid; grid-template-columns: 1fr 250px; gap: 20px; align-items: start; }
+  @media (max-width: 700px) { .grid { grid-template-columns: 1fr; }
+    .formula { font-size: 12px; } .wrap { padding: 14px 14px 16px; } }
+  svg { width: 100%; display: block; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th, td { padding: 5px 6px; text-align: right; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 500; }
+  td:first-child, th:first-child { text-align: left; }
+  .num { font-family: ui-monospace, Menlo, monospace; font-variant-numeric: tabular-nums; }
+  .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; }
+  .note { font-size: 11px; color: var(--muted); line-height: 1.5; margin-top: 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="title">k-means Explorer</div>
+  <div class="formula">
+    <span>assign to nearest centre</span>
+    <span>move each centre to its average</span>
+    <span>repeat</span>
+  </div>
+
+  <div class="readout" id="readout"></div>
+  <div class="verdict" id="verdict"></div>
+
+  <div class="controls">
+    <div class="toggle">
+      <button id="btnRaw" aria-pressed="false">raw numbers</button>
+      <button id="btnScaled" aria-pressed="true">scaled 0 to 1</button>
+    </div>
+    <label for="step">round</label>
+    <input type="range" id="step" min="0" max="3" step="1" value="3">
+    <output id="stepOut">3</output>
+  </div>
+
+  <div class="grid">
+    <div>
+      <svg id="chart" viewBox="0 0 560 250" role="img"
+           aria-label="Customers plotted by visits and annual spend, coloured by cluster"></svg>
+    </div>
+
+    <div>
+      <table>
+        <tr><th>group</th><th>visits</th><th>spend</th></tr>
+        <tbody id="groups"></tbody>
+      </table>
+      <div class="note">
+        Twelve customers, k set to 4, same starting centres in both modes.
+        The axes always show the original visits and rupees; only what the
+        algorithm measures distance on changes.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Every round of both runs was recorded by executing the lesson's own
+// k_means (random.Random(1).sample for the starting centres) and capturing
+// the assignments and centroids at each pass. Replaying recorded frames
+// avoids trying to reproduce Python's sampler in JavaScript.
+const DATA = {"customers":[[1,45000],[2,52000],[1,38000],[18,6000],[22,8000],[20,5000],[8,22000],[9,25000],[7,19000],[19,23000],[21,26000],[18,20000]],"raw":[{"step":0,"centroids":[[1.0,38000.0],[19.0,23000.0],[2.0,52000.0],[22.0,8000.0]],"groups":[[0,2],[6,7,8,9,10,11],[1],[3,4,5]],"moved":true},{"step":1,"centroids":[[1.0,41500.0],[13.666667,22500.0],[2.0,52000.0],[20.0,6333.333333]],"groups":[[0,2],[6,7,8,9,10,11],[1],[3,4,5]],"moved":false}],"scaledFrames":[{"step":0,"centroids":[[0.0,0.702128],[0.857143,0.382979],[0.047619,1.0],[1.0,0.06383]],"groups":[[0,2,6,7,8],[9,10,11],[1],[3,4,5]],"moved":true},{"step":1,"centroids":[[0.2,0.52766],[0.873016,0.382979],[0.047619,1.0],[0.904762,0.028369]],"groups":[[2,6,7,8],[9,10,11],[0,1],[3,4,5]],"moved":true},{"step":2,"centroids":[[0.25,0.446809],[0.873016,0.382979],[0.02381,0.925532],[0.904762,0.028369]],"groups":[[6,7,8],[9,10,11],[0,1,2],[3,4,5]],"moved":true},{"step":3,"centroids":[[0.333333,0.361702],[0.873016,0.382979],[0.015873,0.851064],[0.904762,0.028369]],"groups":[[6,7,8],[9,10,11],[0,1,2],[3,4,5]],"moved":false}]};
+
+const COLOURS = ["#f2994a", "#5b8def", "#56c288", "#c77dff"];
+const NS = "http://www.w3.org/2000/svg";
+const chart = document.getElementById("chart");
+function el(tag, attrs, text) {
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (text !== undefined) n.textContent = text;
+  return n;
+}
+
+let scaled = true;
+
+// Axes always show the original units, whatever the algorithm measured on.
+const L = 52, R = 546, TOP = 18, BOT = 206;
+const xOf = v => L + (v / 24) * (R - L);
+const yOf = v => BOT - (v / 55000) * (BOT - TOP);
+
+function frames() { return scaled ? DATA.scaledFrames : DATA.raw; }
+
+function draw(frame) {
+  chart.textContent = "";
+
+  chart.appendChild(el("line", { x1: L, y1: BOT, x2: R, y2: BOT,
+    stroke: "var(--line)", "stroke-width": 1 }));
+  chart.appendChild(el("line", { x1: L, y1: TOP, x2: L, y2: BOT,
+    stroke: "var(--line)", "stroke-width": 1 }));
+  for (const t of [0, 10, 20]) {
+    chart.appendChild(el("text", { x: xOf(t), y: BOT + 14, fill: "var(--muted)",
+      "font-size": "10px", "text-anchor": "middle" }, t));
+  }
+  for (const t of [0, 20000, 40000]) {
+    chart.appendChild(el("text", { x: L - 6, y: yOf(t) + 3, fill: "var(--muted)",
+      "font-size": "10px", "text-anchor": "end" }, t / 1000 + "k"));
+  }
+  chart.appendChild(el("text", { x: (L + R) / 2, y: BOT + 28, fill: "var(--muted)",
+    "font-size": "10px", "text-anchor": "middle" }, "visits per month"));
+  chart.appendChild(el("text", { x: 12, y: (TOP + BOT) / 2,
+    fill: "var(--muted)", "font-size": "10px", "text-anchor": "middle",
+    transform: "rotate(-90 12 " + ((TOP + BOT) / 2) + ")" }, "annual spend"));
+
+  frame.groups.forEach((members, g) => {
+    for (const i of members) {
+      const [visits, spend] = DATA.customers[i];
+      chart.appendChild(el("circle", { cx: xOf(visits), cy: yOf(spend), r: 6,
+        fill: COLOURS[g], stroke: "#12161d", "stroke-width": 1.5 }));
+    }
+  });
+
+  // Centroids, converted back into visits and rupees when the run was scaled.
+  frame.centroids.forEach((c, g) => {
+    const visits = scaled ? c[0] * 21 + 1 : c[0];
+    const spend  = scaled ? c[1] * 47000 + 5000 : c[1];
+    const x = xOf(visits), y = yOf(spend);
+    chart.appendChild(el("path", {
+      d: "M" + (x - 6) + " " + y + " H" + (x + 6) + " M" + x + " " + (y - 6) +
+         " V" + (y + 6),
+      stroke: COLOURS[g], "stroke-width": 2.5 }));
+  });
+}
+
+function verdictFor(frame, settled) {
+  const sizes = frame.groups.map(g => g.length).sort((a, b) => b - a);
+  if (!scaled && settled) {
+    return "Groups of " + sizes.join(", ") + ". One group holds six customers " +
+           "whose visits run from 7 to 21, which are not one kind of shopper. " +
+           "Spend is measured in thousands and visits in tens, so distance saw " +
+           "spend and nothing else.";
+  }
+  if (scaled && settled) {
+    return "Four clean groups of three, and each is a customer type the " +
+           "marketing head can act on. Only the scaling changed.";
+  }
+  return "Round " + frame.step + ": every customer has been assigned to its " +
+         "nearest centre, and the centres are about to move to the average of " +
+         "their members.";
+}
+
+function update() {
+  const list = frames();
+  const slider = document.getElementById("step");
+  slider.max = list.length - 1;
+  let step = Math.min(parseInt(slider.value, 10), list.length - 1);
+  slider.value = step;
+  document.getElementById("stepOut").textContent = step;
+
+  const frame = list[step];
+  const settled = step === list.length - 1;
+  document.getElementById("readout").textContent =
+    (scaled ? "scaled" : "raw") + " features, round " + frame.step + "   →   " +
+    "group sizes " + frame.groups.map(g => g.length).join(", ") +
+    (settled ? "   (settled)" : "");
+  document.getElementById("verdict").textContent = verdictFor(frame, settled);
+
+  document.getElementById("groups").innerHTML = frame.groups.map((members, g) => {
+    if (!members.length) return "";
+    const visits = members.map(i => DATA.customers[i][0]);
+    const spend = members.map(i => DATA.customers[i][1]);
+    return '<tr><td><i class="dot" style="background:' + COLOURS[g] + '"></i>' +
+      members.length + '</td><td class="num">' + Math.min(...visits) + "-" +
+      Math.max(...visits) + '</td><td class="num">' + Math.min(...spend) + "-" +
+      Math.max(...spend) + '</td></tr>';
+  }).join("");
+
+  draw(frame);
+}
+
+function setMode(useScaled) {
+  scaled = useScaled;
+  document.getElementById("btnRaw").setAttribute("aria-pressed", String(!useScaled));
+  document.getElementById("btnScaled").setAttribute("aria-pressed", String(useScaled));
+  // Land on the settled round so the two modes compare like for like.
+  document.getElementById("step").value = frames().length - 1;
+  update();
+}
+
+document.getElementById("btnRaw").addEventListener("click", () => setMode(false));
+document.getElementById("btnScaled").addEventListener("click", () => setMode(true));
+document.getElementById("step").addEventListener("input", update);
+update();
+</script>
+</body>
+</html>

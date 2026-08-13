@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overfitting Explorer</title>
+<style>
+  :root {
+    --bg: #12161d; --line: #2c3542; --text: #e6ebf2; --muted: #8b97a8;
+    --accent: #f2994a; --dim: #3a4453; --train: #56c288; --test: #e2666b;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .wrap { padding: 18px 20px 20px; max-width: 900px; margin: 0 auto; }
+  .title { font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--muted); text-align: center; }
+  .formula { text-align: center; font-family: ui-monospace, Menlo, monospace;
+    font-size: 15px; margin: 6px 0 14px;
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 20px; }
+  .formula span { white-space: nowrap; }
+  .swatch { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; }
+  .readout { background: #0d1117; border: 1px solid var(--line); border-radius: 6px;
+    padding: 9px 12px; font-family: ui-monospace, Menlo, monospace;
+    font-size: 13px; text-align: center; }
+  .verdict { text-align: center; font-size: 13px; line-height: 1.5;
+    margin: 10px 0 14px; min-height: 38px; color: var(--accent); }
+  .control { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .control label { font-family: ui-monospace, Menlo, monospace; font-size: 13px;
+    color: var(--muted); white-space: nowrap; }
+  .control output { font-family: ui-monospace, Menlo, monospace; font-size: 13px;
+    width: 20px; text-align: right; color: var(--accent); }
+  input[type=range] { flex: 1; -webkit-appearance: none; appearance: none; height: 4px;
+    border-radius: 2px; background: var(--dim); outline: none; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none;
+    width: 15px; height: 15px; border-radius: 50%; background: var(--accent); cursor: pointer; }
+  input[type=range]::-moz-range-thumb { width: 15px; height: 15px; border: 0;
+    border-radius: 50%; background: var(--accent); cursor: pointer; }
+  .grid { display: grid; grid-template-columns: 1fr 250px; gap: 20px; align-items: start; }
+  @media (max-width: 700px) { .grid { grid-template-columns: 1fr; }
+    .formula { font-size: 13px; } .wrap { padding: 14px 14px 16px; } }
+  svg { width: 100%; display: block; }
+  .sub { font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 6px; }
+  .metric { margin-bottom: 10px; }
+  .metric-head { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+  .metric-head b { color: var(--text); font-family: ui-monospace, Menlo, monospace; font-weight: 500; }
+  .note { font-size: 11px; color: var(--muted); line-height: 1.5; margin-top: 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="title">Overfitting Explorer</div>
+  <div class="formula">
+    <span><i class="swatch" style="background:#8b97a8"></i>true curve</span>
+    <span><i class="swatch" style="background:var(--accent)"></i>fitted polynomial</span>
+    <span><i class="swatch" style="background:var(--train)"></i>10 training points</span>
+  </div>
+
+  <div class="readout" id="readout"></div>
+  <div class="verdict" id="verdict"></div>
+
+  <div class="control">
+    <label for="deg">degree</label>
+    <input type="range" id="deg" min="0" max="9" step="1" value="1">
+    <output id="degOut">1</output>
+  </div>
+
+  <div class="grid">
+    <div>
+      <svg id="chart" viewBox="0 0 560 230" role="img"
+           aria-label="Fitted polynomial against the true curve"></svg>
+    </div>
+
+    <div>
+      <div class="metric">
+        <div class="metric-head"><span>train RMSE</span><b id="trainVal"></b></div>
+      </div>
+      <div class="metric">
+        <div class="metric-head"><span>test RMSE</span><b id="testVal"></b></div>
+      </div>
+
+      <div class="sub">Error against degree</div>
+      <svg id="errs" viewBox="0 0 250 130" role="img"
+           aria-label="Training and test error across every degree"></svg>
+
+      <div class="note">
+        Ten noisy points sampled from a smooth curve. Training error only ever
+        falls, which is why it is no evidence at all. Test error falls, bottoms
+        out, then climbs.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Points and fitted coefficients precomputed with the lesson's own code:
+// true curve sin(2*pi*x), random.Random(5), noise gauss(0, 0.20), least
+// squares by Gaussian elimination. Embedded so the widget's RMSE figures
+// are the lesson's figures rather than a re-derivation.
+const DATA = {"train":[[0.0,-0.235768],[0.111111,0.413155],[0.222222,1.118702],[0.333333,0.407243],[0.444444,0.313343],[0.555556,-0.793236],[0.666667,-0.645831],[0.777778,-0.944228],[0.888889,-0.371524],[1.0,-0.100837]],"fits":[{"degree":0,"coef":[-0.0838980319],"train":0.613,"test":0.702},{"degree":1,"coef":[0.4304335151,-1.0286630939],"train":0.518,"test":0.526},{"degree":2,"coef":[0.4542740385,-1.189586627,0.1609235331],"train":0.517,"test":0.528},{"degree":3,"coef":[-0.2054855073,9.6728830381,-28.4679281872,19.0859011469],"train":0.237,"test":0.283},{"degree":4,"coef":[-0.3269203163,14.2266883748,-51.4646451375,55.971724374,-18.4429116136],"train":0.207,"test":0.294},{"degree":5,"coef":[-0.2616040606,8.2763774774,-1.8651134395,-84.2296185593,142.2595710886,-64.2809930809],"train":0.184,"test":0.278},{"degree":6,"coef":[-0.2494013816,5.0200925943,38.3085462597,-257.140816854,476.4062918834,-361.510339048,99.0764486509],"train":0.181,"test":0.281},{"degree":7,"coef":[-0.2391833416,-6.02991376,220.6422987674,-1338.4007933603,3533.7348434356,-4819.9864334501,3334.6211177418,-924.4413319662],"train":0.17,"test":0.289},{"degree":8,"coef":[-0.2381960938,-13.0952453256,363.1247896578,-2413.0860376166,7587.9246272806,-13260.4182385152,13181.7898668133,-6953.3192666251,1507.2192917206],"train":0.169,"test":0.3},{"degree":9,"coef":[-0.2357607923,-267.0149428664,6228.1792813406,-55241.3211666869,255765.7639905898,-689383.4874023533,1120284.0629531026,-1080766.509086489,569629.0937912473,-126248.6324965578],"train":0.0,"test":1.281}]};
+
+const NS = "http://www.w3.org/2000/svg";
+function el(tag, attrs, text) {
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (text !== undefined) n.textContent = text;
+  return n;
+}
+const applyPoly = (coef, x) => coef.reduce((sum, c, i) => sum + c * Math.pow(x, i), 0);
+
+// ---- main chart ----
+const chart = document.getElementById("chart");
+const L = 34, R = 548, TOP = 16, BOT = 194;
+const xOf = x => L + x * (R - L);
+const YLO = -2.2, YHI = 2.2;
+const yOf = y => TOP + ((YHI - Math.max(YLO, Math.min(YHI, y))) / (YHI - YLO)) * (BOT - TOP);
+
+function curve(fn, samples) {
+  let d = "", pen = false;
+  for (let i = 0; i <= samples; i += 1) {
+    const x = i / samples, y = fn(x);
+    // Break the line where the fit leaves the visible range entirely.
+    if (y < YLO || y > YHI) { pen = false; continue; }
+    d += (pen ? "L" : "M") + xOf(x).toFixed(1) + " " + yOf(y).toFixed(1) + " ";
+    pen = true;
+  }
+  return d;
+}
+
+function drawMain(fit) {
+  chart.textContent = "";
+  chart.appendChild(el("line", { x1: L, y1: yOf(0), x2: R, y2: yOf(0),
+    stroke: "var(--line)", "stroke-width": 1 }));
+
+  chart.appendChild(el("path", { d: curve(x => Math.sin(2 * Math.PI * x), 200),
+    fill: "none", stroke: "#8b97a8", "stroke-width": 1.5, "stroke-dasharray": "5 4" }));
+  chart.appendChild(el("path", { d: curve(x => applyPoly(fit.coef, x), 400),
+    fill: "none", stroke: "var(--accent)", "stroke-width": 2.2 }));
+
+  for (const [x, y] of DATA.train) {
+    chart.appendChild(el("circle", { cx: xOf(x), cy: yOf(y), r: 4,
+      fill: "var(--train)", stroke: "#12161d", "stroke-width": 1.5 }));
+  }
+  for (const t of [-2, -1, 0, 1, 2]) {
+    chart.appendChild(el("text", { x: L - 6, y: yOf(t) + 3, fill: "var(--muted)",
+      "font-size": "10px", "text-anchor": "end" }, t));
+  }
+  chart.appendChild(el("text", { x: (L + R) / 2, y: 216, fill: "var(--muted)",
+    "font-size": "10px", "text-anchor": "middle" }, "x"));
+}
+
+// ---- error-against-degree chart ----
+const errs = document.getElementById("errs");
+const EL = 30, ER = 242, ET = 10, EB = 100;
+const eX = d => EL + (d / 9) * (ER - EL);
+const EMAX = 1.4;
+const eY = v => EB - (Math.min(v, EMAX) / EMAX) * (EB - ET);
+
+function drawErrors(degree) {
+  errs.textContent = "";
+  errs.appendChild(el("line", { x1: EL, y1: EB, x2: ER, y2: EB,
+    stroke: "var(--line)", "stroke-width": 1 }));
+
+  for (const key of ["train", "test"]) {
+    const colour = key === "train" ? "var(--train)" : "var(--test)";
+    let d = "";
+    DATA.fits.forEach((f, i) => {
+      d += (i ? "L" : "M") + eX(f.degree).toFixed(1) + " " + eY(f[key]).toFixed(1) + " ";
+    });
+    errs.appendChild(el("path", { d: d, fill: "none", stroke: colour, "stroke-width": 2 }));
+    const here = DATA.fits[degree];
+    errs.appendChild(el("circle", { cx: eX(degree), cy: eY(here[key]), r: 3.5, fill: colour }));
+  }
+
+  errs.appendChild(el("line", { x1: eX(degree), y1: ET - 4, x2: eX(degree), y2: EB,
+    stroke: "#ffffff", "stroke-width": 1, "stroke-dasharray": "3 3" }));
+  for (const t of [0, 3, 6, 9]) {
+    errs.appendChild(el("text", { x: eX(t), y: EB + 14, fill: "var(--muted)",
+      "font-size": "9px", "text-anchor": "middle" }, t));
+  }
+  errs.appendChild(el("text", { x: (EL + ER) / 2, y: EB + 26, fill: "var(--muted)",
+    "font-size": "9px", "text-anchor": "middle" }, "degree"));
+  errs.appendChild(el("text", { x: EL - 4, y: eY(0) + 3, fill: "var(--muted)",
+    "font-size": "9px", "text-anchor": "end" }, "0"));
+  errs.appendChild(el("text", { x: EL - 4, y: eY(EMAX) + 8, fill: "var(--muted)",
+    "font-size": "9px", "text-anchor": "end" }, EMAX.toFixed(1)));
+}
+
+function verdictFor(fit) {
+  if (fit.degree <= 2) {
+    return "Too rigid to follow a curve that rises and falls. Wrong on the " +
+           "training points and equally wrong on new ones: this is underfitting.";
+  }
+  if (fit.degree === 9) {
+    return "Training error is exactly 0.000 and the test error is the worst on " +
+           "the chart. Ten points and ten coefficients: the curve passes through " +
+           "every point and means nothing between them.";
+  }
+  if (fit.degree === 5) {
+    return "Lowest test error of any degree. It fits the training points less " +
+           "exactly than degree 9 and tracks the truth far better.";
+  }
+  return "Training error keeps falling while test error has stopped improving. " +
+         "The extra flexibility is being spent on the noise.";
+}
+
+function update() {
+  const degree = parseInt(document.getElementById("deg").value, 10);
+  const fit = DATA.fits[degree];
+  document.getElementById("degOut").textContent = degree;
+  document.getElementById("readout").textContent =
+    "degree " + degree + "   →   train RMSE " + fit.train.toFixed(3) +
+    ",  test RMSE " + fit.test.toFixed(3);
+  document.getElementById("verdict").textContent = verdictFor(fit);
+  document.getElementById("trainVal").textContent = fit.train.toFixed(3);
+  document.getElementById("testVal").textContent = fit.test.toFixed(3);
+  drawMain(fit);
+  drawErrors(degree);
+}
+
+document.getElementById("deg").addEventListener("input", update);
+update();
+</script>
+</body>
+</html>

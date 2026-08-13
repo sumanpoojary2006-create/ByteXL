@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Threshold Explorer</title>
+<style>
+  :root {
+    --bg: #12161d;
+    --panel: #1a2029;
+    --line: #2c3542;
+    --text: #e6ebf2;
+    --muted: #8b97a8;
+    --ill: #f2994a;
+    --well: #5b8def;
+    --dim: #3a4453;
+    --good: #56c288;
+    --bad: #e2666b;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  .wrap { padding: 18px 20px 20px; max-width: 900px; margin: 0 auto; }
+  .title {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: center;
+  }
+  .formula {
+    text-align: center;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 15px;
+    margin: 6px 0 14px;
+    color: var(--text);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px 24px;
+  }
+  .formula span { white-space: nowrap; }
+  @media (max-width: 700px) {
+    .formula { font-size: 13px; }
+    .wrap { padding: 14px 14px 16px; }
+  }
+  .readout {
+    background: #0d1117;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 9px 12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 13px;
+    text-align: center;
+    color: var(--text);
+  }
+  .verdict {
+    text-align: center;
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 10px 0 14px;
+    min-height: 38px;
+    color: var(--ill);
+  }
+  .control { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .control label {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 13px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .control output {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 13px;
+    width: 38px;
+    text-align: right;
+    color: var(--ill);
+  }
+  input[type=range] {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--dim);
+    outline: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 15px; height: 15px;
+    border-radius: 50%;
+    background: var(--ill);
+    cursor: pointer;
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 15px; height: 15px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--ill);
+    cursor: pointer;
+  }
+  .grid { display: grid; grid-template-columns: 1fr 250px; gap: 18px; align-items: start; }
+  @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
+  svg { width: 100%; display: block; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th, td { padding: 5px 7px; text-align: right; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 500; text-align: right; }
+  td:first-child, th:first-child { text-align: left; }
+  .num {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+  .bar-track { height: 6px; background: var(--dim); border-radius: 3px; overflow: hidden; margin-top: 3px; }
+  .bar-fill { height: 100%; border-radius: 3px; }
+  .metric { margin-bottom: 12px; }
+  .metric-head { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+  .metric-head b { color: var(--text); font-family: ui-monospace, Menlo, monospace; font-weight: 500; }
+  .note { font-size: 11px; color: var(--muted); line-height: 1.5; margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="title">Threshold Explorer</div>
+  <div class="formula">
+    <span>precision = TP / (TP + FP)</span>
+    <span>recall = TP / (TP + FN)</span>
+  </div>
+
+  <div class="readout" id="readout"></div>
+  <div class="verdict" id="verdict"></div>
+
+  <div class="control">
+    <label for="thr">threshold</label>
+    <input type="range" id="thr" min="0" max="1" step="0.01" value="0.5">
+    <output id="thrOut">0.50</output>
+  </div>
+
+  <div class="grid">
+    <div>
+      <svg id="chart" viewBox="0 0 560 250" role="img" aria-label="Score distributions with threshold line"></svg>
+    </div>
+
+    <div>
+      <div class="metric">
+        <div class="metric-head"><span>recall</span><b id="recallVal"></b></div>
+        <div class="bar-track"><div class="bar-fill" id="recallBar" style="background:var(--good)"></div></div>
+      </div>
+      <div class="metric">
+        <div class="metric-head"><span>precision</span><b id="precVal"></b></div>
+        <div class="bar-track"><div class="bar-fill" id="precBar" style="background:var(--bad)"></div></div>
+      </div>
+
+      <table>
+        <tr><th></th><th>flagged</th><th>cleared</th></tr>
+        <tr><td>ill</td><td class="num" id="tp"></td><td class="num" id="fn"></td></tr>
+        <tr><td>well</td><td class="num" id="fp"></td><td class="num" id="tn"></td></tr>
+      </table>
+
+      <div class="note">
+        1,000 people screened, 20 of whom have the condition.
+        The two rows of the chart use different vertical scales, because
+        980 healthy people would otherwise flatten the 20 ill ones to nothing.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Scores as generated in the lesson: random.Random(7), ill ~ gauss(0.70, 0.15),
+// healthy ~ gauss(0.30, 0.15), clamped to 0..1. Fixed here so the widget and
+// the lesson's printed table agree exactly at every threshold.
+const ILL = [0.43842,0.4463,0.45009,0.5605,0.56656,0.62977,0.65274,0.66162,0.66609,0.668,0.7278,0.73734,0.75922,0.76362,0.77482,0.77596,0.77671,0.82829,0.85553,0.86679];
+const WELL = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.00227,0.00347,0.00392,0.0042,0.00558,0.00837,0.00868,0.00938,0.01501,0.01539,0.01558,0.01611,0.0186,0.01983,0.01994,0.02191,0.0261,0.02618,0.02707,0.02832,0.03361,0.03569,0.03628,0.0375,0.03763,0.03993,0.04129,0.04176,0.04479,0.04561,0.05307,0.05334,0.05684,0.06041,0.06196,0.06475,0.06477,0.06535,0.06541,0.0676,0.06778,0.06827,0.07023,0.0709,0.07357,0.07422,0.07439,0.07515,0.07528,0.07618,0.07654,0.07948,0.0803,0.08041,0.08134,0.08287,0.0843,0.08748,0.08863,0.08957,0.08964,0.09134,0.093,0.09337,0.09459,0.09606,0.09622,0.09684,0.09825,0.10322,0.10332,0.10353,0.10397,0.10512,0.10742,0.10975,0.11028,0.11105,0.11124,0.11426,0.11435,0.11445,0.11521,0.11683,0.1177,0.11856,0.12087,0.12306,0.12316,0.1245,0.12472,0.12493,0.12619,0.12706,0.12797,0.12828,0.12895,0.1305,0.13141,0.13203,0.13322,0.13656,0.13677,0.13739,0.1375,0.13757,0.13828,0.13851,0.14024,0.14098,0.14173,0.14187,0.14192,0.1433,0.14407,0.14522,0.14592,0.14596,0.146,0.1463,0.14658,0.14698,0.14742,0.14759,0.14779,0.1478,0.14997,0.1528,0.15338,0.15387,0.1539,0.15486,0.15514,0.15553,0.15641,0.15646,0.15694,0.15934,0.15942,0.16043,0.16086,0.16413,0.16444,0.16465,0.16647,0.16724,0.16765,0.16768,0.16793,0.16829,0.16859,0.16874,0.16919,0.17205,0.17231,0.17376,0.17432,0.17609,0.17741,0.17764,0.1779,0.17881,0.17885,0.18148,0.18181,0.18194,0.18248,0.18412,0.18436,0.1855,0.18604,0.18636,0.18728,0.18778,0.1884,0.18894,0.18903,0.18907,0.18956,0.19038,0.19087,0.19129,0.19162,0.19343,0.19426,0.19427,0.1946,0.19469,0.19473,0.19553,0.1959,0.19638,0.19649,0.19671,0.19705,0.19757,0.19838,0.19839,0.19862,0.19889,0.19919,0.19923,0.19973,0.20005,0.20018,0.2003,0.20077,0.20083,0.20168,0.2025,0.2029,0.2029,0.20342,0.20366,0.20376,0.20416,0.20495,0.20545,0.20562,0.2057,0.20611,0.20695,0.20815,0.20824,0.20832,0.20885,0.20915,0.20958,0.21032,0.21048,0.21127,0.21334,0.21358,0.21373,0.21377,0.21517,0.2162,0.21657,0.21669,0.21682,0.21687,0.21754,0.21766,0.2186,0.22033,0.22059,0.22089,0.22169,0.22178,0.22191,0.22202,0.22208,0.22419,0.22506,0.22593,0.22634,0.22697,0.2273,0.22805,0.22933,0.22957,0.22962,0.23107,0.23121,0.23209,0.2329,0.23328,0.2335,0.23452,0.23462,0.23483,0.23533,0.23572,0.23586,0.23616,0.2365,0.23703,0.23779,0.23805,0.23851,0.23983,0.24023,0.24038,0.24087,0.24138,0.24192,0.24262,0.24273,0.24369,0.24403,0.24412,0.24414,0.24435,0.24495,0.2454,0.24615,0.24698,0.24699,0.24706,0.24839,0.24852,0.24886,0.24952,0.24968,0.2497,0.25002,0.25061,0.25113,0.25141,0.25176,0.25178,0.25293,0.25302,0.25309,0.25331,0.25469,0.2553,0.25547,0.25553,0.25593,0.25681,0.25702,0.25794,0.25822,0.25822,0.25837,0.25867,0.25902,0.25917,0.25933,0.26014,0.26048,0.26096,0.26147,0.26182,0.26241,0.2635,0.26419,0.26518,0.26524,0.26616,0.26645,0.26649,0.26769,0.26814,0.26819,0.26966,0.27008,0.27031,0.2707,0.27117,0.27161,0.27221,0.2724,0.27291,0.27305,0.27332,0.27357,0.27387,0.27401,0.27559,0.27627,0.27659,0.27723,0.27743,0.27748,0.27757,0.2776,0.27765,0.27773,0.27836,0.27873,0.27979,0.27986,0.28033,0.28137,0.2818,0.28183,0.28197,0.28241,0.28249,0.28261,0.28272,0.28345,0.28356,0.28375,0.28404,0.28408,0.28431,0.28507,0.28508,0.28556,0.28607,0.28664,0.28673,0.28684,0.2871,0.28781,0.2884,0.28889,0.28928,0.28988,0.28999,0.29019,0.29052,0.29059,0.29066,0.29081,0.29092,0.29116,0.29182,0.29218,0.29251,0.29257,0.29311,0.2933,0.29374,0.29413,0.29453,0.29455,0.29482,0.29499,0.29549,0.29571,0.29604,0.29631,0.29639,0.2964,0.29653,0.29685,0.29688,0.29724,0.29758,0.29803,0.29809,0.29848,0.29852,0.29856,0.29911,0.29967,0.29993,0.29995,0.30013,0.30015,0.3005,0.30075,0.30082,0.30093,0.30099,0.30114,0.30182,0.30194,0.30196,0.30239,0.30257,0.30274,0.30293,0.30362,0.30365,0.30394,0.30402,0.30452,0.30474,0.30538,0.30553,0.3056,0.30574,0.30597,0.30664,0.30724,0.30727,0.3074,0.30792,0.30828,0.30894,0.30954,0.30994,0.3108,0.31172,0.31184,0.31193,0.31196,0.31225,0.31359,0.31526,0.31544,0.31582,0.31724,0.31728,0.31768,0.31789,0.31806,0.31825,0.31863,0.31985,0.32121,0.32135,0.32173,0.32198,0.32212,0.32222,0.32287,0.32316,0.32355,0.32359,0.32373,0.32394,0.32445,0.3249,0.32536,0.32544,0.326,0.32638,0.32638,0.32651,0.32685,0.32752,0.32813,0.32867,0.32905,0.32946,0.32968,0.32993,0.33014,0.33049,0.33074,0.33091,0.33115,0.33135,0.33138,0.33333,0.33505,0.33579,0.3359,0.33658,0.33671,0.33683,0.33687,0.33706,0.33711,0.33726,0.33738,0.33744,0.33808,0.33872,0.33909,0.3391,0.33951,0.34003,0.34017,0.34029,0.34162,0.34232,0.34365,0.34365,0.34369,0.3438,0.34392,0.34415,0.34422,0.34526,0.34551,0.34582,0.34597,0.34627,0.34631,0.34631,0.34659,0.34746,0.34756,0.34838,0.34873,0.34873,0.34874,0.34899,0.34917,0.34924,0.35002,0.35033,0.35175,0.35178,0.35264,0.35287,0.35306,0.35314,0.35327,0.35361,0.35391,0.35434,0.35462,0.35487,0.35492,0.35497,0.35532,0.35572,0.3565,0.35787,0.35912,0.35975,0.35994,0.36118,0.36149,0.36259,0.3632,0.36391,0.36395,0.36398,0.36416,0.36442,0.36515,0.3652,0.36574,0.36623,0.36684,0.36697,0.36726,0.36761,0.36768,0.36814,0.36878,0.36898,0.36901,0.36959,0.36979,0.37014,0.37033,0.37122,0.37166,0.3721,0.37355,0.37383,0.3741,0.3745,0.37453,0.37455,0.37461,0.37461,0.37508,0.37621,0.37637,0.37651,0.37733,0.3774,0.3778,0.37813,0.37815,0.37837,0.37839,0.37841,0.3785,0.37862,0.37892,0.37927,0.37944,0.37965,0.37968,0.38087,0.38098,0.38152,0.38216,0.38228,0.38279,0.38349,0.38418,0.38488,0.38496,0.38527,0.38533,0.38579,0.38591,0.38629,0.38677,0.38732,0.38828,0.38945,0.3895,0.39037,0.3909,0.39178,0.39224,0.39232,0.39285,0.39322,0.39349,0.39353,0.39355,0.39416,0.39455,0.39473,0.39481,0.3951,0.39524,0.39545,0.39561,0.3957,0.3958,0.39589,0.396,0.39716,0.39747,0.39827,0.39896,0.39898,0.39971,0.39994,0.40035,0.4004,0.40111,0.40135,0.40136,0.40247,0.40292,0.40344,0.40519,0.4053,0.40575,0.40598,0.40651,0.4078,0.40871,0.40919,0.40948,0.41002,0.4101,0.4101,0.41017,0.41098,0.41106,0.41165,0.41187,0.41198,0.41213,0.41238,0.41249,0.41253,0.41398,0.4146,0.41491,0.41497,0.41498,0.41516,0.4157,0.41593,0.417,0.41707,0.41743,0.41789,0.41837,0.41891,0.41932,0.41937,0.41957,0.42079,0.42108,0.42152,0.4217,0.42172,0.42186,0.42282,0.42381,0.42418,0.42489,0.42635,0.42692,0.42733,0.42804,0.42812,0.42843,0.42882,0.42885,0.42893,0.43104,0.43112,0.43199,0.43221,0.43291,0.43321,0.43333,0.43372,0.43375,0.43448,0.43466,0.43491,0.43506,0.43539,0.43585,0.43624,0.43715,0.43719,0.43841,0.43857,0.43859,0.43939,0.44027,0.44091,0.44188,0.44197,0.44211,0.44303,0.44327,0.44486,0.4457,0.44574,0.44661,0.44707,0.4482,0.44837,0.44853,0.45008,0.45111,0.45129,0.45279,0.45293,0.45356,0.45365,0.45499,0.45502,0.45561,0.45605,0.45625,0.45727,0.45803,0.45805,0.46033,0.46035,0.46104,0.46182,0.4633,0.46377,0.46396,0.46402,0.46526,0.46527,0.46742,0.4693,0.46945,0.46946,0.46974,0.47044,0.47098,0.47185,0.47209,0.47263,0.47446,0.47465,0.47636,0.4772,0.47739,0.47777,0.47918,0.4792,0.47925,0.47955,0.48314,0.48404,0.48595,0.486,0.48644,0.48909,0.48914,0.48996,0.49198,0.49226,0.49333,0.49559,0.49594,0.49641,0.4981,0.49884,0.49898,0.50005,0.50007,0.50051,0.5028,0.50486,0.50611,0.50861,0.51072,0.51099,0.51212,0.51363,0.51609,0.51612,0.5165,0.51784,0.5183,0.51982,0.52096,0.52258,0.5231,0.52366,0.52372,0.52389,0.52471,0.5254,0.52713,0.52843,0.52999,0.53103,0.53405,0.53488,0.53671,0.53719,0.53752,0.53841,0.5391,0.54148,0.54149,0.54152,0.54819,0.54952,0.54955,0.55002,0.55175,0.55261,0.55389,0.55547,0.55574,0.55763,0.55965,0.56288,0.568,0.56869,0.5714,0.57315,0.57417,0.5756,0.57939,0.58296,0.5849,0.59104,0.60159,0.6148,0.61807,0.61812,0.62282,0.62312,0.63125,0.63283,0.63505,0.64254,0.64714,0.64864,0.65048,0.65493,0.65848,0.66356,0.66451,0.67354,0.68196,0.68279,0.68928,0.69458,0.7,0.7118,0.71919];
+
+const BINS = 40;
+const chart = document.getElementById("chart");
+const NS = "http://www.w3.org/2000/svg";
+
+function el(name, attrs, text) {
+  const node = document.createElementNS(NS, name);
+  for (const key in attrs) node.setAttribute(key, attrs[key]);
+  if (text !== undefined) node.textContent = text;
+  return node;
+}
+
+function histogram(values) {
+  const bins = new Array(BINS).fill(0);
+  for (const v of values) bins[Math.min(BINS - 1, Math.floor(v * BINS))] += 1;
+  return bins;
+}
+
+const illBins = histogram(ILL);
+const wellBins = histogram(WELL);
+
+// Geometry: two stacked strips sharing one x axis.
+const L = 42, R = 546, W = R - L;
+const ROWS = [
+  { y: 24,  h: 74, bins: illBins,  colour: "var(--ill)",  label: "20 people who are ill" },
+  { y: 132, h: 74, bins: wellBins, colour: "var(--well)", label: "980 people who are well" }
+];
+
+function draw(threshold) {
+  chart.textContent = "";
+  const xOf = v => L + v * W;
+
+  for (const row of ROWS) {
+    const peak = Math.max(...row.bins, 1);
+    chart.appendChild(el("text", {
+      x: L, y: row.y - 7, fill: "var(--muted)", "font-size": "11px"
+    }, row.label));
+    chart.appendChild(el("line", {
+      x1: L, y1: row.y + row.h, x2: R, y2: row.y + row.h,
+      stroke: "var(--line)", "stroke-width": 1
+    }));
+
+    for (let i = 0; i < BINS; i += 1) {
+      if (!row.bins[i]) continue;
+      const height = (row.bins[i] / peak) * row.h;
+      // A bin counts as flagged when its left edge is at or past the threshold.
+      const flagged = (i / BINS) >= threshold - 1e-9;
+      chart.appendChild(el("rect", {
+        x: xOf(i / BINS) + 0.5,
+        y: row.y + row.h - height,
+        width: W / BINS - 1,
+        height: height,
+        fill: flagged ? row.colour : "var(--dim)"
+      }));
+    }
+  }
+
+  // The threshold line, spanning both strips.
+  const x = xOf(threshold);
+  chart.appendChild(el("line", {
+    x1: x, y1: 14, x2: x, y2: 212,
+    stroke: "#ffffff", "stroke-width": 1.5, "stroke-dasharray": "4 3"
+  }));
+  chart.appendChild(el("text", {
+    x: Math.min(x + 6, R - 66), y: 12, fill: "#ffffff", "font-size": "10px"
+  }, "flag from here →"));
+
+  for (const tick of [0, 0.25, 0.5, 0.75, 1]) {
+    chart.appendChild(el("text", {
+      x: xOf(tick), y: 232, fill: "var(--muted)", "font-size": "10px", "text-anchor": "middle"
+    }, tick.toFixed(2)));
+  }
+  chart.appendChild(el("text", {
+    x: (L + R) / 2, y: 246, fill: "var(--muted)", "font-size": "10px", "text-anchor": "middle"
+  }, "risk score the model gave each person"));
+}
+
+function verdictFor(tp, fn, fp, precision, recall) {
+  if (fn === 0 && fp > 200) {
+    return "Every case found, and " + fp + " healthy people called in for nothing.";
+  }
+  if (fp === 0 && fn > 0) {
+    return "Nobody troubled unnecessarily, and " + fn + " of the 20 cases missed entirely.";
+  }
+  if (recall >= 0.75 && precision < 0.4) {
+    return "Catching most cases, but " + Math.round(1 / precision) +
+           " people are called in for every real one.";
+  }
+  if (precision >= 0.6 && recall <= 0.6) {
+    return "Alarms are mostly real, and half the cases never get found.";
+  }
+  return "Moving the line trades cases found against people troubled. Neither end is the better model.";
+}
+
+function update() {
+  const threshold = parseFloat(document.getElementById("thr").value);
+  document.getElementById("thrOut").textContent = threshold.toFixed(2);
+
+  const tp = ILL.filter(s => s >= threshold).length;
+  const fn = ILL.length - tp;
+  const fp = WELL.filter(s => s >= threshold).length;
+  const tn = WELL.length - fp;
+  const precision = (tp + fp) ? tp / (tp + fp) : 0;
+  const recall = (tp + fn) ? tp / (tp + fn) : 0;
+
+  document.getElementById("readout").textContent =
+    "threshold " + threshold.toFixed(2) +
+    "   →   found " + tp + ", missed " + fn + ", false alarms " + fp;
+  document.getElementById("verdict").textContent = verdictFor(tp, fn, fp, precision, recall);
+
+  document.getElementById("recallVal").textContent = recall.toFixed(3);
+  document.getElementById("precVal").textContent = precision.toFixed(3);
+  document.getElementById("recallBar").style.width = (recall * 100) + "%";
+  document.getElementById("precBar").style.width = (precision * 100) + "%";
+
+  document.getElementById("tp").textContent = tp;
+  document.getElementById("fn").textContent = fn;
+  document.getElementById("fp").textContent = fp;
+  document.getElementById("tn").textContent = tn;
+
+  draw(threshold);
+}
+
+document.getElementById("thr").addEventListener("input", update);
+update();
+</script>
+</body>
+</html>

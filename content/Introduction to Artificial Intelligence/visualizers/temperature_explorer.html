@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Temperature Explorer</title>
+<style>
+  :root {
+    --bg: #12161d; --line: #2c3542; --text: #e6ebf2; --muted: #8b97a8;
+    --accent: #f2994a; --dim: #3a4453; --cool: #5b8def;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .wrap { padding: 18px 20px 20px; max-width: 900px; margin: 0 auto; }
+  .title { font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--muted); text-align: center; }
+  .formula { text-align: center; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 15px; margin: 6px 0 14px; color: var(--text);
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 24px; }
+  .formula span { white-space: nowrap; }
+  .readout { background: #0d1117; border: 1px solid var(--line); border-radius: 6px;
+    padding: 9px 12px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 13px; text-align: center; }
+  .verdict { text-align: center; font-size: 13px; line-height: 1.5;
+    margin: 10px 0 14px; min-height: 38px; color: var(--accent); }
+  .control { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .control label { font-family: ui-monospace, Menlo, monospace; font-size: 13px;
+    color: var(--muted); white-space: nowrap; }
+  .control output { font-family: ui-monospace, Menlo, monospace; font-size: 13px;
+    width: 38px; text-align: right; color: var(--accent); }
+  input[type=range] { flex: 1; -webkit-appearance: none; appearance: none; height: 4px;
+    border-radius: 2px; background: var(--dim); outline: none; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none;
+    width: 15px; height: 15px; border-radius: 50%; background: var(--accent); cursor: pointer; }
+  input[type=range]::-moz-range-thumb { width: 15px; height: 15px; border: 0;
+    border-radius: 50%; background: var(--accent); cursor: pointer; }
+  .grid { display: grid; grid-template-columns: 1fr 230px; gap: 22px; align-items: start; }
+  @media (max-width: 700px) { .grid { grid-template-columns: 1fr; }
+    .formula { font-size: 13px; } .wrap { padding: 14px 14px 16px; } }
+  .row { display: grid; grid-template-columns: 62px 1fr 58px; align-items: center;
+    gap: 10px; margin-bottom: 9px; }
+  .tok { font-family: ui-monospace, Menlo, monospace; font-size: 13px; text-align: right; }
+  .track { height: 16px; background: #0d1117; border: 1px solid var(--line);
+    border-radius: 3px; overflow: hidden; }
+  .fill { height: 100%; transition: width .08s linear; }
+  .pct { font-family: ui-monospace, Menlo, monospace; font-size: 12px;
+    font-variant-numeric: tabular-nums; color: var(--muted); }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th, td { padding: 5px 6px; text-align: right; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 500; }
+  td:first-child, th:first-child { text-align: left; }
+  .num { font-family: ui-monospace, Menlo, monospace; font-variant-numeric: tabular-nums; }
+  .note { font-size: 11px; color: var(--muted); line-height: 1.5; margin-top: 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="title">Temperature Explorer</div>
+  <div class="formula">
+    <span>the food was very ___</span>
+    <span>p = softmax(score / temperature)</span>
+  </div>
+
+  <div class="readout" id="readout"></div>
+  <div class="verdict" id="verdict"></div>
+
+  <div class="control">
+    <label for="temp">temperature</label>
+    <input type="range" id="temp" min="0.1" max="3" step="0.05" value="1">
+    <output id="tempOut">1.00</output>
+  </div>
+
+  <div class="grid">
+    <div id="bars"></div>
+    <div>
+      <table>
+        <tr><th>token</th><th>score</th><th>p</th></tr>
+        <tbody id="tbl"></tbody>
+      </table>
+      <div class="note">
+        The scores never change. Temperature only alters how much the
+        sampling respects the model's own ranking. One token is then drawn
+        at random using these probabilities, so a token near the bottom is
+        rare rather than impossible.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// The model's raw scores for what could follow "the food was very ___".
+// Fixed, exactly as printed in the lesson. Only temperature moves.
+const CANDIDATES = [
+  { token: "good",   score:  4.0 },
+  { token: "tasty",  score:  3.4 },
+  { token: "bad",    score:  2.6 },
+  { token: "late",   score:  1.2 },
+  { token: "purple", score: -1.0 }
+];
+
+function distribution(temperature) {
+  const adjusted = CANDIDATES.map(c => c.score / temperature);
+  const biggest = Math.max(...adjusted);
+  const exps = adjusted.map(v => Math.exp(v - biggest));
+  const total = exps.reduce((a, b) => a + b, 0);
+  return exps.map(e => e / total);
+}
+
+// Warm colour for the token the model prefers, cooling down the ranking.
+const COLOURS = ["#f2994a", "#e8a765", "#c9a17e", "#8f95a8", "#5b8def"];
+
+const bars = document.getElementById("bars");
+CANDIDATES.forEach((c, i) => {
+  const row = document.createElement("div");
+  row.className = "row";
+  row.innerHTML =
+    '<div class="tok">' + c.token + '</div>' +
+    '<div class="track"><div class="fill" id="fill' + i + '" style="background:' +
+    COLOURS[i] + '"></div></div>' +
+    '<div class="pct" id="pct' + i + '"></div>';
+  bars.appendChild(row);
+});
+
+function verdictFor(temperature, probs) {
+  const top = probs[0], worst = probs[probs.length - 1];
+  if (temperature <= 0.35) {
+    return "Almost all the probability sits on one token, so the same prompt " +
+           "returns the same answer nearly every time.";
+  }
+  if (temperature >= 2.2) {
+    return "The ranking is nearly flattened. 'purple' now has a " +
+           (worst * 100).toFixed(1) + "% chance, and once a poor token is " +
+           "committed to, everything after it continues that mistake.";
+  }
+  return "'good' holds " + (top * 100).toFixed(1) + "% of the probability. " +
+         "Lower the temperature to make the model repeat itself, raise it to let it wander.";
+}
+
+function update() {
+  const temperature = parseFloat(document.getElementById("temp").value);
+  document.getElementById("tempOut").textContent = temperature.toFixed(2);
+
+  const probs = distribution(temperature);
+  probs.forEach((p, i) => {
+    document.getElementById("fill" + i).style.width = (p * 100) + "%";
+    document.getElementById("pct" + i).textContent = p.toFixed(3);
+  });
+
+  document.getElementById("readout").textContent =
+    "temperature " + temperature.toFixed(2) + "   →   '" + CANDIDATES[0].token +
+    "' takes " + (probs[0] * 100).toFixed(1) + "% of the probability";
+  document.getElementById("verdict").textContent = verdictFor(temperature, probs);
+
+  document.getElementById("tbl").innerHTML = CANDIDATES.map((c, i) =>
+    '<tr><td>' + c.token + '</td><td class="num">' + c.score.toFixed(1) +
+    '</td><td class="num">' + probs[i].toFixed(3) + '</td></tr>').join("");
+}
+
+document.getElementById("temp").addEventListener("input", update);
+update();
+</script>
+</body>
+</html>
