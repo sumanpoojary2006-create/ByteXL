@@ -52,6 +52,8 @@ test_fine_calculation[7-3.5]
 
 ## Named Test Cases
 
+![3D explanation of Named Test Cases showing the Python mechanism and result](images/06_supplement_2_3d.png)
+
 For clearer output, use `pytest.param` with an `id`:
 
 ```python
@@ -193,6 +195,25 @@ if __name__ == "__main__":
 | Exception cases | Combine with `pytest.raises` inside the function body |
 | With fixtures | Declare fixture parameter alongside parametrize parameters |
 
+## From Example to Production
+
+Parameterized Tests becomes dependable only when its boundaries are as deliberate as its main example. A test is useful when it protects observable behavior and fails for one understandable reason. Arrange minimal inputs, perform one action, and assert the important result or side effect. Isolate external boundaries with fixtures or fakes, but avoid mocking the code under test. Include representative failures and edge cases, keep tests deterministic, and use coverage as a map for investigation rather than a target that replaces judgment.
+
+## Common Mistakes and Engineering Checks
+
+- Asserting implementation details that users cannot observe.
+- Sharing mutable fixture state so test order changes the result.
+- Adding many assertions to one test and obscuring which contract failed.
+
+Before treating the implementation as complete, answer these checks:
+
+- Which behavior is protected?
+- Can the test run alone and repeatedly?
+- Would a valid refactor keep the test passing?
+
+## Check Your Understanding
+
+Explain parameterized tests to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Write a parametrized test for `overdue_report` that covers these cases:

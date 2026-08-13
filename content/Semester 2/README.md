@@ -1,6 +1,6 @@
 # Semester 2: Advanced Python Concepts
 
-14 teaching units and two dedicated project chapters, taught over a 15-week term. See the curriculum workbook for the full week-wise plan and assessment design.
+14 classroom-sized teaching units and two dedicated project chapters, taught over a 15-week term. The curriculum workbook defines 10 broad blueprint areas; this implementation expands them into shorter teaching units by separating the OOP sequence and adding recap, standard-library, and database units. The learning outcomes and production-focused progression remain unchanged.
 
 ## Units
 
@@ -19,7 +19,7 @@
 | 11 | Multithreading and Multiprocessing | 7 | [Unit 11 - Multithreading and Multiprocessing](Unit%2011%20-%20Multithreading%20and%20Multiprocessing/) |
 | 12 | CLI Application Development | 8 | [Unit 12 - CLI Application Development](Unit%2012%20-%20CLI%20Application%20Development/) |
 | 13 | Database Interaction | 8 | [Unit 13 - Database Interaction](Unit%2013%20-%20Database%20Interaction/) |
-| 14 | Packaging and Distribution | 5 | [Unit 14 - Packaging and Distribution](Unit%2014%20-%20Packaging%20and%20Distribution/) |
+| 14 | Packaging and Distribution | 8 | [Unit 14 - Packaging and Distribution](Unit%2014%20-%20Packaging%20and%20Distribution/) |
 
 ## Project Chapters
 
@@ -30,4 +30,16 @@ Projects are collected separately from the teaching units so they can be assigne
 | Mini Projects | 0 | [Mini Projects](Mini%20Projects/) |
 | Capstone Projects | 1 | [Capstone Projects](Capstone%20Projects/) |
 
-**Style:** professional, beginner-friendly, no emojis, no em dashes; standardized Introduction heading, narrative flow.
+## Lesson Standard
+
+Every lesson uses the same teaching contract established in Semester 1:
+
+- story-led `Introduction` and a precise definition
+- labelled instructional visuals
+- concept explanation with runnable examples
+- real-world or production context
+- common mistakes and defensive guidance where relevant
+- a guided `Your Turn` activity
+- a concise `Conclusion` that connects to the next lesson
+
+**Style:** professional, beginner-friendly, no emojis, no em dashes; standardized Introduction heading and narrative flow.

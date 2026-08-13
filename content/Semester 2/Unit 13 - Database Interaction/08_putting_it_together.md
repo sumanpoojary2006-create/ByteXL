@@ -269,6 +269,8 @@ print("\nAll tests passed")
 
 ## Putting It Together at a Glance
 
+![3D explanation of Putting It Together at a Glance showing the Python mechanism and result](images/08_supplement_2_3d.png)
+
 | Layer | Responsibility |
 |---|---|
 | Data models (`@dataclass`) | Hold row data with type information |
@@ -277,6 +279,25 @@ print("\nAll tests passed")
 | `sqlite3.Row` factory | Column-name access on query results |
 | `:memory:` in tests | Fresh isolated database for each test |
 
+## From Example to Production
+
+Putting It Together becomes dependable only when its boundaries are as deliberate as its main example. Database code is reliable when transaction boundaries and data contracts are explicit. Use parameters for every value, keep connections short-lived, and commit only after the complete operation succeeds. Let database constraints protect invariants even when application validation exists. Decide what a returned row represents, translate it at one boundary, and test rollback paths as carefully as successful writes. For SQLite, also remember that concurrency, types, and migration behavior differ from larger server databases, so avoid presenting a local demonstration as a universal deployment model.
+
+## Common Mistakes and Engineering Checks
+
+- Building SQL with string formatting. This creates injection risk and breaks on quoting and type conversion.
+- Committing each statement independently when several statements form one business action. Partial updates then become possible.
+- Testing only with a fresh empty database. Real systems contain old rows, failed migrations, duplicates, and concurrent access.
+
+Before treating the implementation as complete, answer these checks:
+
+- Where does the transaction begin and end?
+- Which constraints enforce valid data?
+- What happens when the second operation fails?
+
+## Check Your Understanding
+
+Explain putting it together to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Add a `get_stats()` method to `LibraryDatabase` that returns a dictionary with total books, total copies, active loans count, and most-borrowed genre. Use a single query with `COUNT` and `GROUP BY` where possible.

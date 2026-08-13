@@ -70,6 +70,8 @@ Notice that both tests independently set up their own `catalog` and `book`. This
 
 ## One Assertion per Test (Roughly)
 
+![3D explanation of One Assertion per Test (Roughly) showing the Python mechanism and result](images/04_supplement_2_3d.png)
+
 Tests that check many things at once are harder to diagnose. When a multi-assertion test fails, you know *something* went wrong, but not what. Prefer focused tests:
 
 ```python
@@ -281,6 +283,25 @@ except AssertionError as e:
 | No shared mutable state | Each test creates its own data |
 | Files mirror modules | `test_catalog.py` tests `catalog.py` |
 
+## From Example to Production
+
+Writing And Organizing Tests becomes dependable only when its boundaries are as deliberate as its main example. A test is useful when it protects observable behavior and fails for one understandable reason. Arrange minimal inputs, perform one action, and assert the important result or side effect. Isolate external boundaries with fixtures or fakes, but avoid mocking the code under test. Include representative failures and edge cases, keep tests deterministic, and use coverage as a map for investigation rather than a target that replaces judgment.
+
+## Common Mistakes and Engineering Checks
+
+- Asserting implementation details that users cannot observe.
+- Sharing mutable fixture state so test order changes the result.
+- Adding many assertions to one test and obscuring which contract failed.
+
+Before treating the implementation as complete, answer these checks:
+
+- Which behavior is protected?
+- Can the test run alone and repeatedly?
+- Would a valid refactor keep the test passing?
+
+## Check Your Understanding
+
+Explain writing and organizing tests to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Write three tests for a `Catalog.remove(isbn)` method:

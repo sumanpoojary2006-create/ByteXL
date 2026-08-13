@@ -39,6 +39,8 @@ for n in countdown:
 
 ## A Realistic Example: CatalogReader
 
+![3D explanation of A Realistic Example: CatalogReader showing the Python mechanism and result](images/03_supplement_2_3d.png)
+
 Leila's actual problem: iterate through a list of raw records and yield only the approved ones, one at a time.
 
 ```python
@@ -162,6 +164,8 @@ This is the same pattern as a list: the list itself returns a fresh `list_iterat
 
 ## When a Custom Iterator Is Worth Writing
 
+![3D explanation of When a Custom Iterator Is Worth Writing showing the key comparison or state change](images/03_supplement_3_3d.png)
+
 Custom iterator classes are most useful when:
 - The next item requires computation or filtering, not just indexing
 - The data source is external (a file, a database cursor, a network stream)
@@ -178,6 +182,25 @@ For simpler cases, a generator function (the next lesson) is usually shorter and
 | Track position | Use an instance attribute like `self._index` |
 | Skip items | Use `while` or `if` inside `__next__` |
 
+## From Example to Production
+
+Building A Custom Iterator becomes dependable only when its boundaries are as deliberate as its main example. Lazy iteration is a lifecycle as well as a memory technique. State whether an iterable is reusable, whether an iterator is single-pass, what resources remain open, and where errors appear. Consume only as much data as the caller needs, avoid accidental materialization with `list()`, and test empty, one-item, and partially consumed cases. For external resources, make ownership and cleanup explicit rather than relying on garbage collection.
+
+## Common Mistakes and Engineering Checks
+
+- Returning the same exhausted iterator when callers expect a fresh traversal.
+- Converting a generator to a list and losing the memory benefit the design was meant to provide.
+- Hiding file or connection ownership inside a generator without a clear cleanup path.
+
+Before treating the implementation as complete, answer these checks:
+
+- Is this reusable or single-pass?
+- When is each value computed?
+- Who closes any underlying resource?
+
+## Check Your Understanding
+
+Explain building a custom iterator to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 ```python

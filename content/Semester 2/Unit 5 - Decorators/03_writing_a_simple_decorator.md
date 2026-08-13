@@ -45,6 +45,8 @@ Python reads the `@add_timing` line, registers it, then when it processes the `d
 
 ## A Complete Simple Decorator
 
+![3D explanation of A Complete Simple Decorator showing the Python mechanism and result](images/03_supplement_2_3d.png)
+
 Here is the full decorator Kiran needs:
 
 ```python
@@ -100,6 +102,8 @@ This matters in practice: if you import a module that contains decorated functio
 
 ## Decorators That Do Not Change the Return Value
 
+![3D explanation of Decorators That Do Not Change the Return Value showing the key comparison or state change](images/03_supplement_3_3d.png)
+
 Not every decorator needs to modify the return value. Some only add side effects: logging, timing, caching checks. The wrapper must still `return result` to not accidentally suppress the return value.
 
 ```python
@@ -134,6 +138,25 @@ Forgetting `return result` in the wrapper causes the decorated function to silen
 | Return the wrapper | `return wrapper` |
 | Apply with @ | `@my_decorator` above the `def` |
 
+## From Example to Production
+
+Writing A Simple Decorator becomes dependable only when its boundaries are as deliberate as its main example. A decorator changes a callable's contract, so the wrapper must be as carefully designed as the wrapped function. Preserve metadata with `functools.wraps`, forward arguments transparently, return the original result, and decide how exceptions should propagate. Keep configuration outside per-call work when possible. Tests should cover metadata, return values, exceptions, and stacked order, not only the extra logging or timing side effect.
+
+## Common Mistakes and Engineering Checks
+
+- Forgetting to return either the wrapper at decoration time or the wrapped result at call time.
+- Losing names, docstrings, and signatures by omitting `functools.wraps`.
+- Catching exceptions inside a generic decorator and silently changing failure behavior.
+
+Before treating the implementation as complete, answer these checks:
+
+- Is the original contract preserved?
+- When does configuration execute?
+- What happens when decorators are stacked?
+
+## Check Your Understanding
+
+Explain writing a simple decorator to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Write a `validate_positive` decorator that raises a `ValueError` if any positional argument passed to the decorated function is negative:

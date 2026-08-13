@@ -18,6 +18,8 @@ pip install pytest-cov
 
 ## Running Coverage
 
+![3D explanation of Running Coverage showing the Python mechanism and result](images/08_supplement_2_3d.png)
+
 ```console
 # Run tests and measure coverage for the library/ package:
 pytest --cov=library tests/
@@ -82,6 +84,8 @@ For `if days_overdue < 0: raise ValueError(...)`, branch coverage requires both 
 
 ## Setting a Coverage Target
 
+![3D explanation of Setting a Coverage Target showing the key comparison or state change](images/08_supplement_3_3d.png)
+
 Configure a minimum acceptable coverage in `pyproject.toml` so the CI build fails if coverage drops below the target:
 
 ```toml
@@ -118,6 +122,25 @@ Any line with `# pragma: no cover` is excluded from the report.
 | `pytest --cov-fail-under=80` | Fail build below coverage threshold |
 | `# pragma: no cover` | Exclude a line from the report |
 
+## From Example to Production
+
+Coverage becomes dependable only when its boundaries are as deliberate as its main example. A test is useful when it protects observable behavior and fails for one understandable reason. Arrange minimal inputs, perform one action, and assert the important result or side effect. Isolate external boundaries with fixtures or fakes, but avoid mocking the code under test. Include representative failures and edge cases, keep tests deterministic, and use coverage as a map for investigation rather than a target that replaces judgment.
+
+## Common Mistakes and Engineering Checks
+
+- Asserting implementation details that users cannot observe.
+- Sharing mutable fixture state so test order changes the result.
+- Adding many assertions to one test and obscuring which contract failed.
+
+Before treating the implementation as complete, answer these checks:
+
+- Which behavior is protected?
+- Can the test run alone and repeatedly?
+- Would a valid refactor keep the test passing?
+
+## Check Your Understanding
+
+Explain coverage to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Run the coverage report on your test suite from this unit:

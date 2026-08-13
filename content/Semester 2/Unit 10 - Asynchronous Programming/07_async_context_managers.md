@@ -93,6 +93,8 @@ asyncio.run(main())
 
 ## contextlib.asynccontextmanager
 
+![3D explanation of contextlib.asynccontextmanager showing the Python mechanism and result](images/07_supplement_2_3d.png)
+
 Just as `@contextmanager` simplifies synchronous context managers, `@asynccontextmanager` simplifies async ones:
 
 ```python
@@ -130,6 +132,8 @@ asyncio.run(main())
 The structure is identical to `@contextmanager`: code before `yield` is setup, `yield` provides the value, and code after is teardown.
 
 ## async for: Iterating Over Async Iterables
+
+![3D explanation of async for: Iterating Over Async Iterables showing the key comparison or state change](images/07_supplement_3_3d.png)
 
 Alongside `async with`, Python provides `async for` for iterating over objects that yield values asynchronously (e.g., a database cursor, a paginated API, a WebSocket stream):
 
@@ -172,6 +176,25 @@ asyncio.run(main())
 | Generator shortcut | `@contextmanager` | `@asynccontextmanager` |
 | Iteration | `for x in iterable:` | `async for x in async_iterable:` |
 
+## From Example to Production
+
+Async Context Managers becomes dependable only when its boundaries are as deliberate as its main example. In production, asynchronous code must be designed around waiting, cancellation, and ownership. First identify the exact operation that yields control. Then decide who creates each task, who awaits it, what timeout applies, and how unfinished work is cancelled during shutdown. Bound concurrency when a loop can create many operations, and record failures instead of allowing a background task to disappear silently. Measure total elapsed time and resource usage with representative I/O; a shorter example is not evidence that every workload benefits.
+
+## Common Mistakes and Engineering Checks
+
+- Using async syntax around CPU-heavy work and expecting parallel execution. The event loop still runs Python code on one thread.
+- Creating tasks without awaiting or retaining them. Their exceptions may be delayed, lost, or reported only at shutdown.
+- Ignoring timeout, cancellation, and cleanup paths. Network and file operations fail at boundaries, not only on the happy path.
+
+Before treating the implementation as complete, answer these checks:
+
+- What operation yields control?
+- Who owns and awaits the work?
+- How is failure, timeout, and cancellation observed?
+
+## Check Your Understanding
+
+Explain async context managers to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Write an `async_timer` context manager using `@asynccontextmanager` that measures how long an async block takes:

@@ -29,6 +29,8 @@ This builds the entire list before the caller receives anything. For a million r
 
 ## A Generator Function Yields Many Times
 
+![3D explanation of A Generator Function Yields Many Times showing the Python mechanism and result](images/04_supplement_2_3d.png)
+
 A `generator function` looks like a regular function but uses `yield` instead of `return`. When called, it does not run immediately. It returns a `generator object`. Advancing that generator (via `next()` or a `for` loop) resumes the function from where it last `yield`-ed, runs until the next `yield`, and pauses again with its local state fully preserved.
 
 ```python
@@ -104,6 +106,8 @@ print(next(gen1)["title"])   # Foundation -- gen1 advances independently
 
 ## yield vs return in the Same Function
 
+![3D explanation of yield vs return in the Same Function showing the key comparison or state change](images/04_supplement_3_3d.png)
+
 A function can have both `yield` and `return`, but in a generator function `return` ends iteration immediately by raising `StopIteration`. The value after `return` is stored in the exception but not usually visible to the caller.
 
 ```python
@@ -131,6 +135,25 @@ print(f"first_n_approved([1, 2, 3], 5) ->", result)
 | `return` in a generator | Ends the generator; raises `StopIteration` |
 | One-pass | A generator object is exhausted after one traversal |
 
+## From Example to Production
+
+Generators And The Yield Keyword becomes dependable only when its boundaries are as deliberate as its main example. Lazy iteration is a lifecycle as well as a memory technique. State whether an iterable is reusable, whether an iterator is single-pass, what resources remain open, and where errors appear. Consume only as much data as the caller needs, avoid accidental materialization with `list()`, and test empty, one-item, and partially consumed cases. For external resources, make ownership and cleanup explicit rather than relying on garbage collection.
+
+## Common Mistakes and Engineering Checks
+
+- Returning the same exhausted iterator when callers expect a fresh traversal.
+- Converting a generator to a list and losing the memory benefit the design was meant to provide.
+- Hiding file or connection ownership inside a generator without a clear cleanup path.
+
+Before treating the implementation as complete, answer these checks:
+
+- Is this reusable or single-pass?
+- When is each value computed?
+- Who closes any underlying resource?
+
+## Check Your Understanding
+
+Explain generators and the yield keyword to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 ```python

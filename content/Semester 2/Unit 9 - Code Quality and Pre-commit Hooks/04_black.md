@@ -30,6 +30,8 @@ black --diff .
 
 ## What black Does
 
+![3D explanation of What black Does showing the Python mechanism and result](images/04_supplement_2_3d.png)
+
 `black` makes consistent, opinionated choices:
 
 ```python
@@ -104,6 +106,8 @@ Leave `line-length` at 88 unless there is a project-specific reason to change it
 
 ## black vs. Manual Formatting
 
+![3D explanation of black vs. Manual Formatting showing the key comparison or state change](images/04_supplement_3_3d.png)
+
 The philosophy of `black` is: consistency over preference. You may not like every formatting choice it makes. That is expected. The trade-off is: you spend zero time debating formatting, and every developer's code looks the same after formatting. For most teams, this is a net gain.
 
 The one thing `black` does not do: rename variables or restructure logic. It only changes whitespace and quotes. Style and logic are separate concerns.
@@ -129,6 +133,25 @@ Alternatively, `ruff format` (introduced in ruff 0.1.0+) is a `black`-compatible
 | `black --diff .` | Show diffs without modifying |
 | `# fmt: off` / `# fmt: on` | Disable black for a section |
 
+## From Example to Production
+
+Black becomes dependable only when its boundaries are as deliberate as its main example. Quality tools work best as one fast feedback system. Define the supported Python version and project rules in version-controlled configuration, run the same commands locally and in CI, and keep automatic fixes separate from checks that require judgment. Introduce rules gradually, fix root causes instead of silencing warnings, and document the single command contributors should run before review.
+
+## Common Mistakes and Engineering Checks
+
+- Enabling overlapping tools with conflicting formatting or lint rules.
+- Ignoring warnings broadly instead of documenting a narrow, justified exception.
+- Running different configurations locally, in pre-commit, and in CI.
+
+Before treating the implementation as complete, answer these checks:
+
+- Where is the rule configured?
+- Can every contributor reproduce the check?
+- Does the warning reveal a real maintenance risk?
+
+## Check Your Understanding
+
+Explain black to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Run `black --diff library/` on the library project. Read the diff output and identify three formatting changes `black` would make. Then run `black library/` to apply them. Confirm the code still runs correctly and all tests still pass.

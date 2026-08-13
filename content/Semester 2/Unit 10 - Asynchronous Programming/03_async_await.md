@@ -28,6 +28,8 @@ print(coro)         # <coroutine object greet at 0x...>
 
 ## await: Running a Coroutine
 
+![3D explanation of await: Running a Coroutine showing the Python mechanism and result](images/03_supplement_2_3d.png)
+
 `await` runs a coroutine and waits for it to complete, yielding control to the event loop while it waits. `await` can only be used inside an `async def` function.
 
 ```python
@@ -81,6 +83,8 @@ print(f"Not available at: {[i for i in [1,2,3] if i not in result]}")
 ```
 
 ## await Can Only Wait on Awaitables
+
+![3D explanation of await Can Only Wait on Awaitables showing the key comparison or state change](images/03_supplement_3_3d.png)
 
 `await` works on:
 - Coroutines (returned by `async def` functions)
@@ -153,6 +157,25 @@ asyncio.run(main())
 | `asyncio.run(main())` | Start the event loop and run `main()` |
 | `asyncio.sleep(n)` | Async sleep (yields to event loop) |
 
+## From Example to Production
+
+Async Await becomes dependable only when its boundaries are as deliberate as its main example. In production, asynchronous code must be designed around waiting, cancellation, and ownership. First identify the exact operation that yields control. Then decide who creates each task, who awaits it, what timeout applies, and how unfinished work is cancelled during shutdown. Bound concurrency when a loop can create many operations, and record failures instead of allowing a background task to disappear silently. Measure total elapsed time and resource usage with representative I/O; a shorter example is not evidence that every workload benefits.
+
+## Common Mistakes and Engineering Checks
+
+- Using async syntax around CPU-heavy work and expecting parallel execution. The event loop still runs Python code on one thread.
+- Creating tasks without awaiting or retaining them. Their exceptions may be delayed, lost, or reported only at shutdown.
+- Ignoring timeout, cancellation, and cleanup paths. Network and file operations fail at boundaries, not only on the happy path.
+
+Before treating the implementation as complete, answer these checks:
+
+- What operation yields control?
+- Who owns and awaits the work?
+- How is failure, timeout, and cancellation observed?
+
+## Check Your Understanding
+
+Explain async await to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Write an async function `simulate_library_check(library_id, delay)` that simulates an API call with `asyncio.sleep(delay)` and returns `{"library": library_id, "available": library_id % 2 == 0}`. Then write an async `main` that calls it three times with different delays and prints the combined result.

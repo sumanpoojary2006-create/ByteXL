@@ -29,6 +29,8 @@ The `for` loop catches `StopIteration` automatically and exits cleanly. The `ite
 
 ## The Two Parts of the Protocol
 
+![3D explanation of The Two Parts of the Protocol showing the Python mechanism and result](images/01_supplement_2_3d.png)
+
 The iterator protocol involves two related but different concepts:
 
 An `iterable` is any object that has an `__iter__` method. Lists, tuples, strings, dicts, sets, and files are all iterables. Calling `iter(some_iterable)` returns an `iterator`.
@@ -73,6 +75,8 @@ with open("sample.txt") as f:
 Each `for` iteration calls `f.__next__()`, which reads one line from disk. No line is held in memory beyond the current iteration. This is exactly the pattern Leila needs for her million-record import.
 
 ## Separation: Iterables That Return Fresh Iterators
+
+![3D explanation of Separation: Iterables That Return Fresh Iterators showing the key comparison or state change](images/01_supplement_3_3d.png)
 
 Most collections (lists, tuples, strings) are `iterables` that return a *new* iterator object each time `iter()` is called. This means you can iterate over a list multiple times without resetting anything manually.
 

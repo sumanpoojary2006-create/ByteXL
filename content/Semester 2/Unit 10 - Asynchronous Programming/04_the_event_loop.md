@@ -46,6 +46,8 @@ Both tasks start, both yield, `B` resumes first (its wait is shorter), then `A` 
 
 ## Getting the Event Loop
 
+![3D explanation of Getting the Event Loop showing the Python mechanism and result](images/04_supplement_2_3d.png)
+
 Inside an async function, `asyncio.get_event_loop()` returns the running event loop. You rarely need to access it directly; it is mainly used in advanced scenarios like scheduling callbacks or integrating with non-async code.
 
 ```python
@@ -130,6 +132,8 @@ asyncio.run(main())
 
 ## Mixing Sync and Async Code
 
+![3D explanation of Mixing Sync and Async Code showing the key comparison or state change](images/04_supplement_3_3d.png)
+
 An async program has one event loop running in one thread. Synchronous code blocks the loop; only code at `await` points yields. The boundary is always `asyncio.run()` at the top:
 
 ```
@@ -155,6 +159,25 @@ You can call sync functions from async code. You cannot call `await` from sync c
 | `asyncio.get_running_loop()` | Access the current running loop |
 | Runaway task | A task that never yields; freezes other tasks |
 
+## From Example to Production
+
+The Event Loop becomes dependable only when its boundaries are as deliberate as its main example. In production, asynchronous code must be designed around waiting, cancellation, and ownership. First identify the exact operation that yields control. Then decide who creates each task, who awaits it, what timeout applies, and how unfinished work is cancelled during shutdown. Bound concurrency when a loop can create many operations, and record failures instead of allowing a background task to disappear silently. Measure total elapsed time and resource usage with representative I/O; a shorter example is not evidence that every workload benefits.
+
+## Common Mistakes and Engineering Checks
+
+- Using async syntax around CPU-heavy work and expecting parallel execution. The event loop still runs Python code on one thread.
+- Creating tasks without awaiting or retaining them. Their exceptions may be delayed, lost, or reported only at shutdown.
+- Ignoring timeout, cancellation, and cleanup paths. Network and file operations fail at boundaries, not only on the happy path.
+
+Before treating the implementation as complete, answer these checks:
+
+- What operation yields control?
+- Who owns and awaits the work?
+- How is failure, timeout, and cancellation observed?
+
+## Check Your Understanding
+
+Explain the event loop to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Write an experiment that demonstrates cooperative scheduling:

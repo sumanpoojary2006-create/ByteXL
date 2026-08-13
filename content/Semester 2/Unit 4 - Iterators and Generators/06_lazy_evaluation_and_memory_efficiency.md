@@ -35,6 +35,8 @@ The generator creation time is effectively zero because no computation happened.
 
 ## Lazy Evaluation When You Do Not Need All Items
 
+![3D explanation of Lazy Evaluation When You Do Not Need All Items showing the Python mechanism and result](images/06_supplement_2_3d.png)
+
 The starkest advantage of lazy evaluation appears when you stop early. If you need only the first matching item in a large sequence, eager evaluation computes all items even though you use only one.
 
 ```python
@@ -77,6 +79,8 @@ print(f"count_approved_in_file(io.StringIO(data)) -> {result}")
 At no point does Python hold the entire file in memory. The operating system reads one buffer at a time, the file object yields one line at a time, and the counter accumulates. This scales to a file of any size.
 
 ## When Laziness Does Not Help (and May Hurt)
+
+![3D explanation of When Laziness Does Not Help (and May Hurt) showing the key comparison or state change](images/06_supplement_3_3d.png)
 
 Lazy evaluation is not always the right choice. If you need to iterate the same sequence multiple times, you must either make it eager (a list) or call the generator function again for each pass.
 

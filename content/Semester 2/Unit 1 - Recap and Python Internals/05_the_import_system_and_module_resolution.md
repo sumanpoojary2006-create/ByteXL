@@ -32,6 +32,8 @@ print(id(sys.modules["math"]))  # same object both times
 
 ## The Three Kinds of Modules Python Searches For
 
+![3D explanation of The Three Kinds of Modules Python Searches For showing the Python mechanism and result](images/05_supplement_2_3d.png)
+
 Python searches for a module in one of three places, in order:
 
 `Built-in modules` are compiled directly into the CPython binary. `sys`, `builtins`, and a handful of others live here. They do not have source files at all.
@@ -82,6 +84,8 @@ print("Second import is instant -- no disk access or recompilation.")
 This behavior is why expensive setup code (opening a database connection, loading a large file) is better placed inside a function rather than at module level, and why circular imports can cause partially-initialized modules to be returned.
 
 ## Relative vs. Absolute Imports
+
+![3D explanation of Relative vs. Absolute Imports showing the key comparison or state change](images/05_supplement_3_3d.png)
 
 When your project has multiple files, Python supports two import styles:
 

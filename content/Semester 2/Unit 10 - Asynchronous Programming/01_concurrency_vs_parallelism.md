@@ -39,6 +39,8 @@ The program could be doing something useful (like sending the next request) whil
 
 ## Concurrency vs Parallelism
 
+![3D explanation of Concurrency vs Parallelism showing the Python mechanism and result](images/01_supplement_2_3d.png)
+
 `Parallelism` means two things actually happen at the same moment. Two CPU cores each execute a line of Python code at the same instant. This requires multiple CPU cores.
 
 `Concurrency` means multiple things are *in progress* at the same time, but not necessarily executing at the same instant. One thing pauses while waiting (e.g., for a network response), and another thing runs while the first is paused. A single CPU handles both, switching between them.
@@ -80,6 +82,8 @@ CPU-bound (async does NOT help):
 ```
 
 ## Python's asyncio Model
+
+![3D explanation of Python's asyncio Model showing the key comparison or state change](images/01_supplement_3_3d.png)
 
 Python's `asyncio` module implements cooperative concurrency: tasks explicitly yield control (via `await`) when they are waiting for I/O. The event loop then runs another task while the first is waiting.
 

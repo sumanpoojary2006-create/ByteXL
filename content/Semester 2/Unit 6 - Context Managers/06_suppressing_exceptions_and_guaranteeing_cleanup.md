@@ -37,6 +37,8 @@ Suppression is selective: only `FileNotFoundError` is absorbed. Any other except
 
 ## contextlib.suppress: The Shortcut
 
+![3D explanation of contextlib.suppress: The Shortcut showing the Python mechanism and result](images/06_supplement_2_3d.png)
+
 `contextlib.suppress` is a built-in context manager that suppresses specific exception types without requiring you to write a class:
 
 ```python
@@ -143,6 +145,8 @@ print("Continuing after suppressed RuntimeError")
 
 ## Combining: Log, Suppress, Clean Up
 
+![3D explanation of Combining: Log, Suppress, Clean Up showing the key comparison or state change](images/06_supplement_3_3d.png)
+
 Here is the pattern Tara uses for her daily backup task:
 
 ```python
@@ -188,6 +192,25 @@ The separation of concerns is clear: `safe_backup` handles logging, `suppress(OS
 | `try`/`except` inside `@contextmanager` | Suppress/log and re-raise in a generator manager |
 | Log then re-raise | Observe an exception without changing its propagation |
 
+## From Example to Production
+
+Suppressing Exceptions And Guaranteeing Cleanup becomes dependable only when its boundaries are as deliberate as its main example. A context manager is an ownership boundary. Write down the resource acquired on entry, the state returned to the block, and the cleanup that must happen on every exit path. Decide explicitly whether an exception is propagated or suppressed. Keep `__exit__` and generator cleanup small, idempotent where practical, and safe even when acquisition only partially succeeded. Test normal exit and exceptional exit separately.
+
+## Common Mistakes and Engineering Checks
+
+- Returning a truthy value from `__exit__` accidentally and hiding an exception.
+- Acquiring several resources before establishing how partial failure will be cleaned up.
+- Placing unrelated business logic in cleanup, making failure paths difficult to reason about.
+
+Before treating the implementation as complete, answer these checks:
+
+- What resource is owned?
+- Does cleanup run after failure?
+- Should the original exception propagate?
+
+## Check Your Understanding
+
+Explain suppressing exceptions and guaranteeing cleanup to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Write a function `safe_remove_all(paths)` that attempts to delete each file in a list, suppresses `FileNotFoundError` for files that are already gone, logs a warning for `PermissionError`, and re-raises any other exception.

@@ -62,6 +62,8 @@ ignore = ["E501"]                            # ignore line-too-long (let black h
 
 ## Ignoring Specific Lines
 
+![3D explanation of Ignoring Specific Lines showing the Python mechanism and result](images/03_supplement_2_3d.png)
+
 When a violation is intentional, annotate the line:
 
 ```python
@@ -119,6 +121,25 @@ ruff check .
 | `# noqa: CODE` | Suppress a specific warning on one line |
 | `pyproject.toml [tool.ruff.lint]` | Configure selected rules and ignores |
 
+## From Example to Production
+
+Ruff And Flake8 becomes dependable only when its boundaries are as deliberate as its main example. Quality tools work best as one fast feedback system. Define the supported Python version and project rules in version-controlled configuration, run the same commands locally and in CI, and keep automatic fixes separate from checks that require judgment. Introduce rules gradually, fix root causes instead of silencing warnings, and document the single command contributors should run before review.
+
+## Common Mistakes and Engineering Checks
+
+- Enabling overlapping tools with conflicting formatting or lint rules.
+- Ignoring warnings broadly instead of documenting a narrow, justified exception.
+- Running different configurations locally, in pre-commit, and in CI.
+
+Before treating the implementation as complete, answer these checks:
+
+- Where is the rule configured?
+- Can every contributor reproduce the check?
+- Does the warning reveal a real maintenance risk?
+
+## Check Your Understanding
+
+Explain ruff and flake8 to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Install `ruff` and run it on a Python project from this semester. Examine the first five violations it finds and categorize them by prefix (E, F, W, I, N). For each one:

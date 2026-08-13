@@ -32,6 +32,8 @@ The `@property` decorator tells Python: "when someone reads `obj.is_available`, 
 
 ## Adding a Setter: Validation on Write
 
+![3D explanation of Adding a Setter: Validation on Write showing the Python mechanism and result](images/04_supplement_2_3d.png)
+
 The real power of properties appears when you add a `setter`. A setter runs code whenever someone writes to the attribute, which is exactly where Priya needs to add her validation.
 
 ```python
@@ -139,6 +141,25 @@ Every caller that used `book.copies = 2` before the refactor still uses `book.co
 | `@name.setter` | The setter | When `obj.name = value` is written |
 | `@name.deleter` | The deleter | When `del obj.name` is called |
 
+## From Example to Production
+
+Properties And Getterssetters becomes dependable only when its boundaries are as deliberate as its main example. Encapsulation is valuable when it protects a meaningful invariant. Start from the invalid states the object must prevent, then expose the smallest interface that keeps those states unreachable. Prefer ordinary attributes until validation or computed behavior is needed, and preserve the public contract when an implementation changes. Tests should exercise behavior through the public interface rather than reaching into name-mangled storage.
+
+## Common Mistakes and Engineering Checks
+
+- Adding getters and setters mechanically without enforcing any rule or simplifying use.
+- Treating a leading underscore as security. It is a communication convention, not an access barrier.
+- Testing private representation so tightly that harmless refactoring breaks the test suite.
+
+Before treating the implementation as complete, answer these checks:
+
+- Which invariant is protected?
+- What is the smallest public interface?
+- Can the implementation change without breaking callers?
+
+## Check Your Understanding
+
+Explain properties and getterssetters to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 ```python

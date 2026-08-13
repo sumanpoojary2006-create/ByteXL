@@ -50,6 +50,8 @@ if today > due_date:
 
 ## Parsing and Formatting Dates
 
+![3D explanation of Parsing and Formatting Dates showing the Python mechanism and result](images/04_supplement_2_3d.png)
+
 Convert between strings and dates using `strptime` (parse) and `strftime` (format):
 
 ```python
@@ -136,6 +138,25 @@ For full time zone database support (named zones like "America/New_York"), use t
 | `date.isoformat()` | `'YYYY-MM-DD'` string |
 | `datetime.now(tz=timezone.utc)` | Timezone-aware UTC now |
 
+## From Example to Production
+
+Datetime Module becomes dependable only when its boundaries are as deliberate as its main example. Standard-library choices still require explicit contracts. Confirm input types, deterministic behavior, platform differences, security properties, and failure modes from current documentation. Separate demonstrations from production defaults: seeded randomness is useful for tests but not secrets; naive datetimes are simple but unsafe across time zones; paths vary across operating systems. Wrap low-level modules behind a small function when the application needs one stable policy.
+
+## Common Mistakes and Engineering Checks
+
+- Choosing a familiar module without checking whether its guarantees match the problem.
+- Assuming operating-system, locale, time-zone, or ordering behavior is identical everywhere.
+- Mixing secure and non-secure randomness or hashing use cases.
+
+Before treating the implementation as complete, answer these checks:
+
+- Which guarantee does the application need?
+- What varies by platform or environment?
+- How will the result be tested deterministically?
+
+## Check Your Understanding
+
+Explain datetime module to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Write a function `overdue_report(records)` that takes a list of borrow records (each with `isbn`, `patron_id`, `borrow_date` as an ISO string, and `loan_days`), computes the due date, and returns a list of overdue records with the number of days overdue.

@@ -24,6 +24,8 @@ The next time you run the program, Python checks whether the `.pyc` is still val
 
 ## When Python Recompiles vs. Reuses
 
+![3D explanation of When Python Recompiles vs. Reuses showing the Python mechanism and result](images/04_supplement_2_3d.png)
+
 Python's validation logic is straightforward. If the `.pyc` file exists and its timestamp matches the source file's last-modified time (and the magic number matches the interpreter version), Python loads the bytecode directly, skipping the lex-parse-compile pipeline entirely. If anything has changed, Python recompiles and overwrites the `.pyc`.
 
 You can verify this yourself:

@@ -76,6 +76,8 @@ Argparse shows the error message and exits with code 2 automatically.
 
 ## Subcommands
 
+![3D explanation of Subcommands showing the Python mechanism and result](images/03_supplement_2_3d.png)
+
 Many CLIs have subcommands (`git commit`, `git push`). `argparse` supports this with subparsers:
 
 ```python
@@ -154,6 +156,25 @@ print("Passing --verbose and --quiet together would print an error and exit.")
 | Restricted choices | `add_argument("--fmt", choices=["csv","json"])` |
 | Subcommands | `subparsers = parser.add_subparsers(...)` |
 
+## From Example to Production
+
+Argparse becomes dependable only when its boundaries are as deliberate as its main example. A CLI is a public interface even when it is used only inside one team. Preserve stable command names and option meanings, validate at the boundary, and keep business logic in ordinary functions that can be tested without starting a subprocess. Send machine-readable results to stdout and diagnostics to stderr. Document exit codes, avoid prompts in automation-oriented commands, and test quoting, paths, and Unicode on every supported platform. A good command is predictable in a terminal, a shell script, and continuous integration.
+
+## Common Mistakes and Engineering Checks
+
+- Mixing parsing, business logic, and printing in one large function. This makes validation and unit testing unnecessarily difficult.
+- Writing warnings or progress messages to stdout. Redirected CSV or JSON output then becomes invalid.
+- Designing only for the successful interactive run. Scripts also depend on stable help text, exit status, and non-interactive behavior.
+
+Before treating the implementation as complete, answer these checks:
+
+- Can the core logic be tested without a subprocess?
+- Are stdout, stderr, and exit status intentional?
+- Does --help show one copyable example?
+
+## Check Your Understanding
+
+Explain argparse to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Build a `report.py` CLI with two subcommands: `daily` (requires `--date`) and `monthly` (requires `--month`, `--year`). Each prints a summary of what it would generate:

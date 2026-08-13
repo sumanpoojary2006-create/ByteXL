@@ -50,6 +50,8 @@ asyncio.run(main())
 
 ## asyncio.create_task
 
+![3D explanation of asyncio.createtask showing the Python mechanism and result](images/05_supplement_2_3d.png)
+
 `asyncio.create_task(coro)` wraps a coroutine in a `Task` and schedules it to run. The task starts running as soon as the current coroutine yields (via `await`).
 
 ```python
@@ -129,6 +131,8 @@ asyncio.run(main())
 
 ## Timeout with asyncio.wait_for
 
+![3D explanation of Timeout with asyncio.waitfor showing the key comparison or state change](images/05_supplement_3_3d.png)
+
 `asyncio.wait_for` wraps a coroutine with a timeout, raising `asyncio.TimeoutError` if it does not complete in time:
 
 ```python
@@ -160,6 +164,25 @@ asyncio.run(main())
 | `task.cancel()` | Request cancellation |
 | `asyncio.wait_for(coro, timeout)` | Run with a timeout; raises `TimeoutError` |
 
+## From Example to Production
+
+Coroutines And Tasks becomes dependable only when its boundaries are as deliberate as its main example. In production, asynchronous code must be designed around waiting, cancellation, and ownership. First identify the exact operation that yields control. Then decide who creates each task, who awaits it, what timeout applies, and how unfinished work is cancelled during shutdown. Bound concurrency when a loop can create many operations, and record failures instead of allowing a background task to disappear silently. Measure total elapsed time and resource usage with representative I/O; a shorter example is not evidence that every workload benefits.
+
+## Common Mistakes and Engineering Checks
+
+- Using async syntax around CPU-heavy work and expecting parallel execution. The event loop still runs Python code on one thread.
+- Creating tasks without awaiting or retaining them. Their exceptions may be delayed, lost, or reported only at shutdown.
+- Ignoring timeout, cancellation, and cleanup paths. Network and file operations fail at boundaries, not only on the happy path.
+
+Before treating the implementation as complete, answer these checks:
+
+- What operation yields control?
+- Who owns and awaits the work?
+- How is failure, timeout, and cancellation observed?
+
+## Check Your Understanding
+
+Explain coroutines and tasks to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Write a function `fetch_all_with_timeout(libraries, isbn, timeout)` that creates a task for each library, waits for all of them with a per-library timeout, and returns a dict mapping library ID to result (or `None` if timed out):

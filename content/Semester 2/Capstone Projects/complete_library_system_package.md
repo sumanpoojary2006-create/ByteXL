@@ -4,6 +4,8 @@ Every character in Semester 2 worked on a piece of the library system. Tara buil
 
 This capstone brings all of those pieces together into one installable, tested, documented package.
 
+![The library package connecting data models, SQLite transactions, CLI commands, tests, and build configuration](images/capstone/01_library_package_architecture.png)
+
 ## What to Build
 
 The `library-system` package must:
@@ -359,6 +361,8 @@ for unit, topic, contribution in semester_map:
 | Tests | `tests/test_database.py` | pytest, fixtures, parametrize |
 | Configuration | `pyproject.toml` | Packaging, tool config |
 | Quality gates | `.pre-commit-config.yaml` | pre-commit, ruff, black, mypy |
+
+![The capstone moving from source code through quality checks, tests, build, clean installation, and successful use](images/capstone/02_quality_release_workflow.png)
 
 ## Your Turn
 

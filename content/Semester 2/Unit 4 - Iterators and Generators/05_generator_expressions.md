@@ -28,6 +28,8 @@ The generator expression does not compute anything when it is created. It is a p
 
 ## Using a Generator Expression
 
+![3D explanation of Using a Generator Expression showing the Python mechanism and result](images/05_supplement_2_3d.png)
+
 Any place that accepts an iterator accepts a generator expression:
 
 ```python
@@ -98,6 +100,8 @@ Each generator in the chain produces items only when the next one requests them.
 
 ## When to Choose a Generator Expression vs. a List Comprehension
 
+![3D explanation of When to Choose a Generator Expression vs. a List Comprehension showing the key comparison or state change](images/05_supplement_3_3d.png)
+
 Use a `list comprehension` when you need to iterate over the result more than once, need to know the length, or need to index into specific positions. Use a `generator expression` when you process results once in a pipeline, the sequence could be very large, or you pass it directly to a function like `sum()`, `max()`, or `any()`.
 
 ```python
@@ -126,6 +130,25 @@ print(sum(r["copies"] for r in records if r["approved"]))   # no list needed
 | Supports `len()` | Yes | No |
 | Best for | Multiple iterations, indexing | Single-pass processing, large data |
 
+## From Example to Production
+
+Generator Expressions becomes dependable only when its boundaries are as deliberate as its main example. Lazy iteration is a lifecycle as well as a memory technique. State whether an iterable is reusable, whether an iterator is single-pass, what resources remain open, and where errors appear. Consume only as much data as the caller needs, avoid accidental materialization with `list()`, and test empty, one-item, and partially consumed cases. For external resources, make ownership and cleanup explicit rather than relying on garbage collection.
+
+## Common Mistakes and Engineering Checks
+
+- Returning the same exhausted iterator when callers expect a fresh traversal.
+- Converting a generator to a list and losing the memory benefit the design was meant to provide.
+- Hiding file or connection ownership inside a generator without a clear cleanup path.
+
+Before treating the implementation as complete, answer these checks:
+
+- Is this reusable or single-pass?
+- When is each value computed?
+- Who closes any underlying resource?
+
+## Check Your Understanding
+
+Explain generator expressions to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 ```python

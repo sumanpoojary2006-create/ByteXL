@@ -33,6 +33,8 @@ for _ in range(5):
 
 ## When Lists Are the Right Choice
 
+![3D explanation of When Lists Are the Right Choice showing the Python mechanism and result](images/08_supplement_2_3d.png)
+
 Lists are better when:
 
 **You need to iterate more than once.** A list supports multiple `for` loops, index access, and length queries. A generator is exhausted after one pass.
@@ -99,6 +101,8 @@ print("Done: updated DB and sent emails for all approved records")
 ```
 
 ## Generators in the Complete Library System
+
+![3D explanation of Generators in the Complete Library System showing the key comparison or state change](images/08_supplement_3_3d.png)
 
 In the context of the semester project, generators are the right tool for the data ingestion layer:
 

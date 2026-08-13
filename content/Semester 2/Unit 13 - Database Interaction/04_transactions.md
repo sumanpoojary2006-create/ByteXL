@@ -6,7 +6,7 @@ Transactions prevent this class of bug. A transaction groups multiple SQL statem
 
 **Definition:** A `transaction` groups multiple SQL statements into a single atomic unit: either every statement succeeds and the changes are committed, or a failure rolls back all of them as if none ran.
 
-![Two operations (return book, borrow book) wrapped in a transaction: if step 2 fails, step 1 is also undone, leaving the database in its original clean state](images/04_transactions.md.png)
+![Two operations (return book, borrow book) wrapped in a transaction: if step 2 fails, step 1 is also undone, leaving the database in its original clean state](images/04_transactions.png)
 
 ## The ACID Properties
 
@@ -58,6 +58,8 @@ conn.close()
 `rollback()` discards all uncommitted changes. The database returns to the state it was in at the last `commit()`.
 
 ## A Real Transaction: Loan Processing
+
+![3D explanation of A Real Transaction: Loan Processing showing the Python mechanism and result](images/04_supplement_2_3d.png)
 
 ```python
 import sqlite3
@@ -147,6 +149,8 @@ The `with conn:` block is the cleanest pattern for transactions. No manual `comm
 
 ## Savepoints for Partial Rollback
 
+![3D explanation of Savepoints for Partial Rollback showing the key comparison or state change](images/04_supplement_3_3d.png)
+
 For complex workflows, SQLite supports savepoints: named checkpoints within a transaction that you can roll back to without undoing the entire transaction.
 
 ```python
@@ -191,6 +195,25 @@ conn.close()
 | Savepoint | Named checkpoint inside a transaction for partial rollback |
 | ACID | Atomic, Consistent, Isolated, Durable |
 
+## From Example to Production
+
+Transactions becomes dependable only when its boundaries are as deliberate as its main example. Database code is reliable when transaction boundaries and data contracts are explicit. Use parameters for every value, keep connections short-lived, and commit only after the complete operation succeeds. Let database constraints protect invariants even when application validation exists. Decide what a returned row represents, translate it at one boundary, and test rollback paths as carefully as successful writes. For SQLite, also remember that concurrency, types, and migration behavior differ from larger server databases, so avoid presenting a local demonstration as a universal deployment model.
+
+## Common Mistakes and Engineering Checks
+
+- Building SQL with string formatting. This creates injection risk and breaks on quoting and type conversion.
+- Committing each statement independently when several statements form one business action. Partial updates then become possible.
+- Testing only with a fresh empty database. Real systems contain old rows, failed migrations, duplicates, and concurrent access.
+
+Before treating the implementation as complete, answer these checks:
+
+- Where does the transaction begin and end?
+- Which constraints enforce valid data?
+- What happens when the second operation fails?
+
+## Check Your Understanding
+
+Explain transactions to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Write a `return_book(isbn, member_id)` function that:

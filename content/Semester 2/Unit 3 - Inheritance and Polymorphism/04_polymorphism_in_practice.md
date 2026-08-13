@@ -48,6 +48,8 @@ The loop is four lines. It has no type checks. Every item responds to `checkout_
 
 ## Why Not Just Use isinstance() and if-Branches?
 
+![3D explanation of Why Not Just Use isinstance() and if-Branches? showing the Python mechanism and result](images/04_supplement_2_3d.png)
+
 It is tempting to write the equivalent logic with explicit type checks:
 
 ```python
@@ -87,6 +89,8 @@ for item in items:
 This is more flexible than Java-style interface declarations: no shared base class or explicit registration is needed. The trade-off is that the shared interface is informal and invisible until an object is actually used.
 
 ## A Practical Example: Generating a Report
+
+![3D explanation of A Practical Example: Generating a Report showing the key comparison or state change](images/04_supplement_3_3d.png)
 
 Polymorphism makes it easy to write functions that work across an entire collection without knowing the specifics:
 

@@ -1,5 +1,7 @@
 # Unit 10: Asynchronous Programming
 
+![Asynchronous tasks coordinated by an event loop while I/O operations wait](images/00_unit_overview.png)
+
 **Semester 2: Advanced Python Concepts**
 
 Handle many I/O-bound tasks concurrently with async/await.

@@ -119,6 +119,8 @@ conn.close()
 
 ## The Key Concept: Separating Schema from Logic
 
+![3D explanation of The Key Concept: Separating Schema from Logic showing the Python mechanism and result](images/07_supplement_2_3d.png)
+
 The ORM pattern keeps the schema definition in one place (the class) instead of scattered across SQL strings. When a column is added, only the class changes:
 
 ```python
@@ -208,6 +210,8 @@ for scenario, choice, reason in scenarios:
 
 ## ORM Intro at a Glance
 
+![3D explanation of ORM Intro at a Glance showing the key comparison or state change](images/07_supplement_3_3d.png)
+
 | Concept | What it means |
 |---|---|
 | ORM | Maps Python classes to database tables |
@@ -216,6 +220,25 @@ for scenario, choice, reason in scenarios:
 | Repository pattern | Encapsulates all database access for a table |
 | SQLAlchemy | Most popular Python ORM (two layers: Core and ORM) |
 
+## From Example to Production
+
+Orm Intro With Sqlite becomes dependable only when its boundaries are as deliberate as its main example. Database code is reliable when transaction boundaries and data contracts are explicit. Use parameters for every value, keep connections short-lived, and commit only after the complete operation succeeds. Let database constraints protect invariants even when application validation exists. Decide what a returned row represents, translate it at one boundary, and test rollback paths as carefully as successful writes. For SQLite, also remember that concurrency, types, and migration behavior differ from larger server databases, so avoid presenting a local demonstration as a universal deployment model.
+
+## Common Mistakes and Engineering Checks
+
+- Building SQL with string formatting. This creates injection risk and breaks on quoting and type conversion.
+- Committing each statement independently when several statements form one business action. Partial updates then become possible.
+- Testing only with a fresh empty database. Real systems contain old rows, failed migrations, duplicates, and concurrent access.
+
+Before treating the implementation as complete, answer these checks:
+
+- Where does the transaction begin and end?
+- Which constraints enforce valid data?
+- What happens when the second operation fails?
+
+## Check Your Understanding
+
+Explain orm intro with sqlite to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Add a `LoanRepository` class that models loans with `book_id`, `member_id`, and `loan_date` columns. Write `borrow(book_id, member_id)` and `active_loans()` methods. Test both with data from `BookTable` and `MemberRepository` in the same in-memory database.

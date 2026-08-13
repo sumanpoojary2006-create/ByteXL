@@ -36,6 +36,8 @@ print(b2)                  # Book('Shogun', copies=1)
 
 ## Instance Attributes, Class Attributes, and the Difference
 
+![3D explanation of Instance Attributes, Class Attributes, and the Difference showing the Python mechanism and result](images/01_supplement_2_3d.png)
+
 Attributes set on `self` in `__init__` are `instance attributes`: each object gets its own copy. Attributes set directly on the class body are `class attributes`: all instances share one copy.
 
 ```python

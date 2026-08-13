@@ -31,6 +31,8 @@ except TypeError as e:
 
 ## Concrete Subclasses Must Implement Every Abstract Method
 
+![3D explanation of Concrete Subclasses Must Implement Every Abstract Method showing the Python mechanism and result](images/06_supplement_2_3d.png)
+
 A class that inherits from `Notifier` and fails to implement `send` cannot be instantiated. Python catches this at instantiation time, not at call time, which is a major improvement over duck typing.
 
 ```python
@@ -115,6 +117,8 @@ print(b.display_title)   # Dune (Ed. 3)
 
 ## isinstance() With Abstract Classes
 
+![3D explanation of isinstance() With Abstract Classes showing the key comparison or state change](images/06_supplement_3_3d.png)
+
 A useful side effect of ABCs: `isinstance()` works correctly across the whole hierarchy, regardless of which concrete class you are holding.
 
 ```python
@@ -160,6 +164,25 @@ The ABC becomes a single, authoritative check: anything that claims to be a `Not
 | Instantiation error | Python raises `TypeError` if a required method is missing |
 | Concrete methods on ABC | Inherited by all subclasses; can call abstract methods via `self` |
 
+## From Example to Production
+
+Abstract Base Classes becomes dependable only when its boundaries are as deliberate as its main example. Encapsulation is valuable when it protects a meaningful invariant. Start from the invalid states the object must prevent, then expose the smallest interface that keeps those states unreachable. Prefer ordinary attributes until validation or computed behavior is needed, and preserve the public contract when an implementation changes. Tests should exercise behavior through the public interface rather than reaching into name-mangled storage.
+
+## Common Mistakes and Engineering Checks
+
+- Adding getters and setters mechanically without enforcing any rule or simplifying use.
+- Treating a leading underscore as security. It is a communication convention, not an access barrier.
+- Testing private representation so tightly that harmless refactoring breaks the test suite.
+
+Before treating the implementation as complete, answer these checks:
+
+- Which invariant is protected?
+- What is the smallest public interface?
+- Can the implementation change without breaking callers?
+
+## Check Your Understanding
+
+Explain abstract base classes to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 ```python

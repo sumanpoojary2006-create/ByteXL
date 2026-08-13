@@ -26,6 +26,8 @@ python script2.py &   # process 2: completely separate
 
 ## What a Thread Is
 
+![3D explanation of What a Thread Is showing the Python mechanism and result](images/01_supplement_2_3d.png)
+
 A thread is a unit of execution within a process. Multiple threads share the same memory space. They can read and write the same variables, lists, and objects directly.
 
 ```python
@@ -80,6 +82,8 @@ All run truly in parallel
 
 ## The Decision Matrix
 
+![3D explanation of The Decision Matrix showing the key comparison or state change](images/01_supplement_3_3d.png)
+
 | Work type | Best tool | Why |
 |---|---|---|
 | I/O-bound, async-compatible libs | `asyncio` | Most efficient; single thread |
@@ -98,6 +102,25 @@ All run truly in parallel
 | I/O concurrency | Yes (GIL released) | Yes |
 | Startup overhead | Low | Higher |
 
+## From Example to Production
+
+Processes Vs Threads becomes dependable only when its boundaries are as deliberate as its main example. Concurrent code should make ownership visible. Decide which data is immutable, which state is shared, and which worker is allowed to change it. Prefer passing messages or returning results over mutating global objects. Start with the highest-level API that fits, place timeouts around waits, propagate worker exceptions to the caller, and shut executors down predictably. Finally, compare the design against a sequential baseline. Threads, processes, and pools add scheduling and debugging costs, so measured throughput and correctness must justify the extra machinery.
+
+## Common Mistakes and Engineering Checks
+
+- Assuming code is safe because one test run succeeded. Race conditions depend on timing and may appear only under repeated load.
+- Holding a lock while performing slow I/O or calling unknown code. This increases contention and can create deadlocks.
+- Starting workers without collecting results or exceptions. A failed worker can leave the main program reporting false success.
+
+Before treating the implementation as complete, answer these checks:
+
+- Which state is shared?
+- Where do worker errors surface?
+- How does the program stop cleanly?
+
+## Check Your Understanding
+
+Explain processes vs threads to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Open two terminal windows. In each one, run `python -c "import os; print(os.getpid())"`. Observe that each command produces a different PID (process ID) -- they are separate processes.

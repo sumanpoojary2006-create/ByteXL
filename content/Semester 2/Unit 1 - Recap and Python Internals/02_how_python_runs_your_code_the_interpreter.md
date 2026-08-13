@@ -24,6 +24,8 @@ Understanding that CPython is a piece of software, not an abstract thing called 
 
 ## The Four Stages Inside the Interpreter
 
+![3D explanation of The Four Stages Inside the Interpreter showing the Python mechanism and result](images/02_supplement_2_3d.png)
+
 When CPython runs `python app.py`, it works through four stages before any of your logic executes:
 
 **1. Lexing** (tokenization) reads your source file character by character and groups characters into meaningful tokens: keywords like `def`, names like `my_function`, operators like `+`, and literals like `"hello"`.

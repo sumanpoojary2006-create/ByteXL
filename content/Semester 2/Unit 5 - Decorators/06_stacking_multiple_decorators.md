@@ -98,6 +98,8 @@ first: after
 
 ## A Concrete Example: Auth, Then Log, Then Time
 
+![3D explanation of A Concrete Example: Auth, Then Log, Then Time showing the Python mechanism and result](images/06_supplement_2_3d.png)
+
 For Kiran's endpoint, the right design question is: what should happen when an unauthorized request arrives? If `@require_auth` is innermost (closest to `def`), it runs last, meaning timing and logging already ran before auth checked anything. If `@require_auth` is outermost (topmost in the source), it is the first thing called and can reject the request before the others run.
 
 ```python
@@ -174,6 +176,8 @@ print(f"get_book(5, token='valid-token') ->", result)
 
 ## The Mental Model: Nested Boxes
 
+![3D explanation of The Mental Model: Nested Boxes showing the key comparison or state change](images/06_supplement_3_3d.png)
+
 The clearest mental model is nested boxes. The decorator closest to `def` is the innermost box. Each decorator above it wraps around the previous layer.
 
 ```python
@@ -221,6 +225,25 @@ Reading `@A @B @C def fn` translates directly to `fn = A(B(C(fn)))`, which is th
 | Practical effect | Outermost decorator controls entry and can short-circuit |
 | Best practice | Use `@functools.wraps(fn)` at every level |
 
+## From Example to Production
+
+Stacking Multiple Decorators becomes dependable only when its boundaries are as deliberate as its main example. A decorator changes a callable's contract, so the wrapper must be as carefully designed as the wrapped function. Preserve metadata with `functools.wraps`, forward arguments transparently, return the original result, and decide how exceptions should propagate. Keep configuration outside per-call work when possible. Tests should cover metadata, return values, exceptions, and stacked order, not only the extra logging or timing side effect.
+
+## Common Mistakes and Engineering Checks
+
+- Forgetting to return either the wrapper at decoration time or the wrapped result at call time.
+- Losing names, docstrings, and signatures by omitting `functools.wraps`.
+- Catching exceptions inside a generic decorator and silently changing failure behavior.
+
+Before treating the implementation as complete, answer these checks:
+
+- Is the original contract preserved?
+- When does configuration execute?
+- What happens when decorators are stacked?
+
+## Check Your Understanding
+
+Explain stacking multiple decorators to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 ```python

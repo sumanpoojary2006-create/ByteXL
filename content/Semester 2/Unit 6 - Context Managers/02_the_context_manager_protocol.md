@@ -37,6 +37,8 @@ with SimpleResource() as resource:
 
 ## __exit__: Tearing Down and Handling Exceptions
 
+![3D explanation of exit: Tearing Down and Handling Exceptions showing the Python mechanism and result](images/02_supplement_2_3d.png)
+
 `__exit__(self, exc_type, exc_val, exc_tb)` receives three arguments describing any exception that occurred inside the `with` block:
 
 - `exc_type`: the exception class, or `None` if no exception occurred
@@ -106,6 +108,8 @@ The `as t` clause makes `t` point to the `Timer` instance returned by `__enter__
 
 ## What Makes a Valid Context Manager
 
+![3D explanation of What Makes a Valid Context Manager showing the key comparison or state change](images/02_supplement_3_3d.png)
+
 An object is a valid context manager if it has both `__enter__` and `__exit__`. The `with` statement calls neither directly; it calls them through the protocol, which means any class implementing both methods works.
 
 ```python
@@ -128,6 +132,25 @@ print(obj)
 | `__enter__(self)` | When the `with` block starts | None | The value bound to `as` |
 | `__exit__(self, exc_type, exc_val, exc_tb)` | When the block ends (any reason) | Exception info or three `None`s | `True` suppresses the exception; falsy propagates it |
 
+## From Example to Production
+
+The Context Manager Protocol becomes dependable only when its boundaries are as deliberate as its main example. A context manager is an ownership boundary. Write down the resource acquired on entry, the state returned to the block, and the cleanup that must happen on every exit path. Decide explicitly whether an exception is propagated or suppressed. Keep `__exit__` and generator cleanup small, idempotent where practical, and safe even when acquisition only partially succeeded. Test normal exit and exceptional exit separately.
+
+## Common Mistakes and Engineering Checks
+
+- Returning a truthy value from `__exit__` accidentally and hiding an exception.
+- Acquiring several resources before establishing how partial failure will be cleaned up.
+- Placing unrelated business logic in cleanup, making failure paths difficult to reason about.
+
+Before treating the implementation as complete, answer these checks:
+
+- What resource is owned?
+- Does cleanup run after failure?
+- Should the original exception propagate?
+
+## Check Your Understanding
+
+Explain the context manager protocol to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 ```python

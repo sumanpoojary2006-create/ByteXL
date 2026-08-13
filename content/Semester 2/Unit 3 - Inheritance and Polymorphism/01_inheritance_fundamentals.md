@@ -33,6 +33,8 @@ print(obj)
 
 ## Defining a Subclass
 
+![3D explanation of Defining a Subclass showing the Python mechanism and result](images/01_supplement_2_3d.png)
+
 The syntax for inheritance is the parent class name in parentheses after the class name:
 
 ```python
@@ -109,6 +111,25 @@ print(isinstance(b, EBook))         # False -- b is not an EBook
 | Inherited members | All non-name-mangled methods and attributes |
 | `isinstance(obj, Parent)` | True for both the child's direct type and all parent types |
 
+## From Example to Production
+
+Inheritance Fundamentals becomes dependable only when its boundaries are as deliberate as its main example. Advanced OOP should reduce coupling, not merely increase the number of classes. Define the substitutable behavior first, keep constructor chains explicit, and prefer composition when collaborators vary independently. Public methods should honor the same contract across implementations, including return types and failure behavior. A small usage example and focused tests usually reveal a fragile hierarchy earlier than a detailed class diagram.
+
+## Common Mistakes and Engineering Checks
+
+- Reusing code through inheritance when the child is not a genuine substitute for the parent.
+- Overriding a method with different assumptions, return values, or exception behavior.
+- Using multiple inheritance without understanding the method resolution order and cooperative `super()`.
+
+Before treating the implementation as complete, answer these checks:
+
+- Is every subtype substitutable?
+- Would composition reduce coupling?
+- Does the public contract stay consistent?
+
+## Check Your Understanding
+
+Explain inheritance fundamentals to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 ```python

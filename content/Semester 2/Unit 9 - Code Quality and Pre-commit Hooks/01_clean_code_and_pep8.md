@@ -97,6 +97,8 @@ print(obj)
 
 ## Line Length
 
+![3D explanation of Line Length showing the Python mechanism and result](images/01_supplement_2_3d.png)
+
 PEP 8 recommends a maximum of 79 characters per line (72 for docstrings). Many teams use 88 or 100 characters, which is the `black` formatter's default. The principle is: keep lines short enough that two files can be opened side by side.
 
 ```python
@@ -184,6 +186,25 @@ print("Both return the same value; only one tells you why.")
 | Import order | stdlib, third-party, local |
 | Blank lines | 2 between top-level, 1 inside class |
 
+## From Example to Production
+
+Clean Code And Pep8 becomes dependable only when its boundaries are as deliberate as its main example. Quality tools work best as one fast feedback system. Define the supported Python version and project rules in version-controlled configuration, run the same commands locally and in CI, and keep automatic fixes separate from checks that require judgment. Introduce rules gradually, fix root causes instead of silencing warnings, and document the single command contributors should run before review.
+
+## Common Mistakes and Engineering Checks
+
+- Enabling overlapping tools with conflicting formatting or lint rules.
+- Ignoring warnings broadly instead of documenting a narrow, justified exception.
+- Running different configurations locally, in pre-commit, and in CI.
+
+Before treating the implementation as complete, answer these checks:
+
+- Where is the rule configured?
+- Can every contributor reproduce the check?
+- Does the warning reveal a real maintenance risk?
+
+## Check Your Understanding
+
+Explain clean code and pep8 to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Open any Python file you have written and apply PEP 8 manually:

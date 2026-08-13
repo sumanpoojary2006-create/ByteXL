@@ -36,6 +36,8 @@ This is exactly what `@dataclass` does: it receives the class, inspects the fiel
 
 ## A Singleton Class Decorator
 
+![3D explanation of A Singleton Class Decorator showing the Python mechanism and result](images/07_supplement_2_3d.png)
+
 A more substantial use of class decorators: enforcing that only one instance of a class can ever exist (the Singleton pattern).
 
 ```python
@@ -95,6 +97,8 @@ print(get_book.call_count)   # 3
 `@CallCounter` makes `get_book` an instance of `CallCounter`. Calling `get_book(...)` calls `get_book.__call__(...)`. The `call_count` attribute persists naturally on the instance. `functools.update_wrapper(self, fn)` serves the same role as `@functools.wraps(fn)` for class-based wrappers.
 
 ## When to Use Class Decorators
+
+![3D explanation of When to Use Class Decorators showing the key comparison or state change](images/07_supplement_3_3d.png)
 
 Function decorators (closures) are shorter and cover most cases. Class decorators are worth choosing when:
 - The decorator needs significant state (a counter, a cache, a configuration object) that would clutter a closure.

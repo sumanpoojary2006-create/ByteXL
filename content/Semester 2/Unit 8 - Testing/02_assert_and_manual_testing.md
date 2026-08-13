@@ -54,6 +54,8 @@ print(f"PASS: calculate_fine(0) == 0.0")
 
 ## Asserting Exceptions
 
+![3D explanation of Asserting Exceptions showing the Python mechanism and result](images/02_supplement_2_3d.png)
+
 To test that a function raises a specific exception, you need to catch it and confirm the type. Python's `pytest` framework provides a cleaner way (covered in the next lesson), but the raw approach shows what is happening underneath:
 
 ```python
@@ -167,6 +169,25 @@ except ValueError as e:
 | `math.isclose(a, b)` | Safe float comparison within tolerance |
 | `assert raised` after try/except | Verify exception was raised |
 
+## From Example to Production
+
+Assert And Manual Testing becomes dependable only when its boundaries are as deliberate as its main example. A test is useful when it protects observable behavior and fails for one understandable reason. Arrange minimal inputs, perform one action, and assert the important result or side effect. Isolate external boundaries with fixtures or fakes, but avoid mocking the code under test. Include representative failures and edge cases, keep tests deterministic, and use coverage as a map for investigation rather than a target that replaces judgment.
+
+## Common Mistakes and Engineering Checks
+
+- Asserting implementation details that users cannot observe.
+- Sharing mutable fixture state so test order changes the result.
+- Adding many assertions to one test and obscuring which contract failed.
+
+Before treating the implementation as complete, answer these checks:
+
+- Which behavior is protected?
+- Can the test run alone and repeatedly?
+- Would a valid refactor keep the test passing?
+
+## Check Your Understanding
+
+Explain assert and manual testing to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Write a file `test_manual.py` with at least five test functions for `calculate_fine`. Include: normal case, zero days, one day, large number of days, and a case with a custom daily rate. Run the file with `python test_manual.py` and confirm all tests pass.

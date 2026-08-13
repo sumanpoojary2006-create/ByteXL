@@ -1,17 +1,18 @@
-# Unit 14: Packaging, Project Structure, and Distribution
+# Unit 14: Packaging and Distribution
 
-**Semester 2: Advanced Python Concepts**
+![A tested Python project moving through build and publication into an installable package](images/00_unit_overview.png)
 
-Structure, document, build, and distribute an installable Python package.
+Turn a tested Python project into a reproducible, installable, documented release.
 
-## Lessons
+## Topics
 
-| # | File | Topic |
-|---|---|---|
-| 01 | [01_project_structure.md](01_project_structure.md) | Project Structure and the src Layout |
-| 02 | [02_pyproject_toml.md](02_pyproject_toml.md) | pyproject.toml: The Single Config File |
-| 03 | [03_virtual_environments_and_uv.md](03_virtual_environments_and_uv.md) | Virtual Environments and uv |
-| 04 | [04_building_and_publishing.md](04_building_and_publishing.md) | Building Wheels and Publishing to PyPI |
-| 05 | [05_documentation.md](05_documentation.md) | Docstrings and README Documentation |
+1. [Professional Project Layout](01_professional_project_layout.md)
+2. [`pyproject.toml` and Build Backends](02_pyprojecttoml_and_build_backends.md)
+3. [Managing Dependencies and Environments with `uv`](03_managing_dependencies_and_environments_with_uv.md)
+4. [Building Wheels and Source Distributions](04_building_wheels_and_source_distributions.md)
+5. [Versioning and Semantic Versioning](05_versioning_and_semantic_versioning.md)
+6. [Publishing to PyPI](06_publishing_to_pypi.md)
+7. [Documentation and README Essentials](07_documentation_and_readme_essentials.md)
+8. [Bringing It Together: A Shippable, Tested Package](08_bringing_it_together_a_shippable_tested_package.md)
 
-_Status: all 5 lessons authored and verified._
+Each lesson follows the Semester 1 house standard: a story-led introduction, precise definition, labelled visual, runnable examples, common mistakes, guided practice, and a concise conclusion.

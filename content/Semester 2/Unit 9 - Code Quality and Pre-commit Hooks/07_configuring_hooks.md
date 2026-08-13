@@ -37,6 +37,8 @@ repos:
 
 ## Adding mypy as a Local Hook
 
+![3D explanation of Adding mypy as a Local Hook showing the Python mechanism and result](images/07_supplement_2_3d.png)
+
 mypy is not available as a pre-packaged pre-commit hook repository. Run it as a "local" hook that uses the project's installed Python:
 
 ```yaml
@@ -168,6 +170,25 @@ repos:
 | `pass_filenames: false` | Don't pass staged filenames to the command |
 | `stages: [pre-push]` | Run only on push, not on commit |
 
+## From Example to Production
+
+Configuring Hooks becomes dependable only when its boundaries are as deliberate as its main example. Quality tools work best as one fast feedback system. Define the supported Python version and project rules in version-controlled configuration, run the same commands locally and in CI, and keep automatic fixes separate from checks that require judgment. Introduce rules gradually, fix root causes instead of silencing warnings, and document the single command contributors should run before review.
+
+## Common Mistakes and Engineering Checks
+
+- Enabling overlapping tools with conflicting formatting or lint rules.
+- Ignoring warnings broadly instead of documenting a narrow, justified exception.
+- Running different configurations locally, in pre-commit, and in CI.
+
+Before treating the implementation as complete, answer these checks:
+
+- Where is the rule configured?
+- Can every contributor reproduce the check?
+- Does the warning reveal a real maintenance risk?
+
+## Check Your Understanding
+
+Explain configuring hooks to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Add a `mypy` local hook to your `.pre-commit-config.yaml` and configure mypy in `pyproject.toml`. Then run:

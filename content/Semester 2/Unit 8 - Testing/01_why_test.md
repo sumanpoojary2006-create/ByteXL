@@ -30,6 +30,8 @@ Running this after every change catches regressions: situations where a previous
 
 ## Why Automated Tests Beat Manual Verification
 
+![3D explanation of Why Automated Tests Beat Manual Verification showing the Python mechanism and result](images/01_supplement_2_3d.png)
+
 Sam verified his change manually: he borrowed one book, returned it ten days late, and confirmed the fine was correct. He did not check: borrowed on the last day of the month, borrowed on February 29, borrowed by a patron with an existing outstanding balance, or the edge case where `days_overdue` is zero.
 
 Automated tests check all these cases every time, in seconds, without anyone having to remember them:

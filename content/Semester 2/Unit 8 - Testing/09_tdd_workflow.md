@@ -20,6 +20,8 @@ Repeat.
 
 ## A TDD Session: Building a Reservation System
 
+![3D explanation of A TDD Session: Building a Reservation System showing the Python mechanism and result](images/09_supplement_2_3d.png)
+
 `Step 1 -- Red`: Write a test for a function that does not yet exist.
 
 ```python
@@ -158,6 +160,8 @@ TDD naturally produces functions with clean interfaces:
 - Every function you write has tests from the start, so coverage stays high automatically.
 
 ## When TDD Is and Is Not Appropriate
+
+![3D explanation of When TDD Is and Is Not Appropriate showing the key comparison or state change](images/09_supplement_3_3d.png)
 
 TDD works well for: business logic with clear inputs and outputs (fine calculations, queuing, validation), algorithmic functions, anything where the specification is clear.
 

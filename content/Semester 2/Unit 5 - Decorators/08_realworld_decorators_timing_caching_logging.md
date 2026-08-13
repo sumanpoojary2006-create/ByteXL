@@ -58,6 +58,8 @@ Two things to note: `time.perf_counter()` is more precise than `time.time()` for
 
 ## A Caching Decorator: functools.lru_cache
 
+![3D explanation of A Caching Decorator: functools.lrucache showing the Python mechanism and result](images/08_supplement_2_3d.png)
+
 Python's standard library provides a battle-tested caching decorator. `@functools.lru_cache` memoizes a function's return values by argument, evicting the Least Recently Used entry when the cache hits its size limit.
 
 ```python
@@ -116,6 +118,8 @@ except ValueError as e:
 ```
 
 ## Combining All Three
+
+![3D explanation of Combining All Three showing the key comparison or state change](images/08_supplement_3_3d.png)
 
 With `@functools.wraps` applied at every level, these decorators compose correctly:
 
@@ -183,6 +187,25 @@ The `@lru_cache` is innermost (checks and populates the cache). `@log_call` wrap
 | Logging | Roll your own with the `logging` module | ENTER/EXIT/ERROR trace |
 | Retrying | Roll your own with a for-loop and try/except | Retry on exception |
 
+## From Example to Production
+
+Realworld Decorators Timing Caching Logging becomes dependable only when its boundaries are as deliberate as its main example. A decorator changes a callable's contract, so the wrapper must be as carefully designed as the wrapped function. Preserve metadata with `functools.wraps`, forward arguments transparently, return the original result, and decide how exceptions should propagate. Keep configuration outside per-call work when possible. Tests should cover metadata, return values, exceptions, and stacked order, not only the extra logging or timing side effect.
+
+## Common Mistakes and Engineering Checks
+
+- Forgetting to return either the wrapper at decoration time or the wrapped result at call time.
+- Losing names, docstrings, and signatures by omitting `functools.wraps`.
+- Catching exceptions inside a generic decorator and silently changing failure behavior.
+
+Before treating the implementation as complete, answer these checks:
+
+- Is the original contract preserved?
+- When does configuration execute?
+- What happens when decorators are stacked?
+
+## Check Your Understanding
+
+Explain realworld decorators timing caching logging to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Apply all three production-quality decorators to a single function:

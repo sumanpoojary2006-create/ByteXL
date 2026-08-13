@@ -89,6 +89,8 @@ print(f"cpu_work(1000) -> {result}")
 
 ## Combining asyncio and ProcessPoolExecutor
 
+![3D explanation of Combining asyncio and ProcessPoolExecutor showing the Python mechanism and result](images/07_supplement_2_3d.png)
+
 For programs with both heavy I/O and heavy CPU, run async for I/O and offload CPU work to a process pool via `asyncio.run_in_executor`:
 
 ```python
@@ -127,6 +129,8 @@ if __name__ == "__main__":
 
 ## Common Mistakes
 
+![3D explanation of Common Mistakes showing the key comparison or state change](images/07_supplement_3_3d.png)
+
 | Mistake | What happens | Fix |
 |---|---|---|
 | Using threads for CPU work | No speedup; GIL serializes | Use `ProcessPoolExecutor` |
@@ -144,6 +148,25 @@ if __name__ == "__main__":
 | `ProcessPoolExecutor` | CPU-bound | `concurrent.futures` | Startup overhead; pickle required |
 | `multiprocessing.Pool` | CPU-bound (more control) | `multiprocessing` | Same as above |
 
+## From Example to Production
+
+Choosing Async Threads Processes becomes dependable only when its boundaries are as deliberate as its main example. Concurrent code should make ownership visible. Decide which data is immutable, which state is shared, and which worker is allowed to change it. Prefer passing messages or returning results over mutating global objects. Start with the highest-level API that fits, place timeouts around waits, propagate worker exceptions to the caller, and shut executors down predictably. Finally, compare the design against a sequential baseline. Threads, processes, and pools add scheduling and debugging costs, so measured throughput and correctness must justify the extra machinery.
+
+## Common Mistakes and Engineering Checks
+
+- Assuming code is safe because one test run succeeded. Race conditions depend on timing and may appear only under repeated load.
+- Holding a lock while performing slow I/O or calling unknown code. This increases contention and can create deadlocks.
+- Starting workers without collecting results or exceptions. A failed worker can leave the main program reporting false success.
+
+Before treating the implementation as complete, answer these checks:
+
+- Which state is shared?
+- Where do worker errors surface?
+- How does the program stop cleanly?
+
+## Check Your Understanding
+
+Explain choosing async threads processes to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Profile `run_slow_pipeline()` (a function you write that mixes I/O and CPU work) using `cProfile`. Based on where time is spent, choose the appropriate tool from the decision framework and rewrite the pipeline to use it. Measure the before and after wall-clock time.

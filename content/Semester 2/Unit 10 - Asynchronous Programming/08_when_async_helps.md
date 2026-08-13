@@ -40,6 +40,8 @@ for r in results:
 
 ## When async Does Not Help: CPU-Bound Work
 
+![3D explanation of When async Does Not Help: CPU-Bound Work showing the Python mechanism and result](images/08_supplement_2_3d.png)
+
 Async does not help when the bottleneck is computation. The event loop runs in one thread, and `await` only yields during I/O waits. If a function does pure computation with no I/O, `async def` just adds overhead without enabling concurrency.
 
 ```python
@@ -103,6 +105,8 @@ The right concurrency tool depends on the type of work:
 | Mixed I/O and CPU in the same program | `asyncio` for I/O, `run_in_executor(ProcessPoolExecutor)` for CPU |
 
 ## Migrating an Existing Codebase
+
+![3D explanation of Migrating an Existing Codebase showing the key comparison or state change](images/08_supplement_3_3d.png)
 
 Introducing async into a synchronous codebase is often called "async all the way down": to `await` a coroutine, the caller must be `async def`, and so must its caller, all the way up to `asyncio.run`. This means async changes propagate up the call stack.
 

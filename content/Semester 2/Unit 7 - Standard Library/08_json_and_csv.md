@@ -40,6 +40,8 @@ print(loaded)
 
 ## JSON Type Mapping
 
+![3D explanation of JSON Type Mapping showing the Python mechanism and result](images/08_supplement_2_3d.png)
+
 Python and JSON types map to each other, but not always one-to-one:
 
 | Python | JSON |
@@ -120,6 +122,8 @@ Always open CSV files with `newline=""`. If you do not, the `csv` module may mis
 
 ## DictReader and DictWriter
 
+![3D explanation of DictReader and DictWriter showing the key comparison or state change](images/08_supplement_3_3d.png)
+
 `csv.DictReader` treats the first row as column names and returns each subsequent row as a `dict`, making column access readable:
 
 ```python
@@ -165,6 +169,25 @@ with open("catalog.csv", "r", newline="") as f:
 | `csv.DictReader(file)` | Read rows as dicts (first row = headers) |
 | `csv.DictWriter(file, fieldnames)` | Write rows as dicts |
 
+## From Example to Production
+
+Json And Csv becomes dependable only when its boundaries are as deliberate as its main example. Standard-library choices still require explicit contracts. Confirm input types, deterministic behavior, platform differences, security properties, and failure modes from current documentation. Separate demonstrations from production defaults: seeded randomness is useful for tests but not secrets; naive datetimes are simple but unsafe across time zones; paths vary across operating systems. Wrap low-level modules behind a small function when the application needs one stable policy.
+
+## Common Mistakes and Engineering Checks
+
+- Choosing a familiar module without checking whether its guarantees match the problem.
+- Assuming operating-system, locale, time-zone, or ordering behavior is identical everywhere.
+- Mixing secure and non-secure randomness or hashing use cases.
+
+Before treating the implementation as complete, answer these checks:
+
+- Which guarantee does the application need?
+- What varies by platform or environment?
+- How will the result be tested deterministically?
+
+## Check Your Understanding
+
+Explain json and csv to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Write two functions: `export_catalog_json` and `export_catalog_csv`, both accepting a list of book dicts and a file path. Then write `load_catalog(path)` that detects the file extension and calls the correct reader.

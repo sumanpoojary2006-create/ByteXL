@@ -39,6 +39,8 @@ print("All batches indexed")
 
 ## Thread Arguments
 
+![3D explanation of Thread Arguments showing the Python mechanism and result](images/02_supplement_2_3d.png)
+
 The `args` parameter is a tuple of positional arguments; `kwargs` is a dict of keyword arguments:
 
 ```python
@@ -76,6 +78,8 @@ print(threading.active_count())          # number of threads currently alive
 ```
 
 ## Daemon Threads
+
+![3D explanation of Daemon Threads showing the key comparison or state change](images/02_supplement_3_3d.png)
 
 A daemon thread is a background thread that is automatically killed when the main thread exits, without requiring `join()`. Use it for background tasks that should not prevent the program from exiting.
 
@@ -144,6 +148,25 @@ print(f"Total indexed: {total}")
 | `threading.current_thread()` | The current thread object |
 | `threading.active_count()` | Number of live threads |
 
+## From Example to Production
+
+Threading Module becomes dependable only when its boundaries are as deliberate as its main example. Concurrent code should make ownership visible. Decide which data is immutable, which state is shared, and which worker is allowed to change it. Prefer passing messages or returning results over mutating global objects. Start with the highest-level API that fits, place timeouts around waits, propagate worker exceptions to the caller, and shut executors down predictably. Finally, compare the design against a sequential baseline. Threads, processes, and pools add scheduling and debugging costs, so measured throughput and correctness must justify the extra machinery.
+
+## Common Mistakes and Engineering Checks
+
+- Assuming code is safe because one test run succeeded. Race conditions depend on timing and may appear only under repeated load.
+- Holding a lock while performing slow I/O or calling unknown code. This increases contention and can create deadlocks.
+- Starting workers without collecting results or exceptions. A failed worker can leave the main program reporting false success.
+
+Before treating the implementation as complete, answer these checks:
+
+- Which state is shared?
+- Where do worker errors surface?
+- How does the program stop cleanly?
+
+## Check Your Understanding
+
+Explain threading module to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Write a function `parallel_download(urls)` that downloads all URLs concurrently using threads and returns a list of response texts:

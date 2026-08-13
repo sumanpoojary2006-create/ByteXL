@@ -47,6 +47,8 @@ print(f"{obj.title}: {obj.copies} copies")
 
 ## The Liskov Substitution Principle
 
+![3D explanation of The Liskov Substitution Principle showing the Python mechanism and result](images/06_supplement_2_3d.png)
+
 A useful rule of thumb: if you inherit, anywhere the parent class is used, the child should be usable as a drop-in replacement. If that is not true, inheritance is the wrong relationship.
 
 ```python
@@ -91,6 +93,8 @@ print(f"Inventory holds {len(obj._items)} item(s)")
 The composed version is simpler, easier to test (you can create an `Inventory` with mock items), and unaffected by changes to `LibraryItem`.
 
 ## Composition and Delegation
+
+![3D explanation of Composition and Delegation showing the key comparison or state change](images/06_supplement_3_3d.png)
 
 Composition often pairs with delegation: the outer object passes method calls through to an inner object it holds, rather than inheriting those methods.
 

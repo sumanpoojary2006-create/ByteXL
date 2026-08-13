@@ -34,6 +34,8 @@ The `try`/`finally` around `yield` is what makes the cleanup unconditional. If a
 
 ## Handling Exceptions in @contextmanager
 
+![3D explanation of Handling Exceptions in @contextmanager showing the Python mechanism and result](images/04_supplement_2_3d.png)
+
 When an exception occurs inside the `with` block, `@contextmanager` re-raises it at the `yield` point inside the generator. Wrapping `yield` in `try`/`except` lets you catch and respond to it, exactly like `__exit__`'s exception arguments.
 
 ```python
@@ -159,6 +161,25 @@ print("All buffers closed after ExitStack exit")
 | `nullcontext()` | A no-op context manager for optional wrapping |
 | `ExitStack` | Dynamically register and compose context managers |
 
+## From Example to Production
+
+Contextlib And Contextmanager becomes dependable only when its boundaries are as deliberate as its main example. A context manager is an ownership boundary. Write down the resource acquired on entry, the state returned to the block, and the cleanup that must happen on every exit path. Decide explicitly whether an exception is propagated or suppressed. Keep `__exit__` and generator cleanup small, idempotent where practical, and safe even when acquisition only partially succeeded. Test normal exit and exceptional exit separately.
+
+## Common Mistakes and Engineering Checks
+
+- Returning a truthy value from `__exit__` accidentally and hiding an exception.
+- Acquiring several resources before establishing how partial failure will be cleaned up.
+- Placing unrelated business logic in cleanup, making failure paths difficult to reason about.
+
+Before treating the implementation as complete, answer these checks:
+
+- What resource is owned?
+- Does cleanup run after failure?
+- Should the original exception propagate?
+
+## Check Your Understanding
+
+Explain contextlib and contextmanager to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Rewrite the `TempDirectory` class from the previous lesson as a `@contextmanager` function:

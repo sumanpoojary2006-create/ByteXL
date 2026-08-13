@@ -44,6 +44,8 @@ The public interface is two methods: `send` and `send_batch`. The validation hel
 
 ## Principle 2: Make It Hard to Use Incorrectly
 
+![3D explanation of Principle 2: Make It Hard to Use Incorrectly showing the Python mechanism and result](images/07_supplement_2_3d.png)
+
 A well-designed interface should be harder to misuse than to use correctly. This is achieved through type checking in setters, sensible defaults, and validation at the entry point.
 
 ```python

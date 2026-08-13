@@ -32,6 +32,8 @@ Writing your own higher-order function works the same way: accept a function par
 
 ## Accepting a Function, Running It, Returning the Result
 
+![3D explanation of Accepting a Function, Running It, Returning the Result showing the Python mechanism and result](images/02_supplement_2_3d.png)
+
 The simplest higher-order function Kiran could write for timing:
 
 ```python
@@ -128,6 +130,25 @@ Without `*args` and `**kwargs`, you would have to write a separate timing functi
 | `*args, **kwargs` | Makes a wrapper accept any function signature |
 | Replacing the original | `fn = add_behavior(fn)` applies the wrapper permanently |
 
+## From Example to Production
+
+Functions As Arguments And Return Values becomes dependable only when its boundaries are as deliberate as its main example. A decorator changes a callable's contract, so the wrapper must be as carefully designed as the wrapped function. Preserve metadata with `functools.wraps`, forward arguments transparently, return the original result, and decide how exceptions should propagate. Keep configuration outside per-call work when possible. Tests should cover metadata, return values, exceptions, and stacked order, not only the extra logging or timing side effect.
+
+## Common Mistakes and Engineering Checks
+
+- Forgetting to return either the wrapper at decoration time or the wrapped result at call time.
+- Losing names, docstrings, and signatures by omitting `functools.wraps`.
+- Catching exceptions inside a generic decorator and silently changing failure behavior.
+
+Before treating the implementation as complete, answer these checks:
+
+- Is the original contract preserved?
+- When does configuration execute?
+- What happens when decorators are stacked?
+
+## Check Your Understanding
+
+Explain functions as arguments and return values to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 ```python

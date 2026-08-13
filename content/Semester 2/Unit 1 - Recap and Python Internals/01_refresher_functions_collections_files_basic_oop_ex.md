@@ -29,6 +29,8 @@ This property, called first-class functions, is the precise reason decorators (U
 
 ## Collections and How They Behave
 
+![3D explanation of Collections and How They Behave showing the Python mechanism and result](images/01_supplement_2_3d.png)
+
 The four core data structures from Semester 1 each have a distinct contract about ordering, mutability, and lookup speed.
 
 ```python

@@ -1,5 +1,7 @@
 # Unit 13: Database Interaction
 
+![A Python application using parameters and a transaction to interact safely with SQLite](images/00_unit_overview.png)
+
 **Semester 2: Advanced Python Concepts**
 
 Persist data reliably using SQLite and Python's built-in database driver.

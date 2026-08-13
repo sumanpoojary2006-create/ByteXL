@@ -66,6 +66,8 @@ with catalog_writer() as writer:
 
 ## Handling Multiple Resources: ExitStack
 
+![3D explanation of Handling Multiple Resources: ExitStack showing the Python mechanism and result](images/05_supplement_2_3d.png)
+
 Opening several resources at once with nested `with` statements works, but becomes hard to read and harder to make conditional:
 
 ```python
@@ -205,6 +207,25 @@ for b in books:
 | Dynamic number of resources | `[stack.enter_context(open(p)) for p in paths]` |
 | Thread lock | `with lock:` |
 
+## From Example to Production
+
+Managing Resources Safely becomes dependable only when its boundaries are as deliberate as its main example. A context manager is an ownership boundary. Write down the resource acquired on entry, the state returned to the block, and the cleanup that must happen on every exit path. Decide explicitly whether an exception is propagated or suppressed. Keep `__exit__` and generator cleanup small, idempotent where practical, and safe even when acquisition only partially succeeded. Test normal exit and exceptional exit separately.
+
+## Common Mistakes and Engineering Checks
+
+- Returning a truthy value from `__exit__` accidentally and hiding an exception.
+- Acquiring several resources before establishing how partial failure will be cleaned up.
+- Placing unrelated business logic in cleanup, making failure paths difficult to reason about.
+
+Before treating the implementation as complete, answer these checks:
+
+- What resource is owned?
+- Does cleanup run after failure?
+- Should the original exception propagate?
+
+## Check Your Understanding
+
+Explain managing resources safely to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Write a function `compare_catalogs(path_a, path_b)` that opens both files simultaneously using `ExitStack`, reads them, and returns whether they have the same content. Make sure both files are always closed, even if reading one of them raises an exception.

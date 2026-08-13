@@ -42,6 +42,8 @@ For passwords and security, use `sha256` or `sha3_256` at minimum. MD5 and SHA-1
 
 ## Hashing Files
 
+![3D explanation of Hashing Files showing the Python mechanism and result](images/03_supplement_2_3d.png)
+
 Hashing is useful beyond passwords. You can hash a file to verify its integrity: if the hash after downloading matches the hash the sender published, the file is unmodified.
 
 ```python
@@ -97,6 +99,8 @@ if secrets.compare_digest(user_token, stored_token):
 
 ## hmac: Message Authentication Codes
 
+![3D explanation of hmac: Message Authentication Codes showing the key comparison or state change](images/03_supplement_3_3d.png)
+
 HMAC verifies that a message was created by someone who knows the secret key and has not been modified in transit. Webhooks and API request signing commonly use this pattern.
 
 ```python
@@ -134,6 +138,25 @@ Never use `==` to compare HMAC signatures; always use `hmac.compare_digest` (or 
 | `hmac.new(key, msg, hash)` | Sign and verify messages |
 | `hmac.compare_digest(a, b)` | Constant-time HMAC comparison |
 
+## From Example to Production
+
+Hashlib Secrets Hmac becomes dependable only when its boundaries are as deliberate as its main example. Standard-library choices still require explicit contracts. Confirm input types, deterministic behavior, platform differences, security properties, and failure modes from current documentation. Separate demonstrations from production defaults: seeded randomness is useful for tests but not secrets; naive datetimes are simple but unsafe across time zones; paths vary across operating systems. Wrap low-level modules behind a small function when the application needs one stable policy.
+
+## Common Mistakes and Engineering Checks
+
+- Choosing a familiar module without checking whether its guarantees match the problem.
+- Assuming operating-system, locale, time-zone, or ordering behavior is identical everywhere.
+- Mixing secure and non-secure randomness or hashing use cases.
+
+Before treating the implementation as complete, answer these checks:
+
+- Which guarantee does the application need?
+- What varies by platform or environment?
+- How will the result be tested deterministically?
+
+## Check Your Understanding
+
+Explain hashlib secrets hmac to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Write a `PatronSession` class that generates a secure session token on creation and verifies it:

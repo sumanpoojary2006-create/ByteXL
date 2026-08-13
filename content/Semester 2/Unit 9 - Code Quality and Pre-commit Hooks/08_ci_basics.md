@@ -65,6 +65,8 @@ jobs:
 
 ## Reading the Workflow
 
+![3D explanation of Reading the Workflow showing the Python mechanism and result](images/08_supplement_2_3d.png)
+
 ```yaml
 on:
   push:

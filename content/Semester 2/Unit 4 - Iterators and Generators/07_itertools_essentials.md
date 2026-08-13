@@ -32,6 +32,8 @@ for title in itertools.islice(all_books(), 2, 5):
 
 ## chain: Combine Multiple Iterables as One
 
+![3D explanation of chain: Combine Multiple Iterables as One showing the Python mechanism and result](images/07_supplement_2_3d.png)
+
 `itertools.chain` concatenates any number of iterables into one seamless sequence, without building a new list.
 
 ```python
@@ -141,6 +143,25 @@ print(next(gen2)["title"])   # Dune -- gen2 has its own cursor
 | `zip_longest(*its, fillvalue)` | Zip to the longest sequence | Pair unequal-length lists |
 | `tee(it, n)` | Clone one iterator into n copies | Process one stream two ways |
 
+## From Example to Production
+
+Itertools Essentials becomes dependable only when its boundaries are as deliberate as its main example. Lazy iteration is a lifecycle as well as a memory technique. State whether an iterable is reusable, whether an iterator is single-pass, what resources remain open, and where errors appear. Consume only as much data as the caller needs, avoid accidental materialization with `list()`, and test empty, one-item, and partially consumed cases. For external resources, make ownership and cleanup explicit rather than relying on garbage collection.
+
+## Common Mistakes and Engineering Checks
+
+- Returning the same exhausted iterator when callers expect a fresh traversal.
+- Converting a generator to a list and losing the memory benefit the design was meant to provide.
+- Hiding file or connection ownership inside a generator without a clear cleanup path.
+
+Before treating the implementation as complete, answer these checks:
+
+- Is this reusable or single-pass?
+- When is each value computed?
+- Who closes any underlying resource?
+
+## Check Your Understanding
+
+Explain itertools essentials to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 ```python

@@ -51,6 +51,8 @@ The second block rolls back automatically. Without `ManagedConnection`, the conn
 
 ## Making the Connection Reusable With a Pattern
 
+![3D explanation of Making the Connection Reusable With a Pattern showing the Python mechanism and result](images/03_supplement_2_3d.png)
+
 If the same connection is used across many operations, a context manager that closes the connection every time is too aggressive. A better pattern is a transaction manager that shares a long-lived connection but commits or rolls back individual transactions:
 
 ```python
@@ -121,6 +123,25 @@ print(f"We have access to elapsed after the block: {timer.elapsed:.4f}s")
 | Suppress exception | Return `True` from `__exit__` | Use deliberately and rarely |
 | Propagate exception | Return `False` from `__exit__` | The usual behavior |
 
+## From Example to Production
+
+Writing A Classbased Context Manager becomes dependable only when its boundaries are as deliberate as its main example. A context manager is an ownership boundary. Write down the resource acquired on entry, the state returned to the block, and the cleanup that must happen on every exit path. Decide explicitly whether an exception is propagated or suppressed. Keep `__exit__` and generator cleanup small, idempotent where practical, and safe even when acquisition only partially succeeded. Test normal exit and exceptional exit separately.
+
+## Common Mistakes and Engineering Checks
+
+- Returning a truthy value from `__exit__` accidentally and hiding an exception.
+- Acquiring several resources before establishing how partial failure will be cleaned up.
+- Placing unrelated business logic in cleanup, making failure paths difficult to reason about.
+
+Before treating the implementation as complete, answer these checks:
+
+- What resource is owned?
+- Does cleanup run after failure?
+- Should the original exception propagate?
+
+## Check Your Understanding
+
+Explain writing a classbased context manager to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Write a `TempDirectory` context manager that creates a temporary directory in `__enter__` (using the `tempfile` module: `tempfile.mkdtemp()`) and removes it with all its contents in `__exit__` (using `shutil.rmtree()`). Test it by creating a file inside the temporary directory during the `with` block, then confirming the directory and the file are both gone after the block exits.

@@ -30,6 +30,8 @@ print(f"Fetched {len(results)} records")
 
 ## executor.submit: Non-Blocking Submission
 
+![3D explanation of executor.submit: Non-Blocking Submission showing the Python mechanism and result](images/06_supplement_2_3d.png)
+
 `submit(fn, *args, **kwargs)` submits a task and returns a `Future` immediately, without waiting for the task to complete. The future is a handle to the pending result.
 
 ```python
@@ -93,6 +95,8 @@ Using `as_completed` with a `{future: metadata}` dict lets you associate each re
 
 ## Handling Exceptions in Futures
 
+![3D explanation of Handling Exceptions in Futures showing the key comparison or state change](images/06_supplement_3_3d.png)
+
 If a submitted task raises an exception, the exception is stored in the Future. Calling `future.result()` re-raises it:
 
 ```python
@@ -123,6 +127,25 @@ with ThreadPoolExecutor(max_workers=4) as executor:
 | `future.result()` | Get the result (blocks until done, raises on exception) |
 | `as_completed(futures)` | Yield futures as they finish (not submission order) |
 
+## From Example to Production
+
+Concurrent Futures becomes dependable only when its boundaries are as deliberate as its main example. Concurrent code should make ownership visible. Decide which data is immutable, which state is shared, and which worker is allowed to change it. Prefer passing messages or returning results over mutating global objects. Start with the highest-level API that fits, place timeouts around waits, propagate worker exceptions to the caller, and shut executors down predictably. Finally, compare the design against a sequential baseline. Threads, processes, and pools add scheduling and debugging costs, so measured throughput and correctness must justify the extra machinery.
+
+## Common Mistakes and Engineering Checks
+
+- Assuming code is safe because one test run succeeded. Race conditions depend on timing and may appear only under repeated load.
+- Holding a lock while performing slow I/O or calling unknown code. This increases contention and can create deadlocks.
+- Starting workers without collecting results or exceptions. A failed worker can leave the main program reporting false success.
+
+Before treating the implementation as complete, answer these checks:
+
+- Which state is shared?
+- Where do worker errors surface?
+- How does the program stop cleanly?
+
+## Check Your Understanding
+
+Explain concurrent futures to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Write `parallel_fetch_and_index(records)` that:

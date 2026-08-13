@@ -31,6 +31,8 @@ For this to work, every `notifier` object must guarantee it has a `send` method 
 
 ## Designing for Abstraction: Concrete vs. Abstract
 
+![3D explanation of Designing for Abstraction: Concrete vs. Abstract showing the Python mechanism and result](images/05_supplement_2_3d.png)
+
 The idea of a "notifier" is abstract: it represents a category of things that can send messages, without specifying which particular channel is used. Specific implementations (email, SMS) are concrete.
 
 ```python
@@ -100,6 +102,8 @@ for key, value in interface_spec.items():
 Abstract Base Classes, covered in the next lesson, bridge this gap by making the required interface explicit and enforced.
 
 ## Hiding Complexity Behind a Simple Interface
+
+![3D explanation of Hiding Complexity Behind a Simple Interface showing the key comparison or state change](images/05_supplement_3_3d.png)
 
 Abstraction is not only about polymorphism. It is also about hiding internal complexity that callers do not need to know about. A well-designed class exposes simple methods even when the implementation is complex.
 

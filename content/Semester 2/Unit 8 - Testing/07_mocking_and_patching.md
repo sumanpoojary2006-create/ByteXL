@@ -32,6 +32,8 @@ print(result)   # True
 
 ## patch: Replace at the Call Site
 
+![3D explanation of patch: Replace at the Call Site showing the Python mechanism and result](images/07_supplement_2_3d.png)
+
 `unittest.mock.patch` temporarily replaces a name with a `MagicMock` for the duration of a test. The replacement is scoped: it reverts to the real object after the test exits.
 
 ```python
@@ -178,6 +180,8 @@ print("never_called.assert_not_called(): passed")
 
 ## What to Mock and What Not to
 
+![3D explanation of What to Mock and What Not to showing the key comparison or state change](images/07_supplement_3_3d.png)
+
 Mock external dependencies: network calls, database I/O, file system writes in slow tests, time (for deterministic date-sensitive tests). Do not mock the code you are actually testing.
 
 ```python
@@ -233,6 +237,25 @@ except AssertionError as e:
 | `mock.assert_called_once_with(args)` | Verify the mock was called with specific args |
 | `mocker.patch(...)` | pytest-mock fixture version of patch |
 
+## From Example to Production
+
+Mocking And Patching becomes dependable only when its boundaries are as deliberate as its main example. A test is useful when it protects observable behavior and fails for one understandable reason. Arrange minimal inputs, perform one action, and assert the important result or side effect. Isolate external boundaries with fixtures or fakes, but avoid mocking the code under test. Include representative failures and edge cases, keep tests deterministic, and use coverage as a map for investigation rather than a target that replaces judgment.
+
+## Common Mistakes and Engineering Checks
+
+- Asserting implementation details that users cannot observe.
+- Sharing mutable fixture state so test order changes the result.
+- Adding many assertions to one test and obscuring which contract failed.
+
+Before treating the implementation as complete, answer these checks:
+
+- Which behavior is protected?
+- Can the test run alone and repeatedly?
+- Would a valid refactor keep the test passing?
+
+## Check Your Understanding
+
+Explain mocking and patching to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Write a test for a function `send_overdue_notices(overdue_records, notifier)` where `notifier` is a callable that sends the notification. Use a `MagicMock` as the notifier and verify it was called once per overdue record, with the correct patron ID:

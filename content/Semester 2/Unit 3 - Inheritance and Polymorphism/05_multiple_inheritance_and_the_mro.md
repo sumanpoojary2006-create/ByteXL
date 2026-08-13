@@ -44,6 +44,8 @@ Here the two parents have no methods in common, so there is no conflict. The rea
 
 ## The Diamond Problem and the MRO
 
+![3D explanation of The Diamond Problem and the MRO showing the Python mechanism and result](images/05_supplement_2_3d.png)
+
 The classic conflict in multiple inheritance is called the `diamond problem`. Imagine this hierarchy:
 
 ```
@@ -116,6 +118,8 @@ Child()
 Every `__init__` ran exactly once, in MRO order, because each one calls `super()`. If any level skipped `super().__init__()`, everything after it in the MRO would be silently skipped.
 
 ## When to Use Multiple Inheritance
+
+![3D explanation of When to Use Multiple Inheritance showing the key comparison or state change](images/05_supplement_3_3d.png)
 
 Multiple inheritance is appropriate when an object genuinely has two independent, orthogonal roles: a `SearchableMixin`, a `LoggableMixin`, or a `SerializableMixin` that adds behavior orthogonally to a domain class. Mixins, classes that add specific capabilities without being primary base classes, are the most common and well-justified use of multiple inheritance.
 

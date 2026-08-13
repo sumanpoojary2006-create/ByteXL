@@ -33,6 +33,8 @@ The type annotations (`title: str`) are used by the dataclass decorator to know 
 
 ## Default Values and Default Factories
 
+![3D explanation of Default Values and Default Factories showing the Python mechanism and result](images/08_supplement_2_3d.png)
+
 Fields can have defaults, just as in a normal `__init__`:
 
 ```python
@@ -111,6 +113,8 @@ Frozen dataclasses are excellent for value objects: things that represent a valu
 
 ## __post_init__: Running Code After auto-generated __init__
 
+![3D explanation of postinit: Running Code After auto-generated init showing the key comparison or state change](images/08_supplement_3_3d.png)
+
 If you need to run validation or derived computation after all fields are set, `__post_init__` runs automatically at the end of the generated `__init__`:
 
 ```python
@@ -141,6 +145,25 @@ print(b.title)   # Dune -- stripped by __post_init__
 | Immutable instances | `@dataclass(frozen=True)` |
 | Post-creation logic | `def __post_init__(self):` |
 
+## From Example to Production
+
+Dataclasses becomes dependable only when its boundaries are as deliberate as its main example. Advanced OOP should reduce coupling, not merely increase the number of classes. Define the substitutable behavior first, keep constructor chains explicit, and prefer composition when collaborators vary independently. Public methods should honor the same contract across implementations, including return types and failure behavior. A small usage example and focused tests usually reveal a fragile hierarchy earlier than a detailed class diagram.
+
+## Common Mistakes and Engineering Checks
+
+- Reusing code through inheritance when the child is not a genuine substitute for the parent.
+- Overriding a method with different assumptions, return values, or exception behavior.
+- Using multiple inheritance without understanding the method resolution order and cooperative `super()`.
+
+Before treating the implementation as complete, answer these checks:
+
+- Is every subtype substitutable?
+- Would composition reduce coupling?
+- Does the public contract stay consistent?
+
+## Check Your Understanding
+
+Explain dataclasses to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 ```python

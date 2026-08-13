@@ -16,6 +16,8 @@ Each instruction is one byte for the operation code (opcode) plus one byte for a
 
 ## Reading Bytecode with dis
 
+![3D explanation of Reading Bytecode with dis showing the Python mechanism and result](images/03_supplement_2_3d.png)
+
 The `dis` module disassembles any function into human-readable bytecode:
 
 ```python
@@ -97,6 +99,8 @@ Instead of seeing three `BINARY_OP` instructions at runtime, you see a single `L
 This is a small but real optimization, and it illustrates the general principle: the compiler is not just translating, it is also doing useful work.
 
 ## What the dis Module Reveals About Your Code
+
+![3D explanation of What the dis Module Reveals About Your Code showing the key comparison or state change](images/03_supplement_3_3d.png)
 
 Reading bytecode is most useful for three things. First, verifying that an optimization you wrote actually matters: if two versions of a function produce identical bytecode, any performance difference you measure is noise, not signal. Second, understanding why certain patterns have the overhead they do: a list comprehension has a `BUILD_LIST` and an inner loop in bytecode, which makes it easy to see it is not free. Third, satisfying curiosity when Python does something surprising and you cannot figure out why from the source code alone.
 

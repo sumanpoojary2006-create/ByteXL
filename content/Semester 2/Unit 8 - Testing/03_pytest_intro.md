@@ -18,6 +18,8 @@ That is the only setup required. `pytest` is not part of the standard library, b
 
 ## Writing Tests for pytest
 
+![3D explanation of Writing Tests for pytest showing the Python mechanism and result](images/03_supplement_2_3d.png)
+
 `pytest` discovers test functions automatically: it looks for files named `test_*.py` or `*_test.py`, and within those files it finds functions named `test_*`. No imports, no registration, no boilerplate required.
 
 ```python
@@ -180,6 +182,25 @@ Running `pytest` from the project root finds all `test_*.py` files automatically
 | `pytest.raises(ExcType)` | Assert that an exception is raised |
 | `pytest.raises(ExcType, match=pattern)` | Assert exception and check message |
 
+## From Example to Production
+
+Pytest Intro becomes dependable only when its boundaries are as deliberate as its main example. A test is useful when it protects observable behavior and fails for one understandable reason. Arrange minimal inputs, perform one action, and assert the important result or side effect. Isolate external boundaries with fixtures or fakes, but avoid mocking the code under test. Include representative failures and edge cases, keep tests deterministic, and use coverage as a map for investigation rather than a target that replaces judgment.
+
+## Common Mistakes and Engineering Checks
+
+- Asserting implementation details that users cannot observe.
+- Sharing mutable fixture state so test order changes the result.
+- Adding many assertions to one test and obscuring which contract failed.
+
+Before treating the implementation as complete, answer these checks:
+
+- Which behavior is protected?
+- Can the test run alone and repeatedly?
+- Would a valid refactor keep the test passing?
+
+## Check Your Understanding
+
+Explain pytest intro to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Move the `calculate_fine` function to its own file `library/fines.py`, then create `tests/test_fines.py`. Import `calculate_fine` and rewrite the manual tests as `pytest` tests, including one that uses `pytest.raises`:

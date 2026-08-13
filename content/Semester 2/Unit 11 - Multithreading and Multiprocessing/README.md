@@ -1,5 +1,7 @@
 # Unit 11: Multithreading and Multiprocessing
 
+![Threads sharing memory compared with processes using separate memory](images/00_unit_overview.png)
+
 **Semester 2: Advanced Python Concepts**
 
 Use threads and processes correctly, GIL and all.

@@ -33,6 +33,8 @@ The ordering is significant: the first matching directory wins. If you have a lo
 
 ## How Python Builds sys.path at Startup
 
+![3D explanation of How Python Builds sys.path at Startup showing the Python mechanism and result](images/06_supplement_2_3d.png)
+
 Python builds `sys.path` from three sources, in this order:
 
 1. `The script's own directory` (or `""` for an empty string, representing the current working directory) is prepended automatically. This is why importing a file in the same directory as your script usually works without any configuration.

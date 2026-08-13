@@ -45,6 +45,8 @@ The name `greet` and the function object it points to are separate things. `say_
 
 ## Functions Defined Inside Other Functions
 
+![3D explanation of Functions Defined Inside Other Functions showing the Python mechanism and result](images/01_supplement_2_3d.png)
+
 A function can be defined inside another function's body. The inner function has access to the outer function's variables, even after the outer function has returned. This combination of an inner function plus the surrounding variables it can see is called a `closure`.
 
 ```python
@@ -87,6 +89,8 @@ print(triple.__closure__[0].cell_contents)   # 3
 The `cell_contents` shows exactly what value each closure is holding. This is the mechanism that will underpin every decorator: a wrapper function that closes over the original function and some extra behavior.
 
 ## The Closure Pattern: Behavior Factories
+
+![3D explanation of The Closure Pattern: Behavior Factories showing the key comparison or state change](images/01_supplement_3_3d.png)
 
 Closures are most useful as `behavior factories`: functions that return customized functions without inheritance or classes.
 

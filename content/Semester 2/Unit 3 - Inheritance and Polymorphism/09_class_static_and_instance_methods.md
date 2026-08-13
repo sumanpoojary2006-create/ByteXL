@@ -36,6 +36,8 @@ When you call `b.check_out()`, Python passes `b` as `self` automatically.
 
 ## Class Methods: Receiving the Class, Not an Instance
 
+![3D explanation of Class Methods: Receiving the Class, Not an Instance showing the Python mechanism and result](images/09_supplement_2_3d.png)
+
 A `class method` receives `cls` (the class itself) as its first argument rather than `self`. It is defined with the `@classmethod` decorator. Class methods have access to the class and all its class attributes, but not to any specific instance.
 
 The most common use is as an `alternative constructor`: a factory method that creates instances from a different input format.

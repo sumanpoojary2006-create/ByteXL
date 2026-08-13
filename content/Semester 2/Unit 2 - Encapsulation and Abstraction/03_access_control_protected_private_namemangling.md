@@ -26,6 +26,8 @@ This is actually intentional in Python's design philosophy. Python prefers clari
 
 ## Two Underscores: Name Mangling
 
+![3D explanation of Two Underscores: Name Mangling showing the Python mechanism and result](images/03_supplement_2_3d.png)
+
 A double leading underscore (`__copies`) triggers a Python feature called `name mangling`. When Python compiles a class that contains an attribute or method starting with `__`, it renames it to `_ClassName__attributename` before the class body runs. This makes it genuinely harder to access from outside the class, because the attribute's name has changed.
 
 ```python

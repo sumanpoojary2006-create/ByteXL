@@ -25,6 +25,8 @@ The most commonly used hooks:
 
 ## A Simple pre-commit Hook
 
+![3D explanation of A Simple pre-commit Hook showing the Python mechanism and result](images/05_supplement_2_3d.png)
+
 ```console
 # .git/hooks/pre-commit
 #!/bin/sh
@@ -69,6 +71,8 @@ Manual hooks have two problems:
 The `pre-commit` framework (next lesson) solves both problems by version-controlling the hook configuration and managing hook installation automatically.
 
 ## Hook Types Reference
+
+![3D explanation of Hook Types Reference showing the key comparison or state change](images/05_supplement_3_3d.png)
 
 | Hook | When it runs |
 |---|---|

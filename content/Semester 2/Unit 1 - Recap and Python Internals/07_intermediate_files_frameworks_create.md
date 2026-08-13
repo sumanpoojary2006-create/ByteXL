@@ -28,6 +28,8 @@ __pycache__/
 
 ## Jinja2 Template Compilation
 
+![3D explanation of Jinja2 Template Compilation showing the Python mechanism and result](images/07_supplement_2_3d.png)
+
 Flask uses the Jinja2 template engine for rendering HTML. Jinja2 compiles templates (`.html` files) to Python bytecode the first time they are rendered, and caches the result in memory during the process lifetime. Jinja2 also supports an optional on-disk bytecode cache, but it is not enabled by default, and when a project does turn it on, it writes to the system's temporary directory rather than anywhere inside the project itself, so it is not something you will typically see sitting in your project folder the way `__pycache__` is.
 
 This is the same compilation concept as Python source files: Jinja2 parses template syntax, produces a code object, and runs that code object when rendering. The intermediate `.html` files in `templates/` are your source; the compiled form is an implementation detail of Jinja2 that you do not interact with directly.

@@ -35,6 +35,8 @@ During the 1-second wait in the first call, no other code runs. The program is f
 
 ## The Event Loop and Why Blocking Breaks It
 
+![3D explanation of The Event Loop and Why Blocking Breaks It showing the Python mechanism and result](images/02_supplement_2_3d.png)
+
 The asyncio event loop runs in a single thread. It switches between tasks at `await` points. If a task runs code that blocks the thread (without `await`), the event loop is frozen: it cannot switch to other tasks, and all pending async operations are stuck.
 
 ```python
@@ -108,6 +110,8 @@ The rule: any function that does I/O must be async and awaitable for use inside 
 
 ## Running Blocking Code Safely
 
+![3D explanation of Running Blocking Code Safely showing the key comparison or state change](images/02_supplement_3_3d.png)
+
 When you must use a blocking library in an async context, run it in a thread pool so it does not block the event loop:
 
 ```python
@@ -153,6 +157,25 @@ asyncio.run(main())
 | `time.sleep(n)` | Blocking pause (freezes event loop) |
 | `run_in_executor` | Run blocking code in a thread without freezing the event loop |
 
+## From Example to Production
+
+Blocking Vs Nonblocking Io becomes dependable only when its boundaries are as deliberate as its main example. In production, asynchronous code must be designed around waiting, cancellation, and ownership. First identify the exact operation that yields control. Then decide who creates each task, who awaits it, what timeout applies, and how unfinished work is cancelled during shutdown. Bound concurrency when a loop can create many operations, and record failures instead of allowing a background task to disappear silently. Measure total elapsed time and resource usage with representative I/O; a shorter example is not evidence that every workload benefits.
+
+## Common Mistakes and Engineering Checks
+
+- Using async syntax around CPU-heavy work and expecting parallel execution. The event loop still runs Python code on one thread.
+- Creating tasks without awaiting or retaining them. Their exceptions may be delayed, lost, or reported only at shutdown.
+- Ignoring timeout, cancellation, and cleanup paths. Network and file operations fail at boundaries, not only on the happy path.
+
+Before treating the implementation as complete, answer these checks:
+
+- What operation yields control?
+- Who owns and awaits the work?
+- How is failure, timeout, and cancellation observed?
+
+## Check Your Understanding
+
+Explain blocking vs nonblocking io to a teammate without using framework vocabulary. Then change one success condition in the lesson's example into a failure: invalid input, unavailable resource, timeout, or worker exception. Predict the visible output and program state before running it. Finally, write one automated test that proves cleanup or rollback still happens. This exercise distinguishes code that demonstrates syntax from code that preserves a contract under pressure.
 ## Your Turn
 
 Compare these two implementations:

@@ -23,6 +23,8 @@ print(type(type))        # <class 'type'>
 
 ## len(), +, and [] Are Just Method Calls
 
+![3D explanation of Python operator and built-in function dispatch through special methods](images/08_supplement_2_3d.png)
+
 Python's built-in functions and operators are thin wrappers around dunder method calls. `len(x)` calls `x.__len__()`. `a + b` calls `a.__add__(b)`. `x[0]` calls `x.__getitem__(0)`. This uniformity means any object can participate in any Python feature once it defines the corresponding method.
 
 ```python

@@ -43,6 +43,8 @@ The single underscore on `_copies` is a Python convention meaning "this is an in
 
 ## Why the Interface Matters More Than the Implementation
 
+![3D explanation of Why the Interface Matters More Than the Implementation showing the Python mechanism and result](images/02_supplement_2_3d.png)
+
 Once Priya wraps `_copies` in methods, something interesting happens: she can change the internal representation without breaking any code that uses `Book`.
 
 ```python
