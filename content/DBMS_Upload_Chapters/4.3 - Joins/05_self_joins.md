@@ -27,8 +27,6 @@ Before running the lesson queries, inspect the data they will use. The tables be
 | 5 | Nikita Rao | 2 |
 | 6 | Om Prakash | 3 |
 
-The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
-
 ## Hands-On Setup: Prepare the Data
 
 ```postgresql
@@ -226,7 +224,6 @@ Zoya wants to know which riders share the same mentor as Farhan Iqbal, not inclu
 ></iframe>
 
 If your query joins `riders` to itself on matching `mentor_id` values, filtering for rows where one side's name is 'Farhan Iqbal' and excluding that same name from the result, it returns Deepa Krishnan, since both she and Farhan are mentored by Suresh Pillai.
-
 
 Expected output for the practice query:
 

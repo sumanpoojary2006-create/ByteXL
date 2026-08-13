@@ -46,8 +46,6 @@ Before running the lesson queries, inspect the data they will use. The tables be
 | 5 | 4 | 2 | 275 | 2025-05-05 |
 | 6 | 2 | 3 | 180 | 2025-05-06 |
 
-The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
-
 ## Hands-On Setup: Prepare the Data
 
 ```postgresql
@@ -251,7 +249,7 @@ Using `COUNT(*)` here instead would incorrectly count her as 1, since `COUNT(*)`
 
 ## Your Turn
 
-The manager also wants to know which restaurants in Pune have never received an order, by name. Write a query against `restaurants` and `orders` above using `LEFT JOIN`, filtering to restaurants in the "Pune" city with no matching orders.
+The manager also wants to know which restaurants in Hyderabad have never received an order, by name. Write a query against `restaurants` and `orders` above using `LEFT JOIN`, filtering to restaurants in the "Hyderabad" city with no matching orders.
 
 <iframe
  frameBorder="0"
@@ -260,12 +258,24 @@ The manager also wants to know which restaurants in Pune have never received an 
  width="100%"
 ></iframe>
 
-If your query left-joins `restaurants` to `orders` and filters with `WHERE restaurants.city = 'Pune' AND orders.order_id IS NULL`, the result is empty, correctly showing that both Pune restaurants, Pizza Palace and Burger Barn, have received at least one order each.
+Left-join `restaurants` to `orders`, then filter with `WHERE restaurants.city = 'Hyderabad' AND orders.order_id IS NULL`. A working query looks like this:
 
+```postgresql
+SELECT r.restaurant_name, r.city, o.order_id
+FROM restaurants r
+LEFT JOIN orders o ON r.restaurant_id = o.restaurant_id
+WHERE r.city = 'Hyderabad' AND o.order_id IS NULL;
+```
 
 Expected output for the practice query:
 
-*(no rows returned)*
+| restaurant_name | city | order_id |
+| --- | --- | --- |
+| Taco Town | Hyderabad | *NULL* |
+
+- The `LEFT JOIN` keeps every restaurant row, attaching order columns only where a match exists; because Taco Town has no matching order, its `order_id` comes back as `NULL`.
+- `WHERE r.city = 'Hyderabad'` narrows the result to the single Hyderabad restaurant, and `AND o.order_id IS NULL` keeps only the ones the join found no order for.
+- The two conditions combine to answer the manager's exact question: Taco Town is the one restaurant in Hyderabad that has never received an order. (An `INNER JOIN` could never surface this row, since a restaurant with zero orders has nothing to match against.)
 
 ## Conclusion
 

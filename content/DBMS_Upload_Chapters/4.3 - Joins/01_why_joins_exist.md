@@ -48,8 +48,6 @@ Before running the lesson queries, inspect the data they will use. The tables be
 | 5 | 4 | 2 | 275 | 2025-05-05 |
 | 6 | 2 | 3 | 180 | 2025-05-06 |
 
-The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
-
 ## Hands-On Setup: Prepare the Data
 
 ```postgresql
@@ -249,7 +247,6 @@ Zoya needs a quick check: which restaurant did order 4 go to, by name, not by id
 ></iframe>
 
 If your query joins `orders` to `restaurants` on `restaurant_id` and filters with `WHERE orders.order_id = 4`, it returns "Pizza Palace," confirming order 4 went to the same restaurant as order 1.
-
 
 Expected output for the practice query:
 

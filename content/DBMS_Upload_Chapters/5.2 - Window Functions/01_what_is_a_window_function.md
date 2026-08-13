@@ -28,8 +28,6 @@ Before running the lesson queries, inspect the starting data. The tables below s
 | 5 | Sana Fatima | South | 6000.00 | 2025-06-11 |
 | 6 | Tarun Bakshi | East | 11000.00 | 2025-06-03 |
 
-The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
-
 ## Hands-On Setup: Prepare the Database
 
 ```postgresql
@@ -235,7 +233,6 @@ Expected output:
 | Nikhil Rao | North | 9200.00 | 29700.00 |
 | Sana Fatima | South | 15000.00 | 21000.00 |
 | Sana Fatima | South | 6000.00 | 21000.00 |
-
 
 ## Conclusion
 

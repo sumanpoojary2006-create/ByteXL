@@ -29,8 +29,6 @@ Before running the lesson queries, inspect the data they will use. The tables be
 | 4 | Manoj Tiwari | 9811100005 | 9811100005 | 2 |
 | 5 | Simran Kaur | 9811100006 | *NULL* | 2 |
 
-The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
-
 ## Hands-On Setup: Prepare the Data
 
 ```postgresql
@@ -196,7 +194,6 @@ The company org chart needs a "reports to" column: for every employee, show thei
 ></iframe>
 
 If your query is `SELECT full_name, COALESCE(manager_id, employee_id) AS reports_to FROM employees;`, Neha's row will show her own `employee_id` in the `reports_to` column, correctly marking her as the top of the chart with nobody above her.
-
 
 Expected output for the practice query:
 

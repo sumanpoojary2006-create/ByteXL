@@ -36,8 +36,6 @@ Before running the lesson queries, inspect the data they will use. The tables be
 | Imran Sheikh | imran.s@example.com |
 | Neha Bhatt | neha.bhatt@example.com |
 
-The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
-
 ## Hands-On Setup: Prepare the Data
 
 ```postgresql
@@ -182,7 +180,6 @@ Tanvi wants to confirm the loyalty reward list a different way: find every store
 ></iframe>
 
 If your query is `SELECT customer_name, email FROM store_customers INTERSECT SELECT customer_name, email FROM online_customers;`, it still returns just Kavya Nair, confirming that unlike `EXCEPT`, swapping the order of the two queries in an `INTERSECT` does not change which rows come back.
-
 
 Expected output for the practice query:
 

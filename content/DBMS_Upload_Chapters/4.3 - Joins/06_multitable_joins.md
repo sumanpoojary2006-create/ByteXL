@@ -50,8 +50,6 @@ Before running the lesson queries, inspect the data they will use. The tables be
 | 4 | 3 | 1 | 2 | 500 |
 | 5 | 2 | 3 | 1 | 180 |
 
-The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
-
 ## Hands-On Setup: Prepare the Data
 
 ```postgresql
@@ -239,7 +237,6 @@ The dispatch manager wants a report showing, for every order over 300 in amount,
 ></iframe>
 
 If your query joins `orders` to `customers` and `riders`, filters with `WHERE o.amount > 300`, and orders by `o.amount DESC`, Rohan Das's order delivered by Suresh Pillai comes out on top at 620.00.
-
 
 Expected output for the practice query:
 

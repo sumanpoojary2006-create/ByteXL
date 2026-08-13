@@ -26,8 +26,6 @@ Before running the lesson queries, inspect the data they will use. The tables be
 | 4 | Ritu Sharma | 0 | premium |
 | 5 | Yusuf Ali | 9 | basic |
 
-The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
-
 ## Hands-On Setup: Prepare the Data
 
 ```postgresql
@@ -196,7 +194,6 @@ The gym wants a discount eligibility flag: members with fewer than 5 visits this
 ></iframe>
 
 If your query uses `CASE WHEN visits_this_month < 5 THEN 'Send Offer' ELSE 'No Offer Needed' END AS offer_status`, only Nisha and Ritu will be flagged for an offer, matching their visit counts of 4 and 0.
-
 
 Expected output for the practice query:
 

@@ -30,8 +30,6 @@ Before running the lesson queries, inspect the data they will use. The tables be
 | 7 | Aman Gupta | Children | 175 | 2025-04-12 |
 | 8 | Ishita Rao | Non-Fiction | 990 | 2025-04-14 |
 
-The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
-
 ## Hands-On Setup: Prepare the Data
 
 ```postgresql
@@ -202,7 +200,6 @@ The founders want to see only the product categories that generated less than 10
 ></iframe>
 
 If your query groups by `category` with `SUM(amount) AS total_revenue` and filters with `HAVING SUM(amount) < 1000`, only the Children's category appears, with a combined total of 385.00.
-
 
 Expected output for the practice query:
 

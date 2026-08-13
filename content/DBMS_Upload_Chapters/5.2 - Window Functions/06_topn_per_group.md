@@ -28,8 +28,6 @@ Before running the lesson queries, inspect the starting data. The tables below s
 | Reema Ghosh | South | 15000.00 |
 | Kunal Verma | East | 11000.00 |
 
-The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
-
 ## Hands-On Setup: Prepare the Database
 
 ```postgresql
@@ -172,7 +170,6 @@ Find the single lowest-selling salesperson in each region, using `RANK`. Write t
 ></iframe>
 
 One valid answer wraps `RANK() OVER (PARTITION BY region ORDER BY total_amount ASC) AS region_rank` in a CTE and filters with `WHERE region_rank = 1`, returning Devika Rao for North, Reema Ghosh for South, and Kunal Verma for East, since ordering ascending instead of descending flips the ranking to find the smallest value first.
-
 
 Expected output:
 

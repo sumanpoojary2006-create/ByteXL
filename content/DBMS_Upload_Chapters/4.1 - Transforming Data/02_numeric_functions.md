@@ -30,8 +30,6 @@ Arjun wants customer-ready whole-number prices. The query is `SELECT product_nam
 
 ## Hands-On Practice: Round Product Prices
 
-The OneCompiler exercise uses two files. `init.sql` creates and populates the displayed `products` table. The active query file contains only the numeric-function query being practised. Where a query does not include `ORDER BY`, the database may return the correct rows in a different order from the example output.
-
 First, `init.sql` prepares the dataset:
 
 ```postgresql

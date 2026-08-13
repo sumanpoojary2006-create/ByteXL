@@ -24,8 +24,6 @@ Before running the lesson queries, inspect the starting data. The tables below s
 | 1 | in_transit |
 | 2 | in_transit |
 
-The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
-
 ## Hands-On Setup: Prepare the Database
 
 ```postgresql
@@ -46,7 +44,7 @@ Before running each active statement, predict which rows, database objects, or s
  width="100%"
 ></iframe>
 
-Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
+Expected observation: PostgreSQL returns live server metadata. Values differ from run to run, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
 The `state` column changes from `idle` to `active` (or briefly `idle in transaction` between statements) once `BEGIN` runs, and this state belongs specifically to this one connection's process id, `pg_backend_pid()`.
 
@@ -65,7 +63,7 @@ If application code calls `BEGIN` but then, due to a bug or an unhandled error, 
  width="100%"
 ></iframe>
 
-Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
+Expected observation: PostgreSQL returns live server metadata. Values differ from run to run, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
 A connection stuck like this continues holding its lock on shipment 2's row for as long as the connection stays open, potentially blocking every other transaction that needs that same row, exactly the kind of contention the concurrency control unit covered.
 

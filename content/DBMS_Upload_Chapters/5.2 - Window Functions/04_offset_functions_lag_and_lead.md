@@ -27,8 +27,6 @@ Before running the lesson queries, inspect the starting data. The tables below s
 | Sana Fatima | 2025-05-01 | 18000.00 |
 | Sana Fatima | 2025-06-01 | 21000.00 |
 
-The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
-
 ## Hands-On Setup: Prepare the Database
 
 ```postgresql
@@ -230,7 +228,6 @@ Leela wants to flag any month where a salesperson's total dropped compared to th
 ></iframe>
 
 One valid answer wraps the `LAG` comparison in a `CASE` expression: `CASE WHEN total_amount < LAG(total_amount) OVER (PARTITION BY salesperson ORDER BY sale_month) THEN 'down' ELSE 'up' END AS trend`. This correctly labels Nikhil's May row as "down" and every other row as "up." The first row of each salesperson has nothing to compare against, so it defaults to "up" through the `ELSE` branch.
-
 
 Expected output:
 

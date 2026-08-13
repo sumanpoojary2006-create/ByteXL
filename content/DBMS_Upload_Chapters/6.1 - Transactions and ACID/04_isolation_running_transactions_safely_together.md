@@ -23,8 +23,6 @@ Before running the lesson queries, inspect the starting data. The tables below s
 | 1 | Meera Iyer | 50000.00 |
 | 2 | Sanjay Rathi | 12000.00 |
 
-The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
-
 ## Hands-On Setup: Prepare the Database
 
 ```postgresql
@@ -49,8 +47,6 @@ Before running each active statement, predict which rows, database objects, or s
 ></iframe>
 
 Expected output:
-
-
 
 | balance |
 | --- |
@@ -80,8 +76,6 @@ The following illustrates the two sessions side by side, as comments, since a si
 
 Expected output:
 
-
-
 | balance |
 | --- |
 | 45000.00 |
@@ -99,7 +93,7 @@ Every database connection operates under an `isolation level`, a named setting t
  width="100%"
 ></iframe>
 
-Expected observation: PostgreSQL returns one row containing the current server or transaction setting. The exact value depends on the OneCompiler PostgreSQL environment, so compare the setting name and meaning rather than memorizing a particular value.
+Expected observation: PostgreSQL returns one row containing the current server or transaction setting. The exact value depends on the PostgreSQL environment, so compare the setting name and meaning rather than memorizing a particular value.
 
 This reports the `isolation level` the current session is using for its transactions, `read committed` by default in PostgreSQL, which already guarantees that a transaction never sees another transaction's uncommitted changes, exactly the behavior demonstrated above.
 

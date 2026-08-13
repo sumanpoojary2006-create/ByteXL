@@ -25,8 +25,6 @@ Some lessons need a larger dataset to make execution plans or maintenance behavi
 
 The setup generates 1,000 rows, numbered from 1 through 1000. This scale is intentional because performance behavior is difficult to observe on a tiny table.
 
-The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
-
 ## Hands-On Setup: Prepare the Database
 
 ```postgresql
@@ -48,7 +46,7 @@ Before running each active statement, predict which rows, database objects, or s
  width="100%"
 ></iframe>
 
-Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
+Expected observation: PostgreSQL returns live server metadata. Values differ from run to run, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
 A monitoring system would run a query shaped like this on a regular interval, minutes or even seconds apart:
 
@@ -69,7 +67,7 @@ The dead tuples covered in the maintenance lesson are exactly the kind of metric
  width="100%"
 ></iframe>
 
-Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
+Expected observation: PostgreSQL returns live server metadata. Values differ from run to run, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
 Tracking `dead_tuple_percent` and `last_autovacuum` across a database's busiest tables over time reveals whether autovacuum is genuinely keeping pace with write activity, or whether a table is quietly accumulating bloat faster than it is being cleaned, a slow-building problem that gradually degrades query performance long before it becomes an obvious emergency.
 
@@ -103,7 +101,7 @@ A ratio that drops noticeably, tracked over time rather than as a single snapsho
  width="100%"
 ></iframe>
 
-Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
+Expected observation: PostgreSQL returns live server metadata. Values differ from run to run, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
 - `wait_event_type` and `wait_event` reveal specifically what a query is stuck waiting on, if anything, such as a lock held by another transaction, exactly the kind of contention the concurrency control unit covered.
 - A monitoring system alerting on queries that exceed a reasonable running-time threshold, tuned to what "reasonable" actually means for a given application, catches runaway or blocked queries early, rather than letting them silently degrade the whole system's responsiveness.

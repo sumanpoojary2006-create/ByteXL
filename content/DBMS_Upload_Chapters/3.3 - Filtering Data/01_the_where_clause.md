@@ -22,7 +22,7 @@ The `courses` table is the only dataset needed for this lesson. Before looking a
 | 104 | Discrete Mathematics | Mathematics | 3 |
 | 105 | Microeconomics | Economics | 2 |
 
-To create this dataset for practice, `CREATE TABLE` defines the four columns, and `INSERT INTO` adds the five displayed rows. Those statements belong in the OneCompiler setup file. They prepare the data but do not explain filtering, so the lesson first focuses on the `WHERE` query itself.
+To create this dataset for practice, `CREATE TABLE` defines the four columns, and `INSERT INTO` adds the five displayed rows. Those statements belong in the setup file. They prepare the data but do not explain filtering, so the lesson first focuses on the `WHERE` query itself.
 
 Omkar needs only the Computer Science courses. The query is `SELECT title, department, credits FROM courses WHERE department = 'Computer Science';`.
 
@@ -40,8 +40,6 @@ Expected output:
 Only `Database Systems` and `Data Structures` come back. The database evaluated the condition `department = 'Computer Science'` against every row in `courses`, kept the two rows where it held true, and dropped the mathematics and economics rows entirely. Omkar's advisor never even sees the rows that did not qualify.
 
 ## Hands-On Practice: Filter the Courses Table
-
-The OneCompiler exercise uses two files. `init.sql` creates and populates only the `courses` table. The active query file contains the `SELECT` statement with its `WHERE` clause. This separation lets you experiment with the filter without mixing setup SQL into the query being studied.
 
 First, `init.sql` prepares the dataset:
 
@@ -70,7 +68,7 @@ Then the active query file applies the filter:
  width="100%"
 ></iframe>
 
-Run the active query file. OneCompiler loads `init.sql` beside it, and the result contains the same two Computer Science courses shown above.
+Run the active query file. `init.sql` loads first, and the result contains the same two Computer Science courses shown above.
 
 ## Where WHERE Sits in a Query
 

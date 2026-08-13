@@ -23,8 +23,6 @@ Before running the lesson queries, inspect the starting data. The tables below s
 | 1 | Meera Iyer | 50000.00 |
 | 2 | Sanjay Rathi | 12000.00 |
 
-The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
-
 ## Hands-On Setup: Prepare the Database
 
 ```postgresql
@@ -49,8 +47,6 @@ Before running each active statement, predict which rows, database objects, or s
 ></iframe>
 
 Expected output:
-
-
 
 | account_id | balance |
 | --- | --- |
@@ -83,7 +79,7 @@ Durability is not free; forcing every commit to wait for a disk write takes real
  width="100%"
 ></iframe>
 
-Expected observation: PostgreSQL returns one row containing the current server or transaction setting. The exact value depends on the OneCompiler PostgreSQL environment, so compare the setting name and meaning rather than memorizing a particular value.
+Expected observation: PostgreSQL returns one row containing the current server or transaction setting. The exact value depends on the PostgreSQL environment, so compare the setting name and meaning rather than memorizing a particular value.
 
 The default value, `on`, means every `COMMIT` waits until its change is safely recorded before reporting success, the full durability guarantee. Turning this off in a real system would make commits faster, but it would reopen exactly the risk durability exists to close: a very recent commit could theoretically be lost if the server crashed in the narrow window before its record was actually written to durable storage.
 

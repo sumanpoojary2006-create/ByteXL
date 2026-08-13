@@ -29,8 +29,6 @@ Before running the lesson queries, inspect the starting data. The tables below s
 | 5 | Pooja Reddy | Sales | 58000.00 | 4 |
 | 6 | Vikas Malhotra | Marketing | 60000.00 | NULL |
 
-The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
-
 ## Hands-On Setup: Prepare the Database
 
 ```postgresql
@@ -159,7 +157,7 @@ For small reference tables like this one, the difference is invisible, but it is
 
 ## Your Turn
 
-Kabir wants to find every employee who earns more than their own direct manager. Write a query against `employees` above using a `correlated subquery` that compares each employee's salary to their manager's salary.
+Kabir wants to find every employee who earns less than their own direct manager, along with each one's salary and their manager's salary for comparison. Write a query against `employees` above using a `correlated subquery` that compares each employee's salary to their manager's salary.
 
 <iframe
  frameBorder="0"
@@ -168,14 +166,27 @@ Kabir wants to find every employee who earns more than their own direct manager.
  width="100%"
 ></iframe>
 
-If your query is `SELECT e1.employee_name FROM employees e1 WHERE e1.salary > (SELECT e2.salary FROM employees e2 WHERE e2.employee_id = e1.manager_id);`, it returns no rows at all in this data, since every manager here, Ananya Sharma at 95000.00 and Sameer Khan at 65000.00, out-earns their own direct reports.
+Compare each employee's salary to their manager's salary with a correlated subquery. A working query looks like this:
+
+```postgresql
+SELECT e1.employee_name,
+       e1.salary,
+       (SELECT e2.salary FROM employees e2 WHERE e2.employee_id = e1.manager_id) AS manager_salary
+FROM employees e1
+WHERE e1.salary < (SELECT e2.salary FROM employees e2 WHERE e2.employee_id = e1.manager_id);
+```
 
 Expected output:
 
-*(no rows returned)*
+| employee_name | salary | manager_salary |
+| --- | --- | --- |
+| Rajat Bhatia | 78000.00 | 95000.00 |
+| Meghna Iyer | 82000.00 | 95000.00 |
+| Pooja Reddy | 58000.00 | 65000.00 |
 
-An empty result is still a correct one: it confirms nobody in the table currently out-earns their manager.
-
+- For each candidate row `e1`, the correlated subquery re-runs using that row's `manager_id`, fetching the salary of that specific employee's manager, then the `WHERE` keeps only rows where `e1.salary` is below it.
+- Rajat and Meghna both report to Ananya Sharma (95000.00) and earn less, and Pooja reports to Sameer Khan (65000.00) and earns less, so all three appear.
+- The three top managers, Ananya, Sameer, and Vikas, have `manager_id = NULL`, so their subquery returns no row; the comparison becomes `NULL`, which is never true, and they are correctly left out.
 
 ## Conclusion
 

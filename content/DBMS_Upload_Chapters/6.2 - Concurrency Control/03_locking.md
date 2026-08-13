@@ -22,8 +22,6 @@ Before running the lesson queries, inspect the starting data. The tables below s
 | --- | --- | --- |
 | 1 | Wireless Mouse | 50 |
 
-The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
-
 ## Hands-On Setup: Prepare the Database
 
 ```postgresql
@@ -48,15 +46,11 @@ Before running each active statement, predict which rows, database objects, or s
 
 Expected output 1:
 
-
-
 | stock_count |
 | --- |
 | 50 |
 
 Expected output 2:
-
-
 
 | stock_count |
 | --- |
@@ -92,8 +86,6 @@ An exclusive lock, the kind `FOR UPDATE` takes, blocks any other transaction fro
 
 Expected output:
 
-
-
 | stock_count |
 | --- |
 | 50 |
@@ -112,8 +104,6 @@ An ordinary `SELECT`, without `FOR UPDATE`, does not block other readers or even
 ></iframe>
 
 Expected output:
-
-
 
 | stock_count |
 | --- |

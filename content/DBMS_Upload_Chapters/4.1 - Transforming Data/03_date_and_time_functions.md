@@ -32,8 +32,6 @@ Before running the lesson queries, inspect the data they will use. The tables be
 | 4 | Lakshmi Iyer | 2025-03-05 16:45:00 |
 | 5 | Devika Menon | 2025-03-18 10:00:00 |
 
-The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
-
 ## Hands-On Setup: Prepare the Data
 
 ```postgresql

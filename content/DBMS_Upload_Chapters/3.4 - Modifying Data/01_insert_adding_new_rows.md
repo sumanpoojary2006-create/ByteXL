@@ -47,8 +47,6 @@ Alia's new student, Diya Kulkarni, now has a row of her own. The column list rig
 
 ### Hands-On Practice: Add the First Row
 
-The OneCompiler exercise uses two files. `init.sql` creates and populates the starting tables. The active query file contains only the statements being practised, here the `INSERT` followed by a confirming `SELECT`. Keeping setup and practice separate lets you rerun the modification against the same fresh dataset every time.
-
 First, `init.sql` prepares the source tables:
 
 ```postgresql
@@ -115,7 +113,7 @@ Then the active query file runs the `INSERT` and confirms it:
  width="100%"
 ></iframe>
 
-Run the active query file. OneCompiler loads `init.sql` first, so the `INSERT` adds Diya to the freshly built eight-row table, and the `SELECT` returns the single new row shown in the expected-output table above.
+Run the active query file. `init.sql` loads first, so the `INSERT` adds Diya to the freshly built eight-row table, and the `SELECT` returns the single new row shown in the expected-output table above.
 
 ## Inserting Several Rows in One Statement
 

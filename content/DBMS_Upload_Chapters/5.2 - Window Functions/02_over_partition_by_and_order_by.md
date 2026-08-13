@@ -27,8 +27,6 @@ Before running the lesson queries, inspect the starting data. The tables below s
 | 5 | Sana Fatima | South | 6000.00 | 2025-06-11 |
 | 6 | Tarun Bakshi | East | 11000.00 | 2025-06-03 |
 
-The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
-
 ## Hands-On Setup: Prepare the Database
 
 ```postgresql
@@ -175,7 +173,6 @@ Leela wants a running total of sales for the South region only, in date order, a
 ></iframe>
 
 If your query filters with `WHERE region = 'South'` and uses `SUM(amount) OVER (PARTITION BY region ORDER BY sale_date) AS running_total`, Sana's June 2 sale shows a running total of 15000.00, and her June 11 sale shows 21000.00, the two combined.
-
 
 Expected output:
 

@@ -25,8 +25,6 @@ Before running the lesson queries, inspect the starting data. The tables below s
 | database | shipments_prod |
 | user | app_service_account |
 
-The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
-
 ## Hands-On Setup: Prepare the Database
 
 ```postgresql
@@ -85,7 +83,7 @@ Opening a connection is not free: it typically means a network round trip to the
  width="100%"
 ></iframe>
 
-Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
+Expected observation: PostgreSQL returns live server metadata. Values differ from run to run, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
 `pg_stat_activity` is a real, queryable view showing every connection currently open to the database, a useful way to see this cost made concrete: each row represents a live connection the server is actively tracking and maintaining resources for, not a free, weightless link.
 
@@ -100,7 +98,7 @@ A connection that is opened but never properly closed continues consuming server
  width="100%"
 ></iframe>
 
-Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
+Expected observation: PostgreSQL returns live server metadata. Values differ from run to run, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
 A connection sitting in the `idle` state, especially one that has been idle for a long time, is exactly this kind of leak: application code that opened it, ran a query, and then never closed it, leaving the server holding onto that connection's resources for no active purpose.
 

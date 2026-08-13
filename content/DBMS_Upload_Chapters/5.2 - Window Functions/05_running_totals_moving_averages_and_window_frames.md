@@ -27,8 +27,6 @@ Before running the lesson queries, inspect the starting data. The tables below s
 | Nikhil Rao | 2025-05-01 | 21000.00 |
 | Nikhil Rao | 2025-06-01 | 29700.00 |
 
-The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
-
 ## Hands-On Setup: Prepare the Database
 
 ```postgresql
@@ -187,7 +185,6 @@ Leela wants a 2-month moving total, the current month plus the one before it, fo
 ></iframe>
 
 If your query uses `SUM(total_amount) OVER (ORDER BY sale_month ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS moving_total_2month`, February shows 38000.00, January plus February combined, and March shows 42000.00, February plus March.
-
 
 Expected output:
 

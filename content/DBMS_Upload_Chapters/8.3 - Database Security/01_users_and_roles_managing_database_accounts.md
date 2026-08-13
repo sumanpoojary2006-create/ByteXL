@@ -21,8 +21,6 @@ This lesson works with database accounts rather than business rows. Before runni
 | `reporting_app` | Account used to demonstrate role membership or privileges |
 | `dev_alia` | Account used to demonstrate role membership or privileges |
 
-The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
-
 ## Hands-On Setup: Prepare the Database
 
 ```postgresql
@@ -83,7 +81,7 @@ It might seem simpler to give every developer and every service the same single 
  width="100%"
 ></iframe>
 
-Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
+Expected observation: PostgreSQL returns live server metadata. Values differ from run to run, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
 - `pg_stat_activity`, introduced in the previous chapter, records which role issued each active query, which is exactly the accountability a shared login destroys.
 - If every developer and every application connected as one single, shared account, there would be no way to answer "who ran this slow query" or "which service made this change" after the fact, since the log would show only the one shared name for every single action, regardless of who or what actually took it.

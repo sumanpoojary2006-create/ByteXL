@@ -34,8 +34,6 @@ The setup also creates the following empty supporting tables. Later statements p
 | `old_data` | `JSONB` |
 | `new_data` | `JSONB` |
 
-The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
-
 ## Hands-On Setup: Prepare the Database
 
 ```postgresql
@@ -105,7 +103,7 @@ A trigger naturally captures `INSERT`, `UPDATE`, and `DELETE`, since those are t
  width="100%"
 ></iframe>
 
-Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
+Expected observation: PostgreSQL returns live server metadata. Values differ from run to run, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
 - `log_statement` controls what PostgreSQL writes to its own server log, with settings ranging from logging nothing extra, to logging every data-modifying statement, to logging genuinely every statement including plain reads.
 - Enabling comprehensive read-level auditing has a real performance cost, since every single query then incurs additional logging overhead, which is why it is typically reserved for tables holding especially sensitive data, rather than applied database-wide by default.

@@ -46,8 +46,6 @@ Before running the lesson queries, inspect the data they will use. The tables be
 | 5 | 4 | 2 | 275 | 2025-05-05 |
 | 6 | 2 | 3 | 180 | 2025-05-06 |
 
-The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
-
 ## Hands-On Setup: Prepare the Data
 
 ```postgresql
@@ -241,7 +239,6 @@ Zoya wants a single audit report showing every restaurant and every order, with 
 ></iframe>
 
 If your query uses `restaurants LEFT JOIN orders ON restaurants.restaurant_id = orders.restaurant_id ORDER BY restaurants.restaurant_name`, all four restaurants appear, with Taco Town showing `NULL` order details since it has none.
-
 
 Expected output for the practice query:
 

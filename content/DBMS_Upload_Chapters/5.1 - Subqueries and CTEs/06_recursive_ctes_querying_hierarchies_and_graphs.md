@@ -29,8 +29,6 @@ Before running the lesson queries, inspect the starting data. The tables below s
 | 5 | Divya Nambiar | 2 |
 | 6 | Farhan Sheikh | 4 |
 
-The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
-
 ## Hands-On Setup: Prepare the Database
 
 ```postgresql
@@ -177,7 +175,6 @@ Find every employee who reports, directly or indirectly, to Rajat Bhatia, includ
 ></iframe>
 
 If your query bases the recursion on `WHERE employee_id = 2` and recurses with `e.manager_id = team_below.employee_id`, it returns Rajat himself at level 1, Karan and Divya at level 2, and Farhan at level 3, correctly walking down every branch under Rajat regardless of depth.
-
 
 Expected output:
 

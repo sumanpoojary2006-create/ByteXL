@@ -34,8 +34,6 @@ Before running the lesson queries, inspect the data they will use. The tables be
 | Imran Sheikh | imran.s@example.com |
 | Neha Bhatt | neha.bhatt@example.com |
 
-The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
-
 ## Hands-On Setup: Prepare the Data
 
 ```postgresql
@@ -179,7 +177,6 @@ Using the `online_customers` and `store_customers` tables above, find every cust
 ></iframe>
 
 One valid answer is `(SELECT customer_name FROM online_customers EXCEPT SELECT customer_name FROM store_customers) UNION ALL (SELECT customer_name FROM store_customers EXCEPT SELECT customer_name FROM online_customers);`, which returns Aditi Kulkarni, Rohan Das, Imran Sheikh, and Neha Bhatt, everyone who shops through exactly one channel.
-
 
 Expected output for the practice query:
 

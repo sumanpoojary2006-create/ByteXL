@@ -44,8 +44,6 @@ Before running the lesson queries, inspect the data they will use. The tables be
 | 7 | Aman Gupta | Children | 175 | 2025-04-12 |
 | 8 | Ishita Rao | Non-Fiction | 990 | 2025-04-14 |
 
-The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
-
 ## Hands-On Setup: Prepare the Data
 
 ```postgresql
@@ -206,7 +204,6 @@ The founders want one more cut: total revenue and order count per category, but 
 - It then orders by summed revenue descending.
 - `Non-Fiction` should come out on top at 3339.00, ahead of `Fiction` at 1380.00.
 - That happens after Aman Gupta's North-region Children orders are filtered out and Vivek's, Sonal's, and Ishita's Non-Fiction orders are summed together.
-
 
 Expected output for the practice query:
 

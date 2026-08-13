@@ -30,8 +30,6 @@ Meera wants a display label that combines each branch with its locality. The que
 
 ## Hands-On Practice: Build a Display Name
 
-The OneCompiler exercise uses two files. `init.sql` creates and populates the visual `restaurants` table. The active query file contains only the string-function query being practised. Where a query does not include `ORDER BY`, the database may return the correct rows in a different order from the example output.
-
 First, `init.sql` prepares the dataset:
 
 ```postgresql

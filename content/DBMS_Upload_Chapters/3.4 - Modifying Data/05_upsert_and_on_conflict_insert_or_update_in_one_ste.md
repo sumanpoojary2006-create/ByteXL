@@ -38,8 +38,6 @@ A setup file builds this starting point with `CREATE TABLE` and `INSERT INTO`. A
 
 ### Hands-On Practice: Prepare the Tables
 
-The OneCompiler exercise uses two files. `init.sql` creates and populates the starting tables, including the `UNIQUE` constraint. The active query file contains only the statement being practised. Because each run reloads `init.sql`, the dataset is always fresh.
-
 First, `init.sql` prepares the source tables:
 
 ```postgresql

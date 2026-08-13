@@ -25,8 +25,6 @@ Before running the lesson queries, inspect the starting data. The tables below s
 | 1 | Meera Iyer | 50000.00 |
 | 2 | Sanjay Rathi | 12000.00 |
 
-The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
-
 ## Hands-On Setup: Prepare the Database
 
 ```postgresql
@@ -52,8 +50,6 @@ Before running each active statement, predict which rows, database objects, or s
 
 Expected output:
 
-
-
 | account_id | owner_name | balance |
 | --- | --- | --- |
 | 1 | Meera Iyer | 45000.00 |
@@ -75,8 +71,6 @@ If the connection dropped after the first `UPDATE` ran but before the second one
 ></iframe>
 
 Expected output:
-
-
 
 | account_id | owner_name | balance |
 | --- | --- | --- |
@@ -100,16 +94,12 @@ If something inside a transaction turns out to be wrong before `COMMIT` runs, `R
 
 Expected output 1:
 
-
-
 | account_id | balance |
 | --- | --- |
 | 1 | 45000.00 |
 | 2 | 17000.00 |
 
 Expected output 2:
-
-
 
 | account_id | balance |
 | --- | --- |

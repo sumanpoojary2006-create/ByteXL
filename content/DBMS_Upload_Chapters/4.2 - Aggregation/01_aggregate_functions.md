@@ -34,8 +34,6 @@ Before running the lesson queries, inspect the data they will use. The tables be
 | 7 | Aman Gupta | Children | 175 | 2025-04-12 |
 | 8 | Ishita Rao | Non-Fiction | 990 | 2025-04-14 |
 
-The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
-
 ## Hands-On Setup: Prepare the Data
 
 ```postgresql
@@ -192,7 +190,6 @@ The founders now want to know the total number of orders placed and the total re
 ></iframe>
 
 If your query filters with `WHERE category = 'Fiction'` before aggregating, it returns 3 orders and 1380.00 in revenue, since `WHERE` narrows the rows down first and the `aggregate functions` only ever see what survives that filter.
-
 
 Expected output for the practice query:
 

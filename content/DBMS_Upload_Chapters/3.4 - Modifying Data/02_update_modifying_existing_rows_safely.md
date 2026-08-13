@@ -37,8 +37,6 @@ One row comes back: Varun Nair, city Chennai. Rohit now knows, with certainty, w
 
 ### Hands-On Practice: Check the Target Row
 
-The OneCompiler exercise uses two files. `init.sql` creates and populates the starting tables. The active query file contains only the statements being practised. Because each run reloads `init.sql`, the dataset is always fresh, so an `UPDATE` you run can be rerun from the same starting point.
-
 First, `init.sql` prepares the source tables:
 
 ```postgresql

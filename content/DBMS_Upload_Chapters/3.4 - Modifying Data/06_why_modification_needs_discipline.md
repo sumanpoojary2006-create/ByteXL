@@ -70,8 +70,6 @@ None of them is difficult, they simply have to be done on purpose rather than sk
 
 ### Hands-On Practice: Check, Update, Confirm
 
-The OneCompiler exercise uses two files. `init.sql` creates and populates the starting tables. The active query file contains only the statements being practised. Because each run reloads `init.sql`, the dataset is always fresh.
-
 First, `init.sql` prepares the source tables:
 
 ```postgresql

@@ -27,8 +27,6 @@ Some lessons need a larger dataset to make execution plans or maintenance behavi
 
 The setup generates 5,000 rows, numbered from 1 through 5000. This scale is intentional because performance behavior is difficult to observe on a tiny table.
 
-The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
-
 ## Hands-On Setup: Prepare the Database
 
 ```postgresql
@@ -50,7 +48,7 @@ Before running each active statement, predict which rows, database objects, or s
  width="100%"
 ></iframe>
 
-Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
+Expected observation: PostgreSQL returns live server metadata. Values differ from run to run, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
 Even though this `UPDATE` did not add a single new row, the table's physical size grows. Here is why:
 
@@ -70,7 +68,7 @@ Even though this `UPDATE` did not add a single new row, the table's physical siz
  width="100%"
 ></iframe>
 
-Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
+Expected observation: PostgreSQL returns live server metadata. Values differ from run to run, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
 - A plain `VACUUM` marks dead space as reusable for this table's own future writes, without necessarily shrinking the file on disk immediately, since PostgreSQL generally prefers to reuse that reclaimed space internally rather than pay the cost of physically returning it to the operating system.
 - `VACUUM FULL` goes further, actually rewriting the table to reclaim disk space visibly, at the cost of locking the table exclusively while it runs, which is why `VACUUM FULL` is typically reserved for planned maintenance windows rather than run routinely against a live, busy table.
@@ -86,7 +84,7 @@ The `query optimizer`, covered in the performance unit, relies on table and colu
  width="100%"
 ></iframe>
 
-Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
+Expected observation: PostgreSQL returns live server metadata. Values differ from run to run, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
 - `ANALYZE` refreshes PostgreSQL's internal statistics about the table's data distribution, and `n_live_tup` and `n_dead_tup` in `pg_stat_user_tables` show, respectively, the estimated count of current, valid rows and dead, reclaimable rows PostgreSQL is currently tracking.
 - Stale statistics, left unrefreshed after significant data changes, can mislead the optimizer into choosing a worse plan than it otherwise would, exactly the risk noted when the optimizer was first introduced.
@@ -104,7 +102,7 @@ Running `VACUUM` and `ANALYZE` manually after every change would be impractical,
  width="100%"
 ></iframe>
 
-Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
+Expected observation: PostgreSQL returns live server metadata. Values differ from run to run, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
 - `autovacuum` reports whether this automatic background process is enabled, `on` by default in a standard PostgreSQL installation.
 - Autovacuum handles routine maintenance for the vast majority of tables without any manual intervention at all; manual `VACUUM` or `ANALYZE` becomes relevant mainly for large, one-off batch operations where waiting for autovacuum's next scheduled pass is not acceptable, or for the exclusive-lock `VACUUM FULL` case, which autovacuum never performs on its own due to its locking cost.

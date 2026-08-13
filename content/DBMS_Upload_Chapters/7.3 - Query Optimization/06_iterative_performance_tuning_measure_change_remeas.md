@@ -28,8 +28,6 @@ Some lessons need a larger dataset to make execution plans or maintenance behavi
 
 The setup generates 60,000 rows, numbered from 1 through 60000. This scale is intentional because performance behavior is difficult to observe on a tiny table.
 
-The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
-
 ## Hands-On Setup: Prepare the Database
 
 ```postgresql

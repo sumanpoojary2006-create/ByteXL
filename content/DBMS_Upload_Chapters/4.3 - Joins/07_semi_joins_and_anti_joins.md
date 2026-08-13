@@ -46,8 +46,6 @@ Before running the lesson queries, inspect the data they will use. The tables be
 | 5 | 4 | 2 | 275 | 2025-05-05 |
 | 6 | 2 | 3 | 180 | 2025-05-06 |
 
-The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
-
 ## Hands-On Setup: Prepare the Data
 
 ```postgresql
@@ -234,7 +232,6 @@ Zoya wants to find every restaurant that has never received an order, using an e
 ></iframe>
 
 If your query is `SELECT restaurant_name FROM restaurants r WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.restaurant_id = r.restaurant_id);`, it returns Taco Town, the one restaurant with no matching orders.
-
 
 Expected output for the practice query:
 

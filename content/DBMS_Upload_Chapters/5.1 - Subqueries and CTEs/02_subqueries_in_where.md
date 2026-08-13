@@ -29,8 +29,6 @@ Before running the lesson queries, inspect the starting data. The tables below s
 | 5 | Pooja Reddy | Sales | 58000.00 | 4 |
 | 6 | Vikas Malhotra | Marketing | 60000.00 | NULL |
 
-The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
-
 ## Hands-On Setup: Prepare the Database
 
 ```postgresql
@@ -215,7 +213,6 @@ Kabir wants every employee who earns less than the lowest salary in Engineering.
 ></iframe>
 
 If your query is `SELECT employee_name, salary FROM employees WHERE salary < ALL (SELECT salary FROM employees WHERE department = 'Engineering');`, it returns Sameer Khan, Pooja Reddy, and Vikas Malhotra, since all three earn less than every Engineering salary, including the lowest one at 78000.00.
-
 
 Expected output:
 

@@ -29,8 +29,6 @@ Before running the lesson queries, inspect the data they will use. The tables be
 | 7 | Aman Gupta | Children | 175 | 2025-04-12 |
 | 8 | Ishita Rao | Non-Fiction | 990 | 2025-04-14 |
 
-The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
-
 ## Hands-On Setup: Prepare the Data
 
 ```postgresql
@@ -217,7 +215,6 @@ The founders want to know how many orders each individual customer has placed, a
 ></iframe>
 
 If your query groups by `customer_name` with `COUNT(*) AS order_count` and `SUM(amount) AS total_spent`, ordered by `total_spent DESC`, Ishita Rao comes out on top with three orders totaling 1760.00.
-
 
 Expected output for the practice query:
 

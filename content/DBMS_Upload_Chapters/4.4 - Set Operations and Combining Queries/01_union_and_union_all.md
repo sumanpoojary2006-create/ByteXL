@@ -32,8 +32,6 @@ Before running the lesson queries, inspect the data they will use. The tables be
 | Imran Sheikh | imran.s@example.com |
 | Neha Bhatt | neha.bhatt@example.com |
 
-The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
-
 ## Hands-On Setup: Prepare the Data
 
 ```postgresql
@@ -230,7 +228,6 @@ Tanvi wants a single list of every unique email address across both channels, wi
 ></iframe>
 
 If your query is `SELECT email FROM online_customers UNION SELECT email FROM store_customers ORDER BY email;`, it returns 5 unique email addresses, with `kavya.nair@example.com` appearing only once despite being present in both source tables.
-
 
 Expected output for the practice query:
 

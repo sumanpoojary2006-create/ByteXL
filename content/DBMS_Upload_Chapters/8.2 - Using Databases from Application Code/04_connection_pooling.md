@@ -23,8 +23,6 @@ Before running the lesson queries, inspect the starting data. The table below sh
 | 1 | in_transit |
 | 2 | in_transit |
 
-The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed table. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
-
 ## Hands-On Setup: Prepare the Database
 
 ```postgresql
@@ -45,7 +43,7 @@ Before running each active statement, predict which rows, database objects, or s
  width="100%"
 ></iframe>
 
-Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
+Expected observation: PostgreSQL returns live server metadata. Values differ from run to run, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
 - `max_connections` reports the server's configured ceiling, commonly 100 in a default installation, and the current connection count shows how much of that ceiling is already in use.
 - If an application, or many application instances together, tried to open a new connection per incoming request under real traffic, it could exhaust this limit quickly, and every connection attempt beyond it would fail outright, taking down the whole application's ability to reach the database at all.
@@ -89,7 +87,7 @@ A returned connection has to be ready for a completely different, unrelated requ
  width="100%"
 ></iframe>
 
-Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
+Expected observation: PostgreSQL returns live server metadata. Values differ from run to run, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
 The "idle in transaction" danger covered in the previous lesson becomes especially serious in a pooled setup: a connection returned to the pool while still mid-transaction would hand the next, completely unrelated request a connection that is unexpectedly holding locks and half-finished work from a previous, unrelated operation, a bug that can be extremely confusing to track down.
 
@@ -117,7 +115,7 @@ A pool that is too small forces requests to wait for a connection to become avai
  width="100%"
 ></iframe>
 
-Expected observation: PostgreSQL returns live server metadata. Values differ across OneCompiler runs, so verify the meaning of each column and the trend described below rather than matching a fixed number.
+Expected observation: PostgreSQL returns live server metadata. Values differ from run to run, so verify the meaning of each column and the trend described below rather than matching a fixed number.
 
 In a real production setup, this kind of query, grouping open connections by which application or user opened them, is a standard way to monitor whether pool sizes across an organization's various services are collectively approaching the database's overall connection ceiling, since `max_connections` is a single, shared limit across every application talking to that database, not a per-application allowance.
 

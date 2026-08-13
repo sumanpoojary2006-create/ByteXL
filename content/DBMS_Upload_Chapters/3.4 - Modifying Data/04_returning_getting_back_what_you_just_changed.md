@@ -39,8 +39,6 @@ The output shows enrollment_id 6, student_id 5, course_id 101, and the enrolled_
 
 ### Hands-On Practice: INSERT with RETURNING
 
-The OneCompiler exercise uses two files. `init.sql` creates and populates the starting tables. The active query file contains only the statement being practised. Because each run reloads `init.sql`, the dataset is always fresh.
-
 First, `init.sql` prepares the source tables:
 
 ```postgresql

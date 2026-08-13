@@ -22,8 +22,6 @@ Before running the lesson queries, inspect the starting data. The tables below s
 | --- | --- |
 | 1 | 50 |
 
-The OneCompiler activity keeps preparation and practice separate. `init.sql` creates the displayed tables, rows, roles, or supporting objects. The active SQL file contains only the statement currently being studied, and `with=init.sql` runs the preparation file first.
-
 ## Hands-On Setup: Prepare the Database
 
 ```postgresql
@@ -44,7 +42,7 @@ Before running each active statement, predict which rows, database objects, or s
  width="100%"
 ></iframe>
 
-Expected observation: PostgreSQL returns one row containing the current server or transaction setting. The exact value depends on the OneCompiler PostgreSQL environment, so compare the setting name and meaning rather than memorizing a particular value.
+Expected observation: PostgreSQL returns one row containing the current server or transaction setting. The exact value depends on the PostgreSQL environment, so compare the setting name and meaning rather than memorizing a particular value.
 
 This confirms the default level for a new PostgreSQL session, `read committed`, sitting in the middle of the strictness spectrum, neither the loosest nor the strictest option available.
 
@@ -59,7 +57,7 @@ The `isolation level` can be set explicitly at the start of a transaction, overr
  width="100%"
 ></iframe>
 
-Expected observation: PostgreSQL returns one row containing the current server or transaction setting. The exact value depends on the OneCompiler PostgreSQL environment, so compare the setting name and meaning rather than memorizing a particular value.
+Expected observation: PostgreSQL returns one row containing the current server or transaction setting. The exact value depends on the PostgreSQL environment, so compare the setting name and meaning rather than memorizing a particular value.
 
 - `SET TRANSACTION ISOLATION LEVEL SERIALIZABLE` requests the strictest level available, for the duration of this one transaction only; the session's default reverts back afterward for the next transaction.
 - PostgreSQL does not implement `READ UNCOMMITTED` as a genuinely looser level, it is treated the same as `READ COMMITTED`, so PostgreSQL in practice offers three distinct behaviors even though four names exist in the standard.

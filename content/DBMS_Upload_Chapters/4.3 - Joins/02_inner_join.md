@@ -47,8 +47,6 @@ Before running the lesson queries, inspect the data they will use. The tables be
 | 5 | 4 | 2 | 275 | 2025-05-05 |
 | 6 | 2 | 3 | 180 | 2025-05-06 |
 
-The OneCompiler activity keeps setup and practice separate. `init.sql` creates and populates the displayed data, while the active SQL file contains only the query being studied.
-
 ## Hands-On Setup: Prepare the Data
 
 ```postgresql
@@ -265,7 +263,6 @@ Zoya wants a list of every restaurant that has actually received at least one or
 ></iframe>
 
 If your query is `SELECT DISTINCT restaurants.restaurant_name FROM orders INNER JOIN restaurants ON orders.restaurant_id = restaurants.restaurant_id;`, it returns Pizza Palace, Sushi Central, and Burger Barn, and Taco Town is correctly missing, since it has never matched an order.
-
 
 Expected output for the practice query:
 
