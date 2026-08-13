@@ -12,6 +12,10 @@ __pycache__/
 *.temp
 *.zip
 .aider*
+.codex-tmp/
+.codex-work/
+.codex_work/
+.codex_spreadsheet_work/
 
 # Only content/ is tracked in this repo
 /.claude
