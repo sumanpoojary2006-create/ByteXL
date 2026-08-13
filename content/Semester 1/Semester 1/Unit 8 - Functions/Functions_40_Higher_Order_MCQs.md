@@ -7,6 +7,8 @@
 - Difficulty mix: 10 foundational, 20 intermediate, 10 advanced
 - Style: situation-led tracing, implementation comparison, failure diagnosis, repair selection, and design judgment
 - Answer-quality controls: balanced positions, no consecutive repeated correct letter, and no uniquely longest correct option
+- Opening coverage: Questions 1–10 collectively represent all eight Unit 8 taxonomy subtopics
+- Metadata: every question identifies its taxonomy and primary assessment behaviour
 
 ---
 
@@ -16,6 +18,10 @@
 
 **Difficulty:** Foundational
 
+**Taxonomy:** `python` → `functions` → `defining-and-calling-functions`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting a reusable function design
+
 Five checkout screens contain copied versions of the same discount calculation. A policy change must take effect everywhere without creating five opportunities for inconsistent edits. Which redesign best supports that goal?
 
 A. Add a comment above every copied calculation describing the new policy  
@@ -23,117 +29,196 @@ B. Place the calculation in one function and call it from each screen
 C. Rename the discount variable differently on every checkout screen  
 D. Keep all five copies so that each screen remains independent
 
-### 2. Turning a long registration workflow into reviewable parts
+### 2. Binding keyword arguments independently of call order
 
 **Difficulty:** Intermediate
 
-A registration script validates contact details, calculates a fee, saves a record, and sends a confirmation inside one large block. The team wants each responsibility to be testable on its own. Which organisation is the strongest fit?
+**Taxonomy:** `python` → `functions` → `function-parameters-and-arguments`  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing keyword binding; final value identification
 
-A. Repeat the full workflow for testing and production, then compare both copies manually after every change  
-B. Replace every intermediate variable with a longer expression  
-C. Put the whole workflow inside one loop controlled by a flag  
-D. Create focused functions for validation, fee calculation, saving, and notification
+A shipping function has one required parameter and one defaulted parameter:
 
-### 3. Comparing two maintenance strategies
+```python
+def shipping(weight, rate=20):
+    return weight * rate
+
+charge = shipping(rate=25, weight=4)
+```
+
+Which binding trace correctly identifies the value stored in `charge`?
+
+A. `80`, because the default rate cannot be overridden by name  
+B. `29`, because keyword arguments are added rather than bound  
+C. The call fails because keyword arguments must follow parameter order  
+D. `100`, because `weight` receives 4 and `rate` receives 25 by name
+
+### 3. A local rate shadows but does not replace the global rate
 
 **Difficulty:** Advanced
 
-Version A copies a tax formula into three reports. Version B calls one `calculate_tax(amount)` function from all three reports. The formula changes, and one report also needs to display the untaxed amount. Which assessment is most accurate?
+**Taxonomy:** `python` → `functions` → `variable-scope-and-legb`  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing scope and shadowing; final values
 
-A. Version B centralises the tax rule, while each report can still handle its own display needs  
-B. Version A is safer because copied formulas automatically detect policy changes and synchronise every report without edits  
-C. Version B prevents the reports from using any values except the returned tax  
-D. Both versions always require exactly the same number of policy edits
+A billing module contains two bindings with the same name:
 
-### 4. A definition is loaded during application startup
+```python
+rate = 10
+
+def quote():
+    rate = 7
+    return rate
+
+inside = quote()
+outside = rate
+```
+
+Which scope audit correctly records the two final values?
+
+A. `inside == 7` and `outside == 10`  
+B. Both are 7 because a local assignment replaces the global binding  
+C. Both are 10 because functions cannot create local names matching global names  
+D. The call raises `NameError` when Python sees two variables named `rate`
+
+### 4. Completing a sorting key with a lambda
 
 **Difficulty:** Foundational
 
-During startup, Python reaches this code but no later line calls the function:
+**Taxonomy:** `python` → `functions` → `lambda-functions`  
+**Is Curriculum Based:** No  
+**Assessment type:** Completing missing lambda code
+
+A product list contains `(name, stock)` tuples and must be sorted by stock count:
 
 ```python
-def announce():
-    print("Workshop open")
+products = [("Pen", 30), ("Book", 12), ("Bag", 20)]
+ordered = sorted(products, key=__________________)
 ```
 
-Which startup observation is consistent with Python's function model?
+Which completion supplies a one-expression function that extracts the numeric stock field?
 
-A. The message appears twice because the name and body are processed  
-B. Python reports an error because the function has no parameters  
-C. The function becomes available, but the message does not appear  
-D. The message appears once as soon as the definition is reached
+A. `lambda item: item[0]`  
+B. `lambda item: len(item)`  
+C. `lambda item: item[1]`  
+D. `lambda item: item`
 
-### 5. A reminder must be sent once per pending account
+### 5. Comparing a mapped transformation with a comprehension
 
 **Difficulty:** Intermediate
 
-The function below is already defined correctly:
+**Taxonomy:** `python` → `functions` → `higher-order-functions`  
+**Is Curriculum Based:** No  
+**Assessment type:** Comparing implementations; deciding equivalence
+
+Two versions double every value in `numbers` and materialise a list.
+
+Version A:
 
 ```python
-def remind():
-    print("Payment pending")
+result = list(map(lambda number: number * 2, numbers))
 ```
 
-A batch contains three pending accounts. Which addition produces one reminder for each account without copying the function body?
+Version B:
 
-A. `for _ in range(3): remind()`  
-B. `remind`  
-C. `def remind(3)`  
-D. `for _ in range(3): print(remind)`
+```python
+result = [number * 2 for number in numbers]
+```
 
-### 6. A startup sequence calls a helper too early
+Assume each version receives a fresh equivalent finite iterable of numeric values. Which comparison is correct?
+
+A. The versions produce the same list in the same order  
+B. Version A retains only positive numbers, while Version B doubles all numbers  
+C. Version B modifies every value inside the original iterable  
+D. They differ whenever `numbers` is empty
+
+### 6. Empty checks produce two different aggregate verdicts
 
 **Difficulty:** Advanced
 
-An engineer arranges a file like this:
+**Taxonomy:** `python` → `functions` → `built-in-functions`  
+**Is Curriculum Based:** No  
+**Assessment type:** Reasoning about truthiness and empty aggregate behaviour
+
+A deployment has not registered any checks yet:
 
 ```python
-prepare()
-
-def prepare():
-    print("Ready")
+checks = []
+release_ready = all(checks)
+alert_needed = any(checks)
 ```
 
-The smallest repair must preserve the function body and still call it once. Which change meets that requirement?
+Which result pair follows Python's empty-collection rules?
 
-A. Add `return prepare` inside the existing function body  
-B. Change the first line to `print(prepare())` and leave its position unchanged  
-C. Indent the function definition beneath the original call  
-D. Move `prepare()` to a line after the function definition
+A. Both values are `False` because the list has no truthy items  
+B. Both values are `True` because no check failed  
+C. `release_ready` is `False` and `alert_needed` is `True`  
+D. `release_ready` is `True` and `alert_needed` is `False`
 
-### 7. Separating the placeholder from the supplied data
+### 7. Completing the stopping condition of a recursive countdown
 
 **Difficulty:** Foundational
 
-Consider `def greet(name): ...` followed later by `greet("Meera")`. A reviewer is documenting the two roles. Which description is accurate?
+**Taxonomy:** `python` → `functions` → `recursion`  
+**Is Curriculum Based:** No  
+**Assessment type:** Completing a missing recursive base condition
 
-A. Both `name` and `"Meera"` are return values  
-B. `name` is a parameter; `"Meera"` is an argument  
-C. `name` is an argument; `"Meera"` is a parameter  
-D. Both are function names with different scopes
+A recursive helper must return `[3, 2, 1]` for `countdown(3)` and stop before adding zero:
 
-### 8. A cost-sharing service feeds another calculation
+```python
+def countdown(n):
+    if __________________:
+        return []
+    return [n] + countdown(n - 1)
+```
+
+Which base condition completes the function for non-negative starting values?
+
+A. `n < 0`  
+B. `n == 0`  
+C. `n > 0`  
+D. `n == 1`
+
+### 8. Comparing a real docstring with an ordinary comment
 
 **Difficulty:** Intermediate
 
-```python
-def share(total, people):
-    return total / people
+**Taxonomy:** `python` → `functions` → `docstrings-and-clean-code`  
+**Is Curriculum Based:** No  
+**Assessment type:** Comparing documentation implementations
 
-per_person = share(900, 3)
-final_charge = per_person + 25
+A team submits two documentation versions.
+
+Version A:
+
+```python
+def total(values):
+    """Return the sum of the supplied values."""
+    return sum(values)
 ```
 
-Which amount reaches `final_charge`?
+Version B:
 
-A. `275.0`  
-B. `300.0`  
-C. `325.0`  
-D. `925.0`
+```python
+def total(values):
+    # Return the sum of the supplied values.
+    return sum(values)
+```
+
+Which review finding correctly distinguishes what `help(total)` can retrieve as the function's docstring?
+
+A. Both versions create identical function docstrings because comments and strings are interchangeable  
+B. Neither version creates documentation visible to `help()`  
+C. Version A creates a docstring because the string is the first body statement; Version B provides only a source comment  
+D. Version B creates a docstring, while Version A returns its explanatory string at runtime
 
 ### 9. A display helper is mistaken for a calculation helper
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `functions` → `function-parameters-and-arguments`  
+**Is Curriculum Based:** No  
+**Assessment type:** Spotting a print-versus-return bug; final value tracing
 
 ```python
 def calculate_fee(amount):
@@ -152,6 +237,10 @@ D. `None`, because the function prints but does not return a value
 ### 10. A validator has an early exit
 
 **Difficulty:** Advanced
+
+**Taxonomy:** `python` → `functions` → `defining-and-calling-functions`  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing multiple conditions and early return
 
 ```python
 def status(score):
@@ -175,6 +264,10 @@ D. No branch completes because negative values cannot be compared
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `functions` → `function-parameters-and-arguments`  
+**Is Curriculum Based:** No  
+**Assessment type:** Diagnosing a missing-argument failure
+
 ```python
 def fare(distance, rate):
     return distance * rate
@@ -193,6 +286,10 @@ D. It raises `NameError` because parameters cannot be used in expressions
 
 **Difficulty:** Foundational
 
+**Taxonomy:** `python` → `functions` → `function-parameters-and-arguments`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting a call that uses a default value
+
 ```python
 def total(price, delivery=40):
     return price + delivery
@@ -209,6 +306,10 @@ D. `total(40, 500)`
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `functions` → `function-parameters-and-arguments`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting the smallest parameter-order repair
+
 A developer writes `def reserve(seats=1, customer):` and Python rejects the definition. Which smallest repair retains `seats` as optional and `customer` as required?
 
 A. `def reserve(seats, customer=1):`  
@@ -219,6 +320,10 @@ D. `def reserve(customer, seats=1):`
 ### 14. Named arguments protect a call from order confusion
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `functions` → `function-parameters-and-arguments`  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing keyword arguments and defaults
 
 ```python
 def badge(name, role, colour="blue"):
@@ -238,6 +343,10 @@ D. The call fails because keyword arguments must follow parameter order
 
 **Difficulty:** Advanced
 
+**Taxonomy:** `python` → `functions` → `function-parameters-and-arguments`  
+**Is Curriculum Based:** No  
+**Assessment type:** Diagnosing call syntax; smallest correct repair
+
 For `def quote(customer, rate=5): ...`, a developer writes `quote(rate=7, "Riya")`. Which minimal edit makes the call valid while preserving the intended customer and rate?
 
 A. `quote("Riya", rate=7)`  
@@ -248,6 +357,10 @@ D. `quote("Riya" rate=7)`
 ### 16. Extra positional readings arrive from a sensor
 
 **Difficulty:** Foundational
+
+**Taxonomy:** `python` → `functions` → `function-parameters-and-arguments`  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing `*args` collection
 
 ```python
 def capture(device, *readings):
@@ -267,6 +380,10 @@ D. `(18, 21, 19)`
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `functions` → `function-parameters-and-arguments`  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing `**kwargs` collection
+
 ```python
 def configure(app, **settings):
     return settings
@@ -284,6 +401,10 @@ D. `{"portal": {"theme": "dark", "retries": 2}}`
 ### 18. One call routes three kinds of input
 
 **Difficulty:** Advanced
+
+**Taxonomy:** `python` → `functions` → `function-parameters-and-arguments`  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing ordinary, variadic positional, and keyword inputs
 
 ```python
 def record(owner, *tags, **details):
@@ -303,16 +424,24 @@ D. Owner contains all strings; details contains only `True`
 
 **Difficulty:** Foundational
 
+**Taxonomy:** `python` → `functions` → `lambda-functions`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting a correct lambda implementation
+
 A report needs a compact function that converts rupees to paise by multiplying one value by 100. Which expression creates that function?
 
-A. `lambda amount: return amount * 100`  
+A. `lambda amount: amount + 100`  
 B. `lambda amount: amount * 100`  
-C. `def(amount): amount * 100`  
-D. `lambda = amount * 100`
+C. `lambda: amount * 100`  
+D. `lambda amount: 100`
 
 ### 20. Sorting products by stock instead of by name
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `functions` → `lambda-functions`  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing a lambda sorting key
 
 ```python
 products = [("Pen", 30), ("Book", 12), ("Bag", 20)]
@@ -330,6 +459,10 @@ D. `[('Book', 12), ('Bag', 20), ('Pen', 30)]`
 
 **Difficulty:** Advanced
 
+**Taxonomy:** `python` → `functions` → `lambda-functions`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting a maintainable function structure
+
 A pricing rule must validate a category, apply one of three discounts, log rejected inputs, and be reused by several modules. Which implementation choice is most appropriate?
 
 A. Put all steps into one lambda separated by semicolons  
@@ -341,16 +474,24 @@ D. Store the steps as strings and evaluate them when a price arrives
 
 **Difficulty:** Foundational
 
+**Taxonomy:** `python` → `functions` → `higher-order-functions`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting a correct mapping pipeline
+
 Given `celsius = [0, 10, 20]`, which use of `map` applies the conversion `c * 9 / 5 + 32` to every reading and produces a list?
 
 A. `list(map(lambda c: c * 9 / 5 + 32, celsius))`  
-B. `map(celsius, lambda c: c * 9 / 5 + 32)`  
+B. `list(map(lambda c: c * 9 / 5, celsius))`  
 C. `list(filter(lambda c: c * 9 / 5 + 32, celsius))`  
-D. `reduce(lambda c: c * 9 / 5 + 32, celsius)`
+D. `[c * 9 / 5 + 32 for c in celsius if c > 0]`
 
 ### 23. Keeping only orders that qualify for free delivery
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `functions` → `higher-order-functions`  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing a filtering predicate
 
 ```python
 totals = [320, 800, 499, 1200]
@@ -368,6 +509,10 @@ D. `[320, 800, 499, 1200]`
 
 **Difficulty:** Advanced
 
+**Taxonomy:** `python` → `functions` → `higher-order-functions`  
+**Is Curriculum Based:** No  
+**Assessment type:** Comparing aggregation implementations
+
 A developer uses `reduce(lambda a, b: a + b, amounts)` only to add ordinary numeric amounts. Which review recommendation best improves clarity without changing the goal?
 
 A. Replace it with `filter(amounts)` because filtering also combines values  
@@ -378,6 +523,10 @@ D. Keep `reduce`; built-ins cannot add a collection of numeric values
 ### 25. Releasing a batch only when every check passes
 
 **Difficulty:** Foundational
+
+**Taxonomy:** `python` → `functions` → `built-in-functions`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting an all-values aggregate condition
 
 A deployment stores check results as `[True, True, False, True]`. The release must proceed only if every check passed. Which condition enforces that policy?
 
@@ -390,6 +539,10 @@ D. `if all(checks):`
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `functions` → `built-in-functions`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting an any-value aggregate condition
+
 The flags `[False, False, True, False]` represent overdue accounts. Which expression answers whether the alert service has at least one case to process?
 
 A. `all(overdue)`  
@@ -400,6 +553,10 @@ D. `sorted(overdue)`
 ### 27. Selecting the shortest support ticket by message length
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `functions` → `built-in-functions`  
+**Is Curriculum Based:** No  
+**Assessment type:** Applying a built-in with a key function
 
 ```python
 tickets = ["Cannot log in", "Refund", "Address update"]
@@ -416,6 +573,10 @@ D. `max(tickets, key=len)`
 
 **Difficulty:** Foundational
 
+**Taxonomy:** `python` → `functions` → `variable-scope-and-legb`  
+**Is Curriculum Based:** No  
+**Assessment type:** Identifying nested-function visibility
+
 An outer function defines `format_row()` inside itself and uses it successfully. Later, unrelated code tries to call `format_row()` directly. Which result follows from that placement?
 
 A. The helper runs because every nested definition is automatically copied into global scope when the outer function returns  
@@ -426,6 +587,10 @@ D. The helper returns `None` only when called from outside
 ### 29. An inner helper uses its enclosing function's value
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `functions` → `variable-scope-and-legb`  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing enclosing-scope lookup
 
 ```python
 def make_label(prefix):
@@ -447,6 +612,10 @@ D. `"ORD-42"`
 
 **Difficulty:** Advanced
 
+**Taxonomy:** `python` → `functions` → `docstrings-and-clean-code`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting an appropriately scoped helper design
+
 A sanitising helper is used only while building one confidential report and should not become part of the module's public collection of utilities. Which placement best communicates that design?
 
 A. Define the sanitising helper inside the report-building function  
@@ -457,6 +626,10 @@ D. Store the helper name in a list instead of defining a function
 ### 31. A local calculation is requested after the call ends
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `functions` → `variable-scope-and-legb`  
+**Is Curriculum Based:** No  
+**Assessment type:** Diagnosing a local-scope failure
 
 ```python
 def invoice(subtotal):
@@ -478,6 +651,10 @@ D. The function raises `TypeError` before calculating a value
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `functions` → `variable-scope-and-legb`  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing global lookup under LEGB
+
 ```python
 rate = 8
 
@@ -497,6 +674,10 @@ D. `40`
 ### 33. The nearest matching name wins
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `functions` → `variable-scope-and-legb`  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing local shadowing under LEGB
 
 ```python
 label = "global"
@@ -519,6 +700,10 @@ D. An undefined-name error
 
 **Difficulty:** Advanced
 
+**Taxonomy:** `python` → `functions` → `variable-scope-and-legb`  
+**Is Curriculum Based:** No  
+**Assessment type:** Spotting an assignment-scope bug; smallest repair
+
 ```python
 counter = 0
 
@@ -540,6 +725,10 @@ D. Move the assignment into another nested function
 
 **Difficulty:** Foundational
 
+**Taxonomy:** `python` → `functions` → `recursion`  
+**Is Curriculum Based:** No  
+**Assessment type:** Identifying the role of a recursive base case
+
 ```python
 def factorial(n):
     if n == 0:
@@ -554,20 +743,37 @@ B. It converts every argument into a Boolean value
 C. It is the base case that stops further recursive calls  
 D. It causes the function to skip all multiplication
 
-### 36. Tracing the return journey of a recursive call
+### 36. Selecting the input that exposes a missing zero base case
 
 **Difficulty:** Intermediate
 
-Using the `factorial` function from the previous scenario, which value is delivered by `factorial(4)` after the calls unwind?
+**Taxonomy:** `python` → `functions` → `recursion`  
+**Is Curriculum Based:** No  
+**Assessment type:** Choosing an input that exposes a recursion defect
 
-A. `16`  
-B. `24`  
-C. `10`  
-D. `120`
+A developer writes a factorial function whose only base case is `n == 1`:
+
+```python
+def factorial(n):
+    if n == 1:
+        return 1
+    return n * factorial(n - 1)
+```
+
+The required domain includes zero. Which input most directly exposes the missing `0! = 1` base case by driving the recursion away from termination?
+
+A. `factorial(1)`  
+B. `factorial(0)`  
+C. `factorial(2)`  
+D. `factorial(4)`
 
 ### 37. A recursive retry never approaches a stopping case
 
 **Difficulty:** Advanced
+
+**Taxonomy:** `python` → `functions` → `recursion`  
+**Is Curriculum Based:** No  
+**Assessment type:** Diagnosing unexpected recursive nontermination
 
 ```python
 def retry(attempt):
@@ -589,6 +795,10 @@ D. It eventually raises `RecursionError` because the argument moves away from th
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `functions` → `docstrings-and-clean-code`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting correct docstring placement
+
 A team wants `help(calculate_total)` to show a concise explanation of the function. Where should the explanatory string be placed?
 
 A. As the first statement inside the function body  
@@ -599,6 +809,10 @@ D. Inside the return expression after the result
 ### 39. Interpreting type hints during execution
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `functions` → `docstrings-and-clean-code`  
+**Is Curriculum Based:** No  
+**Assessment type:** Identifying unexpected annotation behaviour
 
 ```python
 def double(value: int) -> int:
@@ -618,6 +832,10 @@ D. The annotation changes string multiplication into numeric addition
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `functions` → `docstrings-and-clean-code`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting a clean decomposition repair
+
 `process_order()` validates an address, calculates tax, updates inventory, sends email, and formats an analytics report. Failures are difficult to isolate. Which redesign most closely follows clean function design?
 
 A. Rename it `process_order_and_everything_else()` while keeping the body unchanged  
@@ -632,13 +850,13 @@ D. Copy the entire function for each kind of order
 | Q | Answer | Difficulty | Rationale |
 |---:|:---:|---|---|
 | 1 | B | Foundational | One shared function provides a single place to update the discount rule while allowing every screen to reuse it. |
-| 2 | D | Intermediate | Separating the workflow by responsibility makes each part independently understandable and testable. |
-| 3 | A | Advanced | Centralising the calculation removes duplicated policy logic without preventing a caller from managing its own presentation. |
-| 4 | C | Foundational | A `def` statement creates the function object; its body runs only when the function is called. |
-| 5 | A | Intermediate | The loop performs three calls, while the reusable body remains defined in one place. |
-| 6 | D | Advanced | Python must execute the definition before it can resolve and call `prepare` at module level. |
-| 7 | B | Foundational | A parameter is the placeholder in the definition, and an argument is the value supplied during a call. |
-| 8 | C | Intermediate | `900 / 3` returns `300.0`; adding 25 produces `325.0`. |
+| 2 | D | Intermediate | Keyword arguments bind by parameter name rather than call order, so `4 * 25` produces 100. |
+| 3 | A | Advanced | The assignment inside `quote` creates a local binding of 7; it shadows but does not replace the global binding of 10. |
+| 4 | C | Foundational | The lambda receives one tuple and returns its stock field at index 1 for use as the sorting key. |
+| 5 | A | Intermediate | Both implementations iterate once, double every encountered numeric value, preserve order, and materialise the results as a list. |
+| 6 | D | Advanced | `all([])` is vacuously true because no element fails, while `any([])` is false because no element succeeds. |
+| 7 | B | Foundational | At zero the function returns an empty list without another call; earlier calls then prepend 1, 2, and 3 while unwinding. |
+| 8 | C | Intermediate | Only a string literal used as the first function-body statement becomes `__doc__` and is displayed by `help`; a comment does not. |
 | 9 | D | Intermediate | Printing displays a value but does not return it; a function with no explicit return supplies `None`. |
 | 10 | A | Advanced | A return immediately ends that call, so neither later condition nor the final return is evaluated. |
 | 11 | C | Intermediate | Both parameters are required, but the call supplies only `distance`, producing a missing-argument `TypeError`. |
@@ -666,7 +884,7 @@ D. Copy the entire function for each kind of order
 | 33 | C | Intermediate | The local assignment is the nearest binding, so it shadows the global `label` during the call. |
 | 34 | A | Advanced | Declaring `global counter` tells Python that the assignment targets the existing global binding. |
 | 35 | C | Foundational | The base case supplies a result without making another recursive call, allowing recursion to stop. |
-| 36 | B | Intermediate | The calls unwind as `4 * 3 * 2 * 1`, which equals 24. |
+| 36 | B | Intermediate | Starting at zero misses the `n == 1` base case and recurses through negative values, directly exposing the missing zero case. |
 | 37 | D | Advanced | Starting at 3 and adding 1 never reaches 0, so calls accumulate until Python's recursion limit is exceeded. |
 | 38 | A | Intermediate | A string literal placed first in the function body becomes its docstring and is surfaced by `help`. |
 | 39 | B | Intermediate | Annotations do not enforce runtime types by themselves; string multiplication therefore returns `haha`. |
@@ -674,19 +892,15 @@ D. Copy the entire function for each kind of order
 
 ---
 
-## Topic coverage
+## Taxonomy coverage
 
-| Unit 8 topic | Questions |
+| Unit 8 taxonomy subtopic | Questions |
 |---|---|
-| Why Functions: Reuse and Decomposition | 1-3 |
-| Defining and Calling Functions | 4-6 |
-| Parameters, Arguments, and Return Values | 7-11 |
-| Default, Keyword, and Positional Arguments | 12-15 |
-| `*args` and `**kwargs` | 16-18 |
-| Lambda | 19-21 |
-| `map`, `filter`, and `reduce` | 22-24 |
-| Useful Built-ins | 25-27 |
-| Nested Functions | 28-30 |
-| Scope and LEGB | 31-34 |
-| Recursion | 35-37 |
-| Docstrings and Clean Function Design | 38-40 |
+| `defining-and-calling-functions` | 1, 10 |
+| `function-parameters-and-arguments` | 2, 9, 11–18 |
+| `variable-scope-and-legb` | 3, 28–29, 31–34 |
+| `lambda-functions` | 4, 19–21 |
+| `higher-order-functions` | 5, 22–24 |
+| `built-in-functions` | 6, 25–27 |
+| `recursion` | 7, 35–37 |
+| `docstrings-and-clean-code` | 8, 30, 38–40 |

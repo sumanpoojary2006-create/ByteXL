@@ -7,6 +7,8 @@
 - Difficulty mix: 10 foundational, 20 intermediate, 10 advanced
 - Style: situation-led tracing, repair selection, text-pipeline analysis, and practical application
 - Answer-quality controls: balanced answer positions, no consecutive repeated correct letter, and varied option lengths
+- Opening coverage: Questions 1–10 collectively represent all eight Unit 5 taxonomy subtopics
+- Metadata: every question identifies its taxonomy and primary assessment behaviour
 
 ---
 
@@ -16,6 +18,10 @@
 
 **Difficulty:** Foundational
 
+**Taxonomy:** `python` → `strings` → `string-basics`  
+**Is Curriculum Based:** No  
+**Assessment type:** Scenario-based output prediction
+
 A craft-page username field contains `"Meera Arts"`. Its counter uses `len()` and treats every character, including spaces, as part of the text. Which count will appear beside the field?
 
 A. `9`  
@@ -23,101 +29,178 @@ B. `10`
 C. `11`  
 D. `2`
 
-### 2. Keeping an apostrophe inside the shop name
+### 2. Repairing an off-by-one category slice
 
 **Difficulty:** Foundational
 
-A developer needs to store the exact text `Meera's Crafts` without ending the string at the apostrophe. Which assignment is valid and preserves the intended text?
+**Taxonomy:** `python` → `strings` → `indexing-and-slicing`  
+**Is Curriculum Based:** No  
+**Assessment type:** Identifying an incorrect boundary; smallest correct repair
 
-A. `shop = 'Meera's Crafts'`  
-B. `shop = Meera's Crafts`  
-C. `shop = "Meera"s Crafts"`  
-D. `shop = "Meera's Crafts"`
-
-### 3. An untouched optional bio
-
-**Difficulty:** Intermediate
-
-A new profile starts with:
+A product code stores its category at indices 2 through 5 inclusive. The current slice loses the final category character:
 
 ```python
-bio = ""
-bio_length = len(bio)
-has_bio = bool(bio)
+code = "ABCD1234"
+category = code[2:5]       # currently "CD1"
 ```
 
-Which stored state accurately represents the untouched field?
+Which smallest replacement produces the required `"CD12"` without changing the starting index?
 
-A. `bio_length` is `0` and `has_bio` is `False`  
-B. `bio_length` is `1` and `has_bio` is `True`  
-C. `bio_length` is `2` because the quote marks are characters  
-D. `bio` contains a single invisible space
-
-### 4. Preserving a code that begins with zero
-
-**Difficulty:** Advanced
-
-A parcel identifier is `"00751"`. It is displayed, searched, and sliced, but never used in arithmetic. Which storage decision preserves its meaning best?
-
-A. Store it as `751.0` because every identifier is a measurement  
-B. Store it as `751` and recreate the missing zeros from a separate width rule whenever it is displayed  
-C. Keep it as a string so its ordered characters and leading zeros remain intact  
-D. Convert it to `True` because the identifier is present
-
-### 5. Taking the first initial from a name
-
-**Difficulty:** Foundational
-
-A badge generator stores `name = "Meera"` and needs the first initial. Which expression selects it directly?
-
-A. `name[1]`  
-B. `name[0]`  
-C. `name[-1]`  
-D. `name[:0]`
-
-### 6. Masking all but the final four digits
-
-**Difficulty:** Intermediate
-
-A payment message must show only the final four characters of a phone number whose total length may vary. Which slice is robust to that variation?
-
-A. `phone[-4:]`  
-B. `phone[4:]`  
-C. `phone[:4]`  
-D. `phone[-1:4]`
-
-### 7. Extracting the middle of a product code
-
-**Difficulty:** Intermediate
-
-A product code is `"ABCD1234"`. The category is stored at indices 2 through 5 inclusive, which should produce `"CD12"`. Which slice matches that requirement?
-
-A. `code[2:5]`  
+A. `code[2:5:2]`  
 B. `code[1:5]`  
-C. `code[2:5:2]`  
+C. `code[2:7]`  
 D. `code[2:6]`
 
-### 8. Sampling alternate characters from a label
+### 3. Retaining a cleaned required name
+
+**Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `strings` → `string-methods`  
+**Is Curriculum Based:** No  
+**Assessment type:** Spotting a discarded-result bug; truthiness reasoning; smallest repair
+
+A registration field containing only spaces must become an empty string after cleaning, and its validity flag must then be false:
+
+```python
+name = "   "
+name.strip()
+has_name = bool(name)
+```
+
+The current code discards the cleaned result and incorrectly stores `True` in `has_name`. Which smallest repair creates the intended state?
+
+A. Replace `name.strip()` with `name = name.strip()` before calculating `has_name`  
+B. Replace `bool(name)` with `len(name) > 0` without storing the stripped result  
+C. Replace `name.strip()` with `name.upper()`  
+D. Set `has_name = True` whenever the original input contains characters
+
+### 4. Selecting the input that exposes a faulty email search
 
 **Difficulty:** Advanced
 
-A scanner applies this slice:
+**Taxonomy:** `python` → `strings` → `searching-and-membership`  
+**Is Curriculum Based:** No  
+**Assessment type:** Choosing an input that exposes a defect; truthiness reasoning
+
+A signup form uses the integer returned by `.find()` directly as a Boolean:
 
 ```python
-label = "ABCDEFG"
-sample = label[1:6:2]
+if email.find("@"):
+    status = "Accepted"
+else:
+    status = "Rejected"
 ```
 
-Which sample reaches the audit log?
+The policy requires an at sign anywhere in the address. Which input most clearly proves that the implementation can accept an address containing no at sign?
 
-A. `"ACE"`  
-B. `"BCDEF"`  
-C. `"BDF"`  
-D. `"BDFG"`
+A. `"a@b.com"`  
+B. `"meera@shop.in"`  
+C. `"meerashop.in"`  
+D. `"x@y"`
+
+### 5. Checking whether two slug builders are equivalent
+
+**Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `strings` → `split-and-join`  
+**Is Curriculum Based:** No  
+**Assessment type:** Comparing implementations; deciding equivalence
+
+Two developers convert comma-separated tags into a hyphenated slug.
+
+Version A:
+
+```python
+slug = "-".join(tags.split(","))
+```
+
+Version B:
+
+```python
+slug = tags.replace(",", "-")
+```
+
+Assume `tags` is always a string. Which equivalence finding is correct, including for adjacent or trailing commas?
+
+A. Version A deletes empty pieces, so the versions differ whenever commas touch  
+B. Both replace every comma boundary with one hyphen and produce the same string for every `tags` value  
+C. Version B replaces only the first comma  
+D. They are equivalent only when `tags` contains exactly one comma
+
+### 6. Repairing a price that shows one decimal place
+
+**Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `strings` → `string-formatting`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting the smallest formatting repair
+
+A receipt stores `price = 49.5` but currently displays `₹49.5`:
+
+```python
+line = f"₹{price:.1f}"
+```
+
+Which smallest format-specifier repair produces the required `₹49.50` while leaving the numeric value unchanged?
+
+A. `line = f"₹{price:.2f}"`  
+B. `line = f"₹{price:2}"`  
+C. `line = f"₹{price:.2%}"`  
+D. `line = f"₹{price:,}"`
+
+### 7. Preserving a path and moving the filename to a new line
+
+**Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `strings` → `escape-sequences`  
+**Is Curriculum Based:** No  
+**Assessment type:** Completing a literal with two layout requirements
+
+A deployment note must display a Windows folder literally and place the filename on the next line:
+
+```text
+C:\new\table
+report.txt
+```
+
+Which assignment preserves the backslashes and inserts the required line break?
+
+A. `note = "C:\new\table report.txt"`  
+B. `note = r"C:\new\table\nreport.txt"`  
+C. `note = "C:\new\table\nreport.txt"`  
+D. `note = "C:\\new\\table\nreport.txt"`
+
+### 8. Auditing a complete campaign-cleaning pipeline
+
+**Difficulty:** Advanced
+
+**Taxonomy:** `python` → `strings` → `text-processing`  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing multiple transformations; final value identification
+
+A campaign tool normalises a short message and prepares a compact summary:
+
+```python
+message = "  RED, blue,Red  "
+clean = message.strip().lower().replace(",", " ")
+words = clean.split()
+summary = f"{len(words)} words | red={clean.count('red')}"
+```
+
+Which summary reaches the audit log after every transformation?
+
+A. `"4 words | red=1"`  
+B. `"3 words | red=1"`  
+C. `"3 words | red=2"`  
+D. `"4 words | red=2"`
 
 ### 9. Editing one character of a locked string
 
 **Difficulty:** Foundational
+
+**Taxonomy:** `python` → `strings` → `string-basics`  
+**Is Curriculum Based:** No  
+**Assessment type:** Identifying unexpected immutable-string behaviour
 
 A developer tries to correct `"Nython"` using:
 
@@ -137,6 +220,10 @@ D. Square brackets can be used only with numeric values, so text must be convert
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `strings` → `indexing-and-slicing`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting the smallest correct immutable-string repair
+
 A code label contains `word = "Nython"`. Which assignment creates `"Python"` without attempting to mutate the original string object?
 
 A. `word[0] = "P"`  
@@ -146,7 +233,11 @@ D. `word = word[:-1] + "P"`
 
 ### 11. An uppercase result is discarded
 
-**Difficulty:** Intermediate
+**Difficulty:** Foundational
+
+**Taxonomy:** `python` → `strings` → `string-methods`  
+**Is Curriculum Based:** No  
+**Assessment type:** Spotting a logic bug; final value tracing
 
 A profile service runs:
 
@@ -167,6 +258,10 @@ D. String methods work only on text entered with `input()` and cannot transform 
 
 **Difficulty:** Advanced
 
+**Taxonomy:** `python` → `strings` → `string-methods`  
+**Is Curriculum Based:** No  
+**Assessment type:** Identifying final values after a transformation
+
 A moderation tool keeps both versions:
 
 ```python
@@ -185,6 +280,10 @@ D. `original = "summer sale"`, `display = "Summer Sale"`
 
 **Difficulty:** Foundational
 
+**Taxonomy:** `python` → `strings` → `string-methods`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting a correct normalisation approach
+
 A login field may contain capital letters and accidental spaces at both ends. Which expression produces a trimmed, lowercase version for comparison?
 
 A. `email.upper().strip()`  
@@ -195,6 +294,10 @@ D. `email.title()`
 ### 14. Replacing every matching letter
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `strings` → `string-methods`  
+**Is Curriculum Based:** No  
+**Assessment type:** Scenario-based output prediction
 
 A word-game hint applies:
 
@@ -213,6 +316,10 @@ D. `"booooo"`
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `strings` → `string-methods`  
+**Is Curriculum Based:** No  
+**Assessment type:** Identifying unexpected validation behaviour
+
 A form receives `raw_price = "12.5"` and evaluates `raw_price.isdigit()`. Which validation result should the team expect?
 
 A. `True`, because the text represents a numeric value  
@@ -223,6 +330,10 @@ D. `False`, because the decimal point is not a digit
 ### 16. Capturing every cleanup step
 
 **Difficulty:** Advanced
+
+**Taxonomy:** `python` → `strings` → `string-methods`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting the smallest correct pipeline repair
 
 A customer name arrives as `"   meera shah   "`. The stored value must become `"Meera Shah"`. Which one-line repair both transforms and retains the cleaned result?
 
@@ -235,6 +346,10 @@ D. `name = name.lower().rstrip()`
 
 **Difficulty:** Foundational
 
+**Taxonomy:** `python` → `strings` → `split-and-join`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting an appropriate split operation
+
 A craft form stores `tags = "handmade,gifts,pune"`. Which expression separates it at the commas?
 
 A. `tags.join(",")`, because `join` separates text  
@@ -245,6 +360,10 @@ D. `tags.split(",")`
 ### 18. Several spaces still represent one boundary
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `strings` → `split-and-join`  
+**Is Curriculum Based:** No  
+**Assessment type:** Predicting default split behaviour
 
 A sentence contains irregular spacing:
 
@@ -263,6 +382,10 @@ D. `['fresh', '   ', 'handmade', '  ', 'gifts']`
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `strings` → `split-and-join`  
+**Is Curriculum Based:** No  
+**Assessment type:** Completing a realistic join operation
+
 A page has `parts = ["handmade", "gifts", "pune"]` and needs `"handmade-gifts-pune"`. Which expression uses the intended separator?
 
 A. `parts.join("-")`  
@@ -274,18 +397,35 @@ D. `parts.split("-")`
 
 **Difficulty:** Advanced
 
+**Taxonomy:** `python` → `strings` → `split-and-join`  
+**Is Curriculum Based:** No  
+**Assessment type:** Diagnosing a type defect; selecting the smallest redesign
+
 A report tries to build a code using `"-".join([10, 20, 30])` and is rejected. Which diagnosis guides the smallest appropriate redesign?
 
-A. `join` accepts only one item at a time, so loop through the list and append each numeric ID to the final string separately  
+A. Wrap the complete `join` call in `str()`; conversion after joining will make the integer elements acceptable  
 B. Every joined piece must already be a string, so the numeric IDs need string representations  
-C. Hyphens cannot be used as separators between values  
-D. `join` works only when called on a list rather than a string
+C. Convert the entire list once with `str([10, 20, 30])` and pass that one string to `join`, which will preserve each ID as one piece  
+D. Call `[10, 20, 30].join("-")` so the collection, rather than the separator, controls the operation
 
-### 21. A rough email check for the at sign
+### 21. Completing a rough email membership condition
 
 **Difficulty:** Foundational
 
-A signup form only needs a quick Boolean indicating whether `email` contains `"@"`. Which expression communicates that check directly?
+**Taxonomy:** `python` → `strings` → `searching-and-membership`  
+**Is Curriculum Based:** No  
+**Assessment type:** Completing a missing condition
+
+A signup form needs a quick branch that accepts text containing an at sign anywhere:
+
+```python
+if __________________:
+    status = "Continue"
+else:
+    status = "Missing @"
+```
+
+Which expression completes the condition directly without relying on a numeric search position?
 
 A. `"@" in email`  
 B. `email.find("@")`  
@@ -295,6 +435,10 @@ D. `email.startswith("@") and email.endswith("@")`
 ### 22. Searching safely for an optional marker
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `strings` → `searching-and-membership`  
+**Is Curriculum Based:** No  
+**Assessment type:** Interpreting a search sentinel value
 
 A tracking reference may or may not contain `"-"`. The program uses `reference.find("-")`. Which value signals that the marker is absent without raising an exception?
 
@@ -307,6 +451,10 @@ D. `-1`
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `strings` → `searching-and-membership`  
+**Is Curriculum Based:** No  
+**Assessment type:** Scenario-based search prediction
+
 A caption is `"Sale sale SALE"`. The analytics code uses `caption.count("sale")` without normalising case. Which count is recorded?
 
 A. `3`  
@@ -314,20 +462,37 @@ B. `1`
 C. `2`  
 D. `0`
 
-### 24. Accepting an image extension regardless of case
+### 24. Tracing an upload rule with two required text checks
 
 **Difficulty:** Advanced
 
-An upload named `"PRODUCT.JPG"` should pass a rough `.jpg` extension check. Which condition handles the stated case variation?
+**Taxonomy:** `python` → `strings` → `searching-and-membership`  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing multiple conditions; validation reasoning
 
-A. `filename.lower().startswith(".jpg")`  
-B. `filename.find(".jpg") == 0`  
-C. `filename.lower().endswith(".jpg")`  
-D. `filename.count("JPG") > 1`
+A portal accepts an upload only when its name ends in `.jpg` regardless of case and its caption is not empty after surrounding spaces are removed:
+
+```python
+filename = "PRODUCT.JPG"
+caption = "  Summer sale  "
+
+accepted = filename.lower().endswith(".jpg") and bool(caption.strip())
+```
+
+Which audit result correctly traces both requirements?
+
+A. `False`, because lowercasing the filename changes the stored original  
+B. `False`, because `.strip()` always produces an empty string  
+C. `True`, because the normalised filename has the required suffix and the cleaned caption is non-empty  
+D. `True`, because `and` needs only one side to succeed
 
 ### 25. Showing a price with two decimal places
 
 **Difficulty:** Foundational
+
+**Taxonomy:** `python` → `strings` → `string-formatting`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting a numeric format specification
 
 A product stores `price = 49.5`. Which f-string displays the customer-facing value as `₹49.50`?
 
@@ -340,6 +505,10 @@ D. `f"₹{price:.2f}"`
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `strings` → `string-formatting`  
+**Is Curriculum Based:** No  
+**Assessment type:** Applying a thousands-separator format
+
 A wholesale order total is `1500000`. Which f-string displays it as `1,500,000`?
 
 A. `f"{total:.2f}"`  
@@ -347,11 +516,21 @@ B. `f"{total:,}"`
 C. `f"{total:.1%}"`  
 D. `f"{total:^10}"`
 
-### 27. Converting a ratio into a percentage display
+### 27. Repairing a percentage that is scaled twice
 
 **Difficulty:** Intermediate
 
-A dashboard stores `completion = 0.873`. Which format produces `87.3%` directly?
+**Taxonomy:** `python` → `strings` → `string-formatting`  
+**Is Curriculum Based:** No  
+**Assessment type:** Spotting a formatting bug; selecting the smallest repair
+
+A dashboard stores `completion = 0.873` but incorrectly multiplies it before applying percentage formatting:
+
+```python
+display = f"{completion * 100:.1%}"
+```
+
+The screen shows `8730.0%` instead of `87.3%`. Which smallest repair removes the double scaling?
 
 A. `f"{completion:.1f}%"`  
 B. `f"{completion * 100:.1%}"`  
@@ -361,6 +540,10 @@ D. `f"{completion:,.1f}"`
 ### 28. Aligning a product name and its price
 
 **Difficulty:** Advanced
+
+**Taxonomy:** `python` → `strings` → `string-formatting`  
+**Is Curriculum Based:** No  
+**Assessment type:** Applying multiple alignment and precision requirements
 
 A price list requires the product name left-aligned in a width of 12 and its price right-aligned in a width of 8. Which template applies those two alignments?
 
@@ -373,6 +556,10 @@ D. `f"{name:12.2f}{price:8}"`
 
 **Difficulty:** Foundational
 
+**Taxonomy:** `python` → `strings` → `escape-sequences`  
+**Is Curriculum Based:** No  
+**Assessment type:** Completing a required output layout
+
 A receipt needs `Item: Notebook` on the first line and `Total: 80` on the second. Which escape sequence creates that line break inside one string?
 
 A. `\t`  
@@ -383,6 +570,10 @@ D. `\"`
 ### 30. Preserving quotation marks in a review
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `strings` → `escape-sequences`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting a syntactically valid escaped literal
 
 A message must contain the exact text `She said "great"` while using double quotes around the Python string. Which assignment is valid?
 
@@ -395,6 +586,10 @@ D. `review = "She said /"great/""`
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `strings` → `escape-sequences`  
+**Is Curriculum Based:** No  
+**Assessment type:** Identifying unexpected escape behaviour; selecting a repair
+
 A configuration value must preserve the characters in `C:\new\table` rather than interpreting `\n` and `\t`. Which literal is clearest for that purpose?
 
 A. `path = r"C:\new\table"`  
@@ -406,6 +601,10 @@ D. `path = "C:newtable"`
 
 **Difficulty:** Advanced
 
+**Taxonomy:** `python` → `strings` → `escape-sequences`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting an appropriate multiline representation
+
 A confirmation email has three fixed lines and should be written in source with the same visible line structure. Which representation best fits?
 
 A. A one-line string with every space replaced by a tab  
@@ -416,6 +615,10 @@ D. A triple-quoted string containing the three lines
 ### 33. Cleaning a caption through a method pipeline
 
 **Difficulty:** Foundational
+
+**Taxonomy:** `python` → `strings` → `text-processing`  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing a cleanup pipeline
 
 A caption arrives as `"  Hello, WORLD  "`. The pipeline is:
 
@@ -434,6 +637,10 @@ D. `"hello, world"`
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `strings` → `text-processing`  
+**Is Curriculum Based:** No  
+**Assessment type:** Identifying a final field value after parsing
+
 A line contains `"Asha,20,Pune"` and is processed with:
 
 ```python
@@ -451,6 +658,10 @@ D. `"Asha"`
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `strings` → `text-processing`  
+**Is Curriculum Based:** No  
+**Assessment type:** Applying a word-count pipeline
+
 A feedback message is `"fast   delivery and packaging"`. The analyzer uses `len(message.split())`. Which word count is reported?
 
 A. `6`  
@@ -461,6 +672,10 @@ D. `4`
 ### 36. Counting characters but excluding spaces
 
 **Difficulty:** Advanced
+
+**Taxonomy:** `python` → `strings` → `text-processing`  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing a character-cleaning calculation
 
 An analyzer measures `"data science"` after removing ordinary spaces:
 
@@ -479,6 +694,10 @@ D. `2`
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `strings` → `text-processing`  
+**Is Curriculum Based:** No  
+**Assessment type:** Choosing a correct normalised validation approach
+
 A moderator searches for a user-supplied `keyword` inside `message`, and capitalisation should not affect the result. Which condition normalises both sides?
 
 A. `keyword.lower() in message.lower()`  
@@ -489,6 +708,10 @@ D. `message.find(keyword) == 0`
 ### 38. Converting messy tags into a clean slug
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `strings` → `text-processing`  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing multiple text transformations
 
 A tag line is `" red,BLUE, green "`. The program runs:
 
@@ -508,6 +731,10 @@ D. `" Red-Blue-Green "`
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `strings` → `text-processing`  
+**Is Curriculum Based:** No  
+**Assessment type:** Diagnosing a structural parsing defect
+
 An importer expects exactly three fields:
 
 ```python
@@ -516,14 +743,18 @@ name, age, city = line.split(",")
 
 The line is `"Asha,20,Pune,India"`, and the importer rejects it. Which support note identifies the structural mismatch?
 
-A. `split` removes the final field whenever three commas occur, so the country is discarded and only three pieces remain  
+A. Adding `maxsplit=2` proves the original line has only three fields because the last value would automatically remain just `"Pune"`  
 B. The split creates four pieces, but the assignment provides only three variables  
-C. Commas are not valid separators for strings  
-D. `split` joins the city and country into one field automatically
+C. A fourth variable is required because `split` returns one comma character as an extra value in addition to the three fields  
+D. Joining the result with commas before unpacking would preserve four separate values while making three variables sufficient
 
 ### 40. Summarising a cleaned campaign message
 
 **Difficulty:** Advanced
+
+**Taxonomy:** `python` → `strings` → `text-processing`  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing a complete text-processing pipeline
 
 A campaign analyzer runs:
 
@@ -549,16 +780,16 @@ D. `"5 words | python=2"`
 | Q | Answer | Difficulty | Rationale |
 |---:|:---:|---|---|
 | 1 | B | Foundational | The nine letters plus the space give a total length of 10. |
-| 2 | D | Foundational | Double quotes safely contain the apostrophe as an ordinary character. |
-| 3 | A | Intermediate | The empty string has length zero and is falsy. |
-| 4 | C | Advanced | An identifier is text, and string storage preserves the meaningful leading zeros and character order. |
-| 5 | B | Foundational | String indices begin at zero, so index 0 selects the first character. |
-| 6 | A | Intermediate | `[-4:]` starts four positions from the end and continues through the final character. |
-| 7 | D | Intermediate | The stop is excluded, so a stop of 6 includes indices 2, 3, 4, and 5. |
-| 8 | C | Advanced | Starting at index 1 and stepping by 2 visits B, D, and F before the exclusive stop at 6. |
+| 2 | D | Foundational | Slice stops are exclusive, so changing the stop from 5 to 6 includes index 5 and produces `"CD12"`. |
+| 3 | A | Intermediate | Reassignment retains the empty result of stripping the spaces, after which `bool(name)` correctly produces `False`. |
+| 4 | C | Advanced | An absent at sign makes `.find()` return `-1`, and `-1` is truthy, so the faulty condition accepts the invalid input. |
+| 5 | B | Intermediate | Splitting on an explicit comma preserves empty pieces, and joining places one hyphen at every former comma boundary, exactly like `replace`. |
+| 6 | A | Intermediate | Changing `.1f` to `.2f` preserves the value and displays exactly two digits after the decimal point. |
+| 7 | D | Intermediate | Doubled backslashes preserve the folder separators, while `\n` between the path and filename creates the required line break. |
+| 8 | C | Advanced | Cleaning produces `"red  blue red"`; default splitting yields three words, and `red` occurs twice. |
 | 9 | A | Foundational | Indexing can read a string but cannot assign into it because strings are immutable. |
 | 10 | C | Intermediate | The expression builds a new string from `"P"` and the unchanged slice `"ython"`. |
-| 11 | B | Intermediate | Transforming methods return a new string; ignoring the return value leaves the original variable unchanged. |
+| 11 | B | Foundational | Transforming methods return a new string; ignoring the return value leaves the original variable unchanged. |
 | 12 | D | Advanced | `title()` produces a new value for `display` and does not modify `original`. |
 | 13 | C | Foundational | `strip()` removes surrounding whitespace and `lower()` normalises the remaining characters. |
 | 14 | B | Intermediate | `replace` swaps every lowercase `a`, producing `"bonono"`. |
@@ -571,7 +802,7 @@ D. `"5 words | python=2"`
 | 21 | A | Foundational | The `in` operator directly returns whether the at sign occurs anywhere in the email. |
 | 22 | D | Intermediate | `find` returns -1 when the searched text is absent. |
 | 23 | B | Intermediate | Search is case-sensitive, so only the exact lowercase occurrence matches. |
-| 24 | C | Advanced | Lowercasing first makes the extension test independent of the filename's capitalisation. |
+| 24 | C | Advanced | The lowercased filename ends in `.jpg`, and stripping leaves the non-empty caption `"Summer sale"`, so both sides of `and` are true. |
 | 25 | D | Foundational | The `.2f` specifier displays a numeric value with exactly two digits after the decimal point. |
 | 26 | B | Intermediate | The comma format specifier inserts thousands separators. |
 | 27 | C | Intermediate | `.1%` scales the proportion and displays one decimal place plus a percent sign. |
@@ -591,14 +822,13 @@ D. `"5 words | python=2"`
 
 ## Topic coverage
 
-| Unit 5 topic | Question numbers |
+| Unit 5 taxonomy subtopic | Question numbers |
 |---|---|
-| What a string is and how it is stored | 1–4 |
-| Indexing and slicing | 5–8 |
-| String immutability | 9–12 |
-| Common string methods | 13–16 |
-| Splitting and joining | 17–20 |
-| Searching within strings | 21–24 |
-| String formatting and f-strings | 25–28 |
-| Escape sequences and multi-line strings | 29–32 |
-| Practical text processing | 33–40 |
+| `string-basics` | 1, 9 |
+| `indexing-and-slicing` | 2, 10 |
+| `string-methods` | 3, 11–16 |
+| `searching-and-membership` | 4, 21–24 |
+| `split-and-join` | 5, 17–20 |
+| `string-formatting` | 6, 25–28 |
+| `escape-sequences` | 7, 29–32 |
+| `text-processing` | 8, 33–40 |

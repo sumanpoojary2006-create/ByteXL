@@ -6,6 +6,8 @@
 - Scope: branching, `if`, `if/else`, `elif`, nested conditions, guard-style checks, `match/case`, truthiness, Boolean logic, conditional expressions, and input validation
 - Format: four options per question; exactly one best answer
 - Difficulty mix: 10 foundational, 20 intermediate, 10 advanced
+- Opening coverage: Questions 1–10 collectively represent all six Unit 3 taxonomy subtopics
+- Metadata: every question identifies its taxonomy and primary assessment behaviour
 - Student expectation: trace the code carefully. Running the code after making a prediction is encouraged.
 
 ---
@@ -15,6 +17,10 @@
 ### 1. Wallet balance after a payment
 
 **Difficulty:** Foundational
+
+**Taxonomy:** `python` → `control-flow` → `conditional-statements`  
+**Is Curriculum Based:** No  
+**Assessment type:** Scenario-based output prediction
 
 A customer with ₹900 in their wallet attempts a ₹700 payment. The payment service runs this code before showing its response:
 
@@ -36,36 +42,45 @@ Which response sequence will the customer see?
 A. `Declined` followed by `Low balance`  
 B. `Balance healthy` only  
 C. `Low balance` only  
-D. Nothing, because the first condition is false
+D. `Low balance` followed by `Balance healthy`, because both outcomes of the second decision run
 
-### 2. The hot-weather fee table
+### 2. A paid order waiting for stock
 
 **Difficulty:** Foundational
 
-A delivery service uses the following hot-weather fee rule. A test order is placed when the recorded temperature is 38°C:
+**Taxonomy:** `python` → `control-flow` → `nested-conditions`  
+**Is Curriculum Based:** No  
+**Assessment type:** Analysing nested conditions; final value tracing
+
+A fulfilment service first checks payment and then checks stock only for paid orders:
 
 ```python
-temperature = 38
-fee = 0
+payment_received = True
+stock = 0
 
-if temperature >= 30:
-    fee = 50
-elif temperature >= 35:
-    fee = 80
+if payment_received:
+    if stock > 0:
+        message = "Dispatch"
+    else:
+        message = "Await stock"
 else:
-    fee = 20
+    message = "Payment required"
 ```
 
-Which fee will reach the customer's invoice?
+Which status will be attached to this order after both relevant decisions are traced?
 
-A. `80`  
-B. `50`  
-C. `20`  
-D. `0`
+A. `"Dispatch"`  
+B. `"Await stock"`  
+C. `"Payment required"`  
+D. No status, because the inner `else` belongs to the outer `if`
 
 ### 3. The cold-chain acceptance gate
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `control-flow` → `input-validation`  
+**Is Curriculum Based:** No  
+**Assessment type:** Completing a missing validation condition
 
 A lab accepts a temperature only from 2°C through 8°C, including both endpoints.
 
@@ -89,6 +104,10 @@ D. `temperature >= 2 and temperature <= 8`
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `control-flow` → `truthiness-and-boolean-logic`  
+**Is Curriculum Based:** No  
+**Assessment type:** Spotting a logic bug; smallest correct repair
+
 During a security test, an active account opens even though the tester deliberately enters a wrong PIN. The intended rule is to grant access only when the PIN is correct **and** the account is active.
 
 ```python
@@ -104,13 +123,17 @@ else:
 Which review action closes the security gap while preserving that policy?
 
 A. `or` should be `and`  
-B. `account_active` should be compared with `False`  
-C. The `else` block should come first  
-D. Both variables should be strings
+B. Replace the condition with `pin_correct and not account_active`  
+C. Replace the condition with `not pin_correct and account_active`  
+D. Replace the condition with `pin_correct or not account_active`
 
 ### 5. Conflicting result labels
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `control-flow` → `conditional-statements`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting the smallest correct structural repair
 
 A result must print exactly one label. At a mark of 40, the program currently prints both.
 
@@ -134,6 +157,10 @@ D. Delete the first `if` block
 
 **Difficulty:** Foundational
 
+**Taxonomy:** `python` → `control-flow` → `input-validation`  
+**Is Curriculum Based:** No  
+**Assessment type:** Choosing an input that exposes a boundary defect
+
 A user may register if they are 18 or older.
 
 ```python
@@ -150,30 +177,36 @@ B. `19`
 C. `0`  
 D. `18`
 
-### 7. Two messages on one result screen
+### 7. A delivery label chosen in one expression
 
 **Difficulty:** Intermediate
 
-The developer expects exactly one message.
+**Taxonomy:** `python` → `control-flow` → `conditional-expressions`  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing a conditional expression
+
+A courier uses a conditional expression to assign one delivery label:
 
 ```python
-if score >= 40:
-    print("Pass")
-
-if score <= 50:
-    print("Needs support")
+distance_km = 4
+is_member = False
+label = "Express" if distance_km < 5 and is_member else "Standard"
 ```
 
-Which test score should QA use to capture evidence that the screen can display two conflicting messages?
+Which review note correctly identifies the stored label and the reason for it?
 
-A. `39`  
-B. `51`  
-C. `45`  
-D. `90`
+A. `"Express"`, because distance alone satisfies the true expression  
+B. `"Express"`, because the value before `if` is always assigned first  
+C. `"Standard"`, because the combined condition is false when membership is false  
+D. `"Standard"`, because conditional expressions always select the value after `else`
 
 ### 8. An inventory rule under future edits
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `control-flow` → `conditional-statements`  
+**Is Curriculum Based:** No  
+**Assessment type:** Comparing two implementations; selecting an appropriate structure
 
 An inventory team is choosing between two implementations for a status that must be exactly `"Available"` or `"Sold out"`.
 
@@ -206,6 +239,10 @@ D. Version A checks both conditions and is therefore safer
 
 **Difficulty:** Foundational
 
+**Taxonomy:** `python` → `control-flow` → `truthiness-and-boolean-logic`  
+**Is Curriculum Based:** No  
+**Assessment type:** Deciding whether two versions are equivalent
+
 A developer simplifies the required-name check in a registration form. In this application, `name` is always a string.
 
 ```python
@@ -231,6 +268,10 @@ D. Version A treats `"0"` as empty, but Version B does not
 
 **Difficulty:** Foundational
 
+**Taxonomy:** `python` → `control-flow` → `match-case`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting the most appropriate programming structure
+
 A command-line assistant supports the fixed commands `"start"`, `"stop"`, and `"help"`, and must give a response for every other command. Which implementation structure would make that design clearest to the next developer?
 
 A. Three unrelated `if` statements  
@@ -241,6 +282,10 @@ D. One `if` with several arithmetic comparisons
 ### 11. The warning that never appears
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `control-flow` → `conditional-statements`  
+**Is Curriculum Based:** No  
+**Assessment type:** Identifying an unreachable branch
 
 A road-safety dashboard never displays `"Dangerously fast"`, even when its sensor reports 110 km/h. Its classifier is:
 
@@ -265,6 +310,10 @@ D. The `elif` branch is unreachable because every value `>= 100` already matches
 ### 12. Streaming access with trial time remaining
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `control-flow` → `nested-conditions`  
+**Is Curriculum Based:** No  
+**Assessment type:** Analysing nested conditions; final value tracing
 
 A streaming app prepares one message after checking a signed-in user's subscription and remaining trial time:
 
@@ -295,6 +344,10 @@ D. `"Sign in"`
 
 **Difficulty:** Advanced
 
+**Taxonomy:** `python` → `control-flow` → `truthiness-and-boolean-logic`  
+**Is Curriculum Based:** No  
+**Assessment type:** Evaluating operator precedence; tracing multiple conditions
+
 At an event gate, a 17-year-old presents a pass but is not accompanied by a parent. The gate applies this rule:
 
 ```python
@@ -310,14 +363,18 @@ else:
 
 Which entry in the gate's audit log correctly describes the decision?
 
-A. `Enter`, because `or` is evaluated before `and`  
-B. `Enter`, because `has_pass` alone is true  
+A. `Enter`, because a true `has_pass` prevents Python from checking `with_parent`  
+B. `Enter`, because the condition groups as `(age >= 18 or has_pass) and with_parent`  
 C. `Wait`, because the condition groups as `(age >= 18) or (has_pass and with_parent)`  
-D. `Wait`, because every comparison with `17` is false
+D. `Wait`, because Python evaluates the operators strictly from left to right
 
 ### 14. Zero entered into a stock screen
 
 **Difficulty:** Foundational
+
+**Taxonomy:** `python` → `control-flow` → `truthiness-and-boolean-logic`  
+**Is Curriculum Based:** No  
+**Assessment type:** Reasoning about truthy and falsy values; unexpected behaviour
 
 In a stock-entry screen, the user types `0` and presses Enter. The developer expects zero quantity to behave like “nothing added.”
 
@@ -332,14 +389,18 @@ else:
 
 Which test observation will QA actually record?
 
-A. `Nothing added`, because zero is falsy  
+A. `Nothing added`, because Python automatically converts the typed text to integer `0`  
 B. `Item added`, because `input()` returns the non-empty string `"0"`  
-C. A `SyntaxError`  
-D. Nothing
+C. `Nothing added`, because the character `"0"` makes every containing string empty  
+D. A conversion error occurs before the condition is checked
 
 ### 15. Coffee becomes an invalid selection
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `control-flow` → `match-case`  
+**Is Curriculum Based:** No  
+**Assessment type:** Identifying unexpected type-sensitive matching behaviour
 
 In a canteen menu, the user types `2`, expecting coffee.
 
@@ -357,14 +418,18 @@ match choice:
 
 Which behaviour will the support team observe?
 
-A. `Tea` prints because the first numeric case is tried first  
-B. `Coffee` prints because `2` and `"2"` match  
-C. Python raises an error at `match`  
+A. `Tea` prints because `match` converts the entry to the type of the first case  
+B. `Coffee` prints because digit-only input is automatically converted to an integer  
+C. Python reports a type error because the subject and case values use different types  
 D. `Invalid` prints because the input is the string `"2"`, not the integer `2`
 
 ### 16. Repairing a kiosk that crashed on letters
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `control-flow` → `input-validation`  
+**Is Curriculum Based:** No  
+**Assessment type:** Choosing a correct validation approach
 
 A registration kiosk must accept digit-only ages from 1 through 120. Four patches have been proposed after the kiosk crashed on `"abc"`. Which patch validates the text before conversion and handles the permitted range correctly?
 
@@ -413,6 +478,10 @@ else:
 
 **Difficulty:** Advanced
 
+**Taxonomy:** `python` → `control-flow` → `truthiness-and-boolean-logic`  
+**Is Curriculum Based:** No  
+**Assessment type:** Evaluating operator precedence; final value tracing
+
 A checkout service calculates a coupon discount for this order:
 
 ```python
@@ -437,6 +506,10 @@ D. The code fails because `and` and `or` cannot appear together
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `control-flow` → `truthiness-and-boolean-logic`  
+**Is Curriculum Based:** No  
+**Assessment type:** Completing a compound policy condition
+
 A college event admits a student only if the student has an ID and either has registered or is on the guest list. Which condition exactly represents the policy?
 
 A. `has_id or registered and on_guest_list`  
@@ -448,6 +521,10 @@ D. `has_id or registered or on_guest_list`
 
 **Difficulty:** Advanced
 
+**Taxonomy:** `python` → `control-flow` → `truthiness-and-boolean-logic`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting a safe validation condition; short-circuit tracing
+
 The program should print `"High average"` only when `count` is non-zero and `total / count` is greater than 80. Which condition is safe even when `count` is `0`?
 
 A. `if total / count > 80 and count != 0:`  
@@ -458,6 +535,10 @@ D. `if count != 0 and total / count > 80:`
 ### 20. The scholarship status badge
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `control-flow` → `nested-conditions`  
+**Is Curriculum Based:** No  
+**Assessment type:** Analysing nested conditions; final value tracing
 
 A scholarship portal prepares a status badge using the following checks:
 
@@ -485,6 +566,10 @@ D. `"Review"`
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `control-flow` → `input-validation`  
+**Is Curriculum Based:** No  
+**Assessment type:** Completing a missing boundary condition
+
 An ordering screen accepts quantities from 1 through 10, inclusive. The incomplete first branch must stop every value outside that range before the order continues.
 
 ```python
@@ -507,6 +592,10 @@ D. `quantity > 1 and quantity < 10`
 
 **Difficulty:** Advanced
 
+**Taxonomy:** `python` → `control-flow` → `input-validation`  
+**Is Curriculum Based:** No  
+**Assessment type:** Spotting a validation logic bug; unreachable rejection branch
+
 The intended valid score is from 0 through 100. During testing, `-5`, `50`, and `150` are all labelled valid.
 
 ```python
@@ -518,14 +607,18 @@ else:
 
 Which code-review finding explains why the invalid cases never reach the rejection message?
 
-A. Only the score `50` is accepted  
-B. The condition fails only for negative scores  
-C. The boundaries must both be made strict  
+A. Python checks only `score >= 0`; when that comparison is false, it skips the second comparison  
+B. The comparisons are correct, but the `else` belongs only to `score <= 100`  
+C. Changing the condition to `score > 0 or score < 100` would reject both invalid values  
 D. `or` makes the condition true for every numeric score; it should be `and`
 
 ### 23. A score of 95 receives grade C
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `control-flow` → `conditional-statements`  
+**Is Curriculum Based:** No  
+**Assessment type:** Repairing branch order; identifying shadowed cases
 
 A student who scores 95 is incorrectly assigned grade C. The team wants to preserve all existing thresholds and labels.
 
@@ -551,6 +644,10 @@ D. Reverse only the labels, leaving the conditions in place
 
 **Difficulty:** Foundational
 
+**Taxonomy:** `python` → `control-flow` → `input-validation`  
+**Is Curriculum Based:** No  
+**Assessment type:** Identifying and repairing an incorrect boundary
+
 A coupon is valid through and including 31 July. Dates are represented here only by the July day number.
 
 ```python
@@ -565,11 +662,15 @@ On 31 July, a customer is incorrectly told the coupon has expired. Which change 
 A. Change `day >= 1` to `day > 1`  
 B. Change `and` to `or`  
 C. Change `day < 31` to `day <= 31`  
-D. Change `day < 31` to `day == 31`
+D. Change the full condition to `day >= 1 and day <= 30`
 
 ### 25. Proving free delivery is too easy to obtain
 
 **Difficulty:** Advanced
+
+**Taxonomy:** `python` → `control-flow` → `truthiness-and-boolean-logic`  
+**Is Curriculum Based:** No  
+**Assessment type:** Choosing an input that exposes a policy defect
 
 The rule says: “A delivery is free only when the customer is a member **and** the order total is at least ₹500.” The code is:
 
@@ -590,6 +691,10 @@ D. `is_member = True`, `total = 900`
 ### 26. Stacking two earned discounts
 
 **Difficulty:** Advanced
+
+**Taxonomy:** `python` → `control-flow` → `conditional-statements`  
+**Is Curriculum Based:** No  
+**Assessment type:** Comparing two implementations; choosing a distinguishing input
 
 A shop may stack a coupon discount and a member discount. Two developers submit these implementations:
 
@@ -622,6 +727,10 @@ D. Only when both `has_coupon` and `is_member` are true
 
 **Difficulty:** Advanced
 
+**Taxonomy:** `python` → `control-flow` → `truthiness-and-boolean-logic`  
+**Is Curriculum Based:** No  
+**Assessment type:** Deciding whether two Boolean versions are equivalent
+
 A security engineer wants to refactor Version A without changing which login attempts are rejected:
 
 ```python
@@ -640,6 +749,10 @@ D. `if correct_pin and not active_account:`
 
 **Difficulty:** Foundational
 
+**Taxonomy:** `python` → `control-flow` → `conditional-expressions`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting the most appropriate programming structure
+
 A report-card program only needs to assign `"Pass"` when `marks >= 40` and `"Fail"` otherwise. No logging or additional action belongs to either path. Which implementation should the reviewer approve for this small value choice?
 
 A. Two separate `if` statements  
@@ -650,6 +763,10 @@ D. A nested conditional expression
 ### 29. The missing large-transfer label
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `control-flow` → `conditional-statements`  
+**Is Curriculum Based:** No  
+**Assessment type:** Identifying an unreachable branch
 
 A payment dashboard correctly labels positive, zero, and negative amounts, but the `"Large payment"` label has never appeared—even for transfers above ₹1,000.
 
@@ -674,6 +791,10 @@ D. `else`
 ### 30. A minor arrives with a valid cinema ticket
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `control-flow` → `nested-conditions`  
+**Is Curriculum Based:** No  
+**Assessment type:** Analysing nested conditions; scenario-based prediction
 
 At a cinema gate, a 15-year-old arrives with a valid ticket. The screen follows these nested rules:
 
@@ -701,6 +822,10 @@ D. `Adult required`
 
 **Difficulty:** Advanced
 
+**Taxonomy:** `python` → `control-flow` → `truthiness-and-boolean-logic`  
+**Is Curriculum Based:** No  
+**Assessment type:** Evaluating operator precedence; final value tracing
+
 An access service computes `allowed` before deciding whether to unlock a turnstile:
 
 ```python
@@ -722,6 +847,10 @@ D. The expression is invalid without parentheses
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `control-flow` → `truthiness-and-boolean-logic`  
+**Is Curriculum Based:** No  
+**Assessment type:** Reasoning about container truthiness
+
 A sensor submits one reading, and that reading happens to be zero. The dashboard uses the collection itself to decide whether data arrived:
 
 ```python
@@ -736,13 +865,17 @@ else:
 Which message card will the dashboard display?
 
 A. `"Data received"`, because the list contains one item even though that item is `0`  
-B. `"No data"`, because `0` is falsy  
-C. `"No data"`, because all lists are falsy  
-D. Python raises an error when a list is used as a condition
+B. `"No data"`, because a list's truthiness is copied from its first element  
+C. `"No data"`, because Python evaluates the condition as `any(readings)`  
+D. `"Data received"` only after the zero is converted to a truthy string
 
 ### 33. A winter temperature rejected as non-numeric
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `control-flow` → `input-validation`  
+**Is Curriculum Based:** No  
+**Assessment type:** Identifying unexpected validation behaviour
 
 A weather app should accept whole-number temperatures from -50 through 60.
 
@@ -770,6 +903,10 @@ D. `"-5".isdigit()` is false because the minus sign is not a digit
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `control-flow` → `input-validation`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting the smallest correct validation repair
+
 A required name must contain something other than spaces. The current code accepts the input `"   "`.
 
 ```python
@@ -792,6 +929,10 @@ D. `if not name:`
 
 **Difficulty:** Foundational
 
+**Taxonomy:** `python` → `control-flow` → `conditional-statements`  
+**Is Curriculum Based:** No  
+**Assessment type:** Scenario-based branch tracing; final value identification
+
 A shopping cart assigns a discount rate from the order amount. The current cart total is ₹750:
 
 ```python
@@ -809,14 +950,18 @@ else:
 
 Which discount rate will be attached to this cart?
 
-A. `0.10`  
-B. `0.20`  
-C. `0.05`  
-D. `0`
+A. `0.10`, because `>= 500` is the first satisfied branch  
+B. `0.20`, because the three qualifying rates are added together  
+C. `0.05`, because the last true threshold overwrites earlier matches  
+D. `0`, because `750` does not exactly equal a listed threshold
 
 ### 36. Showing one loan rejection reason
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `control-flow` → `nested-conditions`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting an appropriate ordered validation structure
 
 A loan application should show one specific reason for rejection, checking these rules in order:
 
@@ -875,6 +1020,10 @@ else:
 
 **Difficulty:** Advanced
 
+**Taxonomy:** `python` → `control-flow` → `match-case`  
+**Is Curriculum Based:** No  
+**Assessment type:** Identifying an unreachable branch and resulting syntax failure
+
 A command processor fails to start after a developer moves the catch-all case above the supported commands:
 
 ```python
@@ -899,6 +1048,10 @@ D. All three cases run in order
 ### 38. The distinction badge overwrites the pass badge
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `control-flow` → `conditional-statements`  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing independent conditions and variable overwriting
 
 A learning portal assigns a badge after checking both its general pass rule and its distinction rule:
 
@@ -926,6 +1079,10 @@ D. `"Distinction"`
 
 **Difficulty:** Advanced
 
+**Taxonomy:** `python` → `control-flow` → `truthiness-and-boolean-logic`  
+**Is Curriculum Based:** No  
+**Assessment type:** Spotting a precedence bug; smallest correct repair
+
 The intended rule is: a user may enter only if they are not blocked **and** they either have a ticket or are a VIP.
 
 ```python
@@ -943,6 +1100,10 @@ D. `if not (blocked and has_ticket and is_vip):`
 ### 40. A finance readability refactor
 
 **Difficulty:** Foundational
+
+**Taxonomy:** `python` → `control-flow` → `conditional-expressions`  
+**Is Curriculum Based:** No  
+**Assessment type:** Comparing implementations; deciding equivalence
 
 A finance developer replaces Version A with Version B during a readability cleanup.
 
@@ -975,12 +1136,12 @@ D. Version B works only when `balance` and `amount` are Boolean
 | Q | Answer | Difficulty | Rationale |
 |---:|:---:|---|---|
 | 1 | C | Foundational | The first `if` is false. The second `if` is true because `900 - 700` is `200`, which is below `300`; its `else` is skipped. |
-| 2 | B | Foundational | `38 >= 30` is the first true condition, so the chain stops and assigns `50`. The later, more specific threshold is never checked. |
+| 2 | B | Foundational | Payment has been received, so the inner stock check runs. Zero stock fails `stock > 0`, and the inner `else` assigns `"Await stock"`. |
 | 3 | D | Intermediate | Both limits must hold, so the comparisons need `and`; `>=` and `<=` include the endpoints. |
 | 4 | A | Intermediate | The policy requires both facts to be true. `or` grants access when only one passes. |
 | 5 | B | Intermediate | `else` makes failure the one mutually exclusive alternative to passing and removes the duplicated boundary test. |
 | 6 | D | Foundational | Age `18` should qualify under “18 or older,” but `age > 18` rejects it. |
-| 7 | C | Intermediate | `45` satisfies both `score >= 40` and `score <= 50`, so both independent blocks run. |
+| 7 | C | Intermediate | Although the distance test is true, `and is_member` makes the complete condition false, so the expression selects `"Standard"`. |
 | 8 | A | Intermediate | The policy has exactly two complementary outcomes. `if/else` expresses that invariant without a second condition that a later edit could make overlap or leave a gap. |
 | 9 | B | Foundational | For strings, only `""` is falsy. Therefore “not equal to the empty string” and direct truthiness give the same branch decision. |
 | 10 | C | Foundational | `match/case` is designed for comparing one value with several fixed options, and `case _` handles everything else. |
@@ -1019,10 +1180,21 @@ D. Version B works only when `balance` and `amount` are Boolean
 
 | Assessment behaviour | Question numbers |
 |---|---|
-| Scenario-based output prediction | 1, 13, 14, 15, 30, 37 |
-| Final value tracing | 2, 12, 17, 20, 31, 35, 38 |
+| Scenario-based output prediction | 1–2, 7, 13–15, 30, 32, 35, 37–38 |
+| Final value tracing | 2, 7, 12, 17, 20, 31, 35, 38 |
 | Missing conditions and validation | 3, 16, 19, 21, 34 |
-| Logic bugs, boundaries, and repairs | 4, 5, 6, 7, 11, 22, 23, 24, 25, 29, 33, 39 |
+| Logic bugs, boundaries, and repairs | 4–6, 11, 22–25, 29, 33–34, 39 |
 | Comparing implementations and equivalence | 8, 9, 26, 27, 40 |
 | Selecting an appropriate structure | 10, 18, 28, 36 |
 | Truthiness and precedence | 13, 14, 17, 27, 31, 32 |
+
+## Taxonomy coverage
+
+| Unit 3 taxonomy subtopic | Question numbers |
+|---|---|
+| `conditional-statements` | 1, 5, 8, 11, 23, 26, 29, 35, 38 |
+| `nested-conditions` | 2, 12, 20, 30, 36 |
+| `match-case` | 10, 15, 37 |
+| `truthiness-and-boolean-logic` | 4, 9, 13–14, 17–19, 25, 27, 31–32, 39 |
+| `conditional-expressions` | 7, 28, 40 |
+| `input-validation` | 3, 6, 16, 21–22, 24, 33–34 |

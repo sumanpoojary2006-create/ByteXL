@@ -16,6 +16,10 @@
 
 **Difficulty:** Foundational
 
+**Taxonomy:** `python` → `data-types-and-operators` → `variables-and-assignment`  
+**Is Curriculum Based:** No  
+**Assessment type:** Scenario-based output prediction; final value of a variable
+
 A digital wallet starts a transaction with this state:
 
 ```python
@@ -26,142 +30,196 @@ print(f"Remaining: {balance}")
 
 Which amount will the transaction screen show?
 
-A. `1000`, because the first assignment cannot be changed  
+A. `1250`, because reassignment adds the two numbers automatically  
 B. `750`, because the second assignment stores the calculated value back under the same label  
-C. `250`, because assignment keeps only the value being subtracted  
-D. The screen remains blank because a variable cannot be reassigned
+C. `250`, because the rightmost numeric literal replaces the balance before subtraction  
+D. `1000`, because the print statement uses the value from the first assignment
 
-### 2. Naming a value another developer must maintain
-
-**Difficulty:** Intermediate
-
-A banking program needs a variable for the amount left after a withdrawal. Which proposed name is both valid Python and the clearest PEP 8-style choice?
-
-A. `2ndBalance`  
-B. `class`  
-C. `Remaining Balance`  
-D. `remaining_balance`
-
-### 3. Two score labels that differ only by case
+### 2. Choosing a type that preserves a sensor reading
 
 **Difficulty:** Intermediate
 
-A scoreboard contains:
+**Taxonomy:** `python` → `data-types-and-operators` → `numeric-types`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting the most appropriate data representation
+
+A greenhouse sensor reports a temperature of `23.75°C`. A developer must preserve the fractional reading for later calculations. Which assignment best matches that requirement?
+
+A. `temperature = 23`  
+B. `temperature = "23.75"`  
+C. `temperature = 23 + 75j`  
+D. `temperature = 23.75`
+
+### 3. Separating displayed text from a Boolean verdict
+
+**Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `data-types-and-operators` → `strings-and-booleans`  
+**Is Curriculum Based:** No  
+**Assessment type:** Identifying final values and types
+
+A registration service prepares a message and a machine-readable verdict:
 
 ```python
-score = 80
-Score = 20
-combined = score + Score
+status_text = "Approved"
+is_approved = status_text == "Approved"
 ```
 
-A reviewer initially assumes the second line replaces the first. Which audit note correctly describes the stored result?
+A downstream rule requires an actual Boolean. Which audit record correctly identifies the two final values and their types?
 
-A. `combined` is `100` because `score` and `Score` are two case-sensitive variable names  
-B. `combined` is `40` because both names refer to the latest value  
-C. `combined` is `160` because `Score` duplicates `score`  
-D. Python rejects all variable names containing capital letters
+A. `status_text` is the string `"Approved"`; `is_approved` is the Boolean `True`  
+B. Both variables contain the string `"Approved"`  
+C. `status_text` is a Boolean because it describes a decision  
+D. `is_approved` contains the string `"True"`
 
-### 4. A jar label quietly changes meaning
+### 4. A decimal price is converted with the wrong tool
 
 **Difficulty:** Advanced
 
-A delivery script first uses `status` for text and later reuses it for a number:
+**Taxonomy:** `python` → `data-types-and-operators` → `type-conversion`  
+**Is Curriculum Based:** No  
+**Assessment type:** Error diagnosis; smallest correct repair
+
+A checkout receives a decimal price as keyboard input:
 
 ```python
-status = "Packed"
-# several lines later
-status = 3
+raw_price = input("Price: ")
+price = int(raw_price)
 ```
 
-Both lines are legal Python, but a later developer expects `status` to contain the delivery message. Which repair most improves maintainability without removing either value?
+When the customer enters `12.50`, the conversion fails. The system must preserve paise rather than discard them. Which single-line replacement is the smallest correct repair?
 
-A. Rename both variables to `x`  
-B. Write `status = "Packed" = 3` so both values remain attached  
-C. Use separate descriptive names such as `delivery_status` and `attempt_count`  
-D. Capitalise the second name as `Status` and leave its purpose unexplained
+A. `price = bool(raw_price)`  
+B. `price = int(float(raw_price))`  
+C. `price = float(raw_price)`  
+D. `price = raw_price + 0.0`
 
-### 5. Selecting number types for a science lab
+### 5. Recovering complete trays and leftover cups
 
 **Difficulty:** Foundational
 
-A lab program stores the number of samples, a measured voltage with decimals, and an electrical value containing a real and imaginary part. Which mapping fits the quantities?
+**Taxonomy:** `python` → `data-types-and-operators` → `arithmetic-operators`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting operators for a realistic calculation
 
-A. Samples: `float`; voltage: `complex`; electrical value: `int`  
-B. Samples: `complex`; voltage: `int`; electrical value: `float`  
-C. All three should be strings because they will eventually be displayed  
-D. Samples: `int`; voltage: `float`; electrical value: `complex`
+A caterer has `29` dessert cups and trays that hold `6` cups. The dashboard must show both the number of completely filled trays and the number of cups left over. Which pair gives the required values?
 
-### 6. A receipt shows more decimal digits than expected
+A. `full = 29 / 6` and `left = 29 / 6`  
+B. `full = 29 % 6` and `left = 29 // 6`  
+C. `full = int(29 / 6)` and `left = 29 - 6`  
+D. `full = 29 // 6` and `left = 29 % 6`
 
-**Difficulty:** Intermediate
-
-A prototype calculates:
-
-```python
-total = 0.1 + 0.2
-```
-
-The debug screen shows `0.30000000000000004`. Which support note gives the most accurate response?
-
-A. Python performed addition in the wrong order  
-B. Some decimal fractions cannot be represented exactly in binary floating point; format or round the displayed value when appropriate  
-C. One operand must be converted to `complex`  
-D. Python floats cannot store values below 1
-
-### 7. Whole crates versus a decimal result
+### 6. Finding the test that reveals an age-boundary defect
 
 **Difficulty:** Intermediate
 
-A warehouse has 8 bottles and packs 4 bottles per crate.
+**Taxonomy:** `python` → `data-types-and-operators` → `comparison-and-logical-operators`  
+**Is Curriculum Based:** No  
+**Assessment type:** Choosing an input that exposes an incorrect boundary
+
+A portal is intended to accept applicants aged 18 or older, but the developer writes:
 
 ```python
-result_a = 8 / 4
-result_b = 8 // 4
+eligible = age > 18
 ```
 
-The inventory API requires a whole-number crate count. Which value and explanation should the developer use?
+The test team can add only one input to expose the incorrect boundary. Which age should it choose?
 
-A. `result_a`, because it stores the integer `2`  
-B. Either value, because `/` and `//` always produce the same type  
-C. `result_b`, because it stores the whole-number result `2`, while `result_a` is `2.0`  
-D. Neither value, because division always produces a complex number
+A. `17`, because both the requirement and implementation reject it  
+B. `18`, because the requirement accepts it while the implementation rejects it  
+C. `19`, because both the requirement and implementation accept it  
+D. `30`, because a value far from the boundary is the strongest boundary test
 
-### 8. Fractional packet counts enter the inventory
+### 7. Restoring the missing stock update
+
+**Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `data-types-and-operators` → `assignment-operators`  
+**Is Curriculum Based:** No  
+**Assessment type:** Completing missing code; final value of a variable
+
+A kiosk begins with 20 bottles and completes a sale of 6:
+
+```python
+stock = 20
+sold = 6
+# missing update
+```
+
+Which line should replace the comment so `stock` finishes at `14` while expressing an in-place update?
+
+A. `stock = sold - stock`  
+B. `stock += sold`  
+C. `stock -= sold`  
+D. `sold -= stock`
+
+### 8. Repairing a precedence defect without changing the formula
 
 **Difficulty:** Advanced
 
-A shop's data model treats the number of sealed biscuit packets as a measurement and accepts `3.5`. The business sells only complete sealed packets. Which design correction best aligns the stored type with the real quantity?
+**Taxonomy:** `python` → `data-types-and-operators` → `operator-precedence`  
+**Is Curriculum Based:** No  
+**Assessment type:** Spotting a logic defect; smallest correct repair
 
-A. Represent the count as an integer and reject data that is not a whole packet count  
-B. Use a complex number so the fractional part becomes imaginary  
-C. Keep a float because all numeric types mean the same thing  
-D. Convert the count to text and perform arithmetic on it later
+A billing rule says a base charge and service charge must be added before multiplying by the number of days. The implementation is:
 
-### 9. Joining a player's first and last name
+```python
+total = base_charge + service_charge * days
+```
+
+Which smallest repair makes the evaluation order match the written policy?
+
+A. `total = (base_charge + service_charge) * days`  
+B. `total = base_charge + (service_charge * days)`  
+C. `total = base_charge * service_charge + days`  
+D. `total = base_charge + service_charge + days`
+
+### 9. Completing a receipt without manual conversion
 
 **Difficulty:** Foundational
 
-A profile card currently shows `SachinTendulkar`. The variables hold `"Sachin"` and `"Tendulkar"`. Which expression produces the intended display name?
+**Taxonomy:** `python` → `data-types-and-operators` → `input-and-output`  
+**Is Curriculum Based:** No  
+**Assessment type:** Completing missing output code in a realistic situation
 
-A. `first_name - last_name`  
-B. `first_name + " " + last_name`  
-C. `first_name + last_name + 1`  
-D. `first_name * last_name`
+A café stores `item = "Sandwich"`, `quantity = 2`, and `total = 119.0`. The receipt must display `2 × Sandwich = ₹119.00`. Which line completes the output cleanly without manually converting each value to text?
 
-### 10. Storing an actual account verdict
+A. `print(quantity + " × " + item + total)`  
+B. `print(f"{quantity} × {item} = ₹{total:.2f}")`  
+C. `print("quantity × item = ₹total")`  
+D. `print(f"{quantity + item} = ₹{total}")`
+
+### 10. Tracing a discount rule with two routes to qualification
 
 **Difficulty:** Intermediate
 
-A login service needs a Boolean indicating that an account is inactive. Which assignment stores an actual Boolean false value rather than text or an invalid spelling?
+**Taxonomy:** `python` → `data-types-and-operators` → `comparison-and-logical-operators`  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing multiple conditions
 
-A. `is_active = "False"`  
-B. `is_active = false`  
-C. `is_active = ""`  
-D. `is_active = False`
+A store grants a discount when the cart is at least ₹500 and the shopper is either a member or shopping during a festival offer:
+
+```python
+cart_total = 700
+is_member = False
+festival_offer = True
+discount_applies = cart_total >= 500 and (is_member or festival_offer)
+```
+
+Which review note correctly traces this shopper's result?
+
+A. No discount, because both membership and the festival must be true  
+B. No discount, because `False` appears anywhere in the expression  
+C. The expression fails because comparisons cannot be combined with Booleans  
+D. The discount applies: the cart meets the minimum and the festival satisfies the alternative qualification
 
 ### 11. A text field containing a single zero
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `data-types-and-operators` → `strings-and-booleans`  
+**Is Curriculum Based:** No  
+**Assessment type:** Reasoning about truthy and falsy values
 
 A form stores the typed entry `"0"` in `response`. Another developer plans to use its truthiness as an “entry supplied” flag. Which review conclusion is accurate?
 
@@ -174,6 +232,10 @@ D. It becomes falsy only because it has one character
 
 **Difficulty:** Advanced
 
+**Taxonomy:** `python` → `data-types-and-operators` → `strings-and-booleans`  
+**Is Curriculum Based:** No  
+**Assessment type:** Identifying final values and types
+
 A profile service contains:
 
 ```python
@@ -185,13 +247,17 @@ status_text = "Complete"
 Which data audit correctly distinguishes the values?
 
 A. `name` and `status_text` are strings; `is_complete` is the Boolean `False`  
-B. All three values are strings because they have variable names  
-C. `name` is Boolean, `is_complete` is text, and `status_text` is numeric  
-D. `is_complete` contains the string `"False"`
+B. `name` is falsy, so Python changes its stored type from `str` to `bool`  
+C. `is_complete` is the string `"False"` because it was derived from text  
+D. `status_text` becomes the Boolean `True` because it is non-empty
 
 ### 13. Adding one year to keyboard input
 
 **Difficulty:** Foundational
+
+**Taxonomy:** `python` → `data-types-and-operators` → `type-conversion`  
+**Is Curriculum Based:** No  
+**Assessment type:** Error diagnosis; smallest correct repair
 
 A birthday kiosk receives an age and immediately adds 1:
 
@@ -211,6 +277,10 @@ D. `age = int(input("Age: "))`
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `data-types-and-operators` → `type-conversion`  
+**Is Curriculum Based:** No  
+**Assessment type:** Scenario-based output prediction
+
 A parcel measurement is `7.9` kg, and a developer stores `int(7.9)` in a report. Which value reaches the report, and how should the team interpret it?
 
 A. `8`, because `int()` rounds to the nearest whole number  
@@ -221,6 +291,10 @@ D. The conversion fails because floats cannot become integers
 ### 15. Investigating a decimal-looking input
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `data-types-and-operators` → `type-conversion`  
+**Is Curriculum Based:** No  
+**Assessment type:** Diagnosing unexpected program behaviour
 
 A price entered as `12.5` behaves differently from the number `12.5`. The developer adds:
 
@@ -240,6 +314,10 @@ D. `<class 'bool'>`, because input is either present or absent
 
 **Difficulty:** Advanced
 
+**Taxonomy:** `python` → `data-types-and-operators` → `type-conversion`  
+**Is Curriculum Based:** No  
+**Assessment type:** Truthiness analysis; unexpected behaviour
+
 A settings importer performs:
 
 ```python
@@ -258,6 +336,10 @@ D. Capital letters automatically make a Boolean true
 
 **Difficulty:** Foundational
 
+**Taxonomy:** `python` → `data-types-and-operators` → `arithmetic-operators`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting the appropriate operator
+
 A warehouse must calculate how many complete boxes of 12 can be filled from 50 items. Which expression directly produces the required count?
 
 A. `50 / 12`  
@@ -269,6 +351,10 @@ D. `50 ** 12`
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `data-types-and-operators` → `arithmetic-operators`  
+**Is Curriculum Based:** No  
+**Assessment type:** Applying paired operators in a realistic situation
+
 A journey lasts 250 minutes. The display needs complete hours and leftover minutes. Which pair of expressions produces 4 hours and 10 minutes?
 
 A. `250 / 60` and `250 * 60`  
@@ -279,6 +365,10 @@ D. `250 // 60` for hours and `250 % 60` for minutes
 ### 19. Building a three-beat cheer
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `data-types-and-operators` → `arithmetic-operators`  
+**Is Curriculum Based:** No  
+**Assessment type:** Scenario-based output prediction
 
 A game uses:
 
@@ -297,16 +387,24 @@ D. The expression fails because strings cannot use arithmetic symbols
 
 **Difficulty:** Advanced
 
+**Taxonomy:** `python` → `data-types-and-operators` → `arithmetic-operators`  
+**Is Curriculum Based:** No  
+**Assessment type:** Comparing calculation approaches
+
 A dispatch centre has `48` items and cartons that hold `5` items each. It needs both the number of full cartons and the number of loose items. Which calculation pair preserves both facts?
 
 A. `full_cartons = 48 // 5` and `loose_items = 48 % 5`  
 B. `full_cartons = 48 / 5` and `loose_items = 48 / 5`  
 C. `full_cartons = 48 % 5` and `loose_items = 48 // 5`  
-D. `full_cartons = 48 ** 5` and `loose_items = 0`
+D. `full_cartons = int(48 / 5)` and `loose_items = 48 - 5`
 
 ### 21. Voting on the eighteenth birthday
 
 **Difficulty:** Foundational
+
+**Taxonomy:** `python` → `data-types-and-operators` → `comparison-and-logical-operators`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting a correct boundary condition
 
 A voting portal must mark a citizen eligible from the day they turn 18. Which comparison captures the boundary correctly?
 
@@ -319,6 +417,10 @@ D. `age >= 18`
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `data-types-and-operators` → `comparison-and-logical-operators`  
+**Is Curriculum Based:** No  
+**Assessment type:** Choosing a correct validation approach
+
 A marks validator needs one Boolean that is true from 0 through 100, including both limits. Which comparison expresses that interval most clearly?
 
 A. `marks >= 0 or marks <= 100`  
@@ -329,6 +431,10 @@ D. `marks == 0 == 100`
 ### 23. Checking a submitted PIN without overwriting it
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `data-types-and-operators` → `comparison-and-logical-operators`  
+**Is Curriculum Based:** No  
+**Assessment type:** Spotting an operator-selection defect
 
 A security review finds that a developer confused assignment with equality. Which expression asks whether `entered_pin` matches `saved_pin` without assigning either value?
 
@@ -341,18 +447,32 @@ D. `entered_pin != saved_pin`
 
 **Difficulty:** Advanced
 
+**Taxonomy:** `python` → `data-types-and-operators` → `comparison-and-logical-operators`  
+**Is Curriculum Based:** No  
+**Assessment type:** Predicting unexpected comparison behaviour
+
 A catalog sorts the string codes `"item10"` and `"item2"` alphabetically. A developer expects the numeric-looking suffix 10 to come after 2. Which observation matches Python's string comparison?
 
 A. `"item10" > "item2"` is true because Python extracts the numbers  
 B. `"item10" < "item2"` is true because string comparison reaches `'1'` versus `'2'` character by character  
-C. Strings can only be tested with `==`, never `<`  
-D. Both strings are equal because they begin with `"item"`
+C. Python ignores the shared prefix and automatically compares the suffixes as integers, so `10 > 2`  
+D. The shorter numeric suffix sorts first, so `"item2" < "item10"` regardless of character order
 
 ### 25. Two checks at a theme park ride
 
 **Difficulty:** Foundational
 
-A rider may enter only when they are at least 120 cm tall and at least 8 years old. Which condition represents the rule?
+**Taxonomy:** `python` → `data-types-and-operators` → `comparison-and-logical-operators`  
+**Is Curriculum Based:** No  
+**Assessment type:** Completing a missing condition
+
+A rider may enter only when they are at least 120 cm tall and at least 8 years old. Complete the missing condition:
+
+```python
+may_enter = __________
+```
+
+Which expression makes `may_enter` match the rule for every rider?
 
 A. `height >= 120 or age >= 8`  
 B. `not height >= 120`  
@@ -362,6 +482,10 @@ D. `height >= 120 and not age >= 8`
 ### 26. Two independent ways to earn a discount
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `data-types-and-operators` → `comparison-and-logical-operators`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting a condition for a realistic policy
 
 A store grants a discount when the shopper is a member or when a festival offer is active. Either fact is sufficient. Which condition matches the policy?
 
@@ -374,6 +498,10 @@ D. `not (is_member or festival_offer)`
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `data-types-and-operators` → `comparison-and-logical-operators`  
+**Is Curriculum Based:** No  
+**Assessment type:** Completing a Boolean relationship
+
 A gate stores `is_blocked`. The permission value should be true exactly when the visitor is not blocked. Which assignment states that relationship directly?
 
 A. `allowed = is_blocked`  
@@ -385,7 +513,11 @@ D. `allowed = not is_blocked`
 
 **Difficulty:** Advanced
 
-A score service should calculate `total / count` only when at least one score exists. Which condition places the safety check where Python can short-circuit before dividing by zero?
+**Taxonomy:** `python` → `data-types-and-operators` → `comparison-and-logical-operators`  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing multiple conditions; selecting a safe validation expression
+
+A score service should return `True` only when at least one score exists and the average exceeds 80. Which condition checks that complete rule while allowing Python to short-circuit before dividing by zero?
 
 A. `total / count > 80 and count != 0`  
 B. `count != 0 and total / count > 80`  
@@ -395,6 +527,10 @@ D. `not count != 0 and total / count > 80`
 ### 29. Awarding bonus points in place
 
 **Difficulty:** Foundational
+
+**Taxonomy:** `python` → `data-types-and-operators` → `assignment-operators`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting the most appropriate update structure
 
 A game should increase the existing `score` by 15. Which statement communicates that update most directly?
 
@@ -407,6 +543,10 @@ D. `15 += score`
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `data-types-and-operators` → `assignment-operators`  
+**Is Curriculum Based:** No  
+**Assessment type:** Identifying the final value of a variable
+
 A promotional cart runs these updates:
 
 ```python
@@ -418,25 +558,33 @@ total -= 40
 
 Which amount will be sent to checkout?
 
-A. `210`  
-B. `2600`  
+A. `112`  
+B. `110`  
 C. `260`  
-D. `110`
+D. `300`
 
 ### 31. Rewriting an update without changing behavior
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `data-types-and-operators` → `assignment-operators`  
+**Is Curriculum Based:** No  
+**Assessment type:** Deciding whether two implementations are equivalent
+
 A reviewer expands the shorthand `items //= 4` for a beginner. Which replacement is equivalent?
 
 A. `items = 4 // items`  
 B. `items = items // 4`  
-C. `items = items / 4.0 + items`  
+C. `items = items / 4`  
 D. `items == items // 4`
 
 ### 32. Keeping only the seconds left after full minutes
 
 **Difficulty:** Advanced
+
+**Taxonomy:** `python` → `data-types-and-operators` → `assignment-operators`  
+**Is Curriculum Based:** No  
+**Assessment type:** Completing an in-place update; final value tracing
 
 A timer stores `367` total seconds. After separately recording the full minutes, it wants to update `seconds` so it contains only the leftover seconds. Which in-place operation leaves `7` in `seconds`?
 
@@ -449,6 +597,10 @@ D. `seconds %= 60`
 
 **Difficulty:** Foundational
 
+**Taxonomy:** `python` → `data-types-and-operators` → `operator-precedence`  
+**Is Curriculum Based:** No  
+**Assessment type:** Evaluating operator precedence
+
 A small fee formula is:
 
 ```python
@@ -457,14 +609,18 @@ fee = 2 + 3 * 4
 
 Which fee reaches the invoice under Python's precedence rules?
 
-A. `20`, because addition is read first  
-B. `9`, because only adjacent numbers combine  
+A. `20`, because the expression is mistakenly grouped as `(2 + 3) * 4`  
+B. `9`, because both operator symbols are mistakenly treated as addition  
 C. `14`, because multiplication is performed before addition  
-D. `24`, because every value is multiplied
+D. `24`, because the expression is mistakenly treated as `2 * 3 * 4`
 
 ### 34. Repairing an average that looks believable but is wrong
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `data-types-and-operators` → `operator-precedence`  
+**Is Curriculum Based:** No  
+**Assessment type:** Spotting a logic bug; smallest correct repair
 
 A sensor system intends to average `a` and `b` but uses:
 
@@ -483,6 +639,10 @@ D. `average = a + b * 2`
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `data-types-and-operators` → `operator-precedence`  
+**Is Curriculum Based:** No  
+**Assessment type:** Evaluating associativity
+
 A balance adjustment uses:
 
 ```python
@@ -500,6 +660,10 @@ D. The expression is rejected unless parentheses are added
 
 **Difficulty:** Advanced
 
+**Taxonomy:** `python` → `data-types-and-operators` → `operator-precedence`  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing multiple conditions; repairing a logic bug
+
 A service computes:
 
 ```python
@@ -516,6 +680,10 @@ D. `allowed = account_active and (has_ticket or is_vip)`
 ### 37. Two typed numbers join together
 
 **Difficulty:** Foundational
+
+**Taxonomy:** `python` → `data-types-and-operators` → `input-and-output`  
+**Is Curriculum Based:** No  
+**Assessment type:** Scenario-based output prediction; unexpected behaviour
 
 A quick calculator contains:
 
@@ -536,6 +704,10 @@ D. The result is `70`, because text multiplication occurs
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `data-types-and-operators` → `input-and-output`  
+**Is Curriculum Based:** No  
+**Assessment type:** Scenario-based output prediction
+
 A beginner wants the sentence `Order 3 ready` and writes:
 
 ```python
@@ -554,6 +726,10 @@ D. The line displays only the numeric value
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `data-types-and-operators` → `input-and-output`  
+**Is Curriculum Based:** No  
+**Assessment type:** Completing formatted output code
+
 A receipt stores `quantity = 2` and `price = 49.5`. The total must appear with exactly two decimal places. Which line produces `Total: ₹99.00`?
 
 A. `print("Total: ₹" + quantity * price)`  
@@ -564,6 +740,10 @@ D. `print(f"Total: ₹{quantity * price:.2f}")`
 ### 40. Presenting a performance rate and a large audience
 
 **Difficulty:** Advanced
+
+**Taxonomy:** `python` → `data-types-and-operators` → `input-and-output`  
+**Is Curriculum Based:** No  
+**Assessment type:** Applying multiple format specifications
 
 A dashboard stores `success_rate = 0.873` and `audience = 1500000`. It must display `Success: 87.3% | Audience: 1,500,000`. Which f-string applies both requested formats?
 
@@ -579,15 +759,15 @@ D. `f"Success: {success_rate * 100:,} | Audience: {audience:.1%}"`
 | Q | Answer | Difficulty | Rationale |
 |---:|:---:|---|---|
 | 1 | B | Foundational | The expression uses the current balance, subtracts 250, and stores 750 back under the same name. |
-| 2 | D | Intermediate | It is valid, descriptive snake_case and does not begin with a digit, contain spaces, or reuse a reserved word. |
-| 3 | A | Intermediate | Python names are case-sensitive, so the two differently capitalised names hold separate values. |
-| 4 | C | Advanced | Python permits reassignment to another type, but separate purpose-specific names prevent a misleading change of meaning. |
-| 5 | D | Foundational | Counts are whole integers, measured voltage may be fractional, and complex electrical values need real and imaginary parts. |
-| 6 | B | Intermediate | Binary floating point cannot exactly represent some decimal fractions; the tiny difference is expected and can be formatted for display. |
-| 7 | C | Intermediate | `/` returns the float `2.0`, while `//` returns the whole-number result `2` for these integer operands. |
-| 8 | A | Advanced | Whole sealed units are modelled as an integer count, and fractional data should be rejected rather than silently treated as meaningful. |
-| 9 | B | Foundational | String concatenation includes only the characters supplied, so an explicit one-space string is required between the names. |
-| 10 | D | Intermediate | Python Boolean literals are unquoted and capitalised exactly as `True` and `False`. |
+| 2 | D | Intermediate | The literal `23.75` is a float, so it preserves the fractional sensor reading for numeric calculations. |
+| 3 | A | Intermediate | The quoted value is a string, while the equality comparison produces the Boolean `True`. |
+| 4 | C | Advanced | `float(raw_price)` accepts decimal text such as `"12.50"` and preserves its fractional part; converting through `int` would discard it. |
+| 5 | D | Foundational | Floor division gives 4 completely filled trays, while modulo gives the 5 cups left over. |
+| 6 | B | Intermediate | At exactly 18, the inclusive requirement says eligible but the strict `>` implementation says ineligible, exposing the defect. |
+| 7 | C | Intermediate | `stock -= sold` subtracts 6 from the existing stock and stores 14 back in `stock`. |
+| 8 | A | Advanced | Parentheses make the addition occur before multiplication, matching the stated billing rule. |
+| 9 | B | Foundational | The f-string inserts mixed value types and formats the total with exactly two decimal places. |
+| 10 | D | Intermediate | The cart passes the minimum, and `festival_offer` makes the parenthesised alternative true even though membership is false. |
 | 11 | C | Intermediate | The integer `0` is falsy, but the string `"0"` contains one character and is therefore truthy. |
 | 12 | A | Advanced | The comparison produces the Boolean `False`; the two quoted values are strings, including the empty string. |
 | 13 | D | Foundational | `input()` returns text; converting that text to `int` allows numeric addition. |
@@ -605,7 +785,7 @@ D. `f"Success: {success_rate * 100:,} | Audience: {audience:.1%}"`
 | 25 | C | Foundational | Both requirements are mandatory, so the comparisons must be joined with `and`. |
 | 26 | A | Intermediate | Either independent qualifying fact is sufficient, which is the meaning of `or`. |
 | 27 | D | Intermediate | `not` reverses the blocked flag, making permission true exactly when blocking is false. |
-| 28 | B | Advanced | If `count` is zero, the left side of `and` is false and Python skips the unsafe division. |
+| 28 | B | Advanced | If `count` is zero, the left side is false, the unsafe division is skipped, and the complete condition correctly remains false. |
 | 29 | A | Foundational | `+=` clearly means “add to the existing score and store the result back.” |
 | 30 | C | Intermediate | The total changes from 100 to 150, then 300, then 260. |
 | 31 | B | Intermediate | `x //= value` is shorthand for `x = x // value`. |
@@ -623,13 +803,13 @@ D. `f"Success: {success_rate * 100:,} | Audience: {audience:.1%}"`
 
 | Unit 2 topic | Question numbers |
 |---|---|
-| Variables, assignment, and naming | 1–4 |
-| `int`, `float`, and `complex` | 5–8 |
-| Strings and Booleans | 9–12 |
-| Type conversion and `type()` | 13–16 |
-| Arithmetic operators | 17–20 |
-| Comparison operators | 21–24 |
-| Logical operators | 25–28 |
-| Assignment and augmented operators | 29–32 |
-| Operator precedence and associativity | 33–36 |
-| Input, output, and f-strings | 37–40 |
+| Variables, assignment, and naming | 1 |
+| `int`, `float`, and `complex` | 2 |
+| Strings and Booleans | 3, 11–12 |
+| Type conversion and `type()` | 4, 13–16 |
+| Arithmetic operators | 5, 17–20 |
+| Comparison operators | 6, 21–24 |
+| Logical operators | 10, 25–28 |
+| Assignment and augmented operators | 7, 29–32 |
+| Operator precedence and associativity | 8, 33–36 |
+| Input, output, and f-strings | 9, 37–40 |

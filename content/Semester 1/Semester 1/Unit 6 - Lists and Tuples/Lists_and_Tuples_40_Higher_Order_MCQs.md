@@ -7,6 +7,8 @@
 - Difficulty mix: 10 foundational, 20 intermediate, 10 advanced
 - Style: situation-led tracing, repair selection, implementation comparison, and practical data modelling
 - Answer-quality controls: balanced positions, no consecutive repeated correct letter, and no uniquely longest correct option
+- Opening coverage: Questions 1–10 collectively represent all seven Unit 6 taxonomy subtopics
+- Metadata: every question identifies its taxonomy and primary assessment behaviour
 
 ---
 
@@ -15,6 +17,10 @@
 ### 1. One trip record holds different kinds of values
 
 **Difficulty:** Foundational
+
+**Taxonomy:** `python` → `lists-and-tuples` → `lists`  
+**Is Curriculum Based:** No  
+**Assessment type:** Identifying an appropriate collection representation
 
 A trip summary is stored as:
 
@@ -29,105 +35,198 @@ B. It is invalid because every item in a Python list must use the same data type
 C. It is a four-item list that preserves the written order  
 D. It is a string because the first item contains text
 
-### 2. Reaching the final packing item without counting
+### 2. Tracing removal by value and then by position
 
 **Difficulty:** Intermediate
 
-A packing list may grow before departure. The checklist screen always needs its final item. Which expression remains correct as the length changes?
+**Taxonomy:** `python` → `lists-and-tuples` → `list-methods`  
+**Is Curriculum Based:** No  
+**Assessment type:** Scenario-based mutation trace; final value identification
 
-A. `packing_list[-1]`  
-B. `packing_list[1]`  
-C. `packing_list[len(packing_list)]`  
-D. `packing_list[0]`
+A queue contains a repeated request and applies two different removal methods:
 
-### 3. Previewing the middle two destinations
+```python
+requests = ["Tea", "Coffee", "Tea"]
+requests.remove("Tea")
+served = requests.pop(0)
+```
+
+Which audit state correctly records both the returned value and the remaining list?
+
+A. `served == "Coffee"` and `requests == ["Tea"]`  
+B. `served == "Tea"` and `requests == ["Coffee"]`  
+C. `served is None` and `requests == ["Coffee", "Tea"]`  
+D. `served == "Coffee"` and `requests == []`
+
+### 3. Completing a filtered square comprehension
 
 **Difficulty:** Foundational
 
-A route is `['Pune', 'Nashik', 'Surat', 'Vadodara']`. Which slice produces `['Nashik', 'Surat']`?
+**Taxonomy:** `python` → `lists-and-tuples` → `list-comprehensions`  
+**Is Curriculum Based:** No  
+**Assessment type:** Completing missing transformation and filter code
 
-A. `route[1:2]`  
-B. `route[0:2]`  
-C. `route[2:4]`  
-D. `route[1:3]`
+A report needs the square of each positive value in `numbers`, while zero and negative values must be omitted:
 
-### 4. A seat lookup steps beyond the list
+```python
+squares = [____________________________]
+```
+
+Which completion performs both the transformation and the filter?
+
+A. `number for number in numbers if number < 0`  
+B. `number > 0 for number in numbers`  
+C. `number ** 2 for number in numbers`  
+D. `number ** 2 for number in numbers if number > 0`
+
+### 4. A tuple contains a list that can still change
 
 **Difficulty:** Intermediate
 
-A row contains three names, so its valid indices are 0, 1, and 2. A screen requests `row[3]`. Which support classification fits the failed lookup?
+**Taxonomy:** `python` → `lists-and-tuples` → `tuples`  
+**Is Curriculum Based:** No  
+**Assessment type:** Identifying unexpected mutability behaviour
 
-A. `ValueError`, because the name is missing  
-B. `IndexError`, because position 3 lies outside the list  
-C. `TypeError`, because lists cannot use integer indices during a lookup at runtime  
-D. No failure; Python returns an empty item
+A trip record contains a mutable stop list inside a tuple:
 
-### 5. Editing a sliced preview
+```python
+trip = (["Pune"], 2026)
+trip[0].append("Nashik")
+```
+
+Which review note states the tuple rule precisely?
+
+A. The code fails because every object stored in a tuple becomes immutable  
+B. The append succeeds because the tuple still refers to the same inner list; replacing `trip[0]` itself would fail  
+C. The append converts `trip` into a list automatically  
+D. The year changes to 2027 whenever the inner list changes
+
+### 5. Selecting the record that exposes an unpacking defect
 
 **Difficulty:** Advanced
 
-A planner creates and edits a preview:
+**Taxonomy:** `python` → `lists-and-tuples` → `packing-and-unpacking`  
+**Is Curriculum Based:** No  
+**Assessment type:** Choosing an input that exposes a structural defect
+
+A loader assumes that every student record contains exactly two values:
 
 ```python
-route = ["Pune", "Nashik", "Surat", "Vadodara"]
-preview = route[1:3]
-preview[0] = "Mumbai"
+name, score = record
 ```
 
-Which state should the route review record?
+Which proposed record is the smallest input that exposes the assumption by producing too many values to unpack?
 
-A. Both values begin with `"Mumbai"` because slicing creates an alias that shares the original list's storage  
-B. `route` becomes empty when its slice is edited  
-C. `route[1]` changes because every sub-list edit changes its source  
-D. `preview` changes, while `route` keeps `"Nashik"` because slicing made a new list
+A. `("Asha", 90)`  
+B. `["Ravi", 82]`  
+C. `("Meera",)`  
+D. `("Dev", 75, "Pune")`
 
-### 6. Adding one snack at the end
+### 6. Completing a safe lookup in a ragged seating chart
 
 **Difficulty:** Foundational
 
-A snack checklist must add `"chips"` after every existing item. Which method expresses that mutation directly?
+**Taxonomy:** `python` → `lists-and-tuples` → `nested-lists`  
+**Is Curriculum Based:** No  
+**Assessment type:** Completing a safe validation condition; tracing multiple conditions
 
-A. `snacks.insert(0, "chips")`  
-B. `snacks.remove("chips")`  
-C. `snacks.append("chips")`  
-D. `snacks.pop("chips")`
+A seating chart may contain rows of different lengths. Before reading `seating[row][column]`, the program must validate both positions:
 
-### 7. Protecting a fragile item at the front
+```python
+if ______________________________________________:
+    seat = seating[row][column]
+else:
+    seat = "Invalid position"
+```
 
-**Difficulty:** Intermediate
+Which condition checks the selected row before using that row's actual length for the column check?
 
-A trip coordinator must place `"cake"` at index 0 while shifting the existing snacks right. Which operation fits?
+A. `row < len(seating) or column < len(seating[row])`  
+B. `0 <= column < len(seating) and 0 <= row < len(seating[column])`  
+C. `0 <= row < len(seating) and 0 <= column < len(seating[row])`  
+D. `row in seating and column in seating`
 
-A. `snacks.insert(0, "cake")`  
-B. `snacks.append(0, "cake")`  
-C. `snacks[0].append("cake")`  
-D. `snacks.remove(0)`
-
-### 8. Removing only the first duplicate request
-
-**Difficulty:** Intermediate
-
-A playlist is `['Song A', 'Song B', 'Song A']`. The coordinator runs `playlist.remove('Song A')`. Which list remains?
-
-A. `['Song A', 'Song B']`  
-B. `['Song B', 'Song A']`  
-C. `['Song B']`  
-D. `['Song A', 'Song B', 'Song A']`
-
-### 9. Taking the last task out for immediate use
+### 7. Comparing direct and index-based sequence iteration
 
 **Difficulty:** Intermediate
 
-A stack-like checklist contains `tasks = ['pack', 'call', 'pay']` and runs `current = tasks.pop()`. Which state follows?
+**Taxonomy:** `python` → `lists-and-tuples` → `sequence-iteration`  
+**Is Curriculum Based:** No  
+**Assessment type:** Comparing implementations; deciding equivalence
 
-A. `current` is `'pay'` and `tasks` is `['pack', 'call']`  
-B. `current` is `None` and the list remains unchanged  
-C. `current` is `'pack'` and only the first item is removed  
-D. All tasks move into `current` as another list
+Two versions build uppercase copies of every stored name.
+
+Version A:
+
+```python
+result = []
+for name in names:
+    result.append(name.upper())
+```
+
+Version B:
+
+```python
+result = []
+for index in range(len(names)):
+    result.append(names[index].upper())
+```
+
+Assume `names` is a list of strings. Which comparison is correct?
+
+A. The versions produce the same `result` for every such list, although Version A avoids unnecessary index handling  
+B. Version B skips the final name because `range(len(names))` excludes the list length  
+C. Version A changes `names` in place, while Version B does not  
+D. The versions differ whenever `names` is empty
+
+### 8. Choosing data that reveals aliasing instead of copying
+
+**Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `lists-and-tuples` → `lists`  
+**Is Curriculum Based:** No  
+**Assessment type:** Choosing a test that exposes an aliasing defect
+
+A developer intends to preserve an original list but writes `backup = items`. Which test most clearly reveals that `backup` is an alias rather than an independent copy?
+
+A. Start with `[]` and compare `items == backup` without changing either name  
+B. Start with `["A"]`, append `"B"` through `backup`, and observe that `items` also becomes `["A", "B"]`  
+C. Start with `["A"]` and read `items[0]`  
+D. Start with two separately created lists and compare their lengths
+
+### 9. An empty queue skips its processing branch
+
+**Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `lists-and-tuples` → `lists`  
+**Is Curriculum Based:** No  
+**Assessment type:** Reasoning about collection truthiness; final value tracing
+
+A dispatch screen uses collection truthiness to decide whether work is waiting:
+
+```python
+tasks = []
+
+if tasks:
+    status = "Process next task"
+else:
+    status = "Queue empty"
+```
+
+Which state should the dashboard display?
+
+A. `"Queue empty"`, because an empty list is falsy  
+B. `"Process next task"`, because the variable exists  
+C. Both messages, because a list can be both empty and valid  
+D. A `TypeError`, because lists cannot be used as conditions
 
 ### 10. Two names point to one snack list
 
 **Difficulty:** Advanced
+
+**Taxonomy:** `python` → `lists-and-tuples` → `lists`  
+**Is Curriculum Based:** No  
+**Assessment type:** Spotting an aliasing bug; selecting the smallest correct repair
 
 A coordinator expects an independent official copy:
 
@@ -148,6 +247,10 @@ D. Create it with `official = snacks.copy()` or `list(snacks)`
 
 **Difficulty:** Foundational
 
+**Taxonomy:** `python` → `lists-and-tuples` → `list-methods`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting a counting method
+
 A request list is `['Sky', 'Road', 'Sky', 'Sky']`. Which expression returns the number of `"Sky"` entries?
 
 A. `requests.index("Sky")`  
@@ -158,6 +261,10 @@ D. `requests.sort("Sky")`
 ### 12. Locating the first matching stop
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `lists-and-tuples` → `list-methods`  
+**Is Curriculum Based:** No  
+**Assessment type:** Predicting first-match search behaviour
 
 A route is `['Pune', 'Nashik', 'Pune']`. The planner uses `route.index('Pune')`. Which position is returned?
 
@@ -170,6 +277,10 @@ D. `[0, 2]`
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `lists-and-tuples` → `list-methods`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting the appropriate order mutation
+
 A playlist is already in request order. The newest requests should temporarily become first without alphabetising anything. Which in-place method flips the current order?
 
 A. `playlist.sort(reverse=True)`  
@@ -180,6 +291,10 @@ D. `playlist.reverse()`
 ### 14. A sorted playlist becomes `None`
 
 **Difficulty:** Advanced
+
+**Taxonomy:** `python` → `lists-and-tuples` → `list-methods`  
+**Is Curriculum Based:** No  
+**Assessment type:** Spotting an in-place-method return-value bug
 
 A developer writes:
 
@@ -199,6 +314,10 @@ D. Assignment automatically empties any list used on its right side
 
 **Difficulty:** Advanced
 
+**Taxonomy:** `python` → `lists-and-tuples` → `list-methods`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting a non-mutating implementation
+
 A music app must display songs alphabetically while preserving the original request order for playback. Which plan meets both needs?
 
 A. Call `playlist.sort()` and use the permanently changed list for both display and later playback  
@@ -210,38 +329,54 @@ D. Assign `alphabetic = playlist.sort()`
 
 **Difficulty:** Foundational
 
+**Taxonomy:** `python` → `lists-and-tuples` → `list-comprehensions`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting a correct filter comprehension
+
 A bus system has `seats = [1, 2, 3, 4, 5, 6]`. Which comprehension builds `[2, 4, 6]`?
 
 A. `[seat for seat in seats if seat % 2 == 0]`  
-B. `[seat % 2 for seat in seats]`  
-C. `[seats if seat % 2 == 0]`  
-D. `[seat for seats in seat if seat == 2]`, which loops through each stored seat value
+B. `[seat % 2 == 0 for seat in seats]`  
+C. `[seat for seat in seats if seat % 2 != 0]`  
+D. `[seat * 2 for seat in seats if seat % 2 == 0]`
 
 ### 17. Applying the same discount to every price
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `lists-and-tuples` → `list-comprehensions`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting a transformation comprehension
+
 A sale preview needs a new list containing 90% of every value in `prices`, with no filtering. Which comprehension fits?
 
 A. `[price for price in prices if price == 0.9]`  
 B. `[price * 0.9 for price in prices]`  
-C. `[0.9 for price * prices]`  
-D. `[price * 0.9 if prices]`
+C. `[price + 0.9 for price in prices]`  
+D. `[price * 0.9 for price in prices if price > 0]`
 
 ### 18. Filtering and formatting qualifying names
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `lists-and-tuples` → `list-comprehensions`  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing combined filtering and transformation
+
 A report should keep names longer than four characters and title-case those retained. Which comprehension performs both operations?
 
-A. `[name for name.title() in names if len(name) > 4]`  
+A. `[name for name in names if len(name) > 4]`  
 B. `[len(name) > 4 for name in names]`  
-C. `[name.title() for names if len(name) > 4]`  
+C. `[name.title() for name in names if len(name) <= 4]`  
 D. `[name.title() for name in names if len(name) > 4]`
 
 ### 19. Replacing a loop-and-append filter
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `lists-and-tuples` → `list-comprehensions`  
+**Is Curriculum Based:** No  
+**Assessment type:** Comparing implementations; deciding equivalence
 
 Version A appends each positive value from `numbers` into a new list. Which Version B is equivalent?
 
@@ -254,6 +389,10 @@ D. `positives = [number for number in numbers if number < 0]`
 
 **Difficulty:** Advanced
 
+**Taxonomy:** `python` → `lists-and-tuples` → `list-comprehensions`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting the most maintainable programming structure
+
 A proposed comprehension validates each record, prints a rejection reason, updates an audit counter, and transforms accepted data in one dense line. Which review decision best supports maintainability?
 
 A. Add another nested comprehension so validation, printing, counter updates, and transformation all remain inside one compact expression  
@@ -265,49 +404,69 @@ D. Replace every variable name with one letter to shorten the line
 
 **Difficulty:** Foundational
 
+**Taxonomy:** `python` → `lists-and-tuples` → `tuples`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting a correct one-item tuple representation
+
 A coordinate record must be a tuple containing only the value `5`. Which expression creates that one-item tuple?
 
 A. `(5,)`  
 B. `(5)`, because parentheses around one value always create a tuple  
-C. `[5]`  
-D. `{5}`
+C. `tuple(5)`  
+D. `(5, 5)`
 
 ### 22. Reading one value from a fixed coordinate
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `lists-and-tuples` → `tuples`  
+**Is Curriculum Based:** No  
+**Assessment type:** Identifying a tuple element by position
+
 A GPS coordinate is `location = (18.52, 73.85)`. Which expression retrieves the longitude `73.85`?
 
-A. `location[-3]`  
+A. `location[-2]`  
 B. `location[0]`  
 C. `location[1]`  
-D. `location(1)`
+D. `location[1:]`
 
 ### 23. An accidental coordinate edit is refused
 
 **Difficulty:** Foundational
 
+**Taxonomy:** `python` → `lists-and-tuples` → `tuples`  
+**Is Curriculum Based:** No  
+**Assessment type:** Diagnosing tuple-position assignment failure
+
 A navigation tool tries `location[0] = 19.0` where `location` is a tuple. Which design property blocks the operation?
 
-A. Tuples accept only string coordinates, so numeric latitude values must be converted before any position can be replaced  
-B. Position zero cannot be used in sequences  
-C. Coordinates must be sorted before editing  
-D. Tuple items are immutable and do not support item assignment
+A. Tuple positions can be replaced only when the new value has the same type as the old value  
+B. Numeric values may be read from tuples but can be replaced only through slice assignment  
+C. Item assignment would work after calling `location.copy()` because copying unlocks a tuple  
+D. The tuple itself is immutable, so assigning a new value to `location[0]` is not supported
 
 ### 24. Giving names to a packed stop record
 
 **Difficulty:** Intermediate
 
-A fixed stop is `stop = ('Fort', 18.4, 73.7)`. Which assignment unpacks the values by position?
+**Taxonomy:** `python` → `lists-and-tuples` → `packing-and-unpacking`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting a correct unpacking structure
 
-A. `stop = name, latitude, longitude`  
+A fixed stop is `stop = ('Fort', 18.4, 73.7)`. Which assignment creates the three separate variables `name`, `latitude`, and `longitude` by position?
+
+A. `name, latitude = stop`  
 B. `name, latitude, longitude = stop`  
-C. `name = latitude = longitude = stop`  
-D. `name, stop = latitude, longitude`
+C. `name, *latitude = stop`  
+D. `name, latitude, longitude = [stop]`
 
 ### 25. Three values enter two variables
 
 **Difficulty:** Advanced
+
+**Taxonomy:** `python` → `lists-and-tuples` → `packing-and-unpacking`  
+**Is Curriculum Based:** No  
+**Assessment type:** Diagnosing a structural unpacking mismatch
 
 A route import attempts:
 
@@ -326,6 +485,10 @@ D. Latitude values must be stored as integers
 
 **Difficulty:** Foundational
 
+**Taxonomy:** `python` → `lists-and-tuples` → `lists`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting a collection for mutable requirements
+
 Items will be added, removed, and reordered until the bus leaves. Which container communicates those needs?
 
 A. A tuple, because its locked contents can be rebuilt as a fresh tuple after every addition or removal  
@@ -336,6 +499,10 @@ D. A number recording only the item count
 ### 27. Protecting one fixed GPS pair
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `lists-and-tuples` → `tuples`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting a fixed-record representation
 
 A destination's latitude and longitude form one fixed record that should not be edited after lookup. Which representation best documents that intent?
 
@@ -348,6 +515,10 @@ D. `coordinates = {18.52, 73.85}`
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `lists-and-tuples` → `lists`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting a composite list-and-tuple structure
+
 An itinerary must accept new stops, while every stored stop remains a fixed `(name, latitude, longitude)` record. Which overall shape matches both requirements?
 
 A. One tuple containing every mutable stop list  
@@ -358,6 +529,10 @@ D. A list whose items are stop tuples
 ### 29. Making an intent promise to future readers
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `lists-and-tuples` → `tuples`  
+**Is Curriculum Based:** No  
+**Assessment type:** Applying immutability to data modelling
 
 A record always consists of a student's roll number and admission year. Neither field should change inside the program. Why is a tuple preferable to a list here?
 
@@ -370,6 +545,10 @@ D. Tuples sort their contents as soon as they are created
 
 **Difficulty:** Advanced
 
+**Taxonomy:** `python` → `lists-and-tuples` → `lists`  
+**Is Curriculum Based:** No  
+**Assessment type:** Comparing data-structure trade-offs
+
 A developer selects a tuple for a shopping cart that must frequently add and remove products, arguing that tuples are slightly lighter. Which review response gives the sounder priority?
 
 A. Use a list because required mutation matters more than the small tuple performance difference  
@@ -380,6 +559,10 @@ D. Use a tuple because performance always overrides the data's behavior
 ### 31. Reaching one seat by row and column
 
 **Difficulty:** Foundational
+
+**Taxonomy:** `python` → `lists-and-tuples` → `nested-lists`  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing a two-dimensional lookup
 
 A seating chart is:
 
@@ -401,6 +584,10 @@ D. `seating[2][1]`
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `lists-and-tuples` → `nested-lists`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting a precise nested mutation
+
 Using the same chart, the coordinator must replace `"Ravi"` with `"Kabir"` without changing another seat. Which statement is precise?
 
 A. `seating[1] = "Kabir"`  
@@ -411,6 +598,10 @@ D. `seating[0][1] = "Kabir"`
 ### 33. Visiting every seat in every row
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `lists-and-tuples` → `nested-lists`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting iteration that follows nested structure
 
 A chart contains rows of seat names. Which loop structure follows the two-level data shape and visits every individual name?
 
@@ -423,6 +614,10 @@ D. `for seat in range(1): print(seat)`
 
 **Difficulty:** Advanced
 
+**Taxonomy:** `python` → `lists-and-tuples` → `nested-lists`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting a nested-comprehension structure
+
 A program needs a 2-row by 3-column zero grid using the nested-comprehension pattern taught in the unit. Which expression builds the required shape?
 
 A. `[0 for row in range(2) for column in range(3)]`, which produces a single flat sequence instead of separate rows  
@@ -433,6 +628,10 @@ D. `[[0 for column in range(3)] for row in range(2)]`
 ### 35. Counting work in uneven rows
 
 **Difficulty:** Advanced
+
+**Taxonomy:** `python` → `lists-and-tuples` → `nested-lists`  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing a ragged nested collection
 
 A nested list contains `[[1, 2], [3], [4, 5, 6]]`. An outer loop visits rows and an inner loop handles each contained value. How many times does the inner action run?
 
@@ -445,38 +644,54 @@ D. `2`
 
 **Difficulty:** Foundational
 
+**Taxonomy:** `python` → `lists-and-tuples` → `sequence-iteration`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting direct sequence iteration
+
 A briefing needs every value from `packing_list`, and numeric positions are irrelevant. Which loop is clearest?
 
-A. `for item in range(packing_list):`  
+A. `for index in range(len(packing_list)): print(index)`  
 B. `while packing_list:` without modifying it  
 C. `for item in packing_list:`  
-D. `for packing_list in item:`
+D. `for item in [packing_list]: print(item)`
 
 ### 37. Numbering itinerary days from one
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** `python` → `lists-and-tuples` → `sequence-iteration`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting correct `enumerate` usage
+
 A public itinerary should label its first stored plan as Day 1 rather than Day 0. Which loop obtains number and plan together?
 
-A. `for day, plan in itinerary:`  
-B. `for day in range(itinerary):`  
-C. `for plan in enumerate(1, itinerary):`, because the visible starting value must be supplied before the collection  
+A. `for day, plan in enumerate(itinerary):`  
+B. `for day in range(len(itinerary)):`  
+C. `for plan, day in enumerate(itinerary, start=1):`  
 D. `for day, plan in enumerate(itinerary, start=1):`
 
 ### 38. Unpacking each stop while looping
 
 **Difficulty:** Intermediate
 
-A route is a list of `(name, latitude, longitude)` tuples. Which loop header gives readable variables on every pass?
+**Taxonomy:** `python` → `lists-and-tuples` → `sequence-iteration`  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting tuple unpacking during iteration
+
+A route is a list of `(name, latitude, longitude)` tuples. Which loop header gives three separate variables with exactly those meanings on every pass?
 
 A. `for name, latitude, longitude in route:`  
-B. `for stop in name, latitude, longitude:`, which iterates across the three variable names before reading the route  
-C. `for route in name:`  
-D. `for name in latitude in longitude:`
+B. `for stop in route:`  
+C. `for name, *coordinates in route:`  
+D. `for (name, latitude), longitude in route:`
 
 ### 39. One list runs out before the other
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** `python` → `lists-and-tuples` → `sequence-iteration`  
+**Is Curriculum Based:** No  
+**Assessment type:** Predicting unequal-length `zip` behaviour
 
 `names` contains four students, while `seats` contains three seat numbers. A loop uses `zip(names, seats)`. How many pairs will it process?
 
@@ -488,6 +703,10 @@ D. `0`, because `zip` rejects unequal lengths before producing any paired values
 ### 40. Numbering and unpacking itinerary records together
 
 **Difficulty:** Advanced
+
+**Taxonomy:** `python` → `lists-and-tuples` → `sequence-iteration`  
+**Is Curriculum Based:** No  
+**Assessment type:** Combining `enumerate` with nested unpacking
 
 An itinerary stores tuples such as `("Day 1", "Museum")`. The briefing needs a sequence number plus both fields. Which loop header combines `enumerate` and tuple unpacking correctly?
 
@@ -503,14 +722,14 @@ D. `for number in enumerate(day, plan):`
 | Q | Answer | Difficulty | Rationale |
 |---:|:---:|---|---|
 | 1 | C | Foundational | Square brackets create a list, and the four mixed-type values remain in their written order. |
-| 2 | A | Intermediate | Index -1 always selects the final item without requiring the current length. |
-| 3 | D | Foundational | The slice begins at index 1 and stops before index 3, selecting indices 1 and 2. |
-| 4 | B | Intermediate | A three-item list has no index 3, so the lookup raises `IndexError`. |
-| 5 | D | Advanced | A slice creates a separate list, so mutating the preview does not rewrite the source list. |
-| 6 | C | Foundational | `append` mutates the list by adding one item at its end. |
-| 7 | A | Intermediate | `insert(0, value)` places the new value first and shifts existing items right. |
-| 8 | B | Intermediate | `remove` deletes only the first matching value, leaving the later duplicate. |
-| 9 | A | Intermediate | With no index, `pop` removes and returns the final item. |
+| 2 | A | Intermediate | `remove` deletes the first `"Tea"`, leaving `["Coffee", "Tea"]`; `pop(0)` then returns `"Coffee"` and leaves `["Tea"]`. |
+| 3 | D | Foundational | The expression squares each value before the `for`, while the trailing condition retains only positive inputs. |
+| 4 | B | Intermediate | The tuple's positions cannot be replaced, but the list already stored at position 0 remains a mutable list and can be appended to. |
+| 5 | D | Advanced | The loader has two targets, while the three-item tuple supplies one extra value and raises a too-many-values unpacking error. |
+| 6 | C | Foundational | `and` checks the row bound first; only for a valid row does Python inspect the selected row's actual length for the column bound. |
+| 7 | A | Intermediate | Both loops visit indices or values covering every list item in order and append the same uppercase strings; direct iteration is clearer. |
+| 8 | B | Intermediate | Assignment shares one list object, so appending through `backup` also changes the list observed through `items`. |
+| 9 | A | Intermediate | An empty list is falsy, so the `else` branch assigns `"Queue empty"`. |
 | 10 | D | Advanced | Plain assignment creates an alias; an explicit copy provides an independently mutable list. |
 | 11 | B | Foundational | `count` returns how many times the requested value occurs. |
 | 12 | C | Intermediate | `index` returns the first matching position, which is zero here. |
@@ -528,7 +747,7 @@ D. `for number in enumerate(day, plan):`
 | 24 | B | Intermediate | Three variables on the left receive the tuple's three values in positional order. |
 | 25 | C | Advanced | Unpacking requires the number of target variables to match the number of tuple items. |
 | 26 | B | Foundational | A list is designed for a collection that must grow, shrink, and reorder. |
-| 27 | A | Intermediate | A tuple groups the related coordinates while signalling and enforcing item immutability. |
+| 27 | A | Intermediate | A tuple groups the related coordinates and prevents either tuple position from being replaced after creation. |
 | 28 | D | Intermediate | The list can grow, while each tuple inside it remains a fixed record. |
 | 29 | B | Intermediate | The container communicates a fixed record shape and prevents accidental item reassignment. |
 | 30 | A | Advanced | The required operations determine the container; a minor efficiency difference cannot replace needed mutation. |
@@ -543,15 +762,14 @@ D. `for number in enumerate(day, plan):`
 | 39 | C | Intermediate | `zip` ends as soon as the shorter three-item list is exhausted. |
 | 40 | B | Advanced | `enumerate` yields a number and one tuple, whose two elements are unpacked by the nested target. |
 
-## Topic coverage
+## Taxonomy coverage
 
-| Unit 6 topic | Question numbers |
+| Unit 6 taxonomy subtopic | Question numbers |
 |---|---|
-| List creation, indexing, and slicing | 1–5 |
-| Mutating lists | 6–10 |
-| List methods and sorting | 11–15 |
-| List comprehensions | 16–20 |
-| Tuples, immutability, packing, and unpacking | 21–25 |
-| Choosing tuples versus lists | 26–30 |
-| Nested lists | 31–35 |
-| Iterating over lists and tuples | 36–40 |
+| `lists` | 1, 8–10, 26, 28, 30 |
+| `list-methods` | 2, 11–15 |
+| `list-comprehensions` | 3, 16–20 |
+| `tuples` | 4, 21–23, 27, 29 |
+| `packing-and-unpacking` | 5, 24–25 |
+| `nested-lists` | 6, 31–35 |
+| `sequence-iteration` | 7, 36–40 |

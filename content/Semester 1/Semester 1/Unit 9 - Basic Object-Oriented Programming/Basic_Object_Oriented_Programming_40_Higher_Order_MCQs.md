@@ -7,124 +7,244 @@
 - Difficulty mix: 10 foundational, 20 intermediate, 10 advanced
 - Style: situation-led modelling, object-state tracing, implementation comparison, failure diagnosis, minimal repair, and design judgment
 - Answer-quality controls: balanced positions, no consecutive repeated correct letter, and no uniquely longest correct option
+- Opening coverage: Questions 1-10 collectively assess all five official Unit 9 taxonomy subtopics
+- Metadata: every question identifies its taxonomy subtopic and assessment type
 
 ---
 
 ## Questions
 
-### 1. A transferred student exposes a record-keeping weakness
+### 1. One edit silently changes the identity of three records
 
 **Difficulty:** Foundational
 
-An office stores student names and roll numbers in separate lists whose positions must always match. After one name is moved without its roll number, reports pair the wrong details. Which redesign addresses the underlying modelling problem?
+**Taxonomy:** python → object-oriented-programming-intro → object-oriented-programming  
+**Is Curriculum Based:** No  
+**Assessment type:** Applying a concept in a realistic situation
+
+An office stores names, roll numbers, and attendance in three parallel lists. A transfer operation moves one name but not the matching values in the other lists. The program still runs, yet the next report combines facts from different students. Which redesign removes the dependency that caused the silent corruption?
 
 A. Sort both lists independently before every report  
 B. Add more comments explaining that the positions must match  
 C. Represent each student as one object carrying its related data  
 D. Convert the roll-number list into a tuple and keep the name list unchanged
 
-### 2. Identifying the central things in a service application
+### 2. Finding the boundaries before writing classes
 
 **Difficulty:** Intermediate
 
-A repair service tracks customers who raise tickets, technicians who accept them, and tickets that change status. Which first step best reflects object-oriented modelling?
+**Taxonomy:** python → object-oriented-programming-intro → modeling-with-classes  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting the most appropriate programming structure
+
+A repair service must remember who raised a ticket, which technician accepted it, and how each ticket's status changes. Before choosing attributes or methods, which proposed model identifies the most defensible object boundaries?
 
 A. Identify `Customer`, `Technician`, and `Ticket` as candidate program entities  
 B. Put every value into one long list, then document the position assigned to each field and entity  
 C. Create one function for each individual customer by name  
 D. Store all statuses in variables unrelated to their tickets
 
-### 3. Related facts are together, but their rule is still scattered
+### 3. Two names may represent either one object or two
 
 **Difficulty:** Intermediate
 
-Each order is already stored as a dictionary containing `total` and `paid`. Five screens separately repeat the rule that decides whether an order can ship. Which improvement takes the next OOP step?
+**Taxonomy:** python → object-oriented-programming-intro → classes-and-objects  
+**Is Curriculum Based:** No  
+**Assessment type:** Identifying the final value of a variable
 
-A. Rename the dictionaries differently on the five screens  
-B. Store `total` and `paid` in separate lists again  
-C. Copy the shipping condition into every current and future screen that displays an order  
-D. Model an order with its data and a reusable shipping-decision method
+Consider the following incident-reproduction code:
 
-### 4. Two implementations face a policy change
+```python
+class Parcel:
+    pass
+
+first = Parcel()
+second = first
+third = Parcel()
+same_first_second = first is second
+same_first_third = first is third
+```
+
+Which pair is stored in `same_first_second` and `same_first_third`?
+
+A. `False, False`  
+B. `True, True`  
+C. `False, True`  
+D. `True, False`
+
+### 4. A method updates a temporary value instead of the object
 
 **Difficulty:** Advanced
 
-Version A stores account balances in dictionaries and lets each screen implement withdrawals. Version B gives every account object one `withdraw` method that rejects overdrafts. A new fee rule is introduced. Which comparison is strongest?
+**Taxonomy:** python → object-oriented-programming-intro → attributes-and-methods  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting the smallest correct repair
 
-A. Version A guarantees consistency because dictionaries prevent screens from using different rules  
-B. Version B has one method to update, so every account follows the revised withdrawal rule  
-C. Both versions necessarily require changes in exactly one location  
-D. Version B is unsuitable because an object's balance cannot change after creation
+An inventory test expects `item.reserve(3)` to reduce `item.stock` from 10 to 7, but the object remains unchanged:
 
-### 5. Distinguishing a blueprint from one real item
+```python
+class Item:
+    def reserve(self, amount):
+        stock = self.stock - amount
+
+item = Item()
+item.stock = 10
+item.reserve(3)
+```
+
+Which one-line replacement repairs the method without changing its interface?
+
+A. `amount = self.stock - amount`  
+B. `self.stock -= amount`  
+C. `Item.stock = amount`  
+D. `return stock - amount`
+
+### 5. Construction succeeds only after a manual setup call
 
 **Difficulty:** Foundational
 
-A library system includes a general description, "Every book has a title and author," and a record for the specific copy of *Wings of Fire* on shelf 3. How should these be classified?
+**Taxonomy:** python → object-oriented-programming-intro → constructors  
+**Is Curriculum Based:** No  
+**Assessment type:** Completing missing code
 
-A. Both descriptions are classes because both refer to books  
-B. The general description is an object; the shelf copy is a class  
-C. Both descriptions are objects with different amounts of data  
-D. The general description is a class; the shelf copy is an object
+A developer intends every new badge to receive its owner during creation, but the setup method is not recognised automatically:
 
-### 6. One blueprint serves three registrations
+```python
+class Badge:
+    def ______(self, owner):
+        self.owner = owner
+
+staff_badge = Badge("Meera")
+```
+
+Which exact method name completes the class so that the final line succeeds?
+
+A. `_init_`  
+B. `init`  
+C. `__create__`  
+D. `__init__`
+
+### 6. A shared blueprint does not imply shared state
 
 **Difficulty:** Intermediate
 
-`asha`, `ravi`, and `meera` are created separately from the same `Student` class. Which statement correctly describes their relationship?
+**Taxonomy:** python → object-oriented-programming-intro → classes-and-objects  
+**Is Curriculum Based:** No  
+**Assessment type:** Scenario-based output prediction
 
-A. The first object is the class, while the remaining two are copies of it  
-B. They are three independent objects built from one shared blueprint  
-C. They must all hold identical attribute values because their class matches  
-D. Creating the third object automatically deletes the first one
+Two registrations are created from the same class:
 
-### 7. Choosing the object from a set of descriptions
+```python
+class Registration:
+    pass
+
+morning = Registration()
+evening = Registration()
+morning.seats = 20
+evening.seats = 35
+morning.seats -= 4
+print(morning.seats, evening.seats)
+```
+
+Which console record should the tester expect?
+
+A. `16 31`  
+B. `16 35`  
+C. `20 35`  
+D. `31 31`
+
+### 7. Choosing a model that owns both state and a rule
 
 **Difficulty:** Intermediate
 
-Which description refers to an object rather than a class?
+**Taxonomy:** python → object-oriented-programming-intro → modeling-with-classes  
+**Is Curriculum Based:** No  
+**Assessment type:** Choosing a correct validation approach
 
-A. An invoice has a number, date, and amount  
-B. A vehicle can start, stop, and report its speed  
-C. Neha's invoice `INV-204`, dated 12 July, for ₹850  
-D. A support ticket has an owner and can be closed
+A parking application manages hundreds of lots. Each lot has its own capacity and occupied count, and every entry attempt must be rejected when that particular lot is full. Which design places the validation where it can be reused without mixing the lots' state?
 
-### 8. Testing independence rather than shared origin
+A. Keep all capacities in one list and let each screen edit occupancy directly  
+B. Store each lot in a tuple and repeat the capacity check wherever an entry is recorded  
+C. Give each `ParkingLot` object its own state and an `admit` method that enforces capacity  
+D. Create one global Boolean named `has_space` and reuse it for every lot
+
+### 8. A method accidentally consults the wrong student
 
 **Difficulty:** Advanced
 
-Two student objects come from the same class. After `asha.marks` is changed from 70 to 95, `ravi.marks` remains 70. Which conclusion follows?
+**Taxonomy:** python → object-oriented-programming-intro → attributes-and-methods  
+**Is Curriculum Based:** No  
+**Assessment type:** Choosing an input that exposes a defect
 
-A. Objects can share a class while retaining separate attribute values  
-B. Changing an object automatically creates a new class for that object  
-C. The two names must refer to one object because their original marks matched  
-D. Classes prevent attributes from being reassigned after instantiation
+A method is supposed to judge the object receiving the call, but it uses `asha.marks` instead of `self.marks`:
 
-### 9. Creating the smallest usable blueprint
+```python
+class Student:
+    def has_passed(self):
+        return asha.marks >= 40
+```
+
+Which test data most clearly exposes the defect when the program evaluates `ravi.has_passed()`?
+
+A. `asha.marks = 80` and `ravi.marks = 20`  
+B. `asha.marks = 80` and `ravi.marks = 80`  
+C. `asha.marks = 20` and `ravi.marks = 20`  
+D. `asha.marks = 40` and `ravi.marks = 40`
+
+### 9. Completing a blueprint without inventing behaviour
 
 **Difficulty:** Foundational
 
-A developer wants an intentionally empty `Sensor` class before adding details later. Which definition is valid Python?
+**Taxonomy:** python → object-oriented-programming-intro → classes-and-objects  
+**Is Curriculum Based:** No  
+**Assessment type:** Completing missing code
 
-A. `def Sensor(): pass`  
-B. `class Sensor: pass`  
-C. `Sensor = class()`  
-D. `class Sensor()`
+A hardware team wants an intentionally empty `Sensor` blueprint so integration code can already create `Sensor()` objects. Which completion produces a valid class while adding no premature data or behaviour?
 
-### 10. Producing one instance from an existing class
+```python
+class Sensor:
+    ______
+```
+
+A. `Sensor = None`  
+B. `pass`  
+C. `def read(self): return None`  
+D. `status = "unknown"`
+
+### 10. A default constructor value is overridden once
 
 **Difficulty:** Intermediate
 
-The class `Sensor` has already been defined and currently needs no arguments. Which statement instantiates one object and stores it in `lab_sensor`?
+**Taxonomy:** python → object-oriented-programming-intro → constructors  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing multiple object states
 
-A. `class lab_sensor = Sensor`  
-B. `lab_sensor.Sensor()`  
-C. `def lab_sensor(Sensor)`  
-D. `lab_sensor = Sensor()`
+A dashboard creates two counters:
+
+```python
+class Counter:
+    def __init__(self, value=0):
+        self.value = value
+
+left = Counter()
+right = Counter(5)
+left.value += 2
+```
+
+Which state is present after the final assignment?
+
+A. `left.value == 0` and `right.value == 7`  
+B. `left.value == 7` and `right.value == 7`  
+C. `left.value == 5` and `right.value == 2`  
+D. `left.value == 2` and `right.value == 5`
 
 ### 11. Two calls use the same empty class
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** python → object-oriented-programming-intro → classes-and-objects  
+**Is Curriculum Based:** No  
+**Assessment type:** Identifying the final value of a variable
 
 ```python
 class PassCard:
@@ -142,20 +262,28 @@ B. `True`, because both objects have no attributes
 C. `None`, because `is` works only with numbers and strings  
 D. The comparison fails because empty classes cannot be instantiated twice
 
-### 12. Making a class name readable as a class name
+### 12. A valid declaration fails the team's class-name check
 
 **Difficulty:** Intermediate
 
-A code review finds a class written as `class bank_account:`. Which revision follows the naming convention taught in this unit?
+**Taxonomy:** python → object-oriented-programming-intro → classes-and-objects  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting the smallest correct repair
 
-A. `class bank-account:`  
-B. `class BANK_ACCOUNT:`  
+A valid declaration, `class bank_account:`, runs successfully but fails the project's class-naming check. The public name should remain the two words "bank account." Which header is the smallest convention-compliant repair?
+
+A. `class Bank_Account:`  
+B. `class BANKAccount:`  
 C. `class BankAccount:`  
 D. `class bankAccount:`
 
 ### 13. An alias is confused with a fresh instance
 
 **Difficulty:** Advanced
+
+**Taxonomy:** python → object-oriented-programming-intro → classes-and-objects  
+**Is Curriculum Based:** No  
+**Assessment type:** Identifying unexpected program behaviour
 
 ```python
 class Student:
@@ -178,16 +306,24 @@ D. `third.name` is `"Asha"`, while `second` remains without a name
 
 **Difficulty:** Foundational
 
+**Taxonomy:** python → object-oriented-programming-intro → attributes-and-methods  
+**Is Curriculum Based:** No  
+**Assessment type:** Completing missing code
+
 An empty `Student` object is stored in `asha`. Which statement attaches roll number 101 to that particular object?
 
-A. `Student.roll_number(101)`  
-B. `roll_number.asha = 101`  
+A. `Student.roll_number = 101`  
+B. `roll_number = 101`  
 C. `asha.roll_number = 101`  
-D. `asha = roll_number(101)`
+D. `asha = 101`
 
 ### 15. Updating one account without disturbing another
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** python → object-oriented-programming-intro → attributes-and-methods  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing multiple object states
 
 ```python
 acc1.balance = 1000
@@ -205,6 +341,10 @@ D. Both balances become undefined after reassignment
 ### 16. A partially prepared object reaches a report
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** python → object-oriented-programming-intro → attributes-and-methods  
+**Is Curriculum Based:** No  
+**Assessment type:** Handling a runtime failure
 
 ```python
 class Student:
@@ -226,16 +366,24 @@ D. `AttributeError`, because this object was never given a `name` attribute
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** python → object-oriented-programming-intro → attributes-and-methods  
+**Is Curriculum Based:** No  
+**Assessment type:** Completing a state update
+
 An object begins with `ticket.status = "Open"`. After the issue is resolved, which statement changes only that object's existing status?
 
-A. `Ticket("Closed")`  
+A. `Ticket.status = "Closed"`  
 B. `ticket.status = "Closed"`  
-C. `status.ticket("Closed")`  
-D. `class ticket.status = "Closed"`
+C. `status = "Closed"`  
+D. `ticket = "Closed"`
 
 ### 18. Preventing incomplete objects rather than detecting them later
 
 **Difficulty:** Advanced
+
+**Taxonomy:** python → object-oriented-programming-intro → constructors  
+**Is Curriculum Based:** No  
+**Assessment type:** Choosing a correct validation approach
 
 A program creates fifty student objects and then manually assigns `name`, `roll_number`, and `marks` in three separate lines for each one. Missing one line causes a delayed `AttributeError`. Which structural repair addresses the source of the defect?
 
@@ -248,16 +396,24 @@ D. Sort the objects before reading their attributes
 
 **Difficulty:** Foundational
 
+**Taxonomy:** python → object-oriented-programming-intro → attributes-and-methods  
+**Is Curriculum Based:** No  
+**Assessment type:** Completing missing method code
+
 A `Student` object should answer whether its own marks meet the pass boundary. Which class member has the correct basic method shape?
 
-A. `has_passed(self) = self.marks >= 40`  
-B. `method has_passed(): return marks >= 40`  
-C. `def has_passed(): return self.marks >= 40  # self is available automatically`  
+A. `def has_passed(marks): return marks >= 40`  
+B. `def has_passed(self): return marks >= 40`  
+C. `def has_passed(self): result = self.marks >= 40`  
 D. `def has_passed(self): return self.marks >= 40`
 
 ### 20. The same method serves different objects
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** python → object-oriented-programming-intro → attributes-and-methods  
+**Is Curriculum Based:** No  
+**Assessment type:** Scenario-based output prediction
 
 ```python
 class Student:
@@ -279,6 +435,10 @@ D. The first call permanently changes the shared method, forcing the second call
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** python → object-oriented-programming-intro → attributes-and-methods  
+**Is Curriculum Based:** No  
+**Assessment type:** Handling a method-call failure
+
 ```python
 class Greeter:
     def welcome():
@@ -298,6 +458,10 @@ D. `welcome` can only be called by writing `Greeter.welcome()` because methods n
 ### 22. Supplying a method's ordinary argument
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** python → object-oriented-programming-intro → attributes-and-methods  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing argument binding
 
 ```python
 class Account:
@@ -319,6 +483,10 @@ D. Python supplies `acc` as `self`, and `450` becomes `amount`
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** python → object-oriented-programming-intro → attributes-and-methods  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing delegated method calls
+
 ```python
 class Student:
     def has_passed(self):
@@ -339,6 +507,10 @@ D. The conditional expression ignores the result of `has_passed`
 
 **Difficulty:** Advanced
 
+**Taxonomy:** python → object-oriented-programming-intro → attributes-and-methods  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting the smallest correct repair
+
 ```python
 class Student:
     def rename(self, new_name):
@@ -355,6 +527,10 @@ D. Move `name = new_name` outside the class
 ### 25. Setup occurs without a separate method call
 
 **Difficulty:** Foundational
+
+**Taxonomy:** python → object-oriented-programming-intro → constructors  
+**Is Curriculum Based:** No  
+**Assessment type:** Identifying the final value of an attribute
 
 ```python
 class Device:
@@ -375,6 +551,10 @@ D. `router` contains only a method and cannot hold data
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** python → object-oriented-programming-intro → constructors  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing constructor argument binding
+
 ```python
 class Student:
     def __init__(self, name, marks):
@@ -394,6 +574,10 @@ D. The arguments disappear because the constructor returns nothing
 ### 27. Creation is blocked when required data is absent
 
 **Difficulty:** Intermediate
+
+**Taxonomy:** python → object-oriented-programming-intro → constructors  
+**Is Curriculum Based:** No  
+**Assessment type:** Handling a construction failure
 
 ```python
 class Student:
@@ -416,6 +600,10 @@ D. A `TypeError` reports the missing required `marks` argument
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** python → object-oriented-programming-intro → constructors  
+**Is Curriculum Based:** No  
+**Assessment type:** Reasoning about default arguments
+
 ```python
 class Account:
     def __init__(self, holder, balance=0):
@@ -434,6 +622,10 @@ D. `neha = Account(0, "Neha")`
 
 **Difficulty:** Advanced
 
+**Taxonomy:** python → object-oriented-programming-intro → constructors  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting the smallest correct repair
+
 ```python
 class Student:
     def __init__(self, name):
@@ -450,6 +642,10 @@ D. Change the body to `self.name = name`
 ### 30. A nearly correct special-method name is never recognised
 
 **Difficulty:** Advanced
+
+**Taxonomy:** python → object-oriented-programming-intro → constructors  
+**Is Curriculum Based:** No  
+**Assessment type:** Handling an unexpected construction failure
 
 ```python
 class Product:
@@ -469,6 +665,10 @@ D. Replace `self.price` with a global variable
 ### 31. The exact pass boundary is tested
 
 **Difficulty:** Foundational
+
+**Taxonomy:** python → object-oriented-programming-intro → modeling-with-classes  
+**Is Curriculum Based:** No  
+**Assessment type:** Identifying an incorrect boundary condition
 
 ```python
 class Student:
@@ -492,6 +692,10 @@ D. The comparison fails because marks is an attribute
 
 **Difficulty:** Foundational
 
+**Taxonomy:** python → object-oriented-programming-intro → modeling-with-classes  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing successive method calls
+
 An account begins with 500. Its `deposit` method adds 200. Its `withdraw` method changes the balance only when the requested amount does not exceed the current balance. A withdrawal of 800 is then attempted. Which balance remains?
 
 A. `-100`  
@@ -503,6 +707,10 @@ D. `1500`
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** python → object-oriented-programming-intro → modeling-with-classes  
+**Is Curriculum Based:** No  
+**Assessment type:** Tracing multiple object states
+
 `primary` and `savings` are separate `BankAccount` objects, each starting at 1000. The program calls `primary.withdraw(300)` and then `savings.deposit(50)`. Which state is consistent with independent objects?
 
 A. Both balances become 750 because they share the class  
@@ -510,20 +718,28 @@ B. `primary` becomes 1050 and `savings` becomes 700
 C. `primary` becomes 700 and `savings` becomes 1050  
 D. Both balances remain 1000 because methods cannot change attributes
 
-### 34. A report coordinates two existing decisions
+### 34. Two reports agree today but age differently
 
 **Difficulty:** Intermediate
 
-A `Student.report()` method needs the results already provided by `has_passed()` and `grade()`. Which implementation avoids duplicating both rules?
+**Taxonomy:** python → object-oriented-programming-intro → modeling-with-classes  
+**Is Curriculum Based:** No  
+**Assessment type:** Deciding whether two implementations are equivalent
 
-A. Call `self.has_passed()` and `self.grade()` while constructing the report  
-B. Recalculate every grade boundary inside `report` and stop using the other methods  
-C. Create a new `Student` object inside `report` to obtain fresh values  
-D. Read global variables named `has_passed` and `grade`
+A class already provides `has_passed()` and `grade()`. Version A of `report()` calls those methods. Version B repeats their current conditions exactly inside `report()`. Tests over every integer mark from 0 through 100 currently produce identical reports. Which review conclusion is accurate?
+
+A. Equivalent now; Version A is less likely to drift after a rule change  
+B. They cannot be equivalent because one method is not allowed to call another method on the same object  
+C. Version B is necessarily safer because copying a rule creates a second independent source of truth  
+D. Version A evaluates another student's state whenever it calls through `self`
 
 ### 35. Withdrawing the full balance is rejected by one character
 
 **Difficulty:** Advanced
+
+**Taxonomy:** python → object-oriented-programming-intro → modeling-with-classes  
+**Is Curriculum Based:** No  
+**Assessment type:** Identifying an incorrect boundary condition
 
 ```python
 def withdraw(self, amount):
@@ -543,6 +759,10 @@ D. Remove the condition and accept every request
 ### 36. A deposit method changes the wrong account
 
 **Difficulty:** Advanced
+
+**Taxonomy:** python → object-oriented-programming-intro → attributes-and-methods  
+**Is Curriculum Based:** No  
+**Assessment type:** Spotting a state-management defect
 
 ```python
 class Account:
@@ -567,6 +787,10 @@ D. Replace the body with `self.balance += amount`
 
 **Difficulty:** Foundational
 
+**Taxonomy:** python → object-oriented-programming-intro → modeling-with-classes  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting the most appropriate programming structure
+
 The help desk only needs to store today's visitor count, `47`, and perform ordinary arithmetic with it. Which representation is most appropriate?
 
 A. A plain numeric variable  
@@ -577,6 +801,10 @@ D. Two parallel lists containing the same count
 ### 38. Fixed coordinates carry facts but no actions
 
 **Difficulty:** Foundational
+
+**Taxonomy:** python → object-oriented-programming-intro → modeling-with-classes  
+**Is Curriculum Based:** No  
+**Assessment type:** Selecting the most appropriate programming structure
 
 A map marker is represented only by latitude and longitude. The pair has no custom behaviour or rule to enforce. Which structure is a proportionate choice?
 
@@ -589,6 +817,10 @@ D. Separate classes for latitude and longitude
 
 **Difficulty:** Intermediate
 
+**Taxonomy:** python → object-oriented-programming-intro → modeling-with-classes  
+**Is Curriculum Based:** No  
+**Assessment type:** Choosing a correct validation approach
+
 An event has a title, capacity, and current registrations. Every registration must be rejected once capacity is reached, and hundreds of events follow the same rule independently. Which model best fits?
 
 A. Store only all event titles in one tuple  
@@ -599,6 +831,10 @@ D. Use an `Event` class with state and a registration method that enforces the l
 ### 40. Choosing the point where a class earns its place
 
 **Difficulty:** Advanced
+
+**Taxonomy:** python → object-oriented-programming-intro → modeling-with-classes  
+**Is Curriculum Based:** No  
+**Assessment type:** Comparing two code implementations
 
 Version A represents each student as a dictionary, while several screens independently implement pass, grade, and report rules. Version B uses `Student` objects with those operations as methods. The system will manage thousands of students and revise grading rules annually. Which judgment is most defensible?
 
@@ -613,25 +849,25 @@ D. Neither design can represent more than one student at a time
 
 | Q | Answer | Difficulty | Rationale |
 |---:|:---:|---|---|
-| 1 | C | Foundational | An object keeps one student's related facts together, removing dependence on synchronised positions. |
-| 2 | A | Intermediate | OOP begins by identifying the meaningful entities whose data and behaviour belong together. |
-| 3 | D | Intermediate | A class can keep the order's state and its shipping rule together instead of repeating behaviour across screens. |
-| 4 | B | Advanced | A shared method gives the withdrawal policy one implementation point used by every account object. |
-| 5 | D | Foundational | The general shape is a class, while the identified physical copy is one specific object. |
-| 6 | B | Intermediate | One class can instantiate any number of separate objects, each with its own state. |
-| 7 | C | Intermediate | The invoice number, date, and amount identify one concrete invoice rather than a general blueprint. |
-| 8 | A | Advanced | Objects share their blueprint and methods, but instance attributes belong independently to each object. |
-| 9 | B | Foundational | `class Sensor:` defines the class, and `pass` supplies a valid placeholder body. |
-| 10 | D | Intermediate | Calling the class name constructs a new instance, which the assignment stores in `lab_sensor`. |
+| 1 | C | Foundational | Bundling each student's related state in one object removes the positional dependency that allowed the parallel collections to drift. |
+| 2 | A | Intermediate | `Customer`, `Technician`, and `Ticket` are the meaningful entities whose separate state and behaviour the service must model. |
+| 3 | D | Intermediate | Assignment makes `second` an alias of `first`, while the second call to `Parcel()` creates the distinct object referenced by `third`. |
+| 4 | B | Advanced | Assigning through `self.stock` changes the attribute of the object that received the method call; the original line only created a local variable. |
+| 5 | D | Foundational | Python invokes only the exact special method name `__init__` automatically while processing `Badge("Meera")`. |
+| 6 | B | Intermediate | The subtraction changes only `morning.seats`; the independent `evening` object retains 35. |
+| 7 | C | Intermediate | Each object keeps one lot's state, while one shared method consistently checks that lot's capacity before changing occupancy. |
+| 8 | A | Advanced | Ravi should fail with 20, but the defective method reads Asha's 80 and returns `True`; equal-side test values would conceal the wrong reference. |
+| 9 | B | Foundational | `pass` is a valid placeholder statement in a class body and adds no data or behaviour. |
+| 10 | D | Intermediate | The omitted argument gives `left` zero before its increment to two, while `right` keeps its explicitly supplied value of five. |
 | 11 | A | Intermediate | Each class call creates a new object, so identity comparison with `is` returns `False`. |
 | 12 | C | Intermediate | Python class names conventionally use CapitalisedWords, represented here by `BankAccount`. |
 | 13 | A | Advanced | `second = first` creates an alias to the same object, while `third = Student()` creates a new object with no `name`. |
-| 14 | C | Foundational | Dot assignment creates `roll_number` on the specific object referenced by `asha`. |
+| 14 | C | Foundational | Dot assignment creates `roll_number` on the specific object referenced by `asha`; the alternatives modify another namespace or replace the reference. |
 | 15 | B | Intermediate | Reassigning `acc1.balance` changes that object only; `acc2` retains its separate value. |
 | 16 | D | Intermediate | Dot lookup raises `AttributeError` when the requested attribute was never attached to that object. |
-| 17 | B | Intermediate | Assigning through `ticket.status` replaces the value on that particular ticket object. |
+| 17 | B | Intermediate | Assigning through `ticket.status` replaces that object's value; a class attribute, standalone variable, or replaced reference does not perform the requested update. |
 | 18 | A | Advanced | A constructor makes the required setup part of creation, preventing partially prepared objects. |
-| 19 | D | Foundational | A method is a `def` inside the class and needs `self` first to access the calling object's attributes. |
+| 19 | D | Foundational | The correct method receives the object as `self`, reads its attribute, and explicitly returns the Boolean result. |
 | 20 | C | Intermediate | In each call, `self` refers to the object before the dot, so the two marks produce different Boolean results. |
 | 21 | A | Intermediate | An object method call automatically passes the object, causing a `TypeError` when no first parameter exists. |
 | 22 | D | Intermediate | Python supplies the calling object as `self`; the explicitly supplied 450 fills `amount`. |
@@ -646,7 +882,7 @@ D. Neither design can represent more than one student at a time
 | 31 | A | Foundational | The `>=` operator includes 40 in the passing range. |
 | 32 | B | Foundational | The deposit raises the balance to 700, and the excessive withdrawal leaves it unchanged. |
 | 33 | C | Intermediate | Each method updates only its receiving object, leaving balances of 700 and 1050. |
-| 34 | A | Intermediate | Calling the existing methods through `self` reuses their decisions for the same student. |
+| 34 | A | Intermediate | Matching conditions make the versions equivalent over the stated marks today, but delegation avoids a duplicate rule that can diverge after a policy change. |
 | 35 | B | Advanced | Only amounts greater than the balance should be rejected; an equal amount must reach the subtraction. |
 | 36 | D | Advanced | `self` refers to the object that received the call, so the deposit updates `savings` in this scenario. |
 | 37 | A | Foundational | A standalone number with no attached behaviour needs only a normal variable. |
@@ -656,15 +892,12 @@ D. Neither design can represent more than one student at a time
 
 ---
 
-## Topic coverage
+## Taxonomy coverage
 
-| Unit 9 topic | Questions |
-|---|---|
-| Why OOP? Modeling Real-World Things | 1-4 |
-| What is a Class? What is an Object? | 5-8 |
-| Creating a Class and Instantiating Objects | 9-13 |
-| Attributes (Instance Variables) | 14-18 |
-| Methods and the `self` Parameter | 19-24 |
-| The `__init__` Constructor | 25-30 |
-| A Simple Class Walkthrough | 31-36 |
-| Objects vs Plain Data: When to Use a Class | 37-40 |
+| Subject | Topic | Subtopic | Questions | Is Curriculum Based |
+|---|---|---|---|:---:|
+| python | object-oriented-programming-intro | object-oriented-programming | 1 | No |
+| python | object-oriented-programming-intro | classes-and-objects | 3, 6, 9, 11-13 | No |
+| python | object-oriented-programming-intro | attributes-and-methods | 4, 8, 14-17, 19-24, 36 | No |
+| python | object-oriented-programming-intro | constructors | 5, 10, 18, 25-30 | No |
+| python | object-oriented-programming-intro | modeling-with-classes | 2, 7, 31-35, 37-40 | No |
