@@ -10,7 +10,7 @@ The interesting thing is that Nikhil's reasoning was not sloppy in any way he co
 
 **Definition:** `Logical inference` is the derivation of new statements from known ones. A knowledge base `entails` a statement when that statement is true in every situation in which everything in the knowledge base is true, and a valid inference procedure derives only entailed statements.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_section_introduction.png)
+![Opening scene: At half past nine on a Tuesday, the network support desk at a college in Coimbatore receives a call: the internet is down in the library.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_section_introduction.png)
 
 ## Entailment: The Standard Everything Is Measured Against
 

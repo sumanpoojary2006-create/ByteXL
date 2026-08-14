@@ -10,7 +10,7 @@ The question worth asking is not whether machines can copy this. It is which sin
 
 **Definition:** `Biological inspiration` in AI refers to a small set of principles borrowed from how nervous systems compute, chiefly that intelligence can emerge from very many simple units, each combining weighted signals and passing on a result, with the strength of connections adjusted by experience.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_section_introduction.png)
+![Opening scene: In a first-year biology practical, Aarav looks down a microscope at a stained slice of brain tissue and sees something that does not look like a computer at all.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_section_introduction.png)
 
 ## What a Biological Neuron Does
 

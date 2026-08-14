@@ -10,7 +10,7 @@ This argument is preventable, and the thing that prevents it is a short specific
 
 **Definition:** The `PEAS framework` specifies an intelligent agent by stating its `Performance measure`, its `Environment`, its `Actuators`, and its `Sensors`, fixing what the agent is for and what it has to work with before any design decisions are made.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_section_introduction.png)
+![Opening scene: Two engineers at an agri-drone startup in Coimbatore spend a full hour arguing about whether their spraying drone works.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_section_introduction.png)
 
 ## What PEAS Forces You To Do
 

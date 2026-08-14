@@ -10,7 +10,7 @@ That gap is what an **AI agent** fills. Not a better model, but a model placed i
 
 **Definition:** An `AI agent` is a system in which a model is given a goal, a set of `tools` it may call, and a loop in which it repeatedly decides an action, executes it, observes the result, and continues until the goal is achieved or it gives up.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_section_introduction.png)
+![Opening scene: A logistics firm's expense desk processes about six hundred claims a month, and each one takes a clerk four minutes of the same tedious sequence.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_section_introduction.png)
 
 ## What Turns a Model Into an Agent
 

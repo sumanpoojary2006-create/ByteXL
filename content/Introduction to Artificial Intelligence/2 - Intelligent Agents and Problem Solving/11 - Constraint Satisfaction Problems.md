@@ -10,7 +10,7 @@ Problems shaped like this are so common, and so different from everything else i
 
 **Definition:** A `constraint satisfaction problem`, or CSP, is defined by a set of `variables`, a `domain` of possible values for each variable, and a set of `constraints` restricting which combinations of values are permitted; a solution is an assignment of one value to every variable that violates no constraint.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_section_introduction.png)
+![Opening scene: Every February, the vice principal of Deepa's college locks herself in her office for three days with a whiteboard and builds next semester's timetable by hand.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_section_introduction.png)
 
 ## A Different Shape of Problem
 

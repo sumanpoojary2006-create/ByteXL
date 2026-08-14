@@ -12,7 +12,7 @@ The consultant's problem is not a shortage of data. It is that the representatio
 
 **Definition:** A `Bayesian network` is a directed acyclic graph in which nodes are random variables and arrows represent direct probabilistic influence, with each node holding a small table of conditional probabilities given only its parents, so that the full joint distribution is reconstructed from a handful of local tables.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_section_introduction.png)
+![Opening scene: A hospital in Kochi asks a consultant to build a diagnostic aid.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_section_introduction.png)
 
 ## The Problem With the Full Table
 

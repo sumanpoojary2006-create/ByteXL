@@ -10,7 +10,7 @@ What the assessor does, and what the two models could not, is reason across both
 
 **Definition:** `Multimodal AI` refers to systems that accept or produce more than one kind of input, such as text, images, audio, and video, by representing each in a shared space so that information from different sources can be combined within a single model.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_section_introduction.png)
+![Opening scene: An insurance company handles motor claims, and the process has always had two halves that never met.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_section_introduction.png)
 
 ## The Central Problem
 

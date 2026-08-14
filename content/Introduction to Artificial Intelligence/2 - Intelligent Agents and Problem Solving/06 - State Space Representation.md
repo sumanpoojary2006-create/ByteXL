@@ -10,7 +10,7 @@ That network is the **state space**, and once a problem is seen this way, every 
 
 **Definition:** The `state space` of a problem is the set of all states reachable from the initial state, together with the transitions between them, forming a graph in which a solution is a path from the initial state to a goal state.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_section_introduction_simple_v2.png)
+![Opening scene: Sanjana's eight-year-old cousin hands her a sliding tile puzzle, the plastic kind with eight numbered tiles in a three by three frame and one empty square, and asks her to fix it.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_section_introduction_simple_v2.png)
 
 ## What Counts as a State
 

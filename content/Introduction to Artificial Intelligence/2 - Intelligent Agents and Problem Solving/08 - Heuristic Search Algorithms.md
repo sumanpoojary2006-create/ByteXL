@@ -10,7 +10,7 @@ Yet any person handed the same map solves this instantly. Shown a road heading w
 
 **Definition:** A `heuristic` is a function that estimates the cost of reaching the goal from a given state, and `heuristic search` uses that estimate to decide which part of the frontier to expand next, so the search advances towards the goal instead of spreading out in every direction.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_section_introduction.png)
+![A Pune ambulance dispatcher watches a route search waste eleven seconds exploring west while the hospital is east](images/08_section_introduction_v2.png)
 
 ## What a Heuristic Actually Is
 

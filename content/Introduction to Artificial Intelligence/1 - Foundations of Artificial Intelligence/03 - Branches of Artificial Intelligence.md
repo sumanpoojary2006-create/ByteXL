@@ -8,7 +8,7 @@ They are, in the way that cardiology and dermatology are both medicine. Artifici
 
 **Definition:** The `branches of artificial intelligence` are the specialised subfields of AI, each defined by the kind of problem it tackles, from learning patterns in data to understanding language, interpreting images, representing knowledge, planning actions, and controlling physical machines.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_section_introduction.png)
+![Opening scene: Meera is three weeks from her internship deadline, and she has thirty tabs open on a hiring portal, every one of them titled some version of "AI Intern".](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_section_introduction.png)
 
 ## Why the Branches Divide the Way They Do
 

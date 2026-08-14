@@ -12,7 +12,7 @@ None of these is a defect. Each follows directly from how these systems work, an
 
 **Definition:** A `large language model` is a transformer trained on a very large quantity of text to predict the next `token` given the preceding ones, which after sufficient scale produces a system capable of a wide range of language tasks it was never separately trained for.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_section_introduction_simple_v2.png)
+![Opening scene: A logistics firm builds a support assistant on a hosted language model, and the pilot goes well enough that they roll it out.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_section_introduction_simple_v2.png)
 
 ## Tokens
 
@@ -173,8 +173,6 @@ The model's opinion is identical in every row. Only the reading of it changes.
 At low temperature the highest-scoring token takes almost all the probability, so the same input reliably produces the same output. At high temperature the distribution flattens until a token the model rated poorly, "purple", gets a 6.2 percent chance of being chosen, and once a poor token is committed to, everything after it is generated as a continuation of that mistake.
 
 So the logistics firm's inconsistency is a configuration choice, not a bug. **For a support assistant quoting policy, temperature should be near zero.** For brainstorming, higher is the point. Shipping a factual assistant at a creative setting is a common and entirely avoidable error.
-
-![Visual explanation of sampling](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_section_sampling_simple_v2.png)
 
 ## From Next-Token Predictor to Assistant
 

@@ -8,7 +8,7 @@ The grandmother was judging the vacuum against her own view of the hall. The vac
 
 **Definition:** An `agent` is anything that perceives its environment through sensors and acts upon that environment through actuators, choosing each action on the basis of what it has perceived so far.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_section_introduction.png)
+![Opening scene: Nandini's family buys a robot vacuum, and within a week her grandmother has formed a firm opinion about it.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_section_introduction.png)
 
 ## The Agent Loop: Percept In, Action Out
 

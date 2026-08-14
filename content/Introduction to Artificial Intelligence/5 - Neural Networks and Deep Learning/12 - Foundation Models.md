@@ -10,7 +10,7 @@ Nothing in the architecture changed. What changed is where the knowledge comes f
 
 **Definition:** A `foundation model` is a large model trained once on a broad quantity of unlabelled data, producing general-purpose capabilities that can then be adapted cheaply to many specific tasks through `fine-tuning` or prompting, rather than each task requiring a model trained from scratch.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_section_introduction.png)
+![Opening scene: A hospital group wants a system that reads discharge summaries and flags the ones needing follow-up.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_section_introduction.png)
 
 ## The Labelling Problem, Solved Sideways
 

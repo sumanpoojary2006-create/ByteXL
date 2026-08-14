@@ -12,7 +12,7 @@ That mechanism is **attention**, and it is the idea modern language models are b
 
 **Definition:** `Attention` computes, for a given position, a set of weights over all available positions and returns a weighted average of their values, so that the position draws information directly from wherever it is relevant rather than through a chain of intermediate steps.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_section_introduction.png)
+![Kavya keeps a finger on an English equipment manual while linking each Tamil phrase to the relevant source words](images/10_section_introduction_v2.png)
 
 ## Attention Is a Soft Lookup
 

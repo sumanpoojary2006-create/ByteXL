@@ -8,7 +8,7 @@ This is not a small handicap, and it is worth pausing on. Farhan cannot ask "whi
 
 **Definition:** `Blind search` explores a problem's state space using only the structure of the connections available, with no information about how near any state is to the goal, so its behaviour is determined entirely by the order in which it chooses to expand what it has discovered.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_section_introduction.png)
+![Opening scene: Farhan has forty minutes before his exam and he is standing at the hostel gate of a campus he joined three weeks ago.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_section_introduction.png)
 
 ## What "Blind" Actually Means
 

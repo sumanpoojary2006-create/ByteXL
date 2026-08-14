@@ -12,7 +12,7 @@ Understanding why that helped means understanding what the activation function i
 
 **Definition:** An `activation function` is the rule applied to a neuron's weighted sum to produce its output. It is what prevents stacked layers from collapsing into a single layer, and its shape determines how well a correction can travel back through a deep network during training.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_section_introduction.png)
+![A doctoral student in 2006 sees performance worsen as a working four-layer network grows to five and six layers](images/05_section_introduction_v2.png)
 
 ## The Three Common Choices
 
@@ -159,8 +159,6 @@ Two numbers in that output decide the rest of this lesson.
 **At an input of 8, the slope is 0.00034.** A neuron that has drifted into that region is `saturated`. It still produces an output, and it has stopped learning, because no adjustment to its weights makes an appreciable difference to what it produces. It is effectively frozen.
 
 ReLU's column is different in kind. Its slope is exactly 1 for every positive input, no matter how large. A ReLU neuron with a weighted sum of 8 is just as responsive as one with a sum of 0.5.
-
-![Visual explanation of what steepness has to do with learning](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_section_what_steepness_has_to_do_with_learning_simple_v2.png)
 
 ## Why Depth Broke
 

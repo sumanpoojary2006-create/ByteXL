@@ -10,7 +10,7 @@ When only the final configuration matters and the route to it is irrelevant, hol
 
 **Definition:** `Local search` algorithms keep a single current state and repeatedly move to a neighbouring state, discarding the path taken, which makes them suitable for problems where the solution is the final configuration itself rather than the sequence of steps that reached it.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_section_introduction.png)
+![Opening scene: Latha runs the dispatch desk for a courier branch, and every morning she has the same job: eight stops to cover, one van, and a route to decide before the driver leaves at seven.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_section_introduction.png)
 
 ## When the Path Does Not Matter
 

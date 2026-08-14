@@ -12,7 +12,7 @@ Fixing this requires a language that can talk about objects, the properties they
 
 **Definition:** `First-order predicate logic` extends propositional logic by breaking statements into `predicates` applied to `objects`, and by adding `quantifiers` that allow a single statement to assert something about all objects or about at least one object in a domain.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_section_introduction.png)
+![Opening scene: The examination cell at a university in Pune runs on a set of rules that a clerk applies by hand, and Farida has been asked to encode them so a system can apply them instead.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_section_introduction.png)
 
 ## Objects, Predicates, and Relations
 

@@ -10,7 +10,7 @@ So the useful thing this lesson can offer is not a forecast. It is a description
 
 **Definition:** `Emerging trends` in AI are the directions of current research and investment, including `agentic AI`, `physical AI`, `edge AI`, AI for scientific discovery, and the drive towards more efficient models, each pursued for a specific reason and each facing specific unsolved problems.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/13_section_introduction.png)
+![Anitha encounters an unfamiliar new AI technique in a 2026 interview three weeks after completing her course](images/13_section_introduction_v2.png)
 
 ## Five Directions
 

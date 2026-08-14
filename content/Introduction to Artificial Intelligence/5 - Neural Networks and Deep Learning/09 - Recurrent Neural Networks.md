@@ -12,7 +12,7 @@ What is needed is a network that reads one item at a time and carries something 
 
 **Definition:** A `recurrent neural network` processes a sequence one element at a time, maintaining a `hidden state` that is updated at each step from the current input and the previous state, so that the state acts as a memory of everything seen so far.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_section_introduction.png)
+![Opening scene: A food delivery company wants to score restaurant reviews automatically, and the first attempt is the obvious one: give every word a sentiment score and add them up.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_section_introduction.png)
 
 ## The Loop
 

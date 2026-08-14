@@ -10,7 +10,7 @@ The model was not wrong. It was unusable, and the missing property has a name.
 
 **Definition:** `Explainable AI` covers methods for producing an account of why a model reached a particular decision, in a form the person affected by it or responsible for it can check, challenge, and act on.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_section_introduction.png)
+![Opening scene: A hospital in Kochi trials a model that flags which discharged patients are likely to need follow-up within thirty days.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_section_introduction.png)
 
 ## Two Ways to Get an Explanation
 

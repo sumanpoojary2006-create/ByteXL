@@ -12,7 +12,7 @@ Fixing this is what **model training** covers: not the fitting itself, which is 
 
 **Definition:** `Model training` is the process of fitting a model to data together with the procedures that make its measured performance trustworthy, including how the data is divided, how `hyperparameters` are chosen, and how the final estimate is kept honest.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_section_introduction.png)
+![Opening scene: Two analysts at the same property portal build price estimators in the same week, using the same twelve flats and, as it turns out, the same method.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_section_introduction.png)
 
 ## One Split Measures Luck
 

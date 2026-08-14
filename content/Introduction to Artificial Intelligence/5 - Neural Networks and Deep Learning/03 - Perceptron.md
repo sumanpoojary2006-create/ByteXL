@@ -10,7 +10,7 @@ That procedure is the **perceptron**, and it was the first learning algorithm fo
 
 **Definition:** A `perceptron` is a single artificial neuron together with a learning rule that adjusts its weights and bias in response to its own mistakes, converging on a `decision boundary` that separates two classes whenever such a straight boundary exists.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_section_introduction.png)
+![Opening scene: The irrigation controller worked because somebody had already written the rule down in three sentences, and the weights were read off from those sentences by hand.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_section_introduction.png)
 
 ## The Learning Rule
 

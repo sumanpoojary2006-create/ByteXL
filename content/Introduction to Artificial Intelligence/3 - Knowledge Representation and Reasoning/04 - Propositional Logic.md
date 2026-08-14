@@ -10,7 +10,7 @@ Nobody lied and nobody was careless. English is simply not precise enough to spe
 
 **Definition:** `Propositional logic` is a formal language in which each `proposition` is a statement that is either true or false, and complex statements are built from simpler ones using `logical operators` whose meaning is fixed completely by a `truth table`.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_section_introduction.png)
+![Opening scene: A small firm in Kochi is installing alarm systems in apartments, and Tanvi, who writes the controller software, is having an argument with the salesman about when the siren should sound.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_section_introduction.png)
 
 ## Propositions
 

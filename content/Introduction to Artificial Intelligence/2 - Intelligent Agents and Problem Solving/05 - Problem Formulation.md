@@ -8,7 +8,7 @@ What Ishaan is facing is the step that sits between a real situation and any alg
 
 **Definition:** `Problem formulation` is the process of restating a real-world situation as a precise search problem, by specifying the initial state, the actions available, the result of each action, a test for the goal, and the cost of each step.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_section_introduction.png)
+![Opening scene: Ishaan is handed what sounds like a simple task at his internship: work out the best way for the company's service engineer to visit four customer sites in a day and get back to the depot.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_section_introduction.png)
 
 ## From a Real Situation to a Solvable One
 

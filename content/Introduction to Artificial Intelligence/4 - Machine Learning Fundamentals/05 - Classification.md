@@ -10,7 +10,7 @@ The question she needs answered for each new message is not a quantity. Nobody w
 
 **Definition:** `Classification` is supervised learning where the label is a category from a fixed set rather than a number, and the model learns to assign new examples to one of those categories using features whose relationship to the category is derived from labelled examples.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_section_introduction.png)
+![Opening scene: The IT desk at a college in Kochi gets the same complaint every week.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_section_introduction.png)
 
 ## Classification Against Regression
 

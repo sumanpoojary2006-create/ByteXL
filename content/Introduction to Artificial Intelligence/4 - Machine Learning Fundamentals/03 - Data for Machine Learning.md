@@ -10,7 +10,7 @@ He removes that column, rebuilds, and the estimates become mediocre, which is th
 
 **Definition:** A `dataset` for machine learning is a table in which each row is an example, the `features` are the input columns the model may use, and the `label` is the output column it is trained to predict, with the rows deliberately divided into a `training set` used to fit the model and a `test set` reserved to measure it.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_section_introduction_simple_v2.png)
+![Opening scene: Harsh joins a property portal in Pune as its first analyst and is told the company wants a price estimator.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_section_introduction_simple_v2.png)
 
 ## The Shape of a Dataset
 

@@ -10,7 +10,7 @@ Finding a relationship between the features and a continuous label, so that the 
 
 **Definition:** `Regression` is supervised learning where the label is a continuous quantity, and the model learns a function from the features to that quantity by adjusting its parameters to minimise the difference between its predictions and the known values.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_section_introduction.png)
+![Opening scene: Harsh's property portal wants a number on every listing page: an estimated fair price, shown before the seller enters their asking price, so that buyers have something to compare against.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_section_introduction.png)
 
 ## Fitting a Line
 

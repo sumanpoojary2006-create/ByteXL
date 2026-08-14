@@ -10,7 +10,7 @@ Same machinery, same shape of rules, opposite direction of travel. The first run
 
 **Definition:** `Forward chaining` starts from known facts and repeatedly fires every applicable rule to derive all their consequences, while `backward chaining` starts from a goal and recursively seeks facts or rules that would establish it, pursuing only what is relevant to that goal.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_section_introduction.png)
+![Opening scene: Two systems in the same hospital use the same kind of reasoning engine and behave nothing alike, and the difference tells you almost everything about this lesson.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_section_introduction.png)
 
 ## One Rule Base, Two Directions
 

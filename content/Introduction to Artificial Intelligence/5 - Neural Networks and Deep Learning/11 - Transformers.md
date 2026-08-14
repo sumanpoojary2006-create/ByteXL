@@ -10,7 +10,7 @@ It worked, and the resulting architecture now underlies essentially every large 
 
 **Definition:** A `transformer` is a neural architecture built from stacked layers of self-attention and position-wise feedforward networks, with positional encoding supplying order and residual connections and normalisation making depth trainable, processing all positions of a sequence in parallel.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_section_introduction.png)
+![A machine-translation team splits between skepticism and curiosity over Attention Is All You Need on a Monday in June 2017](images/11_section_introduction_v2.png)
 
 ## What a Transformer Block Contains
 

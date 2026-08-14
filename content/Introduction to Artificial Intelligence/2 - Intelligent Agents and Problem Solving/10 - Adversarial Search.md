@@ -10,7 +10,7 @@ The agent no longer controls the state that follows its move. It controls only e
 
 **Definition:** `Adversarial search` finds the best move in a competitive setting by searching a game tree in which the two players alternate, one trying to maximise the outcome and the other trying to minimise it, so every plan is evaluated against the opponent's best reply rather than a convenient one.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_section_introduction.png)
+![Opening scene: Manoj writes a tic-tac-toe program for a college assignment, and it plays reasonably well against his roommate for about a week.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_section_introduction.png)
 
 ## Why an Opponent Changes Everything
 

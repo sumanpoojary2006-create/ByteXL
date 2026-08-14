@@ -10,7 +10,7 @@ That gap, between a system that works and a system that is acceptable, is the en
 
 **Definition:** `Responsible AI` is the practice of building and deploying AI systems that are fair, explainable, privacy-respecting, accountable, and subject to meaningful human oversight, treating these as engineering requirements rather than as public relations.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_section_introduction.png)
+![Opening scene: Arjun applies to forty companies in his final semester.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_section_introduction.png)
 
 ## Where Bias Actually Comes From
 

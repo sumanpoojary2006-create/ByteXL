@@ -10,7 +10,7 @@ Neither is a bug in the ordinary sense. Both are cases of a system behaving exac
 
 **Definition:** `AI safety and security` covers the ways systems fail when inputs are chosen adversarially or when a model optimises its objective in ways nobody intended, spanning `adversarial examples`, `prompt injection`, and the general problem of `alignment` between what a system was told to do and what was wanted.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_section_introduction.png)
+![Opening scene: Two incidents in the same month at a logistics firm, reported to two different teams, turn out to be the same kind of problem.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_section_introduction.png)
 
 ## Ordinary Failure Against Adversarial Failure
 

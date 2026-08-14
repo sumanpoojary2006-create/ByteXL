@@ -8,7 +8,7 @@ Their algorithms did not fail because they were badly written. They failed becau
 
 **Definition:** An `AI environment` is classified by a small number of structural properties, such as how much of it the agent can observe and how predictable its actions are, and these properties determine which techniques are viable for an agent operating within it.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_section_introduction.png)
+![Opening scene: Aditya's team wins a college robotics contest with a chess-playing arm, and on the strength of it a local firm asks them to prototype a small delivery robot for a hospital corridor.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_section_introduction.png)
 
 ## Fully Observable vs Partially Observable
 

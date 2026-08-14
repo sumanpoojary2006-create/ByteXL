@@ -10,7 +10,7 @@ This is what makes the **future of AI** worth studying rather than merely specul
 
 **Definition:** The `future of AI` refers to the emerging directions reshaping how intelligent systems are built and deployed: foundation models, multimodal AI, agentic AI, physical AI, and edge AI, each of which changes what is expensive and what is cheap in building an intelligent system.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_section_introduction.png)
+![Opening scene: In 2019, Lakshmi's seniors submitted a final-year project they were rightly proud of: a chatbot for their department office.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_section_introduction.png)
 
 ## Why the Ground Moved: Foundation Models
 

@@ -10,7 +10,7 @@ That is not a list of facts. It is a **structure**, in which the arrangement of 
 
 **Definition:** `Semantic knowledge models` represent knowledge as a structured network of entities and the labelled relationships between them, so that the organisation itself supports inference, most notably by allowing properties to be inherited from general categories down to specific instances.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_section_introduction.png)
+![Priya searches for a debutant cricketer as a right-hand knowledge panel assembles connected facts with nine minutes remaining](images/08_section_introduction_v2.png)
 
 ## Semantic Networks
 

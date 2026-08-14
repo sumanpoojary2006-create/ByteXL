@@ -12,7 +12,7 @@ That arrangement, neurons in layers where each layer's outputs become the next l
 
 **Definition:** A `feedforward neural network` arranges neurons in successive `layers`, where every neuron in a layer receives the outputs of the previous layer as its inputs, and information flows in one direction from input to output with no loops.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_section_introduction.png)
+![Warangal students try and fail to separate diagonally arranged circles and crosses with one straight line](images/04_section_introduction_v2.png)
 
 ## Solving XOR With Two Layers
 

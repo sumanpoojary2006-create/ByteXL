@@ -10,7 +10,7 @@ Turning that into twelve titles is a **recommendation system**, and it is quietl
 
 **Definition:** A `recommendation system` predicts which items a person will find relevant, using either the attributes of items the person already liked, called `content-based filtering`, or the behaviour of other people with similar histories, called `collaborative filtering`.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_section_introduction.png)
+![Opening scene: A streaming service in India carries about eight thousand titles.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_section_introduction.png)
 
 ## Content-Based Filtering
 

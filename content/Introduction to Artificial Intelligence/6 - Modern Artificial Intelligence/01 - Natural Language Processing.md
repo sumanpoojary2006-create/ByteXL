@@ -12,7 +12,7 @@ Turning language into something a machine can compute over, and back again, is *
 
 **Definition:** `Natural language processing` is the field concerned with enabling machines to work with human language, covering the conversion of text into structured representations, the extraction of meaning from it, and the generation of language as output.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_section_introduction.png)
+![Opening scene: A food delivery company receives about forty thousand written reviews a week, and until last year a team of six read a sample of them and wrote a summary every Friday.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_section_introduction.png)
 
 ## Three Things People Mean by NLP
 

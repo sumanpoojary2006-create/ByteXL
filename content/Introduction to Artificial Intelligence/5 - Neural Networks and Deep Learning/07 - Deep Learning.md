@@ -12,7 +12,7 @@ Then a network was entered into a large image recognition competition that was g
 
 **Definition:** `Deep learning` uses neural networks with many layers to learn useful `representations` of raw input automatically, so that the features a classifier depends on are discovered from data rather than designed by a person.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_section_introduction.png)
+![Sandeep spends four months measuring leaf texture and manually filling forty feature slots](images/07_section_introduction_v2.png)
 
 ## The Feature Bottleneck
 

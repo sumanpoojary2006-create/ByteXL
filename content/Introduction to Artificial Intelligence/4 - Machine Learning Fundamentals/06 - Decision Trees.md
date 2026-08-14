@@ -10,7 +10,7 @@ A **decision tree** is a chain of yes-or-no questions ending in a verdict, learn
 
 **Definition:** A `decision tree` is a model that repeatedly splits the data on one feature at a time, choosing at each step the split that best separates the classes, producing a branching structure whose leaves give the prediction and whose path from the root is a readable explanation.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_section_introduction.png)
+![Opening scene: A cooperative bank in Belagavi buys a loan-scoring model, deploys it, and withdraws it eleven weeks later.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_section_introduction.png)
 
 ## The Shape of a Tree
 

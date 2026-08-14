@@ -12,7 +12,7 @@ Choosing measurements that expose failures rather than conceal them is **model e
 
 **Definition:** `Model evaluation` is the practice of measuring a model's performance with quantities chosen to reveal the specific ways it can fail, rather than with a single summary figure that can be high while the model is useless.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_section_introduction.png)
+![Opening scene: A district health programme pilots a screening model for a condition affecting roughly two people in a hundred.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_section_introduction.png)
 
 ## Accuracy and Its Blind Spot
 

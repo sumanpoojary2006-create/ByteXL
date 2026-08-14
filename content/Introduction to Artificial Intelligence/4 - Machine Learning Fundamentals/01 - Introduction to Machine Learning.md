@@ -12,7 +12,7 @@ Devika cannot write that rule because nobody can. But she has something the acco
 
 **Definition:** `Machine learning` is the field concerned with systems that improve at a task by processing data rather than by being explicitly programmed, deriving the rule from examples instead of receiving it from a person.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_section_introduction_simple_v2.png)
+![Opening scene: A logistics firm in Surat asks Devika to write a program that flags suspicious invoices before they are paid, and she starts the way any competent programmer would.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_section_introduction_simple_v2.png)
 
 ## The Inversion
 

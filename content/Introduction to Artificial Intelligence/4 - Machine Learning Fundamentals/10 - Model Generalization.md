@@ -12,7 +12,7 @@ Arun's model has not solved anything. It has memorised the answer sheet, and mem
 
 **Definition:** `Generalization` is a model's performance on data it was not trained on. A model `overfits` when it captures noise particular to the training data and performs far worse on new data, and `underfits` when it is too rigid to capture the real pattern and performs poorly everywhere.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_section_introduction.png)
+![Opening scene: Two students submit machine learning projects on the same dataset in the same week, and their reports read very differently.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/10_section_introduction.png)
 
 ## Two Ways to Be Wrong
 

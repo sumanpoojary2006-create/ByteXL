@@ -10,7 +10,7 @@ Five products, one problem, and each version differs from the last not in what i
 
 **Definition:** An `agent architecture` is the internal organisation of an agent program: what information it retains, what it reasons about before acting, and therefore what range of behaviours it can produce.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_section_introduction.png)
+![Opening scene: Rehana works at a delivery company in Pune that is building a navigation assistant for its riders, and over eighteen months she watches the same product get rebuilt five times.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_section_introduction.png)
 
 ## Simple Reflex Agents
 

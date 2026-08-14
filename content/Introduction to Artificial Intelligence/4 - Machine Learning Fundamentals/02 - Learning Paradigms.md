@@ -10,7 +10,7 @@ These are not one problem with three datasets. They are three fundamentally diff
 
 **Definition:** The `learning paradigms` classify machine learning problems by the kind of feedback available: `supervised learning` when every example carries a correct answer, `unsupervised learning` when the data has no answers at all, and `reinforcement learning` when feedback arrives as rewards following actions rather than as answers.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_section_introduction.png)
+![Opening scene: A retail chain in Jaipur gives its new data team three requests in the same week, and the team's first mistake is assuming they are three versions of one job.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_section_introduction.png)
 
 ## Supervised Learning
 

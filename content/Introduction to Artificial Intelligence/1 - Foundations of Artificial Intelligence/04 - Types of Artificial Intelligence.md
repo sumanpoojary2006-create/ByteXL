@@ -8,7 +8,7 @@ That vocabulary exists, and it is one of the most practically useful things in t
 
 **Definition:** The `types of artificial intelligence` classify systems by the breadth of their capability rather than the technique inside them: `Artificial Narrow Intelligence` performs one task or a narrow set of related tasks, `Artificial General Intelligence` would match human flexibility across any intellectual task, and `Artificial Super Intelligence` would exceed the best human performance in essentially every domain.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_section_introduction.png)
+![Opening scene: At nine on a Sunday morning, Karthik's uncle forwards a message to the family group.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/04_section_introduction.png)
 
 ## A Different Way of Slicing the Field
 

@@ -10,7 +10,7 @@ That gap is the subject of this lesson. Before a system can reason, someone must
 
 **Definition:** `Knowledge representation` is the study of how to encode what a system knows in a form a machine can store and reason over, choosing structures that capture the domain accurately while remaining efficient to use and practical to build.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_section_introduction.png)
+![Opening scene: Anjali is setting up a smart home system for her parents' flat, and it takes her about an hour to hit a wall that is far more interesting than the product manual suggests.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_section_introduction.png)
 
 ## Facts, and Why They Are Not Enough
 

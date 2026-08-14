@@ -12,7 +12,7 @@ A system built out of exactly these pieces, a store of facts and a set of rules 
 
 **Definition:** `Rule-based reasoning` derives new facts by repeatedly matching `rules` of the form "if conditions then conclusion" against the `facts` currently known, adding each conclusion to the store of facts so that further rules become applicable.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_section_introduction.png)
+![Opening scene: At a two-wheeler service centre in Mysuru, the senior mechanic Iqbal has a habit his apprentices find maddening.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_section_introduction.png)
 
 ## The Three Parts of a Production System
 

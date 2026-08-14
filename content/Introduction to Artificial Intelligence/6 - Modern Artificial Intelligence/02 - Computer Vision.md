@@ -10,7 +10,7 @@ Building systems that extract meaning from images is **computer vision**, and it
 
 **Definition:** `Computer vision` is the field concerned with extracting meaning from images and video, spanning tasks from assigning a single label to a picture, through locating objects within it, to labelling every individual pixel.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_section_introduction_simple_v2.png)
+![Opening scene: A quality inspector at a textile mill near Tiruppur can glance at a moving length of fabric and spot a flaw in under a second.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_section_introduction_simple_v2.png)
 
 ## Why Pixels Are Hard
 

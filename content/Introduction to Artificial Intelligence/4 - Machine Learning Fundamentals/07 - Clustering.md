@@ -12,7 +12,7 @@ Discovering groups in data that carries no answers is **clustering**.
 
 **Definition:** `Clustering` is unsupervised learning that partitions examples into groups so that members of a group resemble one another more than they resemble members of other groups, using only the features, with no labels available and therefore no answer key against which the result can be declared correct.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_section_introduction.png)
+![Opening scene: The marketing head of a supermarket chain in Nagpur asks her analytics team a question that sounds simple and turns out to be a different kind of question altogether.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/07_section_introduction.png)
 
 ## Similarity Is the Whole Idea
 

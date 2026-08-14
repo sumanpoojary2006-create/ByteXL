@@ -10,7 +10,7 @@ That problem, in both directions, is **speech AI**.
 
 **Definition:** `Speech AI` covers `speech recognition`, which converts an audio signal into text, and `speech synthesis`, which converts text into audible speech, together forming the voice interface that sits in front of any language system.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_section_introduction.png)
+![Opening scene: A state transport corporation adds a voice line so passengers can check bus timings by phone instead of navigating a menu.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/03_section_introduction.png)
 
 ## What Makes Speech Different From Text
 

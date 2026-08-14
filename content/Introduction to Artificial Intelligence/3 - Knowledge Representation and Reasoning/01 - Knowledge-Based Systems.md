@@ -10,7 +10,7 @@ The attempt to stop that happening, by putting an expert's knowledge into a mach
 
 **Definition:** A `knowledge-based system` is an AI system that separates what it knows, held explicitly in a `knowledge base`, from how it reasons, carried out by a general-purpose `inference engine`, so that the knowledge can be inspected, extended, and corrected without rewriting the program.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_section_introduction.png)
+![Opening scene: Ramesh has run the service desk at a diesel generator dealership in Nashik for thirty-one years, and in March he retires.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/01_section_introduction.png)
 
 ## The Two Halves
 

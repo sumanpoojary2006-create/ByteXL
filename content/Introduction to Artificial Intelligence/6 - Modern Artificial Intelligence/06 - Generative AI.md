@@ -8,7 +8,7 @@ That is a genuine change in what the tools do. Everything in this unit so far ta
 
 **Definition:** `Generative AI` refers to models that produce new content, such as text, images, audio, or code, by learning the statistical structure of a large body of examples and then sampling from it, rather than by classifying or scoring input.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_section_introduction.png)
+![Opening scene: A small publishing house in Kochi asks its two-person design team to produce forty book cover concepts in a week, which is roughly four weeks of work.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_section_introduction.png)
 
 ## Recognising Against Producing
 

@@ -10,7 +10,7 @@ Five weeks of modelling and eleven months of everything else. That ratio is norm
 
 **Definition:** The `AI development lifecycle` is the sequence of stages an AI project passes through, from defining the problem and acquiring data, through building and evaluating a model, to deploying it and monitoring it in service, with each stage feeding back into the others.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_section_introduction.png)
+![Opening scene: A bank commissions a model to predict which small-business loans will default.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/12_section_introduction.png)
 
 ## The Stages
 

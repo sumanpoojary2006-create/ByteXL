@@ -10,7 +10,7 @@ That failure is not sloppy engineering. It is the signature of one specific way 
 
 **Definition:** `Symbolic AI` represents knowledge as explicit symbols and rules written by humans, and reasons by applying those rules; `learning-based AI` derives its own internal patterns from examples, without anyone stating the rules in advance.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_section_introduction.png)
+![Opening scene: Divya's college puts a chatbot on its website, and for about four minutes she is impressed.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_section_introduction.png)
 
 ## Two Answers to the Same Question
 

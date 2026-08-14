@@ -12,7 +12,7 @@ Both problems have one cause and one fix: build the spatial structure into the a
 
 **Definition:** A `convolutional neural network` applies small learned `filters` across every position of its input, so that a feature is detected wherever it appears using the same handful of weights, and reduces the result with `pooling` to summarise what was found while discarding exactly where.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/08_section_introduction.png)
+![Nikhil's team sees identical accuracy before and after every image pixel is shuffled](images/08_section_introduction_v2.png)
 
 ## Convolution
 

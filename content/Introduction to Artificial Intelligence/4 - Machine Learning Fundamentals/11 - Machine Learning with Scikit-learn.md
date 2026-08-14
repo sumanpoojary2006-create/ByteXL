@@ -10,7 +10,7 @@ That is the problem **scikit-learn** solves, and it is not typing. When every mo
 
 **Definition:** `scikit-learn` is a Python library providing a uniform interface to machine learning models, in which every estimator offers `fit` to learn from data and `predict` to apply what was learned, together with tools for splitting data, tuning settings, and measuring results.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_section_introduction.png)
+![Harsh compares four property-price models while a Friday deadline approaches](images/11_section_introduction_v2.png)
 
 ## The Interface Is the Idea
 

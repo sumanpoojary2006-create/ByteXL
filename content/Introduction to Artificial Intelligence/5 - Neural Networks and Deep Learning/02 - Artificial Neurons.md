@@ -10,7 +10,7 @@ It sounds like a needlessly indirect way to write three conditions, and for this
 
 **Definition:** An `artificial neuron` computes a weighted sum of its inputs, adds a `bias`, and passes the result through an `activation function` to produce an output, so that its entire behaviour is determined by the numbers on its connections rather than by its structure.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_section_introduction.png)
+![Opening scene: A horticulture department wants an automatic irrigation controller for its polyhouse, and the brief given to the electronics student building it is three sentences long.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/02_section_introduction.png)
 
 ## The Four Parts
 

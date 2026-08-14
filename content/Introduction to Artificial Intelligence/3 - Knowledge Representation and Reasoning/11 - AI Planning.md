@@ -10,7 +10,7 @@ Producing that sequence, from a description of the current situation and a descr
 
 **Definition:** `AI planning` is the task of finding a sequence of actions that transforms a described initial state into a state satisfying a goal, where each action is specified by the conditions required before it can be taken and the changes it makes when taken.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_section_introduction.png)
+![Opening scene: A fulfilment warehouse outside Hosur runs a small fleet of picking robots, and Vikram, who maintains them, describes the first version of the software as a machine that knew everything and could do…](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/11_section_introduction.png)
 
 ## Why Planning Is Not Just Search
 

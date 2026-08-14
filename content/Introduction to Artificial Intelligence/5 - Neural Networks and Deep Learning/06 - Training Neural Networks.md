@@ -8,7 +8,7 @@ So the weights have to be found rather than chosen, and the network has to find 
 
 **Definition:** `Training` a neural network means repeatedly measuring its error with a `loss function`, computing how each weight affects that error, and adjusting every weight a little in the direction that reduces it, using `gradient descent` driven by `backpropagation` to distribute the error across all layers.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_section_introduction.png)
+![A postgraduate student confronts the impossibility of setting 112,000 neural-network weights by hand](images/06_section_introduction_v2.png)
 
 ## The Loss Function
 

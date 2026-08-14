@@ -8,7 +8,7 @@ This is what the word **application** means in AI, and it is the part of the sub
 
 **Definition:** An `AI application` is a deployed system that uses AI techniques to solve a specific problem inside a real domain, where its value is measured not by technical sophistication but by the decisions it improves and the outcomes it changes.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_section_introduction.png)
+![Opening scene: Sneha's father has run a pharmacy in Hubballi for twenty-six years, and when she tells him she is studying artificial intelligence, he laughs kindly and says it is a subject for big companies in…](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/06_section_introduction.png)
 
 ## The Five Jobs AI Does, Whatever the Industry
 

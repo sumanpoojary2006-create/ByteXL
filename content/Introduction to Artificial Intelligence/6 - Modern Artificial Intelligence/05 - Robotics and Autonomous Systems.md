@@ -8,7 +8,7 @@ None of these is a perception failure. They are failures of the harder thing, wh
 
 **Definition:** `Robotics and autonomous systems` concerns machines that sense their environment, determine their own position within it, plan a course of action, and execute it through physical actuators, operating in a continuous loop under real-time constraints where errors have physical consequences.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_section_introduction.png)
+![Opening scene: A warehouse near Bhiwandi installs its first mobile robots, and the project manager's expectation is that the hard part will be teaching them to recognise things.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/05_section_introduction.png)
 
 ## Why Acting Is Harder Than Recognising
 

@@ -10,7 +10,7 @@ Everything in this unit so far would be no help to him. Rules fire or they do no
 
 **Definition:** `Reasoning under uncertainty` replaces truth values with degrees of belief expressed as probabilities, and updates those beliefs in the light of new evidence using `Bayes' theorem`, which combines how likely the evidence is under each hypothesis with how likely the hypothesis was beforehand.
 
-![Visual explanation of introduction](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_section_introduction.png)
+![Opening scene: A free health screening camp runs for three days at a community hall in Nagpur.](https://s3.ap-south-1.amazonaws.com/static.bytexl.app/uploads/44sjn9mdv/content/images/09_section_introduction.png)
 
 ## Why Logic Alone Cannot Cope
 
