@@ -803,7 +803,12 @@
   const apiBase = externalApiBase();
   const uploadImageUrl = apiBase + "/upload-image";
   const oneCompilerWorkspaceUrl = apiBase + "/onecompiler/workspace";
-  const readingMaterialsUrl = apiBase + "/reading-materials";
+  // Fetch the product list from the same Vercel region as the UI. The Render
+  // API remains responsible for uploads, but its route to this large ByteXL
+  // response can time out even while other operations are healthy.
+  const readingMaterialsUrl = location.protocol === "file:"
+    ? apiBase + "/reading-materials"
+    : "/api/reading-materials";
   const previewProductUploadUrl = apiBase + "/preview-product-upload";
   const uploadToProductUrl = apiBase + "/upload-to-product";
 
@@ -1145,7 +1150,14 @@
     if (btn) btn.disabled = true;
     try {
       const r = await fetch(readingMaterialsUrl);
-      if (!r.ok) throw new Error();
+      if (!r.ok) {
+        let detail = "Product list unavailable";
+        try {
+          const failure = await r.json();
+          if (failure && failure.detail) detail = failure.detail;
+        } catch {}
+        throw new Error(detail);
+      }
       const data = await r.json();
       const items = (data.items||[]).sort((a,b)=>(a.title||"").localeCompare(b.title||""));
       sel.innerHTML = "";
@@ -1158,7 +1170,10 @@
       if (prev && sel.querySelector(`option[value="${prev}"]`)) sel.value = prev;
       else { const def = sel.querySelector(`option[value="${data.defaultReadingId}"]`); if (def) def.selected = true; }
       readingsLoaded = true;
-    } catch { sel.innerHTML = `<option value="">Products unavailable — check token</option>`; }
+    } catch (error) {
+      const message = error && error.message ? error.message : "Product list unavailable";
+      sel.innerHTML = `<option value="">${escapeHtml(message)} — click refresh</option>`;
+    }
     if (btn) btn.disabled = false;
     updateControls();
   }
