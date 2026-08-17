@@ -775,10 +775,10 @@
   // Keep pressure modest. Do not automatically resend a complete image.
   const IMAGE_UPLOAD_CONCURRENCY = 2;
   const IMAGE_UPLOAD_ATTEMPTS = 1;
-  // v3 invalidates URLs created before image filenames became content-addressed.
-  // Those older URLs may have been overwritten by another unit using the same
-  // basename (for example, every unit having an images/01_intro.png file).
-  const IMAGE_UPLOAD_CACHE_KEY = "bytexl-image-uploads-v3";
+  // v4 invalidates URLs created before the browser assigned collision-proof
+  // names. ByteXL accepts the `images` subtype, so uniqueness belongs in the
+  // filename rather than in a custom subtype.
+  const IMAGE_UPLOAD_CACHE_KEY = "bytexl-image-uploads-v4";
   const IMAGE_UPLOAD_CACHE_LIMIT = 2500;
   const IMAGE_OPTIMIZE_MIN_BYTES = 256 * 1024;
   const IMAGE_OPTIMIZE_MAX_DIMENSION = 1920;
@@ -1063,8 +1063,9 @@
     let lastError = null;
     for (let attempt = 1; attempt <= IMAGE_UPLOAD_ATTEMPTS; attempt++) {
       const fd = new FormData();
-      fd.append("subtype", imageUploadSubtype(imgPath));
-      fd.append("file", payload.blob, payload.filename);
+      const uploadFilename = uniqueImageUploadFilename(imgPath, payload.filename, digest);
+      fd.append("subtype", "images");
+      fd.append("file", payload.blob, uploadFilename);
       try {
         const r = await fetch(uploadImageUrl,{method:"POST",body:fd});
         if (r.status===413) throw new Error(`${baseName(imgPath)} is too large.`);
@@ -1091,12 +1092,28 @@
     throw lastError||new Error(`Upload failed for ${baseName(imgPath)}.`);
   }
 
-  function imageUploadSubtype(imgPath) {
+  function shortPathHash(text) {
+    let hash = 2166136261;
+    for (let i = 0; i < text.length; i++) {
+      hash ^= text.charCodeAt(i);
+      hash = Math.imul(hash, 16777619);
+    }
+    return (hash >>> 0).toString(16).padStart(8, "0");
+  }
+
+  function uniqueImageUploadFilename(imgPath, optimizedFilename, digest) {
     const imageFolder = dirName(imgPath);
-    const contentFolder = baseName(imageFolder).toLowerCase() === "images"
-      ? dirName(imageFolder)
-      : imageFolder;
-    return slugify(baseName(contentFolder)||"content");
+    const unitFolder = baseName(imageFolder).toLowerCase() === "images"
+      ? baseName(dirName(imageFolder))
+      : baseName(imageFolder);
+    const ext = extName(optimizedFilename) || extName(imgPath);
+    const stem = baseName(optimizedFilename)
+      .replace(/\.[^.]+$/, "")
+      .replace(/[^a-z0-9]+/gi, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 50) || "image";
+    const fingerprint = digest ? digest.slice(0, 12) : shortPathHash(normalizePath(imgPath));
+    return `${slugify(unitFolder)}-${stem}-${fingerprint}${ext}`;
   }
 
   async function uploadImagesConcurrently(imgFiles, zip, urlMap, stats) {
