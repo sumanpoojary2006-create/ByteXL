@@ -3,6 +3,10 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/api/bytexl/:path*",
+      "destination": "/api/bytexl-proxy?path=:path*"
+    },
+    {
       "source": "/convert",
       "destination": "/index.html"
     },
