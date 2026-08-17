@@ -609,6 +609,21 @@ def upload_to_s3(filename: str, data: bytes, subtype: str) -> str:
     return url
 
 
+def content_addressed_image_name(filename: str, data: bytes) -> str:
+    """Return a stable S3 name that cannot collide with a different image.
+
+    Course ZIPs commonly repeat names such as ``01_intro.png`` in every unit.
+    ByteXL stores uploads by subtype and filename, so sending only that basename
+    allows a later unit to overwrite an earlier unit's image.  Key the stored
+    name by the actual uploaded bytes while retaining a readable stem.
+    """
+    path = Path(filename or "image")
+    ext = path.suffix.lower()
+    stem = re.sub(r"[^A-Za-z0-9._-]+", "-", path.stem).strip("-._")[:80] or "image"
+    digest = hashlib.sha256(data).hexdigest()[:16]
+    return f"{stem}-{digest}{ext}"
+
+
 def slugify(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")[:40] or "content"
 
@@ -1329,7 +1344,8 @@ async def upload_image(file: UploadFile = File(...), subtype: str = Form("conten
         raise HTTPException(500, "BYTEXL_UPLOAD_TOKEN is not configured on the server")
 
     data = await file.read()
-    url = upload_to_s3(Path(file.filename).name, data, slugify(subtype))
+    upload_name = content_addressed_image_name(Path(file.filename).name, data)
+    url = upload_to_s3(upload_name, data, slugify(subtype))
     if not url:
         raise HTTPException(502, "ByteXL image upload failed")
 

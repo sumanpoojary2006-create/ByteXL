@@ -1,4 +1,6 @@
+import asyncio
 import importlib.util
+import io
 import sys
 import unittest
 from pathlib import Path
@@ -16,6 +18,33 @@ SPEC.loader.exec_module(server)
 
 
 class ImageUploadTests(unittest.TestCase):
+    def test_content_addressed_names_prevent_same_basename_collision(self):
+        first = server.content_addressed_image_name("01_intro.png", b"cloud evolution")
+        second = server.content_addressed_image_name("01_intro.png", b"identity workflow")
+
+        self.assertNotEqual(first, second)
+        self.assertTrue(first.startswith("01_intro-"))
+        self.assertTrue(first.endswith(".png"))
+
+    def test_content_addressed_name_is_stable_for_identical_bytes(self):
+        first = server.content_addressed_image_name("01_intro.webp", b"same image")
+        second = server.content_addressed_image_name("01_intro.webp", b"same image")
+
+        self.assertEqual(first, second)
+
+    @patch.object(server, "get_upload_token", return_value="test-token")
+    @patch.object(server, "upload_to_s3", return_value="https://cdn.example/image.png")
+    def test_upload_endpoint_replaces_repeated_basename_before_s3(self, upload_to_s3, _get_token):
+        file = server.UploadFile(filename="01_intro.png", file=io.BytesIO(b"cloud evolution"))
+
+        result = asyncio.run(server.upload_image(file, "Introduction to Cloud Computing"))
+
+        uploaded_name, uploaded_bytes, subtype = upload_to_s3.call_args.args
+        self.assertRegex(uploaded_name, r"^01_intro-[0-9a-f]{16}\.png$")
+        self.assertEqual(uploaded_bytes, b"cloud evolution")
+        self.assertEqual(subtype, "introduction-to-cloud-computing")
+        self.assertEqual(result, {"status": "success", "url": "https://cdn.example/image.png"})
+
     def test_legacy_bytexl_host_is_normalized_without_losing_path(self):
         self.assertEqual(
             server.canonical_bytexl_url("https://bytexl.app/api/upload/s3"),
