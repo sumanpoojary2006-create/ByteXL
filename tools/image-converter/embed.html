@@ -60,6 +60,30 @@
       return JSON.parse(new TextDecoder().decode(bytes));
     }
 
+    function splitPostgresqlCode(code) {
+      const text = String(code || "");
+      const match = text.match(/^--\s*Query\s*$/im);
+      if (!match || typeof match.index !== "number") {
+        return { setup: "", commands: text.replace(/\s+$/, "") };
+      }
+      const setup = text.slice(0, match.index).replace(/\s+$/, "");
+      const commands = text.slice(match.index + match[0].length).replace(/^\s+/, "").replace(/\s+$/, "");
+      return { setup, commands: commands || text.replace(/\s+$/, "") };
+    }
+
+    function oneCompilerFiles(snippet, language) {
+      if (language !== "postgresql") {
+        return [{
+          name: snippet.filename || "main.py",
+          content: snippet.code || ""
+        }];
+      }
+      const split = splitPostgresqlCode(snippet.code || "");
+      const files = [{ name: "commands.sql", content: split.commands }];
+      if (split.setup) files.push({ name: "init.sql", content: split.setup });
+      return files;
+    }
+
     try {
       const snippet = decodePayload();
       const language = snippet.language || "python";
@@ -79,10 +103,7 @@
         editor.contentWindow.postMessage({
           eventType: "populateCode",
           language,
-          files: [{
-            name: snippet.filename || "main.py",
-            content: snippet.code || ""
-          }]
+          files: oneCompilerFiles(snippet, language)
         }, "https://onecompiler.com");
       }
 

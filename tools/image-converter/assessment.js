@@ -18,6 +18,8 @@ const MCQ_HEADERS = [
   "answer"
 ];
 
+const UPDATE_ID_HEADER = "questionId";
+
 const CODING_HEADERS = [
   "title",
   "description",
@@ -51,11 +53,30 @@ const CODING_HEADERS = [
   "testcase7_input",
   "testcase7_output",
   "preloadCode_python",
+  "setupFile1_filename",
+  "setupFile1_content",
   "solution_python",
   "hints"
 ];
 
+// Show the first two coding test cases and keep the remaining fixtures hidden.
 const PUBLIC_CODING_TEST_CASE_COUNT = 2;
+
+function externalApiBase() {
+  const configured = location.protocol === "file:"
+    ? "http://127.0.0.1:8000"
+    : String(window.IMAGE_CONVERTER_CONFIG?.apiBase || "").trim();
+  if (!configured) throw new Error("The update API is not configured.");
+
+  const api = new URL(configured, location.href);
+  const isVercel = api.hostname === "vercel.app" || api.hostname.endsWith(".vercel.app");
+  if (api.origin === location.origin || isVercel) {
+    throw new Error("Assessment updates cannot use Vercel. Configure an external API host.");
+  }
+  return api.origin;
+}
+
+const API_BASE = externalApiBase();
 
 const LANGUAGE_ALIASES = {
   py: "python",
@@ -157,6 +178,8 @@ const SAMPLE_ROWS = {
     testcase7_input: "Ira",
     testcase7_output: "Hello Ira your token number will be called shortly",
     preloadCode_python: "",
+    setupFile1_filename: "students.csv",
+    setupFile1_content: "name,score\nAsha,88\nKabir,92",
     solution_python: "name = input()\n\nprint(\"Hello\", name, \"your token number will be called shortly\")",
     hints: ""
   }
@@ -168,6 +191,7 @@ const REQUIRED_COLUMNS = {
 };
 
 const state = {
+  mode: "create",
   type: "mcq",
   fileName: "",
   rawRows: [],
@@ -175,14 +199,21 @@ const state = {
   validating: false,
   uploading: false,
   uploaded: 0,
-  failed: 0
+  created: 0,
+  updated: 0,
+  failed: 0,
+  unchanged: 0,
+  preflightComplete: false
 };
 
 const $ = (id) => document.getElementById(id);
 
 function init() {
-  document.querySelectorAll(".segment-btn").forEach((button) => {
+  document.querySelectorAll(".type-btn").forEach((button) => {
     button.addEventListener("click", () => setType(button.dataset.type));
+  });
+  document.querySelectorAll(".mode-btn").forEach((button) => {
+    button.addEventListener("click", () => setMode(button.dataset.mode));
   });
 
   $("downloadSampleBtn").addEventListener("click", downloadSample);
@@ -195,7 +226,7 @@ function init() {
     }
   });
   $("fileInput").addEventListener("change", (event) => loadFile(event.target.files[0]));
-  $("uploadToByteXLBtn").addEventListener("click", uploadToByteXL);
+  $("uploadToByteXLBtn").addEventListener("click", handlePrimaryAction);
   $("resetBtn").addEventListener("click", resetAll);
 
   ["dragenter", "dragover"].forEach((name) => {
@@ -222,11 +253,36 @@ function setType(type) {
   state.rawRows = [];
   state.questions = [];
   state.uploaded = 0;
+  state.created = 0;
+  state.updated = 0;
   state.failed = 0;
+  state.unchanged = 0;
+  state.preflightComplete = false;
   $("fileInput").value = "";
   hideMessage();
   hideProgress();
-  log(`Selected ${labelForType(type)} upload.`);
+  log(`Selected ${labelForType(type)} ${state.mode === "update" ? "update" : "upload"}.`);
+  render();
+}
+
+function setMode(mode) {
+  if (!["create", "update"].includes(mode) || state.uploading) return;
+  state.mode = mode;
+  state.fileName = "";
+  state.rawRows = [];
+  state.questions = [];
+  state.uploaded = 0;
+  state.created = 0;
+  state.updated = 0;
+  state.failed = 0;
+  state.unchanged = 0;
+  state.preflightComplete = false;
+  $("fileInput").value = "";
+  hideMessage();
+  hideProgress();
+  log(mode === "update"
+    ? "Update mode selected. Every row must include an existing ByteXL questionId. This mode cannot create questions."
+    : "Create mode selected. New questions are added and exact duplicates may be updated.");
   render();
 }
 
@@ -237,11 +293,11 @@ function downloadSample() {
   }
   const headers = headersForType(state.type);
   const sample = SAMPLE_ROWS[state.type];
-  const rows = [headers, headers.map((header) => sample[header] ?? "")];
+  const rows = [headers, headers.map((header) => header === UPDATE_ID_HEADER ? "existing-question-id" : sample[header] ?? "")];
   const worksheet = XLSX.utils.aoa_to_sheet(rows);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, labelForType(state.type));
-  XLSX.writeFile(workbook, `bytexl-${state.type}-sample.xlsx`);
+  XLSX.writeFile(workbook, `bytexl-${state.type}-${state.mode === "update" ? "update" : "create"}-sample.xlsx`);
 }
 
 async function loadFile(file) {
@@ -259,7 +315,11 @@ async function loadFile(file) {
     setBusy(true, "Reading");
     state.fileName = file.name;
     state.uploaded = 0;
+    state.created = 0;
+    state.updated = 0;
     state.failed = 0;
+    state.unchanged = 0;
+    state.preflightComplete = false;
     hideProgress();
 
     const buffer = await file.arrayBuffer();
@@ -280,8 +340,12 @@ async function loadFile(file) {
 
 function rebuildQuestions() {
   const headers = Object.keys(state.rawRows[0] || {});
-  const missingColumns = REQUIRED_COLUMNS[state.type].filter((column) => !headers.includes(column));
+  const requiredColumns = state.mode === "update"
+    ? [UPDATE_ID_HEADER, ...REQUIRED_COLUMNS[state.type]]
+    : REQUIRED_COLUMNS[state.type];
+  const missingColumns = requiredColumns.filter((column) => !headers.includes(column));
   const seenTitles = new Map();
+  const seenIds = new Map();
 
   state.questions = state.rawRows
     .filter((row) => Object.values(row).some((value) => clean(value) !== ""))
@@ -297,6 +361,13 @@ function rebuildQuestions() {
           seenTitles.set(titleKey, index + 2);
         }
       }
+      if (state.mode === "update" && question.questionId) {
+        if (seenIds.has(question.questionId)) {
+          question.errors.push(`Duplicate questionId also appears on row ${seenIds.get(question.questionId)}.`);
+        } else {
+          seenIds.set(question.questionId, index + 2);
+        }
+      }
       return question;
     });
 }
@@ -304,7 +375,9 @@ function rebuildQuestions() {
 function buildBaseQuestion(row, rowNumber, type) {
   const errors = [];
   const warnings = [];
+  const questionId = clean(row.questionId);
 
+  if (state.mode === "update" && !questionId) errors.push("questionId is required in update mode.");
   if (!clean(row.title)) errors.push("Title is required.");
   if (!clean(row.description)) errors.push("Description is required.");
   if (toNumber(row.score, 0) <= 0) errors.push("Score must be greater than 0.");
@@ -339,7 +412,7 @@ function buildBaseQuestion(row, rowNumber, type) {
       hints: [],
       ignoreCase: true,
       privileged: false,
-      setupFiles: []
+      setupFiles: {}
     },
     multipleChoiceOptions: {
       selectionType: "single",
@@ -354,7 +427,19 @@ function buildBaseQuestion(row, rowNumber, type) {
     }
   };
 
-  return { rowNumber, source: row, payload, errors, warnings, bytexlErrors: [], uploadedId: "" };
+  return {
+    rowNumber,
+    source: row,
+    questionId,
+    payload,
+    errors,
+    warnings,
+    bytexlErrors: [],
+    uploadedId: "",
+    changedFields: [],
+    expectedRevision: "",
+    resultAction: ""
+  };
 }
 
 function buildMcqQuestion(row, rowNumber) {
@@ -383,6 +468,7 @@ function buildCodingQuestion(row, rowNumber) {
   const testCases = extractTestCases(row, rowNumber);
   const preloads = buildLanguageMap(row, "preloadCode", supportedLanguages, true);
   const codeSolutions = buildLanguageMap(row, "solution", supportedLanguages, false);
+  const setupFiles = extractSetupFiles(row, question.errors);
 
   if (!SUBTYPE_LANGUAGES[codingType].includes(language) && !allSupported) {
     question.errors.push(`Language ${language} is not valid for ${codingType}.`);
@@ -408,7 +494,7 @@ function buildCodingQuestion(row, rowNumber) {
     hints: splitHints(row.hints),
     ignoreCase: toBool(row.ignoreCase, true),
     privileged: false,
-    setupFiles: []
+    setupFiles
   };
   return question;
 }
@@ -418,10 +504,10 @@ function parseAnswer(value, options) {
   if (!text) return null;
   const number = Number(text);
   if (Number.isInteger(number) && number >= 1 && number <= options.length) {
-    return number - 1;
+    return number;
   }
   const match = options.findIndex((option) => option.toLowerCase() === text.toLowerCase());
-  return match >= 0 ? match : null;
+  return match >= 0 ? match + 1 : null;
 }
 
 function extractTestCases(row, rowNumber) {
@@ -434,8 +520,8 @@ function extractTestCases(row, rowNumber) {
   return [...numbers]
     .sort((a, b) => a - b)
     .map((number, index) => {
-      const input = clean(row[`testcase${number}_input`]);
-      const output = clean(row[`testcase${number}_output`]);
+      const input = cleanTestCaseText(row[`testcase${number}_input`], { trim: true });
+      const output = cleanTestCaseText(row[`testcase${number}_output`], { trim: false });
       const explanation = clean(row[`testcase${number}_explanation`]);
       const timeLimit = toOptionalNumber(row[`testcase${number}_timeLimit`]);
       const memoryLimit = toOptionalNumber(row[`testcase${number}_memoryLimit`]);
@@ -455,6 +541,61 @@ function extractTestCases(row, rowNumber) {
       return testCase;
     })
     .filter(Boolean);
+}
+
+function extractSetupFiles(row, errors) {
+  const setupFiles = {};
+  const slots = new Map();
+
+  Object.keys(row).forEach((key) => {
+    const match = key.match(/^setupFile(\d*)_(filename|content)$/i);
+    if (!match) return;
+    const number = Number(match[1] || 1);
+    const slot = slots.get(number) || {};
+    slot[match[2].toLowerCase()] = key;
+    slots.set(number, slot);
+  });
+
+  [...slots.entries()]
+    .sort(([a], [b]) => a - b)
+    .forEach(([number, slot]) => {
+      const filename = clean(slot.filename ? row[slot.filename] : "");
+      const content = normalizeFileContent(slot.content ? row[slot.content] : "");
+      if (!filename) {
+        if (content.trim()) errors.push(`Setup file ${number} has content but no filename.`);
+        return;
+      }
+      if (Object.prototype.hasOwnProperty.call(setupFiles, filename)) {
+        errors.push(`Duplicate setup filename: ${filename}`);
+        return;
+      }
+      setupFiles[filename] = content;
+    });
+
+  const jsonKey = Object.keys(row).find((key) => key.toLowerCase() === "setupfiles");
+  const jsonText = jsonKey ? clean(row[jsonKey]) : "";
+  if (jsonText) {
+    try {
+      const parsed = JSON.parse(jsonText);
+      if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") {
+        errors.push("setupFiles must be a JSON object mapping filenames to file content.");
+      } else {
+        Object.entries(parsed).forEach(([filenameValue, contentValue]) => {
+          const filename = clean(filenameValue);
+          if (!filename) return;
+          if (Object.prototype.hasOwnProperty.call(setupFiles, filename)) {
+            errors.push(`Duplicate setup filename: ${filename}`);
+            return;
+          }
+          setupFiles[filename] = normalizeFileContent(contentValue);
+        });
+      }
+    } catch {
+      errors.push("setupFiles contains invalid JSON.");
+    }
+  }
+
+  return setupFiles;
 }
 
 function buildLanguageMap(row, prefix, supportedLanguages, includeDefaults) {
@@ -495,6 +636,189 @@ function inferLanguageFromColumns(row) {
   return "";
 }
 
+function handlePrimaryAction() {
+  if (state.mode === "create") return uploadToByteXL();
+  if (state.preflightComplete) return applyExistingUpdates();
+  return validateExistingUpdates();
+}
+
+function questionForUpdate(question, includeRevision = false) {
+  return {
+    ...question.payload,
+    questionId: question.questionId,
+    ...(includeRevision ? { expectedRevision: question.expectedRevision } : {})
+  };
+}
+
+// Each question update performs a ByteXL read and write. Isolating updates
+// prevents one slow question from timing out a complete serverless batch.
+const UPDATE_BATCH_SIZE = 1;
+
+function chunksOf(items, size) {
+  const chunks = [];
+  for (let index = 0; index < items.length; index += size) {
+    chunks.push(items.slice(index, index + size));
+  }
+  return chunks;
+}
+
+async function validateExistingUpdates() {
+  if (!state.questions.length || state.uploading) return;
+  if (countLocalErrors() > 0) {
+    showMessage("Fix sheet errors before validating updates.", "error");
+    return;
+  }
+
+  try {
+    setBusy(true, "Validating");
+    state.updated = 0;
+    state.failed = 0;
+    state.created = 0;
+    state.unchanged = 0;
+    hideProgress();
+    state.questions.forEach((question) => {
+      question.bytexlErrors = [];
+      question.changedFields = [];
+      question.expectedRevision = "";
+      question.resultAction = "";
+      question.uploadedId = "";
+    });
+    state.preflightComplete = false;
+    showMessage("Validating question data and resolving existing ByteXL IDs...", "");
+
+    const schemaValidation = await postJson("/assessment/validate", {
+      type: state.type,
+      questions: state.questions.map((question) => question.payload)
+    });
+    applyValidation(schemaValidation.result);
+    if (countErrors() > 0) {
+      showMessage("ByteXL found question-data issues. Fix the highlighted rows before updating.", "error");
+      log(`Update validation stopped with ${countErrors()} question-data issue(s).`);
+      return;
+    }
+
+    const validation = await postJson("/assessment/update/validate", {
+      type: state.type,
+      questions: state.questions.map((question) => questionForUpdate(question))
+    });
+    applyUpdateValidation(validation.result);
+    state.preflightComplete = countErrors() === 0;
+    state.unchanged = state.questions.filter((question) => question.resultAction === "unchanged").length;
+    const pending = countPendingUpdates();
+
+    if (!state.preflightComplete) {
+      showMessage("Some existing questions could not be validated. No questions were changed.", "error");
+      log(`Update preflight failed with ${countErrors()} issue(s). Created: 0.`);
+    } else {
+      showMessage(
+        `${pending} existing question(s) ready to update; ${state.unchanged} unchanged; 0 will be created. Review the preview, then apply updates.`,
+        pending ? "success" : "warning"
+      );
+      log(`Preflight complete: ${pending} updates, ${state.unchanged} unchanged, 0 creates.`);
+    }
+  } catch (error) {
+    showMessage(error.message || "Could not validate existing questions.", "error");
+    log(`ERROR: ${error.message || error}`);
+  } finally {
+    setBusy(false);
+    render();
+  }
+}
+
+function applyUpdateValidation(result) {
+  if (!Array.isArray(result)) throw new Error("Unexpected update validation response from ByteXL.");
+  state.questions.forEach((question, index) => {
+    const item = result[index] || {};
+    question.bytexlErrors = Array.isArray(item.errors) ? item.errors.map(formatIssue) : [];
+    question.changedFields = Array.isArray(item.changedFields) ? item.changedFields : [];
+    question.expectedRevision = clean(item.expectedRevision);
+    question.resultAction = clean(item.uploadAction);
+  });
+}
+
+async function applyExistingUpdates() {
+  if (!state.preflightComplete || countErrors() > 0 || state.uploading) return;
+  const pending = countPendingUpdates();
+  if (!pending) {
+    showMessage("Every row is unchanged. Nothing was sent to ByteXL.", "warning");
+    return;
+  }
+  if (!window.confirm(`Update ${pending} existing ByteXL question(s)? This operation will create 0 questions.`)) return;
+
+  const pendingQuestions = state.questions.filter(
+    (question) => !question.errors.length && !question.bytexlErrors.length && question.changedFields.length > 0
+  );
+
+  try {
+    state.uploading = true;
+    state.updated = 0;
+    state.unchanged = state.questions.filter((question) => question.resultAction === "unchanged").length;
+    state.failed = 0;
+    state.created = 0;
+    setBusy(true, "Updating");
+    showUpdateProgress(0, pendingQuestions.length, 0);
+    showMessage(`Updating 0 of ${pendingQuestions.length} changed questions by ByteXL ID...`, "");
+    log(`Applying ${pending} ID-based update(s) in batches of ${UPDATE_BATCH_SIZE}. Create fallback is disabled.`);
+
+    let processed = 0;
+    for (const batch of chunksOf(pendingQuestions, UPDATE_BATCH_SIZE)) {
+      try {
+        const update = await postJson("/assessment/update", {
+          type: state.type,
+          confirm: true,
+          questions: batch.map((question) => questionForUpdate(question, true))
+        });
+        if (!Array.isArray(update.result) || update.result.length !== batch.length) {
+          throw new Error("Unexpected update response from ByteXL.");
+        }
+
+        batch.forEach((question, index) => {
+          const rawItem = update.result[index] || {};
+          const item = rawItem.data && typeof rawItem.data === "object" ? rawItem.data : rawItem;
+          question.resultAction = clean(item.uploadAction || item.status);
+          question.changedFields = Array.isArray(item.changedFields) ? item.changedFields : question.changedFields;
+          if (item._id && ["updated", "unchanged"].includes(question.resultAction)) {
+            question.uploadedId = item._id;
+            question.bytexlErrors = [];
+            if (question.resultAction === "updated") state.updated += 1;
+            else state.unchanged += 1;
+          } else {
+            state.failed += 1;
+            question.bytexlErrors = [String(item.message || "ByteXL did not update this question.")];
+          }
+        });
+      } catch (error) {
+        batch.forEach((question) => {
+          state.failed += 1;
+          question.resultAction = "failed";
+          question.bytexlErrors = [String(error.message || error || "Update request failed.")];
+        });
+      }
+
+      processed += batch.length;
+      showUpdateProgress(processed, pendingQuestions.length, state.failed);
+      showMessage(`Updating ${processed} of ${pendingQuestions.length} changed questions by ByteXL ID...`, "");
+      log(`Update progress: ${processed}/${pendingQuestions.length} processed, ${state.updated} updated, ${state.failed} failed, 0 created.`);
+    }
+    state.preflightComplete = false;
+
+    if (state.failed) {
+      showMessage(`Updated ${state.updated}; unchanged ${state.unchanged}; failed ${state.failed}; created 0.`, "error");
+      log(`Partial update: ${state.updated} updated, ${state.unchanged} unchanged, ${state.failed} failed, 0 created.`);
+    } else {
+      showMessage(`Updated ${state.updated} existing question(s); ${state.unchanged} unchanged; 0 created.`, "success");
+      log(`Update complete: ${state.updated} updated, ${state.unchanged} unchanged, 0 created.`);
+    }
+  } catch (error) {
+    showMessage(error.message || "Update failed.", "error");
+    log(`ERROR: ${error.message || error}`);
+  } finally {
+    state.uploading = false;
+    setBusy(false);
+    render();
+  }
+}
+
 async function uploadToByteXL() {
   if (!state.questions.length || state.uploading) return;
   if (countLocalErrors() > 0) {
@@ -520,33 +844,50 @@ async function uploadToByteXL() {
 
     state.uploading = true;
     state.uploaded = 0;
+    state.created = 0;
+    state.updated = 0;
     state.failed = 0;
     showProgress(0, state.questions.length);
-    showMessage("Uploading questions to ByteXL...", "");
-    log(`Uploading ${state.questions.length} question(s)...`);
+    showMessage(
+      validation.warning || "Uploading questions to ByteXL...",
+      validation.warning ? "warning" : ""
+    );
+    log(`${validation.warning ? `WARNING: ${validation.warning} ` : ""}Uploading ${state.questions.length} question(s)...`);
 
-    for (let index = 0; index < state.questions.length; index += 1) {
-      const question = state.questions[index];
-      setBusy(true, `Uploading ${index + 1}/${state.questions.length}`);
-      const payload = await postJson("/assessment/upload-one", { type: state.type, question: question.payload });
-      const item = Array.isArray(payload.result) ? payload.result[0] || {} : {};
+    const upload = await postJson("/assessment/upload", {
+      type: state.type,
+      questions: state.questions.map((question) => question.payload)
+    });
+    if (!Array.isArray(upload.result)) {
+      throw new Error("Unexpected upload response from ByteXL.");
+    }
+
+    state.questions.forEach((question, index) => {
+      const rawItem = upload.result[index] || {};
+      const item = rawItem.data && typeof rawItem.data === "object" ? rawItem.data : rawItem;
       question.uploadedId = item._id || "";
       if (question.uploadedId) {
+        question.bytexlErrors = [];
         state.uploaded += 1;
+        if (item.uploadAction === "updated") state.updated += 1;
+        else state.created += 1;
       } else {
         state.failed += 1;
-        if (item.message) question.bytexlErrors = [String(item.message)];
+        question.bytexlErrors = [String(item.message || "ByteXL did not create this question.")];
       }
-      showProgress(state.uploaded, state.questions.length - state.uploaded);
-      renderRows();
-    }
+    });
+    showProgress(state.uploaded, state.questions.length - state.uploaded);
+    renderRows();
 
     if (state.failed > 0) {
       showMessage(`Uploaded ${state.uploaded}/${state.questions.length}. Check failed rows.`, "error");
       log(`Partial upload: ${state.uploaded} added, ${state.questions.length - state.uploaded} left.`);
     } else {
-      showMessage(`Uploaded ${state.uploaded} question(s) successfully.`, "success");
-      log(`Upload complete: ${state.uploaded} added, 0 left.`);
+      showMessage(
+        `Processed ${state.uploaded} question(s): ${state.created} created, ${state.updated} updated.`,
+        "success"
+      );
+      log(`Upload complete: ${state.created} created, ${state.updated} updated, 0 left.`);
     }
   } catch (error) {
     showMessage(error.message || "Upload failed.", "error");
@@ -567,11 +908,17 @@ function applyValidation(result) {
 }
 
 async function postJson(url, body) {
-  const response = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body)
-  });
+  let response;
+  try {
+    response = await fetch(API_BASE + url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+  } catch {
+    const operation = url === "/assessment/update" ? "update" : "request";
+    throw new Error(`The ${operation} connection closed before the server returned a result. No create fallback was used; validate again to reconcile the existing question IDs.`);
+  }
   const text = await response.text();
   let data = text;
   try {
@@ -591,40 +938,66 @@ function resetAll() {
   state.rawRows = [];
   state.questions = [];
   state.uploaded = 0;
+  state.created = 0;
+  state.updated = 0;
   state.failed = 0;
+  state.unchanged = 0;
+  state.preflightComplete = false;
   $("fileInput").value = "";
   hideMessage();
   hideProgress();
-  log("Waiting for assessment sheet.");
+  log(state.mode === "update" ? "Waiting for an update sheet with questionId values." : "Waiting for assessment sheet.");
   render();
 }
 
 function render() {
-  document.querySelectorAll(".segment-btn").forEach((button) => {
+  document.querySelectorAll(".type-btn").forEach((button) => {
     button.classList.toggle("active", button.dataset.type === state.type);
   });
+  document.querySelectorAll(".mode-btn").forEach((button) => {
+    button.classList.toggle("active", button.dataset.mode === state.mode);
+  });
+  const isUpdate = state.mode === "update";
+  $("workflowTitle").textContent = isUpdate ? "Update Existing Questions" : "Create or Import Questions";
+  $("workflowSub").textContent = isUpdate
+    ? "Update questions by their existing ByteXL ID. This workflow cannot create questions."
+    : "Use the sample format, preview every row, then add questions to ByteXL.";
+  $("downloadSampleBtn").textContent = isUpdate ? "Download update template" : "Download create template";
+  $("uploadToByteXLBtn").textContent = isUpdate
+    ? (state.preflightComplete ? `Apply ${countPendingUpdates()} update(s)` : "Validate existing questions")
+    : "Upload to ByteXL";
+  $("primaryStepLabel").textContent = isUpdate ? "Validate IDs" : "Preview";
+  $("finalStepLabel").textContent = isUpdate ? "Apply updates" : "Upload";
+  $("previewDescription").textContent = isUpdate
+    ? "Review resolved IDs and changed fields. Update mode always creates 0 questions."
+    : "All questions are shown here before upload.";
   $("fileName").textContent = state.fileName || "No file selected";
   $("questionCount").textContent = state.questions.length;
   $("readyCount").textContent = countReady();
   $("warningCount").textContent = countWarnings();
   $("errorCount").textContent = countErrors();
-  $("uploadToByteXLBtn").disabled = state.questions.length === 0 || countErrors() > 0 || state.uploading;
-  $("previewState").textContent = state.questions.length ? (countErrors() ? "Needs fixes" : "Ready") : "Waiting";
+  $("uploadToByteXLBtn").disabled = state.questions.length === 0 || countErrors() > 0 || state.uploading || (isUpdate && state.preflightComplete && countPendingUpdates() === 0);
+  $("previewState").textContent = state.questions.length
+    ? (countErrors() ? "Needs fixes" : isUpdate && state.preflightComplete ? "Validated" : "Ready")
+    : "Waiting";
   renderRows();
 }
 
 function renderRows() {
   if (!state.questions.length) {
-    $("questionRows").innerHTML = `<tr><td class="empty" colspan="7">Choose a type and upload an XLSX sheet to preview questions.</td></tr>`;
+    $("questionRows").innerHTML = `<tr><td class="empty" colspan="9">Choose a workflow and type, then upload an XLSX sheet to preview questions.</td></tr>`;
     return;
   }
 
   $("questionRows").innerHTML = state.questions.map((question) => {
     const errors = [...question.errors, ...question.bytexlErrors];
+    const completedLabel = question.resultAction === "updated" ? "Updated" : question.resultAction === "unchanged" ? "Unchanged" : "Uploaded";
     const status = question.uploadedId
-      ? `<span class="badge ok">Uploaded</span>`
+      ? `<span class="badge ok">${completedLabel}</span>`
       : errors.length
         ? `<span class="badge err">Error</span>`
+        : state.mode === "update" && state.preflightComplete
+          ? `<span class="badge ok">${question.resultAction === "unchanged" ? "Unchanged" : "Ready to update"}</span>`
         : question.warnings.length
           ? `<span class="badge warn">Warning</span>`
           : `<span class="badge ok">Ready</span>`;
@@ -633,9 +1006,11 @@ function renderRows() {
       <tr>
         <td>${question.rowNumber}</td>
         <td>${escapeHtml(labelForType(state.type))}</td>
+        <td>${escapeHtml(question.questionId || "—")}</td>
         <td>${escapeHtml(question.payload.title || "(Untitled)")}</td>
         <td>${escapeHtml(question.payload.difficulty || "-")}</td>
         <td>${escapeHtml(question.payload.score)}</td>
+        <td>${escapeHtml(question.changedFields.length ? question.changedFields.join(", ") : "—")}</td>
         <td>${status}</td>
         <td><div class="notes">${notes.length ? notes.map(([className, text]) => `<span class="${className}">${escapeHtml(text)}</span>`).join("") : "<span>No issues</span>"}</div></td>
       </tr>`;
@@ -658,8 +1033,13 @@ function countErrors() {
   return state.questions.reduce((sum, question) => sum + question.errors.length + question.bytexlErrors.length, 0);
 }
 
+function countPendingUpdates() {
+  return state.questions.filter((question) => !question.errors.length && !question.bytexlErrors.length && question.changedFields.length > 0).length;
+}
+
 function headersForType(type) {
-  return type === "mcq" ? MCQ_HEADERS : CODING_HEADERS;
+  const headers = type === "mcq" ? MCQ_HEADERS : CODING_HEADERS;
+  return state.mode === "update" ? [UPDATE_ID_HEADER, ...headers] : headers;
 }
 
 function labelForType(type) {
@@ -724,6 +1104,17 @@ function clean(value) {
   return String(value).replace(/\r\n/g, "\n").trim();
 }
 
+function cleanTestCaseText(value, { trim = false } = {}) {
+  if (value === null || value === undefined) return "";
+  const text = String(value).replace(/\r\n/g, "\n");
+  return trim ? text.trim() : text;
+}
+
+function normalizeFileContent(value) {
+  if (value === null || value === undefined) return "";
+  return String(value).replace(/\r\n/g, "\n");
+}
+
 function formatIssue(issue) {
   if (typeof issue === "string") return issue;
   if (issue?.message) return issue.message;
@@ -754,10 +1145,17 @@ function showProgress(added, left) {
   $("progressText").textContent = `${added} added, ${left} left`;
 }
 
+function showUpdateProgress(processed, total, failed) {
+  const percent = total ? Math.round((processed / total) * 100) : 100;
+  $("progressPanel").classList.add("show");
+  $("progressFill").style.width = `${percent}%`;
+  $("progressText").textContent = `${processed} of ${total} processed, ${failed} failed`;
+}
+
 function hideProgress() {
   $("progressPanel").classList.remove("show");
   $("progressFill").style.width = "0%";
-  $("progressText").textContent = "0 added, 0 left";
+  $("progressText").textContent = state.mode === "update" ? "0 processed, 0 failed" : "0 added, 0 left";
 }
 
 function setBusy(isBusy, label = "Working") {
@@ -765,7 +1163,7 @@ function setBusy(isBusy, label = "Working") {
   ["downloadSampleBtn", "pickFileBtn", "uploadToByteXLBtn", "resetBtn"].forEach((id) => {
     const button = $(id);
     if (id === "uploadToByteXLBtn") {
-      button.disabled = isBusy || state.questions.length === 0 || countErrors() > 0;
+      button.disabled = isBusy || state.questions.length === 0 || countErrors() > 0 || (state.mode === "update" && state.preflightComplete && countPendingUpdates() === 0);
     } else {
       button.disabled = isBusy;
     }

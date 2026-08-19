@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="/config.js"></script>
   <script src="/xlsx.full.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -136,6 +137,8 @@
 
     .card-body { padding: 22px 28px 28px; display: grid; gap: 18px; }
     .control-grid { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; align-items: stretch; }
+    .workflow-picker { display: grid; gap: 8px; }
+    .control-label { color: var(--ink2); font-size: 12px; font-weight: 900; letter-spacing: .55px; text-transform: uppercase; }
     .segment {
       display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
       padding: 10px; border: 1px solid rgba(139,92,246,0.22);
@@ -150,6 +153,10 @@
     .segment-btn.active {
       color: #fff; background: var(--grad-primary); border-color: transparent;
       box-shadow: 0 4px 20px rgba(99,102,241,0.32), inset 0 1px 0 rgba(255,255,255,0.2);
+    }
+    .safety-note {
+      padding: 12px 14px; border: 1px solid var(--green-brd); border-radius: var(--radius-xs);
+      background: var(--green-soft); color: #a7f3d0; font-size: 12.5px; font-weight: 700;
     }
     .btn-primary { color: #fff; background: var(--grad-primary); border-color: transparent; }
     .btn-success { color: #041b12; background: var(--grad-success); border-color: transparent; }
@@ -180,6 +187,7 @@
     }
     .message.error { border-color: var(--red-brd); border-left-color: var(--red); background: var(--red-soft); color: #fca5a5; }
     .message.success { border-color: var(--green-brd); border-left-color: var(--green); background: var(--green-soft); color: #6ee7b7; }
+    .message.warning { border-color: var(--amber-brd); border-left-color: var(--amber); background: rgba(251,191,36,0.08); color: #fcd34d; }
 
     .progress-panel { display: none; padding: 16px 18px; border: 1px solid var(--amber-brd); border-radius: var(--radius-sm); background: rgba(251,191,36,0.08); }
     .progress-panel.show { display: block; }
@@ -251,22 +259,32 @@
 
       <section class="card">
         <div class="card-header">
-          <div class="card-title">Upload Assessments</div>
-          <div class="card-sub">Use the sample format, upload an XLSX file, review the preview, then add questions to ByteXL.</div>
+          <div id="workflowTitle" class="card-title">Create or Import Questions</div>
+          <div id="workflowSub" class="card-sub">Use the sample format, preview every row, then add questions to ByteXL.</div>
         </div>
 
         <div class="steps">
           <div class="step active"><div class="step-num">1</div> Choose type</div>
           <div class="step"><div class="step-num">2</div> Download sample</div>
-          <div class="step"><div class="step-num">3</div> Preview</div>
-          <div class="step"><div class="step-num">4</div> Upload</div>
+          <div class="step"><div class="step-num">3</div> <span id="primaryStepLabel">Preview</span></div>
+          <div class="step"><div class="step-num">4</div> <span id="finalStepLabel">Upload</span></div>
         </div>
 
         <div class="card-body">
+          <div class="workflow-picker">
+            <div class="control-label">Workflow</div>
+            <div class="segment workflow-segment" aria-label="Question workflow">
+              <button class="segment-btn mode-btn active" type="button" data-mode="create">Create Questions</button>
+              <button class="segment-btn mode-btn" type="button" data-mode="update">Update Existing Questions</button>
+            </div>
+          </div>
+
+          <div class="safety-note">Update mode requires an existing ByteXL <strong>questionId</strong>, validates every row before applying changes, and never creates questions.</div>
+
           <div class="control-grid">
             <div class="segment" aria-label="Assessment type">
-              <button class="segment-btn active" type="button" data-type="mcq">MCQ</button>
-              <button class="segment-btn" type="button" data-type="coding">Coding Questions</button>
+              <button class="segment-btn type-btn active" type="button" data-type="mcq">MCQ</button>
+              <button class="segment-btn type-btn" type="button" data-type="coding">Coding Questions</button>
             </div>
             <button id="downloadSampleBtn" class="btn" type="button">Download sample XLSX</button>
             <button id="pickFileBtn" class="btn btn-primary" type="button">Upload XLSX</button>
@@ -302,7 +320,7 @@
             <div class="panel-header">
               <div>
                 <div class="panel-title">Preview</div>
-                <div class="panel-sub">All questions are shown here before upload.</div>
+                <div id="previewDescription" class="panel-sub">All questions are shown here before upload.</div>
               </div>
               <span id="previewState" class="mini-pill">Waiting</span>
             </div>
@@ -312,15 +330,17 @@
                   <tr>
                     <th>Row</th>
                     <th>Type</th>
+                    <th>Question ID</th>
                     <th>Title</th>
                     <th>Difficulty</th>
                     <th>Score</th>
+                    <th>Changed fields</th>
                     <th>Status</th>
                     <th>Notes</th>
                   </tr>
                 </thead>
                 <tbody id="questionRows">
-                  <tr><td class="empty" colspan="7">Choose a type and upload an XLSX sheet to preview questions.</td></tr>
+                  <tr><td class="empty" colspan="9">Choose a workflow and type, then upload an XLSX sheet to preview questions.</td></tr>
                 </tbody>
               </table>
             </div>
@@ -343,6 +363,6 @@
     </div>
   </main>
 </div>
-<script src="/assessment.js"></script>
+<script src="/assessment.js?v=20260806-1"></script>
 </body>
 </html>

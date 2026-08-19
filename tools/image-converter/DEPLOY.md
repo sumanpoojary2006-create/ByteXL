@@ -12,20 +12,27 @@ Optional:
 
 ```text
 BYTEXL_CONTENT_TOKEN=<separate ByteXL bearer token for content updates>
-BYTEXL_API_BASE=https://bytexl.app
+BYTEXL_API_BASE=https://app.bytexl.ai
 BYTEXL_READING_ID=44sqshkgw
-BYTEXL_UPLOAD_URL=https://bytexl.app/api/upload/s3
+BYTEXL_UPLOAD_URL=https://app.bytexl.ai/api/upload/s3
 ONECOMPILER_WEB_BASE=https://onecompiler.com
+FRONTEND_ORIGINS=https://image-converter-pi-rouge.vercel.app
 PORT=8000
 ```
 
 If `BYTEXL_CONTENT_TOKEN` is not set, the app uses `BYTEXL_UPLOAD_TOKEN` for both image uploads and content updates. Keep tokens server-side only.
 
-## Vercel
+## Architecture
 
-Vercel can deploy this FastAPI app from `server.py`.
+Vercel is a static frontend host only. It must never run `server.py` or receive
+image, assessment, OneCompiler, preview, or product-update requests. The browser
+sends those requests directly to the external API configured in `config.js`.
 
-Important: Vercel Functions have a request/response payload limit. The hosted page uses a team workflow: choose Images, Code, Upload, or a combination with the top checkboxes; upload one ZIP; then download the updated ZIP or preview and push the updated markdown into ByteXL. It avoids sending the whole ZIP through Vercel by sending images one at a time to `/upload-image`. Direct ByteXL upload sends only markdown text and paths to `/preview-product-upload` first, then `/upload-to-product` after the user confirms in the UI. OneCompiler editor conversion saves code through `/onecompiler/workspace` and writes direct `https://onecompiler.com/embed/<language>/<codeId>` links into the markdown. A single oversized image can still fail and should be compressed or handled by a non-Vercel backend.
+The FastAPI service runs on Render (or another non-Vercel host), where the ByteXL
+tokens remain server-side. This removes image payloads and update traffic from
+Vercel Fast Origin Transfer.
+
+## Vercel (static frontend only)
 
 Current production deployment:
 
@@ -36,18 +43,15 @@ https://image-converter-pi-rouge.vercel.app
 1. Push the `image-converter` folder changes to Git.
 2. In Vercel, import the connected repository.
 3. Set the project Root Directory to `image-converter`.
-4. Leave Framework Preset as Vercel-detected/Other.
-5. Add Environment Variables:
-   - `BYTEXL_UPLOAD_TOKEN`
-   - `BYTEXL_CONTENT_TOKEN` if content updates should use a different token
-   - `BYTEXL_READING_ID` for the default product shown in Upload mode
-   - `BYTEXL_UPLOAD_URL` = `https://bytexl.app/api/upload/s3`
-6. Deploy.
-7. Open `/convert` on the Vercel deployment URL.
-8. Convert a small ZIP with Code Editors checked and confirm the output Markdown
+4. Leave Framework Preset as Vercel-detected/Other. Do not add a Python build or function.
+5. Do not add ByteXL tokens to Vercel.
+6. Set the external API origin in `config.js`.
+7. Deploy.
+8. Open `/convert` on the Vercel deployment URL.
+9. Convert a small ZIP with Code Editors checked and confirm the output Markdown
    contains `https://onecompiler.com/embed/python/` links for Python blocks.
 
-Vercel uses `server.py` as the FastAPI entrypoint. `run.py` is only for local development.
+`vercel.json` contains only static rewrites. There is no Vercel Function entrypoint.
 
 ## Render
 
@@ -56,7 +60,9 @@ Vercel uses `server.py` as the FastAPI entrypoint. `run.py` is only for local de
 3. Build command: `pip install -r requirements.txt`
 4. Start command: `python run.py`
 5. Add `BYTEXL_UPLOAD_TOKEN` in Environment.
-6. Health check path: `/healthz`
+6. Add `FRONTEND_ORIGINS=https://image-converter-pi-rouge.vercel.app`.
+7. Health check path: `/healthz`.
+8. Update `config.js` if Render assigns a different service URL.
 
 The included `render.yaml` can also be used as a blueprint when this folder is deployed as the service root.
 

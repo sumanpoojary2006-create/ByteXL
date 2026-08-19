@@ -1,18 +1,26 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "services": {
-    "bytexl-image-converter": {
-      "root": ".",
-      "entrypoint": "server:app"
-    }
-  },
+  "trailingSlash": false,
   "rewrites": [
     {
-      "source": "/(.*)",
-      "destination": {
-        "type": "service",
-        "service": "bytexl-image-converter"
-      }
+      "source": "/api/bytexl/:path*",
+      "destination": "/api/bytexl-proxy?path=:path*"
+    },
+    {
+      "source": "/convert",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/assessment",
+      "destination": "/assessment.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/config.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+      ]
     }
   ]
 }

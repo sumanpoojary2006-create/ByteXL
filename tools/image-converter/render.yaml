@@ -9,5 +9,9 @@ services:
     envVars:
       - key: BYTEXL_UPLOAD_TOKEN
         sync: false
+      - key: BYTEXL_API_BASE
+        value: https://image-converter-pi-rouge.vercel.app/api/bytexl
       - key: BYTEXL_UPLOAD_URL
-        value: https://bytexl.app/api/upload/s3
+        value: https://app.bytexl.ai/api/upload/s3
+      - key: FRONTEND_ORIGINS
+        value: https://image-converter-pi-rouge.vercel.app
