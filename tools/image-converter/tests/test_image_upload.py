@@ -4,7 +4,7 @@ import io
 import sys
 import unittest
 from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, call, patch
 
 from fastapi import HTTPException
 import requests
@@ -82,6 +82,58 @@ class ImageUploadTests(unittest.TestCase):
 
         self.assertEqual(raised.exception.status_code, 502)
         self.assertIn("Invalid token", raised.exception.detail)
+
+    @patch.object(server.time, "sleep")
+    @patch.object(server.requests, "get")
+    @patch.object(server, "get_content_token", return_value="content-token")
+    def test_id_request_retries_and_uses_content_token(self, _token, get, sleep):
+        failed = Mock()
+        failed.raise_for_status.side_effect = requests.RequestException("temporary failure")
+        succeeded = Mock()
+        succeeded.raise_for_status.return_value = None
+        succeeded.json.return_value = {"id": "12abc3def"}
+        get.side_effect = [failed, succeeded]
+
+        self.assertEqual(server.get_bytexl_id(), "12abc3def")
+        self.assertEqual(get.call_count, 2)
+        self.assertEqual(
+            get.call_args_list,
+            [
+                call(
+                    f"{server.BYTEXL_API_BASE}/api/getId",
+                    headers={"Authorization": "Bearer content-token"},
+                    timeout=30,
+                ),
+                call(
+                    f"{server.BYTEXL_API_BASE}/api/getId",
+                    headers={"Authorization": "Bearer content-token"},
+                    timeout=30,
+                ),
+            ],
+        )
+        sleep.assert_called_once_with(0.25)
+
+    @patch.object(server.time, "sleep")
+    @patch.object(server.requests, "get")
+    @patch.object(server, "get_content_token", return_value="")
+    def test_id_request_reports_final_status_after_retries(self, _token, get, sleep):
+        response = Mock(status_code=503)
+        failed = Mock()
+        failed.raise_for_status.side_effect = requests.HTTPError(
+            "unavailable", response=response
+        )
+        get.return_value = failed
+
+        with self.assertRaises(HTTPException) as raised:
+            server.get_bytexl_id()
+
+        self.assertEqual(raised.exception.status_code, 502)
+        self.assertEqual(
+            raised.exception.detail,
+            "Could not create a ByteXL id after 3 attempts: ByteXL returned HTTP 503",
+        )
+        self.assertEqual(get.call_count, 3)
+        self.assertEqual(sleep.call_args_list, [call(0.25), call(0.5)])
 
 
 if __name__ == "__main__":

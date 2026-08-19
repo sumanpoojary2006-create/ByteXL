@@ -4,6 +4,7 @@ import json
 import os
 import posixpath
 import re
+import time
 import zipfile
 from difflib import SequenceMatcher
 from pathlib import Path, PurePosixPath
@@ -561,15 +562,43 @@ def upsert_assessment_questions(questions: list[dict[str, Any]]) -> list[Any]:
 
 
 def get_bytexl_id() -> str:
-    try:
-        resp = requests.get(f"{BYTEXL_API_BASE}/api/getId", timeout=30)
-        resp.raise_for_status()
-        value = resp.json().get("id")
-    except (requests.RequestException, ValueError) as exc:
-        raise HTTPException(502, "Could not create a ByteXL id") from exc
-    if not value:
-        raise HTTPException(502, "ByteXL did not return an id")
-    return value
+    """Fetch a section ID without making a brief upstream outage fatal.
+
+    Product uploads only call this endpoint when they need to create a missing
+    section.  The endpoint is small but external, and a cold connection or a
+    transient 5xx previously aborted the entire upload on the first attempt.
+    """
+    token = get_content_token()
+    headers = {"Authorization": f"Bearer {token}"} if token else {}
+    last_error = ""
+
+    for attempt in range(3):
+        try:
+            resp = requests.get(
+                f"{BYTEXL_API_BASE}/api/getId",
+                headers=headers,
+                timeout=30,
+            )
+            resp.raise_for_status()
+            result = resp.json()
+            value = result.get("id") if isinstance(result, dict) else None
+            if value:
+                return str(value)
+            last_error = "ByteXL returned a response without an id"
+        except requests.RequestException as exc:
+            upstream_response = getattr(exc, "response", None)
+            if upstream_response is not None:
+                last_error = f"ByteXL returned HTTP {upstream_response.status_code}"
+            else:
+                last_error = str(exc)
+        except ValueError:
+            last_error = "ByteXL returned an invalid response"
+
+        if attempt < 2:
+            time.sleep(0.25 * (attempt + 1))
+
+    detail = last_error or "ByteXL did not return an id"
+    raise HTTPException(502, f"Could not create a ByteXL id after 3 attempts: {detail}")
 
 
 def upload_to_s3(filename: str, data: bytes, subtype: str) -> str:
