@@ -1660,9 +1660,9 @@
         continue;
       }
       if (rawLang === "nimbus") {
-        const launch = nimbusLaunchLink(attrs);
-        if (launch) {
-          replacements.push([block.start, block.end, launch]);
+        const embed = nimbusIframeHtml(attrs, settings.height);
+        if (embed) {
+          replacements.push([block.start, block.end, embed]);
           convertedBlocks++;
           languageCounts.nimbus = (languageCounts.nimbus || 0) + 1;
         } else {
@@ -1794,14 +1794,13 @@
   function stripIncludedSetup(code,setupName){const p=new RegExp(`^\\s*\\\\i\\s+${escapeRegExp(setupName)}\\s*$`);return code.replace(/\n+$/,"").split(/\n/).filter(line=>!p.test(line)).join("\n").replace(/\n+$/,"");}
   function oneCompilerSqlCode(block,setupName,setup,context){const parts=[setup.replace(/\n+$/,"")];const contextCode=context.map(item=>item.replace(/\n+$/,"")).filter(Boolean).join("\n\n");if(contextCode)parts.push(`-- Reusable definitions from earlier examples\n${contextCode}`);parts.push(`-- Query\n${stripIncludedSetup(block.code,setupName)}`);return parts.join("\n\n");}
   function reusableSetupCode(language,code){if(language!=="postgresql")return false;return /\b(CREATE\s+(?:OR\s+REPLACE\s+)?(?:VIEW|MATERIALIZED\s+VIEW|FUNCTION|PROCEDURE|TRIGGER|ROLE)|PREPARE\s+\w+|CREATE\s+TABLE\s+schema_migrations\b)/is.test(code);}
-  // A ```nimbus fence becomes a top-level Nimbus launch link. The ByteXL app cannot
-  // authenticate while nested inside a lesson iframe, so embedding this URL produces a
-  // blank/login screen. Opening it in a new tab preserves the student's ByteXL session;
-  // the template route then creates or reuses that student's workspace.
+  // A ```nimbus fence becomes a same-origin iframe. Keeping the route relative is
+  // important: once the reading material is rendered by app.bytexl.ai, Nimbus shares
+  // the student's active ByteXL session instead of being treated as third-party content.
   //   ```nimbus template=python-fastapi name="Tiffin Trail" height=650
   //   ```nimbus workspace=44yrwxr3u          (one fixed workspace, for a demo)
   //   ```nimbus fork=44yrwxr3u               (student forks a prepared workspace)
-  const NIMBUS_BASE = "https://app.bytexl.ai/nimbus";
+  const NIMBUS_BASE = "/nimbus";
 
   function nimbusEmbedUrl(attrs) {
     if (attrs.workspace) return `${NIMBUS_BASE}/${encodeURIComponent(attrs.workspace)}`;
@@ -1813,11 +1812,12 @@
     return null;
   }
 
-  function nimbusLaunchLink(attrs) {
-    const href = nimbusEmbedUrl(attrs);
-    if (!href) return null;
-    const label = attrs.name ? `Open ${attrs.name} in Nimbus` : "Open workspace in Nimbus";
-    return `<p><a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)}</a></p>\n`;
+  function nimbusIframeHtml(attrs, fallbackHeight) {
+    const src = nimbusEmbedUrl(attrs);
+    if (!src) return null;
+    const height = attrs.height || fallbackHeight || "650";
+    const title = attrs.name ? `${attrs.name} Nimbus workspace` : "Nimbus workspace";
+    return `<iframe\n frameBorder="0"\n height="${escapeAttr(height)}"\n src="${escapeAttr(src)}"\n title="${escapeAttr(title)}"\n allow="clipboard-read; clipboard-write; fullscreen"\n width="100%"\n></iframe>\n`;
   }
 
   function iframeHtml(src,h) { return `<iframe\n frameBorder="0"\n height="${escapeAttr(h)}"  \n src="${escapeAttr(src)}" \n width="100%"\n></iframe>\n`; }
