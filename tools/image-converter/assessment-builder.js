@@ -9,7 +9,7 @@ function apiBase() {
 }
 
 const API_BASE = apiBase();
-const state = { loading: false, creating: false, discovery: null, selected: new Set(), overrides: new Map() };
+const state = { loading: false, creating: false, discovery: null, selected: new Set(), overrides: new Map(), search: "" };
 const $ = (id) => document.getElementById(id);
 
 function escapeHtml(value) {
@@ -76,46 +76,13 @@ function overrideFor(candidate) {
   return state.overrides.get(candidate.groupKey) || {};
 }
 
-function renderRows() {
-  const tbody = $("candidateRows");
-  const candidates = state.discovery?.candidates || [];
-  if (!candidates.length) {
-    tbody.innerHTML = `<tr><td class="empty" colspan="8">${state.loading ? "Loading…" : "No Set 2 assessment groups were detected."}</td></tr>`;
-    return;
-  }
-  tbody.innerHTML = candidates.map((candidate) => {
-    const status = candidateStatus(candidate);
-    const selectable = status === "ready";
-    const checked = state.selected.has(candidate.groupKey);
-    const override = overrideFor(candidate);
-    const titleValue = override.title ?? candidate.title;
-    const durationValue = override.duration ?? candidate.duration;
-    const notes = [];
-    if (candidate.issues?.length) notes.push(...candidate.issues);
-    if (candidate.existingTest) {
-      notes.push(`Test already exists${candidate.existingTest.title ? `: ${candidate.existingTest.title}` : ""}.`);
-    }
-    const existingLink = candidate.existingTest?.editUrl
-      ? `<a href="${escapeHtml(candidate.existingTest.editUrl)}" target="_blank" rel="noopener">Open existing test</a>`
-      : "";
-    const titleCell = selectable
-      ? `<input class="edit-title" type="text" maxlength="180" data-key="${escapeHtml(candidate.groupKey)}" data-field="title" value="${escapeHtml(titleValue)}">`
-      : `<strong>${escapeHtml(titleValue)}</strong>${existingLink}`;
-    const durationCell = selectable
-      ? `<span class="duration-cell"><input class="edit-duration" type="number" min="0" max="1440" step="1" data-key="${escapeHtml(candidate.groupKey)}" data-field="duration" value="${escapeHtml(durationValue)}"> min</span>`
-      : `${escapeHtml(durationValue)} min`;
-    return `<tr>
-      <td class="check"><input type="checkbox" data-key="${escapeHtml(candidate.groupKey)}" ${checked ? "checked" : ""} ${selectable ? "" : "disabled"}></td>
-      <td>${escapeHtml(candidate.course)}</td>
-      <td>${escapeHtml(candidate.unit)}</td>
-      <td class="title-cell">${titleCell}</td>
-      <td>${escapeHtml(candidate.questionCount)} (${escapeHtml((candidate.questionTypes || []).join(", "))})</td>
-      <td>${durationCell}</td>
-      <td><span class="status ${status}">${status}</span></td>
-      <td>${escapeHtml(notes.join(" ")) || "&mdash;"}</td>
-    </tr>`;
-  }).join("");
+function matchesSearch(candidate) {
+  const query = state.search.trim().toLowerCase();
+  if (!query) return true;
+  return `${candidate.course} ${candidate.title}`.toLowerCase().includes(query);
+}
 
+function bindRowInteractions(tbody) {
   tbody.querySelectorAll("input[type=checkbox]").forEach((box) => {
     box.addEventListener("change", () => {
       const key = box.dataset.key;
@@ -124,17 +91,96 @@ function renderRows() {
       renderControls();
     });
   });
-
   tbody.querySelectorAll("input.edit-title, input.edit-duration").forEach((input) => {
     input.addEventListener("input", () => {
       const key = input.dataset.key;
       const field = input.dataset.field;
       const current = state.overrides.get(key) || {};
-      current[field] = field === "duration" ? input.value : input.value;
+      current[field] = input.value;
       state.overrides.set(key, current);
       renderControls();
     });
   });
+}
+
+function renderReadyRows(rows) {
+  const tbody = $("readyRows");
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td class="empty" colspan="7">${state.loading ? "Loading…" : "No ready groups match."}</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = rows.map((candidate) => {
+    const checked = state.selected.has(candidate.groupKey);
+    const override = overrideFor(candidate);
+    const titleValue = override.title ?? candidate.title;
+    const durationValue = override.duration ?? candidate.duration;
+    return `<tr>
+      <td class="check"><input type="checkbox" data-key="${escapeHtml(candidate.groupKey)}" ${checked ? "checked" : ""}></td>
+      <td>${escapeHtml(candidate.course)}</td>
+      <td>${escapeHtml(candidate.unit)}</td>
+      <td class="title-cell"><input class="edit-title" type="text" maxlength="180" data-key="${escapeHtml(candidate.groupKey)}" data-field="title" value="${escapeHtml(titleValue)}"></td>
+      <td>${escapeHtml(candidate.questionCount)} (${escapeHtml((candidate.questionTypes || []).join(", "))})</td>
+      <td><span class="duration-cell"><input class="edit-duration" type="number" min="0" max="1440" step="1" data-key="${escapeHtml(candidate.groupKey)}" data-field="duration" value="${escapeHtml(durationValue)}"> min</span></td>
+      <td>&mdash;</td>
+    </tr>`;
+  }).join("");
+  bindRowInteractions(tbody);
+}
+
+function renderExistingRows(rows) {
+  const tbody = $("existingRows");
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td class="empty" colspan="5">${state.loading ? "Loading…" : "No matches."}</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = rows.map((candidate) => {
+    const link = candidate.existingTest?.editUrl
+      ? `<a href="${escapeHtml(candidate.existingTest.editUrl)}" target="_blank" rel="noopener">${escapeHtml(candidate.existingTest.title || "Open existing test")}</a>`
+      : escapeHtml(candidate.existingTest?.title || "—");
+    return `<tr>
+      <td>${escapeHtml(candidate.course)}</td>
+      <td>${escapeHtml(candidate.unit)}</td>
+      <td>${escapeHtml(candidate.title)}</td>
+      <td class="title-cell">${link}</td>
+      <td>${escapeHtml(candidate.questionCount)} (${escapeHtml((candidate.questionTypes || []).join(", "))})</td>
+    </tr>`;
+  }).join("");
+}
+
+function renderBlockedRows(rows) {
+  const panel = $("blockedPanel");
+  const tbody = $("blockedRows");
+  panel.hidden = !rows.length;
+  if (!rows.length) {
+    tbody.innerHTML = "";
+    return;
+  }
+  $("blockedSub").textContent = `${rows.length} group(s) need fixing before they can be created.`;
+  tbody.innerHTML = rows.map((candidate) => `<tr>
+      <td>${escapeHtml(candidate.course)}</td>
+      <td>${escapeHtml(candidate.unit)}</td>
+      <td>${escapeHtml(candidate.title)}</td>
+      <td>${escapeHtml(candidate.questionCount)}</td>
+      <td>${escapeHtml((candidate.issues || []).join(" ")) || "&mdash;"}</td>
+    </tr>`).join("");
+}
+
+function renderTables() {
+  const all = state.discovery?.candidates || [];
+  const filtered = all.filter(matchesSearch);
+  const ready = filtered.filter((candidate) => candidateStatus(candidate) === "ready");
+  const existing = filtered.filter((candidate) => candidateStatus(candidate) === "exists");
+  const blocked = filtered.filter((candidate) => candidateStatus(candidate) === "blocked");
+
+  renderReadyRows(ready);
+  renderExistingRows(existing);
+  renderBlockedRows(blocked);
+
+  const filterNote = state.search.trim() ? " matching your search" : "";
+  $("readySub").textContent = state.loading ? "Scanning…" : `${ready.length} ready group(s)${filterNote}.`;
+  $("readyPill").textContent = state.loading ? "Loading" : ready.length ? "Ready" : "None";
+  $("existingSub").textContent = state.loading ? "Scanning…" : `${existing.length} group(s) already have a test${filterNote}.`;
+  $("existingPill").textContent = state.loading ? "Loading" : existing.length ? "On file" : "None";
 }
 
 function selectionIsValid() {
@@ -167,15 +213,12 @@ function renderControls() {
 
 function render() {
   renderStats();
-  renderRows();
+  renderTables();
   const discovery = state.discovery;
   if (state.loading) {
-    $("previewSub").textContent = "Scanning ByteXL for Set 2 questions…";
-    $("previewPill").textContent = "Loading";
+    $("headSub").textContent = "Scanning ByteXL for Set 2 questions…";
   } else if (discovery) {
     $("headSub").textContent = `${discovery.candidateCount} group(s) detected from ${discovery.setTwoQuestionCount} Set 2 question(s).`;
-    $("previewSub").textContent = `${discovery.readyCount} ready to create, ${discovery.existingCount} already have a test.`;
-    $("previewPill").textContent = discovery.readyCount ? "Ready" : "No new groups";
   }
   renderControls();
 }
@@ -201,7 +244,7 @@ async function loadCandidates() {
 
 function selectAllReady() {
   for (const candidate of state.discovery?.candidates || []) {
-    if (candidateStatus(candidate) === "ready") state.selected.add(candidate.groupKey);
+    if (candidateStatus(candidate) === "ready" && matchesSearch(candidate)) state.selected.add(candidate.groupKey);
   }
   render();
 }
@@ -270,6 +313,10 @@ function init() {
   $("selectAllBtn").addEventListener("click", selectAllReady);
   $("clearBtn").addEventListener("click", clearSelection);
   $("createBtn").addEventListener("click", createSelected);
+  $("searchInput").addEventListener("input", (event) => {
+    state.search = event.target.value;
+    render();
+  });
   render();
   loadCandidates();
 }

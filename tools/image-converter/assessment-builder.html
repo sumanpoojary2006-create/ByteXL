@@ -49,6 +49,10 @@
     .card-sub { margin-top: 4px; color: var(--muted); font-size: 13px; }
     .body { padding: 20px 28px 28px; display: grid; gap: 18px; }
     .notice { padding: 13px 15px; border: 1px solid rgba(52,211,153,.3); border-left: 5px solid var(--green); border-radius: 10px; background: rgba(16,185,129,.09); color: #a7f3d0; font-size: 13px; font-weight: 700; }
+    .field { display: grid; gap: 7px; }
+    .field label { color: var(--ink2); font-size: 11px; font-weight: 900; letter-spacing: .55px; text-transform: uppercase; }
+    .field input { width: 100%; height: 44px; padding: 0 14px; color: var(--ink); background: rgba(8,11,22,.66); border: 1px solid var(--line-hi); border-radius: 9px; outline: none; }
+    .field input:focus { border-color: var(--violet); box-shadow: 0 0 0 3px rgba(139,92,246,.12); }
     .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
     .btn { min-height: 44px; padding: 0 18px; border: 1px solid var(--line-hi); border-radius: 9px; color: var(--ink2); background: rgba(255,255,255,.05); font-weight: 800; cursor: pointer; }
     .btn.primary { color: white; border-color: transparent; background: var(--grad); }
@@ -124,16 +128,38 @@
             <div class="stat"><strong id="readyCount">0</strong><span>Ready to create</span></div>
             <div class="stat"><strong id="existingCount">0</strong><span>Already exist</span></div>
           </div>
+          <div class="field">
+            <label for="searchInput">Search candidates</label>
+            <input id="searchInput" type="text" placeholder="Filter by course or assessment title&hellip;">
+          </div>
           <div class="panel">
-            <div class="panel-head"><div><div class="card-title">Candidates</div><div id="previewSub" class="card-sub">&nbsp;</div></div><span id="previewPill" class="pill">Waiting</span></div>
+            <div class="panel-head"><div><div class="card-title">Ready to create</div><div id="readySub" class="card-sub">&nbsp;</div></div><span id="readyPill" class="pill">Waiting</span></div>
             <div class="table-wrap">
               <table>
-                <thead><tr><th></th><th>Course</th><th>Unit</th><th>Assessment</th><th>Questions</th><th>Duration</th><th>Status</th><th>Notes</th></tr></thead>
-                <tbody id="candidateRows"><tr><td class="empty" colspan="8">Loading&hellip;</td></tr></tbody>
+                <thead><tr><th></th><th>Course</th><th>Unit</th><th>Assessment</th><th>Questions</th><th>Duration</th><th>Notes</th></tr></thead>
+                <tbody id="readyRows"><tr><td class="empty" colspan="7">Loading&hellip;</td></tr></tbody>
               </table>
             </div>
           </div>
           <button id="createBtn" class="btn success" type="button" disabled>Create selected assessments</button>
+          <div class="panel">
+            <div class="panel-head"><div><div class="card-title">Already have a test</div><div id="existingSub" class="card-sub">&nbsp;</div></div><span id="existingPill" class="pill">Waiting</span></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Course</th><th>Unit</th><th>Generated title</th><th>Existing test</th><th>Questions</th></tr></thead>
+                <tbody id="existingRows"><tr><td class="empty" colspan="5">Loading&hellip;</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+          <div id="blockedPanel" class="panel" hidden>
+            <div class="panel-head"><div><div class="card-title">Needs attention</div><div id="blockedSub" class="card-sub">&nbsp;</div></div><span class="pill">Blocked</span></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Course</th><th>Unit</th><th>Assessment</th><th>Questions</th><th>Issue</th></tr></thead>
+                <tbody id="blockedRows"></tbody>
+              </table>
+            </div>
+          </div>
           <div id="resultsPanel" class="panel" hidden>
             <div class="panel-head"><div class="card-title">Creation results</div><span id="resultsPill" class="pill">Done</span></div>
             <div id="resultsBody" class="results" style="padding:16px 18px;"></div>
