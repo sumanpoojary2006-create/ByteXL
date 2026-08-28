@@ -308,6 +308,50 @@ class AssessmentValidationTests(unittest.TestCase):
         self.assertEqual(result["existingCount"], 1)
         self.assertEqual(result["readyCount"], 0)
 
+    @patch.object(server, "bytexl_get")
+    def test_candidates_match_existing_test_by_question_ids_when_titles_differ(self, bytexl_get):
+        questions = [{"_id": "q1", "title": "Introduction to Artificial Intelligence - MCQ 6.2.1", "tags": "Set 2"}]
+        tests = [
+            {
+                "_id": "test-77",
+                "title": "Introduction to AI - Assessment 6",
+                "testIntent": "standardizedAssessment",
+                "questionsCount": 1,
+            }
+        ]
+        bytexl_get.return_value = {"data": {"questions": [{"_id": "q1"}]}}
+
+        result = server.set_two_assessment_candidates(questions, tests)
+
+        candidate = result["candidates"][0]
+        self.assertEqual(candidate["existingTest"]["_id"], "test-77")
+        bytexl_get.assert_called_once_with("/api/tests/test-77")
+
+    @patch.object(server, "bytexl_get")
+    def test_candidates_stay_ready_when_question_ids_do_not_match(self, bytexl_get):
+        questions = [{"_id": "q1", "title": "New Course - MCQ 1.2.1", "tags": "Set 2"}]
+        tests = [{"_id": "test-1", "title": "Unrelated Test", "testIntent": "standardizedAssessment", "questionsCount": 1}]
+        bytexl_get.return_value = {"data": {"questions": [{"_id": "different-question"}]}}
+
+        result = server.set_two_assessment_candidates(questions, tests)
+
+        candidate = result["candidates"][0]
+        self.assertIsNone(candidate["existingTest"])
+        self.assertTrue(candidate["ready"])
+
+    @patch.object(server, "bytexl_get")
+    def test_question_id_fallback_skips_non_standardized_and_mismatched_counts(self, bytexl_get):
+        questions = [{"_id": "q1", "title": "New Course - MCQ 1.2.1", "tags": "Set 2"}]
+        tests = [
+            {"_id": "test-1", "title": "Other", "testIntent": "practice", "questionsCount": 1},
+            {"_id": "test-2", "title": "Other2", "testIntent": "standardizedAssessment", "questionsCount": 5},
+        ]
+
+        result = server.set_two_assessment_candidates(questions, tests)
+
+        bytexl_get.assert_not_called()
+        self.assertIsNone(result["candidates"][0]["existingTest"])
+
     @patch.object(server, "published_test_items", return_value=[])
     @patch.object(server, "published_question_items")
     def test_candidates_endpoint_returns_discovery(self, published_questions, _published_tests):

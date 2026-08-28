@@ -827,6 +827,50 @@ def set_two_group_key(course: str, unit: int) -> str:
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()[:16]
 
 
+def fetch_test_question_ids(test_id: str) -> frozenset[str]:
+    detail = bytexl_get(f"/api/tests/{test_id}")
+    data = detail.get("data") if isinstance(detail, dict) else None
+    data = data if isinstance(data, dict) else (detail if isinstance(detail, dict) else {})
+    questions = data.get("questions") if isinstance(data, dict) else None
+    if not isinstance(questions, list):
+        return frozenset()
+    return frozenset(str(question["_id"]) for question in questions if isinstance(question, dict) and question.get("_id"))
+
+
+def find_existing_test_by_question_ids(
+    question_ids: list[str],
+    tests: list[dict[str, Any]],
+    detail_cache: dict[str, frozenset[str]],
+) -> Optional[dict[str, Any]]:
+    """Fall back to matching by exact question-set when titles disagree.
+
+    ByteXL's existing Set 2 assessments use inconsistent naming per course
+    ("Introduction to AI" vs "Introduction to Artificial Intelligence",
+    "(v1)" suffixes, hyphen spacing) so exact-title matching alone misses
+    real duplicates. Standardized-assessment tests are rare platform-wide
+    (dozens, not thousands), so checking their actual question ids is cheap
+    and unambiguous: a hash-id collision across an entire question set is
+    not something that happens by chance.
+    """
+    wanted = frozenset(question_ids)
+    for test in tests:
+        if test.get("testIntent") != "standardizedAssessment":
+            continue
+        if test.get("questionsCount") != len(wanted):
+            continue
+        test_id = str(test.get("_id") or "")
+        if not test_id:
+            continue
+        if test_id not in detail_cache:
+            try:
+                detail_cache[test_id] = fetch_test_question_ids(test_id)
+            except HTTPException:
+                detail_cache[test_id] = frozenset()
+        if detail_cache[test_id] and detail_cache[test_id] == wanted:
+            return test
+    return None
+
+
 def set_two_assessment_candidates(
     questions: list[dict[str, Any]],
     tests: list[dict[str, Any]],
@@ -851,13 +895,17 @@ def set_two_assessment_candidates(
         if key and test.get("_id"):
             existing_by_title.setdefault(key, test)
 
+    detail_cache: dict[str, frozenset[str]] = {}
     candidates: list[dict[str, Any]] = []
     for (course, unit), items in groups.items():
         items.sort(key=lambda question: (question["_setTwo"]["order"], str(question.get("_id"))))
         orders = [question["_setTwo"]["order"] for question in items]
         duplicate_orders = sorted({order for order in orders if orders.count(order) > 1})
         title = assessment_title_for_set_two_group(course, unit)
+        question_ids = [str(question["_id"]) for question in items]
         existing = existing_by_title.get(normalize_assessment_test_title(title))
+        if not existing:
+            existing = find_existing_test_by_question_ids(question_ids, tests, detail_cache)
         kinds = sorted({question["_setTwo"]["kind"] for question in items})
         duration = 60 if "coding" in kinds else 30
         candidates.append(
@@ -871,7 +919,7 @@ def set_two_assessment_candidates(
                 "questionTypes": kinds,
                 "firstQuestion": items[0].get("title") or "",
                 "lastQuestion": items[-1].get("title") or "",
-                "questionIds": [str(question["_id"]) for question in items],
+                "questionIds": question_ids,
                 "ready": not duplicate_orders,
                 "issues": ([f"Duplicate question numbers: {', '.join(map(str, duplicate_orders))}"] if duplicate_orders else []),
                 "existingTest": (
