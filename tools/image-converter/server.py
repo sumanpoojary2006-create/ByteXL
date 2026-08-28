@@ -770,70 +770,131 @@ def published_question_items() -> list[dict[str, Any]]:
     return [item for item in items if isinstance(item, dict)]
 
 
-def resolve_set_two_assessment_questions(
-    rows: list[dict[str, Any]],
-    catalog: list[dict[str, Any]],
+def published_test_items() -> list[dict[str, Any]]:
+    response = bytexl_get("/api/tests?builderListView=true")
+    if isinstance(response, list):
+        items = response
+    elif isinstance(response, dict):
+        items = response.get("items") or response.get("data") or []
+    else:
+        items = []
+    if not isinstance(items, list):
+        raise HTTPException(502, "ByteXL returned an unexpected test list")
+    return [item for item in items if isinstance(item, dict)]
+
+
+SET_TWO_STRUCTURED_TITLE_RE = re.compile(
+    r"^(?P<course>.+?)\s+-\s+(?P<kind>MCQ|Coding(?:\s+Question)?s?)\s*(?:-\s*)?"
+    r"(?P<unit>\d+)\.2\.(?P<order>\d+)\s*$",
+    re.IGNORECASE,
+)
+
+
+def parse_set_two_question_title(question: dict[str, Any]) -> Optional[dict[str, Any]]:
+    if not is_set_two_question(question):
+        return None
+    title = " ".join(str(question.get("title") or "").split())
+    match = SET_TWO_STRUCTURED_TITLE_RE.fullmatch(title)
+    if not match:
+        return None
+    return {
+        "course": match.group("course").strip(),
+        "unit": int(match.group("unit")),
+        "order": int(match.group("order")),
+        "kind": "coding" if match.group("kind").lower().startswith("coding") else "mcq",
+    }
+
+
+def assessment_title_for_set_two_group(course: str, unit: int) -> str:
+    display_course = re.sub(
+        r"^Introduction to Artificial Intelligence$",
+        "Intro to Artificial Intelligence",
+        course,
+        flags=re.IGNORECASE,
+    )
+    return f"{display_course} - Assessment {unit}"
+
+
+def normalize_assessment_test_title(value: Any) -> str:
+    title = " ".join(str(value or "").split()).casefold()
+    title = title.replace("introduction to artificial intelligence", "intro to artificial intelligence")
+    return re.sub(r"[^a-z0-9]+", " ", title).strip()
+
+
+def set_two_group_key(course: str, unit: int) -> str:
+    canonical = f"{course.casefold()}|{unit}"
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()[:16]
+
+
+def set_two_assessment_candidates(
+    questions: list[dict[str, Any]],
+    tests: list[dict[str, Any]],
 ) -> dict[str, Any]:
-    set_two_rows = [row for row in rows if is_set_two_question(row)]
-    ignored_count = len(rows) - len(set_two_rows)
-    if not set_two_rows:
-        raise HTTPException(400, "No Set 2 questions were found. The tags column must identify Set 2.")
+    groups: dict[tuple[str, int], list[dict[str, Any]]] = {}
+    structured_count = 0
+    set_two_count = 0
+    for question in questions:
+        if not is_set_two_question(question):
+            continue
+        set_two_count += 1
+        parsed = parse_set_two_question_title(question)
+        if not parsed or not question.get("_id"):
+            continue
+        structured_count += 1
+        key = (parsed["course"], parsed["unit"])
+        groups.setdefault(key, []).append({**question, "_setTwo": parsed})
 
-    title_index: dict[str, list[dict[str, Any]]] = {}
-    for question in catalog:
-        key = normalize_assessment_question_title(question.get("title"))
-        if key and question.get("_id"):
-            title_index.setdefault(key, []).append(question)
+    existing_by_title: dict[str, dict[str, Any]] = {}
+    for test in tests:
+        key = normalize_assessment_test_title(test.get("title"))
+        if key and test.get("_id"):
+            existing_by_title.setdefault(key, test)
 
-    seen_source_titles: set[str] = set()
-    resolved_rows: list[dict[str, Any]] = []
-    for position, row in enumerate(set_two_rows, start=1):
-        title = " ".join(str(row.get("title") or "").split())
-        key = normalize_assessment_question_title(title)
-        sheet_row = row.get("sheetRow") or row.get("row") or position + 1
-        matches = title_index.get(key, []) if key else []
-        notes: list[str] = []
-        status = "matched"
-        question_id = ""
-
-        if not title:
-            status = "missing"
-            notes.append("Title is required.")
-        elif key in seen_source_titles:
-            status = "duplicate"
-            notes.append("This Set 2 title appears more than once in the uploaded sheet.")
-        elif len(matches) == 0:
-            status = "missing"
-            notes.append("No published ByteXL question has this exact title.")
-        elif len(matches) > 1:
-            status = "ambiguous"
-            notes.append(f"{len(matches)} published ByteXL questions have this title.")
-        else:
-            question_id = str(matches[0].get("_id") or "")
-
-        if key:
-            seen_source_titles.add(key)
-        resolved_rows.append(
+    candidates: list[dict[str, Any]] = []
+    for (course, unit), items in groups.items():
+        items.sort(key=lambda question: (question["_setTwo"]["order"], str(question.get("_id"))))
+        orders = [question["_setTwo"]["order"] for question in items]
+        duplicate_orders = sorted({order for order in orders if orders.count(order) > 1})
+        title = assessment_title_for_set_two_group(course, unit)
+        existing = existing_by_title.get(normalize_assessment_test_title(title))
+        kinds = sorted({question["_setTwo"]["kind"] for question in items})
+        duration = 60 if "coding" in kinds else 30
+        candidates.append(
             {
-                "sheetRow": sheet_row,
+                "groupKey": set_two_group_key(course, unit),
+                "course": course,
+                "unit": unit,
                 "title": title,
-                "tags": row.get("tags") or "",
-                "questionId": question_id,
-                "status": status,
-                "notes": notes,
+                "duration": duration,
+                "questionCount": len(items),
+                "questionTypes": kinds,
+                "firstQuestion": items[0].get("title") or "",
+                "lastQuestion": items[-1].get("title") or "",
+                "questionIds": [str(question["_id"]) for question in items],
+                "ready": not duplicate_orders,
+                "issues": ([f"Duplicate question numbers: {', '.join(map(str, duplicate_orders))}"] if duplicate_orders else []),
+                "existingTest": (
+                    {
+                        "_id": existing.get("_id"),
+                        "title": existing.get("title"),
+                        "status": existing.get("status"),
+                        "editUrl": f'{BYTEXL_API_BASE}/tests/_edit/{existing.get("_id")}/{assessment_url_slug(existing.get("title") or title)}',
+                    }
+                    if existing
+                    else None
+                ),
             }
         )
 
-    matched_count = sum(row["status"] == "matched" for row in resolved_rows)
-    error_count = len(resolved_rows) - matched_count
+    candidates.sort(key=lambda candidate: (candidate["course"].casefold(), candidate["unit"]))
     return {
-        "rows": resolved_rows,
-        "totalRows": len(rows),
-        "setTwoCount": len(set_two_rows),
-        "ignoredCount": ignored_count,
-        "matchedCount": matched_count,
-        "errorCount": error_count,
-        "ready": error_count == 0,
+        "candidates": candidates,
+        "setTwoQuestionCount": set_two_count,
+        "structuredQuestionCount": structured_count,
+        "unstructuredQuestionCount": set_two_count - structured_count,
+        "candidateCount": len(candidates),
+        "readyCount": sum(candidate["ready"] and not candidate["existingTest"] for candidate in candidates),
+        "existingCount": sum(bool(candidate["existingTest"]) for candidate in candidates),
     }
 
 
@@ -1744,76 +1805,74 @@ async def assessment_upload_one(payload: dict[str, Any] = Body(...)):
     return {"status": "success", "result": result}
 
 
-@app.post("/test-assessment/preview")
-async def test_assessment_preview(payload: dict[str, Any] = Body(...)):
-    questions = payload.get("questions") or []
-    if not isinstance(questions, list) or not questions:
-        raise HTTPException(400, "No question rows were provided")
-    if len(questions) > 1000:
-        raise HTTPException(400, "A maximum of 1000 question rows can be checked at once")
-    if not all(isinstance(question, dict) for question in questions):
-        raise HTTPException(400, "Every question row must be an object")
-
-    result = resolve_set_two_assessment_questions(questions, published_question_items())
+@app.get("/test-assessment/candidates")
+async def test_assessment_candidates():
+    result = set_two_assessment_candidates(published_question_items(), published_test_items())
     return {"status": "success", **result}
 
 
 @app.post("/test-assessment/create")
 async def test_assessment_create(payload: dict[str, Any] = Body(...)):
     if payload.get("confirm") is not True:
-        raise HTTPException(400, "Preview the Set 2 questions, then confirm assessment creation")
+        raise HTTPException(400, "Review the detected Set 2 groups, then confirm assessment creation")
 
-    title = " ".join(str(payload.get("title") or "").split())
-    if not title:
-        raise HTTPException(400, "Assessment title is required")
-    if len(title) > 180:
-        raise HTTPException(400, "Assessment title must be 180 characters or fewer")
+    requested_keys = payload.get("groupKeys") or []
+    if not isinstance(requested_keys, list) or not requested_keys:
+        raise HTTPException(400, "Choose at least one detected Set 2 group")
+    requested_keys = [str(key or "").strip() for key in requested_keys]
+    if len(requested_keys) > 100:
+        raise HTTPException(400, "A maximum of 100 assessments can be created at once")
+    if len(set(requested_keys)) != len(requested_keys):
+        raise HTTPException(400, "The same Set 2 group was selected more than once")
 
-    duration = payload.get("duration", 30)
-    if isinstance(duration, bool) or not isinstance(duration, int) or not 0 <= duration <= 1440:
-        raise HTTPException(400, "Duration must be a whole number from 0 to 1440 minutes")
+    discovery = set_two_assessment_candidates(published_question_items(), published_test_items())
+    by_key = {candidate["groupKey"]: candidate for candidate in discovery["candidates"]}
+    missing_keys = [key for key in requested_keys if key not in by_key]
+    if missing_keys:
+        raise HTTPException(409, "Set 2 groups changed after discovery. Refresh the list and try again.")
 
-    status = str(payload.get("assessmentStatus") or "published").strip().lower()
-    if status not in {"draft", "published"}:
-        raise HTTPException(400, "Assessment status must be draft or published")
+    selected = [by_key[key] for key in requested_keys]
+    blocked = [candidate for candidate in selected if not candidate["ready"] or candidate["existingTest"]]
+    if blocked:
+        titles = ", ".join(candidate["title"] for candidate in blocked[:5])
+        raise HTTPException(409, f"These assessments are not eligible for creation: {titles}")
 
-    questions = payload.get("questions") or []
-    if not isinstance(questions, list) or not questions:
-        raise HTTPException(400, "No question rows were provided")
-    if len(questions) > 1000:
-        raise HTTPException(400, "A maximum of 1000 question rows can be used at once")
-    if not all(isinstance(question, dict) for question in questions):
-        raise HTTPException(400, "Every question row must be an object")
-
-    resolution = resolve_set_two_assessment_questions(questions, published_question_items())
-    if not resolution["ready"]:
-        raise HTTPException(
-            409,
-            f'{resolution["errorCount"]} Set 2 question(s) could not be matched. Preview again after fixing them.',
+    results: list[dict[str, Any]] = []
+    for candidate in selected:
+        test_payload = build_standardized_assessment_payload(
+            title=candidate["title"],
+            duration=candidate["duration"],
+            status="published",
+            shuffle_questions=False,
+            question_ids=candidate["questionIds"],
         )
+        try:
+            response = bytexl_post("/api/tests", test_payload)
+            created = response.get("data") if isinstance(response, dict) and isinstance(response.get("data"), dict) else response
+            if not isinstance(created, dict) or not created.get("_id"):
+                results.append({"status": "failed", "title": candidate["title"], "message": "ByteXL did not return the created assessment"})
+                continue
+            test_id = str(created["_id"])
+            created_title = str(created.get("title") or candidate["title"])
+            slug = assessment_url_slug(created_title)
+            results.append(
+                {
+                    "status": "created",
+                    "testId": test_id,
+                    "title": created_title,
+                    "questionCount": candidate["questionCount"],
+                    "editUrl": f"{BYTEXL_API_BASE}/tests/_edit/{test_id}/{slug}",
+                    "previewUrl": f"{BYTEXL_API_BASE}/test/{test_id}/{slug}",
+                }
+            )
+        except HTTPException as exc:
+            results.append({"status": "failed", "title": candidate["title"], "message": str(exc.detail)})
 
-    question_ids = [row["questionId"] for row in resolution["rows"]]
-    test_payload = build_standardized_assessment_payload(
-        title=title,
-        duration=duration,
-        status=status,
-        shuffle_questions=bool(payload.get("shuffleQuestions", False)),
-        question_ids=question_ids,
-    )
-    response = bytexl_post("/api/tests", test_payload)
-    created = response.get("data") if isinstance(response, dict) and isinstance(response.get("data"), dict) else response
-    if not isinstance(created, dict) or not created.get("_id"):
-        raise HTTPException(502, "ByteXL did not return the created assessment")
-
-    test_id = str(created["_id"])
-    slug = assessment_url_slug(str(created.get("title") or title))
     return {
         "status": "success",
-        "testId": test_id,
-        "title": created.get("title") or title,
-        "questionCount": len(question_ids),
-        "editUrl": f"{BYTEXL_API_BASE}/tests/_edit/{test_id}/{slug}",
-        "previewUrl": f"{BYTEXL_API_BASE}/test/{test_id}/{slug}",
+        "createdCount": sum(result["status"] == "created" for result in results),
+        "failedCount": sum(result["status"] == "failed" for result in results),
+        "results": results,
     }
 
 

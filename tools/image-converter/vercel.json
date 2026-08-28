@@ -13,6 +13,10 @@
     {
       "source": "/assessment",
       "destination": "/assessment.html"
+    },
+    {
+      "source": "/assessment-builder",
+      "destination": "/assessment-builder.html"
     }
   ],
   "headers": [

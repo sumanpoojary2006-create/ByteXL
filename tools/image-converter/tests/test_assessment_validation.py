@@ -257,6 +257,105 @@ class AssessmentValidationTests(unittest.TestCase):
         self.assertEqual(raised.exception.status_code, 400)
         self.assertIn("confirm", raised.exception.detail)
 
+    def test_candidates_group_by_course_and_unit_and_sort_by_order(self):
+        questions = [
+            {"_id": "q1", "title": "AI - MCQ 3.2.2", "tags": "Set 2"},
+            {"_id": "q2", "title": "AI - MCQ 3.2.1", "tags": "Set 2"},
+            {"_id": "q3", "title": "AI - Coding Question 3.2.3", "tags": ["ai", "Set 2"]},
+            {"_id": "q4", "title": "AI - MCQ 1.1.1", "tags": "Set 1"},
+            {"_id": "q5", "title": "Not a structured title", "tags": "Set 2"},
+        ]
+
+        result = server.set_two_assessment_candidates(questions, [])
+
+        self.assertEqual(result["setTwoQuestionCount"], 4)
+        self.assertEqual(result["structuredQuestionCount"], 3)
+        self.assertEqual(result["unstructuredQuestionCount"], 1)
+        self.assertEqual(len(result["candidates"]), 1)
+        candidate = result["candidates"][0]
+        self.assertEqual(candidate["course"], "AI")
+        self.assertEqual(candidate["unit"], 3)
+        self.assertEqual(candidate["title"], "AI - Assessment 3")
+        self.assertEqual(candidate["questionIds"], ["q2", "q1", "q3"])
+        self.assertTrue(candidate["ready"])
+        self.assertIsNone(candidate["existingTest"])
+        self.assertEqual(candidate["duration"], 60)
+
+    def test_candidates_flag_duplicate_order_and_existing_test(self):
+        questions = [
+            {"_id": "q1", "title": "AI - MCQ 2.2.1", "tags": "Set 2"},
+            {"_id": "q2", "title": "AI - MCQ 2.2.1", "tags": "Set 2"},
+        ]
+        tests = [{"_id": "test-9", "title": "AI - Assessment 2"}]
+
+        result = server.set_two_assessment_candidates(questions, tests)
+
+        candidate = result["candidates"][0]
+        self.assertFalse(candidate["ready"])
+        self.assertIn("Duplicate question numbers: 1", candidate["issues"][0])
+        self.assertEqual(candidate["existingTest"]["_id"], "test-9")
+        self.assertEqual(result["existingCount"], 1)
+        self.assertEqual(result["readyCount"], 0)
+
+    @patch.object(server, "published_test_items", return_value=[])
+    @patch.object(server, "published_question_items")
+    def test_candidates_endpoint_returns_discovery(self, published_questions, _published_tests):
+        published_questions.return_value = [{"_id": "q1", "title": "AI - MCQ 1.2.1", "tags": "Set 2"}]
+
+        result = asyncio.run(server.test_assessment_candidates())
+
+        self.assertEqual(result["status"], "success")
+        self.assertEqual(result["candidateCount"], 1)
+
+    @patch.object(server, "bytexl_post")
+    @patch.object(server, "published_test_items", return_value=[])
+    @patch.object(server, "published_question_items")
+    def test_create_builds_standardized_test_for_selected_group(
+        self, published_questions, _published_tests, bytexl_post
+    ):
+        published_questions.return_value = [
+            {"_id": "q1", "title": "AI - MCQ 1.2.2", "tags": "Set 2"},
+            {"_id": "q2", "title": "AI - MCQ 1.2.1", "tags": "Set 2"},
+        ]
+        bytexl_post.return_value = {"_id": "test-1", "title": "AI - Assessment 1"}
+        group_key = server.set_two_group_key("AI", 1)
+
+        result = asyncio.run(server.test_assessment_create({"confirm": True, "groupKeys": [group_key]}))
+
+        bytexl_post.assert_called_once()
+        path, test_payload = bytexl_post.call_args.args
+        self.assertEqual(path, "/api/tests")
+        self.assertEqual(test_payload["questions"], ["q2", "q1"])
+        self.assertEqual(test_payload["testIntent"], "standardizedAssessment")
+        self.assertEqual(test_payload["timeLimit"], 30)
+        self.assertEqual(result["createdCount"], 1)
+        self.assertEqual(result["failedCount"], 0)
+        self.assertIn("/tests/_edit/test-1/ai-assessment-1", result["results"][0]["editUrl"])
+
+    @patch.object(server, "published_test_items", return_value=[{"_id": "test-9", "title": "AI - Assessment 1"}])
+    @patch.object(server, "published_question_items")
+    def test_create_rejects_group_that_already_has_a_test(self, published_questions, _published_tests):
+        published_questions.return_value = [{"_id": "q1", "title": "AI - MCQ 1.2.1", "tags": "Set 2"}]
+        group_key = server.set_two_group_key("AI", 1)
+
+        with self.assertRaises(HTTPException) as raised:
+            asyncio.run(server.test_assessment_create({"confirm": True, "groupKeys": [group_key]}))
+
+        self.assertEqual(raised.exception.status_code, 409)
+
+    def test_create_requires_confirmation(self):
+        with self.assertRaises(HTTPException) as raised:
+            asyncio.run(server.test_assessment_create({"groupKeys": ["anything"]}))
+
+        self.assertEqual(raised.exception.status_code, 400)
+        self.assertIn("confirm", raised.exception.detail)
+
+    def test_create_rejects_empty_group_selection(self):
+        with self.assertRaises(HTTPException) as raised:
+            asyncio.run(server.test_assessment_create({"confirm": True, "groupKeys": []}))
+
+        self.assertEqual(raised.exception.status_code, 400)
+
 
 if __name__ == "__main__":
     unittest.main()

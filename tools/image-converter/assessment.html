@@ -87,6 +87,7 @@
       color: #c4b5fd; text-decoration: none;
       font-size: 11px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase;
     }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
 
     .main { flex: 1; padding: 48px 32px 64px; }
     .shell { width: min(1120px, 100%); margin: 0 auto; display: grid; gap: 22px; }
@@ -247,7 +248,10 @@
       <div class="logo-mark">b</div>
       <span class="nav-title">byte<span>XL</span> Uploader</span>
     </a>
-    <a class="nav-badge" href="/">Content Upload</a>
+    <div class="nav-actions">
+      <a class="nav-badge" href="/">Content Upload</a>
+      <a class="nav-badge" href="/assessment-builder">Assessment Builder</a>
+    </div>
   </nav>
 
   <main class="main">
