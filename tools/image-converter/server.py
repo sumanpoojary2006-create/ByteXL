@@ -818,6 +818,7 @@ def assessment_title_for_set_two_group(course: str, unit: int) -> str:
 def normalize_assessment_test_title(value: Any) -> str:
     title = " ".join(str(value or "").split()).casefold()
     title = title.replace("introduction to artificial intelligence", "intro to artificial intelligence")
+    title = re.sub(r"\(\s*v\d+\s*\)", " ", title, flags=re.IGNORECASE)
     return re.sub(r"[^a-z0-9]+", " ", title).strip()
 
 

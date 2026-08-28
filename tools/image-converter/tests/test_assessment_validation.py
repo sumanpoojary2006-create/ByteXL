@@ -297,6 +297,17 @@ class AssessmentValidationTests(unittest.TestCase):
         self.assertEqual(result["existingCount"], 1)
         self.assertEqual(result["readyCount"], 0)
 
+    def test_candidates_match_existing_test_with_version_tag(self):
+        questions = [{"_id": "q1", "title": "System Design - MCQ 1.2.1", "tags": "Set 2"}]
+        tests = [{"_id": "test-1", "title": "System Design (v1) – Assessment 1"}]
+
+        result = server.set_two_assessment_candidates(questions, tests)
+
+        candidate = result["candidates"][0]
+        self.assertEqual(candidate["existingTest"]["_id"], "test-1")
+        self.assertEqual(result["existingCount"], 1)
+        self.assertEqual(result["readyCount"], 0)
+
     @patch.object(server, "published_test_items", return_value=[])
     @patch.object(server, "published_question_items")
     def test_candidates_endpoint_returns_discovery(self, published_questions, _published_tests):
