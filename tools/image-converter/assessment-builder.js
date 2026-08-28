@@ -351,6 +351,162 @@ function handleCopyClick(event) {
   });
 }
 
+const blueprintState = { previewing: false, creating: false, preview: null };
+
+function showBlueprintMessage(text, tone = "") {
+  const message = $("blueprintMessage");
+  message.hidden = !text;
+  message.className = `message ${tone}`.trim();
+  message.textContent = text;
+}
+
+function blueprintRowStatus(row) {
+  if (row.existingTest) return "exists";
+  if (row.issues?.length) return "blocked";
+  return "ready";
+}
+
+function renderBlueprintRows() {
+  const panel = $("blueprintPanel");
+  const tbody = $("blueprintRowsBody");
+  const preview = blueprintState.preview;
+  panel.hidden = !preview;
+  if (!preview) return;
+
+  tbody.innerHTML = preview.rows.map((row) => {
+    const status = blueprintRowStatus(row);
+    const notes = [];
+    if (row.issues?.length) notes.push(...row.issues);
+    if (row.existingTest) {
+      notes.push(`Already exists${row.existingTest.title ? `: ${row.existingTest.title}` : ""}.`);
+      const link = row.existingTest.editUrl
+        ? `<a href="${escapeHtml(row.existingTest.editUrl)}" target="_blank" rel="noopener">Open</a>`
+        : "";
+      if (link) notes.push(link);
+    }
+    return `<tr>
+      <td><strong>${escapeHtml(row.title)}</strong></td>
+      <td>${escapeHtml((row.topics || []).join(", "))}</td>
+      <td>${escapeHtml(row.mcqSelectedCount)} / ${escapeHtml(row.mcqRequested)} <span style="color:var(--faint)">(avail ${escapeHtml(row.mcqAvailable)})</span></td>
+      <td>${escapeHtml(row.codingSelectedCount)} / ${escapeHtml(row.codingRequested)} <span style="color:var(--faint)">(avail ${escapeHtml(row.codingAvailable)})</span></td>
+      <td>${escapeHtml(row.duration)} min</td>
+      <td><span class="status ${status}">${status}</span></td>
+      <td>${notes.join(" ") || "&mdash;"}</td>
+    </tr>`;
+  }).join("");
+
+  $("blueprintSub").textContent = `${preview.readyCount} of ${preview.rows.length} row(s) ready · ${preview.poolSize} Set 2 questions found for "${preview.subject}".`;
+  $("blueprintPill").textContent = preview.readyCount === preview.rows.length ? "All ready" : "Needs attention";
+  $("blueprintCreateBtn").disabled = blueprintState.previewing || blueprintState.creating || preview.readyCount !== preview.rows.length;
+  $("blueprintCreateBtn").textContent = blueprintState.creating
+    ? "Creating assessments…"
+    : `Create blueprint assessments${preview.rows.length ? ` (${preview.rows.length})` : ""}`;
+}
+
+function parseBlueprintRows() {
+  const raw = $("blueprintRows").value.trim();
+  if (!raw) throw new Error("Paste at least one blueprint row as a JSON array.");
+  let rows;
+  try {
+    rows = JSON.parse(raw);
+  } catch (error) {
+    throw new Error(`Blueprint JSON is invalid: ${error.message}`);
+  }
+  if (!Array.isArray(rows) || !rows.length) throw new Error("Blueprint must be a non-empty JSON array of rows.");
+  return rows;
+}
+
+async function previewBlueprint() {
+  if (blueprintState.previewing || blueprintState.creating) return;
+  const subject = $("blueprintSubject").value.trim();
+  if (!subject) return showBlueprintMessage("Enter a subject (e.g. python).", "error");
+
+  let rows;
+  try {
+    rows = parseBlueprintRows();
+  } catch (error) {
+    return showBlueprintMessage(error.message, "error");
+  }
+
+  blueprintState.previewing = true;
+  blueprintState.preview = null;
+  $("blueprintCreateBtn").disabled = true;
+  $("blueprintResultsPanel").hidden = true;
+  showBlueprintMessage("");
+  renderBlueprintRows();
+  try {
+    const result = await request("/test-assessment/blueprint/preview", {
+      method: "POST",
+      body: JSON.stringify({ subject, rows })
+    });
+    blueprintState.preview = { ...result, subject };
+    showBlueprintMessage(
+      result.readyCount === rows.length
+        ? `All ${rows.length} row(s) are ready to create.`
+        : `${rows.length - result.readyCount} of ${rows.length} row(s) need attention before creating.`,
+      result.readyCount === rows.length ? "success" : "error"
+    );
+  } catch (error) {
+    showBlueprintMessage(error.message || "Could not preview the blueprint.", "error");
+  } finally {
+    blueprintState.previewing = false;
+    renderBlueprintRows();
+  }
+}
+
+function renderBlueprintResults(result) {
+  const panel = $("blueprintResultsPanel");
+  panel.hidden = false;
+  $("blueprintResultsPill").textContent = `${result.createdCount} created · ${result.failedCount} failed`;
+  $("blueprintResultsBody").innerHTML = (result.results || []).map((row) => {
+    if (row.status === "created") {
+      return `<div class="result-row">
+        <div><span class="status created">created</span> <strong>${escapeHtml(row.title)}</strong> · ${escapeHtml(row.questionCount)} questions</div>
+        <div class="links">
+          <a href="${escapeHtml(row.editUrl)}" target="_blank" rel="noopener">Open Test Builder</a>
+          <button type="button" class="copy-btn" data-url="${escapeHtml(row.editUrl)}">Copy link</button>
+          <a href="${escapeHtml(row.previewUrl)}" target="_blank" rel="noopener">Preview</a>
+        </div>
+      </div>`;
+    }
+    return `<div class="result-row">
+      <div><span class="status failed">failed</span> <strong>${escapeHtml(row.title)}</strong></div>
+      <div>${escapeHtml(row.message || "Creation failed.")}</div>
+    </div>`;
+  }).join("");
+}
+
+async function createBlueprint() {
+  const preview = blueprintState.preview;
+  if (!preview || blueprintState.creating || preview.readyCount !== preview.rows.length) return;
+  blueprintState.creating = true;
+  renderBlueprintRows();
+  try {
+    const rows = parseBlueprintRows();
+    const result = await request("/test-assessment/blueprint/create", {
+      method: "POST",
+      body: JSON.stringify({ confirm: true, subject: preview.subject, rows })
+    });
+    showBlueprintMessage(`${result.createdCount} assessment(s) created, ${result.failedCount} failed.`, result.failedCount ? "error" : "success");
+    renderBlueprintResults(result);
+    await previewBlueprint();
+  } catch (error) {
+    showBlueprintMessage(error.message || "Blueprint creation failed.", "error");
+  } finally {
+    blueprintState.creating = false;
+    renderBlueprintRows();
+  }
+}
+
+function clearBlueprint() {
+  $("blueprintSubject").value = "";
+  $("blueprintRows").value = "";
+  blueprintState.preview = null;
+  $("blueprintResultsPanel").hidden = true;
+  showBlueprintMessage("");
+  renderBlueprintRows();
+}
+
 function init() {
   $("refreshBtn").addEventListener("click", loadCandidates);
   $("selectAllBtn").addEventListener("click", selectAllReady);
@@ -360,6 +516,9 @@ function init() {
     state.search = event.target.value;
     render();
   });
+  $("blueprintPreviewBtn").addEventListener("click", previewBlueprint);
+  $("blueprintClearBtn").addEventListener("click", clearBlueprint);
+  $("blueprintCreateBtn").addEventListener("click", createBlueprint);
   document.addEventListener("click", handleCopyClick);
   render();
   loadCandidates();

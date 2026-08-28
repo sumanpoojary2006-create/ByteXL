@@ -466,6 +466,133 @@ class AssessmentValidationTests(unittest.TestCase):
 
         self.assertEqual(raised.exception.status_code, 400)
 
+    def test_blueprint_round_robin_spreads_across_merged_topics(self):
+        pool = [
+            {"_id": f"oop-{i}", "type": "multipleChoice", "subjects": ["python"], "tags": ["python - set 2"], "topics": ["oop"]}
+            for i in range(5)
+        ] + [
+            {"_id": f"mod-{i}", "type": "multipleChoice", "subjects": ["python"], "tags": ["python - set 2"], "topics": ["modules"]}
+            for i in range(2)
+        ]
+
+        row = server.resolve_blueprint_row(
+            pool,
+            {"title": "Objects and Modules", "topics": ["oop", "modules"], "mcqCount": 4, "codingCount": 0, "duration": 60},
+            [],
+        )
+
+        self.assertTrue(row["ready"])
+        self.assertEqual(row["mcqSelectedCount"], 4)
+        selected_ids = row["questionIds"]
+        self.assertIn("oop-0", selected_ids)
+        self.assertIn("mod-0", selected_ids)
+        self.assertIn("mod-1", selected_ids)
+
+    def test_blueprint_row_flags_shortfall_when_pool_too_small(self):
+        pool = [
+            {"_id": "intro-1", "type": "multipleChoice", "subjects": ["python"], "tags": ["python - set 2"], "topics": ["introduction-to-programming"]},
+        ]
+
+        row = server.resolve_blueprint_row(
+            pool,
+            {"title": "Programming Foundations", "topics": ["introduction-to-programming"], "mcqCount": 20, "codingCount": 2, "duration": 30},
+            [],
+        )
+
+        self.assertFalse(row["ready"])
+        self.assertEqual(row["mcqAvailable"], 1)
+        self.assertEqual(row["codingAvailable"], 0)
+        self.assertEqual(len(row["issues"]), 2)
+
+    def test_blueprint_row_matches_existing_test_by_question_ids(self):
+        pool = [
+            {"_id": "q1", "type": "multipleChoice", "subjects": ["python"], "tags": ["python - set 2"], "topics": ["strings"]},
+        ]
+        tests = [{"_id": "test-1", "title": "Strings Basics", "testIntent": "standardizedAssessment", "questionsCount": 1}]
+
+        with patch.object(server, "fetch_test_question_ids", return_value=frozenset({"q1"})):
+            row = server.resolve_blueprint_row(
+                pool,
+                {"title": "Strings and Text Processing", "topics": ["strings"], "mcqCount": 1, "codingCount": 0, "duration": 60},
+                tests,
+            )
+
+        self.assertFalse(row["ready"])
+        self.assertEqual(row["existingTest"]["_id"], "test-1")
+
+    @patch.object(server, "published_test_items", return_value=[])
+    @patch.object(server, "published_question_items")
+    def test_blueprint_preview_endpoint_resolves_rows(self, published_questions, _published_tests):
+        published_questions.return_value = [
+            {"_id": "q1", "type": "multipleChoice", "subjects": ["python"], "tags": ["python - set 2"], "topics": ["strings"]},
+            {"_id": "q2", "type": "coding", "subjects": ["python"], "tags": ["python - set 2"], "topics": ["strings"]},
+        ]
+
+        result = asyncio.run(
+            server.test_assessment_blueprint_preview(
+                {"subject": "python", "rows": [{"title": "Strings", "topics": ["strings"], "mcqCount": 1, "codingCount": 1, "duration": 60}]}
+            )
+        )
+
+        self.assertEqual(result["status"], "success")
+        self.assertEqual(result["poolSize"], 2)
+        self.assertEqual(result["readyCount"], 1)
+        self.assertEqual(sorted(result["rows"][0]["questionIds"]), ["q1", "q2"])
+
+    @patch.object(server, "bytexl_post")
+    @patch.object(server, "published_test_items", return_value=[])
+    @patch.object(server, "published_question_items")
+    def test_blueprint_create_creates_test_from_selected_questions(self, published_questions, _published_tests, bytexl_post):
+        published_questions.return_value = [
+            {"_id": "q1", "type": "multipleChoice", "subjects": ["python"], "tags": ["python - set 2"], "topics": ["strings"]},
+            {"_id": "q2", "type": "coding", "subjects": ["python"], "tags": ["python - set 2"], "topics": ["strings"]},
+        ]
+        bytexl_post.return_value = {"_id": "test-1", "title": "Strings"}
+
+        result = asyncio.run(
+            server.test_assessment_blueprint_create(
+                {
+                    "confirm": True,
+                    "subject": "python",
+                    "rows": [{"title": "Strings", "topics": ["strings"], "mcqCount": 1, "codingCount": 1, "duration": 60}],
+                }
+            )
+        )
+
+        bytexl_post.assert_called_once()
+        path, test_payload = bytexl_post.call_args.args
+        self.assertEqual(path, "/api/tests")
+        self.assertEqual(sorted(test_payload["questions"]), ["q1", "q2"])
+        self.assertEqual(test_payload["timeLimit"], 60)
+        self.assertEqual(result["createdCount"], 1)
+
+    @patch.object(server, "published_test_items", return_value=[])
+    @patch.object(server, "published_question_items")
+    def test_blueprint_create_rejects_row_with_shortfall(self, published_questions, _published_tests):
+        published_questions.return_value = [
+            {"_id": "q1", "type": "multipleChoice", "subjects": ["python"], "tags": ["python - set 2"], "topics": ["strings"]},
+        ]
+
+        with self.assertRaises(HTTPException) as raised:
+            asyncio.run(
+                server.test_assessment_blueprint_create(
+                    {
+                        "confirm": True,
+                        "subject": "python",
+                        "rows": [{"title": "Strings", "topics": ["strings"], "mcqCount": 5, "codingCount": 0, "duration": 60}],
+                    }
+                )
+            )
+
+        self.assertEqual(raised.exception.status_code, 409)
+
+    def test_blueprint_create_requires_confirmation(self):
+        with self.assertRaises(HTTPException) as raised:
+            asyncio.run(server.test_assessment_blueprint_create({"subject": "python", "rows": [{"title": "x"}]}))
+
+        self.assertEqual(raised.exception.status_code, 400)
+        self.assertIn("confirm", raised.exception.detail)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -952,6 +952,117 @@ def assessment_url_slug(title: str) -> str:
     return slug or "assessment"
 
 
+def subject_set_two_pool(subject: str, questions: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    subject_key = subject.strip().casefold()
+    return [
+        question
+        for question in questions
+        if is_set_two_question(question)
+        and subject_key in [str(item).casefold() for item in (question.get("subjects") or [])]
+    ]
+
+
+def blueprint_order_key(question: dict[str, Any]) -> tuple[int, str]:
+    title = str(question.get("title") or "")
+    match = re.search(r"(\d+)\.2\.(\d+)", title)
+    return (int(match.group(2)) if match else 10**6, title)
+
+
+def blueprint_pool_by_topic(
+    pool: list[dict[str, Any]], topics: list[str], question_type: str
+) -> dict[str, list[dict[str, Any]]]:
+    pools: dict[str, list[dict[str, Any]]] = {}
+    for topic in topics:
+        matched = [
+            question
+            for question in pool
+            if question.get("type") == question_type and topic in (question.get("topics") or [])
+        ]
+        matched.sort(key=blueprint_order_key)
+        pools[topic] = matched
+    return pools
+
+
+def blueprint_round_robin(
+    pools: dict[str, list[dict[str, Any]]], topics: list[str], count: int
+) -> list[dict[str, Any]]:
+    """Spread the pick evenly across topics instead of draining the first one.
+
+    A blueprint row can merge several curriculum topics into one assessment
+    (e.g. OOP + modules + standard library). Taking the requested count
+    straight off the first topic's pool would make the test lopsided, so
+    this takes one question per topic per pass until the count is met or
+    every pool is exhausted.
+    """
+    taken: list[dict[str, Any]] = []
+    cursors = {topic: 0 for topic in topics}
+    while len(taken) < count:
+        progressed = False
+        for topic in topics:
+            if len(taken) >= count:
+                break
+            pool = pools[topic]
+            idx = cursors[topic]
+            if idx < len(pool):
+                taken.append(pool[idx])
+                cursors[topic] += 1
+                progressed = True
+        if not progressed:
+            break
+    return taken
+
+
+def resolve_blueprint_row(
+    pool: list[dict[str, Any]], row: dict[str, Any], tests: list[dict[str, Any]]
+) -> dict[str, Any]:
+    title = " ".join(str(row.get("title") or "").split())
+    topics = [str(topic).strip() for topic in (row.get("topics") or []) if str(topic).strip()]
+    mcq_count = int(row.get("mcqCount") or 0)
+    coding_count = int(row.get("codingCount") or 0)
+    duration = int(row.get("duration") or 30)
+
+    mcq_pools = blueprint_pool_by_topic(pool, topics, "multipleChoice")
+    coding_pools = blueprint_pool_by_topic(pool, topics, "coding")
+    mcq_selected = blueprint_round_robin(mcq_pools, topics, mcq_count)
+    coding_selected = blueprint_round_robin(coding_pools, topics, coding_count)
+
+    mcq_available = sum(len(items) for items in mcq_pools.values())
+    coding_available = sum(len(items) for items in coding_pools.values())
+
+    question_ids = [str(question["_id"]) for question in mcq_selected + coding_selected]
+    existing = find_existing_test_by_question_ids(question_ids, tests, {}) if question_ids else None
+
+    issues: list[str] = []
+    if len(mcq_selected) < mcq_count:
+        issues.append(f"Needs {mcq_count} MCQs, only {mcq_available} available")
+    if len(coding_selected) < coding_count:
+        issues.append(f"Needs {coding_count} coding problems, only {coding_available} available")
+
+    return {
+        "title": title,
+        "topics": topics,
+        "duration": duration,
+        "mcqRequested": mcq_count,
+        "codingRequested": coding_count,
+        "mcqAvailable": mcq_available,
+        "codingAvailable": coding_available,
+        "mcqSelectedCount": len(mcq_selected),
+        "codingSelectedCount": len(coding_selected),
+        "questionIds": question_ids,
+        "ready": not issues and not existing,
+        "issues": issues,
+        "existingTest": (
+            {
+                "_id": existing.get("_id"),
+                "title": existing.get("title"),
+                "editUrl": f'{BYTEXL_API_BASE}/tests/_edit/{existing.get("_id")}/{assessment_url_slug(existing.get("title") or title)}',
+            }
+            if existing
+            else None
+        ),
+    }
+
+
 def build_standardized_assessment_payload(
     title: str,
     duration: int,
@@ -1941,6 +2052,88 @@ async def test_assessment_create(payload: dict[str, Any] = Body(...)):
             )
         except HTTPException as exc:
             results.append({"status": "failed", "title": candidate["title"], "message": str(exc.detail)})
+
+    return {
+        "status": "success",
+        "createdCount": sum(result["status"] == "created" for result in results),
+        "failedCount": sum(result["status"] == "failed" for result in results),
+        "results": results,
+    }
+
+
+def parse_blueprint_rows(payload: dict[str, Any]) -> tuple[str, list[dict[str, Any]]]:
+    subject = str(payload.get("subject") or "").strip()
+    if not subject:
+        raise HTTPException(400, "subject is required")
+    rows = payload.get("rows")
+    if not isinstance(rows, list) or not rows:
+        raise HTTPException(400, "At least one blueprint row is required")
+    if len(rows) > 50:
+        raise HTTPException(400, "A maximum of 50 blueprint rows can be used at once")
+    if not all(isinstance(row, dict) for row in rows):
+        raise HTTPException(400, "Every blueprint row must be an object")
+    return subject, rows
+
+
+@app.post("/test-assessment/blueprint/preview")
+async def test_assessment_blueprint_preview(payload: dict[str, Any] = Body(...)):
+    subject, rows = parse_blueprint_rows(payload)
+    pool = subject_set_two_pool(subject, published_question_items())
+    tests = published_test_items()
+    resolved = [resolve_blueprint_row(pool, row, tests) for row in rows]
+    return {
+        "status": "success",
+        "subject": subject,
+        "poolSize": len(pool),
+        "rows": resolved,
+        "readyCount": sum(row["ready"] for row in resolved),
+    }
+
+
+@app.post("/test-assessment/blueprint/create")
+async def test_assessment_blueprint_create(payload: dict[str, Any] = Body(...)):
+    if payload.get("confirm") is not True:
+        raise HTTPException(400, "Preview the blueprint, then confirm assessment creation")
+    subject, rows = parse_blueprint_rows(payload)
+
+    pool = subject_set_two_pool(subject, published_question_items())
+    tests = published_test_items()
+    resolved = [resolve_blueprint_row(pool, row, tests) for row in rows]
+    blocked = [row for row in resolved if not row["ready"]]
+    if blocked:
+        titles = ", ".join(row["title"] for row in blocked[:5])
+        raise HTTPException(409, f"These blueprint rows are not eligible for creation: {titles}")
+
+    results: list[dict[str, Any]] = []
+    for row in resolved:
+        test_payload = build_standardized_assessment_payload(
+            title=row["title"],
+            duration=row["duration"],
+            status="published",
+            shuffle_questions=False,
+            question_ids=row["questionIds"],
+        )
+        try:
+            response = bytexl_post("/api/tests", test_payload)
+            created = response.get("data") if isinstance(response, dict) and isinstance(response.get("data"), dict) else response
+            if not isinstance(created, dict) or not created.get("_id"):
+                results.append({"status": "failed", "title": row["title"], "message": "ByteXL did not return the created assessment"})
+                continue
+            test_id = str(created["_id"])
+            created_title = str(created.get("title") or row["title"])
+            slug = assessment_url_slug(created_title)
+            results.append(
+                {
+                    "status": "created",
+                    "testId": test_id,
+                    "title": created_title,
+                    "questionCount": len(row["questionIds"]),
+                    "editUrl": f"{BYTEXL_API_BASE}/tests/_edit/{test_id}/{slug}",
+                    "previewUrl": f"{BYTEXL_API_BASE}/test/{test_id}/{slug}",
+                }
+            )
+        except HTTPException as exc:
+            results.append({"status": "failed", "title": row["title"], "message": str(exc.detail)})
 
     return {
         "status": "success",

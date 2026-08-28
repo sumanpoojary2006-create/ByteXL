@@ -53,6 +53,9 @@
     .field label { color: var(--ink2); font-size: 11px; font-weight: 900; letter-spacing: .55px; text-transform: uppercase; }
     .field input { width: 100%; height: 44px; padding: 0 14px; color: var(--ink); background: rgba(8,11,22,.66); border: 1px solid var(--line-hi); border-radius: 9px; outline: none; }
     .field input:focus { border-color: var(--violet); box-shadow: 0 0 0 3px rgba(139,92,246,.12); }
+    .field textarea { width: 100%; padding: 12px 14px; color: var(--ink); background: rgba(8,11,22,.66); border: 1px solid var(--line-hi); border-radius: 9px; outline: none; font-family: "SFMono-Regular",Consolas,monospace; font-size: 12.5px; line-height: 1.5; resize: vertical; }
+    .field textarea:focus { border-color: var(--violet); box-shadow: 0 0 0 3px rgba(139,92,246,.12); }
+    .notice code { padding: 1px 6px; border-radius: 5px; background: rgba(255,255,255,.08); font-family: "SFMono-Regular",Consolas,monospace; font-size: 12px; }
     .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
     .btn { min-height: 44px; padding: 0 18px; border: 1px solid var(--line-hi); border-radius: 9px; color: var(--ink2); background: rgba(255,255,255,.05); font-weight: 800; cursor: pointer; }
     .btn.primary { color: white; border-color: transparent; background: var(--grad); }
@@ -167,6 +170,41 @@
           <div id="resultsPanel" class="panel" hidden>
             <div class="panel-head"><div class="card-title">Creation results</div><span id="resultsPill" class="pill">Done</span></div>
             <div id="resultsBody" class="results" style="padding:16px 18px;"></div>
+          </div>
+        </div>
+      </section>
+      <section class="card">
+        <div class="card-head">
+          <div><div class="card-title">Custom topic blueprint</div><div class="card-sub">For courses where assessment topics don&rsquo;t map 1:1 to curriculum units &mdash; set exact MCQ / coding counts per topic instead of auto-discovering by unit.</div></div>
+        </div>
+        <div class="body">
+          <div class="notice">Each row is <code>{"title","topics","mcqCount","codingCount","duration"}</code>. <code>topics</code> must match the <code>topics</code> tag on Set&nbsp;2 questions in ByteXL (e.g. <code>strings</code>, <code>lists-and-tuples</code>) &mdash; list several to merge them into one test. Questions are spread evenly across merged topics and picked in a fixed order, so re-running with the same inputs is deterministic.</div>
+          <div class="field">
+            <label for="blueprintSubject">Subject</label>
+            <input id="blueprintSubject" type="text" placeholder="e.g. python">
+          </div>
+          <div class="field">
+            <label for="blueprintRows">Blueprint rows (JSON array)</label>
+            <textarea id="blueprintRows" rows="8" placeholder='[{"title": "Python Programming - Assessment 1", "topics": ["introduction-to-programming"], "mcqCount": 20, "codingCount": 0, "duration": 30}]'></textarea>
+          </div>
+          <div class="actions">
+            <button id="blueprintPreviewBtn" class="btn primary" type="button">Preview blueprint</button>
+            <button id="blueprintClearBtn" class="btn" type="button">Clear</button>
+          </div>
+          <div id="blueprintMessage" class="message" hidden></div>
+          <div id="blueprintPanel" class="panel" hidden>
+            <div class="panel-head"><div><div class="card-title">Blueprint preview</div><div id="blueprintSub" class="card-sub">&nbsp;</div></div><span id="blueprintPill" class="pill">Waiting</span></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Assessment</th><th>Topics</th><th>MCQ</th><th>Coding</th><th>Duration</th><th>Status</th><th>Notes</th></tr></thead>
+                <tbody id="blueprintRowsBody"></tbody>
+              </table>
+            </div>
+          </div>
+          <button id="blueprintCreateBtn" class="btn success" type="button" disabled>Create blueprint assessments</button>
+          <div id="blueprintResultsPanel" class="panel" hidden>
+            <div class="panel-head"><div class="card-title">Creation results</div><span id="blueprintResultsPill" class="pill">Done</span></div>
+            <div id="blueprintResultsBody" class="results" style="padding:16px 18px;"></div>
           </div>
         </div>
       </section>
