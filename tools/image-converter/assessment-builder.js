@@ -21,15 +21,33 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
+const WAKE_UP_RETRY_DELAYS_MS = [4000, 10000, 20000];
+
+function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function request(path, options = {}) {
-  const response = await fetch(`${API_BASE}${path}`, {
-    ...options,
-    headers: { "Content-Type": "application/json", ...(options.headers || {}) }
-  });
-  let body;
-  try { body = await response.json(); } catch { body = {}; }
-  if (!response.ok) throw new Error(body.detail || body.message || `Request failed (${response.status})`);
-  return body;
+  for (let attempt = 0; ; attempt++) {
+    let response;
+    try {
+      response = await fetch(`${API_BASE}${path}`, {
+        ...options,
+        headers: { "Content-Type": "application/json", ...(options.headers || {}) }
+      });
+    } catch (networkError) {
+      if (attempt >= WAKE_UP_RETRY_DELAYS_MS.length) {
+        throw new Error("Could not reach the assessment API after several attempts. The free Render instance may still be waking up — wait a moment and click Refresh.");
+      }
+      showMessage(`The API service looks idle and is waking up — retrying in a few seconds (attempt ${attempt + 2} of ${WAKE_UP_RETRY_DELAYS_MS.length + 1})…`);
+      await wait(WAKE_UP_RETRY_DELAYS_MS[attempt]);
+      continue;
+    }
+    let body;
+    try { body = await response.json(); } catch { body = {}; }
+    if (!response.ok) throw new Error(body.detail || body.message || `Request failed (${response.status})`);
+    return body;
+  }
 }
 
 function showMessage(text, tone = "") {
