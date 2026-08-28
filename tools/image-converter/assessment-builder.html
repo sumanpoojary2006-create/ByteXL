@@ -83,6 +83,10 @@
     .status.failed { color: var(--red); background: rgba(248,113,113,.12); }
     .title-cell strong { display: block; color: var(--ink); }
     .title-cell a { color: #67e8f9; font-size: 11.5px; }
+    .link-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .copy-btn { display: inline-flex; align-items: center; gap: 4px; min-height: 24px; padding: 3px 9px; border: 1px solid var(--line-hi); border-radius: 7px; background: rgba(255,255,255,.05); color: var(--ink2); font-size: 11px; font-weight: 800; cursor: pointer; }
+    .copy-btn:hover { border-color: var(--violet); color: #c4b5fd; }
+    .copy-btn.copied { border-color: rgba(52,211,153,.4); color: var(--green); background: rgba(16,185,129,.12); }
     .edit-title { width: 100%; min-width: 220px; height: 34px; padding: 0 10px; color: var(--ink); background: rgba(8,11,22,.66); border: 1px solid var(--line-hi); border-radius: 7px; outline: none; font-size: 12.5px; font-weight: 700; }
     .edit-title:focus { border-color: var(--violet); box-shadow: 0 0 0 3px rgba(139,92,246,.12); }
     .edit-duration { width: 68px; height: 34px; padding: 0 8px; color: var(--ink); background: rgba(8,11,22,.66); border: 1px solid var(--line-hi); border-radius: 7px; outline: none; font-size: 12.5px; }

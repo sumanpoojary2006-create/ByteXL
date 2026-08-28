@@ -134,8 +134,12 @@ function renderExistingRows(rows) {
     return;
   }
   tbody.innerHTML = rows.map((candidate) => {
-    const link = candidate.existingTest?.editUrl
-      ? `<a href="${escapeHtml(candidate.existingTest.editUrl)}" target="_blank" rel="noopener">${escapeHtml(candidate.existingTest.title || "Open existing test")}</a>`
+    const editUrl = candidate.existingTest?.editUrl;
+    const link = editUrl
+      ? `<div class="link-row">
+          <a href="${escapeHtml(editUrl)}" target="_blank" rel="noopener">${escapeHtml(candidate.existingTest.title || "Open existing test")}</a>
+          <button type="button" class="copy-btn" data-url="${escapeHtml(editUrl)}">Copy link</button>
+        </div>`
       : escapeHtml(candidate.existingTest?.title || "—");
     return `<tr>
       <td>${escapeHtml(candidate.course)}</td>
@@ -264,6 +268,7 @@ function renderResults(result) {
         <div><span class="status created">created</span> <strong>${escapeHtml(row.title)}</strong> · ${escapeHtml(row.questionCount)} questions</div>
         <div class="links">
           <a href="${escapeHtml(row.editUrl)}" target="_blank" rel="noopener">Open Test Builder</a>
+          <button type="button" class="copy-btn" data-url="${escapeHtml(row.editUrl)}">Copy link</button>
           <a href="${escapeHtml(row.previewUrl)}" target="_blank" rel="noopener">Preview</a>
         </div>
       </div>`;
@@ -308,6 +313,44 @@ async function createSelected() {
   }
 }
 
+async function copyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    try {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      const ok = document.execCommand("copy");
+      document.body.removeChild(textarea);
+      return ok;
+    } catch {
+      return false;
+    }
+  }
+}
+
+function handleCopyClick(event) {
+  const button = event.target.closest(".copy-btn");
+  if (!button) return;
+  const url = button.dataset.url;
+  if (!url) return;
+  copyText(url).then((ok) => {
+    const original = button.textContent;
+    button.textContent = ok ? "Copied!" : "Copy failed";
+    button.classList.toggle("copied", ok);
+    setTimeout(() => {
+      button.textContent = original;
+      button.classList.remove("copied");
+    }, 1500);
+  });
+}
+
 function init() {
   $("refreshBtn").addEventListener("click", loadCandidates);
   $("selectAllBtn").addEventListener("click", selectAllReady);
@@ -317,6 +360,7 @@ function init() {
     state.search = event.target.value;
     render();
   });
+  document.addEventListener("click", handleCopyClick);
   render();
   loadCandidates();
 }
