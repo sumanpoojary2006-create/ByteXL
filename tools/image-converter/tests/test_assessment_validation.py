@@ -332,6 +332,61 @@ class AssessmentValidationTests(unittest.TestCase):
         self.assertEqual(result["failedCount"], 0)
         self.assertIn("/tests/_edit/test-1/ai-assessment-1", result["results"][0]["editUrl"])
 
+    @patch.object(server, "bytexl_post")
+    @patch.object(server, "published_test_items", return_value=[])
+    @patch.object(server, "published_question_items")
+    def test_create_applies_title_and_duration_overrides(
+        self, published_questions, _published_tests, bytexl_post
+    ):
+        published_questions.return_value = [{"_id": "q1", "title": "AI - MCQ 1.2.1", "tags": "Set 2"}]
+        bytexl_post.return_value = {"_id": "test-1", "title": "Custom Title"}
+        group_key = server.set_two_group_key("AI", 1)
+
+        result = asyncio.run(
+            server.test_assessment_create(
+                {
+                    "confirm": True,
+                    "groupKeys": [group_key],
+                    "overrides": {group_key: {"title": "  Custom Title  ", "duration": 45}},
+                }
+            )
+        )
+
+        path, test_payload = bytexl_post.call_args.args
+        self.assertEqual(test_payload["title"], "Custom Title")
+        self.assertEqual(test_payload["timeLimit"], 45)
+        self.assertEqual(result["results"][0]["title"], "Custom Title")
+
+    @patch.object(server, "published_test_items", return_value=[])
+    @patch.object(server, "published_question_items")
+    def test_create_rejects_blank_title_override(self, published_questions, _published_tests):
+        published_questions.return_value = [{"_id": "q1", "title": "AI - MCQ 1.2.1", "tags": "Set 2"}]
+        group_key = server.set_two_group_key("AI", 1)
+
+        with self.assertRaises(HTTPException) as raised:
+            asyncio.run(
+                server.test_assessment_create(
+                    {"confirm": True, "groupKeys": [group_key], "overrides": {group_key: {"title": "   "}}}
+                )
+            )
+
+        self.assertEqual(raised.exception.status_code, 400)
+
+    @patch.object(server, "published_test_items", return_value=[])
+    @patch.object(server, "published_question_items")
+    def test_create_rejects_out_of_range_duration_override(self, published_questions, _published_tests):
+        published_questions.return_value = [{"_id": "q1", "title": "AI - MCQ 1.2.1", "tags": "Set 2"}]
+        group_key = server.set_two_group_key("AI", 1)
+
+        with self.assertRaises(HTTPException) as raised:
+            asyncio.run(
+                server.test_assessment_create(
+                    {"confirm": True, "groupKeys": [group_key], "overrides": {group_key: {"duration": 5000}}}
+                )
+            )
+
+        self.assertEqual(raised.exception.status_code, 400)
+
     @patch.object(server, "published_test_items", return_value=[{"_id": "test-9", "title": "AI - Assessment 1"}])
     @patch.object(server, "published_question_items")
     def test_create_rejects_group_that_already_has_a_test(self, published_questions, _published_tests):

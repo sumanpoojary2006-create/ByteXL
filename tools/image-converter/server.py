@@ -1825,6 +1825,10 @@ async def test_assessment_create(payload: dict[str, Any] = Body(...)):
     if len(set(requested_keys)) != len(requested_keys):
         raise HTTPException(400, "The same Set 2 group was selected more than once")
 
+    overrides_payload = payload.get("overrides") or {}
+    if not isinstance(overrides_payload, dict):
+        raise HTTPException(400, "overrides must be an object keyed by group key")
+
     discovery = set_two_assessment_candidates(published_question_items(), published_test_items())
     by_key = {candidate["groupKey"]: candidate for candidate in discovery["candidates"]}
     missing_keys = [key for key in requested_keys if key not in by_key]
@@ -1837,8 +1841,29 @@ async def test_assessment_create(payload: dict[str, Any] = Body(...)):
         titles = ", ".join(candidate["title"] for candidate in blocked[:5])
         raise HTTPException(409, f"These assessments are not eligible for creation: {titles}")
 
-    results: list[dict[str, Any]] = []
+    prepared: list[dict[str, Any]] = []
     for candidate in selected:
+        override = overrides_payload.get(candidate["groupKey"])
+        override = override if isinstance(override, dict) else {}
+
+        title = candidate["title"]
+        if "title" in override:
+            title = " ".join(str(override.get("title") or "").split())
+            if not title:
+                raise HTTPException(400, f'Title is required for "{candidate["title"]}"')
+            if len(title) > 180:
+                raise HTTPException(400, f'Title must be 180 characters or fewer for "{candidate["title"]}"')
+
+        duration = candidate["duration"]
+        if "duration" in override:
+            duration = override.get("duration")
+            if isinstance(duration, bool) or not isinstance(duration, int) or not 0 <= duration <= 1440:
+                raise HTTPException(400, f'Duration must be a whole number from 0 to 1440 minutes for "{candidate["title"]}"')
+
+        prepared.append({**candidate, "title": title, "duration": duration})
+
+    results: list[dict[str, Any]] = []
+    for candidate in prepared:
         test_payload = build_standardized_assessment_payload(
             title=candidate["title"],
             duration=candidate["duration"],

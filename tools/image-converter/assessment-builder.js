@@ -9,7 +9,7 @@ function apiBase() {
 }
 
 const API_BASE = apiBase();
-const state = { loading: false, creating: false, discovery: null, selected: new Set() };
+const state = { loading: false, creating: false, discovery: null, selected: new Set(), overrides: new Map() };
 const $ = (id) => document.getElementById(id);
 
 function escapeHtml(value) {
@@ -54,6 +54,10 @@ function renderStats() {
   $("existingCount").textContent = discovery?.existingCount ?? 0;
 }
 
+function overrideFor(candidate) {
+  return state.overrides.get(candidate.groupKey) || {};
+}
+
 function renderRows() {
   const tbody = $("candidateRows");
   const candidates = state.discovery?.candidates || [];
@@ -65,6 +69,9 @@ function renderRows() {
     const status = candidateStatus(candidate);
     const selectable = status === "ready";
     const checked = state.selected.has(candidate.groupKey);
+    const override = overrideFor(candidate);
+    const titleValue = override.title ?? candidate.title;
+    const durationValue = override.duration ?? candidate.duration;
     const notes = [];
     if (candidate.issues?.length) notes.push(...candidate.issues);
     if (candidate.existingTest) {
@@ -73,13 +80,19 @@ function renderRows() {
     const existingLink = candidate.existingTest?.editUrl
       ? `<a href="${escapeHtml(candidate.existingTest.editUrl)}" target="_blank" rel="noopener">Open existing test</a>`
       : "";
+    const titleCell = selectable
+      ? `<input class="edit-title" type="text" maxlength="180" data-key="${escapeHtml(candidate.groupKey)}" data-field="title" value="${escapeHtml(titleValue)}">`
+      : `<strong>${escapeHtml(titleValue)}</strong>${existingLink}`;
+    const durationCell = selectable
+      ? `<span class="duration-cell"><input class="edit-duration" type="number" min="0" max="1440" step="1" data-key="${escapeHtml(candidate.groupKey)}" data-field="duration" value="${escapeHtml(durationValue)}"> min</span>`
+      : `${escapeHtml(durationValue)} min`;
     return `<tr>
       <td class="check"><input type="checkbox" data-key="${escapeHtml(candidate.groupKey)}" ${checked ? "checked" : ""} ${selectable ? "" : "disabled"}></td>
       <td>${escapeHtml(candidate.course)}</td>
       <td>${escapeHtml(candidate.unit)}</td>
-      <td class="title-cell"><strong>${escapeHtml(candidate.title)}</strong>${existingLink}</td>
+      <td class="title-cell">${titleCell}</td>
       <td>${escapeHtml(candidate.questionCount)} (${escapeHtml((candidate.questionTypes || []).join(", "))})</td>
-      <td>${escapeHtml(candidate.duration)} min</td>
+      <td>${durationCell}</td>
       <td><span class="status ${status}">${status}</span></td>
       <td>${escapeHtml(notes.join(" ")) || "&mdash;"}</td>
     </tr>`;
@@ -93,14 +106,42 @@ function renderRows() {
       renderControls();
     });
   });
+
+  tbody.querySelectorAll("input.edit-title, input.edit-duration").forEach((input) => {
+    input.addEventListener("input", () => {
+      const key = input.dataset.key;
+      const field = input.dataset.field;
+      const current = state.overrides.get(key) || {};
+      current[field] = field === "duration" ? input.value : input.value;
+      state.overrides.set(key, current);
+      renderControls();
+    });
+  });
+}
+
+function selectionIsValid() {
+  if (!state.selected.size) return false;
+  for (const candidate of state.discovery?.candidates || []) {
+    if (!state.selected.has(candidate.groupKey)) continue;
+    const override = overrideFor(candidate);
+    const title = String(override.title ?? candidate.title).trim();
+    if (!title || title.length > 180) return false;
+    const duration = Number(override.duration ?? candidate.duration);
+    if (!Number.isInteger(duration) || duration < 0 || duration > 1440) return false;
+  }
+  return true;
 }
 
 function renderControls() {
   const busy = state.loading || state.creating;
+  const valid = selectionIsValid();
   $("refreshBtn").disabled = busy;
   $("selectAllBtn").disabled = busy || !state.discovery?.candidates?.length;
   $("clearBtn").disabled = busy || !state.selected.size;
-  $("createBtn").disabled = busy || !state.selected.size;
+  $("createBtn").disabled = busy || !valid;
+  $("createBtn").title = !busy && state.selected.size && !valid
+    ? "Fix the highlighted title/duration values before creating."
+    : "";
   $("createBtn").textContent = state.creating
     ? "Creating assessments…"
     : `Create selected assessments${state.selected.size ? ` (${state.selected.size})` : ""}`;
@@ -125,6 +166,7 @@ async function loadCandidates() {
   if (state.loading) return;
   state.loading = true;
   state.selected.clear();
+  state.overrides.clear();
   render();
   try {
     const result = await request("/test-assessment/candidates");
@@ -172,14 +214,27 @@ function renderResults(result) {
   }).join("");
 }
 
+function buildOverridesPayload() {
+  const overrides = {};
+  for (const key of state.selected) {
+    const edited = state.overrides.get(key);
+    if (!edited) continue;
+    const entry = {};
+    if ("title" in edited) entry.title = String(edited.title).trim();
+    if ("duration" in edited) entry.duration = Number(edited.duration);
+    if (Object.keys(entry).length) overrides[key] = entry;
+  }
+  return overrides;
+}
+
 async function createSelected() {
-  if (!state.selected.size || state.creating) return;
+  if (!state.selected.size || state.creating || !selectionIsValid()) return;
   state.creating = true;
   render();
   try {
     const result = await request("/test-assessment/create", {
       method: "POST",
-      body: JSON.stringify({ confirm: true, groupKeys: Array.from(state.selected) })
+      body: JSON.stringify({ confirm: true, groupKeys: Array.from(state.selected), overrides: buildOverridesPayload() })
     });
     showMessage(`${result.createdCount} assessment(s) created, ${result.failedCount} failed.`, result.failedCount ? "error" : "success");
     renderResults(result);

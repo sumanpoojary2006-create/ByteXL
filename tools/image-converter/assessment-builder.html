@@ -79,6 +79,11 @@
     .status.failed { color: var(--red); background: rgba(248,113,113,.12); }
     .title-cell strong { display: block; color: var(--ink); }
     .title-cell a { color: #67e8f9; font-size: 11.5px; }
+    .edit-title { width: 100%; min-width: 220px; height: 34px; padding: 0 10px; color: var(--ink); background: rgba(8,11,22,.66); border: 1px solid var(--line-hi); border-radius: 7px; outline: none; font-size: 12.5px; font-weight: 700; }
+    .edit-title:focus { border-color: var(--violet); box-shadow: 0 0 0 3px rgba(139,92,246,.12); }
+    .edit-duration { width: 68px; height: 34px; padding: 0 8px; color: var(--ink); background: rgba(8,11,22,.66); border: 1px solid var(--line-hi); border-radius: 7px; outline: none; font-size: 12.5px; }
+    .edit-duration:focus { border-color: var(--violet); box-shadow: 0 0 0 3px rgba(139,92,246,.12); }
+    .duration-cell { display: flex; align-items: center; gap: 6px; }
     .empty { padding: 38px; text-align: center; color: var(--muted); }
     .results { display: grid; gap: 10px; }
     .result-row { padding: 14px 16px; border: 1px solid var(--line); border-radius: 10px; background: rgba(255,255,255,.02); display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
@@ -110,7 +115,7 @@
           </div>
         </div>
         <div class="body">
-          <div class="notice">A group is created from questions titled like <strong>&ldquo;Course &ndash; MCQ 3.2.5&rdquo;</strong> or <strong>&ldquo;Course &ndash; Coding Question 3.2.5&rdquo;</strong>, tagged Set 2. All matching questions for that course + unit become one test.</div>
+          <div class="notice">A group is created from questions titled like <strong>&ldquo;Course &ndash; MCQ 3.2.5&rdquo;</strong> or <strong>&ldquo;Course &ndash; Coding Question 3.2.5&rdquo;</strong>, tagged Set 2. All matching questions for that course + unit become one test. Edit the assessment title or duration inline for any ready row before creating.</div>
           <div id="message" class="message" hidden></div>
           <div class="stats">
             <div class="stat"><strong id="setTwoCount">0</strong><span>Set 2 questions</span></div>
