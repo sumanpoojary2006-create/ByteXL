@@ -488,6 +488,42 @@ class AssessmentValidationTests(unittest.TestCase):
         self.assertIn("mod-0", selected_ids)
         self.assertIn("mod-1", selected_ids)
 
+    def test_blueprint_row_filters_by_difficulty(self):
+        pool = [
+            {"_id": "e1", "type": "multipleChoice", "subjects": ["python"], "tags": ["python - set 2"], "topics": ["strings"], "difficulty": "easy"},
+            {"_id": "e2", "type": "multipleChoice", "subjects": ["python"], "tags": ["python - set 2"], "topics": ["strings"], "difficulty": "easy"},
+            {"_id": "m1", "type": "multipleChoice", "subjects": ["python"], "tags": ["python - set 2"], "topics": ["strings"], "difficulty": "medium"},
+            {"_id": "h1", "type": "multipleChoice", "subjects": ["python"], "tags": ["python - set 2"], "topics": ["strings"], "difficulty": "hard"},
+        ]
+
+        row = server.resolve_blueprint_row(
+            pool,
+            {"title": "Strings", "topics": ["strings"], "mcqCount": 2, "codingCount": 0, "duration": 60, "difficulty": "easy"},
+            [],
+        )
+
+        self.assertTrue(row["ready"])
+        self.assertEqual(row["difficulty"], ["easy"])
+        self.assertEqual(row["mcqAvailable"], 2)
+        self.assertEqual(sorted(row["questionIds"]), ["e1", "e2"])
+
+    def test_blueprint_row_accepts_multiple_difficulties(self):
+        pool = [
+            {"_id": "e1", "type": "coding", "subjects": ["python"], "tags": ["python - set 2"], "topics": ["strings"], "difficulty": "easy"},
+            {"_id": "m1", "type": "coding", "subjects": ["python"], "tags": ["python - set 2"], "topics": ["strings"], "difficulty": "medium"},
+            {"_id": "h1", "type": "coding", "subjects": ["python"], "tags": ["python - set 2"], "topics": ["strings"], "difficulty": "hard"},
+        ]
+
+        row = server.resolve_blueprint_row(
+            pool,
+            {"title": "Strings", "topics": ["strings"], "mcqCount": 0, "codingCount": 3, "duration": 60, "difficulty": ["easy", "medium"]},
+            [],
+        )
+
+        self.assertFalse(row["ready"])
+        self.assertEqual(row["codingAvailable"], 2)
+        self.assertIn("difficulty easy/medium", row["issues"][0])
+
     def test_blueprint_row_flags_shortfall_when_pool_too_small(self):
         pool = [
             {"_id": "intro-1", "type": "multipleChoice", "subjects": ["python"], "tags": ["python - set 2"], "topics": ["introduction-to-programming"]},

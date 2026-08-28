@@ -178,14 +178,14 @@
           <div><div class="card-title">Custom topic blueprint</div><div class="card-sub">For courses where assessment topics don&rsquo;t map 1:1 to curriculum units &mdash; set exact MCQ / coding counts per topic instead of auto-discovering by unit.</div></div>
         </div>
         <div class="body">
-          <div class="notice">Each row is <code>{"title","topics","mcqCount","codingCount","duration"}</code>. <code>topics</code> must match the <code>topics</code> tag on Set&nbsp;2 questions in ByteXL (e.g. <code>strings</code>, <code>lists-and-tuples</code>) &mdash; list several to merge them into one test. Questions are spread evenly across merged topics and picked in a fixed order, so re-running with the same inputs is deterministic.</div>
+          <div class="notice">Each row is <code>{"title","topics","mcqCount","codingCount","duration","difficulty"}</code>. <code>topics</code> must match the <code>topics</code> tag on Set&nbsp;2 questions in ByteXL (e.g. <code>strings</code>, <code>lists-and-tuples</code>) &mdash; list several to merge them into one test. <code>difficulty</code> is optional (<code>"easy"</code>, <code>"medium"</code>, <code>"hard"</code>, or an array to allow several) and filters both MCQ and coding pools; omit it to draw from any difficulty. Questions are spread evenly across merged topics and picked in a fixed order, so re-running with the same inputs is deterministic.</div>
           <div class="field">
             <label for="blueprintSubject">Subject</label>
             <input id="blueprintSubject" type="text" placeholder="e.g. python">
           </div>
           <div class="field">
             <label for="blueprintRows">Blueprint rows (JSON array)</label>
-            <textarea id="blueprintRows" rows="8" placeholder='[{"title": "Python Programming - Assessment 1", "topics": ["introduction-to-programming"], "mcqCount": 20, "codingCount": 0, "duration": 30}]'></textarea>
+            <textarea id="blueprintRows" rows="8" placeholder='[{"title": "Python Programming - Assessment 1", "topics": ["introduction-to-programming"], "mcqCount": 20, "codingCount": 0, "duration": 30, "difficulty": ["easy", "medium"]}]'></textarea>
           </div>
           <div class="actions">
             <button id="blueprintPreviewBtn" class="btn primary" type="button">Preview blueprint</button>
@@ -196,7 +196,7 @@
             <div class="panel-head"><div><div class="card-title">Blueprint preview</div><div id="blueprintSub" class="card-sub">&nbsp;</div></div><span id="blueprintPill" class="pill">Waiting</span></div>
             <div class="table-wrap">
               <table>
-                <thead><tr><th>Assessment</th><th>Topics</th><th>MCQ</th><th>Coding</th><th>Duration</th><th>Status</th><th>Notes</th></tr></thead>
+                <thead><tr><th>Assessment</th><th>Topics</th><th>Difficulty</th><th>MCQ</th><th>Coding</th><th>Duration</th><th>Status</th><th>Notes</th></tr></thead>
                 <tbody id="blueprintRowsBody"></tbody>
               </table>
             </div>

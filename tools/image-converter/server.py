@@ -968,15 +968,27 @@ def blueprint_order_key(question: dict[str, Any]) -> tuple[int, str]:
     return (int(match.group(2)) if match else 10**6, title)
 
 
+def normalize_blueprint_difficulties(value: Any) -> set[str]:
+    if not value:
+        return set()
+    values = value if isinstance(value, list) else [value]
+    return {str(item).strip().casefold() for item in values if str(item).strip()}
+
+
 def blueprint_pool_by_topic(
-    pool: list[dict[str, Any]], topics: list[str], question_type: str
+    pool: list[dict[str, Any]],
+    topics: list[str],
+    question_type: str,
+    difficulties: set[str],
 ) -> dict[str, list[dict[str, Any]]]:
     pools: dict[str, list[dict[str, Any]]] = {}
     for topic in topics:
         matched = [
             question
             for question in pool
-            if question.get("type") == question_type and topic in (question.get("topics") or [])
+            if question.get("type") == question_type
+            and topic in (question.get("topics") or [])
+            and (not difficulties or str(question.get("difficulty") or "").casefold() in difficulties)
         ]
         matched.sort(key=blueprint_order_key)
         pools[topic] = matched
@@ -1020,9 +1032,10 @@ def resolve_blueprint_row(
     mcq_count = int(row.get("mcqCount") or 0)
     coding_count = int(row.get("codingCount") or 0)
     duration = int(row.get("duration") or 30)
+    difficulties = normalize_blueprint_difficulties(row.get("difficulty"))
 
-    mcq_pools = blueprint_pool_by_topic(pool, topics, "multipleChoice")
-    coding_pools = blueprint_pool_by_topic(pool, topics, "coding")
+    mcq_pools = blueprint_pool_by_topic(pool, topics, "multipleChoice", difficulties)
+    coding_pools = blueprint_pool_by_topic(pool, topics, "coding", difficulties)
     mcq_selected = blueprint_round_robin(mcq_pools, topics, mcq_count)
     coding_selected = blueprint_round_robin(coding_pools, topics, coding_count)
 
@@ -1032,15 +1045,17 @@ def resolve_blueprint_row(
     question_ids = [str(question["_id"]) for question in mcq_selected + coding_selected]
     existing = find_existing_test_by_question_ids(question_ids, tests, {}) if question_ids else None
 
+    difficulty_note = f" at difficulty {'/'.join(sorted(difficulties))}" if difficulties else ""
     issues: list[str] = []
     if len(mcq_selected) < mcq_count:
-        issues.append(f"Needs {mcq_count} MCQs, only {mcq_available} available")
+        issues.append(f"Needs {mcq_count} MCQs{difficulty_note}, only {mcq_available} available")
     if len(coding_selected) < coding_count:
-        issues.append(f"Needs {coding_count} coding problems, only {coding_available} available")
+        issues.append(f"Needs {coding_count} coding problems{difficulty_note}, only {coding_available} available")
 
     return {
         "title": title,
         "topics": topics,
+        "difficulty": sorted(difficulties),
         "duration": duration,
         "mcqRequested": mcq_count,
         "codingRequested": coding_count,

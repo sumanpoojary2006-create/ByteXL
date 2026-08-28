@@ -387,6 +387,7 @@ function renderBlueprintRows() {
     return `<tr>
       <td><strong>${escapeHtml(row.title)}</strong></td>
       <td>${escapeHtml((row.topics || []).join(", "))}</td>
+      <td>${escapeHtml((row.difficulty || []).join(", ")) || "&mdash;"}</td>
       <td>${escapeHtml(row.mcqSelectedCount)} / ${escapeHtml(row.mcqRequested)} <span style="color:var(--faint)">(avail ${escapeHtml(row.mcqAvailable)})</span></td>
       <td>${escapeHtml(row.codingSelectedCount)} / ${escapeHtml(row.codingRequested)} <span style="color:var(--faint)">(avail ${escapeHtml(row.codingAvailable)})</span></td>
       <td>${escapeHtml(row.duration)} min</td>
