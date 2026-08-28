@@ -4,6 +4,7 @@ import json
 import os
 import posixpath
 import re
+import sys
 import time
 import zipfile
 from difflib import SequenceMatcher
@@ -12,7 +13,7 @@ from typing import Any, Optional
 from urllib.parse import unquote
 
 import requests
-from fastapi import Body, FastAPI, File, Form, HTTPException, Response, UploadFile
+from fastapi import Body, FastAPI, File, Form, HTTPException, Request, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 
@@ -181,6 +182,186 @@ def auth_headers() -> dict[str, str]:
     if not token:
         raise HTTPException(500, "ByteXL token is not configured on the server")
     return {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+
+
+PYTHON_EDITOR_LANGUAGES = {"python", "python2"}
+# Pure-stdlib stand-ins shipped beside a snippet so lesson code that imports these can
+# still run in the sandbox. Injected only when the snippet actually imports them.
+SANDBOX_SHIM_DIR = Path(__file__).parent / "sandbox"
+SANDBOX_SHIMS = {"fastapi": "fastapi.py", "pydantic": "pydantic.py"}
+
+
+def sandbox_shim_files(code: str) -> list[dict[str, str]]:
+    """The shim modules a snippet needs, including any the shims need themselves."""
+    roots = set(python_import_roots(code))
+    if not roots & set(SANDBOX_SHIMS):
+        return []
+    needed = ["pydantic", "fastapi"] if "fastapi" in roots else ["pydantic"]
+    files = []
+    for module in needed:
+        source = SANDBOX_SHIM_DIR / SANDBOX_SHIMS[module]
+        if source.is_file():
+            files.append({"name": SANDBOX_SHIMS[module], "content": source.read_text()})
+    return files
+# Verified against the live OneCompiler sandbox (Python 3.12.3): these are the only
+# non-stdlib imports available. It has no outbound network and pip refuses to install
+# under PEP 668, so anything else fails on the import line.
+PYTHON_SANDBOX_EXTRA_PACKAGES = {"requests", "numpy", "pandas"}
+PYTHON_IMPORT_RE = re.compile(
+    r"^(?:from\s+([A-Za-z_][\w.]*)\s+import\s|import\s+(.+))", re.MULTILINE
+)
+
+
+def python_import_roots(code: str) -> list[str]:
+    roots: list[str] = []
+    for line in str(code or "").splitlines():
+        if line[:1] in (" ", "\t"):
+            continue
+        match = PYTHON_IMPORT_RE.match(line.split("#", 1)[0].strip())
+        if not match:
+            continue
+        if match.group(1):
+            roots.append(match.group(1).split(".")[0])
+            continue
+        for part in (match.group(2) or "").split(","):
+            name = part.strip().split(" as ")[0].strip()
+            if re.fullmatch(r"[A-Za-z_][\w.]*", name or ""):
+                roots.append(name.split(".")[0])
+    return list(dict.fromkeys(roots))
+
+
+def local_module_names(fixture_names: Any) -> set[str]:
+    """Modules a lesson ships beside the snippet are present in the workspace."""
+    modules: set[str] = set()
+    for name in fixture_names or []:
+        clean = str(name or "").lstrip("./")
+        if clean:
+            modules.add(clean.split("/")[0].removesuffix(".py"))
+    return modules
+
+
+def missing_sandbox_packages(language: str, code: str, local_modules: Any = None) -> list[str]:
+    if str(language or "").lower() not in PYTHON_EDITOR_LANGUAGES:
+        return []
+    available = (
+        set(sys.stdlib_module_names)
+        | PYTHON_SANDBOX_EXTRA_PACKAGES
+        | set(SANDBOX_SHIMS)
+        | local_module_names(local_modules)
+    )
+    return [root for root in python_import_roots(code) if root not in available]
+
+
+SHELL_EDITOR_LANGUAGES = {"bash", "sh"}
+# Verified against the live sandbox: bash 5.2 with coreutils, but no uv, git, docker,
+# wget or zip. The second set is installed yet still unusable, because the sandbox has
+# no network and runs no services, so curl, pip and npm fail whatever the block says.
+SHELL_SANDBOX_COMMANDS = {
+    "bash", "sh", "echo", "printf", "ls", "tac", "cat", "head", "tail", "wc", "sort", "uniq",
+    "grep", "sed", "awk", "cut", "tr", "paste", "join", "comm", "find", "xargs", "mkdir", "rmdir",
+    "cp", "mv", "rm", "touch", "ln", "chmod", "pwd", "basename", "dirname", "date", "sleep", "seq",
+    "env", "tee", "diff", "cmp", "md5sum", "sha256sum", "tar", "gzip", "gunzip", "unzip", "python3",
+    "node", "sqlite3", "make", "nl", "rev", "shuf", "split", "stat", "du", "df", "ps", "expr",
+    "test", "true", "false", "yes",
+}
+SHELL_KEYWORDS = {
+    "if", "then", "else", "elif", "fi", "for", "while", "until", "do", "done", "case", "esac", "in",
+    "function", "select", "time", "cd", "read", "export", "local", "return", "exit", "source", ".",
+    ":", "set", "unset", "shift", "declare", "typeset", "readonly", "eval", "exec", "trap", "wait",
+    "break", "continue", "let", "alias", "[", "[[",
+}
+SHELL_UNAVAILABLE_COMMANDS = {
+    "curl", "wget", "pip", "pip3", "npm", "npx", "ssh", "scp", "rsync", "git", "apt", "apt-get",
+    "yum", "dnf", "brew", "docker", "docker-compose", "kubectl", "uv", "uvx", "poetry", "pipenv",
+    "conda", "uvicorn", "fastapi", "gunicorn", "alembic", "psql", "mysql", "mongo", "mongosh",
+    "redis-cli", "celery", "pytest", "ruff", "mypy", "systemctl", "nc", "ping",
+}
+SHELL_ASSIGNMENT_RE = re.compile(r"^[A-Za-z_]\w*=")
+
+
+def shell_command_names(code: str) -> list[str]:
+    names: list[str] = []
+    # Quoted spans are collapsed first so separators inside a JSON argument are not
+    # mistaken for the start of another command.
+    cleaned = re.sub(r"\\\r?\n", " ", str(code or ""))
+    cleaned = re.sub(r"'[^']*'", "''", cleaned)
+    cleaned = re.sub(r'"[^"]*"', '""', cleaned)
+    for raw_line in cleaned.splitlines():
+        line = raw_line.split("#", 1)[0].strip()
+        if not line:
+            continue
+        for statement in re.split(r"\|\||&&|[|;&]", line):
+            tokens = statement.split()
+            for token in tokens:
+                stripped = token.lstrip("(\"'`$")
+                if not stripped:
+                    continue
+                if SHELL_ASSIGNMENT_RE.match(stripped):
+                    continue
+                if stripped in {"sudo", "command", "env"}:
+                    continue
+                name = stripped.rsplit("/", 1)[-1]
+                # Redirections (2>&1, >out.txt) and argument fragments are not commands.
+                if not re.fullmatch(r"[A-Za-z_][\w.+-]*", name):
+                    break
+                if name not in SHELL_KEYWORDS:
+                    names.append(name)
+                break
+    return list(dict.fromkeys(names))
+
+
+def undefined_top_level_names(language: str, code: str) -> list[str]:
+    """Names a snippet reaches into at statement level but never defines.
+
+    An illustrative fragment such as a bare `@app.get(...)` is valid Python that cannot
+    run, so it must not become an editor that raises NameError in the published lesson.
+    """
+    if str(language or "").lower() not in PYTHON_EDITOR_LANGUAGES:
+        return []
+    defined = {"self", "cls"}
+    needed: list[str] = []
+    for raw_line in str(code or "").splitlines():
+        bare = raw_line.split("#", 1)[0]
+        trimmed = bare.strip()
+        if not trimmed:
+            continue
+        for pattern in (
+            r"^([A-Za-z_]\w*)\s*(?::[^=]+)?=[^=]",
+            r"^(?:async\s+)?def\s+([A-Za-z_]\w*)",
+            r"^class\s+([A-Za-z_]\w*)",
+        ):
+            match = re.match(pattern, trimmed)
+            if match:
+                defined.add(match.group(1))
+        match = re.match(r"^for\s+([A-Za-z_][\w, ]*)\s+in\s", trimmed)
+        if match:
+            defined.update(name.strip() for name in match.group(1).split(","))
+        match = re.search(r"\bas\s+([A-Za-z_]\w*)", trimmed)
+        if match:
+            defined.add(match.group(1))
+        match = re.match(r"^import\s+(.+)$", trimmed)
+        if match:
+            for part in match.group(1).split(","):
+                defined.add(part.strip().split(" as ")[-1].split(".")[0].strip())
+        match = re.match(r"^from\s+[\w.]+\s+import\s+(.+)$", trimmed)
+        if match:
+            for part in match.group(1).split(","):
+                defined.add(part.strip().split(" as ")[-1].replace("(", "").replace(")", "").strip())
+        for pattern in (r"^@([A-Za-z_]\w*)", r"^([A-Za-z_]\w*)\.[A-Za-z_]"):
+            match = re.match(pattern, bare)
+            if match and match.group(1) not in needed:
+                needed.append(match.group(1))
+    return [name for name in needed if name not in defined]
+
+
+def unavailable_shell_commands(language: str, code: str) -> list[str]:
+    if str(language or "").lower() not in SHELL_EDITOR_LANGUAGES:
+        return []
+    return [
+        name
+        for name in shell_command_names(code)
+        if name in SHELL_UNAVAILABLE_COMMANDS or name not in SHELL_SANDBOX_COMMANDS
+    ]
 
 
 def onecompiler_editor_language_for(language: str) -> str:
@@ -559,6 +740,138 @@ def upsert_assessment_questions(questions: list[dict[str, Any]]) -> list[Any]:
 
         upserted.append(result)
     return upserted
+
+
+SET_TWO_TAG_RE = re.compile(r"(?:^|[^a-z0-9])set\s*[-_]?\s*2(?:$|[^a-z0-9])", re.IGNORECASE)
+
+
+def is_set_two_question(question: Any) -> bool:
+    if not isinstance(question, dict):
+        return False
+    tags = question.get("tags")
+    values = tags if isinstance(tags, list) else [tags]
+    return any(SET_TWO_TAG_RE.search(str(value or "")) for value in values)
+
+
+def normalize_assessment_question_title(value: Any) -> str:
+    return " ".join(str(value or "").split()).casefold()
+
+
+def published_question_items() -> list[dict[str, Any]]:
+    response = bytexl_get("/api/questions?status=published&summaryScreen=true")
+    if isinstance(response, list):
+        items = response
+    elif isinstance(response, dict):
+        items = response.get("items") or response.get("data") or []
+    else:
+        items = []
+    if not isinstance(items, list):
+        raise HTTPException(502, "ByteXL returned an unexpected question list")
+    return [item for item in items if isinstance(item, dict)]
+
+
+def resolve_set_two_assessment_questions(
+    rows: list[dict[str, Any]],
+    catalog: list[dict[str, Any]],
+) -> dict[str, Any]:
+    set_two_rows = [row for row in rows if is_set_two_question(row)]
+    ignored_count = len(rows) - len(set_two_rows)
+    if not set_two_rows:
+        raise HTTPException(400, "No Set 2 questions were found. The tags column must identify Set 2.")
+
+    title_index: dict[str, list[dict[str, Any]]] = {}
+    for question in catalog:
+        key = normalize_assessment_question_title(question.get("title"))
+        if key and question.get("_id"):
+            title_index.setdefault(key, []).append(question)
+
+    seen_source_titles: set[str] = set()
+    resolved_rows: list[dict[str, Any]] = []
+    for position, row in enumerate(set_two_rows, start=1):
+        title = " ".join(str(row.get("title") or "").split())
+        key = normalize_assessment_question_title(title)
+        sheet_row = row.get("sheetRow") or row.get("row") or position + 1
+        matches = title_index.get(key, []) if key else []
+        notes: list[str] = []
+        status = "matched"
+        question_id = ""
+
+        if not title:
+            status = "missing"
+            notes.append("Title is required.")
+        elif key in seen_source_titles:
+            status = "duplicate"
+            notes.append("This Set 2 title appears more than once in the uploaded sheet.")
+        elif len(matches) == 0:
+            status = "missing"
+            notes.append("No published ByteXL question has this exact title.")
+        elif len(matches) > 1:
+            status = "ambiguous"
+            notes.append(f"{len(matches)} published ByteXL questions have this title.")
+        else:
+            question_id = str(matches[0].get("_id") or "")
+
+        if key:
+            seen_source_titles.add(key)
+        resolved_rows.append(
+            {
+                "sheetRow": sheet_row,
+                "title": title,
+                "tags": row.get("tags") or "",
+                "questionId": question_id,
+                "status": status,
+                "notes": notes,
+            }
+        )
+
+    matched_count = sum(row["status"] == "matched" for row in resolved_rows)
+    error_count = len(resolved_rows) - matched_count
+    return {
+        "rows": resolved_rows,
+        "totalRows": len(rows),
+        "setTwoCount": len(set_two_rows),
+        "ignoredCount": ignored_count,
+        "matchedCount": matched_count,
+        "errorCount": error_count,
+        "ready": error_count == 0,
+    }
+
+
+def assessment_url_slug(title: str) -> str:
+    slug = re.sub(r"[^a-z0-9]+", "-", str(title or "").lower()).strip("-")
+    return slug or "assessment"
+
+
+def build_standardized_assessment_payload(
+    title: str,
+    duration: int,
+    status: str,
+    shuffle_questions: bool,
+    question_ids: list[str],
+) -> dict[str, Any]:
+    return {
+        "title": title,
+        "name": "",
+        "description": "",
+        "tags": [],
+        "status": status,
+        "testIntent": "standardizedAssessment",
+        "labMode": False,
+        "timeLimit": duration,
+        "showInstructionsOnStart": False,
+        "shuffleQuestions": shuffle_questions,
+        "captureUserImages": False,
+        "recordSession": False,
+        "forceFullScreen": False,
+        "captureTabSwitches": False,
+        "closeAfterNumberOfTabSwitches": 0,
+        "showReportAfterTest": False,
+        "sendReportViaEmail": False,
+        "showReportAfter": "",
+        "questions": question_ids,
+        "enableSections": False,
+        "sections": [],
+    }
 
 
 def get_bytexl_id() -> str:
@@ -960,6 +1273,14 @@ def read_assessment_js() -> str:
     return (Path(__file__).parent / "assessment.js").read_text(encoding="utf-8")
 
 
+def read_assessment_builder() -> str:
+    return (Path(__file__).parent / "assessment-builder.html").read_text(encoding="utf-8")
+
+
+def read_assessment_builder_js() -> str:
+    return (Path(__file__).parent / "assessment-builder.js").read_text(encoding="utf-8")
+
+
 @app.get("/save-token", response_class=HTMLResponse)
 async def save_token_page(t: str = ""):
     if t:
@@ -982,6 +1303,15 @@ async def convert_page():
     return read_index()
 
 
+@app.get("/config.js")
+async def config_js(request: Request):
+    origin = f"{request.url.scheme}://{request.headers.get('host', 'localhost:8000')}"
+    return Response(
+        f'window.IMAGE_CONVERTER_CONFIG = Object.freeze({{ apiBase: "{origin}" }});',
+        media_type="application/javascript",
+    )
+
+
 @app.get("/assessment", response_class=HTMLResponse)
 async def assessment_page():
     return read_assessment()
@@ -990,6 +1320,16 @@ async def assessment_page():
 @app.get("/assessment.js")
 async def assessment_js():
     return Response(read_assessment_js(), media_type="application/javascript; charset=utf-8")
+
+
+@app.get("/assessment-builder", response_class=HTMLResponse)
+async def assessment_builder_page():
+    return read_assessment_builder()
+
+
+@app.get("/assessment-builder.js")
+async def assessment_builder_js():
+    return Response(read_assessment_builder_js(), media_type="application/javascript; charset=utf-8")
 
 
 @app.get("/xlsx.full.min.js")
@@ -1005,6 +1345,7 @@ async def embed_page():
 @app.head("/")
 @app.head("/convert")
 @app.head("/assessment")
+@app.head("/assessment-builder")
 @app.head("/embed.html")
 async def page_head():
     return Response(status_code=200)
@@ -1080,6 +1421,40 @@ async def create_onecompiler_workspace(payload: dict[str, Any] = Body(...)):
         raise HTTPException(400, "Code is required")
 
     editor_language = onecompiler_editor_language_for(language)
+
+    # Refuse an editor that is certain to fail on its import line. The browser
+    # already screens these out; this is the backstop for direct API callers.
+    fixture_names = [
+        str(extra.get("name") or "")
+        for extra in (extra_files if isinstance(extra_files, list) else [])
+        if isinstance(extra, dict)
+    ]
+    missing = missing_sandbox_packages(language, code, fixture_names)
+    if missing:
+        raise HTTPException(
+            400,
+            "The OneCompiler Python sandbox cannot import "
+            f"{', '.join(missing)}. It has no network access and pip is blocked, so this "
+            "block must stay a static code block.",
+        )
+
+    undefined = undefined_top_level_names(language, code)
+    if undefined:
+        raise HTTPException(
+            400,
+            f"This snippet uses {', '.join(undefined)} without defining it, so an editor "
+            "would raise NameError. It must stay a static code block.",
+        )
+
+    unavailable = unavailable_shell_commands(language, code)
+    if unavailable:
+        raise HTTPException(
+            400,
+            "The OneCompiler shell sandbox cannot run "
+            f"{', '.join(unavailable)}. It has no network access and no services running, so this "
+            "block must stay a static code block.",
+        )
+
     tags = ["bytexl", "reading-material"]
     if snippet_id:
         tags.append(snippet_id[:40])
@@ -1108,6 +1483,12 @@ async def create_onecompiler_workspace(payload: dict[str, Any] = Body(...)):
         # examples still have their inputs available.
         files = [{"name": filename, "content": code}]
         seen_names = {filename}
+        # Stand-in modules go in before the lesson's own fixtures, so `import fastapi`
+        # resolves inside the workspace instead of failing.
+        for shim in sandbox_shim_files(code):
+            if shim["name"] not in seen_names:
+                files.append(shim)
+                seen_names.add(shim["name"])
         if isinstance(extra_files, list):
             for extra in extra_files:
                 if not isinstance(extra, dict):
@@ -1361,6 +1742,79 @@ async def assessment_upload_one(payload: dict[str, Any] = Body(...)):
 
     result = upsert_assessment_questions([question])
     return {"status": "success", "result": result}
+
+
+@app.post("/test-assessment/preview")
+async def test_assessment_preview(payload: dict[str, Any] = Body(...)):
+    questions = payload.get("questions") or []
+    if not isinstance(questions, list) or not questions:
+        raise HTTPException(400, "No question rows were provided")
+    if len(questions) > 1000:
+        raise HTTPException(400, "A maximum of 1000 question rows can be checked at once")
+    if not all(isinstance(question, dict) for question in questions):
+        raise HTTPException(400, "Every question row must be an object")
+
+    result = resolve_set_two_assessment_questions(questions, published_question_items())
+    return {"status": "success", **result}
+
+
+@app.post("/test-assessment/create")
+async def test_assessment_create(payload: dict[str, Any] = Body(...)):
+    if payload.get("confirm") is not True:
+        raise HTTPException(400, "Preview the Set 2 questions, then confirm assessment creation")
+
+    title = " ".join(str(payload.get("title") or "").split())
+    if not title:
+        raise HTTPException(400, "Assessment title is required")
+    if len(title) > 180:
+        raise HTTPException(400, "Assessment title must be 180 characters or fewer")
+
+    duration = payload.get("duration", 30)
+    if isinstance(duration, bool) or not isinstance(duration, int) or not 0 <= duration <= 1440:
+        raise HTTPException(400, "Duration must be a whole number from 0 to 1440 minutes")
+
+    status = str(payload.get("assessmentStatus") or "published").strip().lower()
+    if status not in {"draft", "published"}:
+        raise HTTPException(400, "Assessment status must be draft or published")
+
+    questions = payload.get("questions") or []
+    if not isinstance(questions, list) or not questions:
+        raise HTTPException(400, "No question rows were provided")
+    if len(questions) > 1000:
+        raise HTTPException(400, "A maximum of 1000 question rows can be used at once")
+    if not all(isinstance(question, dict) for question in questions):
+        raise HTTPException(400, "Every question row must be an object")
+
+    resolution = resolve_set_two_assessment_questions(questions, published_question_items())
+    if not resolution["ready"]:
+        raise HTTPException(
+            409,
+            f'{resolution["errorCount"]} Set 2 question(s) could not be matched. Preview again after fixing them.',
+        )
+
+    question_ids = [row["questionId"] for row in resolution["rows"]]
+    test_payload = build_standardized_assessment_payload(
+        title=title,
+        duration=duration,
+        status=status,
+        shuffle_questions=bool(payload.get("shuffleQuestions", False)),
+        question_ids=question_ids,
+    )
+    response = bytexl_post("/api/tests", test_payload)
+    created = response.get("data") if isinstance(response, dict) and isinstance(response.get("data"), dict) else response
+    if not isinstance(created, dict) or not created.get("_id"):
+        raise HTTPException(502, "ByteXL did not return the created assessment")
+
+    test_id = str(created["_id"])
+    slug = assessment_url_slug(str(created.get("title") or title))
+    return {
+        "status": "success",
+        "testId": test_id,
+        "title": created.get("title") or title,
+        "questionCount": len(question_ids),
+        "editUrl": f"{BYTEXL_API_BASE}/tests/_edit/{test_id}/{slug}",
+        "previewUrl": f"{BYTEXL_API_BASE}/test/{test_id}/{slug}",
+    }
 
 
 @app.post("/upload-image")

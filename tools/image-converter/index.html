@@ -153,6 +153,7 @@
       transition: border-color .2s, background .2s, color .2s, transform .12s;
     }
     .nav-badge:hover { border-color: rgba(34,211,238,0.45); background: rgba(34,211,238,0.12); color: #cffafe; transform: translateY(-1px); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
 
     .main { flex: 1; padding: 48px 32px 64px; }
     .shell { width: min(880px, 100%); margin: 0 auto; display: grid; gap: 22px; }
@@ -557,7 +558,10 @@
       <div class="logo-mark">b</div>
       <span class="nav-title">byte<span>XL</span> Uploader</span>
     </a>
-    <a class="nav-badge" href="/assessment">Assessment Upload</a>
+    <div class="nav-actions">
+      <a class="nav-badge" href="/assessment">Question Upload</a>
+      <a class="nav-badge" href="/assessment-builder">Assessment Builder</a>
+    </div>
   </nav>
 
   <main class="main">
@@ -770,6 +774,169 @@
 
   const SQL_LANGUAGES = new Set(["mysql","postgresql","sqlite"]);
 
+  // The OneCompiler Python sandbox runs 3.12 with no outbound network, and pip is
+  // blocked by PEP 668, so a block importing anything outside this list cannot run
+  // there however correct the code is. Verified against the live sandbox: requests,
+  // numpy and pandas are present; fastapi, pydantic, httpx, starlette and flask are not.
+  const PYTHON_LANGUAGES = new Set(["python","python2"]);
+  const PYTHON_SANDBOX_EXTRA_PACKAGES = new Set(["requests","numpy","pandas"]);
+  const PYTHON_STDLIB_MODULES = new Set(["abc","aifc","antigravity","argparse","array","ast","asyncio","atexit","audioop","base64","bdb","binascii","bisect","builtins","bz2","cProfile","calendar","cgi","cgitb","chunk","cmath","cmd","code","codecs","codeop","collections","colorsys","compileall","concurrent","configparser","contextlib","contextvars","copy","copyreg","crypt","csv","ctypes","curses","dataclasses","datetime","dbm","decimal","difflib","dis","doctest","email","encodings","ensurepip","enum","errno","faulthandler","fcntl","filecmp","fileinput","fnmatch","fractions","ftplib","functools","gc","genericpath","getopt","getpass","gettext","glob","graphlib","grp","gzip","hashlib","heapq","hmac","html","http","idlelib","imaplib","imghdr","importlib","inspect","io","ipaddress","itertools","json","keyword","lib2to3","linecache","locale","logging","lzma","mailbox","mailcap","marshal","math","mimetypes","mmap","modulefinder","msilib","msvcrt","multiprocessing","netrc","nis","nntplib","nt","ntpath","nturl2path","numbers","opcode","operator","optparse","os","ossaudiodev","pathlib","pdb","pickle","pickletools","pipes","pkgutil","platform","plistlib","poplib","posix","posixpath","pprint","profile","pstats","pty","pwd","py_compile","pyclbr","pydoc","pydoc_data","pyexpat","queue","quopri","random","re","readline","reprlib","resource","rlcompleter","runpy","sched","secrets","select","selectors","shelve","shlex","shutil","signal","site","smtplib","sndhdr","socket","socketserver","spwd","sqlite3","sre_compile","sre_constants","sre_parse","ssl","stat","statistics","string","stringprep","struct","subprocess","sunau","symtable","sys","sysconfig","syslog","tabnanny","tarfile","telnetlib","tempfile","termios","textwrap","this","threading","time","timeit","tkinter","token","tokenize","tomllib","trace","traceback","tracemalloc","tty","turtle","turtledemo","types","typing","unicodedata","unittest","urllib","uu","uuid","venv","warnings","wave","weakref","webbrowser","winreg","winsound","wsgiref","xdrlib","xml","xmlrpc","zipapp","zipfile","zipimport","zlib","zoneinfo"]);
+
+  // Root module of every top-level import in a snippet. Indented imports are ignored
+  // on purpose: they sit inside a function or a try block and are usually optional.
+  // Relative imports resolve inside the workspace, so they are skipped too.
+  function pythonImportRoots(code) {
+    const roots = new Set();
+    const withoutStrings = String(code || "").replace(/'''[\s\S]*?'''|"""[\s\S]*?"""/g, "");
+    for (const rawLine of withoutStrings.split(/\r?\n/)) {
+      if (/^\s/.test(rawLine)) continue;
+      const line = rawLine.replace(/#.*$/, "").trim();
+      let m = line.match(/^from\s+([A-Za-z_][\w.]*)\s+import\s/);
+      if (m) { roots.add(m[1].split(".")[0]); continue; }
+      m = line.match(/^import\s+(.+)$/);
+      if (!m) continue;
+      for (const part of m[1].split(",")) {
+        const name = part.trim().split(/\s+as\s+/)[0].trim();
+        if (/^[A-Za-z_][\w.]*$/.test(name)) roots.add(name.split(".")[0]);
+      }
+    }
+    return [...roots];
+  }
+
+  // Shell sandbox inventory, verified the same way as the Python one. Bash 5.2 with
+  // coreutils, but no uv, git, docker, wget or zip. Commands in the second set exist
+  // yet still cannot work: the sandbox has no network and no services running, so
+  // curl, pip and npm fail whatever the block says.
+  const SHELL_LANGUAGES = new Set(["bash","sh"]);
+  const SHELL_SANDBOX_COMMANDS = new Set([
+    "bash","sh","echo","printf","ls","tac","cat","head","tail","wc","sort","uniq","grep","sed","awk",
+    "cut","tr","paste","join","comm","find","xargs","mkdir","rmdir","cp","mv","rm","touch","ln","chmod",
+    "pwd","basename","dirname","date","sleep","seq","env","tee","diff","cmp","md5sum","sha256sum","tar",
+    "gzip","gunzip","unzip","python3","node","sqlite3","make","nl","rev","shuf","split","stat","du","df",
+    "ps","expr","test","true","false","yes"
+  ]);
+  const SHELL_KEYWORDS = new Set([
+    "if","then","else","elif","fi","for","while","until","do","done","case","esac","in","function",
+    "select","time","cd","read","export","local","return","exit","source",".",":","set","unset","shift",
+    "declare","typeset","readonly","eval","exec","trap","wait","break","continue","let","alias","[","[["
+  ]);
+  const SHELL_UNAVAILABLE_COMMANDS = new Set([
+    "curl","wget","pip","pip3","npm","npx","ssh","scp","rsync","git","apt","apt-get","yum","dnf","brew",
+    "docker","docker-compose","kubectl","uv","uvx","poetry","pipenv","conda","uvicorn","fastapi","gunicorn",
+    "alembic","psql","mysql","mongo","mongosh","redis-cli","celery","pytest","ruff","mypy","systemctl","nc","ping"
+  ]);
+
+  // First word of every command in a shell block. Pipelines and separators start a new
+  // command, assignments and flags are not commands, and a sudo or env prefix is stepped
+  // over so the real command is what gets checked.
+  function shellCommandNames(code) {
+    const names = new Set();
+    // Quoted spans are collapsed first so that separators and braces inside a JSON
+    // argument are not mistaken for the start of another command.
+    const cleaned = String(code || "")
+      .replace(/\\\r?\n/g, " ")
+      .replace(/'[^']*'/g, "''")
+      .replace(/"[^"]*"/g, '""');
+    for (const rawLine of cleaned.split(/\r?\n/)) {
+      const line = rawLine.replace(/#.*$/, "").trim();
+      if (!line) continue;
+      for (const statement of line.split(/\|\||&&|[|;&]/)) {
+        const tokens = statement.trim().split(/\s+/).filter(Boolean);
+        let i = 0;
+        while (i < tokens.length) {
+          const token = tokens[i].replace(/^[("'`$]+/, "");
+          if (!token) { i++; continue; }
+          if (/^[A-Za-z_]\w*=/.test(token)) { i++; continue; }   // VAR=value prefix
+          if (token === "sudo" || token === "command" || token === "env") { i++; continue; }
+          const name = token.replace(/^.*\//, "");               // ./script.sh -> script.sh
+          // Redirections (2>&1, >out.txt) and stray argument fragments are not commands.
+          if (!/^[A-Za-z_][\w.+-]*$/.test(name)) break;
+          if (!SHELL_KEYWORDS.has(name)) names.add(name);
+          break;
+        }
+      }
+    }
+    return [...names];
+  }
+
+  function unavailableShellCommands(language, code) {
+    if (!SHELL_LANGUAGES.has(language)) return [];
+    return shellCommandNames(code).filter(name =>
+      SHELL_UNAVAILABLE_COMMANDS.has(name) || !SHELL_SANDBOX_COMMANDS.has(name));
+  }
+
+  // Shipped beside a snippet by the API when it is imported, so lesson code using
+  // FastAPI still runs in the sandbox. Keep in step with SANDBOX_SHIMS in server.py.
+  const PYTHON_SANDBOX_SHIMS = new Set(["fastapi","pydantic"]);
+
+  // SHIM-SOURCES:START (generated by build_shim_bundle.py, do not edit by hand)
+  const SANDBOX_SHIM_SOURCES = {
+    "pydantic.py": "\"\"\"A teaching stand-in for Pydantic v2, written with the standard library only.\n\nThe OneCompiler sandbox has no network and cannot install packages, so lesson code that\nsays `from pydantic import BaseModel` would fail on the import line. This module is\ninjected beside the snippet so the same code runs unchanged.\n\nIt implements the surface the reading materials use: models, field constraints, nested\nand collection models, field and model validators, aliases, and the v2 error payload.\nError `type`, `loc`, `msg` and `ctx` values are copied from real Pydantic so that what a\nstudent sees here matches what the framework says. It is not a reimplementation of\nPydantic and is not intended for anything else.\n\"\"\"\n\nimport types\nimport typing\n\n__all__ = [\"BaseModel\", \"Field\", \"FieldInfo\", \"ValidationError\", \"ConfigDict\",\n           \"field_validator\", \"model_validator\", \"EmailStr\"]\n\n_MISSING = object()\n\n\ndef ConfigDict(**options):\n    return dict(options)\n\n\nclass FieldInfo:\n    def __init__(self, default=_MISSING, **rules):\n        self.default = default\n        self.ge = rules.get(\"ge\")\n        self.gt = rules.get(\"gt\")\n        self.le = rules.get(\"le\")\n        self.lt = rules.get(\"lt\")\n        self.min_length = rules.get(\"min_length\")\n        self.max_length = rules.get(\"max_length\")\n        self.description = rules.get(\"description\")\n        self.title = rules.get(\"title\")\n        self.alias = rules.get(\"alias\")\n        self.examples = rules.get(\"examples\")\n\n    @property\n    def required(self):\n        return self.default is _MISSING\n\n\ndef Field(default=_MISSING, **rules):\n    return FieldInfo(default, **rules)\n\n\nclass ValidationError(ValueError):\n    def __init__(self, errors):\n        self._errors = errors\n        count = len(errors)\n        super().__init__(f\"{count} validation error{'' if count == 1 else 's'}\")\n\n    def errors(self):\n        return list(self._errors)\n\n    def __str__(self):\n        lines = [f\"{len(self._errors)} validation error(s)\"]\n        for error in self._errors:\n            location = \".\".join(str(part) for part in error[\"loc\"]) or \"__root__\"\n            lines.append(f\"  {location}\\n    {error['msg']} [type={error['type']}]\")\n        return \"\\n\".join(lines)\n\n\nclass _ValidatorMarker:\n    def __init__(self, func, fields, mode):\n        self.func = func\n        self.fields = fields\n        self.mode = mode\n\n\ndef field_validator(*fields, mode=\"after\"):\n    def decorator(func):\n        inner = func.__func__ if isinstance(func, classmethod) else func\n        return _ValidatorMarker(inner, fields, mode)\n    return decorator\n\n\ndef model_validator(mode=\"after\"):\n    def decorator(func):\n        inner = func.__func__ if isinstance(func, classmethod) else func\n        return _ValidatorMarker(inner, None, mode)\n    return decorator\n\n\nclass EmailStr(str):\n    \"\"\"Accepts what an email address must have: a name, an @, and a dotted domain.\"\"\"\n\n    @classmethod\n    def _validate(cls, value):\n        if \"@\" not in value:\n            return \"An email address must have an @-sign.\"\n        local, _, domain = value.rpartition(\"@\")\n        if not local:\n            return \"There must be something before the @-sign.\"\n        if \".\" not in domain or domain.startswith(\".\") or domain.endswith(\".\"):\n            return \"The part after the @-sign is not valid.\"\n        return None\n\n\ndef _plural(count, noun):\n    return f\"{count} {noun}\" if count == 1 else f\"{count} {noun}s\"\n\n\ndef _unwrap_optional(annotation):\n    \"\"\"`str | None` and `Optional[str]` -> (str, True).\"\"\"\n    origin = typing.get_origin(annotation)\n    if origin is typing.Union or origin is types.UnionType:\n        args = typing.get_args(annotation)\n        real = [a for a in args if a is not type(None)]\n        return (real[0] if real else str), len(real) != len(args)\n    return annotation, False\n\n\ndef unwrap_annotated(annotation):\n    \"\"\"`Annotated[int, Field(ge=1)]` -> (int, FieldInfo) and plain types unchanged.\"\"\"\n    rules = None\n    if typing.get_origin(annotation) is typing.Annotated:\n        args = typing.get_args(annotation)\n        annotation = args[0]\n        for extra in args[1:]:\n            if isinstance(extra, FieldInfo):\n                rules = extra\n    return annotation, rules\n\n\ndef check_constraints(value, rules):\n    \"\"\"Return (error_type, message, ctx) for the first constraint the value fails.\"\"\"\n    if rules is None:\n        return None\n    if isinstance(value, (int, float)) and not isinstance(value, bool):\n        if rules.ge is not None and value < rules.ge:\n            return \"greater_than_equal\", f\"Input should be greater than or equal to {rules.ge}\", {\"ge\": rules.ge}\n        if rules.gt is not None and value <= rules.gt:\n            return \"greater_than\", f\"Input should be greater than {rules.gt}\", {\"gt\": rules.gt}\n        if rules.le is not None and value > rules.le:\n            return \"less_than_equal\", f\"Input should be less than or equal to {rules.le}\", {\"le\": rules.le}\n        if rules.lt is not None and value >= rules.lt:\n            return \"less_than\", f\"Input should be less than {rules.lt}\", {\"lt\": rules.lt}\n    if isinstance(value, str):\n        if rules.min_length is not None and len(value) < rules.min_length:\n            return (\"string_too_short\",\n                    f\"String should have at least {_plural(rules.min_length, 'character')}\",\n                    {\"min_length\": rules.min_length})\n        if rules.max_length is not None and len(value) > rules.max_length:\n            return (\"string_too_long\",\n                    f\"String should have at most {_plural(rules.max_length, 'character')}\",\n                    {\"max_length\": rules.max_length})\n    if isinstance(value, list):\n        if rules.min_length is not None and len(value) < rules.min_length:\n            return (\"too_short\",\n                    f\"List should have at least {_plural(rules.min_length, 'item')} after validation, \"\n                    f\"not {len(value)}\",\n                    {\"field_type\": \"List\", \"min_length\": rules.min_length, \"actual_length\": len(value)})\n        if rules.max_length is not None and len(value) > rules.max_length:\n            return (\"too_long\",\n                    f\"List should have at most {_plural(rules.max_length, 'item')} after validation, \"\n                    f\"not {len(value)}\",\n                    {\"field_type\": \"List\", \"max_length\": rules.max_length, \"actual_length\": len(value)})\n    return None\n\n\ndef validate_value(value, annotation, loc):\n    \"\"\"Return (coerced_value, errors). `loc` is the path reported in each error.\"\"\"\n    annotation, inline_rules = unwrap_annotated(annotation)\n    annotation, allows_none = _unwrap_optional(annotation)\n    if value is None and allows_none:\n        return None, []\n\n    origin = typing.get_origin(annotation)\n    args = typing.get_args(annotation)\n\n    if origin in (list, typing.List):\n        if not isinstance(value, list):\n            return None, [_error(\"list_type\", loc, \"Input should be a valid list\", value)]\n        item_type = args[0] if args else str\n        items, errors = [], []\n        for index, item in enumerate(value):\n            coerced, item_errors = validate_value(item, item_type, (*loc, index))\n            errors.extend(item_errors)\n            if not item_errors:\n                items.append(coerced)\n        return (items if not errors else None), errors\n\n    if origin in (dict, typing.Dict):\n        if not isinstance(value, dict):\n            return None, [_error(\"dict_type\", loc, \"Input should be a valid dictionary\", value)]\n        value_type = args[1] if len(args) == 2 else str\n        result, errors = {}, []\n        for key, item in value.items():\n            coerced, item_errors = validate_value(item, value_type, (*loc, key))\n            errors.extend(item_errors)\n            if not item_errors:\n                result[key] = coerced\n        return (result if not errors else None), errors\n\n    if isinstance(annotation, type) and issubclass(annotation, BaseModel):\n        if isinstance(value, annotation):\n            return value, []\n        if not isinstance(value, dict):\n            return None, [_error(\"model_attributes_type\", loc,\n                                 \"Input should be a valid dictionary or object to extract fields from\",\n                                 value)]\n        return annotation._build(value, loc)\n\n    if isinstance(annotation, type) and issubclass(annotation, EmailStr):\n        if not isinstance(value, str):\n            return None, [_error(\"string_type\", loc, \"Input should be a valid string\", value)]\n        reason = EmailStr._validate(value)\n        if reason:\n            error = _error(\"value_error\", loc, f\"value is not a valid email address: {reason}\", value)\n            error[\"ctx\"] = {\"reason\": reason}\n            return None, [error]\n        return EmailStr(value), []\n\n    coerced, error_type, message = _coerce_scalar(value, annotation)\n    if error_type:\n        return None, [_error(error_type, loc, message, value)]\n\n    failure = check_constraints(coerced, inline_rules)\n    if failure:\n        error_type, message, ctx = failure\n        error = _error(error_type, loc, message, value)\n        error[\"ctx\"] = ctx\n        return None, [error]\n    return coerced, []\n\n\ndef _error(error_type, loc, message, value):\n    return {\"type\": error_type, \"loc\": tuple(loc), \"msg\": message, \"input\": value}\n\n\ndef _coerce_scalar(value, annotation):\n    \"\"\"Return (value, error_type, message). Mirrors Pydantic's lax mode.\"\"\"\n    if annotation in (typing.Any, None) or annotation is type(None):\n        return value, None, None\n\n    if annotation is bool:\n        if isinstance(value, bool):\n            return value, None, None\n        if isinstance(value, str):\n            lowered = value.strip().lower()\n            if lowered in {\"1\", \"true\", \"yes\", \"on\", \"y\", \"t\"}:\n                return True, None, None\n            if lowered in {\"0\", \"false\", \"no\", \"off\", \"n\", \"f\"}:\n                return False, None, None\n        if isinstance(value, int) and value in (0, 1):\n            return bool(value), None, None\n        return None, \"bool_parsing\", \"Input should be a valid boolean, unable to interpret input\"\n\n    if annotation is int:\n        if isinstance(value, bool):\n            return None, \"int_type\", \"Input should be a valid integer\"\n        if isinstance(value, int):\n            return value, None, None\n        if isinstance(value, float):\n            if value.is_integer():\n                return int(value), None, None\n            return None, \"int_from_float\", \"Input should be a valid integer, got a number with a fractional part\"\n        if isinstance(value, str):\n            try:\n                return int(value.strip()), None, None\n            except ValueError:\n                return None, \"int_parsing\", \"Input should be a valid integer, unable to parse string as an integer\"\n        return None, \"int_type\", \"Input should be a valid integer\"\n\n    if annotation is float:\n        if isinstance(value, bool):\n            return None, \"float_type\", \"Input should be a valid number\"\n        if isinstance(value, (int, float)):\n            return float(value), None, None\n        if isinstance(value, str):\n            try:\n                return float(value.strip()), None, None\n            except ValueError:\n                return None, \"float_parsing\", \"Input should be a valid number, unable to parse string as a number\"\n        return None, \"float_type\", \"Input should be a valid number\"\n\n    if annotation is str:\n        if isinstance(value, str):\n            return value, None, None\n        return None, \"string_type\", \"Input should be a valid string\"\n\n    return value, None, None\n\n\nclass _ModelMeta(type):\n    def __new__(mcls, name, bases, namespace):\n        fields = {}\n        field_validators = []\n        model_validators = []\n        for base in bases:\n            fields.update(getattr(base, \"model_fields\", {}) or {})\n            field_validators.extend(getattr(base, \"__field_validators__\", []) or [])\n            model_validators.extend(getattr(base, \"__model_validators__\", []) or [])\n\n        for attr_name, attr in list(namespace.items()):\n            if isinstance(attr, _ValidatorMarker):\n                (field_validators if attr.fields else model_validators).append(attr)\n                namespace[attr_name] = attr.func\n\n        for field_name, annotation in namespace.get(\"__annotations__\", {}).items():\n            if field_name.startswith(\"_\") or field_name == \"model_config\":\n                continue\n            annotation, inline = unwrap_annotated(annotation)\n            declared = namespace.get(field_name, _MISSING)\n            info = declared if isinstance(declared, FieldInfo) else (inline or FieldInfo(declared))\n            if inline is not None and isinstance(declared, FieldInfo) is False and declared is not _MISSING:\n                info.default = declared\n            fields[field_name] = (annotation, info)\n\n        cls = super().__new__(mcls, name, bases, namespace)\n        cls.model_fields = fields\n        cls.__field_validators__ = field_validators\n        cls.__model_validators__ = model_validators\n        cls.model_config = namespace.get(\"model_config\", getattr(cls, \"model_config\", {}) or {})\n        return cls\n\n\nclass BaseModel(metaclass=_ModelMeta):\n    model_fields = {}\n    model_config = {}\n    __field_validators__ = []\n    __model_validators__ = []\n\n    def __init__(self, **data):\n        instance, errors = type(self)._build(data, ())\n        if errors:\n            raise ValidationError([{**e, \"loc\": tuple(e[\"loc\"])} for e in errors])\n        object.__setattr__(self, \"__dict__\", dict(instance.__dict__))\n        object.__setattr__(self, \"__fields_set__\", set(instance.__fields_set__))\n\n    @classmethod\n    def _build(cls, data, loc):\n        \"\"\"Validate a dict into an instance. Returns (instance_or_None, errors).\"\"\"\n        errors = []\n        values = {}\n        provided = set()\n        populate_by_name = bool(cls.model_config.get(\"populate_by_name\"))\n\n        for field_name, (annotation, info) in cls.model_fields.items():\n            alias = info.alias\n            key = None\n            if alias and alias in data:\n                key = alias\n            elif field_name in data and (alias is None or populate_by_name):\n                key = field_name\n            report_name = alias or field_name\n\n            if key is None:\n                if info.required:\n                    errors.append(_error(\"missing\", (*loc, report_name), \"Field required\", data))\n                else:\n                    values[field_name] = info.default\n                continue\n\n            provided.add(field_name)\n            coerced, field_errors = validate_value(data[key], annotation, (*loc, report_name))\n            if field_errors:\n                errors.extend(field_errors)\n                continue\n            failure = check_constraints(coerced, info)\n            if failure:\n                error_type, message, ctx = failure\n                error = _error(error_type, (*loc, report_name), message, data[key])\n                error[\"ctx\"] = ctx\n                errors.append(error)\n                continue\n            for validator in cls.__field_validators__:\n                if field_name not in validator.fields:\n                    continue\n                try:\n                    coerced = validator.func(cls, coerced)\n                except (ValueError, AssertionError) as exc:\n                    error = _error(\"value_error\", (*loc, report_name), f\"Value error, {exc}\", coerced)\n                    error[\"ctx\"] = {\"error\": exc}\n                    errors.append(error)\n                    coerced = _MISSING\n                    break\n            if coerced is _MISSING:\n                continue\n            values[field_name] = coerced\n\n        if errors:\n            return None, errors\n\n        instance = object.__new__(cls)\n        object.__setattr__(instance, \"__dict__\", values)\n        object.__setattr__(instance, \"__fields_set__\", provided)\n\n        for validator in cls.__model_validators__:\n            try:\n                returned = validator.func(instance)\n                if isinstance(returned, cls):\n                    instance = returned\n            except (ValueError, AssertionError) as exc:\n                error = _error(\"value_error\", loc, f\"Value error, {exc}\", data)\n                error[\"ctx\"] = {\"error\": exc}\n                return None, [error]\n\n        return instance, []\n\n    @classmethod\n    def model_validate(cls, data):\n        return cls(**data)\n\n    @property\n    def model_fields_set(self):\n        return set(self.__fields_set__)\n\n    def model_dump(self, exclude_unset=False, by_alias=False, exclude_none=False, exclude=None):\n        result = {}\n        for field_name, (_, info) in self.model_fields.items():\n            if exclude_unset and field_name not in self.__fields_set__:\n                continue\n            if exclude and field_name in exclude:\n                continue\n            value = self.__dict__.get(field_name)\n            if exclude_none and value is None:\n                continue\n            key = (info.alias or field_name) if by_alias else field_name\n            result[key] = _dump(value, exclude_unset, by_alias, exclude_none)\n        return result\n\n    def dict(self, **kwargs):  # Pydantic v1 spelling, still common in course material\n        return self.model_dump(**kwargs)\n\n    def model_dump_json(self, **kwargs):\n        # Pydantic writes JSON without spaces and converts dates and times to strings.\n        import json\n        return json.dumps(_json_safe(self.model_dump(**kwargs)), separators=(\",\", \":\"))\n\n    def __repr__(self):\n        # Matches Pydantic: repr() names the model, str() lists the fields only.\n        inner = \", \".join(f\"{k}={v!r}\" for k, v in self._field_values().items())\n        return f\"{type(self).__name__}({inner})\"\n\n    def __str__(self):\n        return \" \".join(f\"{k}={v!r}\" for k, v in self._field_values().items())\n\n    def _field_values(self):\n        return {name: self.__dict__[name] for name in self.model_fields if name in self.__dict__}\n\n    def __eq__(self, other):\n        return isinstance(other, BaseModel) and self.__dict__ == other.__dict__\n\n\ndef _json_safe(value):\n    import datetime\n    if isinstance(value, dict):\n        return {k: _json_safe(v) for k, v in value.items()}\n    if isinstance(value, list):\n        return [_json_safe(v) for v in value]\n    if isinstance(value, (datetime.datetime, datetime.date, datetime.time)):\n        return value.isoformat()\n    return value\n\n\ndef _dump(value, exclude_unset, by_alias, exclude_none):\n    if isinstance(value, BaseModel):\n        return value.model_dump(exclude_unset=exclude_unset, by_alias=by_alias, exclude_none=exclude_none)\n    if isinstance(value, list):\n        return [_dump(item, exclude_unset, by_alias, exclude_none) for item in value]\n    if isinstance(value, dict):\n        return {k: _dump(v, exclude_unset, by_alias, exclude_none) for k, v in value.items()}\n    return value\n",
+    "fastapi.py": "\"\"\"A teaching stand-in for FastAPI, written with the standard library only.\n\nThe OneCompiler sandbox cannot install FastAPI, so this module is injected beside a\nlesson snippet to let the same code run unchanged: routes, path and query parameters,\nrequest bodies, response models, HTTPException, TestClient and the generated OpenAPI\nschema. Status codes, validation errors and schema output are matched to what real\nFastAPI produces for the constructs used in the reading materials, so the behaviour a\nstudent observes here is the behaviour they will get on their own machine.\n\nIt covers what the course uses and nothing more. There is no server, no async support,\nno dependency injection and no middleware; those arrive in later units, where students\nrun the real framework in their own project.\n\"\"\"\n\nimport inspect\nimport sys\nimport types\nimport typing\nfrom datetime import date, datetime, time\nfrom decimal import Decimal\nfrom uuid import UUID\n\nimport pydantic\nfrom pydantic import BaseModel, FieldInfo, ValidationError, unwrap_annotated\n\n__all__ = [\"FastAPI\", \"HTTPException\", \"Query\", \"Path\", \"Body\", \"Header\", \"Cookie\",\n           \"status\", \"APIRouter\", \"Response\", \"encoders\", \"testclient\"]\n\n\nclass _Status:\n    HTTP_200_OK = 200\n    HTTP_201_CREATED = 201\n    HTTP_202_ACCEPTED = 202\n    HTTP_204_NO_CONTENT = 204\n    HTTP_301_MOVED_PERMANENTLY = 301\n    HTTP_307_TEMPORARY_REDIRECT = 307\n    HTTP_400_BAD_REQUEST = 400\n    HTTP_401_UNAUTHORIZED = 401\n    HTTP_403_FORBIDDEN = 403\n    HTTP_404_NOT_FOUND = 404\n    HTTP_405_METHOD_NOT_ALLOWED = 405\n    HTTP_409_CONFLICT = 409\n    HTTP_415_UNSUPPORTED_MEDIA_TYPE = 415\n    HTTP_422_UNPROCESSABLE_ENTITY = 422\n    HTTP_500_INTERNAL_SERVER_ERROR = 500\n    HTTP_503_SERVICE_UNAVAILABLE = 503\n\n\nstatus = _Status()\n\n_REASONS = {\n    200: \"OK\", 201: \"Created\", 202: \"Accepted\", 204: \"No Content\",\n    307: \"Temporary Redirect\", 400: \"Bad Request\", 401: \"Unauthorized\",\n    403: \"Forbidden\", 404: \"Not Found\", 405: \"Method Not Allowed\",\n    409: \"Conflict\", 415: \"Unsupported Media Type\", 422: \"Unprocessable Entity\",\n    500: \"Internal Server Error\", 503: \"Service Unavailable\",\n}\n\n\nclass HTTPException(Exception):\n    def __init__(self, status_code, detail=None, headers=None):\n        self.status_code = status_code\n        self.detail = detail if detail is not None else _REASONS.get(status_code, \"Error\")\n        self.headers = headers\n        super().__init__(self.detail)\n\n\nclass _ParamInfo(pydantic.FieldInfo):\n    \"\"\"Query(...) / Path(...) carry the same rules a model Field does.\"\"\"\n\n    def __init__(self, default=..., **rules):\n        super().__init__(pydantic._MISSING if default is ... else default, **rules)\n        self.source = rules.get(\"source\", \"query\")\n\n\ndef Query(default=..., **rules):\n    rules[\"source\"] = \"query\"\n    return _ParamInfo(default, **rules)\n\n\ndef Path(default=..., **rules):\n    rules[\"source\"] = \"path\"\n    return _ParamInfo(default, **rules)\n\n\ndef Body(default=..., **rules):\n    rules[\"source\"] = \"body\"\n    return _ParamInfo(default, **rules)\n\n\ndef Header(default=..., **rules):\n    rules[\"source\"] = \"header\"\n    return _ParamInfo(default, **rules)\n\n\ndef Cookie(default=..., **rules):\n    rules[\"source\"] = \"cookie\"\n    return _ParamInfo(default, **rules)\n\n\ndef jsonable_encoder(value):\n    if isinstance(value, BaseModel):\n        return jsonable_encoder(value.model_dump())\n    if isinstance(value, dict):\n        return {str(k): jsonable_encoder(v) for k, v in value.items()}\n    if isinstance(value, (list, tuple, set, frozenset)):\n        return [jsonable_encoder(v) for v in value]\n    if isinstance(value, (datetime, date, time)):\n        return value.isoformat()\n    if isinstance(value, (UUID, Decimal)):\n        return str(value) if isinstance(value, UUID) else float(value)\n    if isinstance(value, BaseException):\n        # FastAPI encodes the exception held in a validation error's ctx as {}.\n        return {}\n    return value\n\n\nclass Response:\n    def __init__(self, content=None, status_code=200, headers=None, media_type=None):\n        self.body = content\n        self.status_code = status_code\n        self.headers = headers or {}\n        self.media_type = media_type\n\n\nclass JSONResponse(Response):\n    pass\n\n\nclass _Route:\n    def __init__(self, path, endpoint, methods, **options):\n        self.path = path\n        self.endpoint = endpoint\n        self.methods = set(methods)\n        self.status_code = options.get(\"status_code\")\n        self.tags = options.get(\"tags\")\n        self.summary = options.get(\"summary\")\n        self.response_model = options.get(\"response_model\")\n        self.response_model_exclude_unset = bool(options.get(\"response_model_exclude_unset\"))\n        self.response_model_exclude_none = bool(options.get(\"response_model_exclude_none\"))\n        self.response_model_by_alias = bool(options.get(\"response_model_by_alias\"))\n        self.responses = options.get(\"responses\")\n        self.name = getattr(endpoint, \"__name__\", \"endpoint\")\n        doc = inspect.getdoc(endpoint)\n        self.description = doc or \"\"\n        self.segments = [s for s in path.split(\"/\") if s]\n\n    def match(self, path):\n        \"\"\"Return the raw path parameters, or None when the shape does not match.\"\"\"\n        parts = [s for s in path.split(\"/\") if s]\n        if len(parts) != len(self.segments):\n            return None\n        captured = {}\n        for template, actual in zip(self.segments, parts):\n            if template.startswith(\"{\") and template.endswith(\"}\"):\n                captured[template[1:-1]] = actual\n            elif template != actual:\n                return None\n        return captured\n\n\ndef _doc_endpoint(name):\n    def endpoint():  # pragma: no cover - never called, only listed in app.routes\n        return None\n    endpoint.__name__ = name\n    return endpoint\n\n\nclass APIRouter:\n    def __init__(self, prefix=\"\", tags=None):\n        self.prefix = prefix\n        self.tags = tags\n        self.routes = []\n\n    def _register(self, path, methods, options):\n        def decorator(func):\n            self.routes.append(_Route(self.prefix + path, func, methods, **options))\n            return func\n        return decorator\n\n    def get(self, path, **options): return self._register(path, [\"GET\"], options)\n    def post(self, path, **options): return self._register(path, [\"POST\"], options)\n    def put(self, path, **options): return self._register(path, [\"PUT\"], options)\n    def patch(self, path, **options): return self._register(path, [\"PATCH\"], options)\n    def delete(self, path, **options): return self._register(path, [\"DELETE\"], options)\n    def head(self, path, **options): return self._register(path, [\"HEAD\"], options)\n    def options(self, path, **options): return self._register(path, [\"OPTIONS\"], options)\n\n\nclass FastAPI(APIRouter):\n    def __init__(self, title=\"FastAPI\", version=\"0.1.0\", description=None,\n                 openapi_tags=None, docs_url=\"/docs\", redoc_url=\"/redoc\", **_ignored):\n        super().__init__()\n        self.title = title\n        self.version = version\n        self.description = description\n        self.openapi_tags = openapi_tags\n        # Real FastAPI registers the documentation routes when the app is created,\n        # so they appear in app.routes before any route of your own.\n        self.routes = [\n            _Route(\"/openapi.json\", _doc_endpoint(\"openapi\"), [\"GET\", \"HEAD\"]),\n            _Route(docs_url, _doc_endpoint(\"swagger_ui_html\"), [\"GET\", \"HEAD\"]),\n            _Route(f\"{docs_url}/oauth2-redirect\", _doc_endpoint(\"swagger_ui_redirect\"), [\"GET\", \"HEAD\"]),\n            _Route(redoc_url, _doc_endpoint(\"redoc_html\"), [\"GET\", \"HEAD\"]),\n        ]\n        self._user_route_start = len(self.routes)\n\n    def include_router(self, router, prefix=\"\", tags=None):\n        for route in router.routes:\n            route.path = prefix + route.path\n            if tags and not route.tags:\n                route.tags = tags\n            self.routes.append(route)\n\n    def user_routes(self):\n        return self.routes[self._user_route_start:]\n\n    def openapi(self):\n        info = {\"title\": self.title, \"version\": self.version}\n        if self.description:\n            info[\"description\"] = self.description\n        schemas = {}\n        paths = {}\n        for route in self.user_routes():\n            operation = {}\n            if route.summary:\n                operation[\"summary\"] = route.summary\n            if route.description:\n                operation[\"description\"] = route.description\n            if route.tags:\n                operation[\"tags\"] = list(route.tags)\n            responses = {}\n            success = str(route.status_code or 200)\n            responses[success] = {\"description\": _REASONS.get(int(success), \"Successful Response\")\n                                  if int(success) != 200 else \"Successful Response\"}\n            for code, detail in (route.responses or {}).items():\n                responses[str(code)] = dict(detail)\n            body_model = _body_model_for(route.endpoint)\n            if body_model is not None:\n                schemas[body_model.__name__] = _model_schema(body_model)\n                operation[\"requestBody\"] = {\n                    \"content\": {\"application/json\": {\n                        \"schema\": {\"$ref\": f\"#/components/schemas/{body_model.__name__}\"}}},\n                    \"required\": True,\n                }\n            if route.response_model is not None:\n                response_model = _element_model(route.response_model) or route.response_model\n                if isinstance(response_model, type) and issubclass(response_model, BaseModel):\n                    schemas[response_model.__name__] = _model_schema(response_model)\n            if _validated_params(route.endpoint, route) or body_model is not None:\n                responses[\"422\"] = {\"description\": \"Validation Error\"}\n            operation[\"responses\"] = responses\n            for method in sorted(route.methods):\n                paths.setdefault(route.path, {})[method.lower()] = operation\n        document = {\"openapi\": \"3.1.0\", \"info\": info, \"paths\": paths}\n        if self.openapi_tags:\n            document[\"tags\"] = list(self.openapi_tags)\n        if schemas:\n            document[\"components\"] = {\"schemas\": schemas}\n        return document\n\n\ndef _title_for(field_name):\n    return \" \".join(part.capitalize() for part in field_name.split(\"_\"))\n\n\ndef _model_schema(model):\n    properties = {}\n    required = []\n    for field_name, (annotation, info) in model.model_fields.items():\n        annotation, _ = pydantic._unwrap_optional(annotation)\n        entry = {}\n        if annotation is int:\n            entry[\"type\"] = \"integer\"\n        elif annotation is float:\n            entry[\"type\"] = \"number\"\n        elif annotation is bool:\n            entry[\"type\"] = \"boolean\"\n        elif annotation is str:\n            entry[\"type\"] = \"string\"\n        else:\n            entry[\"type\"] = \"object\"\n        # Key order follows real FastAPI output so a printed schema matches the lesson.\n        if entry[\"type\"] == \"string\":\n            if info.min_length is not None:\n                entry[\"minLength\"] = info.min_length\n            if info.max_length is not None:\n                entry[\"maxLength\"] = info.max_length\n        else:\n            if info.le is not None:\n                entry[\"maximum\"] = float(info.le)\n            if info.ge is not None:\n                entry[\"minimum\"] = float(info.ge)\n            if info.lt is not None:\n                entry[\"exclusiveMaximum\"] = float(info.lt)\n            if info.gt is not None:\n                entry[\"exclusiveMinimum\"] = float(info.gt)\n        entry[\"title\"] = info.title or _title_for(field_name)\n        if info.description:\n            entry[\"description\"] = info.description\n        properties[field_name] = entry\n        if info.required:\n            required.append(field_name)\n    schema = {\"properties\": properties}\n    if required:\n        schema[\"required\"] = required\n    schema[\"title\"] = model.__name__\n    schema[\"type\"] = \"object\"\n    return schema\n\n\ndef _annotation_and_rules(parameter):\n    \"\"\"Split `Annotated[int, Query(le=50)]` into its type and its rules.\"\"\"\n    annotation = parameter.annotation\n    rules = None\n    if typing.get_origin(annotation) is typing.Annotated:\n        args = typing.get_args(annotation)\n        annotation = args[0]\n        for extra in args[1:]:\n            if isinstance(extra, FieldInfo):\n                rules = extra\n    if isinstance(parameter.default, FieldInfo):\n        rules = parameter.default\n    if annotation is inspect.Parameter.empty:\n        annotation = str\n    return annotation, rules\n\n\ndef _body_model_for(endpoint):\n    for parameter in inspect.signature(endpoint).parameters.values():\n        annotation, _ = _annotation_and_rules(parameter)\n        if isinstance(annotation, type) and issubclass(annotation, BaseModel):\n            return annotation\n    return None\n\n\ndef _validated_params(endpoint, route):\n    \"\"\"Every parameter that is read from the path or the query string.\"\"\"\n    found = []\n    for parameter in inspect.signature(endpoint).parameters.values():\n        annotation, rules = _annotation_and_rules(parameter)\n        if isinstance(annotation, type) and issubclass(annotation, BaseModel):\n            continue\n        source = \"path\" if f\"{{{parameter.name}}}\" in route.path else \"query\"\n        found.append((parameter, annotation, rules, source))\n    return found\n\n\ndef _default_for(parameter, rules):\n    if rules is not None and not rules.required:\n        return rules.default\n    if parameter.default is not inspect.Parameter.empty and not isinstance(parameter.default, FieldInfo):\n        return parameter.default\n    return pydantic._MISSING\n\n\nencoders = types.ModuleType(\"fastapi.encoders\")\nencoders.jsonable_encoder = jsonable_encoder\nsys.modules[\"fastapi.encoders\"] = encoders\n\nresponses_module = types.ModuleType(\"fastapi.responses\")\nresponses_module.JSONResponse = JSONResponse\nresponses_module.Response = Response\nsys.modules[\"fastapi.responses\"] = responses_module\n\n\nclass _TestResponse:\n    def __init__(self, status_code, payload, has_body=True):\n        self.status_code = status_code\n        self._payload = payload\n        self.headers = {\"content-type\": \"application/json\"} if has_body else {}\n        if not has_body:\n            self.text = \"\"\n        elif isinstance(payload, str):\n            self.text = payload\n        else:\n            import json\n            self.text = json.dumps(payload)\n\n    def json(self):\n        return self._payload\n\n\nclass TestClient:\n    \"\"\"Calls the application in this process, the way FastAPI's TestClient does.\"\"\"\n\n    __test__ = False  # stops pytest trying to collect this as a test class\n\n    def __init__(self, app, raise_server_exceptions=True):\n        self.app = app\n        self.raise_server_exceptions = raise_server_exceptions\n\n    def get(self, url, **kwargs): return self.request(\"GET\", url, **kwargs)\n    def post(self, url, **kwargs): return self.request(\"POST\", url, **kwargs)\n    def put(self, url, **kwargs): return self.request(\"PUT\", url, **kwargs)\n    def patch(self, url, **kwargs): return self.request(\"PATCH\", url, **kwargs)\n    def delete(self, url, **kwargs): return self.request(\"DELETE\", url, **kwargs)\n    def head(self, url, **kwargs): return self.request(\"HEAD\", url, **kwargs)\n\n    def request(self, method, url, json=None, data=None, content=None, headers=None, **_ignored):\n        path, _, query_string = url.partition(\"?\")\n        query = _parse_query(query_string)\n        body = json\n        if body is None and (data is not None or content is not None):\n            body = _NOT_AN_OBJECT\n\n        path_matched = False\n        for route in self.app.routes:\n            captured = route.match(path)\n            if captured is None:\n                continue\n            path_matched = True\n            if method.upper() not in route.methods:\n                continue\n            return self._call(route, captured, query, body)\n\n        if path_matched:\n            return _TestResponse(405, {\"detail\": \"Method Not Allowed\"})\n        return _TestResponse(404, {\"detail\": \"Not Found\"})\n\n    def _call(self, route, captured, query, body):\n        errors = []\n        arguments = {}\n\n        for parameter, annotation, rules, source in _validated_params(route.endpoint, route):\n            name = parameter.name\n            raw_values = captured.get(name) if source == \"path\" else query.get(name)\n            if source == \"query\" and typing.get_origin(annotation) in (list, typing.List):\n                raw = raw_values if raw_values is not None else None\n            elif isinstance(raw_values, list):\n                raw = raw_values[-1]\n            else:\n                raw = raw_values\n\n            if raw is None:\n                default = _default_for(parameter, rules)\n                if default is pydantic._MISSING:\n                    errors.append({\"type\": \"missing\", \"loc\": [source, name],\n                                   \"msg\": \"Field required\", \"input\": None})\n                else:\n                    arguments[name] = default\n                continue\n\n            coerced, field_errors = pydantic.validate_value(raw, annotation, (source, name))\n            if field_errors:\n                for error in field_errors:\n                    errors.append({**error, \"loc\": list(error[\"loc\"])})\n                continue\n            failure = pydantic.check_constraints(coerced, rules)\n            if failure:\n                error_type, message, ctx = failure\n                errors.append({\"type\": error_type, \"loc\": [source, name], \"msg\": message,\n                               \"input\": raw, \"ctx\": ctx})\n                continue\n            arguments[name] = coerced\n\n        body_model = _body_model_for(route.endpoint)\n        if body_model is not None:\n            body_name = next(p.name for p in inspect.signature(route.endpoint).parameters.values()\n                             if _annotation_and_rules(p)[0] is body_model)\n            if body is _NOT_AN_OBJECT or (body is not None and not isinstance(body, dict)):\n                errors.append({\"type\": \"model_attributes_type\", \"loc\": [\"body\"],\n                               \"msg\": \"Input should be a valid dictionary or object to extract fields from\",\n                               \"input\": body if body is not _NOT_AN_OBJECT else \"\"})\n            elif body is None:\n                errors.append({\"type\": \"missing\", \"loc\": [\"body\"],\n                               \"msg\": \"Field required\", \"input\": None})\n            else:\n                instance, body_errors = body_model._build(body, (\"body\",))\n                if body_errors:\n                    for error in body_errors:\n                        entry = dict(error)\n                        entry[\"loc\"] = list(error[\"loc\"])\n                        errors.append(entry)\n                else:\n                    arguments[body_name] = instance\n\n        if errors:\n            return _TestResponse(422, jsonable_encoder({\"detail\": errors}))\n\n        try:\n            result = route.endpoint(**arguments)\n        except HTTPException as exc:\n            return _TestResponse(exc.status_code, {\"detail\": exc.detail})\n        except Exception:\n            if self.raise_server_exceptions:\n                raise\n            return _TestResponse(500, \"Internal Server Error\")\n\n        status_code = route.status_code or 200\n        if status_code == 204:\n            return _TestResponse(204, None, has_body=False)\n        if route.response_model is not None:\n            result = _apply_response_model(route.response_model, result,\n                                           route.response_model_exclude_unset,\n                                           route.response_model_exclude_none,\n                                           route.response_model_by_alias)\n        return _TestResponse(status_code, jsonable_encoder(result))\n\n\n_NOT_AN_OBJECT = object()\n\n\ndef _element_model(model):\n    \"\"\"`list[DishOut]` describes many DishOut, so the element type does the validating.\"\"\"\n    if typing.get_origin(model) in (list, typing.List):\n        args = typing.get_args(model)\n        return args[0] if args else None\n    return None\n\n\ndef _apply_response_model(model, result, exclude_unset=False, exclude_none=False, by_alias=False):\n    \"\"\"FastAPI validates what you return through the response model, then serialises it.\"\"\"\n    element = _element_model(model)\n    if element is not None:\n        items = result if isinstance(result, list) else [result]\n        return [_apply_response_model(element, item, exclude_unset, exclude_none, by_alias)\n                for item in items]\n    if isinstance(result, list):\n        return [_apply_response_model(model, item, exclude_unset, exclude_none, by_alias)\n                for item in result]\n    if isinstance(result, model):\n        return result.model_dump(exclude_unset=exclude_unset, exclude_none=exclude_none,\n                                 by_alias=by_alias)\n    payload = result.model_dump() if isinstance(result, BaseModel) else result\n    if not isinstance(payload, dict):\n        return payload\n    instance, errors = model._build(payload, ())\n    if errors:\n        location = \".\".join(str(p) for p in errors[0][\"loc\"])\n        raise RuntimeError(\n            f\"Response validation failed for {model.__name__}: {errors[0]['msg']} at {location}\"\n        )\n    return instance.model_dump(exclude_unset=exclude_unset, exclude_none=exclude_none,\n                               by_alias=by_alias)\n\n\ndef _parse_query(query_string):\n    parsed = {}\n    for pair in query_string.split(\"&\"):\n        if not pair:\n            continue\n        name, _, value = pair.partition(\"=\")\n        parsed.setdefault(_unquote(name), []).append(_unquote(value))\n    return parsed\n\n\ndef _unquote(text):\n    from urllib.parse import unquote_plus\n    return unquote_plus(text)\n\n\ntestclient = types.ModuleType(\"fastapi.testclient\")\ntestclient.TestClient = TestClient\nsys.modules[\"fastapi.testclient\"] = testclient\n",
+  };
+  // SHIM-SOURCES:END
+
+  // The shim travels with the workspace payload as an extra file, so any version of the
+  // API creates a working editor without needing to know what a shim is.
+  function sandboxShimFiles(language, code) {
+    if (!PYTHON_LANGUAGES.has(language)) return [];
+    const roots = new Set(pythonImportRoots(code));
+    if (![...PYTHON_SANDBOX_SHIMS].some(name => roots.has(name))) return [];
+    const needed = roots.has("fastapi") ? ["pydantic.py", "fastapi.py"] : ["pydantic.py"];
+    return needed
+      .filter(name => SANDBOX_SHIM_SOURCES[name])
+      .map(name => ({name, content: SANDBOX_SHIM_SOURCES[name]}));
+  }
+
+  // An illustrative fragment such as a bare `@app.get(...)` with no app in sight is
+  // valid Python that cannot run. Rather than publish an editor that raises NameError,
+  // find names the block uses at statement level but never defines.
+  function undefinedTopLevelNames(language, code) {
+    if (!PYTHON_LANGUAGES.has(language)) return [];
+    const text = String(code || "");
+    const defined = new Set(["self","cls"]);
+    const needed = new Map();
+    for (const line of text.split(/\r?\n/)) {
+      const bare = line.replace(/#.*$/, "");
+      const trimmed = bare.trim();
+      if (!trimmed) continue;
+      let m;
+      if ((m = trimmed.match(/^([A-Za-z_]\w*)\s*(?::[^=]+)?=[^=]/))) defined.add(m[1]);
+      if ((m = trimmed.match(/^(?:async\s+)?def\s+([A-Za-z_]\w*)/))) defined.add(m[1]);
+      if ((m = trimmed.match(/^class\s+([A-Za-z_]\w*)/))) defined.add(m[1]);
+      if ((m = trimmed.match(/^for\s+([A-Za-z_][\w, ]*)\s+in\s/)))
+        for (const name of m[1].split(",")) defined.add(name.trim());
+      if ((m = trimmed.match(/\bas\s+([A-Za-z_]\w*)/))) defined.add(m[1]);
+      if ((m = trimmed.match(/^import\s+(.+)$/)))
+        for (const part of m[1].split(",")) defined.add(part.trim().split(/\s+as\s+/).pop().split(".")[0].trim());
+      if ((m = trimmed.match(/^from\s+[\w.]+\s+import\s+(.+)$/)))
+        for (const part of m[1].split(",")) defined.add(part.trim().split(/\s+as\s+/).pop().replace(/[()]/g,"").trim());
+      // Uses: a decorator root, or a statement that starts by reaching into a name.
+      if ((m = bare.match(/^@([A-Za-z_]\w*)/))) needed.set(m[1], true);
+      if ((m = bare.match(/^([A-Za-z_]\w*)\.[A-Za-z_]/))) needed.set(m[1], true);
+    }
+    return [...needed.keys()].filter(name => !defined.has(name));
+  }
+
+  // Modules a lesson ships itself with `file=` are present in the workspace, so they
+  // count as available even though they are not installed anywhere.
+  function localModuleNames(fixtureNames) {
+    const modules = new Set();
+    for (const name of fixtureNames || []) {
+      const clean = String(name).replace(/^\.\//, "");
+      modules.add(clean.split("/")[0].replace(/\.py$/, ""));
+    }
+    return modules;
+  }
+
+  function missingSandboxPackages(language, code, localModules) {
+    if (!PYTHON_LANGUAGES.has(language)) return [];
+    const local = localModules || new Set();
+    return pythonImportRoots(code).filter(root =>
+      !PYTHON_STDLIB_MODULES.has(root) && !PYTHON_SANDBOX_EXTRA_PACKAGES.has(root) &&
+      !PYTHON_SANDBOX_SHIMS.has(root) && !local.has(root));
+  }
+
   const supportedExts = new Set([".png",".jpg",".jpeg",".gif",".webp",".svg"]);
   const mimeTypes = {".png":"image/png",".jpg":"image/jpeg",".jpeg":"image/jpeg",".gif":"image/gif",".webp":"image/webp",".svg":"image/svg+xml"};
   // Keep pressure modest. Do not automatically resend a complete image.
@@ -786,6 +953,8 @@
 
   const $ = id => document.getElementById(id);
 
+  const isLocalDev = ["127.0.0.1", "localhost"].includes(location.hostname);
+
   function externalApiBase() {
     const configured = location.protocol === "file:"
       ? "http://127.0.0.1:8000"
@@ -794,7 +963,7 @@
 
     const api = new URL(configured, location.href);
     const isVercel = api.hostname === "vercel.app" || api.hostname.endsWith(".vercel.app");
-    if (api.origin === location.origin || isVercel) {
+    if (!isLocalDev && (api.origin === location.origin || isVercel)) {
       throw new Error("Uploads and product updates cannot use Vercel. Configure an external API host.");
     }
     return api.origin;
@@ -806,7 +975,7 @@
   // Fetch the product list from the same Vercel region as the UI. The Render
   // API remains responsible for uploads, but its route to this large ByteXL
   // response can time out even while other operations are healthy.
-  const readingMaterialsUrl = location.protocol === "file:"
+  const readingMaterialsUrl = (location.protocol === "file:" || isLocalDev)
     ? apiBase + "/reading-materials"
     : "/api/reading-materials";
   const previewProductUploadUrl = apiBase + "/preview-product-upload";
@@ -1452,12 +1621,24 @@
 
   function parseBlockInfo(info) {
     // "python with=attendees.txt" or "text file=reports/day1.txt" -> {language, attrs}
+    // Bare flags carry no value: "python norun" -> {norun: ""}.
     const attrs = {};
     for (const token of String(info||"").trim().split(/\s+/)) {
-      const m = token.match(/^(file|with)=(.+)$/);
-      if (m) attrs[m[1]] = m[2];
+      const m = token.match(/^(file|with|template|workspace|fork|height)=(.+)$/);
+      if (m) { attrs[m[1]] = m[2]; continue; }
+      if (token === "norun" || token === "run") attrs[token] = "";
     }
+    const named = String(info||"").match(/\bname=("([^"]*)"|'([^']*)'|(\S+))/);
+    if (named) attrs.name = named[2] ?? named[3] ?? named[4];
     return { language: normalizeLanguage(info), attrs };
+  }
+
+  // Authoring flags are instructions to this converter, not content, so they are
+  // stripped before the markdown is published.
+  function publishedFenceInfo(info) {
+    return String(info||"").trim().split(/\s+/)
+      .filter(token => token && token !== "norun" && token !== "run" && !/^file=/.test(token))
+      .join(" ");
   }
 
   async function convertMarkdownCode(markdown, filePath, settings) {
@@ -1472,6 +1653,7 @@
       const { attrs } = parseBlockInfo(block.info);
       if (attrs.file) fileRegistry.set(attrs.file, block.code.replace(/\n+$/,""));
     }
+    const localModules = localModuleNames(fileRegistry.keys());
     for (const block of blocks) {
       const { language: rawLang, attrs } = parseBlockInfo(block.info);
       // A `file=` block is a fixture definition, never its own editor. Re-render it
@@ -1481,8 +1663,29 @@
         replacements.push([block.start, block.end, "```"+(rawLang||"")+"\n"+block.code.replace(/\n+$/,"")+"\n```\n"]);
         continue;
       }
-      const decision = shouldConvert(rawLang, block.code, settings);
-      if (!decision.convert) { skippedBlocks.push({file:filePath,lines:`${block.startLine}-${block.endLine}`,language:decision.language||"(none)",reason:decision.reason}); continue; }
+      if (rawLang === "nimbus") {
+        const embed = nimbusIframeHtml(attrs, settings.height);
+        if (embed) {
+          replacements.push([block.start, block.end, embed]);
+          convertedBlocks++;
+          languageCounts.nimbus = (languageCounts.nimbus || 0) + 1;
+        } else {
+          skippedBlocks.push({file:filePath,lines:`${block.startLine}-${block.endLine}`,
+                              language:"nimbus",reason:"nimbus-block-needs-template-workspace-or-fork"});
+        }
+        continue;
+      }
+      const decision = shouldConvert(rawLang, block.code, settings, attrs, localModules);
+      if (!decision.convert) {
+        skippedBlocks.push({file:filePath,lines:`${block.startLine}-${block.endLine}`,language:decision.language||"(none)",reason:decision.reason});
+        // A skipped block stays in the lesson as a plain fenced block. Rewrite it
+        // only when the fence carries authoring flags that must not be published.
+        const cleaned = publishedFenceInfo(block.info);
+        if (cleaned !== String(block.info||"").trim()) {
+          replacements.push([block.start, block.end, "```"+cleaned+"\n"+block.code.replace(/\n+$/,"")+"\n```\n"]);
+        }
+        continue;
+      }
       fileBlockIndex++;convertedBlocks++;
       const lang = decision.language;
       let snippetCode = block.code.replace(/\n+$/,"");
@@ -1501,6 +1704,11 @@
           }
           else fileWarnings.push({file:filePath,lines:`${block.startLine}-${block.endLine}`,name});
         }
+      }
+      // Ship the stand-in modules beside the snippet when it imports them, so the
+      // editor can run FastAPI code the sandbox could never install.
+      for (const shim of sandboxShimFiles(lang, snippetCode)) {
+        if (!extraFiles.some(existing => existing.name === shim.name)) extraFiles.push(shim);
       }
       const snippet = {
         snippetId: snippetIdFor(filePath,fileBlockIndex),
@@ -1562,13 +1770,26 @@
     return blocks;
   }
 
-  function shouldConvert(language,code,settings) {
+  function shouldConvert(language,code,settings,attrs,localModules) {
+    const blockAttrs = attrs || {};
     if (!code.trim()) return {convert:false,language,reason:"empty"};
     let lang=language;
     if (!lang) { if (!settings.convertUnlabeled) return {convert:false,language,reason:"unlabeled"}; lang="python"; }
     if (DEFAULT_SKIP_LANGUAGES.has(lang)) return {convert:false,language:lang,reason:"skipped-language"};
     if (settings.includeLanguages&&!settings.includeLanguages.has(lang)) return {convert:false,language:lang,reason:"not-in-include-list"};
     if (!ONECOMPILER_LANGUAGES.has(lang)) return {convert:false,language:lang,reason:"unsupported-language"};
+    // `norun` keeps a block static even when it would run, for example a snippet
+    // the lesson deliberately presents as broken. `run` overrides the sandbox
+    // check for an author who knows better than the package list.
+    if ("norun" in blockAttrs) return {convert:false,language:lang,reason:"author-marked-norun"};
+    if (!("run" in blockAttrs)) {
+      const missing = missingSandboxPackages(lang,code,localModules);
+      if (missing.length) return {convert:false,language:lang,reason:`missing-package:${missing.join(",")}`};
+      const unavailable = unavailableShellCommands(lang,code);
+      if (unavailable.length) return {convert:false,language:lang,reason:`missing-command:${unavailable.join(",")}`};
+      const undefinedNames = undefinedTopLevelNames(lang,code);
+      if (undefinedNames.length) return {convert:false,language:lang,reason:`incomplete-snippet:${undefinedNames.join(",")}`};
+    }
     return {convert:true,language:lang,reason:"converted"};
   }
 
@@ -1577,6 +1798,32 @@
   function stripIncludedSetup(code,setupName){const p=new RegExp(`^\\s*\\\\i\\s+${escapeRegExp(setupName)}\\s*$`);return code.replace(/\n+$/,"").split(/\n/).filter(line=>!p.test(line)).join("\n").replace(/\n+$/,"");}
   function oneCompilerSqlCode(block,setupName,setup,context){const parts=[setup.replace(/\n+$/,"")];const contextCode=context.map(item=>item.replace(/\n+$/,"")).filter(Boolean).join("\n\n");if(contextCode)parts.push(`-- Reusable definitions from earlier examples\n${contextCode}`);parts.push(`-- Query\n${stripIncludedSetup(block.code,setupName)}`);return parts.join("\n\n");}
   function reusableSetupCode(language,code){if(language!=="postgresql")return false;return /\b(CREATE\s+(?:OR\s+REPLACE\s+)?(?:VIEW|MATERIALIZED\s+VIEW|FUNCTION|PROCEDURE|TRIGGER|ROLE)|PREPARE\s+\w+|CREATE\s+TABLE\s+schema_migrations\b)/is.test(code);}
+  // A ```nimbus fence becomes a same-origin iframe. Keeping the route relative is
+  // important: once the reading material is rendered by app.bytexl.ai, Nimbus shares
+  // the student's active ByteXL session instead of being treated as third-party content.
+  //   ```nimbus template=python-fastapi name="Tiffin Trail" height=650
+  //   ```nimbus workspace=44yrwxr3u          (one fixed workspace, for a demo)
+  //   ```nimbus fork=44yrwxr3u               (student forks a prepared workspace)
+  const NIMBUS_BASE = "/nimbus";
+
+  function nimbusEmbedUrl(attrs) {
+    if (attrs.workspace) return `${NIMBUS_BASE}/${encodeURIComponent(attrs.workspace)}`;
+    if (attrs.fork) return `${NIMBUS_BASE}/fork/${encodeURIComponent(attrs.fork)}`;
+    if (attrs.template) {
+      const name = attrs.name ? `?name=${encodeURIComponent(attrs.name)}` : "";
+      return `${NIMBUS_BASE}/template/${encodeURIComponent(attrs.template)}${name}`;
+    }
+    return null;
+  }
+
+  function nimbusIframeHtml(attrs, fallbackHeight) {
+    const src = nimbusEmbedUrl(attrs);
+    if (!src) return null;
+    const height = attrs.height || fallbackHeight || "650";
+    const title = attrs.name ? `${attrs.name} Nimbus workspace` : "Nimbus workspace";
+    return `<iframe\n frameBorder="0"\n height="${escapeAttr(height)}"\n src="${escapeAttr(src)}"\n title="${escapeAttr(title)}"\n allow="clipboard-read; clipboard-write; fullscreen"\n width="100%"\n></iframe>\n`;
+  }
+
   function iframeHtml(src,h) { return `<iframe\n frameBorder="0"\n height="${escapeAttr(h)}"  \n src="${escapeAttr(src)}" \n width="100%"\n></iframe>\n`; }
   async function createOneCompilerWorkspace(snippet) {
     const r = await fetch(oneCompilerWorkspaceUrl,{
@@ -1622,6 +1869,21 @@
     if(le.length)for(const[l,c]of le)lines.push(`- ${l}: ${c}`);else lines.push("- None");
     lines.push("","## Changed Files","");
     if(changedFiles.length){lines.push("| File | Editors |","|----|---:|");for(const it of changedFiles.slice(0,500))lines.push(`| \`${it.path}\` | ${it.editors} |`);if(changedFiles.length>500)lines.push(`| ... | ${changedFiles.length-500} more |`);}else lines.push("No files changed.");
+    const incomplete=skippedBlocks.filter(it=>String(it.reason||"").startsWith("incomplete-snippet:"));
+    if(incomplete.length){
+      lines.push("","## Left Static: Incomplete Snippet","",
+        "These blocks use a name they never define, so they illustrate a point rather than run. An editor here would raise NameError. Give the block the imports and definitions it needs if it should be runnable.","",
+        "| File | Lines | Undefined |","|----|---:|---|");
+      for(const it of incomplete.slice(0,500))lines.push(`| \`${it.file}\` | ${it.lines} | \`${it.reason.slice("incomplete-snippet:".length)}\` |`);
+    }
+    const unrunnable=skippedBlocks.filter(it=>/^missing-(package|command):/.test(String(it.reason||"")));
+    if(unrunnable.length){
+      lines.push("","## Left Static: Not Available In The Sandbox","",
+        "These blocks stayed plain code because the OneCompiler sandbox cannot run them. It has no network access, pip is blocked by PEP 668, and tools such as uv, git and docker are not installed, so an editor here would fail on the first line. FastAPI and Pydantic are the exception: a stand-in is shipped with the snippet, so those blocks do become editors. Rewrite the snippet against what the sandbox has, or leave it static and keep the expected output in the lesson.","",
+        "| File | Lines | Language | Not available |","|----|---:|---|---|");
+      for(const it of unrunnable.slice(0,500))lines.push(`| \`${it.file}\` | ${it.lines} | \`${it.language}\` | \`${it.reason.replace(/^missing-(package|command):/,"")}\` |`);
+      if(unrunnable.length>500)lines.push(`| ... | ... | ... | ${unrunnable.length-500} more |`);
+    }
     lines.push("","## Skipped Blocks","");
     if(skippedBlocks.length){lines.push("| File | Lines | Language | Reason |","|----|---:|---|---|");for(const it of skippedBlocks.slice(0,500))lines.push(`| \`${it.file}\` | ${it.lines} | \`${it.language}\` | ${it.reason} |`);if(skippedBlocks.length>500)lines.push(`| ... | ... | ... | ${skippedBlocks.length-500} more |`);}else lines.push("No skipped blocks.");
     lines.push("");return lines.join("\n");
