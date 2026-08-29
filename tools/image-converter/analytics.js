@@ -51,20 +51,19 @@
   var lastForcedRefreshMs = 0;
   var loadInFlight = false;
   var metricHistory = {};
-  var resilienceScoreHistory = 0;
   var motionOK = !window.matchMedia || !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var activeDashboard = "overview";
   var DASHBOARDS = {
-    overview: { title: "What needs attention", description: "A plain-language summary of what changed and what to do next." },
+    overview: { title: "Overview", description: "The most important numbers at a glance. Click a card to see the full picture." },
     production: { title: "Questions created over time", description: "How many questions were added, who created them, and what was archived." },
     coverage: { title: "What content is available", description: "Available questions and assessments by subject, track, and company." },
     quality: { title: "Question quality", description: "Difficulty balance and missing question details." },
     team: { title: "Team roles", description: "Choose each author's role for people-based reports." }
   };
   var ANALYTICS_INDEX = [
-    { title: "What needs attention", view: "overview", target: "tiles", tags: "summary total questions mcq coding growth increase decrease" },
-    { title: "Subjects that depend on one person", view: "overview", target: "metric-resilience", tags: "subjects one author ownership unavailable maintain difficult" },
-    { title: "Monthly production", view: "production", target: "metric-monthly", tags: "monthly trend volume added questions growth output over time" },
+    { title: "Overview", view: "overview", target: "tiles", tags: "summary total questions mcq coding growth increase decrease" },
+    { title: "Monthly production", view: "overview", target: "metric-monthly", tags: "monthly trend volume added questions growth output over time" },
+    { title: "Subjects that depend on one person", view: "coverage", target: "metric-resilience", tags: "subjects one author ownership unavailable maintain difficult" },
     { title: "Who added the questions?", view: "production", target: "metric-curated", tags: "content leads support engineers role written uploaded" },
     { title: "Questions added and archived", view: "production", target: "metric-churn", tags: "archived deleted additions overall increase decrease" },
     { title: "Weekly movement", view: "production", target: "metric-weekly", tags: "week over week weekly added archived net movement trend" },
@@ -139,7 +138,7 @@
   }
   function animateMetrics(scope) {
     if (!motionOK) return;
-    Array.prototype.forEach.call((scope || document).querySelectorAll(".tile .v,.score-value,.operating-value"), function (node) {
+    Array.prototype.forEach.call((scope || document).querySelectorAll(".tile .v"), function (node) {
       var raw = node.childNodes.length ? node.childNodes[0].nodeValue || node.textContent : node.textContent;
       var target = parseMetric(raw); if (target === null) return;
       var labelNode = node.closest(".tile") && node.closest(".tile").querySelector(".k");
@@ -483,36 +482,14 @@
   }
 
   /* --------------------------------------------------------------- panels */
-  function renderTiles() {
-    var t = byMonthType();
-    var total = rows.length;
-    var mcq = t.mcq.reduce(add, 0), cod = t.coding.reduce(add, 0);
-    var arch = archivedRows().length;
-    var leadN = 0;
-    rows.forEach(function (i) { if (roleOf(DATA.cols.au[i]) === "lead") leadN++; });
-    var net = total - arch;
-    var last = months[months.length - 1], prev = months[months.length - 2];
-    var lastN = t.mcq[months.length - 1] + t.coding[months.length - 1] + t.desc[months.length - 1];
-    var prevN = months.length > 1 ? t.mcq[months.length - 2] + t.coding[months.length - 2] + t.desc[months.length - 2] : 0;
-    var delta = prevN ? Math.round(((lastN - prevN) / prevN) * 100) : 0;
-
-    var tiles = [
-      { k: "Questions added", v: fmt(total), d: months.length + " month" + (months.length > 1 ? "s" : "") + " in view" },
-      { k: "MCQs", v: fmt(mcq), d: pct(mcq, total) + "% of additions" },
-      { k: "Coding questions", v: fmt(cod), d: pct(cod, total) + "% of additions" },
-      { k: "Curated by Content Leads", v: pct(leadN, total) + "%", d: fmt(leadN) + " of " + fmt(total) + " questions" },
-      { k: "Archived in window", v: fmt(arch), d: arch > total ? "Exceeds additions" : pct(arch, total) + "% of additions", cls: arch > total ? "down" : "" },
-      { k: "Overall question-bank change", v: (net >= 0 ? "+" : "") + fmt(net), d: net >= 0 ? "More questions than before" : "Fewer questions than before", cls: net >= 0 ? "up" : "down" },
-      { k: monthLabel(last) + " vs " + monthLabel(prev), v: (delta >= 0 ? "+" : "") + delta + "%", d: fmt(prevN) + " → " + fmt(lastN), cls: delta >= 0 ? "up" : "down" }
-    ];
-    $("tiles").innerHTML = tiles.map(function (x) {
-      return '<div class="tile"><div class="k">' + esc(x.k) + '</div><div class="v">' + x.v +
-        '</div><div class="d ' + (x.cls || "") + '">' + esc(x.d) + "</div></div>";
-    }).join("");
-  }
-  function add(a, b) { return a + b; }
-
-  function executiveSignals() {
+  /**
+   * The raw counts behind every "needs attention" signal on the dashboard.
+   * Overview shows these as plain tiles; the dashboards they link to show the
+   * full breakdown. No blended score lives here on purpose — a single 0-100
+   * dial hides which of four unrelated things actually moved it, which was
+   * the exact complaint about the old headline metric. Show the numbers.
+   */
+  function bankSignals() {
     var c = DATA.cols, dims = DATA.dims, selected = rows.length, total = selected || 1;
     var latestKey = months[months.length - 1], previousKey = months[months.length - 2];
     var latestIndex = dims.months.indexOf(latestKey), previousIndex = dims.months.indexOf(previousKey);
@@ -528,97 +505,87 @@
       var author = dims.authors[c.au[i]];
       subjects[subject].authors[author] = (subjects[subject].authors[author] || 0) + 1;
     });
-    var concentrated = [], exposed = 0;
+    var concentrated = 0, exposed = 0;
     Object.keys(subjects).forEach(function (subject) {
       var pool = subjects[subject]; if (pool.n < 25) return;
       var counts = Object.keys(pool.authors).map(function (author) { return pool.authors[author]; });
       var topShare = Math.max.apply(null, counts) / pool.n;
-      if (topShare >= .7) { concentrated.push(subject); exposed += pool.n; }
+      if (topShare >= .7) { concentrated++; exposed += pool.n; }
     });
     var archived = archivedRows().length;
     var momentum = previous ? Math.round(((latest - previous) / previous) * 100) : 0;
-    var debtPct = pct(qualityDebt, total), exposedPct = pct(exposed, total), archivePct = pct(archived, total);
-    var risk = .5 * exposedPct + .28 * debtPct + .12 * Math.min(100, archivePct) + .1 * Math.max(0, -momentum);
-    var score = selected ? Math.max(0, Math.min(100, Math.round(100 - risk))) : 0;
     return {
-      total: selected, latest: latest, previous: previous, latestKey: latestKey, momentum: momentum,
-      archived: archived, net: rows.length - archived, archivePct: archivePct,
-      qualityDebt: qualityDebt, debtPct: debtPct,
-      concentrated: concentrated.length, exposed: exposed, exposedPct: exposedPct,
-      score: score, state: !selected ? "No questions in this selection" : score >= 72 ? "Healthy" : score >= 55 ? "Needs attention" : "Needs urgent attention"
+      total: selected, momentum: momentum, archived: archived, net: rows.length - archived,
+      qualityDebt: qualityDebt, concentrated: concentrated, exposed: exposed
     };
   }
 
-  function renderExecutiveBrief() {
-    var s = executiveSignals(), headline;
-    if (!s.total) headline = 'No questions match these filters. <em>Try selecting more months or subjects.</em>';
-    else if (s.exposedPct >= 45) headline = 'Too many questions <em>depend on just one author.</em>';
-    else if (s.debtPct >= 25) headline = 'Many questions are <em>missing details the team needs.</em>';
-    else if (s.momentum < 0) headline = 'The team created <em>fewer questions than last month.</em>';
-    else headline = 'Question production is growing and <em>the bank is in good shape.</em>';
+  function renderTiles() {
+    var t = byMonthType();
+    var total = rows.length;
+    var mcq = t.mcq.reduce(add, 0), cod = t.coding.reduce(add, 0);
+    var arch = archivedRows().length;
+    var leadN = 0;
+    rows.forEach(function (i) { if (roleOf(DATA.cols.au[i]) === "lead") leadN++; });
+    var net = total - arch;
+    var last = months[months.length - 1], prev = months[months.length - 2];
+    var lastN = t.mcq[months.length - 1] + t.coding[months.length - 1] + t.desc[months.length - 1];
+    var prevN = months.length > 1 ? t.mcq[months.length - 2] + t.coding[months.length - 2] + t.desc[months.length - 2] : 0;
+    var delta = prevN ? Math.round(((lastN - prevN) / prevN) * 100) : 0;
+    var s = bankSignals();
 
-    var host = $("executive-brief");
-    host.innerHTML = '<div class="executive-hero"><div class="executive-copy">' +
-      '<div class="signal-label">Simple summary</div><div class="executive-headline">' + headline + '</div>' +
-      '<p class="executive-summary">In ' + monthLabel(s.latestKey) + ', the team created <b>' + Math.abs(s.momentum) + '% ' + (s.momentum >= 0 ? "more" : "fewer") +
-      ' questions</b> than in the previous month. One author created at least 70% of the questions in subject areas covering <b>' + s.exposedPct +
-      '%</b> of this selection. <b>' + s.debtPct + '%</b> of questions are missing a subject, topic, difficulty, or explanation.</p>' +
-      '<div class="hero-facts"><span class="hero-fact"><b>' + (s.net >= 0 ? "+" : "") + fmt(s.net) + '</b> questions after archiving</span>' +
-      '<span class="hero-fact"><b>' + s.concentrated + '</b> subjects mostly written by one person</span>' +
-      '<span class="hero-fact"><b>' + fmt(s.qualityDebt) + '</b> questions missing details</span></div></div>' +
-      '<div class="operating-score"><div class="score-orbit" style="--operating:0"><div class="operating-value">' + s.score +
-      '<small>Dashboard health</small></div></div><div class="operating-state">' + esc(s.state) + '</div>' +
-      '<div class="operating-note">Higher is better. The score checks author dependence, missing details, archived questions, and monthly output.</div></div></div>';
-    requestAnimationFrame(function () {
-      var orbit = host.querySelector(".score-orbit"); if (orbit) orbit.style.setProperty("--operating", s.score);
-    });
-
-    var priorities = [
-      { severity: s.exposedPct, metric: s.exposedPct + "%", title: "Add more authors to these subjects", copy: fmt(s.exposed) + " questions are in subjects where one person created at least 70% of the content.", view: "overview", target: "metric-resilience", action: "View affected subjects", color: "#55dfe4", glow: "rgba(53,215,232,.2)" },
-      { severity: s.debtPct, metric: s.debtPct + "%", title: "Complete missing question details", copy: fmt(s.qualityDebt) + " questions are missing a subject, topic, difficulty, or explanation.", view: "quality", target: "metric-quality", action: "View missing details", color: "#a78bfa", glow: "rgba(139,92,246,.22)" },
-      { severity: Math.max(5, s.archivePct - 40, -s.momentum), metric: (s.momentum >= 0 ? "+" : "") + s.momentum + "%", title: s.momentum >= 0 ? "Keep monthly output steady" : "Increase question creation", copy: fmt(s.archived) + " questions were archived in this period. After additions and archiving, the bank changed by " + (s.net >= 0 ? "+" : "") + fmt(s.net) + " questions.", view: "production", target: "metric-churn", action: "View added and archived", color: "#f27bcc", glow: "rgba(232,70,199,.2)" }
-    ].sort(function (a, b) { return b.severity - a.severity; });
-    $("priority-actions").innerHTML = '<div class="priority-grid">' + priorities.map(function (p, i) {
-      return '<article class="priority-card" style="--priority-color:' + p.color + ';--priority-glow:' + p.glow + '">' +
-        '<div class="priority-top"><span class="priority-rank">Priority ' + (i + 1) + '</span><span class="priority-metric">' + esc(p.metric) + '</span></div>' +
-        '<div class="priority-title">' + esc(p.title) + '</div><div class="priority-copy">' + esc(p.copy) + '</div>' +
-        '<button class="brief-jump" data-view="' + p.view + '" data-target="' + p.target + '">' + esc(p.action) + ' →</button></article>';
-    }).join("") + '</div>';
-    Array.prototype.forEach.call($("priority-actions").querySelectorAll(".brief-jump"), function (button) {
-      button.addEventListener("click", function () { setDashboard(button.dataset.view, button.dataset.target, false); });
+    var tiles = [
+      { k: "Questions added", v: fmt(total), d: months.length + " month" + (months.length > 1 ? "s" : "") + " in view" },
+      { k: "MCQs", v: fmt(mcq), d: pct(mcq, total) + "% of additions" },
+      { k: "Coding questions", v: fmt(cod), d: pct(cod, total) + "% of additions" },
+      { k: "Curated by Content Leads", v: pct(leadN, total) + "%", d: fmt(leadN) + " of " + fmt(total) + " questions" },
+      { k: "Archived in window", v: fmt(arch), d: arch > total ? "Exceeds additions" : pct(arch, total) + "% of additions", cls: arch > total ? "down" : "" },
+      { k: "Overall question-bank change", v: (net >= 0 ? "+" : "") + fmt(net), d: net >= 0 ? "More questions than before" : "Fewer questions than before", cls: net >= 0 ? "up" : "down" },
+      { k: monthLabel(last) + " vs " + monthLabel(prev), v: (delta >= 0 ? "+" : "") + delta + "%", d: fmt(prevN) + " → " + fmt(lastN), cls: delta >= 0 ? "up" : "down" },
+      { k: "Subjects that need a second author", v: fmt(s.concentrated), d: fmt(s.exposed) + " questions depend on one person", cls: s.concentrated ? "down" : "", view: "coverage", target: "metric-resilience" },
+      { k: "Questions missing details", v: fmt(s.qualityDebt), d: pct(s.qualityDebt, total) + "% need a subject, topic, difficulty, or explanation", cls: s.qualityDebt ? "down" : "", view: "quality", target: "metric-quality" }
+    ];
+    $("tiles").innerHTML = tiles.map(function (x) {
+      var nav = x.view ? ' data-view="' + x.view + '" data-target="' + x.target + '" tabindex="0" role="button"' : "";
+      return '<div class="tile' + (x.view ? " tile-nav" : "") + '"' + nav + '><div class="k">' + esc(x.k) + '</div><div class="v">' + x.v +
+        '</div><div class="d ' + (x.cls || "") + '">' + esc(x.d) + "</div></div>";
+    }).join("");
+    Array.prototype.forEach.call($("tiles").querySelectorAll(".tile-nav"), function (node) {
+      node.addEventListener("click", function () { setDashboard(node.dataset.view, node.dataset.target, false); });
+      node.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); node.click(); } });
     });
   }
+  function add(a, b) { return a + b; }
 
   /**
-   * Hidden operational signal: a bank can have thousands of questions and
-   * still be a single point of failure if one author owns a subject, or if the
-   * pool is hard to review and rebalance. This turns those latent weaknesses
-   * into one resilience score and a ranked intervention list.
+   * A bank can have thousands of questions and still be hard to maintain if
+   * one author wrote most of a subject — that person leaving or going quiet
+   * leaves nobody who can review or extend it. The bar for each subject is
+   * literally "% of its questions written by the single busiest author",
+   * with no other factor blended in, so the number on screen is the number
+   * being claimed — nothing is hidden behind a weighted composite.
    */
   function renderResilience() {
     var c = DATA.cols, dims = DATA.dims, agg = {};
     rows.forEach(function (i) {
       var subject = dims.subjects[c.su[i]];
       if (!subject || subject === "(no subject)") return;
-      if (!agg[subject]) agg[subject] = { n: 0, authors: {}, noExpl: 0, noDiff: 0, mcq: 0, coding: 0 };
+      if (!agg[subject]) agg[subject] = { n: 0, authors: {}, noExpl: 0, noDiff: 0 };
       var a = agg[subject], author = dims.authors[c.au[i]];
       a.n++; a.authors[author] = (a.authors[author] || 0) + 1;
       if (!c.ex[i]) a.noExpl++;
       if (c.df[i] === 3) a.noDiff++;
-      if (c.ty[i] === 1) a.coding++; else if (c.ty[i] === 0) a.mcq++;
     });
 
     var scored = Object.keys(agg).filter(function (s) { return agg[s].n >= 25; }).map(function (subject) {
-      var a = agg[subject], counts = Object.keys(a.authors).map(function (k) { return a.authors[k]; });
-      var top = Math.max.apply(null, counts), topShare = top / a.n;
-      var hhi = counts.reduce(function (sum, n) { var share = n / a.n; return sum + share * share; }, 0);
-      var effective = hhi ? 1 / hhi : 0;
-      var qualityGap = ((a.noExpl / a.n) + (a.noDiff / a.n)) / 2;
-      var inventoryGap = Math.max(0, (120 - a.n) / 120);
-      var formatGap = (!a.mcq || !a.coding) ? 1 : 0;
-      var risk = Math.round(100 * (.55 * topShare + .25 * qualityGap + .12 * inventoryGap + .08 * formatGap));
-      return { subject: subject, n: a.n, risk: risk, topShare: topShare, effective: effective, authors: Object.keys(a.authors).length, noExpl: a.noExpl, noDiff: a.noDiff, formatGap: formatGap };
-    }).sort(function (a, b) { return b.risk - a.risk || b.n - a.n; });
+      var a = agg[subject], authorNames = Object.keys(a.authors);
+      var counts = authorNames.map(function (k) { return a.authors[k]; });
+      var topIndex = counts.indexOf(Math.max.apply(null, counts));
+      return {
+        subject: subject, n: a.n, topShare: counts[topIndex] / a.n, topAuthor: authorNames[topIndex],
+        authors: authorNames.length, noExpl: a.noExpl, noDiff: a.noDiff
+      };
+    }).sort(function (a, b) { return b.topShare - a.topShare || b.n - a.n; });
 
     var host = $("c-resilience");
     if (!scored.length) {
@@ -626,37 +593,25 @@
       return;
     }
     var weight = scored.reduce(function (sum, x) { return sum + x.n; }, 0) || 1;
-    var weightedRisk = scored.reduce(function (sum, x) { return sum + x.risk * x.n; }, 0) / weight;
-    var score = Math.max(0, Math.round(100 - weightedRisk));
     var concentrated = scored.filter(function (x) { return x.topShare >= .7; });
     var exposed = concentrated.reduce(function (sum, x) { return sum + x.n; }, 0);
     var authorAvg = scored.reduce(function (sum, x) { return sum + x.authors * x.n; }, 0) / weight;
-    // Same three-tier wording as the top-level score, so a first-time viewer sees
-    // one consistent vocabulary instead of two health meters that speak differently.
-    var state = score >= 65 ? "Healthy" : score >= 45 ? "Needs attention" : "Needs urgent attention";
-    var color = score >= 65 ? css("--green") : score >= 45 ? css("--amber") : css("--red");
-    var previous = resilienceScoreHistory; resilienceScoreHistory = score;
 
-    host.innerHTML = '<div class="insight-grid"><div class="score-wrap">' +
-      '<div class="score-ring" style="--score:' + previous + ';--ring-color:' + color + '"><div class="score-value">' + score + '<small>Attention score / 100</small></div></div>' +
-      '<div class="score-state">' + state + '</div></div><div class="insight-side">' +
-      '<div class="tiles"><div class="tile"><div class="k">Subjects mostly written by one person</div><div class="v">' + concentrated.length + '</div><div class="d down">One author created at least 70% of the questions</div></div>' +
-      '<div class="tile"><div class="k">Questions in those subjects</div><div class="v">' + pct(exposed, weight) + '%</div><div class="d">' + fmt(exposed) + ' questions may be harder for others to maintain</div></div>' +
-      '<div class="tile"><div class="k">Authors per subject</div><div class="v">' + authorAvg.toFixed(1) + '</div><div class="d">Average number of authors who contributed</div></div></div>' +
+    host.innerHTML = '<div class="tiles">' +
+      '<div class="tile"><div class="k">Subjects mostly written by one person</div><div class="v">' + concentrated.length + '</div><div class="d down">One author wrote at least 70% of the questions</div></div>' +
+      '<div class="tile"><div class="k">Questions in those subjects</div><div class="v">' + pct(exposed, weight) + '%</div><div class="d">' + fmt(exposed) + ' questions may be harder for someone else to maintain</div></div>' +
+      '<div class="tile"><div class="k">Authors per subject</div><div class="v">' + authorAvg.toFixed(1) + '</div><div class="d">Average number of people who contributed</div></div></div>' +
       '<div id="c-resilience-bars"></div>' +
-      '<p class="metric-note"><b>How the attention score works:</b> a subject scores higher when most questions come from one author, important details are missing, there are too few questions, or it has only MCQs or only Coding questions. Higher means the subject needs attention sooner.</p>' +
-      '</div></div>';
-    requestAnimationFrame(function () {
-      var ring = host.querySelector(".score-ring"); if (ring) ring.style.setProperty("--score", score);
-    });
+      '<p class="metric-note">Each bar is the share of a subject\'s questions written by its single most active author — not a blended score. 70% or higher means that subject would be hard to update if that one person became unavailable.</p>';
     hbars($("c-resilience-bars"), {
-      labelWidth: 182, valueLabel: "Attention score", suffix: "%",
+      labelWidth: 182, valueLabel: "Written by top author", suffix: "%",
       items: scored.slice(0, 10).map(function (x) {
+        var pctTop = Math.round(x.topShare * 100);
         return {
-          label: x.subject, value: x.risk,
-          color: x.risk >= 65 ? css("--series-8") : x.risk >= 50 ? css("--series-4") : css("--series-7"),
+          label: x.subject, value: pctTop,
+          color: pctTop >= 70 ? css("--series-8") : pctTop >= 50 ? css("--series-4") : css("--series-7"),
           detail: [
-            { label: "Questions from the top author", value: Math.round(x.topShare * 100) + "%" },
+            { label: "Top author", value: x.topAuthor },
             { label: "Authors who contributed", value: x.authors },
             { label: "Questions", value: x.n },
             { label: "Missing explanation", value: x.noExpl },
@@ -664,8 +619,8 @@
           ]
         };
       }),
-      aria: "Subjects that need the most attention",
-      caption: "Subjects that need attention first in the current selection. A lower score is better."
+      aria: "Subjects ranked by how much one author dominates them",
+      caption: "The 10 subjects with the most concentrated authorship in the current selection."
     });
   }
 
@@ -1046,7 +1001,7 @@
   function renderAll() {
     months = activeMonths();
     rows = computeRows();
-    renderExecutiveBrief(); renderTiles(); renderResilience(); renderMonthly(); renderCurated(); renderChurn(); renderWeekly();
+    renderTiles(); renderResilience(); renderMonthly(); renderCurated(); renderChurn(); renderWeekly();
     renderSubject(); renderLead(); renderTrack(); renderCompany(); renderAkilaCompany();
     renderMatrix(); renderStandard(); renderQuality(); renderRoster();
     animateMetrics($("app"));

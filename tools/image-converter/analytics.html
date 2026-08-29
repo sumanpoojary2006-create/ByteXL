@@ -27,7 +27,6 @@
       --ord-1: #9ec5f4; --ord-2: #3987e5; --ord-3: #184f95; --ord-0: #4a5372;
       --grid: rgba(255,255,255,.07);
     }
-    @property --score { syntax: "<number>"; inherits: false; initial-value: 0; }
     body {
       min-height: 100vh; color: var(--ink); font: 14px/1.5 Inter,-apple-system,BlinkMacSystemFont,sans-serif;
       background: radial-gradient(circle at 0 0,rgba(99,102,241,.34),transparent 34rem),
@@ -110,14 +109,6 @@
     .tile .d { margin-top: 6px; color: var(--muted); font-size: 11.5px; }
     .tile .d.up { color: var(--green); } .tile .d.down { color: var(--red); }
 
-    .insight-card { border-color: rgba(34,211,238,.19); background: radial-gradient(circle at 14% 18%,rgba(34,211,238,.11),transparent 24rem),linear-gradient(145deg,rgba(21,29,49,.9),rgba(12,15,29,.82)); }
-    .insight-grid { display: grid; grid-template-columns: 250px minmax(0,1fr); gap: 24px; align-items: center; }
-    .score-wrap { display: grid; place-items: center; gap: 12px; text-align: center; }
-    .score-ring { --score: 0; --ring-color: var(--green); position: relative; width: 170px; aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; background: conic-gradient(var(--ring-color) calc(var(--score)*1%),rgba(255,255,255,.065) 0); box-shadow: 0 0 38px color-mix(in srgb,var(--ring-color) 20%,transparent); transition: --score .75s cubic-bezier(.2,.75,.25,1); }
-    .score-ring::before { content: ""; width: 132px; aspect-ratio: 1; position: absolute; border-radius: 50%; background: radial-gradient(circle at 40% 30%,#192039,#0b0e1c 74%); box-shadow: inset 0 0 0 1px var(--line); }
-    .score-value { position: relative; font: 700 42px/1 "Space Grotesk"; letter-spacing: -2px; }
-    .score-value small { display: block; margin-top: 8px; color: var(--muted); font: 800 9px/1 Inter; letter-spacing: .8px; text-transform: uppercase; }
-    .score-state { padding: 4px 9px; border-radius: 99px; color: var(--ink2); background: rgba(255,255,255,.06); border: 1px solid var(--line); font-size: 10.5px; font-weight: 800; }
     .insight-side { min-width: 0; display: grid; gap: 14px; }
     .metric-note { color: var(--muted); font-size: 11.5px; line-height: 1.6; }
     .metric-note b { color: var(--ink2); }
@@ -180,7 +171,6 @@
       .topnav { padding: 0 16px; height: auto; min-height: 66px; flex-wrap: wrap; gap: 8px; padding-block: 10px; }
       .filters { position: static; }
       .grid2 { grid-template-columns: 1fr; }
-      .insight-grid { grid-template-columns: 1fr; }
     }
     @media (max-width: 640px) {
       main { padding: 24px 14px 56px; } .card-head, .body { padding-left: 16px; padding-right: 16px; }
@@ -284,12 +274,6 @@
     .body { padding:14px 20px 20px; }
     .req { color:#5c60ae; background:#f0efff; border-color:#dcd9fb; }
     .novel { color:#167a72; background:#eaf8f5; border-color:#c9eee7; }
-    .insight-card { border-color:#d8e8e5; background:linear-gradient(120deg,#fff 30%,#f3fbf9 100%); }
-    .insight-grid { grid-template-columns:205px minmax(0,1fr); gap:18px; }
-    .score-ring { width:144px; box-shadow:0 0 32px color-mix(in srgb,var(--ring-color) 14%,transparent); }
-    .score-ring::before { width:112px; background:#fff; box-shadow:inset 0 0 0 1px var(--line); }
-    .score-value { font-size:36px; }
-    .score-state { color:var(--ink2); background:#fff; }
     .grid2 { gap:16px; grid-template-columns:repeat(2,minmax(0,1fr)); }
     .legend .item { color:var(--ink2); }
     th { color:#748094; background:#f8fafc; }
@@ -324,7 +308,7 @@
       .workspace-topbar { position:relative; grid-template-columns:1fr; gap:12px; padding:18px 0 14px; }
       .quick-prompts { display:none; }
       .filters { position:static; }
-      .grid2,.insight-grid { grid-template-columns:1fr; }
+      .grid2 { grid-template-columns:1fr; }
       .tiles { grid-template-columns:repeat(2,minmax(0,1fr)); }
     }
     @media (max-width:470px) {
@@ -334,7 +318,6 @@
     }
 
     /* Signal OS — executive command-center treatment. */
-    @property --operating { syntax:"<number>"; inherits:false; initial-value:0; }
     :root {
       --bg:#07080d; --panel:#11131c; --panel2:#0c0e15;
       --line:rgba(255,255,255,.085); --line-hi:rgba(255,255,255,.17);
@@ -417,9 +400,6 @@
     .tile .k { color:#697286; }
     .tile .v { color:#f5f7fc; }
     .tile .d { color:#7e8798; }
-    .insight-card { border-color:rgba(53,215,232,.15); background:radial-gradient(circle at 6% 10%,rgba(53,215,232,.09),transparent 23rem),radial-gradient(circle at 98% 100%,rgba(116,92,255,.12),transparent 26rem),linear-gradient(145deg,#12151f,#0b0d14); }
-    .score-ring::before { background:radial-gradient(circle at 42% 34%,#171b29,#090b12 73%); box-shadow:inset 0 0 0 1px rgba(255,255,255,.08); }
-    .score-state { color:#c6ccda; background:rgba(255,255,255,.04); }
     th { color:#687184; background:#0e1018; }
     tbody tr:hover { background:rgba(116,92,255,.07); }
     .rrow { background:rgba(255,255,255,.025); }
@@ -430,55 +410,16 @@
     .metric-flash { animation:metricFlashDark 1.25s ease; }
     @keyframes metricFlashDark { 0%,100% { box-shadow:var(--shadow); } 25% { border-color:#9d7cff; box-shadow:0 0 0 5px rgba(139,92,246,.13),0 24px 70px rgba(0,0,0,.45); } }
 
-    .executive-hero { position:relative; min-height:276px; display:grid; grid-template-columns:minmax(0,1.35fr) minmax(250px,.65fr); gap:26px; padding:28px; overflow:hidden; border:1px solid rgba(255,255,255,.1); border-radius:20px; background:radial-gradient(circle at 83% 28%,rgba(53,215,232,.16),transparent 18rem),radial-gradient(circle at 32% 120%,rgba(232,70,199,.14),transparent 27rem),linear-gradient(125deg,#151827,#0b0d14 68%); box-shadow:0 30px 90px rgba(0,0,0,.42); }
-    .executive-hero::before { content:""; position:absolute; inset:0; opacity:.2; background-image:linear-gradient(rgba(255,255,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.055) 1px,transparent 1px); background-size:36px 36px; mask-image:linear-gradient(90deg,#000,transparent 76%); }
-    .executive-copy,.operating-score { position:relative; z-index:1; }
-    .signal-label { display:flex; align-items:center; gap:8px; color:#71e0ec; font-size:9px; font-weight:900; letter-spacing:1.2px; text-transform:uppercase; }
-    .signal-label::before { content:""; width:20px; height:1px; background:linear-gradient(90deg,#35d7e8,transparent); }
-    .executive-headline { max-width:820px; margin-top:16px; color:#fff; font:600 clamp(24px,3.1vw,40px)/1.12 "Space Grotesk"; letter-spacing:-1.4px; }
-    .executive-headline em { color:transparent; background:linear-gradient(90deg,#72e1ec,#a78bfa 55%,#f27bcc); -webkit-background-clip:text; background-clip:text; font-style:normal; }
-    .executive-summary { max-width:760px; margin-top:14px; color:#959eb1; font-size:12.5px; line-height:1.7; }
-    .hero-facts { display:flex; flex-wrap:wrap; gap:8px; margin-top:20px; }
-    .hero-fact { padding:7px 10px; border:1px solid rgba(255,255,255,.08); border-radius:9px; color:#bbc2d1; background:rgba(255,255,255,.035); font-size:10.5px; }
-    .hero-fact b { color:#fff; }
-    .operating-score { align-self:stretch; display:grid; place-items:center; align-content:center; gap:8px; border-left:1px solid rgba(255,255,255,.08); }
-    .score-orbit { --operating:0; position:relative; width:168px; aspect-ratio:1; display:grid; place-items:center; border-radius:50%; background:conic-gradient(#55dfe4 calc(var(--operating)*1%),#8b5cf6 calc(var(--operating)*1%),rgba(255,255,255,.065) 0); filter:drop-shadow(0 0 24px rgba(90,200,225,.13)); transition:--operating .8s cubic-bezier(.2,.8,.2,1); }
-    .score-orbit::before { content:""; position:absolute; inset:9px; border-radius:50%; background:#0e1119; box-shadow:inset 0 0 0 1px rgba(255,255,255,.08); }
-    .score-orbit::after { content:""; position:absolute; inset:-8px; border:1px dashed rgba(120,211,230,.15); border-radius:50%; animation:orbit 22s linear infinite; }
-    @keyframes orbit { to { transform:rotate(360deg); } }
-    .operating-value { position:relative; color:#fff; font:700 42px/1 "Space Grotesk"; letter-spacing:-2px; }
-    .operating-value small { display:block; margin-top:7px; color:#717b8e; font:800 8px/1 Inter; letter-spacing:1px; text-align:center; text-transform:uppercase; }
-    .operating-state { color:#cbd1de; font-size:11px; font-weight:800; }
-    .operating-note { max-width:200px; color:#626b7c; font-size:9.5px; line-height:1.5; text-align:center; }
-    .priority-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
-    .priority-card { position:relative; min-height:154px; padding:17px; overflow:hidden; border:1px solid rgba(255,255,255,.075); border-radius:14px; background:linear-gradient(145deg,rgba(18,20,30,.96),rgba(10,12,18,.94)); transition:transform .22s,border-color .22s; }
-    .priority-card:hover { transform:translateY(-3px); border-color:rgba(139,108,255,.25); }
-    .priority-card::after { content:""; position:absolute; width:110px; height:110px; right:-55px; bottom:-65px; border-radius:50%; background:var(--priority-glow,rgba(116,92,255,.16)); filter:blur(20px); }
-    .priority-top { display:flex; justify-content:space-between; gap:8px; align-items:center; }
-    .priority-rank { color:var(--priority-color,#a78bfa); font-size:9px; font-weight:900; letter-spacing:.9px; text-transform:uppercase; }
-    .priority-metric { color:#f4f6fc; font:700 20px "Space Grotesk"; }
-    .priority-title { margin-top:14px; color:#e7eaf3; font-weight:800; font-size:12px; }
-    .priority-copy { margin-top:5px; color:#7e8798; font-size:10.5px; line-height:1.55; }
-    .brief-jump { position:relative; z-index:2; margin-top:12px; padding:0; border:0; color:#9c8cff; background:transparent; font-size:9.5px; font-weight:900; letter-spacing:.3px; cursor:pointer; }
-    .brief-jump:hover { color:#fff; }
     #tiles .tile:first-child { grid-column:span 2; background:radial-gradient(circle at 90% 10%,rgba(53,215,232,.11),transparent 13rem),linear-gradient(145deg,#161a27,#0e1119); }
     #tiles .tile:first-child .v { font-size:31px; }
-    @media (max-width:980px) {
-      .executive-hero { grid-template-columns:1fr; }
-      .operating-score { padding-top:22px; border-left:0; border-top:1px solid rgba(255,255,255,.08); }
-      .priority-grid { grid-template-columns:1fr; }
-    }
     @media (max-width:760px) {
       .sidebar { background:rgba(8,9,14,.96); }
       .workspace-topbar { background:transparent; }
-      .executive-hero { padding:20px; }
-      .executive-headline { font-size:25px; }
       .filter-mark { width:100%; border-right:0; border-bottom:1px solid var(--line); padding:0 0 9px; }
       #tiles .tile:first-child { grid-column:span 2; }
     }
     @media (max-width:470px) {
       #tiles .tile:first-child { grid-column:auto; }
-      .score-orbit { width:148px; }
     }
     .role-share-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(145px,1fr)); gap:9px; margin-bottom:14px; }
     .role-share { padding:11px; border:1px solid rgba(255,255,255,.075); border-radius:11px; background:rgba(255,255,255,.025); }
@@ -564,29 +505,7 @@
     body[data-theme="light"] #tiles .tile:first-child .d { color:#b9c4da; }
     body[data-theme="light"] #tiles .tile:nth-child(2),body[data-theme="light"] #tiles .tile:nth-child(6) { background:radial-gradient(circle at 100% 0,rgba(77,195,205,.1),transparent 11rem),#fff; }
     body[data-theme="light"] #tiles .tile:nth-child(3),body[data-theme="light"] #tiles .tile:nth-child(7) { background:radial-gradient(circle at 100% 0,rgba(98,91,219,.09),transparent 11rem),#fff; }
-    body[data-theme="light"] .insight-card { border-color:rgba(59,144,157,.2); background:radial-gradient(circle at 92% 9%,rgba(79,97,216,.1),transparent 22rem),radial-gradient(circle at 9% 94%,rgba(24,165,156,.08),transparent 22rem),linear-gradient(125deg,#fff 20%,#f5f9fb 100%); box-shadow:0 24px 60px rgba(35,67,89,.09); }
-    body[data-theme="light"] .executive-hero { border-color:rgba(83,96,185,.2); background:radial-gradient(circle at 82% 18%,rgba(38,178,190,.2),transparent 21rem),radial-gradient(circle at 18% 110%,rgba(117,95,212,.16),transparent 28rem),linear-gradient(130deg,#fff 8%,#f2f5ff 57%,#eefafa 100%); box-shadow:0 28px 70px rgba(47,62,104,.12); }
-    body[data-theme="light"] .executive-hero::before { opacity:.2; background-image:linear-gradient(rgba(31,42,68,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(31,42,68,.04) 1px,transparent 1px); }
-    body[data-theme="light"] .executive-headline,body[data-theme="light"] .operating-value,body[data-theme="light"] .priority-metric { color:var(--ink); }
-    body[data-theme="light"] .executive-headline em { background:linear-gradient(90deg,#176f8f,#5a54d6 58%,#b64d87); -webkit-background-clip:text; background-clip:text; }
-    body[data-theme="light"] .signal-label { color:#176f8f; }
-    body[data-theme="light"] .executive-summary { color:#586780; }
-    body[data-theme="light"] .hero-fact,body[data-theme="light"] .priority-card,body[data-theme="light"] .role-share,body[data-theme="light"] .rrow { color:var(--ink2); border-color:var(--line); background:#f8fafc; }
-    body[data-theme="light"] .hero-fact { background:rgba(255,255,255,.72); box-shadow:0 5px 14px rgba(40,55,90,.045); }
-    body[data-theme="light"] .hero-fact b,body[data-theme="light"] .priority-title { color:var(--ink); }
-    body[data-theme="light"] .priority-card { background:linear-gradient(145deg,#fff,#f8faff); box-shadow:0 14px 34px rgba(40,55,90,.075); }
-    body[data-theme="light"] .priority-copy,body[data-theme="light"] .operating-note { color:#65738b; }
-    body[data-theme="light"] .brief-jump { color:#554fc8; }
-    body[data-theme="light"] .score-orbit { background:conic-gradient(#168ca0 calc(var(--operating)*1%),#6254d8 calc(var(--operating)*1%),#e3e8f1 0); filter:drop-shadow(0 10px 22px rgba(65,79,130,.14)); }
-    body[data-theme="light"] .score-orbit::before { background:linear-gradient(145deg,#fff,#f4f7fb); box-shadow:inset 0 0 0 1px #dfe5ef; }
-    body[data-theme="light"] .score-orbit::after { border-color:rgba(79,97,216,.2); }
-    body[data-theme="light"] .operating-state { color:#34425b; }
-    body[data-theme="light"] .operating-score { border-color:var(--line); }
-    body[data-theme="light"] .score-ring { background:conic-gradient(var(--ring-color) calc(var(--score)*1%),#e3e8f1 0); box-shadow:0 14px 35px color-mix(in srgb,var(--ring-color) 18%,transparent); }
-    body[data-theme="light"] .score-ring::before { background:linear-gradient(145deg,#fff,#f4f7fb); box-shadow:inset 0 0 0 1px #dfe5ef; }
-    body[data-theme="light"] .score-value { color:var(--ink); }
-    body[data-theme="light"] .score-value small { color:#78859b; }
-    body[data-theme="light"] .score-state { color:#34425b; background:#fff; border-color:#dfe5ef; }
+    body[data-theme="light"] .role-share,body[data-theme="light"] .rrow { color:var(--ink2); border-color:var(--line); background:#f8fafc; }
     body[data-theme="light"] .role-share-values { color:var(--ink); }
     body[data-theme="light"] .share-bar { background:#e5eaf2; }
     body[data-theme="light"] th { color:#748094; background:#f8fafc; }
@@ -615,7 +534,7 @@
 
     <main class="workspace-main">
       <header class="workspace-topbar">
-        <div><div class="page-kicker">Question Bank · Live overview</div><h1 class="page-title" id="view-title">What needs attention</h1><p class="page-description" id="view-description">A plain-language summary of what changed and what to do next.</p><div class="theme-switch" role="group" aria-label="Dashboard theme"><button class="theme-option" type="button" data-theme-choice="light">☀ Light</button><button class="theme-option" type="button" data-theme-choice="dark">◐ Dark</button></div></div>
+        <div><div class="page-kicker">Question Bank · Live overview</div><h1 class="page-title" id="view-title">Overview</h1><p class="page-description" id="view-description">The most important numbers, updated automatically. Click a card to see the full picture.</p><div class="theme-switch" role="group" aria-label="Dashboard theme"><button class="theme-option" type="button" data-theme-choice="light">☀ Light</button><button class="theme-option" type="button" data-theme-choice="dark">◐ Dark</button></div></div>
         <div class="analytics-finder">
           <div class="finder-box"><span class="finder-icon">⌕</span><input id="analytics-search" type="search" autocomplete="off" placeholder="Ask for an insight — e.g. who authored the most?" aria-label="Find an analytic"><span class="finder-key">⌘ K</span></div>
           <div id="finder-results" class="finder-results" role="listbox"></div>
@@ -673,30 +592,20 @@
         <div id="meta" class="meta-line"><span class="live-dot"></span><span id="meta-fresh">Updating…</span><span id="meta-rest"></span></div>
 
         <section class="dashboard-view active" data-dashboard="overview">
-          <div class="section-intro"><div><h2>What you should know now</h2><p>The most important changes and problems, explained in everyday language.</p></div><span class="view-count">Updates automatically</span></div>
-          <div id="executive-brief"></div>
-          <div id="priority-actions"></div>
+          <div class="section-intro"><div><h2>Overview</h2><p>The most important numbers, updated automatically. Click a card to see the full picture.</p></div><span class="view-count">Updates automatically</span></div>
           <div class="tiles" id="tiles"></div>
 
-          <div class="card insight-card" id="metric-resilience">
-          <div class="card-head"><div>
-            <div class="card-title">Subjects that depend on one person</div>
-            <div class="card-sub">Shows which subjects may be difficult to update if their main author is unavailable, and where question details are incomplete.</div>
-          </div></div>
-          <div class="body"><div id="c-resilience"></div></div>
+          <div class="card" id="metric-monthly">
+            <div class="card-head"><div>
+              <div class="card-title">Monthly production</div>
+              <div class="card-sub">Questions authored per month, split by format. Bars are counted from each question's own creation date, so archived questions still count in the month they were written.</div>
+            </div><label class="toggle"><input type="checkbox" id="t-monthly"> Table view</label></div>
+            <div class="body"><div id="c-monthly"></div><div id="tb-monthly" class="hidden"></div></div>
           </div>
         </section>
 
         <section class="dashboard-view" data-dashboard="production">
-          <div class="section-intro"><div><h2>Production performance</h2><p>How quickly the bank is growing, who is contributing, and what leaves the bank.</p></div><span class="view-count">5 analytics</span></div>
-        <div class="card" id="metric-monthly">
-          <div class="card-head"><div>
-            <div class="card-title">Monthly production</div>
-            <div class="card-sub">Questions authored per month, split by format. Bars are counted from each question's own creation date, so archived questions still count in the month they were written.</div>
-          </div><label class="toggle"><input type="checkbox" id="t-monthly"> Table view</label></div>
-          <div class="body"><div id="c-monthly"></div><div id="tb-monthly" class="hidden"></div></div>
-        </div>
-
+          <div class="section-intro"><div><h2>Production performance</h2><p>How quickly the bank is growing, who is contributing, and what leaves the bank.</p></div><span class="view-count">4 analytics</span></div>
         <div class="card" id="metric-weekly">
           <div class="card-head"><div>
             <div class="card-title">Weekly bank movement</div>
@@ -732,7 +641,16 @@
         </section>
 
         <section class="dashboard-view" data-dashboard="coverage">
-          <div class="section-intro"><div><h2>What content is available</h2><p>See where there are many questions and where the team needs to create more.</p></div><span class="view-count">5 analytics</span></div>
+          <div class="section-intro"><div><h2>What content is available</h2><p>See where there are many questions and where the team needs to create more.</p></div><span class="view-count">6 analytics</span></div>
+
+          <div class="card" id="metric-resilience">
+          <div class="card-head"><div>
+            <div class="card-title">Subjects that depend on one person</div>
+            <div class="card-sub">Shows which subjects may be difficult to update if their main author is unavailable, and where question details are incomplete.</div>
+          </div></div>
+          <div class="body"><div id="c-resilience"></div></div>
+          </div>
+
         <div class="card" id="metric-subject">
           <div class="card-head"><div>
             <div class="card-title">Questions created for each subject</div>
