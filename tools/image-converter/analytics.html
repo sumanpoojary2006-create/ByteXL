@@ -486,6 +486,18 @@
     .role-share-counts { margin-top:7px; color:#697286; font-size:9px; line-height:1.45; }
     .matrix-controls { display:flex; gap:9px; align-items:end; flex-wrap:wrap; }
     .matrix-controls .fgroup { min-width:150px; }
+    .matrix-controls .subject-search { width:min(450px,60vw); }
+    .matrix-search { position:relative; }
+    .matrix-search-icon { position:absolute; z-index:2; left:11px; top:50%; color:#50d7e8; font-size:13px; transform:translateY(-50%); pointer-events:none; }
+    .matrix-search input { width:100%; min-width:0; padding-left:32px; padding-right:30px; }
+    .matrix-search input::-webkit-search-cancel-button { cursor:pointer; filter:invert(1); opacity:.55; }
+    .matrix-results { display:none; position:absolute; z-index:70; top:calc(100% + 6px); left:0; right:0; max-height:290px; overflow:auto; padding:7px; border:1px solid rgba(255,255,255,.12); border-radius:11px; background:#10121b; box-shadow:0 22px 58px rgba(0,0,0,.6); }
+    .matrix-results.open { display:grid; gap:2px; }
+    .matrix-option { width:100%; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:12px; padding:9px 10px; border:0; border-radius:8px; color:#c7ccda; background:transparent; text-align:left; cursor:pointer; }
+    .matrix-option:hover,.matrix-option.focused { color:#fff; background:linear-gradient(100deg,rgba(116,92,255,.18),rgba(53,215,232,.07)); }
+    .matrix-option span:first-child { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .matrix-option .count { color:#687184; font-size:10.5px; font-variant-numeric:tabular-nums; }
+    .matrix-no-results { padding:12px 10px; color:#777f91; font-size:11.5px; }
     @media (max-width:640px) { .matrix-controls { width:100%; } .matrix-controls .fgroup { flex:1; } }
   </style>
 </head>
@@ -672,7 +684,7 @@
             <div class="card-title">Question difficulty by topic</div>
             <div class="card-sub">Shows the Easy, Medium, Hard, and Unspecified split for MCQs or Coding questions in each topic.</div>
           </div>
-          <div class="matrix-controls"><div class="fgroup"><label for="f-matrix">Subject</label><select id="f-matrix"></select></div>
+          <div class="matrix-controls"><div class="fgroup subject-search"><label for="f-matrix">Subject</label><div class="matrix-search"><span class="matrix-search-icon" aria-hidden="true">⌕</span><input id="f-matrix" type="search" placeholder="Search subjects…" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="matrix-subject-results"><div id="matrix-subject-results" class="matrix-results" role="listbox" aria-label="Subjects"></div></div></div>
           <div class="fgroup"><label>Format</label><div class="seg" id="f-matrix-type"><button data-v="0">MCQ</button><button data-v="1" class="on">Coding</button></div></div></div>
           </div>
           <div class="body"><div id="c-matrix"></div></div>

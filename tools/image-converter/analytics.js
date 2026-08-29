@@ -38,6 +38,9 @@
   var VIEW = { months: new Set(), tracks: new Set(), subjects: new Set(), authors: new Set(), type: "" };
   var initialMonthScope = true;
   var matrixType = 1;
+  var matrixSubject = "";
+  var matrixSubjects = [];
+  var matrixSearchIndex = -1;
   var rows = [];        // filtered row indices
   var months = [];      // month keys in the active window
   var bound = false;    // controls are bound once, not on every snapshot load
@@ -907,7 +910,7 @@
   }
 
   function renderMatrix() {
-    var subject = $("f-matrix").value;
+    var subject = matrixSubject;
     var c = DATA.cols, dims = DATA.dims, agg = {};
     // The matrix reads the whole bank for the chosen subject, not just the period —
     // difficulty balance is a property of the bank as it stands today.
@@ -1130,8 +1133,8 @@
   function closeAllMultiSelects() {
     ALL_MULTISELECTS.forEach(function (m) { m.panel.classList.remove("open"); m.btn.classList.remove("open"); });
   }
-  document.addEventListener("click", closeAllMultiSelects);
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeAllMultiSelects(); });
+  document.addEventListener("click", function () { closeAllMultiSelects(); closeMatrixResults(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") { closeAllMultiSelects(); closeMatrixResults(); } });
 
   /**
    * A checkbox dropdown bound to a Set in VIEW[opts.key]. Empty set = no filter,
@@ -1275,24 +1278,89 @@
     [monthsMsel, tracksMsel, subjectsMsel, authorsMsel].forEach(function (m) { m.refresh(); });
   }
 
-  function refreshMatrixSelect() {
+  function closeMatrixResults() {
+    var results = $("matrix-subject-results");
+    if (!results) return;
+    results.classList.remove("open");
+    $("f-matrix").setAttribute("aria-expanded", "false");
+    matrixSearchIndex = -1;
+  }
+
+  function matchingMatrixSubjects() {
+    var q = $("f-matrix").value.trim().toLowerCase();
+    if (!q) return matrixSubjects.slice(0, 14);
+    return matrixSubjects.filter(function (item) {
+      return item.value.toLowerCase().indexOf(q) >= 0;
+    }).slice(0, 14);
+  }
+
+  function renderMatrixResults() {
+    var results = $("matrix-subject-results");
+    var matches = matchingMatrixSubjects();
+    if (matrixSearchIndex >= matches.length) matrixSearchIndex = matches.length - 1;
+    results.innerHTML = matches.length ? matches.map(function (item, i) {
+      return '<button type="button" class="matrix-option' + (i === matrixSearchIndex ? " focused" : "") + '" role="option" data-subject="' + esc(item.value) + '" aria-selected="' + (item.value === matrixSubject) + '"><span>' + esc(item.label) + '</span><span class="count">' + fmt(item.count) + " questions</span></button>";
+    }).join("") : '<div class="matrix-no-results">No subjects match that search.</div>';
+    Array.prototype.forEach.call(results.querySelectorAll(".matrix-option"), function (option) {
+      option.addEventListener("mousedown", function (e) { e.preventDefault(); });
+      option.addEventListener("click", function () { selectMatrixSubject(option.dataset.subject); });
+    });
+    results.classList.add("open");
+    $("f-matrix").setAttribute("aria-expanded", "true");
+  }
+
+  function selectMatrixSubject(subject) {
+    if (!subject) return;
+    matrixSubject = subject;
+    $("f-matrix").value = subject;
+    closeMatrixResults();
+    renderMatrix();
+  }
+
+  function refreshMatrixSearch() {
     var dims = DATA.dims, counts = {};
     for (var j = 0; j < DATA.cols.su.length; j++) counts[dims.subjects[DATA.cols.su[j]]] = (counts[dims.subjects[DATA.cols.su[j]]] || 0) + 1;
     // The difficulty matrix defaults to the subjects the brief named.
     var preferred = ["c-programming", "python", "algorithm-design", "java", "rdbms"];
-    var matrixSubjects = dims.subjects.slice().filter(function (s) { return counts[s] >= 40 && s !== "(no subject)"; })
-      .sort(function (a, b) { return counts[b] - counts[a]; });
-    var sel = $("f-matrix");
-    var prevValue = sel.value;
-    sel.innerHTML = matrixSubjects.map(function (s) { return '<option value="' + esc(s) + '">' + esc(s) + " (" + fmt(counts[s]) + ")</option>"; }).join("");
-    if (matrixSubjects.indexOf(prevValue) >= 0) { sel.value = prevValue; return; }
-    var first = preferred.find(function (p) { return matrixSubjects.indexOf(p) >= 0; });
-    if (first) sel.value = first;
+    matrixSubjects = dims.subjects.slice().filter(function (s) { return counts[s] >= 40 && s !== "(no subject)"; })
+      .sort(function (a, b) { return counts[b] - counts[a]; })
+      .map(function (s) { return { value: s, label: s, count: counts[s] }; });
+    var values = matrixSubjects.map(function (item) { return item.value; });
+    if (values.indexOf(matrixSubject) < 0) {
+      matrixSubject = preferred.find(function (p) { return values.indexOf(p) >= 0; }) || (values[0] || "");
+    }
+    $("f-matrix").value = matrixSubject;
+    closeMatrixResults();
   }
 
   function bindControls() {
     bindWorkspaceNavigation();
-    $("f-matrix").addEventListener("change", renderMatrix);
+    $("f-matrix").addEventListener("focus", function () { matrixSearchIndex = -1; renderMatrixResults(); });
+    $("f-matrix").addEventListener("click", function (e) { e.stopPropagation(); renderMatrixResults(); });
+    $("f-matrix").addEventListener("input", function () {
+      matrixSearchIndex = -1;
+      renderMatrixResults();
+      var typed = $("f-matrix").value.trim().toLowerCase();
+      var exact = matrixSubjects.find(function (item) { return item.value.toLowerCase() === typed; });
+      if (exact && exact.value !== matrixSubject) selectMatrixSubject(exact.value);
+    });
+    $("f-matrix").addEventListener("keydown", function (e) {
+      var matches = matchingMatrixSubjects();
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault();
+        matrixSearchIndex += e.key === "ArrowDown" ? 1 : -1;
+        if (matrixSearchIndex < 0) matrixSearchIndex = matches.length - 1;
+        if (matrixSearchIndex >= matches.length) matrixSearchIndex = 0;
+        renderMatrixResults();
+      } else if (e.key === "Enter" && matches.length) {
+        e.preventDefault();
+        selectMatrixSubject(matches[Math.max(0, matrixSearchIndex)].value);
+      } else if (e.key === "Escape") {
+        $("f-matrix").value = matrixSubject;
+        closeMatrixResults();
+      }
+    });
+    $("matrix-subject-results").addEventListener("click", function (e) { e.stopPropagation(); });
     Array.prototype.forEach.call($("f-matrix-type").children, function (b) {
       b.addEventListener("click", function () {
         Array.prototype.forEach.call($("f-matrix-type").children, function (o) { o.classList.remove("on"); });
@@ -1399,10 +1467,10 @@
             (d.refreshing ? " · a background refresh is in progress" : "");
         }
         if (!bound) {
-          mountFilters(); refreshMatrixSelect(); bindControls(); bound = true;
+          mountFilters(); refreshMatrixSearch(); bindControls(); bound = true;
           startFreshnessTicker(); startPolling();
         } else if (changed) {
-          refreshFilters(); refreshMatrixSelect();
+          refreshFilters(); refreshMatrixSearch();
         }
         $("loader").classList.add("hidden");
         $("app").classList.remove("hidden");
