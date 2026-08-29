@@ -24,9 +24,8 @@
   }
   var SERIES = ["--series-1", "--series-2", "--series-3", "--series-4", "--series-5", "--series-6", "--series-7", "--series-8"];
   var ORD = ["--ord-1", "--ord-2", "--ord-3", "--ord-0"]; // easy, medium, hard, unspecified
-  // Sequential blue ramp for a light surface: near-white means near zero and
-  // increasing saturation means increasing question volume.
-  var HEAT = ["#edf4ff", "#dbe9fd", "#c5ddfb", "#a9cef7", "#8bbbf1", "#6da7ec", "#568fe4", "#437fda", "#326fc9", "#285fb5", "#214f9e", "#193f83"];
+  // Sequential cyan ramp tuned for the graphite command-center surface.
+  var HEAT = ["#171a2b", "#1b2440", "#203258", "#244773", "#285c8f", "#2c72a7", "#3189ba", "#37a0c9", "#43b7d6", "#59cbdf", "#7edce7", "#a9ebef"];
   var TYPE_LABEL = ["MCQ", "Coding", "Descriptive"];
   var DIFF_LABEL = ["Easy", "Medium", "Hard", "Unspecified"];
   var ROSTER_KEY = "bytexl.analytics.roster.v1";
@@ -118,7 +117,7 @@
   }
   function animateMetrics(scope) {
     if (!motionOK) return;
-    Array.prototype.forEach.call((scope || document).querySelectorAll(".tile .v,.score-value"), function (node) {
+    Array.prototype.forEach.call((scope || document).querySelectorAll(".tile .v,.score-value,.operating-value"), function (node) {
       var raw = node.childNodes.length ? node.childNodes[0].nodeValue || node.textContent : node.textContent;
       var target = parseMetric(raw); if (target === null) return;
       var labelNode = node.closest(".tile") && node.closest(".tile").querySelector(".k");
@@ -358,15 +357,15 @@
       svg.appendChild(t);
       r.values.forEach(function (v, j) {
         var idx = v <= 0 ? -1 : Math.min(HEAT.length - 1, Math.floor(Math.sqrt(v / max) * (HEAT.length - 1)));
-        var fill = idx < 0 ? "rgba(21,32,52,.035)" : HEAT[idx];
+        var fill = idx < 0 ? "rgba(255,255,255,.025)" : HEAT[idx];
         var cell = el("rect", { x: m.l + j * cellW + 1, y: m.t + i * cellH + 1, width: cellW - 3, height: cellH - 3, rx: 4, fill: fill, class: "heat-cell" });
         bindTip(cell, r.label + " · " + cols[j], (r.detail && r.detail[j]) || [{ label: "Questions", value: v }]);
         svg.appendChild(cell);
         if (v > 0) {
           var lb = el("text", {
             x: m.l + j * cellW + cellW / 2, y: m.t + i * cellH + cellH / 2 + 4, "text-anchor": "middle",
-            // Dark text on pale cells; white once saturation is high enough.
-            fill: idx >= 7 ? "#ffffff" : css("--ink"), "font-size": 10.5, "font-weight": 700
+            // White on the darker ramp; dark ink only on the palest top cells.
+            fill: idx >= 10 ? "#081018" : "#ffffff", "font-size": 10.5, "font-weight": 700
           });
           lb.textContent = fmt(v); svg.appendChild(lb);
         }
@@ -490,6 +489,83 @@
     }).join("");
   }
   function add(a, b) { return a + b; }
+
+  function executiveSignals() {
+    var c = DATA.cols, dims = DATA.dims, selected = rows.length, total = selected || 1;
+    var latestKey = months[months.length - 1], previousKey = months[months.length - 2];
+    var latestIndex = dims.months.indexOf(latestKey), previousIndex = dims.months.indexOf(previousKey);
+    var latest = 0, previous = 0, qualityDebt = 0, subjects = {};
+    rows.forEach(function (i) {
+      if (c.cm[i] === latestIndex) latest++;
+      if (c.cm[i] === previousIndex) previous++;
+      var subject = dims.subjects[c.su[i]], topic = dims.topics[c.tp[i]];
+      if (!c.ex[i] || c.df[i] === 3 || subject === "(no subject)" || topic === "(no topic)") qualityDebt++;
+      if (!subject || subject === "(no subject)") return;
+      if (!subjects[subject]) subjects[subject] = { n: 0, authors: {} };
+      subjects[subject].n++;
+      var author = dims.authors[c.au[i]];
+      subjects[subject].authors[author] = (subjects[subject].authors[author] || 0) + 1;
+    });
+    var concentrated = [], exposed = 0;
+    Object.keys(subjects).forEach(function (subject) {
+      var pool = subjects[subject]; if (pool.n < 25) return;
+      var counts = Object.keys(pool.authors).map(function (author) { return pool.authors[author]; });
+      var topShare = Math.max.apply(null, counts) / pool.n;
+      if (topShare >= .7) { concentrated.push(subject); exposed += pool.n; }
+    });
+    var archived = archivedRows().length;
+    var momentum = previous ? Math.round(((latest - previous) / previous) * 100) : 0;
+    var debtPct = pct(qualityDebt, total), exposedPct = pct(exposed, total), archivePct = pct(archived, total);
+    var risk = .5 * exposedPct + .28 * debtPct + .12 * Math.min(100, archivePct) + .1 * Math.max(0, -momentum);
+    var score = selected ? Math.max(0, Math.min(100, Math.round(100 - risk))) : 0;
+    return {
+      total: selected, latest: latest, previous: previous, latestKey: latestKey, momentum: momentum,
+      archived: archived, net: rows.length - archived, archivePct: archivePct,
+      qualityDebt: qualityDebt, debtPct: debtPct,
+      concentrated: concentrated.length, exposed: exposed, exposedPct: exposedPct,
+      score: score, state: !selected ? "No data in this scope" : score >= 72 ? "Strong operating position" : score >= 55 ? "Guarded — intervention needed" : "Exposed — act now"
+    };
+  }
+
+  function renderExecutiveBrief() {
+    var s = executiveSignals(), headline;
+    if (!s.total) headline = 'This scope has no questions; <em>widen the filters to restore the decision model.</em>';
+    else if (s.exposedPct >= 45) headline = 'The bank is growing, but its knowledge base is <em>too concentrated to scale safely.</em>';
+    else if (s.debtPct >= 25) headline = 'Production is healthy; <em>metadata debt is now the constraint.</em>';
+    else if (s.momentum < 0) headline = 'Question-bank momentum has turned; <em>protect the next production cycle.</em>';
+    else headline = 'The bank is expanding with <em>manageable operating risk.</em>';
+
+    var host = $("executive-brief");
+    host.innerHTML = '<div class="executive-hero"><div class="executive-copy">' +
+      '<div class="signal-label">Executive readout</div><div class="executive-headline">' + headline + '</div>' +
+      '<p class="executive-summary">' + monthLabel(s.latestKey) + ' production is <b>' + (s.momentum >= 0 ? "+" : "") + s.momentum +
+      '%</b> versus the prior month. At the same time, <b>' + s.exposedPct + '%</b> of questions in view sit in concentrated subject pools and <b>' +
+      s.debtPct + '%</b> carry at least one reuse-blocking metadata gap.</p>' +
+      '<div class="hero-facts"><span class="hero-fact"><b>' + fmt(s.net) + '</b> net bank movement</span>' +
+      '<span class="hero-fact"><b>' + s.concentrated + '</b> concentrated subjects</span>' +
+      '<span class="hero-fact"><b>' + fmt(s.qualityDebt) + '</b> questions need enrichment</span></div></div>' +
+      '<div class="operating-score"><div class="score-orbit" style="--operating:0"><div class="operating-value">' + s.score +
+      '<small>Operating score</small></div></div><div class="operating-state">' + esc(s.state) + '</div>' +
+      '<div class="operating-note">Weighted from concentration, metadata debt, archive pressure, and negative momentum.</div></div></div>';
+    requestAnimationFrame(function () {
+      var orbit = host.querySelector(".score-orbit"); if (orbit) orbit.style.setProperty("--operating", s.score);
+    });
+
+    var priorities = [
+      { severity: s.exposedPct, metric: s.exposedPct + "%", title: "Diversify knowledge ownership", copy: fmt(s.exposed) + " questions depend on subject pools where one author supplied at least 70%.", view: "overview", target: "metric-resilience", action: "Inspect resilience", color: "#55dfe4", glow: "rgba(53,215,232,.2)" },
+      { severity: s.debtPct, metric: s.debtPct + "%", title: "Pay down metadata debt", copy: fmt(s.qualityDebt) + " questions have a missing subject, topic, difficulty, or explanation.", view: "quality", target: "metric-quality", action: "Open quality control", color: "#a78bfa", glow: "rgba(139,92,246,.22)" },
+      { severity: Math.max(5, s.archivePct - 40, -s.momentum), metric: (s.momentum >= 0 ? "+" : "") + s.momentum + "%", title: s.momentum >= 0 ? "Protect production momentum" : "Reverse the production decline", copy: fmt(s.archived) + " questions were archived in the selected window; net movement is " + (s.net >= 0 ? "+" : "") + fmt(s.net) + ".", view: "production", target: "metric-churn", action: "Review production", color: "#f27bcc", glow: "rgba(232,70,199,.2)" }
+    ].sort(function (a, b) { return b.severity - a.severity; });
+    $("priority-actions").innerHTML = '<div class="priority-grid">' + priorities.map(function (p, i) {
+      return '<article class="priority-card" style="--priority-color:' + p.color + ';--priority-glow:' + p.glow + '">' +
+        '<div class="priority-top"><span class="priority-rank">Priority ' + (i + 1) + '</span><span class="priority-metric">' + esc(p.metric) + '</span></div>' +
+        '<div class="priority-title">' + esc(p.title) + '</div><div class="priority-copy">' + esc(p.copy) + '</div>' +
+        '<button class="brief-jump" data-view="' + p.view + '" data-target="' + p.target + '">' + esc(p.action) + ' →</button></article>';
+    }).join("") + '</div>';
+    Array.prototype.forEach.call($("priority-actions").querySelectorAll(".brief-jump"), function (button) {
+      button.addEventListener("click", function () { setDashboard(button.dataset.view, button.dataset.target, false); });
+    });
+  }
 
   /**
    * Hidden operational signal: a bank can have thousands of questions and
@@ -877,7 +953,7 @@
   function renderAll() {
     months = activeMonths();
     rows = computeRows();
-    renderTiles(); renderResilience(); renderMonthly(); renderCurated(); renderChurn();
+    renderExecutiveBrief(); renderTiles(); renderResilience(); renderMonthly(); renderCurated(); renderChurn();
     renderSubject(); renderLead(); renderTrack(); renderCompany();
     renderMatrix(); renderStandard(); renderQuality(); renderRoster();
     animateMetrics($("app"));
