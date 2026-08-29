@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ByteXL Question Bank Intelligence</title>
+  <title>Question Bank Intelligence</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -184,26 +184,182 @@
     @media (prefers-reduced-motion: reduce) {
       *,*::before,*::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
     }
+
+    /* Standalone analytics workspace — intentionally independent from the uploader UI. */
+    :root {
+      --bg: #f4f6fa; --panel: #ffffff; --panel2: #f8fafc;
+      --line: #e5e9f0; --line-hi: #cfd6e2;
+      --ink: #152034; --ink2: #344054; --muted: #667085; --faint: #8a94a6;
+      --violet: #5b5bd6; --green: #16866a; --amber: #c77b14; --red: #d1435b;
+      --grad: linear-gradient(135deg,#4f61d8 0%,#6f5bd3 100%);
+      --cyan: #0f8f95; --shadow: 0 12px 32px rgba(31,42,68,.07);
+      --surface-1: #ffffff;
+      --series-1: #4f6ef7; --series-2: #ec7c4a; --series-3: #2ca77c; --series-4: #d49a25;
+      --series-5: #cc6287; --series-6: #238a70; --series-7: #866dd6; --series-8: #d75d70;
+      --ord-1: #a9cef7; --ord-2: #568fe4; --ord-3: #315caa; --ord-0: #aab2c0;
+      --grid: #e9edf3;
+    }
+    body { background: var(--bg); color: var(--ink); }
+    .product-shell { min-height:100vh; display:grid; grid-template-columns:224px minmax(0,1fr); }
+    .sidebar { position:sticky; top:0; height:100vh; padding:22px 16px; background:#fff; border-right:1px solid var(--line); display:flex; flex-direction:column; z-index:40; }
+    .side-brand { display:flex; align-items:center; gap:11px; padding:0 8px 26px; color:var(--ink); text-decoration:none; }
+    .side-brand .logo { width:36px; height:36px; border-radius:10px; color:#fff; box-shadow:0 6px 18px rgba(79,97,216,.22); }
+    .brand-copy { display:grid; line-height:1.15; }
+    .brand-copy strong { font:700 14px "Space Grotesk"; letter-spacing:-.2px; }
+    .brand-copy span { margin-top:3px; color:var(--faint); font-size:9px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; }
+    .side-label { padding:0 10px 8px; color:#a2a9b7; font-size:9px; font-weight:900; letter-spacing:.9px; text-transform:uppercase; }
+    .dash-nav { display:grid; gap:4px; }
+    .dash-nav-btn { width:100%; min-height:42px; display:flex; align-items:center; gap:11px; padding:0 11px; border:0; border-radius:9px; background:transparent; color:#596579; text-align:left; font-weight:700; font-size:12.5px; cursor:pointer; transition:background .18s ease,color .18s ease,transform .18s ease; }
+    .dash-nav-btn:hover { color:var(--ink); background:#f3f5fa; transform:translateX(2px); }
+    .dash-nav-btn.active { color:#4255c4; background:#eef0ff; }
+    .nav-ico { width:28px; height:28px; display:grid; place-items:center; border:1px solid #e2e6ee; border-radius:8px; background:#fff; color:inherit; font-size:12px; box-shadow:0 2px 5px rgba(31,42,68,.04); }
+    .dash-nav-btn.active .nav-ico { border-color:#cfd4ff; background:#fff; }
+    .side-status { margin-top:auto; padding:13px; border:1px solid #e5e9f0; border-radius:12px; background:#f8fafc; }
+    .status-line { display:flex; align-items:center; gap:8px; font-size:11.5px; font-weight:800; }
+    .live-dot { width:7px; height:7px; background:#20a77a; box-shadow:0 0 0 4px rgba(32,167,122,.11); }
+    .status-copy { margin-top:6px; color:var(--faint); font-size:10.5px; line-height:1.45; }
+    .workspace-main { min-width:0; padding:0 28px 56px; }
+    .workspace-topbar { position:sticky; top:0; z-index:30; min-height:96px; display:grid; grid-template-columns:minmax(240px,.8fr) minmax(360px,1.2fr); align-items:center; gap:28px; padding:18px 0; background:rgba(244,246,250,.92); backdrop-filter:blur(14px); }
+    .page-kicker { color:#4f61d8; font-size:9.5px; font-weight:900; letter-spacing:.9px; text-transform:uppercase; }
+    .page-title { margin-top:4px; color:var(--ink); background:none; -webkit-text-fill-color:currentColor; font:700 clamp(21px,2.2vw,29px)/1.15 "Space Grotesk"; letter-spacing:-.7px; }
+    .page-description { margin-top:5px; color:var(--muted); font-size:11.5px; }
+    .analytics-finder { position:relative; }
+    .finder-box { min-height:48px; display:flex; align-items:center; gap:10px; padding:0 14px; border:1px solid #dce1eb; border-radius:13px; background:#fff; box-shadow:0 8px 22px rgba(31,42,68,.06); transition:border-color .2s,box-shadow .2s; }
+    .finder-box:focus-within { border-color:#8994ec; box-shadow:0 0 0 4px rgba(79,97,216,.09),0 10px 28px rgba(31,42,68,.07); }
+    .finder-icon { color:#7b86a0; font-size:18px; }
+    #analytics-search { width:100%; border:0; outline:0; color:var(--ink); background:transparent; font-size:13px; }
+    #analytics-search::placeholder { color:#9ba4b5; }
+    .finder-key { padding:3px 6px; border:1px solid var(--line); border-radius:5px; color:#929baa; background:#f8fafc; font-size:9px; font-weight:800; }
+    .finder-results { display:none; position:absolute; top:calc(100% + 8px); left:0; right:0; padding:7px; border:1px solid var(--line); border-radius:13px; background:#fff; box-shadow:0 18px 42px rgba(31,42,68,.14); }
+    .finder-results.open { display:grid; gap:3px; }
+    .finder-result { width:100%; display:grid; grid-template-columns:1fr auto; gap:8px; padding:10px 11px; border:0; border-radius:9px; color:var(--ink2); background:transparent; text-align:left; cursor:pointer; }
+    .finder-result:hover,.finder-result.focused { background:#f1f3ff; color:#3548bc; }
+    .finder-result strong { font-size:12.5px; }
+    .finder-result span { color:var(--faint); font-size:10.5px; }
+    .finder-empty { padding:14px 12px; color:var(--muted); font-size:12px; }
+    .quick-prompts { display:flex; gap:6px; margin-top:7px; overflow:auto; scrollbar-width:none; }
+    .quick-prompt { flex:none; padding:4px 8px; border:1px solid #e2e6ef; border-radius:99px; color:#657087; background:#fff; font-size:9.5px; font-weight:700; cursor:pointer; }
+    .quick-prompt:hover { color:#4255c4; border-color:#cfd4ff; }
+    .workspace { display:grid; gap:16px; }
+    #app { display:grid !important; gap:16px !important; }
+    #app.hidden { display:none !important; }
+    .filters { position:relative; top:auto; z-index:20; padding:13px 15px; gap:9px; border:1px solid var(--line); border-radius:13px; background:#fff; box-shadow:var(--shadow); backdrop-filter:none; }
+    .fgroup { min-width:140px; }
+    .fgroup label { color:#8a94a6; font-size:9px; }
+    .fgroup select,.fgroup input,.msel-btn { color:var(--ink); background:#fff; border-color:#dce1e9; }
+    .msel-panel { background:#fff; border-color:#dce1e9; box-shadow:0 16px 40px rgba(31,42,68,.14); }
+    .msel-chip,.msel-link { color:var(--ink2); background:#f8fafc; }
+    .msel-chip:hover,.msel-link:hover { color:#4255c4; }
+    .msel-row:hover { background:#f1f3ff; }
+    .seg { border-color:#dce1e9; background:#f8fafc; }
+    .seg button.on { background:#5362cf; }
+    .btn { color:var(--ink2); background:#fff; border-color:#d8dee8; }
+    .btn:hover { color:#4255c4; border-color:#9ca6ed; }
+    .btn.primary { background:#5362cf; box-shadow:0 7px 18px rgba(83,98,207,.2); }
+    .meta-line { display:flex; align-items:center; gap:4px; padding:0 3px; color:var(--faint); font-size:10.5px; }
+    .dashboard-view { display:none; gap:16px; animation:viewIn .36s cubic-bezier(.2,.75,.25,1); }
+    .dashboard-view.active { display:grid; }
+    @keyframes viewIn { from { opacity:0; transform:translateY(7px); } to { opacity:1; transform:none; } }
+    .section-intro { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; padding:4px 2px 0; }
+    .section-intro h2 { font:700 17px "Space Grotesk"; letter-spacing:-.3px; }
+    .section-intro p { margin-top:3px; color:var(--muted); font-size:11.5px; }
+    .view-count { flex:none; padding:5px 9px; border-radius:99px; color:#526075; background:#e9edf4; font-size:9.5px; font-weight:800; }
+    .tiles { grid-template-columns:repeat(4,minmax(135px,1fr)); gap:10px; }
+    .tile { padding:14px 15px; border-color:var(--line); background:#fff; box-shadow:0 5px 16px rgba(31,42,68,.035); }
+    .tile::before { width:34px; background:#6675df; box-shadow:none; }
+    .tile:hover { border-color:#ccd2ef; }
+    .tile .k { color:#7c879a; font-size:9.5px; }
+    .tile .v { color:var(--ink); font-size:24px; }
+    .tile .d { font-size:10.5px; }
+    .card { border-color:var(--line); border-radius:15px; background:#fff; box-shadow:var(--shadow); backdrop-filter:none; }
+    .card::after { display:none; }
+    .card:hover { border-color:#d7dcea; box-shadow:0 15px 36px rgba(31,42,68,.09); }
+    .card-head { padding:18px 20px 0; }
+    .card-title { color:var(--ink); font-size:14px; }
+    .card-sub { color:var(--muted); font-size:11.5px; }
+    .body { padding:14px 20px 20px; }
+    .req { color:#5c60ae; background:#f0efff; border-color:#dcd9fb; }
+    .novel { color:#167a72; background:#eaf8f5; border-color:#c9eee7; }
+    .insight-card { border-color:#d8e8e5; background:linear-gradient(120deg,#fff 30%,#f3fbf9 100%); }
+    .insight-grid { grid-template-columns:205px minmax(0,1fr); gap:18px; }
+    .score-ring { width:144px; box-shadow:0 0 32px color-mix(in srgb,var(--ring-color) 14%,transparent); }
+    .score-ring::before { width:112px; background:#fff; box-shadow:inset 0 0 0 1px var(--line); }
+    .score-value { font-size:36px; }
+    .score-state { color:var(--ink2); background:#fff; }
+    .grid2 { gap:16px; grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .legend .item { color:var(--ink2); }
+    th { color:#748094; background:#f8fafc; }
+    tbody tr:hover { background:#f6f7fd; }
+    .scroll { border-color:var(--line); }
+    .rrow { background:#f8fafc; }
+    .rrow select { color:var(--ink); background:#fff; border-color:#d8dee8; }
+    #tooltip { color:#f8fafc; background:#182033; border-color:#303b52; box-shadow:0 12px 34px rgba(18,27,45,.26); }
+    #tooltip .tt-r { color:#cdd4e1; } #tooltip .tt-r b { color:#fff; }
+    .warn { color:#88510d; background:#fff8e8; border-color:#efd9a9; }
+    .err { color:#a52b40; background:#fff1f3; border-color:#f0bec7; }
+    .loader { min-height:70vh; }
+    .metric-flash { animation:metricFlash 1.2s ease; }
+    @keyframes metricFlash { 0%,100% { box-shadow:var(--shadow); } 25% { border-color:#7f89e8; box-shadow:0 0 0 5px rgba(83,98,207,.12),0 18px 38px rgba(31,42,68,.1); } }
+    @media (max-width:1100px) {
+      .product-shell { grid-template-columns:76px minmax(0,1fr); }
+      .sidebar { padding-inline:10px; }
+      .brand-copy,.side-label,.dash-nav-btn>span:last-child,.side-status { display:none; }
+      .side-brand { justify-content:center; padding-inline:0; }
+      .dash-nav-btn { justify-content:center; padding:0; }
+      .workspace-main { padding-inline:22px; }
+      .tiles { grid-template-columns:repeat(2,minmax(135px,1fr)); }
+    }
+    @media (max-width:760px) {
+      .product-shell { display:block; }
+      .sidebar { position:sticky; height:auto; padding:9px 12px; border-right:0; border-bottom:1px solid var(--line); flex-direction:row; align-items:center; gap:8px; }
+      .side-brand { padding:0; }
+      .dash-nav { display:flex; flex:1; overflow:auto; }
+      .dash-nav-btn { min-width:42px; }
+      .nav-ico { width:30px; height:30px; }
+      .workspace-main { padding:0 14px 42px; }
+      .workspace-topbar { position:relative; grid-template-columns:1fr; gap:12px; padding:18px 0 14px; }
+      .quick-prompts { display:none; }
+      .filters { position:static; }
+      .grid2,.insight-grid { grid-template-columns:1fr; }
+      .tiles { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    }
+    @media (max-width:470px) {
+      .tiles { grid-template-columns:1fr; }
+      .finder-key { display:none; }
+      .fgroup,.msel { min-width:100%; width:100%; }
+    }
   </style>
 </head>
-<body data-palette="#3987e5,#d95926,#199e70,#c98500,#d55181,#008300,#9085e9,#e66767">
-  <nav class="topnav">
-    <a class="nav-brand" href="/"><span class="logo">b</span><span class="brand">byte<span>XL</span> Intelligence</span></a>
-    <div class="nav-links">
-      <a class="nav-link" href="/">Content</a>
-      <a class="nav-link" href="/assessment">Question Upload</a>
-      <a class="nav-link" href="/assessment-builder">Test Builder</a>
-      <a class="nav-link active" href="/question-bank-analytics">Analytics</a>
-    </div>
-  </nav>
+<body data-palette="#4f6ef7,#ec7c4a,#2ca77c,#d49a25,#cc6287,#238a70,#866dd6,#d75d70">
+  <div class="product-shell">
+    <aside class="sidebar">
+      <a class="side-brand" href="/question-bank-analytics"><span class="logo">Q</span><span class="brand-copy"><strong>Question Intelligence</strong><span>Decision workspace</span></span></a>
+      <div class="side-label">Dashboards</div>
+      <nav class="dash-nav" aria-label="Analytics dashboards">
+        <button class="dash-nav-btn active" data-view="overview" aria-label="Overview" title="Overview"><span class="nav-ico">◫</span><span>Overview</span></button>
+        <button class="dash-nav-btn" data-view="production" aria-label="Production" title="Production"><span class="nav-ico">↗</span><span>Production</span></button>
+        <button class="dash-nav-btn" data-view="coverage" aria-label="Coverage" title="Coverage"><span class="nav-ico">◎</span><span>Coverage</span></button>
+        <button class="dash-nav-btn" data-view="quality" aria-label="Quality" title="Quality"><span class="nav-ico">◇</span><span>Quality</span></button>
+        <button class="dash-nav-btn" data-view="team" aria-label="Team" title="Team"><span class="nav-ico">♙</span><span>Team</span></button>
+      </nav>
+      <div class="side-status"><div class="status-line"><span class="live-dot"></span>Live platform sync</div><div class="status-copy">The workspace checks for new ByteXL data every minute.</div></div>
+    </aside>
 
-  <main>
-    <div class="shell">
-      <div class="hero">
-        <div class="eyebrow"><span class="live-dot"></span>Live intelligence layer</div>
-        <h1>Question Bank Intelligence</h1>
-        <p>Production, curation and coverage across the ByteXL question bank — read live from the platform, pivoted in the browser. Every panel responds to the filters below.</p>
-      </div>
+    <main class="workspace-main">
+      <header class="workspace-topbar">
+        <div><div class="page-kicker">Question bank intelligence</div><h1 class="page-title" id="view-title">Decision overview</h1><p class="page-description" id="view-description">The signals that need attention now.</p></div>
+        <div class="analytics-finder">
+          <div class="finder-box"><span class="finder-icon">⌕</span><input id="analytics-search" type="search" autocomplete="off" placeholder="Ask for an insight — e.g. who authored the most?" aria-label="Find an analytic"><span class="finder-key">⌘ K</span></div>
+          <div id="finder-results" class="finder-results" role="listbox"></div>
+          <div class="quick-prompts">
+            <button class="quick-prompt" data-query="Who authored the most?">Who authored the most?</button>
+            <button class="quick-prompt" data-query="Which subjects are fragile?">Which subjects are fragile?</button>
+            <button class="quick-prompt" data-query="Where are quality gaps?">Where are quality gaps?</button>
+          </div>
+        </div>
+      </header>
+
+      <div class="workspace">
 
       <div id="loader" class="loader">
         <div class="spin"></div>
@@ -214,7 +370,7 @@
       </div>
       <div id="error" class="err hidden"></div>
 
-      <div id="app" class="hidden" style="display:grid;gap:20px">
+      <div id="app" class="hidden">
 
         <div class="filters">
           <div class="fgroup">
@@ -245,19 +401,24 @@
           <button id="btn-reset" class="btn">Reset</button>
           <button id="btn-refresh" class="btn primary">Refresh data</button>
         </div>
-        <div id="meta" class="muted" style="font-size:11.5px;margin-top:-8px"><span id="meta-fresh">Updating…</span><span id="meta-rest"></span></div>
+        <div id="meta" class="meta-line"><span class="live-dot"></span><span id="meta-fresh">Updating…</span><span id="meta-rest"></span></div>
 
-        <div class="tiles" id="tiles"></div>
+        <section class="dashboard-view active" data-dashboard="overview">
+          <div class="section-intro"><div><h2>What needs a decision</h2><p>A compact pulse of growth, mix, risk, and knowledge continuity.</p></div><span class="view-count">8 live signals</span></div>
+          <div class="tiles" id="tiles"></div>
 
-        <div class="card insight-card">
+          <div class="card insight-card" id="metric-resilience">
           <div class="card-head"><div>
             <div class="card-title">Knowledge resilience<span class="req novel">NEW · HIDDEN SIGNAL</span></div>
             <div class="card-sub">A large question bank can still be fragile. This measures whether subject knowledge is distributed across people, review-ready, and reusable — not merely abundant.</div>
           </div></div>
           <div class="body"><div id="c-resilience"></div></div>
-        </div>
+          </div>
+        </section>
 
-        <div class="card">
+        <section class="dashboard-view" data-dashboard="production">
+          <div class="section-intro"><div><h2>Production performance</h2><p>How quickly the bank is growing, who is contributing, and what leaves the bank.</p></div><span class="view-count">4 analytics</span></div>
+        <div class="card" id="metric-monthly">
           <div class="card-head"><div>
             <div class="card-title">Monthly production<span class="req">Q1</span></div>
             <div class="card-sub">Questions authored per month, split by format. Bars are counted from each question's own creation date, so archived questions still count in the month they were written.</div>
@@ -266,14 +427,14 @@
         </div>
 
         <div class="grid2">
-          <div class="card">
+          <div class="card" id="metric-curated">
             <div class="card-head"><div>
               <div class="card-title">Curated vs uploaded<span class="req">Q2</span></div>
               <div class="card-sub">Share authored by Content Leads against Platform Support Engineers each month.</div>
             </div></div>
             <div class="body"><div id="c-curated"></div></div>
           </div>
-          <div class="card">
+          <div class="card" id="metric-churn">
             <div class="card-head"><div>
               <div class="card-title">Bank churn — added vs archived<span class="req">Q5</span></div>
               <div class="card-sub">Additions against archivals in the same month, and the resulting net change.</div>
@@ -282,31 +443,33 @@
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-head"><div>
-            <div class="card-title">Subject coverage by month<span class="req">Q3</span></div>
-            <div class="card-sub">Questions added per subject per month. Colour encodes volume; hover any cell for the MCQ and coding split.</div>
-          </div><label class="toggle"><input type="checkbox" id="t-subject"> Table view</label></div>
-          <div class="body"><div id="c-subject"></div><div id="tb-subject" class="hidden"></div></div>
-        </div>
-
-        <div class="card">
+        <div class="card" id="metric-lead">
           <div class="card-head"><div>
             <div class="card-title">Content Lead output<span class="req">Q4</span></div>
             <div class="card-sub">Per-lead monthly production. Roles come from the roster below and every curation metric recomputes when you change one.</div>
           </div><label class="toggle"><input type="checkbox" id="t-lead"> Table view</label></div>
           <div class="body"><div id="c-lead"></div><div id="tb-lead" class="hidden"></div></div>
         </div>
+        </section>
 
+        <section class="dashboard-view" data-dashboard="coverage">
+          <div class="section-intro"><div><h2>Coverage &amp; readiness</h2><p>Find the subjects, tracks, and hiring scenarios that are strong—or underserved.</p></div><span class="view-count">4 analytics</span></div>
+        <div class="card" id="metric-subject">
+          <div class="card-head"><div>
+            <div class="card-title">Subject coverage by month<span class="req">Q3</span></div>
+            <div class="card-sub">Questions added per subject per month. Colour encodes volume; hover any cell for the MCQ and coding split.</div>
+          </div><label class="toggle"><input type="checkbox" id="t-subject"> Table view</label></div>
+          <div class="body"><div id="c-subject"></div><div id="tb-subject" class="hidden"></div></div>
+        </div>
         <div class="grid2">
-          <div class="card">
+          <div class="card" id="metric-track">
             <div class="card-head"><div>
               <div class="card-title">Track coverage<span class="req">Q7</span></div>
               <div class="card-sub">Questions per track. Tracks are derived from the subject field — see the mapping note under the table.</div>
             </div></div>
             <div class="body"><div id="c-track"></div></div>
           </div>
-          <div class="card">
+          <div class="card" id="metric-company">
             <div class="card-head"><div>
               <div class="card-title">Company mock test coverage<span class="req">Q8</span></div>
               <div class="card-sub">Questions tagged to a hiring company, plus the mock tests built from them.</div>
@@ -315,7 +478,18 @@
           </div>
         </div>
 
-        <div class="card">
+        <div class="card" id="metric-standard">
+          <div class="card-head"><div>
+            <div class="card-title">Standardized assessment coverage<span class="req">Q9</span></div>
+            <div class="card-sub">Subjects that have a ready-to-assign standardized assessment, and how many papers exist for each.</div>
+          </div></div>
+          <div class="body"><div id="c-standard"></div></div>
+        </div>
+        </section>
+
+        <section class="dashboard-view" data-dashboard="quality">
+          <div class="section-intro"><div><h2>Quality control</h2><p>Diagnose blueprint imbalance and the metadata gaps blocking reuse.</p></div><span class="view-count">2 analytics</span></div>
+        <div class="card" id="metric-matrix">
           <div class="card-head"><div>
             <div class="card-title">Difficulty matrix by topic<span class="req">Q6</span></div>
             <div class="card-sub">Difficulty mix within each topic of a subject. Balanced topics run roughly 30/50/20 easy/medium/hard — bars far from that, or heavy on "unspecified", are the ones to fix.</div>
@@ -324,34 +498,30 @@
           </div>
           <div class="body"><div id="c-matrix"></div></div>
         </div>
-
-        <div class="card">
-          <div class="card-head"><div>
-            <div class="card-title">Standardized assessment coverage<span class="req">Q9</span></div>
-            <div class="card-sub">Subjects that have a ready-to-assign standardized assessment, and how many papers exist for each.</div>
-          </div></div>
-          <div class="body"><div id="c-standard"></div></div>
-        </div>
-
-        <div class="card">
+        <div class="card" id="metric-quality">
           <div class="card-head"><div>
             <div class="card-title">Data quality &amp; risk</div>
             <div class="card-sub">Gaps that make the numbers above harder to trust, and that block questions from being found in the Test Builder.</div>
           </div></div>
           <div class="body"><div id="c-quality"></div></div>
         </div>
+        </section>
 
-        <div class="card">
+        <section class="dashboard-view" data-dashboard="team">
+          <div class="section-intro"><div><h2>Team &amp; ownership</h2><p>Maintain role ownership and immediately recalculate curation analytics.</p></div><span class="view-count">1 control</span></div>
+        <div class="card" id="metric-roster">
           <div class="card-head"><div>
             <div class="card-title">Author roster</div>
             <div class="card-sub">Who counts as a Content Lead. Changes are saved in this browser and immediately recompute the curation metrics.</div>
           </div><button id="btn-roster-reset" class="btn">Restore defaults</button></div>
           <div class="body"><div id="c-roster" class="roster"></div></div>
         </div>
+        </section>
 
       </div>
-    </div>
-  </main>
+      </div>
+    </main>
+  </div>
 
   <div id="tooltip"></div>
   <script src="/analytics.js"></script>

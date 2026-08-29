@@ -24,9 +24,9 @@
   }
   var SERIES = ["--series-1", "--series-2", "--series-3", "--series-4", "--series-5", "--series-6", "--series-7", "--series-8"];
   var ORD = ["--ord-1", "--ord-2", "--ord-3", "--ord-0"]; // easy, medium, hard, unspecified
-  // Blue ramp, dark (near the surface = near zero) to light as magnitude rises.
-  // Inverted from the light-surface convention because this dashboard is dark.
-  var HEAT = ["#0d366b", "#184f95", "#1c5cab", "#256abf", "#2a78d6", "#3987e5", "#5598e7", "#6da7ec", "#86b6ef", "#9ec5f4", "#b7d3f6", "#cde2fb"];
+  // Sequential blue ramp for a light surface: near-white means near zero and
+  // increasing saturation means increasing question volume.
+  var HEAT = ["#edf4ff", "#dbe9fd", "#c5ddfb", "#a9cef7", "#8bbbf1", "#6da7ec", "#568fe4", "#437fda", "#326fc9", "#285fb5", "#214f9e", "#193f83"];
   var TYPE_LABEL = ["MCQ", "Coding", "Descriptive"];
   var DIFF_LABEL = ["Easy", "Medium", "Hard", "Unspecified"];
   var ROSTER_KEY = "bytexl.analytics.roster.v1";
@@ -48,6 +48,29 @@
   var metricHistory = {};
   var resilienceScoreHistory = 0;
   var motionOK = !window.matchMedia || !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var activeDashboard = "overview";
+  var DASHBOARDS = {
+    overview: { title: "Decision overview", description: "The signals that need attention now." },
+    production: { title: "Production performance", description: "Growth, contribution, and bank movement over time." },
+    coverage: { title: "Coverage & readiness", description: "Subject, track, company, and assessment readiness." },
+    quality: { title: "Quality control", description: "Blueprint balance and metadata health." },
+    team: { title: "Team & ownership", description: "Roles, contribution ownership, and curation rules." }
+  };
+  var ANALYTICS_INDEX = [
+    { title: "Decision overview", view: "overview", target: "tiles", tags: "summary kpi total questions mcq coding growth net change executive pulse" },
+    { title: "Knowledge resilience", view: "overview", target: "metric-resilience", tags: "fragile subjects risk concentration single author exposed ownership continuity hidden signal" },
+    { title: "Monthly production", view: "production", target: "metric-monthly", tags: "monthly trend volume added questions growth output over time" },
+    { title: "Curated vs uploaded", view: "production", target: "metric-curated", tags: "content leads support engineers role curated share uploaded" },
+    { title: "Bank churn", view: "production", target: "metric-churn", tags: "archived deleted additions net change shrinking growing" },
+    { title: "Content Lead output", view: "production", target: "metric-lead", tags: "who authored most top author contributor people leader productivity" },
+    { title: "Subject coverage", view: "coverage", target: "metric-subject", tags: "subjects monthly gaps volume curriculum" },
+    { title: "Track coverage", view: "coverage", target: "metric-track", tags: "tracks programming fundamentals tactical drills categories" },
+    { title: "Company mock coverage", view: "coverage", target: "metric-company", tags: "company hiring mock tests employers tagged readiness" },
+    { title: "Standardized assessments", view: "coverage", target: "metric-standard", tags: "standard tests papers ready assign assessment coverage" },
+    { title: "Difficulty matrix", view: "quality", target: "metric-matrix", tags: "easy medium hard topic balance blueprint difficulty unspecified" },
+    { title: "Data quality & risk", view: "quality", target: "metric-quality", tags: "missing subject topic explanation difficulty gaps metadata quality reusable" },
+    { title: "Author roster", view: "team", target: "metric-roster", tags: "team people roles author ownership content lead support manager" }
+  ];
 
   function css(name) { return getComputedStyle(document.body).getPropertyValue(name).trim(); }
   function $(id) { return document.getElementById(id); }
@@ -335,15 +358,15 @@
       svg.appendChild(t);
       r.values.forEach(function (v, j) {
         var idx = v <= 0 ? -1 : Math.min(HEAT.length - 1, Math.floor(Math.sqrt(v / max) * (HEAT.length - 1)));
-        var fill = idx < 0 ? "rgba(255,255,255,.035)" : HEAT[idx];
+        var fill = idx < 0 ? "rgba(21,32,52,.035)" : HEAT[idx];
         var cell = el("rect", { x: m.l + j * cellW + 1, y: m.t + i * cellH + 1, width: cellW - 3, height: cellH - 3, rx: 4, fill: fill, class: "heat-cell" });
         bindTip(cell, r.label + " · " + cols[j], (r.detail && r.detail[j]) || [{ label: "Questions", value: v }]);
         svg.appendChild(cell);
         if (v > 0) {
           var lb = el("text", {
             x: m.l + j * cellW + cellW / 2, y: m.t + i * cellH + cellH / 2 + 4, "text-anchor": "middle",
-            // Ink token, not the series colour; flipped for contrast on light cells.
-            fill: idx >= 7 ? "#0b1020" : css("--ink"), "font-size": 10.5, "font-weight": 700
+            // Dark text on pale cells; white once saturation is high enough.
+            fill: idx >= 7 ? "#ffffff" : css("--ink"), "font-size": 10.5, "font-weight": 700
           });
           lb.textContent = fmt(v); svg.appendChild(lb);
         }
@@ -860,6 +883,97 @@
     animateMetrics($("app"));
   }
 
+  /* ------------------------------------------------ dashboard navigation / finder */
+  function setDashboard(view, target, fromSearch) {
+    if (!DASHBOARDS[view]) return;
+    activeDashboard = view;
+    Array.prototype.forEach.call(document.querySelectorAll(".dashboard-view"), function (section) {
+      section.classList.toggle("active", section.dataset.dashboard === view);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll(".dash-nav-btn"), function (button) {
+      button.classList.toggle("active", button.dataset.view === view);
+      button.setAttribute("aria-current", button.dataset.view === view ? "page" : "false");
+    });
+    $("view-title").textContent = DASHBOARDS[view].title;
+    $("view-description").textContent = DASHBOARDS[view].description;
+    if (DATA) renderAll();
+    if (fromSearch) {
+      var search = $("analytics-search"), results = $("finder-results");
+      search.value = ""; results.classList.remove("open"); results.innerHTML = "";
+    }
+    requestAnimationFrame(function () {
+      var node = target && $(target);
+      if (node) {
+        node.classList.remove("metric-flash");
+        void node.offsetWidth;
+        node.classList.add("metric-flash");
+        node.scrollIntoView({ behavior: motionOK ? "smooth" : "auto", block: "center" });
+      } else if (window.innerWidth < 761) {
+        window.scrollTo({ top: 0, behavior: motionOK ? "smooth" : "auto" });
+      }
+    });
+  }
+
+  function finderMatches(query) {
+    var q = query.trim().toLowerCase();
+    if (!q) return ANALYTICS_INDEX.slice(0, 6);
+    var stop = { the: 1, and: 1, are: 1, for: 1, who: 1, what: 1, where: 1, which: 1, most: 1, show: 1, find: 1, need: 1 };
+    var words = q.split(/\s+/).filter(function (word) { return word.length > 2 && !stop[word]; });
+    return ANALYTICS_INDEX.map(function (item) {
+      var title = item.title.toLowerCase(), haystack = title + " " + item.tags;
+      var score = title.indexOf(q) >= 0 ? 12 : 0;
+      words.forEach(function (word) {
+        if (title.indexOf(word) >= 0) score += 4;
+        else if (haystack.indexOf(word) >= 0) score += 2;
+      });
+      return { item: item, score: score };
+    }).filter(function (result) { return result.score > 0; })
+      .sort(function (a, b) { return b.score - a.score; })
+      .slice(0, 6).map(function (result) { return result.item; });
+  }
+
+  function renderFinder(query) {
+    var results = $("finder-results"), matches = finderMatches(query);
+    results.innerHTML = matches.length ? matches.map(function (item, i) {
+      return '<button class="finder-result' + (i === 0 ? " focused" : "") + '" role="option" data-view="' + item.view + '" data-target="' + item.target + '">' +
+        '<strong>' + esc(item.title) + '</strong><span>' + esc(DASHBOARDS[item.view].title) + '</span></button>';
+    }).join("") : '<div class="finder-empty">No exact match. Try “authors”, “quality”, “difficulty”, or “company”.</div>';
+    results.classList.add("open");
+    Array.prototype.forEach.call(results.querySelectorAll(".finder-result"), function (button) {
+      button.addEventListener("click", function () { setDashboard(button.dataset.view, button.dataset.target, true); });
+    });
+  }
+
+  function bindWorkspaceNavigation() {
+    Array.prototype.forEach.call(document.querySelectorAll(".dash-nav-btn"), function (button) {
+      button.addEventListener("click", function () { setDashboard(button.dataset.view); });
+    });
+    var search = $("analytics-search"), results = $("finder-results");
+    search.addEventListener("focus", function () { renderFinder(search.value); });
+    search.addEventListener("input", function () { renderFinder(search.value); });
+    search.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        var first = results.querySelector(".finder-result");
+        if (first) { event.preventDefault(); setDashboard(first.dataset.view, first.dataset.target, true); }
+      } else if (event.key === "Escape") {
+        results.classList.remove("open"); search.blur();
+      }
+    });
+    document.addEventListener("keydown", function (event) {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault(); search.focus(); search.select();
+      }
+    });
+    document.addEventListener("click", function (event) {
+      if (!event.target.closest(".analytics-finder")) results.classList.remove("open");
+    });
+    Array.prototype.forEach.call(document.querySelectorAll(".quick-prompt"), function (button) {
+      button.addEventListener("click", function () {
+        search.value = button.dataset.query; renderFinder(search.value); search.focus();
+      });
+    });
+  }
+
   /* --------------------------------------------------------- multi-select filter */
   var ALL_MULTISELECTS = [];
   function closeAllMultiSelects() {
@@ -1027,6 +1141,7 @@
   }
 
   function bindControls() {
+    bindWorkspaceNavigation();
     $("f-matrix").addEventListener("change", renderMatrix);
     Array.prototype.forEach.call($("f-type").children, function (b) {
       b.addEventListener("click", function () {
