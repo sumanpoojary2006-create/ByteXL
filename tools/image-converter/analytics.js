@@ -613,12 +613,14 @@
     var concentrated = scored.filter(function (x) { return x.topShare >= .7; });
     var exposed = concentrated.reduce(function (sum, x) { return sum + x.n; }, 0);
     var authorAvg = scored.reduce(function (sum, x) { return sum + x.authors * x.n; }, 0) / weight;
-    var state = score >= 65 ? "Resilient" : score >= 45 ? "Needs attention" : "Fragile";
+    // Same three-tier wording as the top-level score, so a first-time viewer sees
+    // one consistent vocabulary instead of two health meters that speak differently.
+    var state = score >= 65 ? "Healthy" : score >= 45 ? "Needs attention" : "Needs urgent attention";
     var color = score >= 65 ? css("--green") : score >= 45 ? css("--amber") : css("--red");
     var previous = resilienceScoreHistory; resilienceScoreHistory = score;
 
     host.innerHTML = '<div class="insight-grid"><div class="score-wrap">' +
-      '<div class="score-ring" style="--score:' + previous + ';--ring-color:' + color + '"><div class="score-value">' + score + '<small>Resilience / 100</small></div></div>' +
+      '<div class="score-ring" style="--score:' + previous + ';--ring-color:' + color + '"><div class="score-value">' + score + '<small>Attention score / 100</small></div></div>' +
       '<div class="score-state">' + state + '</div></div><div class="insight-side">' +
       '<div class="tiles"><div class="tile"><div class="k">Subjects mostly written by one person</div><div class="v">' + concentrated.length + '</div><div class="d down">One author created at least 70% of the questions</div></div>' +
       '<div class="tile"><div class="k">Questions in those subjects</div><div class="v">' + pct(exposed, weight) + '%</div><div class="d">' + fmt(exposed) + ' questions may be harder for others to maintain</div></div>' +
@@ -700,7 +702,7 @@
   function renderWeekly() {
     var c = DATA.cols, dims = DATA.dims, host = $("c-weekly"), tableHost = $("tb-weekly");
     if (!c.cw || !c.aw || !dims.weeks) {
-      host.innerHTML = '<div class="warn">Week-level history is being prepared. Refresh after the analytics service has rebuilt its snapshot.</div>';
+      host.innerHTML = '<div class="warn">Weekly data isn\'t ready yet. Click "Refresh data" above in a minute and it will appear.</div>';
       tableHost.innerHTML = ""; return;
     }
     var weekSet = {}, added = {}, archived = {};
@@ -892,7 +894,7 @@
       if (c.co[i] >= 0) companies[dims.companies[c.co[i]]] = 1;
     }
     var total = mcq.reduce(add, 0) + coding.reduce(add, 0), host = $("c-akila-company");
-    host.innerHTML = '<div class="tiles" style="margin-bottom:14px"><div class="tile"><div class="k">Company-specific by Akila</div><div class="v">' + fmt(total) + '</div><div class="d">Fixed-author metric for the selected period</div></div>' +
+    host.innerHTML = '<div class="tiles" style="margin-bottom:14px"><div class="tile"><div class="k">Company-specific by Akila</div><div class="v">' + fmt(total) + '</div><div class="d">Always Akila Rengarajan, for the selected period</div></div>' +
       '<div class="tile"><div class="k">MCQ</div><div class="v">' + fmt(mcq.reduce(add, 0)) + '</div><div class="d">' + pct(mcq.reduce(add, 0), total) + '% of her company output</div></div>' +
       '<div class="tile"><div class="k">Coding</div><div class="v">' + fmt(coding.reduce(add, 0)) + '</div><div class="d">' + pct(coding.reduce(add, 0), total) + '% of her company output</div></div>' +
       '<div class="tile"><div class="k">Named companies</div><div class="v">' + fmt(Object.keys(companies).length) + '</div><div class="d">Company field populated</div></div></div><div id="c-akila-company-chart"></div>';
@@ -900,7 +902,7 @@
       categories: months.map(monthLabel), height: 280,
       series: [{ label: "MCQ", color: css("--series-1"), values: mcq }, { label: "Coding", color: css("--series-2"), values: coding }],
       aria: "Akila Rengarajan company-specific questions by month and type",
-      caption: "This special category intentionally stays fixed to Akila even when the global Author filter changes. Other filters still apply."
+      caption: "This chart always shows Akila Rengarajan, even if you choose someone else in the Author filter above. The Month, Track, Subject, and Question type filters still apply."
     });
   }
 
@@ -924,7 +926,10 @@
       series: DIFF_LABEL.map(function (l, i) { return { label: l, color: css(ORD[i]) }; }),
       items: keys.map(function (k) { return { label: k, values: agg[k] }; }),
       aria: TYPE_LABEL[matrixType] + " difficulty mix per topic for " + subject,
-      caption: "Live " + TYPE_LABEL[matrixType] + " questions in " + subject + ". Row totals are on the right; hover for exact counts and shares."
+      // "Currently active", not "Live" — this dashboard already uses "Live" for the
+      // auto-refreshing data feed, so reusing it here for "not archived" would give
+      // the same word two different meanings on the same page.
+      caption: "Currently active " + TYPE_LABEL[matrixType] + " questions in " + subject + ". Row totals are on the right; hover for exact counts and shares."
     });
   }
 
@@ -1007,7 +1012,7 @@
         '<select data-author="' + esc(n) + '">' +
         ["lead", "support", "manager", "system"].map(function (o) {
           return '<option value="' + o + '"' + (o === r ? " selected" : "") + ">" +
-            { lead: "Content Lead", support: "Support Eng", manager: "Manager", system: "System" }[o] + "</option>";
+            { lead: "Content Lead", support: "Support Engineer", manager: "Manager", system: "System" }[o] + "</option>";
         }).join("") + "</select></div>";
     }).join("");
     Array.prototype.forEach.call($("c-roster").querySelectorAll("select"), function (s) {
