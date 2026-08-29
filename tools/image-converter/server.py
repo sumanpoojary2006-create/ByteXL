@@ -12,12 +12,18 @@ from pathlib import Path, PurePosixPath
 from typing import Any, Optional
 from urllib.parse import unquote
 
+import ijson
 import requests
 from fastapi import Body, FastAPI, File, Form, HTTPException, Request, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 
+import analytics
+
 app = FastAPI()
+# The analytics fact table is ~6 MB of JSON and compresses to a fraction of that.
+app.add_middleware(GZipMiddleware, minimum_size=8192)
 frontend_origins = [
     origin.strip()
     for origin in os.getenv(
@@ -55,6 +61,11 @@ BYTEXL_UPLOAD_URL = canonical_bytexl_url(
 )
 BYTEXL_API_BASE = canonical_bytexl_url(
     os.getenv("BYTEXL_API_BASE", "https://app.bytexl.ai")
+).rstrip("/")
+# Analytics reads bypass BYTEXL_API_BASE: deployments route that through the
+# Vercel proxy, which cannot carry a 245 MB, ~60s response. See bytexl_stream_large.
+BYTEXL_BULK_BASE = canonical_bytexl_url(
+    os.getenv("BYTEXL_BULK_BASE", "https://app.bytexl.ai")
 ).rstrip("/")
 DEFAULT_READING_ID = os.getenv("BYTEXL_READING_ID", "44sqshkgw")
 ONECOMPILER_WEB_BASE = os.getenv("ONECOMPILER_WEB_BASE", "https://onecompiler.com").rstrip("/")
@@ -1517,6 +1528,42 @@ def read_assessment_builder_js() -> str:
     return (Path(__file__).parent / "assessment-builder.js").read_text(encoding="utf-8")
 
 
+def read_analytics() -> str:
+    return (Path(__file__).parent / "analytics.html").read_text(encoding="utf-8")
+
+
+def read_analytics_js() -> str:
+    return (Path(__file__).parent / "analytics.js").read_text(encoding="utf-8")
+
+
+def bytexl_stream_large(path: str):
+    """Yield the items of a bulk ByteXL collection one at a time.
+
+    Deliberately different from :func:`bytexl_get` on two counts.
+
+    It streams rather than buffering: ``/api/questions`` is ~245 MB, and holding
+    the parsed document in memory peaks around 2.8 GB, which no small dyno
+    survives. Parsing incrementally keeps the working set to one question plus
+    the fact table being built.
+
+    It also goes straight to ByteXL rather than through ``BYTEXL_API_BASE``.
+    Deployments point that at the Vercel proxy, which buffers whole responses
+    and aborts at 45s — fine for the small reads it was built for, fatal for a
+    245 MB one that takes about a minute.
+    """
+    url = f"{BYTEXL_BULK_BASE}{path}"
+    try:
+        with requests.get(url, headers=auth_headers(), timeout=(30, 420), stream=True) as resp:
+            resp.raise_for_status()
+            resp.raw.decode_content = True
+            for item in ijson.items(resp.raw, "item"):
+                yield item
+    except requests.RequestException as exc:
+        raise HTTPException(502, f"ByteXL bulk read failed: {exc}") from exc
+    except ijson.JSONError as exc:
+        raise HTTPException(502, f"ByteXL returned an invalid bulk response: {exc}") from exc
+
+
 @app.get("/save-token", response_class=HTMLResponse)
 async def save_token_page(t: str = ""):
     if t:
@@ -1566,6 +1613,22 @@ async def assessment_builder_page():
 @app.get("/assessment-builder.js")
 async def assessment_builder_js():
     return Response(read_assessment_builder_js(), media_type="application/javascript; charset=utf-8")
+
+
+@app.get("/question-bank-analytics", response_class=HTMLResponse)
+async def analytics_page():
+    return read_analytics()
+
+
+@app.get("/analytics.js")
+async def analytics_js():
+    return Response(read_analytics_js(), media_type="application/javascript; charset=utf-8")
+
+
+@app.get("/analytics/snapshot")
+async def analytics_snapshot(refresh: bool = False):
+    """The question-bank fact table the dashboard pivots client-side."""
+    return analytics.load_snapshot(bytexl_stream_large, force=refresh)
 
 
 @app.get("/xlsx.full.min.js")

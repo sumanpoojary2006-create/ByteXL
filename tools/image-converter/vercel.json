@@ -17,6 +17,10 @@
     {
       "source": "/assessment-builder",
       "destination": "/assessment-builder.html"
+    },
+    {
+      "source": "/question-bank-analytics",
+      "destination": "/analytics.html"
     }
   ],
   "headers": [

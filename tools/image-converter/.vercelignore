@@ -11,5 +11,7 @@ render.yaml
 requirements.txt
 run.py
 server.py
+analytics.py
+.analytics-snapshot.json
 tests/
 .python-version

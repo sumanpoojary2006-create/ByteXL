@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ByteXL Question Bank Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="/config.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #070912; --panel: rgba(22,26,44,.64); --panel2: rgba(12,15,29,.72);
+      --line: rgba(255,255,255,.09); --line-hi: rgba(255,255,255,.17);
+      --ink: #f1f4ff; --ink2: #c3cae0; --muted: #8790ad; --faint: #5c6480;
+      --violet: #8b5cf6; --green: #34d399; --amber: #fbbf24; --red: #f87171;
+      --grad: linear-gradient(135deg,#6366f1 0%,#8b5cf6 52%,#d946ef 100%);
+
+      /* Data-viz roles. Dark steps of the reference categorical palette,
+         validated against this surface (#0e1120): all six checks pass. */
+      --surface-1: #0e1120;
+      --series-1: #3987e5; --series-2: #d95926; --series-3: #199e70; --series-4: #c98500;
+      --series-5: #d55181; --series-6: #008300; --series-7: #9085e9; --series-8: #e66767;
+      /* Ordinal ramp for difficulty (one hue, monotone lightness, validated). */
+      --ord-1: #9ec5f4; --ord-2: #3987e5; --ord-3: #184f95; --ord-0: #4a5372;
+      --grid: rgba(255,255,255,.07);
+    }
+    body {
+      min-height: 100vh; color: var(--ink); font: 14px/1.5 Inter,-apple-system,BlinkMacSystemFont,sans-serif;
+      background: radial-gradient(circle at 0 0,rgba(99,102,241,.34),transparent 34rem),
+        radial-gradient(circle at 96% 18%,rgba(217,70,239,.22),transparent 32rem),
+        radial-gradient(circle at 55% 90%,rgba(6,182,212,.16),transparent 30rem),var(--bg);
+    }
+    button, input, select { font: inherit; }
+    .topnav {
+      position: sticky; top: 0; z-index: 30; height: 66px; padding: 0 32px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(9,11,20,.68); backdrop-filter: blur(20px) saturate(160%);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 12px; color: inherit; text-decoration: none; }
+    .logo { width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; background: var(--grad); font: 800 18px "Space Grotesk"; box-shadow: 0 4px 20px rgba(139,92,246,.45); }
+    .brand { font: 700 17px "Space Grotesk"; }
+    .brand span, h1 { background: linear-gradient(135deg,#fff 20%,#a5b4fc 60%,#e879f9); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+    .nav-link { min-height: 32px; display: flex; align-items: center; padding: 6px 12px; border: 1px solid rgba(139,92,246,.3); border-radius: 99px; color: #c4b5fd; background: rgba(139,92,246,.12); text-decoration: none; font-size: 11px; font-weight: 800; letter-spacing: .35px; text-transform: uppercase; }
+    .nav-link.active { background: var(--grad); color: #fff; border-color: transparent; }
+    main { padding: 34px 28px 72px; }
+    .shell { width: min(1360px,100%); margin: auto; display: grid; gap: 20px; }
+    .hero { text-align: center; margin-bottom: 4px; }
+    h1 { font: 700 clamp(28px,4.4vw,40px)/1.08 "Space Grotesk"; letter-spacing: -1.2px; }
+    .hero p { max-width: 780px; margin: 10px auto 0; color: var(--muted); font-size: 14px; }
+
+    .card { border: 1px solid var(--line); border-radius: 18px; background: var(--panel); box-shadow: 0 20px 60px rgba(0,0,0,.4); backdrop-filter: blur(28px); overflow: hidden; }
+    .card-head { padding: 20px 24px 0; display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+    .card-title { font: 700 15.5px "Space Grotesk"; }
+    .req { display: inline-block; margin-left: 8px; padding: 2px 7px; border-radius: 6px; background: rgba(139,92,246,.18); border: 1px solid rgba(139,92,246,.3); color: #c4b5fd; font-size: 10px; font-weight: 800; letter-spacing: .3px; vertical-align: 2px; }
+    .card-sub { margin-top: 4px; color: var(--muted); font-size: 12.5px; max-width: 78ch; }
+    .body { padding: 16px 24px 24px; display: grid; gap: 14px; }
+
+    /* Filter bar: one row above the charts, per interaction spec. */
+    .filters { position: sticky; top: 66px; z-index: 20; display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; padding: 14px 18px; border: 1px solid var(--line); border-radius: 14px; background: rgba(10,13,24,.92); backdrop-filter: blur(18px); }
+    .fgroup { display: grid; gap: 5px; }
+    .fgroup label { color: var(--faint); font-size: 10px; font-weight: 900; letter-spacing: .6px; text-transform: uppercase; }
+    .fgroup select, .fgroup input { height: 36px; padding: 0 10px; color: var(--ink); background: rgba(8,11,22,.8); border: 1px solid var(--line-hi); border-radius: 8px; outline: none; min-width: 150px; }
+    .fgroup select:focus, .fgroup input:focus { border-color: var(--violet); }
+    .seg { display: flex; border: 1px solid var(--line-hi); border-radius: 8px; overflow: hidden; height: 36px; }
+    .seg button { padding: 0 13px; border: 0; background: transparent; color: var(--muted); font-size: 12px; font-weight: 700; cursor: pointer; }
+    .seg button.on { background: var(--grad); color: #fff; }
+    .spacer { flex: 1 1 auto; }
+    .btn { min-height: 36px; padding: 0 15px; border: 1px solid var(--line-hi); border-radius: 8px; color: var(--ink2); background: rgba(255,255,255,.05); font-weight: 800; font-size: 12.5px; cursor: pointer; }
+    .btn:hover { border-color: var(--violet); color: #fff; }
+    .btn.primary { background: var(--grad); color: #fff; border-color: transparent; }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    .tiles { display: grid; grid-template-columns: repeat(auto-fit,minmax(178px,1fr)); gap: 12px; }
+    .tile { padding: 15px 17px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel2); }
+    .tile .k { color: var(--faint); font-size: 10.5px; font-weight: 900; letter-spacing: .55px; text-transform: uppercase; }
+    .tile .v { margin-top: 7px; font: 700 27px/1 "Space Grotesk"; letter-spacing: -.6px; }
+    .tile .d { margin-top: 6px; color: var(--muted); font-size: 11.5px; }
+    .tile .d.up { color: var(--green); } .tile .d.down { color: var(--red); }
+
+    .grid2 { display: grid; grid-template-columns: repeat(auto-fit,minmax(430px,1fr)); gap: 20px; }
+    .legend { display: flex; gap: 15px; flex-wrap: wrap; align-items: center; margin-top: 2px; }
+    .legend .item { display: flex; align-items: center; gap: 6px; color: var(--ink2); font-size: 12px; font-weight: 600; }
+    .legend .sw { width: 11px; height: 11px; border-radius: 3px; flex: none; }
+    figure { margin: 0; }
+    figcaption { margin-top: 9px; color: var(--faint); font-size: 11.5px; }
+    svg { display: block; width: 100%; overflow: visible; }
+    svg text { font-family: Inter,sans-serif; }
+    .ax { fill: var(--muted); font-size: 11px; }
+    .axs { fill: var(--faint); font-size: 10px; }
+    .dlabel { fill: var(--ink); font-size: 11px; font-weight: 700; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+    th, td { padding: 8px 10px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+    th:first-child, td:first-child { text-align: left; }
+    th { color: var(--faint); font-size: 10.5px; font-weight: 900; letter-spacing: .5px; text-transform: uppercase; position: sticky; top: 0; background: #0d1020; z-index: 2; }
+    tbody tr:hover { background: rgba(139,92,246,.08); }
+    td.num { font-variant-numeric: tabular-nums; }
+    .scroll { max-height: 430px; overflow: auto; border: 1px solid var(--line); border-radius: 11px; }
+    .muted { color: var(--muted); }
+    .pill { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 10.5px; font-weight: 800; }
+    .pill.lead { background: rgba(57,135,229,.18); color: #8ab8f0; border: 1px solid rgba(57,135,229,.35); }
+    .pill.support { background: rgba(217,89,38,.16); color: #e89b78; border: 1px solid rgba(217,89,38,.35); }
+    .pill.manager { background: rgba(144,133,233,.16); color: #b5aef0; border: 1px solid rgba(144,133,233,.35); }
+    .pill.system { background: rgba(255,255,255,.06); color: var(--muted); border: 1px solid var(--line-hi); }
+
+    #tooltip { position: fixed; z-index: 100; pointer-events: none; opacity: 0; transition: opacity .1s; padding: 9px 11px; border: 1px solid var(--line-hi); border-radius: 9px; background: rgba(8,11,22,.97); box-shadow: 0 12px 34px rgba(0,0,0,.6); font-size: 12px; max-width: 300px; }
+    #tooltip .tt-t { font-weight: 800; margin-bottom: 5px; }
+    #tooltip .tt-r { display: flex; align-items: center; gap: 7px; color: var(--ink2); }
+    #tooltip .tt-r b { margin-left: auto; color: var(--ink); font-variant-numeric: tabular-nums; }
+    #tooltip .sw { width: 9px; height: 9px; border-radius: 2px; flex: none; }
+
+    .toggle { display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: 11.5px; font-weight: 700; cursor: pointer; user-select: none; }
+    .roster { display: grid; grid-template-columns: repeat(auto-fit,minmax(250px,1fr)); gap: 8px; }
+    .rrow { display: flex; align-items: center; gap: 9px; padding: 7px 11px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel2); }
+    .rrow .nm { flex: 1; font-size: 12.5px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; }
+    .rrow .ct { color: var(--faint); font-size: 11px; font-variant-numeric: tabular-nums; }
+    .rrow select { height: 28px; padding: 0 6px; font-size: 11.5px; background: rgba(8,11,22,.8); color: var(--ink); border: 1px solid var(--line-hi); border-radius: 6px; }
+
+    .loader { display: grid; place-items: center; gap: 14px; padding: 90px 20px; text-align: center; }
+    .spin { width: 42px; height: 42px; border: 3px solid rgba(139,92,246,.2); border-top-color: var(--violet); border-radius: 50%; animation: sp 1s linear infinite; }
+    @keyframes sp { to { transform: rotate(360deg); } }
+    .err { padding: 14px 16px; border: 1px solid rgba(248,113,113,.35); border-left: 5px solid var(--red); border-radius: 10px; background: rgba(248,113,113,.08); color: #fecaca; font-size: 13px; }
+    .warn { padding: 12px 15px; border: 1px solid rgba(251,191,36,.3); border-left: 5px solid var(--amber); border-radius: 10px; background: rgba(251,191,36,.07); color: #fde68a; font-size: 12.5px; }
+    .hidden { display: none !important; }
+    /* The sticky offset assumes a single-line 66px nav. Below this width the nav
+       wraps and the offset would let the filter bar cover the charts, so it stops
+       sticking instead. */
+    @media (max-width: 980px) {
+      .topnav { padding: 0 16px; height: auto; min-height: 66px; flex-wrap: wrap; gap: 8px; padding-block: 10px; }
+      .filters { position: static; }
+      .grid2 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      main { padding: 24px 14px 56px; } .card-head, .body { padding-left: 16px; padding-right: 16px; }
+    }
+  </style>
+</head>
+<body data-palette="#3987e5,#d95926,#199e70,#c98500,#d55181,#008300,#9085e9,#e66767">
+  <nav class="topnav">
+    <a class="nav-brand" href="/"><span class="logo">b</span><span class="brand">byte<span>XL</span> Intelligence</span></a>
+    <div class="nav-links">
+      <a class="nav-link" href="/">Content</a>
+      <a class="nav-link" href="/assessment">Question Upload</a>
+      <a class="nav-link" href="/assessment-builder">Test Builder</a>
+      <a class="nav-link active" href="/question-bank-analytics">Analytics</a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="shell">
+      <div class="hero">
+        <h1>Question Bank Intelligence</h1>
+        <p>Production, curation and coverage across the ByteXL question bank — read live from the platform, pivoted in the browser. Every panel responds to the filters below.</p>
+      </div>
+
+      <div id="loader" class="loader">
+        <div class="spin"></div>
+        <div>
+          <div style="font-weight:800">Loading the question bank…</div>
+          <div class="muted" style="font-size:12.5px;margin-top:5px">First build reads ~123,000 questions from the platform and can take about a minute. Later loads are served from the cached snapshot.</div>
+        </div>
+      </div>
+      <div id="error" class="err hidden"></div>
+
+      <div id="app" class="hidden" style="display:grid;gap:20px">
+
+        <div class="filters">
+          <div class="fgroup">
+            <label for="f-range">Period</label>
+            <select id="f-range">
+              <option value="jja" selected>Jun – Aug 2026</option>
+              <option value="6">Last 6 months</option>
+              <option value="12">Last 12 months</option>
+              <option value="all">All time</option>
+            </select>
+          </div>
+          <div class="fgroup">
+            <label for="f-track">Track</label>
+            <select id="f-track"><option value="">All tracks</option></select>
+          </div>
+          <div class="fgroup">
+            <label for="f-subject">Subject</label>
+            <select id="f-subject"><option value="">All subjects</option></select>
+          </div>
+          <div class="fgroup">
+            <label for="f-author">Author</label>
+            <select id="f-author"><option value="">All authors</option></select>
+          </div>
+          <div class="fgroup">
+            <label>Question type</label>
+            <div class="seg" id="f-type">
+              <button data-v="" class="on">All</button>
+              <button data-v="0">MCQ</button>
+              <button data-v="1">Coding</button>
+            </div>
+          </div>
+          <div class="spacer"></div>
+          <button id="btn-reset" class="btn">Reset</button>
+          <button id="btn-refresh" class="btn primary">Refresh data</button>
+        </div>
+        <div id="meta" class="muted" style="font-size:11.5px;margin-top:-8px"></div>
+
+        <div class="tiles" id="tiles"></div>
+
+        <div class="card">
+          <div class="card-head"><div>
+            <div class="card-title">Monthly production<span class="req">Q1</span></div>
+            <div class="card-sub">Questions authored per month, split by format. Bars are counted from each question's own creation date, so archived questions still count in the month they were written.</div>
+          </div><label class="toggle"><input type="checkbox" id="t-monthly"> Table view</label></div>
+          <div class="body"><div id="c-monthly"></div><div id="tb-monthly" class="hidden"></div></div>
+        </div>
+
+        <div class="grid2">
+          <div class="card">
+            <div class="card-head"><div>
+              <div class="card-title">Curated vs uploaded<span class="req">Q2</span></div>
+              <div class="card-sub">Share authored by Content Leads against Platform Support Engineers each month.</div>
+            </div></div>
+            <div class="body"><div id="c-curated"></div></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div>
+              <div class="card-title">Bank churn — added vs archived<span class="req">Q5</span></div>
+              <div class="card-sub">Additions against archivals in the same month, and the resulting net change.</div>
+            </div></div>
+            <div class="body"><div id="c-churn"></div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><div>
+            <div class="card-title">Subject coverage by month<span class="req">Q3</span></div>
+            <div class="card-sub">Questions added per subject per month. Colour encodes volume; hover any cell for the MCQ and coding split.</div>
+          </div><label class="toggle"><input type="checkbox" id="t-subject"> Table view</label></div>
+          <div class="body"><div id="c-subject"></div><div id="tb-subject" class="hidden"></div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><div>
+            <div class="card-title">Content Lead output<span class="req">Q4</span></div>
+            <div class="card-sub">Per-lead monthly production. Roles come from the roster below and every curation metric recomputes when you change one.</div>
+          </div><label class="toggle"><input type="checkbox" id="t-lead"> Table view</label></div>
+          <div class="body"><div id="c-lead"></div><div id="tb-lead" class="hidden"></div></div>
+        </div>
+
+        <div class="grid2">
+          <div class="card">
+            <div class="card-head"><div>
+              <div class="card-title">Track coverage<span class="req">Q7</span></div>
+              <div class="card-sub">Questions per track. Tracks are derived from the subject field — see the mapping note under the table.</div>
+            </div></div>
+            <div class="body"><div id="c-track"></div></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div>
+              <div class="card-title">Company mock test coverage<span class="req">Q8</span></div>
+              <div class="card-sub">Questions tagged to a hiring company, plus the mock tests built from them.</div>
+            </div></div>
+            <div class="body"><div id="c-company"></div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><div>
+            <div class="card-title">Difficulty matrix by topic<span class="req">Q6</span></div>
+            <div class="card-sub">Difficulty mix within each topic of a subject. Balanced topics run roughly 30/50/20 easy/medium/hard — bars far from that, or heavy on "unspecified", are the ones to fix.</div>
+          </div>
+          <div class="fgroup"><label for="f-matrix">Subject</label><select id="f-matrix"></select></div>
+          </div>
+          <div class="body"><div id="c-matrix"></div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><div>
+            <div class="card-title">Standardized assessment coverage<span class="req">Q9</span></div>
+            <div class="card-sub">Subjects that have a ready-to-assign standardized assessment, and how many papers exist for each.</div>
+          </div></div>
+          <div class="body"><div id="c-standard"></div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><div>
+            <div class="card-title">Data quality &amp; risk</div>
+            <div class="card-sub">Gaps that make the numbers above harder to trust, and that block questions from being found in the Test Builder.</div>
+          </div></div>
+          <div class="body"><div id="c-quality"></div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><div>
+            <div class="card-title">Author roster</div>
+            <div class="card-sub">Who counts as a Content Lead. Changes are saved in this browser and immediately recompute the curation metrics.</div>
+          </div><button id="btn-roster-reset" class="btn">Restore defaults</button></div>
+          <div class="body"><div id="c-roster" class="roster"></div></div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <div id="tooltip"></div>
+  <script src="/analytics.js"></script>
+</body>
+</html>
