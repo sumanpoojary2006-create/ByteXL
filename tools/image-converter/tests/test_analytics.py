@@ -89,6 +89,15 @@ class TrackTests(unittest.TestCase):
 
 
 class FactTableTests(unittest.TestCase):
+    def test_creation_and_archive_events_are_encoded_by_iso_week(self):
+        table = analytics.build_fact_table(
+            [], [question(_archived_at="2026-08-09T18:00:00Z")], []
+        )
+        weeks = table["dims"]["weeks"]
+        self.assertEqual(weeks[table["cols"]["cw"][0]], "2026-07-13")
+        self.assertEqual(weeks[table["cols"]["aw"][0]], "2026-08-03")
+        self.assertEqual(table["schemaVersion"], analytics.SNAPSHOT_SCHEMA_VERSION)
+
     def test_live_and_archived_questions_share_one_table(self):
         table = analytics.build_fact_table(
             [question(_id="a")],
@@ -111,6 +120,7 @@ class FactTableTests(unittest.TestCase):
     def test_a_question_that_was_never_archived_has_no_archive_month(self):
         table = analytics.build_fact_table([question()], [], [])
         self.assertEqual(table["cols"]["am"], [-1])
+        self.assertEqual(table["cols"]["aw"], [-1])
 
     def test_a_question_with_no_creation_date_is_skipped(self):
         # Every month-based metric would otherwise silently gain a phantom row.

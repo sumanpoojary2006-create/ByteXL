@@ -35,7 +35,9 @@
   // months/tracks/subjects/authors are checkbox multi-selects: an empty Set means
   // "no filter" (show everything), same convention across all four. type stays a
   // single-select segmented control.
-  var VIEW = { months: new Set(["2026-06", "2026-07", "2026-08"]), tracks: new Set(), subjects: new Set(), authors: new Set(), type: "" };
+  var VIEW = { months: new Set(), tracks: new Set(), subjects: new Set(), authors: new Set(), type: "" };
+  var initialMonthScope = true;
+  var matrixType = 1;
   var rows = [];        // filtered row indices
   var months = [];      // month keys in the active window
   var bound = false;    // controls are bound once, not on every snapshot load
@@ -61,10 +63,12 @@
     { title: "Monthly production", view: "production", target: "metric-monthly", tags: "monthly trend volume added questions growth output over time" },
     { title: "Curated vs uploaded", view: "production", target: "metric-curated", tags: "content leads support engineers role curated share uploaded" },
     { title: "Bank churn", view: "production", target: "metric-churn", tags: "archived deleted additions net change shrinking growing" },
+    { title: "Weekly movement", view: "production", target: "metric-weekly", tags: "week over week weekly added archived net movement trend" },
     { title: "Content Lead output", view: "production", target: "metric-lead", tags: "who authored most top author contributor people leader productivity" },
     { title: "Subject coverage", view: "coverage", target: "metric-subject", tags: "subjects monthly gaps volume curriculum" },
-    { title: "Track coverage", view: "coverage", target: "metric-track", tags: "tracks programming fundamentals tactical drills categories" },
+    { title: "Track coverage", view: "coverage", target: "metric-track", tags: "tracks programming fundamentals tactical drills categories monthly content lead ownership" },
     { title: "Company mock coverage", view: "coverage", target: "metric-company", tags: "company hiring mock tests employers tagged readiness" },
+    { title: "Akila company-specific output", view: "coverage", target: "metric-akila-company", tags: "Akila company specific questions author special category monthly" },
     { title: "Standardized assessments", view: "coverage", target: "metric-standard", tags: "standard tests papers ready assign assessment coverage" },
     { title: "Difficulty matrix", view: "quality", target: "metric-matrix", tags: "easy medium hard topic balance blueprint difficulty unspecified" },
     { title: "Data quality & risk", view: "quality", target: "metric-quality", tags: "missing subject topic explanation difficulty gaps metadata quality reusable" },
@@ -673,7 +677,15 @@
       var r = roleOf(c.au[i]);
       if (r === "lead") lead[k]++; else if (r === "support") sup[k]++; else other[k]++;
     });
-    columns($("c-curated"), {
+    var host = $("c-curated");
+    host.innerHTML = '<div class="role-share-grid">' + months.map(function (m, i) {
+      var total = lead[i] + sup[i] + other[i], leadPct = pct(lead[i], total), supPct = pct(sup[i], total);
+      return '<div class="role-share"><div class="role-share-month">' + esc(monthLabel(m)) + '</div>' +
+        '<div class="role-share-values"><b>' + leadPct + '% <small>Lead</small></b><b>' + supPct + '% <small>Support</small></b></div>' +
+        '<div class="share-bar"><i style="width:' + leadPct + '%"></i><i style="width:' + supPct + '%"></i></div>' +
+        '<div class="role-share-counts">' + fmt(lead[i]) + ' curated · ' + fmt(sup[i]) + ' uploaded · ' + pct(other[i], total) + '% other</div></div>';
+    }).join("") + '</div><div id="c-curated-chart"></div>';
+    columns($("c-curated-chart"), {
       categories: months.map(monthLabel), stacked: true, height: 290,
       series: [
         { label: "Content Leads", color: css("--series-1"), values: lead },
@@ -681,10 +693,35 @@
         { label: "Manager / system", color: css("--series-7"), values: other }
       ],
       aria: "Questions by author role per month",
-      caption: "Curated share: " + months.map(function (m, i) {
-        return monthLabel(m) + " " + pct(lead[i], lead[i] + sup[i] + other[i]) + "%";
-      }).join(" · ")
+      caption: "Counts behind the monthly proportions shown above. Manager and system activity stays visible rather than being reassigned."
     });
+  }
+
+  function renderWeekly() {
+    var c = DATA.cols, dims = DATA.dims, host = $("c-weekly"), tableHost = $("tb-weekly");
+    if (!c.cw || !c.aw || !dims.weeks) {
+      host.innerHTML = '<div class="warn">Week-level history is being prepared. Refresh after the analytics service has rebuilt its snapshot.</div>';
+      tableHost.innerHTML = ""; return;
+    }
+    var weekSet = {}, added = {}, archived = {};
+    rows.forEach(function (i) { var w = dims.weeks[c.cw[i]]; if (w) { weekSet[w] = 1; added[w] = (added[w] || 0) + 1; } });
+    archivedRows().forEach(function (i) { var w = dims.weeks[c.aw[i]]; if (w) { weekSet[w] = 1; archived[w] = (archived[w] || 0) + 1; } });
+    var weeks = Object.keys(weekSet).sort().slice(-14);
+    function label(w) { var d = new Date(w + "T00:00:00"); return d.toLocaleDateString("en-IN", { day: "2-digit", month: "short" }); }
+    if (!weeks.length) { host.innerHTML = '<p class="muted">No weekly activity in this selection.</p>'; tableHost.innerHTML = ""; return; }
+    columns(host, {
+      categories: weeks.map(label), height: 310,
+      series: [
+        { label: "Added", color: css("--series-3"), values: weeks.map(function (w) { return added[w] || 0; }) },
+        { label: "Archived", color: css("--series-8"), values: weeks.map(function (w) { return archived[w] || 0; }) }
+      ],
+      aria: "Week over week questions added and archived",
+      caption: "Monday-starting weeks. The latest 14 active weeks are shown when a wide period is selected."
+    });
+    table(tableHost, ["Week starting", "Added", "Archived", "Net"], weeks.map(function (w) {
+      var a = added[w] || 0, r = archived[w] || 0;
+      return [label(w) + " " + w.slice(0, 4), fmt(a), fmt(r), (a - r >= 0 ? "+" : "") + fmt(a - r)];
+    }));
   }
 
   function renderChurn() {
@@ -758,50 +795,56 @@
     });
     var names = Object.keys(agg).sort(function (a, b) { return agg[b].total - agg[a].total; });
     if (!names.length) { $("c-lead").innerHTML = '<p class="muted">No Content Lead output in this selection.</p>'; $("tb-lead").innerHTML = ""; return; }
-    // One column per month, capped at the palette's 8 slots.
-    var shown = months.slice(-8);
+    // One segment per month and format makes both dimensions explicit at once.
+    var shown = months.slice(-4), leadSeries = [];
+    shown.forEach(function (m, mi) {
+      var ix = months.indexOf(m);
+      leadSeries.push({ label: monthLabel(m) + " MCQ", color: css(SERIES[(mi * 2) % SERIES.length]), values: names.map(function (n) { return agg[n].cells[ix].m; }) });
+      leadSeries.push({ label: monthLabel(m) + " Coding", color: css(SERIES[(mi * 2 + 1) % SERIES.length]), values: names.map(function (n) { return agg[n].cells[ix].c; }) });
+    });
     columns($("c-lead"), {
       categories: names.map(function (n) { return n.split(" ")[0]; }), height: 330,
       stacked: true,
-      series: shown.map(function (m, i) {
-        var mi = months.indexOf(m);
-        return {
-          label: monthLabel(m), color: css(SERIES[i % SERIES.length]),
-          values: names.map(function (n) { return agg[n].cells[mi].t; })
-        };
-      }),
-      aria: "Content Lead output per month",
-      caption: "Stacked by month; hover a bar for the month-by-month split."
+      series: leadSeries,
+      aria: "Content Lead output per month split by MCQ and coding",
+      caption: "Each lead is split simultaneously by month and question format. Up to the latest four selected months are charted."
     });
-    table($("tb-lead"), ["Content Lead"].concat(months.map(monthLabel)).concat(["Total", "MCQ", "Coding", "Coding %"]),
-      names.map(function (n) {
-        return [n].concat(agg[n].cells.map(function (x) { return fmt(x.t); }))
-          .concat([fmt(agg[n].total), fmt(agg[n].mcq), fmt(agg[n].cod), pct(agg[n].cod, agg[n].total) + "%"]);
-      }));
+    var detailRows = [];
+    names.forEach(function (n) { months.forEach(function (m, i) {
+      var x = agg[n].cells[i]; detailRows.push([n, monthLabel(m), fmt(x.m), fmt(x.c), fmt(x.t), pct(x.c, x.t) + "%"]);
+    }); });
+    table($("tb-lead"), ["Content Lead", "Month", "MCQ", "Coding", "Total", "Coding %"], detailRows);
   }
 
   function renderTrack() {
-    var c = DATA.cols, dims = DATA.dims, agg = {};
+    var c = DATA.cols, dims = DATA.dims, monthIndex = {}, agg = {};
+    months.forEach(function (m, i) { monthIndex[dims.months.indexOf(m)] = i; });
     rows.forEach(function (i) {
       var t = DATA.tracks[dims.subjects[c.su[i]]] || "Other / Unclassified";
-      if (!agg[t]) agg[t] = { n: 0, m: 0, c: 0, subs: {} };
-      agg[t].n++; if (c.ty[i] === 1) agg[t].c++; else agg[t].m++;
-      agg[t].subs[dims.subjects[c.su[i]]] = 1;
+      var k = monthIndex[c.cm[i]]; if (k === undefined) return;
+      if (!agg[t]) agg[t] = { n: 0, cells: months.map(function () { return { n: 0, m: 0, c: 0, leads: {} }; }) };
+      var cell = agg[t].cells[k], author = dims.authors[c.au[i]];
+      agg[t].n++; cell.n++; if (c.ty[i] === 1) cell.c++; else cell.m++;
+      if (roleOf(c.au[i]) === "lead") cell.leads[author] = (cell.leads[author] || 0) + 1;
     });
     var keys = Object.keys(agg).sort(function (a, b) { return agg[b].n - agg[a].n; });
-    hbars($("c-track"), {
-      labelWidth: 176,
-      items: keys.map(function (k) {
-        return {
-          label: k, value: agg[k].n, color: css("--series-1"),
-          detail: [{ label: "MCQ", value: agg[k].m, color: css("--series-1") },
-          { label: "Coding", value: agg[k].c, color: css("--series-2") },
-          { label: "Distinct subjects", value: Object.keys(agg[k].subs).length }]
-        };
-      }),
-      aria: "Questions per track",
-      caption: "Tracks are grouped from the subject field, which the platform does not model directly."
+    heatmap($("c-track"), {
+      columns: months.map(monthLabel),
+      rows: keys.map(function (k) { return { label: k, values: agg[k].cells.map(function (x) { return x.n; }), detail: agg[k].cells.map(function (x) {
+        var details = [{ label: "MCQ", value: x.m, color: css("--series-1") }, { label: "Coding", value: x.c, color: css("--series-2") }];
+        Object.keys(x.leads).sort(function (a, b) { return x.leads[b] - x.leads[a]; }).forEach(function (lead) { details.push({ label: lead, value: x.leads[lead] }); });
+        return details;
+      }) }; }),
+      aria: "Questions per track per month linked to Content Leads",
+      caption: "Hover a month to see format and Content Lead ownership. Tracks are derived from the subject field."
     });
+    var trackRows = [];
+    keys.forEach(function (k) { months.forEach(function (m, i) {
+      var x = agg[k].cells[i], mix = Object.keys(x.leads).sort(function (a, b) { return x.leads[b] - x.leads[a]; })
+        .map(function (lead) { return lead.split(" ")[0] + " " + fmt(x.leads[lead]); }).join(" · ") || "–";
+      trackRows.push([k, monthLabel(m), fmt(x.n), fmt(x.m), fmt(x.c), mix]);
+    }); });
+    var tableHost = $("tb-track"); if (tableHost) table(tableHost, ["Track", "Month", "Questions", "MCQ", "Coding", "Content Lead mix"], trackRows);
   }
 
   function renderCompany() {
@@ -835,6 +878,32 @@
     });
   }
 
+  function renderAkilaCompany() {
+    var c = DATA.cols, dims = DATA.dims, monthIndex = {}, mcq = months.map(function () { return 0; }), coding = months.map(function () { return 0; }), companies = {};
+    months.forEach(function (m, i) { monthIndex[dims.months.indexOf(m)] = i; });
+    for (var i = 0; i < c.cm.length; i++) {
+      if (dims.authors[c.au[i]] !== "Akila Rengarajan" || !c.mk[i]) continue;
+      var k = monthIndex[c.cm[i]]; if (k === undefined) continue;
+      var subject = dims.subjects[c.su[i]];
+      if (VIEW.type !== "" && c.ty[i] !== +VIEW.type) continue;
+      if (VIEW.subjects.size && !VIEW.subjects.has(subject)) continue;
+      if (VIEW.tracks.size && !VIEW.tracks.has(DATA.tracks[subject])) continue;
+      if (c.ty[i] === 1) coding[k]++; else mcq[k]++;
+      if (c.co[i] >= 0) companies[dims.companies[c.co[i]]] = 1;
+    }
+    var total = mcq.reduce(add, 0) + coding.reduce(add, 0), host = $("c-akila-company");
+    host.innerHTML = '<div class="tiles" style="margin-bottom:14px"><div class="tile"><div class="k">Company-specific by Akila</div><div class="v">' + fmt(total) + '</div><div class="d">Fixed-author metric for the selected period</div></div>' +
+      '<div class="tile"><div class="k">MCQ</div><div class="v">' + fmt(mcq.reduce(add, 0)) + '</div><div class="d">' + pct(mcq.reduce(add, 0), total) + '% of her company output</div></div>' +
+      '<div class="tile"><div class="k">Coding</div><div class="v">' + fmt(coding.reduce(add, 0)) + '</div><div class="d">' + pct(coding.reduce(add, 0), total) + '% of her company output</div></div>' +
+      '<div class="tile"><div class="k">Named companies</div><div class="v">' + fmt(Object.keys(companies).length) + '</div><div class="d">Company field populated</div></div></div><div id="c-akila-company-chart"></div>';
+    columns($("c-akila-company-chart"), {
+      categories: months.map(monthLabel), height: 280,
+      series: [{ label: "MCQ", color: css("--series-1"), values: mcq }, { label: "Coding", color: css("--series-2"), values: coding }],
+      aria: "Akila Rengarajan company-specific questions by month and type",
+      caption: "This special category intentionally stays fixed to Akila even when the global Author filter changes. Other filters still apply."
+    });
+  }
+
   function renderMatrix() {
     var subject = $("f-matrix").value;
     var c = DATA.cols, dims = DATA.dims, agg = {};
@@ -843,6 +912,7 @@
     for (var i = 0; i < c.su.length; i++) {
       if (dims.subjects[c.su[i]] !== subject) continue;
       if (c.st[i] === 1) continue; // archived questions are not part of the live matrix
+      if (c.ty[i] !== matrixType) continue;
       var t = dims.topics[c.tp[i]];
       if (!agg[t]) agg[t] = [0, 0, 0, 0];
       agg[t][c.df[i]]++;
@@ -853,8 +923,8 @@
     pctBars($("c-matrix"), {
       series: DIFF_LABEL.map(function (l, i) { return { label: l, color: css(ORD[i]) }; }),
       items: keys.map(function (k) { return { label: k, values: agg[k] }; }),
-      aria: "Difficulty mix per topic for " + subject,
-      caption: "Live (non-archived) questions in " + subject + ". Row totals are on the right; hover for exact counts and shares."
+      aria: TYPE_LABEL[matrixType] + " difficulty mix per topic for " + subject,
+      caption: "Live " + TYPE_LABEL[matrixType] + " questions in " + subject + ". Row totals are on the right; hover for exact counts and shares."
     });
   }
 
@@ -953,8 +1023,8 @@
   function renderAll() {
     months = activeMonths();
     rows = computeRows();
-    renderExecutiveBrief(); renderTiles(); renderResilience(); renderMonthly(); renderCurated(); renderChurn();
-    renderSubject(); renderLead(); renderTrack(); renderCompany();
+    renderExecutiveBrief(); renderTiles(); renderResilience(); renderMonthly(); renderCurated(); renderChurn(); renderWeekly();
+    renderSubject(); renderLead(); renderTrack(); renderCompany(); renderAkilaCompany();
     renderMatrix(); renderStandard(); renderQuality(); renderRoster();
     animateMetrics($("app"));
   }
@@ -1186,8 +1256,7 @@
     monthsMsel = mountMultiSelect("f-months", {
       key: "months", allLabel: "All time", getOptions: monthOptions,
       presets: [
-        { label: "Jun–Aug 26", apply: function (set) { set.clear(); ["2026-06", "2026-07", "2026-08"].forEach(function (m) { set.add(m); }); } },
-        { label: "Last 3", apply: function (set, opts) { set.clear(); opts.slice(-3).forEach(function (o) { set.add(o.value); }); } },
+        { label: "Latest 3", apply: function (set, opts) { set.clear(); opts.slice(-3).forEach(function (o) { set.add(o.value); }); } },
         { label: "Last 6", apply: function (set, opts) { set.clear(); opts.slice(-6).forEach(function (o) { set.add(o.value); }); } },
         { label: "Last 12", apply: function (set, opts) { set.clear(); opts.slice(-12).forEach(function (o) { set.add(o.value); }); } },
         { label: "All time", apply: function (set) { set.clear(); } }
@@ -1219,13 +1288,19 @@
   function bindControls() {
     bindWorkspaceNavigation();
     $("f-matrix").addEventListener("change", renderMatrix);
+    Array.prototype.forEach.call($("f-matrix-type").children, function (b) {
+      b.addEventListener("click", function () {
+        Array.prototype.forEach.call($("f-matrix-type").children, function (o) { o.classList.remove("on"); });
+        b.classList.add("on"); matrixType = +b.dataset.v; renderMatrix();
+      });
+    });
     Array.prototype.forEach.call($("f-type").children, function (b) {
       b.addEventListener("click", function () {
         Array.prototype.forEach.call($("f-type").children, function (o) { o.classList.remove("on"); });
         b.classList.add("on"); VIEW.type = b.dataset.v; renderAll();
       });
     });
-    [["t-monthly", "c-monthly", "tb-monthly"], ["t-subject", "c-subject", "tb-subject"], ["t-lead", "c-lead", "tb-lead"]]
+    [["t-monthly", "c-monthly", "tb-monthly"], ["t-weekly", "c-weekly", "tb-weekly"], ["t-subject", "c-subject", "tb-subject"], ["t-lead", "c-lead", "tb-lead"]]
       .forEach(function (p) {
         $(p[0]).addEventListener("change", function () {
           $(p[1]).classList.toggle("hidden", $(p[0]).checked);
@@ -1233,7 +1308,7 @@
         });
       });
     $("btn-reset").addEventListener("click", function () {
-      VIEW.months = new Set(["2026-06", "2026-07", "2026-08"]);
+      VIEW.months.clear(); monthOptions().slice(-3).forEach(function (o) { VIEW.months.add(o.value); });
       VIEW.tracks.clear(); VIEW.subjects.clear(); VIEW.authors.clear(); VIEW.type = "";
       Array.prototype.forEach.call($("f-type").children, function (o, i) { o.classList.toggle("on", i === 0); });
       refreshFilters();
@@ -1303,6 +1378,10 @@
       .then(function (d) {
         var changed = !DATA || DATA.generatedAt !== d.generatedAt;
         DATA = d;
+        if (initialMonthScope) {
+          VIEW.months.clear(); monthOptions().slice(-3).forEach(function (o) { VIEW.months.add(o.value); });
+          initialMonthScope = false;
+        }
         var saved = null;
         try { saved = JSON.parse(localStorage.getItem(ROSTER_KEY) || "null"); } catch (e) { saved = null; }
         ROLES = Object.assign({}, d.roles, saved || {});

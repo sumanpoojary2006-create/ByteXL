@@ -16,6 +16,7 @@ import json
 import os
 import re
 import time
+from datetime import date, timedelta
 from pathlib import Path
 from typing import Any, Iterable, Optional
 
@@ -25,6 +26,7 @@ SNAPSHOT_PATH = Path(
 # A short cache keeps normal page loads fast while making upstream changes appear
 # on an open dashboard within a few minutes. The Refresh data button bypasses it.
 SNAPSHOT_TTL_SECONDS = int(os.getenv("ANALYTICS_SNAPSHOT_TTL", str(5 * 60)))
+SNAPSHOT_SCHEMA_VERSION = 2
 
 QUESTION_TYPES = ["multipleChoice", "coding", "descriptive"]
 DIFFICULTIES = ["easy", "medium", "hard", "unspecified"]
@@ -182,6 +184,15 @@ def _first(values: Any, default: str = "") -> str:
     return default
 
 
+def week_key(raw: Any) -> str:
+    """Return the ISO date of the Monday containing an upstream timestamp."""
+    try:
+        day = date.fromisoformat(str(raw or "")[:10])
+    except ValueError:
+        return ""
+    return (day - timedelta(days=day.weekday())).isoformat()
+
+
 class Interner:
     """Assigns each distinct string a stable index for columnar encoding."""
 
@@ -207,21 +218,28 @@ def build_fact_table(
     topics = Interner()
     companies = Interner()
     months = Interner()
+    weeks = Interner()
 
-    cols: dict[str, list[int]] = {k: [] for k in ("cm", "am", "ty", "df", "au", "su", "tp", "co", "mk", "ex", "st")}
+    cols: dict[str, list[int]] = {k: [] for k in ("cm", "am", "cw", "aw", "ty", "df", "au", "su", "tp", "co", "mk", "ex", "st")}
 
     def ingest(question: dict[str, Any], archived: bool) -> None:
-        created = str(question.get("created") or "")[:7]
-        if not created:
+        created_raw = question.get("created")
+        created = str(created_raw or "")[:7]
+        created_week = week_key(created_raw)
+        if not created or not created_week:
             return
         subject = _first(question.get("subjects"), "(no subject)")
         company_values = [c for c in (norm_company(c) for c in (question.get("companies") or [])) if c]
         tags = [str(t) for t in (question.get("tags") or [])]
         is_mock = bool(company_values) or subject == "company-specific" or any(MOCK_TAG_RE.search(t) for t in tags)
-        archived_month = str(question.get("_archived_at") or "")[:7]
+        archived_raw = question.get("_archived_at")
+        archived_month = str(archived_raw or "")[:7]
+        archived_week = week_key(archived_raw)
 
         cols["cm"].append(months.add(created))
         cols["am"].append(months.add(archived_month) if archived_month else -1)
+        cols["cw"].append(weeks.add(created_week))
+        cols["aw"].append(weeks.add(archived_week) if archived_week else -1)
         qtype = question.get("type")
         cols["ty"].append(QUESTION_TYPES.index(qtype) if qtype in QUESTION_TYPES else 0)
         cols["df"].append(DIFFICULTIES.index(norm_difficulty(question.get("difficulty"))))
@@ -239,12 +257,14 @@ def build_fact_table(
         ingest(question, archived=True)
 
     return {
+        "schemaVersion": SNAPSHOT_SCHEMA_VERSION,
         "dims": {
             "authors": authors.values,
             "subjects": subjects.values,
             "topics": topics.values,
             "companies": companies.values,
             "months": months.values,
+            "weeks": weeks.values,
             "types": QUESTION_TYPES,
             "difficulties": DIFFICULTIES,
         },
@@ -319,9 +339,10 @@ def load_snapshot(fetch_items, force: bool = False) -> dict[str, Any]:
         if age < SNAPSHOT_TTL_SECONDS:
             try:
                 snapshot = json.loads(SNAPSHOT_PATH.read_text(encoding="utf-8"))
-                snapshot["cached"] = True
-                snapshot["ageSeconds"] = int(age)
-                return snapshot
+                if snapshot.get("schemaVersion") == SNAPSHOT_SCHEMA_VERSION:
+                    snapshot["cached"] = True
+                    snapshot["ageSeconds"] = int(age)
+                    return snapshot
             except (ValueError, OSError):
                 pass  # Unreadable cache is a rebuild, not an error.
 
