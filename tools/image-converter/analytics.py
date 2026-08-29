@@ -22,9 +22,9 @@ from typing import Any, Iterable, Optional
 SNAPSHOT_PATH = Path(
     os.getenv("ANALYTICS_SNAPSHOT_PATH", Path(__file__).parent / ".analytics-snapshot.json")
 )
-# The upstream bank changes over a working day, not by the minute. Six hours keeps
-# the page instant while still refreshing on its own within a shift.
-SNAPSHOT_TTL_SECONDS = int(os.getenv("ANALYTICS_SNAPSHOT_TTL", str(6 * 60 * 60)))
+# A short cache keeps normal page loads fast while making upstream changes appear
+# on an open dashboard within a few minutes. The Refresh data button bypasses it.
+SNAPSHOT_TTL_SECONDS = int(os.getenv("ANALYTICS_SNAPSHOT_TTL", str(5 * 60)))
 
 QUESTION_TYPES = ["multipleChoice", "coding", "descriptive"]
 DIFFICULTIES = ["easy", "medium", "hard", "unspecified"]

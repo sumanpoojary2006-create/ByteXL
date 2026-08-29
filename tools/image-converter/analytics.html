@@ -61,10 +61,29 @@
 
     /* Filter bar: one row above the charts, per interaction spec. */
     .filters { position: sticky; top: 66px; z-index: 20; display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; padding: 14px 18px; border: 1px solid var(--line); border-radius: 14px; background: rgba(10,13,24,.92); backdrop-filter: blur(18px); }
-    .fgroup { display: grid; gap: 5px; }
+    .fgroup { display: grid; gap: 5px; min-width: 160px; }
     .fgroup label { color: var(--faint); font-size: 10px; font-weight: 900; letter-spacing: .6px; text-transform: uppercase; }
     .fgroup select, .fgroup input { height: 36px; padding: 0 10px; color: var(--ink); background: rgba(8,11,22,.8); border: 1px solid var(--line-hi); border-radius: 8px; outline: none; min-width: 150px; }
     .fgroup select:focus, .fgroup input:focus { border-color: var(--violet); }
+    .msel { position: relative; min-width: 180px; }
+    .msel-btn { width: 100%; height: 36px; padding: 0 34px 0 11px; color: var(--ink); text-align: left; background: rgba(8,11,22,.8); border: 1px solid var(--line-hi); border-radius: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+    .msel-btn::after { content: ""; position: absolute; right: 13px; top: 14px; width: 7px; height: 7px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); transition: transform .15s; }
+    .msel-btn:focus, .msel-btn.open { border-color: var(--violet); outline: none; }
+    .msel-btn.open::after { top: 17px; transform: rotate(225deg); }
+    .msel-panel { display: none; position: absolute; z-index: 60; top: calc(100% + 6px); left: 0; width: min(340px,calc(100vw - 32px)); padding: 9px; border: 1px solid var(--line-hi); border-radius: 11px; background: #0b0e1c; box-shadow: 0 18px 50px rgba(0,0,0,.65); }
+    .msel-panel.open { display: grid; gap: 8px; }
+    .msel-search { width: 100%; min-width: 0 !important; }
+    .msel-presets, .msel-footer { display: flex; gap: 6px; flex-wrap: wrap; }
+    .msel-chip, .msel-link { padding: 5px 8px; border: 1px solid var(--line-hi); border-radius: 7px; color: var(--ink2); background: rgba(255,255,255,.04); font-size: 10.5px; font-weight: 700; cursor: pointer; }
+    .msel-chip:hover, .msel-link:hover { border-color: var(--violet); color: #fff; }
+    .msel-list { max-height: 270px; overflow: auto; padding: 2px; }
+    .msel-row { display: grid !important; grid-template-columns: 18px minmax(0,1fr) auto; align-items: center; gap: 8px; padding: 7px 6px; border-radius: 7px; color: var(--ink2) !important; font-size: 12px !important; font-weight: 600 !important; letter-spacing: 0 !important; text-transform: none !important; cursor: pointer; }
+    .msel-row:hover { background: rgba(139,92,246,.12); }
+    .msel-row input { width: 15px; height: 15px; min-width: 0; accent-color: var(--violet); }
+    .msel-row .lb { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .msel-row .ct { color: var(--faint); font-size: 10.5px; font-variant-numeric: tabular-nums; }
+    .msel-footer { justify-content: space-between; padding-top: 7px; border-top: 1px solid var(--line); }
+    .msel-empty { padding: 12px 7px; color: var(--muted); font-size: 12px; }
     .seg { display: flex; border: 1px solid var(--line-hi); border-radius: 8px; overflow: hidden; height: 36px; }
     .seg button { padding: 0 13px; border: 0; background: transparent; color: var(--muted); font-size: 12px; font-weight: 700; cursor: pointer; }
     .seg button.on { background: var(--grad); color: #fff; }
@@ -170,25 +189,20 @@
 
         <div class="filters">
           <div class="fgroup">
-            <label for="f-range">Period</label>
-            <select id="f-range">
-              <option value="jja" selected>Jun – Aug 2026</option>
-              <option value="6">Last 6 months</option>
-              <option value="12">Last 12 months</option>
-              <option value="all">All time</option>
-            </select>
+            <label id="l-months">Months</label>
+            <div id="f-months" aria-labelledby="l-months"></div>
           </div>
           <div class="fgroup">
-            <label for="f-track">Track</label>
-            <select id="f-track"><option value="">All tracks</option></select>
+            <label id="l-track">Track</label>
+            <div id="f-track" aria-labelledby="l-track"></div>
           </div>
           <div class="fgroup">
-            <label for="f-subject">Subject</label>
-            <select id="f-subject"><option value="">All subjects</option></select>
+            <label id="l-subject">Subject</label>
+            <div id="f-subject" aria-labelledby="l-subject"></div>
           </div>
           <div class="fgroup">
-            <label for="f-author">Author</label>
-            <select id="f-author"><option value="">All authors</option></select>
+            <label id="l-author">Author</label>
+            <div id="f-author" aria-labelledby="l-author"></div>
           </div>
           <div class="fgroup">
             <label>Question type</label>
@@ -202,7 +216,7 @@
           <button id="btn-reset" class="btn">Reset</button>
           <button id="btn-refresh" class="btn primary">Refresh data</button>
         </div>
-        <div id="meta" class="muted" style="font-size:11.5px;margin-top:-8px"></div>
+        <div id="meta" class="muted" style="font-size:11.5px;margin-top:-8px"><span id="meta-fresh">Updating…</span><span id="meta-rest"></span></div>
 
         <div class="tiles" id="tiles"></div>
 

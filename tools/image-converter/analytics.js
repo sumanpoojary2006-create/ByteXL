@@ -33,10 +33,18 @@
 
   var DATA = null;      // raw snapshot
   var ROLES = {};       // author name -> lead | support | manager | system
-  var VIEW = { range: "jja", track: "", subject: "", author: "", type: "" };
+  // months/tracks/subjects/authors are checkbox multi-selects: an empty Set means
+  // "no filter" (show everything), same convention across all four. type stays a
+  // single-select segmented control.
+  var VIEW = { months: new Set(["2026-06", "2026-07", "2026-08"]), tracks: new Set(), subjects: new Set(), authors: new Set(), type: "" };
   var rows = [];        // filtered row indices
   var months = [];      // month keys in the active window
   var bound = false;    // controls are bound once, not on every snapshot load
+  var lastGeneratedAtMs = null; // for the ticking "Updated Xs ago" label
+  var POLL_MS = 60000;  // how often the browser checks for a newer snapshot
+  var FORCE_REFRESH_MS = 5 * 60000; // how often an open dashboard rebuilds from ByteXL
+  var lastForcedRefreshMs = 0;
+  var loadInFlight = false;
 
   function css(name) { return getComputedStyle(document.body).getPropertyValue(name).trim(); }
   function $(id) { return document.getElementById(id); }
@@ -101,8 +109,13 @@
     if (max <= 0) return [0];
     var raw = max / (count || 5), mag = Math.pow(10, Math.floor(Math.log10(raw)));
     var step = [1, 2, 2.5, 5, 10].map(function (m) { return m * mag; }).find(function (s) { return s >= raw; }) || 10 * mag;
+    // The top tick must reach at least `max`, not just get close to it: rounding
+    // the axis ceiling up to the next step can leave the last tick below the
+    // real data max, which then draws the tallest bar taller than the plot area
+    // and overflows into whatever sits below the chart.
+    var top = Math.ceil(max / step) * step;
     var out = [];
-    for (var v = 0; v <= max + step * 0.001; v += step) out.push(v);
+    for (var v = 0; v <= top + step * 0.001; v += step) out.push(v);
     return out;
   }
   function legend(host, items) {
@@ -126,7 +139,8 @@
     if (!cats.length) { host.innerHTML = '<p class="muted">No data in this selection.</p>'; return; }
     legend(host, series.map(function (s) { return { label: s.label, color: s.color }; }));
 
-    var W = 980, H = opts.height || 300, m = { t: 16, r: 14, b: 42, l: 58 };
+    // Leave room for a total label when a bar lands exactly on the top tick.
+    var W = 980, H = opts.height || 300, m = { t: 30, r: 14, b: 42, l: 58 };
     var pw = W - m.l - m.r, ph = H - m.t - m.b;
     var totals = cats.map(function (_, i) {
       return stacked ? series.reduce(function (a, s) { return a + (s.values[i] || 0); }, 0)
@@ -309,9 +323,8 @@
 
   function activeMonths() {
     var all = DATA.dims.months.slice().filter(Boolean).sort();
-    if (VIEW.range === "jja") return ["2026-06", "2026-07", "2026-08"].filter(function (m) { return all.indexOf(m) >= 0; });
-    if (VIEW.range === "all") return all;
-    return all.slice(-parseInt(VIEW.range, 10));
+    if (!VIEW.months.size) return all; // empty selection = no filter, same as every other dimension
+    return all.filter(function (m) { return VIEW.months.has(m); });
   }
 
   /** Row indices matching the current filters, by creation month. */
@@ -324,10 +337,10 @@
     for (var i = 0; i < c.cm.length; i++) {
       if (!monthSet[c.cm[i]]) continue;
       if (VIEW.type !== "" && c.ty[i] !== +VIEW.type) continue;
-      if (VIEW.author && dims.authors[c.au[i]] !== VIEW.author) continue;
+      if (VIEW.authors.size && !VIEW.authors.has(dims.authors[c.au[i]])) continue;
       var subj = dims.subjects[c.su[i]];
-      if (VIEW.subject && subj !== VIEW.subject) continue;
-      if (VIEW.track && trackOf[subj] !== VIEW.track) continue;
+      if (VIEW.subjects.size && !VIEW.subjects.has(subj)) continue;
+      if (VIEW.tracks.size && !VIEW.tracks.has(trackOf[subj])) continue;
       out.push(i);
     }
     return out;
@@ -342,10 +355,10 @@
     for (var i = 0; i < c.am.length; i++) {
       if (c.am[i] < 0 || !monthSet[c.am[i]]) continue;
       if (VIEW.type !== "" && c.ty[i] !== +VIEW.type) continue;
-      if (VIEW.author && dims.authors[c.au[i]] !== VIEW.author) continue;
+      if (VIEW.authors.size && !VIEW.authors.has(dims.authors[c.au[i]])) continue;
       var subj = dims.subjects[c.su[i]];
-      if (VIEW.subject && subj !== VIEW.subject) continue;
-      if (VIEW.track && DATA.tracks[subj] !== VIEW.track) continue;
+      if (VIEW.subjects.size && !VIEW.subjects.has(subj)) continue;
+      if (VIEW.tracks.size && !VIEW.tracks.has(DATA.tracks[subj])) continue;
       out.push(i);
     }
     return out;
@@ -706,42 +719,173 @@
     renderMatrix(); renderStandard(); renderQuality(); renderRoster();
   }
 
-  function fillSelects() {
-    var dims = DATA.dims;
+  /* --------------------------------------------------------- multi-select filter */
+  var ALL_MULTISELECTS = [];
+  function closeAllMultiSelects() {
+    ALL_MULTISELECTS.forEach(function (m) { m.panel.classList.remove("open"); m.btn.classList.remove("open"); });
+  }
+  document.addEventListener("click", closeAllMultiSelects);
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeAllMultiSelects(); });
+
+  /**
+   * A checkbox dropdown bound to a Set in VIEW[opts.key]. Empty set = no filter,
+   * matching the convention used everywhere the fact table is queried.
+   *
+   * The search box and the checkbox list are separate persistent DOM nodes —
+   * typing only re-renders `.msel-list`, never the input itself, so a keystroke
+   * never steals its own focus.
+   */
+  function mountMultiSelect(hostId, opts) {
+    var host = $(hostId);
+    host.className = "msel";
+    host.innerHTML = "";
+    var btn = document.createElement("button");
+    btn.type = "button"; btn.className = "msel-btn";
+    var panel = document.createElement("div"); panel.className = "msel-panel";
+
+    var searchEl = null;
+    if (opts.searchable) {
+      searchEl = document.createElement("input");
+      searchEl.type = "text"; searchEl.className = "msel-search"; searchEl.placeholder = "Search…";
+      panel.appendChild(searchEl);
+    }
+    if (opts.presets && opts.presets.length) {
+      var presetsEl = document.createElement("div"); presetsEl.className = "msel-presets";
+      opts.presets.forEach(function (p) {
+        var chip = document.createElement("button");
+        chip.type = "button"; chip.className = "msel-chip"; chip.textContent = p.label;
+        chip.addEventListener("click", function () {
+          p.apply(VIEW[opts.key], optionsList());
+          renderList(); updateButton(); renderAll();
+        });
+        presetsEl.appendChild(chip);
+      });
+      panel.appendChild(presetsEl);
+    }
+    var listEl = document.createElement("div"); listEl.className = "msel-list";
+    panel.appendChild(listEl);
+    var footer = document.createElement("div"); footer.className = "msel-footer";
+    var allBtn = document.createElement("button"); allBtn.type = "button"; allBtn.className = "msel-link"; allBtn.textContent = "Select all";
+    var noneBtn = document.createElement("button"); noneBtn.type = "button"; noneBtn.className = "msel-link"; noneBtn.textContent = "Clear";
+    footer.appendChild(allBtn); footer.appendChild(noneBtn);
+    panel.appendChild(footer);
+    host.appendChild(btn); host.appendChild(panel);
+
+    function optionsList() { return opts.getOptions(); }
+    function visibleOptions() {
+      var q = searchEl ? searchEl.value.trim().toLowerCase() : "";
+      var all = optionsList();
+      return q ? all.filter(function (o) { return o.label.toLowerCase().indexOf(q) >= 0; }) : all;
+    }
+    function updateButton() {
+      var set = VIEW[opts.key];
+      if (!set.size) { btn.textContent = opts.allLabel; return; }
+      var all = optionsList();
+      var names = all.filter(function (o) { return set.has(o.value); }).map(function (o) { return o.label; });
+      btn.textContent = (names.length && names.length === set.size && set.size <= 2) ? names.join(", ") : set.size + " selected";
+    }
+    function renderList() {
+      var vis = visibleOptions();
+      listEl.innerHTML = vis.length ? vis.map(function (o) {
+        var checked = VIEW[opts.key].has(o.value);
+        return '<label class="msel-row"><input type="checkbox" data-v="' + esc(o.value) + '"' + (checked ? " checked" : "") +
+          '><span class="lb">' + esc(o.label) + '</span>' + (o.count != null ? '<span class="ct">' + fmt(o.count) + "</span>" : "") + "</label>";
+      }).join("") : '<div class="msel-empty">No matches</div>';
+      Array.prototype.forEach.call(listEl.querySelectorAll("input[type=checkbox]"), function (cb) {
+        cb.addEventListener("change", function () {
+          if (cb.checked) VIEW[opts.key].add(cb.dataset.v); else VIEW[opts.key].delete(cb.dataset.v);
+          updateButton(); renderAll();
+        });
+      });
+    }
+    if (searchEl) searchEl.addEventListener("input", renderList);
+    allBtn.addEventListener("click", function () {
+      visibleOptions().forEach(function (o) { VIEW[opts.key].add(o.value); });
+      renderList(); updateButton(); renderAll();
+    });
+    noneBtn.addEventListener("click", function () {
+      // Under an active search, "Clear" only drops what's visible so a filtered
+      // search can't silently wipe out selections the user can't currently see.
+      var vis = visibleOptions();
+      if (searchEl && searchEl.value.trim()) vis.forEach(function (o) { VIEW[opts.key].delete(o.value); });
+      else VIEW[opts.key].clear();
+      renderList(); updateButton(); renderAll();
+    });
+    btn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      var willOpen = !panel.classList.contains("open");
+      closeAllMultiSelects();
+      if (willOpen) {
+        renderList();
+        panel.classList.add("open"); btn.classList.add("open");
+        if (searchEl) { searchEl.value = ""; searchEl.focus(); }
+      }
+    });
+    panel.addEventListener("click", function (e) { e.stopPropagation(); });
+
+    updateButton();
+    var handle = { panel: panel, btn: btn, refresh: function () { updateButton(); if (panel.classList.contains("open")) renderList(); } };
+    ALL_MULTISELECTS.push(handle);
+    return handle;
+  }
+
+  function monthOptions() {
     var counts = {};
-    for (var i = 0; i < dims.subjects.length; i++) counts[dims.subjects[i]] = 0;
-    for (var j = 0; j < DATA.cols.su.length; j++) counts[dims.subjects[DATA.cols.su[j]]]++;
+    for (var i = 0; i < DATA.cols.cm.length; i++) { var m = DATA.dims.months[DATA.cols.cm[i]]; if (m) counts[m] = (counts[m] || 0) + 1; }
+    return Object.keys(counts).sort().map(function (m) { return { value: m, label: monthLabel(m), count: counts[m] }; });
+  }
+  function trackOptions() {
+    var counts = {};
+    for (var i = 0; i < DATA.cols.su.length; i++) { var t = DATA.tracks[DATA.dims.subjects[DATA.cols.su[i]]]; counts[t] = (counts[t] || 0) + 1; }
+    return Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a]; }).map(function (t) { return { value: t, label: t, count: counts[t] }; });
+  }
+  function subjectOptions() {
+    var counts = {};
+    for (var i = 0; i < DATA.cols.su.length; i++) { var s = DATA.dims.subjects[DATA.cols.su[i]]; counts[s] = (counts[s] || 0) + 1; }
+    return Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a]; }).map(function (s) { return { value: s, label: s, count: counts[s] }; });
+  }
+  function authorOptions() {
+    var counts = {};
+    for (var i = 0; i < DATA.cols.au.length; i++) { var a = DATA.dims.authors[DATA.cols.au[i]]; counts[a] = (counts[a] || 0) + 1; }
+    return Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a]; }).map(function (a) { return { value: a, label: a, count: counts[a] }; });
+  }
 
-    var tracks = {};
-    Object.keys(DATA.tracks).forEach(function (s) { tracks[DATA.tracks[s]] = (tracks[DATA.tracks[s]] || 0) + (counts[s] || 0); });
-    fill($("f-track"), Object.keys(tracks).sort(function (a, b) { return tracks[b] - tracks[a]; }), "All tracks");
-    fill($("f-subject"), dims.subjects.slice().filter(function (s) { return counts[s] > 0; })
-      .sort(function (a, b) { return counts[b] - counts[a]; }), "All subjects");
-    var acounts = {};
-    for (var k = 0; k < DATA.cols.au.length; k++) { var n = dims.authors[DATA.cols.au[k]]; acounts[n] = (acounts[n] || 0) + 1; }
-    fill($("f-author"), dims.authors.slice().sort(function (a, b) { return (acounts[b] || 0) - (acounts[a] || 0); }), "All authors");
+  var monthsMsel, tracksMsel, subjectsMsel, authorsMsel;
+  function mountFilters() {
+    monthsMsel = mountMultiSelect("f-months", {
+      key: "months", allLabel: "All time", getOptions: monthOptions,
+      presets: [
+        { label: "Jun–Aug 26", apply: function (set) { set.clear(); ["2026-06", "2026-07", "2026-08"].forEach(function (m) { set.add(m); }); } },
+        { label: "Last 3", apply: function (set, opts) { set.clear(); opts.slice(-3).forEach(function (o) { set.add(o.value); }); } },
+        { label: "Last 6", apply: function (set, opts) { set.clear(); opts.slice(-6).forEach(function (o) { set.add(o.value); }); } },
+        { label: "Last 12", apply: function (set, opts) { set.clear(); opts.slice(-12).forEach(function (o) { set.add(o.value); }); } },
+        { label: "All time", apply: function (set) { set.clear(); } }
+      ]
+    });
+    tracksMsel = mountMultiSelect("f-track", { key: "tracks", allLabel: "All tracks", getOptions: trackOptions });
+    subjectsMsel = mountMultiSelect("f-subject", { key: "subjects", allLabel: "All subjects", searchable: true, getOptions: subjectOptions });
+    authorsMsel = mountMultiSelect("f-author", { key: "authors", allLabel: "All authors", searchable: true, getOptions: authorOptions });
+  }
+  function refreshFilters() {
+    [monthsMsel, tracksMsel, subjectsMsel, authorsMsel].forEach(function (m) { m.refresh(); });
+  }
 
+  function refreshMatrixSelect() {
+    var dims = DATA.dims, counts = {};
+    for (var j = 0; j < DATA.cols.su.length; j++) counts[dims.subjects[DATA.cols.su[j]]] = (counts[dims.subjects[DATA.cols.su[j]]] || 0) + 1;
     // The difficulty matrix defaults to the subjects the brief named.
     var preferred = ["c-programming", "python", "algorithm-design", "java", "rdbms"];
     var matrixSubjects = dims.subjects.slice().filter(function (s) { return counts[s] >= 40 && s !== "(no subject)"; })
       .sort(function (a, b) { return counts[b] - counts[a]; });
     var sel = $("f-matrix");
+    var prevValue = sel.value;
     sel.innerHTML = matrixSubjects.map(function (s) { return '<option value="' + esc(s) + '">' + esc(s) + " (" + fmt(counts[s]) + ")</option>"; }).join("");
+    if (matrixSubjects.indexOf(prevValue) >= 0) { sel.value = prevValue; return; }
     var first = preferred.find(function (p) { return matrixSubjects.indexOf(p) >= 0; });
     if (first) sel.value = first;
   }
-  function fill(sel, values, allLabel) {
-    sel.innerHTML = '<option value="">' + allLabel + "</option>" +
-      values.map(function (v) { return '<option value="' + esc(v) + '">' + esc(v) + "</option>"; }).join("");
-  }
 
   function bindControls() {
-    ["f-range", "f-track", "f-subject", "f-author"].forEach(function (id) {
-      $(id).addEventListener("change", function () {
-        VIEW[id.slice(2)] = $(id).value;
-        renderAll();
-      });
-    });
     $("f-matrix").addEventListener("change", renderMatrix);
     Array.prototype.forEach.call($("f-type").children, function (b) {
       b.addEventListener("click", function () {
@@ -757,12 +901,13 @@
         });
       });
     $("btn-reset").addEventListener("click", function () {
-      VIEW = { range: "jja", track: "", subject: "", author: "", type: "" };
-      $("f-range").value = "jja"; $("f-track").value = ""; $("f-subject").value = ""; $("f-author").value = "";
+      VIEW.months = new Set(["2026-06", "2026-07", "2026-08"]);
+      VIEW.tracks.clear(); VIEW.subjects.clear(); VIEW.authors.clear(); VIEW.type = "";
       Array.prototype.forEach.call($("f-type").children, function (o, i) { o.classList.toggle("on", i === 0); });
+      refreshFilters();
       renderAll();
     });
-    $("btn-refresh").addEventListener("click", function () { load(true); });
+    $("btn-refresh").addEventListener("click", function () { load(true, false); });
     $("btn-roster-reset").addEventListener("click", function () {
       localStorage.removeItem(ROSTER_KEY);
       ROLES = Object.assign({}, DATA.roles);
@@ -770,11 +915,37 @@
     });
   }
 
-  function load(force) {
+  /* ----------------------------------------------------------- freshness / polling */
+  function startFreshnessTicker() {
+    setInterval(function () {
+      if (!lastGeneratedAtMs) return;
+      var el = $("meta-fresh");
+      if (!el) return;
+      var secs = Math.max(0, Math.round((Date.now() - lastGeneratedAtMs) / 1000));
+      el.textContent = "Updated " + (secs < 60 ? secs + "s ago" : Math.round(secs / 60) + " min ago");
+    }, 1000);
+  }
+  function startPolling() {
+    // ByteXL has no change webhook, so "live" means the server keeps a warm
+    // snapshot refreshed on its own schedule and the browser checks in
+    // periodically for a newer one — not a push, but close for a dashboard
+    // someone leaves open during the day.
+    setInterval(function () {
+      var force = Date.now() - lastForcedRefreshMs >= FORCE_REFRESH_MS;
+      if (force) lastForcedRefreshMs = Date.now();
+      load(force, true);
+    }, POLL_MS);
+  }
+
+  function load(force, silent) {
+    if (loadInFlight) return;
+    loadInFlight = true;
     var btn = $("btn-refresh");
-    if (btn) { btn.disabled = true; btn.textContent = "Refreshing…"; }
-    if (force) { $("app").classList.add("hidden"); $("loader").classList.remove("hidden"); }
-    $("error").classList.add("hidden");
+    if (!silent) {
+      if (btn) { btn.disabled = true; btn.textContent = "Refreshing…"; }
+      if (force) { $("app").classList.add("hidden"); $("loader").classList.remove("hidden"); }
+      $("error").classList.add("hidden");
+    }
 
     // Resolved here rather than at load time so a misconfigured host surfaces in
     // the error panel instead of leaving the spinner running forever.
@@ -782,10 +953,13 @@
     try {
       API = apiBase();
     } catch (e) {
-      $("loader").classList.add("hidden");
-      $("error").classList.remove("hidden");
-      $("error").textContent = e.message;
-      if (btn) { btn.disabled = false; btn.textContent = "Refresh data"; }
+      if (!silent) {
+        $("loader").classList.add("hidden");
+        $("error").classList.remove("hidden");
+        $("error").textContent = e.message;
+        if (btn) { btn.disabled = false; btn.textContent = "Refresh data"; }
+      }
+      loadInFlight = false;
       return;
     }
 
@@ -795,26 +969,40 @@
         return r.json();
       })
       .then(function (d) {
+        var changed = !DATA || DATA.generatedAt !== d.generatedAt;
         DATA = d;
         var saved = null;
         try { saved = JSON.parse(localStorage.getItem(ROSTER_KEY) || "null"); } catch (e) { saved = null; }
         ROLES = Object.assign({}, d.roles, saved || {});
-        $("meta").textContent = "Snapshot " + (d.generatedAt || "—") +
-          (d.cached ? " · served from cache (" + Math.round((d.ageSeconds || 0) / 60) + " min old)" : " · rebuilt in " + (d.buildSeconds || "?") + "s") +
-          " · " + fmt(d.counts.live) + " live and " + fmt(d.counts.archived) + " archived questions · " + fmt(d.tests.rows.length) + " tests";
-        fillSelects();
-        if (!bound) { bindControls(); bound = true; }  // a refresh must not re-bind
+        lastGeneratedAtMs = d.generatedAt ? Date.parse(d.generatedAt) : Date.now();
+        if (force) lastForcedRefreshMs = Date.now();
+        var restEl = $("meta-rest");
+        if (restEl) {
+          restEl.textContent = " · " + fmt(d.counts.live) + " live and " + fmt(d.counts.archived) + " archived questions · " +
+            fmt(d.tests.rows.length) + " tests · checks every " + Math.round(POLL_MS / 60000) + " min and syncs ByteXL every " + Math.round(FORCE_REFRESH_MS / 60000) + " min" +
+            (d.refreshing ? " · a background refresh is in progress" : "");
+        }
+        if (!bound) {
+          mountFilters(); refreshMatrixSelect(); bindControls(); bound = true;
+          startFreshnessTicker(); startPolling();
+        } else if (changed) {
+          refreshFilters(); refreshMatrixSelect();
+        }
         $("loader").classList.add("hidden");
         $("app").classList.remove("hidden");
-        renderAll();
+        if (!silent || changed) renderAll();
       })
       .catch(function (e) {
+        if (silent) { window.console && console.warn && console.warn("Analytics poll failed:", e.message); return; }
         $("loader").classList.add("hidden");
         $("error").classList.remove("hidden");
         $("error").textContent = "Could not load the question bank: " + e.message;
       })
-      .finally(function () { if (btn) { btn.disabled = false; btn.textContent = "Refresh data"; } });
+      .finally(function () {
+        loadInFlight = false;
+        if (!silent && btn) { btn.disabled = false; btn.textContent = "Refresh data"; }
+      });
   }
 
-  load(false);
+  load(false, false);
 })();
