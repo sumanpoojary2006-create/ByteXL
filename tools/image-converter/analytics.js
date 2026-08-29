@@ -51,28 +51,28 @@
   var motionOK = !window.matchMedia || !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var activeDashboard = "overview";
   var DASHBOARDS = {
-    overview: { title: "Decision overview", description: "The signals that need attention now." },
-    production: { title: "Production performance", description: "Growth, contribution, and bank movement over time." },
-    coverage: { title: "Coverage & readiness", description: "Subject, track, company, and assessment readiness." },
-    quality: { title: "Quality control", description: "Blueprint balance and metadata health." },
-    team: { title: "Team & ownership", description: "Roles, contribution ownership, and curation rules." }
+    overview: { title: "What needs attention", description: "A plain-language summary of what changed and what to do next." },
+    production: { title: "Questions created over time", description: "How many questions were added, who created them, and what was archived." },
+    coverage: { title: "What content is available", description: "Available questions and assessments by subject, track, and company." },
+    quality: { title: "Question quality", description: "Difficulty balance and missing question details." },
+    team: { title: "Team roles", description: "Choose each author's role for people-based reports." }
   };
   var ANALYTICS_INDEX = [
-    { title: "Decision overview", view: "overview", target: "tiles", tags: "summary kpi total questions mcq coding growth net change executive pulse" },
-    { title: "Knowledge resilience", view: "overview", target: "metric-resilience", tags: "fragile subjects risk concentration single author exposed ownership continuity hidden signal" },
+    { title: "What needs attention", view: "overview", target: "tiles", tags: "summary total questions mcq coding growth increase decrease" },
+    { title: "Subjects that depend on one person", view: "overview", target: "metric-resilience", tags: "subjects one author ownership unavailable maintain difficult" },
     { title: "Monthly production", view: "production", target: "metric-monthly", tags: "monthly trend volume added questions growth output over time" },
-    { title: "Curated vs uploaded", view: "production", target: "metric-curated", tags: "content leads support engineers role curated share uploaded" },
-    { title: "Bank churn", view: "production", target: "metric-churn", tags: "archived deleted additions net change shrinking growing" },
+    { title: "Who added the questions?", view: "production", target: "metric-curated", tags: "content leads support engineers role written uploaded" },
+    { title: "Questions added and archived", view: "production", target: "metric-churn", tags: "archived deleted additions overall increase decrease" },
     { title: "Weekly movement", view: "production", target: "metric-weekly", tags: "week over week weekly added archived net movement trend" },
-    { title: "Content Lead output", view: "production", target: "metric-lead", tags: "who authored most top author contributor people leader productivity" },
+    { title: "Questions by Content Lead", view: "production", target: "metric-lead", tags: "who authored most author contributor people monthly mcq coding" },
     { title: "Subject coverage", view: "coverage", target: "metric-subject", tags: "subjects monthly gaps volume curriculum" },
     { title: "Track coverage", view: "coverage", target: "metric-track", tags: "tracks programming fundamentals tactical drills categories monthly content lead ownership" },
-    { title: "Company mock coverage", view: "coverage", target: "metric-company", tags: "company hiring mock tests employers tagged readiness" },
+    { title: "Questions and mock tests by company", view: "coverage", target: "metric-company", tags: "company hiring mock tests employers tagged available" },
     { title: "Akila company-specific output", view: "coverage", target: "metric-akila-company", tags: "Akila company specific questions author special category monthly" },
-    { title: "Standardized assessments", view: "coverage", target: "metric-standard", tags: "standard tests papers ready assign assessment coverage" },
-    { title: "Difficulty matrix", view: "quality", target: "metric-matrix", tags: "easy medium hard topic balance blueprint difficulty unspecified" },
-    { title: "Data quality & risk", view: "quality", target: "metric-quality", tags: "missing subject topic explanation difficulty gaps metadata quality reusable" },
-    { title: "Author roster", view: "team", target: "metric-roster", tags: "team people roles author ownership content lead support manager" }
+    { title: "Ready-to-use assessments", view: "coverage", target: "metric-standard", tags: "standard tests papers ready assign assessment available" },
+    { title: "Question difficulty by topic", view: "quality", target: "metric-matrix", tags: "easy medium hard topic balance difficulty unspecified" },
+    { title: "Missing question details", view: "quality", target: "metric-quality", tags: "missing subject topic explanation difficulty gaps details quality" },
+    { title: "Team roles", view: "team", target: "metric-roster", tags: "team people roles author content lead support manager" }
   ];
 
   function css(name) { return getComputedStyle(document.body).getPropertyValue(name).trim(); }
@@ -484,7 +484,7 @@
       { k: "Coding questions", v: fmt(cod), d: pct(cod, total) + "% of additions" },
       { k: "Curated by Content Leads", v: pct(leadN, total) + "%", d: fmt(leadN) + " of " + fmt(total) + " questions" },
       { k: "Archived in window", v: fmt(arch), d: arch > total ? "Exceeds additions" : pct(arch, total) + "% of additions", cls: arch > total ? "down" : "" },
-      { k: "Net bank change", v: (net >= 0 ? "+" : "") + fmt(net), d: net >= 0 ? "Bank grew" : "Bank shrank", cls: net >= 0 ? "up" : "down" },
+      { k: "Overall question-bank change", v: (net >= 0 ? "+" : "") + fmt(net), d: net >= 0 ? "More questions than before" : "Fewer questions than before", cls: net >= 0 ? "up" : "down" },
       { k: monthLabel(last) + " vs " + monthLabel(prev), v: (delta >= 0 ? "+" : "") + delta + "%", d: fmt(prevN) + " → " + fmt(lastN), cls: delta >= 0 ? "up" : "down" }
     ];
     $("tiles").innerHTML = tiles.map(function (x) {
@@ -527,38 +527,38 @@
       archived: archived, net: rows.length - archived, archivePct: archivePct,
       qualityDebt: qualityDebt, debtPct: debtPct,
       concentrated: concentrated.length, exposed: exposed, exposedPct: exposedPct,
-      score: score, state: !selected ? "No data in this scope" : score >= 72 ? "Strong operating position" : score >= 55 ? "Guarded — intervention needed" : "Exposed — act now"
+      score: score, state: !selected ? "No questions in this selection" : score >= 72 ? "Healthy" : score >= 55 ? "Needs attention" : "Needs urgent attention"
     };
   }
 
   function renderExecutiveBrief() {
     var s = executiveSignals(), headline;
-    if (!s.total) headline = 'This scope has no questions; <em>widen the filters to restore the decision model.</em>';
-    else if (s.exposedPct >= 45) headline = 'The bank is growing, but its knowledge base is <em>too concentrated to scale safely.</em>';
-    else if (s.debtPct >= 25) headline = 'Production is healthy; <em>metadata debt is now the constraint.</em>';
-    else if (s.momentum < 0) headline = 'Question-bank momentum has turned; <em>protect the next production cycle.</em>';
-    else headline = 'The bank is expanding with <em>manageable operating risk.</em>';
+    if (!s.total) headline = 'No questions match these filters. <em>Try selecting more months or subjects.</em>';
+    else if (s.exposedPct >= 45) headline = 'Too many questions <em>depend on just one author.</em>';
+    else if (s.debtPct >= 25) headline = 'Many questions are <em>missing details the team needs.</em>';
+    else if (s.momentum < 0) headline = 'The team created <em>fewer questions than last month.</em>';
+    else headline = 'Question production is growing and <em>the bank is in good shape.</em>';
 
     var host = $("executive-brief");
     host.innerHTML = '<div class="executive-hero"><div class="executive-copy">' +
-      '<div class="signal-label">Executive readout</div><div class="executive-headline">' + headline + '</div>' +
-      '<p class="executive-summary">' + monthLabel(s.latestKey) + ' production is <b>' + (s.momentum >= 0 ? "+" : "") + s.momentum +
-      '%</b> versus the prior month. At the same time, <b>' + s.exposedPct + '%</b> of questions in view sit in concentrated subject pools and <b>' +
-      s.debtPct + '%</b> carry at least one reuse-blocking metadata gap.</p>' +
-      '<div class="hero-facts"><span class="hero-fact"><b>' + fmt(s.net) + '</b> net bank movement</span>' +
-      '<span class="hero-fact"><b>' + s.concentrated + '</b> concentrated subjects</span>' +
-      '<span class="hero-fact"><b>' + fmt(s.qualityDebt) + '</b> questions need enrichment</span></div></div>' +
+      '<div class="signal-label">Simple summary</div><div class="executive-headline">' + headline + '</div>' +
+      '<p class="executive-summary">In ' + monthLabel(s.latestKey) + ', the team created <b>' + Math.abs(s.momentum) + '% ' + (s.momentum >= 0 ? "more" : "fewer") +
+      ' questions</b> than in the previous month. One author created at least 70% of the questions in subject areas covering <b>' + s.exposedPct +
+      '%</b> of this selection. <b>' + s.debtPct + '%</b> of questions are missing a subject, topic, difficulty, or explanation.</p>' +
+      '<div class="hero-facts"><span class="hero-fact"><b>' + (s.net >= 0 ? "+" : "") + fmt(s.net) + '</b> questions after archiving</span>' +
+      '<span class="hero-fact"><b>' + s.concentrated + '</b> subjects mostly written by one person</span>' +
+      '<span class="hero-fact"><b>' + fmt(s.qualityDebt) + '</b> questions missing details</span></div></div>' +
       '<div class="operating-score"><div class="score-orbit" style="--operating:0"><div class="operating-value">' + s.score +
-      '<small>Operating score</small></div></div><div class="operating-state">' + esc(s.state) + '</div>' +
-      '<div class="operating-note">Weighted from concentration, metadata debt, archive pressure, and negative momentum.</div></div></div>';
+      '<small>Dashboard health</small></div></div><div class="operating-state">' + esc(s.state) + '</div>' +
+      '<div class="operating-note">Higher is better. The score checks author dependence, missing details, archived questions, and monthly output.</div></div></div>';
     requestAnimationFrame(function () {
       var orbit = host.querySelector(".score-orbit"); if (orbit) orbit.style.setProperty("--operating", s.score);
     });
 
     var priorities = [
-      { severity: s.exposedPct, metric: s.exposedPct + "%", title: "Diversify knowledge ownership", copy: fmt(s.exposed) + " questions depend on subject pools where one author supplied at least 70%.", view: "overview", target: "metric-resilience", action: "Inspect resilience", color: "#55dfe4", glow: "rgba(53,215,232,.2)" },
-      { severity: s.debtPct, metric: s.debtPct + "%", title: "Pay down metadata debt", copy: fmt(s.qualityDebt) + " questions have a missing subject, topic, difficulty, or explanation.", view: "quality", target: "metric-quality", action: "Open quality control", color: "#a78bfa", glow: "rgba(139,92,246,.22)" },
-      { severity: Math.max(5, s.archivePct - 40, -s.momentum), metric: (s.momentum >= 0 ? "+" : "") + s.momentum + "%", title: s.momentum >= 0 ? "Protect production momentum" : "Reverse the production decline", copy: fmt(s.archived) + " questions were archived in the selected window; net movement is " + (s.net >= 0 ? "+" : "") + fmt(s.net) + ".", view: "production", target: "metric-churn", action: "Review production", color: "#f27bcc", glow: "rgba(232,70,199,.2)" }
+      { severity: s.exposedPct, metric: s.exposedPct + "%", title: "Add more authors to these subjects", copy: fmt(s.exposed) + " questions are in subjects where one person created at least 70% of the content.", view: "overview", target: "metric-resilience", action: "View affected subjects", color: "#55dfe4", glow: "rgba(53,215,232,.2)" },
+      { severity: s.debtPct, metric: s.debtPct + "%", title: "Complete missing question details", copy: fmt(s.qualityDebt) + " questions are missing a subject, topic, difficulty, or explanation.", view: "quality", target: "metric-quality", action: "View missing details", color: "#a78bfa", glow: "rgba(139,92,246,.22)" },
+      { severity: Math.max(5, s.archivePct - 40, -s.momentum), metric: (s.momentum >= 0 ? "+" : "") + s.momentum + "%", title: s.momentum >= 0 ? "Keep monthly output steady" : "Increase question creation", copy: fmt(s.archived) + " questions were archived in this period. After additions and archiving, the bank changed by " + (s.net >= 0 ? "+" : "") + fmt(s.net) + " questions.", view: "production", target: "metric-churn", action: "View added and archived", color: "#f27bcc", glow: "rgba(232,70,199,.2)" }
     ].sort(function (a, b) { return b.severity - a.severity; });
     $("priority-actions").innerHTML = '<div class="priority-grid">' + priorities.map(function (p, i) {
       return '<article class="priority-card" style="--priority-color:' + p.color + ';--priority-glow:' + p.glow + '">' +
@@ -599,12 +599,12 @@
       var inventoryGap = Math.max(0, (120 - a.n) / 120);
       var formatGap = (!a.mcq || !a.coding) ? 1 : 0;
       var risk = Math.round(100 * (.55 * topShare + .25 * qualityGap + .12 * inventoryGap + .08 * formatGap));
-      return { subject: subject, n: a.n, risk: risk, topShare: topShare, effective: effective, noExpl: a.noExpl, noDiff: a.noDiff, formatGap: formatGap };
+      return { subject: subject, n: a.n, risk: risk, topShare: topShare, effective: effective, authors: Object.keys(a.authors).length, noExpl: a.noExpl, noDiff: a.noDiff, formatGap: formatGap };
     }).sort(function (a, b) { return b.risk - a.risk || b.n - a.n; });
 
     var host = $("c-resilience");
     if (!scored.length) {
-      host.innerHTML = '<p class="muted">Select a wider period to calculate resilience; a subject needs at least 25 questions in view.</p>';
+      host.innerHTML = '<p class="muted">Select a longer period. A subject needs at least 25 questions before author dependence can be measured reliably.</p>';
       return;
     }
     var weight = scored.reduce(function (sum, x) { return sum + x.n; }, 0) || 1;
@@ -612,7 +612,7 @@
     var score = Math.max(0, Math.round(100 - weightedRisk));
     var concentrated = scored.filter(function (x) { return x.topShare >= .7; });
     var exposed = concentrated.reduce(function (sum, x) { return sum + x.n; }, 0);
-    var effectiveAvg = scored.reduce(function (sum, x) { return sum + x.effective * x.n; }, 0) / weight;
+    var authorAvg = scored.reduce(function (sum, x) { return sum + x.authors * x.n; }, 0) / weight;
     var state = score >= 65 ? "Resilient" : score >= 45 ? "Needs attention" : "Fragile";
     var color = score >= 65 ? css("--green") : score >= 45 ? css("--amber") : css("--red");
     var previous = resilienceScoreHistory; resilienceScoreHistory = score;
@@ -620,32 +620,32 @@
     host.innerHTML = '<div class="insight-grid"><div class="score-wrap">' +
       '<div class="score-ring" style="--score:' + previous + ';--ring-color:' + color + '"><div class="score-value">' + score + '<small>Resilience / 100</small></div></div>' +
       '<div class="score-state">' + state + '</div></div><div class="insight-side">' +
-      '<div class="tiles"><div class="tile"><div class="k">Concentrated subjects</div><div class="v">' + concentrated.length + '</div><div class="d down">One author supplied at least 70%</div></div>' +
-      '<div class="tile"><div class="k">Questions exposed</div><div class="v">' + pct(exposed, weight) + '%</div><div class="d">' + fmt(exposed) + ' questions in concentrated pools</div></div>' +
-      '<div class="tile"><div class="k">Effective contributors</div><div class="v">' + effectiveAvg.toFixed(1) + '</div><div class="d">Average independent author strength</div></div></div>' +
+      '<div class="tiles"><div class="tile"><div class="k">Subjects mostly written by one person</div><div class="v">' + concentrated.length + '</div><div class="d down">One author created at least 70% of the questions</div></div>' +
+      '<div class="tile"><div class="k">Questions in those subjects</div><div class="v">' + pct(exposed, weight) + '%</div><div class="d">' + fmt(exposed) + ' questions may be harder for others to maintain</div></div>' +
+      '<div class="tile"><div class="k">Authors per subject</div><div class="v">' + authorAvg.toFixed(1) + '</div><div class="d">Average number of authors who contributed</div></div></div>' +
       '<div id="c-resilience-bars"></div>' +
-      '<p class="metric-note"><b>How it works:</b> risk blends dominant-author concentration (55%), missing explanations and difficulty (25%), thin inventory (12%), and missing MCQ/coding variety (8%). Subjects below 25 questions are excluded to avoid noisy small-sample alarms.</p>' +
+      '<p class="metric-note"><b>How the attention score works:</b> a subject scores higher when most questions come from one author, important details are missing, there are too few questions, or it has only MCQs or only Coding questions. Higher means the subject needs attention sooner.</p>' +
       '</div></div>';
     requestAnimationFrame(function () {
       var ring = host.querySelector(".score-ring"); if (ring) ring.style.setProperty("--score", score);
     });
     hbars($("c-resilience-bars"), {
-      labelWidth: 182, valueLabel: "Risk score", suffix: "%",
+      labelWidth: 182, valueLabel: "Attention score", suffix: "%",
       items: scored.slice(0, 10).map(function (x) {
         return {
           label: x.subject, value: x.risk,
           color: x.risk >= 65 ? css("--series-8") : x.risk >= 50 ? css("--series-4") : css("--series-7"),
           detail: [
-            { label: "Dominant author", value: Math.round(x.topShare * 100) + "%" },
-            { label: "Effective contributors", value: x.effective.toFixed(1) },
+            { label: "Questions from the top author", value: Math.round(x.topShare * 100) + "%" },
+            { label: "Authors who contributed", value: x.authors },
             { label: "Questions", value: x.n },
             { label: "Missing explanation", value: x.noExpl },
             { label: "Missing difficulty", value: x.noDiff }
           ]
         };
       }),
-      aria: "Subjects with the highest knowledge concentration risk",
-      caption: "Highest-risk subject pools in the current filter selection. Lower is safer."
+      aria: "Subjects that need the most attention",
+      caption: "Subjects that need attention first in the current selection. A lower score is better."
     });
   }
 
@@ -683,7 +683,7 @@
       return '<div class="role-share"><div class="role-share-month">' + esc(monthLabel(m)) + '</div>' +
         '<div class="role-share-values"><b>' + leadPct + '% <small>Lead</small></b><b>' + supPct + '% <small>Support</small></b></div>' +
         '<div class="share-bar"><i style="width:' + leadPct + '%"></i><i style="width:' + supPct + '%"></i></div>' +
-        '<div class="role-share-counts">' + fmt(lead[i]) + ' curated · ' + fmt(sup[i]) + ' uploaded · ' + pct(other[i], total) + '% other</div></div>';
+        '<div class="role-share-counts">' + fmt(lead[i]) + ' by Leads · ' + fmt(sup[i]) + ' by Support · ' + pct(other[i], total) + '% other</div></div>';
     }).join("") + '</div><div id="c-curated-chart"></div>';
     columns($("c-curated-chart"), {
       categories: months.map(monthLabel), stacked: true, height: 290,
@@ -941,7 +941,7 @@
     var host = $("c-standard");
     var inWindow = all.filter(function (t) { return monthSet[t.month]; }).length;
     host.innerHTML = '<div class="tiles" style="margin-bottom:14px">' +
-      '<div class="tile"><div class="k">Subjects with a standardized assessment</div><div class="v">' + fmt(keys.length) + '</div><div class="d">All-time coverage</div></div>' +
+      '<div class="tile"><div class="k">Subjects with a standardized assessment</div><div class="v">' + fmt(keys.length) + '</div><div class="d">Across all months</div></div>' +
       '<div class="tile"><div class="k">Assessment papers</div><div class="v">' + fmt(all.length) + '</div><div class="d">' + fmt(inWindow) + " created in the selected period</div></div>" +
       '<div class="tile"><div class="k">Papers with no questions</div><div class="v">' + fmt(all.filter(function (t) { return !t.questions; }).length) +
       '</div><div class="d">Shells that cannot be assigned</div></div></div><div id="c-standard-bars"></div><div id="tb-standard" style="margin-top:14px"></div>';
@@ -977,7 +977,7 @@
     var n = rows.length || 1;
     var items = [
       { label: "No subject assigned", v: noSubject, why: "Invisible to subject filters and the Test Builder." },
-      { label: "No topic assigned", v: noTopic, why: "Cannot be placed in a difficulty matrix or blueprint." },
+      { label: "No topic assigned", v: noTopic, why: "Cannot be grouped by topic when building a test." },
       { label: "No difficulty set", v: noDiff, why: "Breaks difficulty-balanced paper generation." },
       { label: "No explanation", v: noExpl, why: "Weak review value for students after an attempt." }
     ];
@@ -990,7 +990,7 @@
     if (noSubject / n > 0.2) {
       var w = document.createElement("div");
       w.className = "warn";
-      w.textContent = "A third of the questions in view carry no subject. Until they are tagged, subject, track and difficulty-matrix panels understate real coverage — the questions exist but cannot be found or reused.";
+      w.textContent = "Many questions have no subject. Add a subject so people can find them in filters, place them in the correct track, and use them when building tests.";
       host.appendChild(w);
     }
   }
