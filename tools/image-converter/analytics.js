@@ -45,6 +45,9 @@
   var FORCE_REFRESH_MS = 5 * 60000; // how often an open dashboard rebuilds from ByteXL
   var lastForcedRefreshMs = 0;
   var loadInFlight = false;
+  var metricHistory = {};
+  var resilienceScoreHistory = 0;
+  var motionOK = !window.matchMedia || !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   function css(name) { return getComputedStyle(document.body).getPropertyValue(name).trim(); }
   function $(id) { return document.getElementById(id); }
@@ -54,6 +57,61 @@
     if (!key) return "";
     var p = key.split("-");
     return ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][+p[1] - 1] + " " + p[0].slice(2);
+  }
+
+  /* -------------------------------------------------------------- motion */
+  function animateBars(svg, axis) {
+    if (!motionOK || !svg || !svg.animate) return;
+    Array.prototype.forEach.call(svg.querySelectorAll(".chart-bar"), function (node, i) {
+      node.style.transformBox = "fill-box";
+      node.style.transformOrigin = axis === "x" ? "left center" : "center bottom";
+      node.animate([
+        { transform: axis === "x" ? "scaleX(.04)" : "scaleY(.04)", opacity: .18 },
+        { transform: "scale(1)", opacity: 1 }
+      ], { duration: 520, delay: Math.min(i * 22, 180), easing: "cubic-bezier(.2,.75,.25,1)", fill: "both" });
+    });
+    Array.prototype.forEach.call(svg.querySelectorAll(".dlabel"), function (node, i) {
+      node.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 300, delay: 300 + Math.min(i * 18, 160), fill: "both" });
+    });
+  }
+  function animateHeat(svg) {
+    if (!motionOK || !svg || !svg.animate) return;
+    Array.prototype.forEach.call(svg.querySelectorAll(".heat-cell"), function (node, i) {
+      node.style.transformBox = "fill-box"; node.style.transformOrigin = "center";
+      node.animate([{ transform: "scale(.72)", opacity: 0 }, { transform: "scale(1)", opacity: 1 }],
+        { duration: 360, delay: Math.min(i * 7, 260), easing: "cubic-bezier(.2,.8,.25,1)", fill: "both" });
+    });
+  }
+  function parseMetric(raw) {
+    var clean = String(raw || "").replace(/,/g, "").replace(/[^0-9+\-.]/g, "");
+    var n = Number(clean); return isFinite(n) ? n : null;
+  }
+  function metricText(raw, value) {
+    var decimals = ((String(raw).match(/\.(\d+)/) || ["", ""])[1] || "").length;
+    var out = value.toLocaleString("en-IN", { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+    if (String(raw).trim().charAt(0) === "+" && value >= 0) out = "+" + out;
+    if (/%\s*$/.test(String(raw))) out += "%";
+    return out;
+  }
+  function animateMetrics(scope) {
+    if (!motionOK) return;
+    Array.prototype.forEach.call((scope || document).querySelectorAll(".tile .v,.score-value"), function (node) {
+      var raw = node.childNodes.length ? node.childNodes[0].nodeValue || node.textContent : node.textContent;
+      var target = parseMetric(raw); if (target === null) return;
+      var labelNode = node.closest(".tile") && node.closest(".tile").querySelector(".k");
+      var owner = node.closest("[id]");
+      var key = (owner ? owner.id : "dashboard") + "|" + (labelNode ? labelNode.textContent : "resilience-score");
+      var start = Object.prototype.hasOwnProperty.call(metricHistory, key) ? metricHistory[key] : 0;
+      metricHistory[key] = target;
+      var began = performance.now(), duration = 560;
+      function tick(now) {
+        var p = Math.min(1, (now - began) / duration), eased = 1 - Math.pow(1 - p, 3);
+        var display = start + (target - start) * eased;
+        node.childNodes[0].nodeValue = metricText(raw, display);
+        if (p < 1 && node.isConnected) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    });
   }
 
   /* ---------------------------------------------------------------- tooltip */
@@ -168,7 +226,7 @@
           var v = s.values[i] || 0; if (!v) return;
           var h = (v / max) * ph, yy = y(acc + v);
           // 2px surface gap between adjacent segments rather than a stroke.
-          var seg = el("path", { d: barPath(cx - inner / 2, yy, inner, Math.max(h - 2, 0.6), true), fill: s.color });
+          var seg = el("path", { d: barPath(cx - inner / 2, yy, inner, Math.max(h - 2, 0.6), true), fill: s.color, class: "chart-bar" });
           bindTip(seg, cat, series.map(function (t) { return { label: t.label, value: t.values[i] || 0, color: t.color }; }));
           svg.appendChild(seg);
           acc += v;
@@ -181,7 +239,7 @@
           var v = s.values[i] || 0;
           var h = (v / max) * ph, bx = cx - inner / 2 + si * (bw + 2);
           if (v > 0) {
-            var b = el("path", { d: barPath(bx, y(v), bw, h, true), fill: s.color });
+            var b = el("path", { d: barPath(bx, y(v), bw, h, true), fill: s.color, class: "chart-bar" });
             bindTip(b, cat, series.map(function (t) { return { label: t.label, value: t.values[i] || 0, color: t.color }; }));
             svg.appendChild(b);
           }
@@ -195,6 +253,7 @@
     });
     svg.appendChild(el("line", { x1: m.l, x2: m.l + pw, y1: m.t + ph, y2: m.t + ph, stroke: css("--line-hi"), "stroke-width": 1 }));
     host.appendChild(svg);
+    animateBars(svg, "y");
     if (opts.caption) caption(host, opts.caption);
   }
 
@@ -214,13 +273,14 @@
       lb.textContent = it.label.length > 26 ? it.label.slice(0, 25) + "…" : it.label;
       svg.appendChild(lb);
       var w = (it.value / max) * pw;
-      var b = el("path", { d: barPath(m.l, yy + 6, Math.max(w, 1), rowH - 14, false), fill: it.color || css("--series-1") });
+      var b = el("path", { d: barPath(m.l, yy + 6, Math.max(w, 1), rowH - 14, false), fill: it.color || css("--series-1"), class: "chart-bar" });
       bindTip(b, it.label, (it.detail || []).concat([{ label: opts.valueLabel || "Questions", value: it.value }]));
       svg.appendChild(b);
       var vl = el("text", { x: m.l + w + 9, y: yy + rowH / 2 + 4, class: "dlabel" });
       vl.textContent = fmt(it.value) + (opts.suffix || ""); svg.appendChild(vl);
     });
     host.appendChild(svg);
+    animateBars(svg, "x");
     if (opts.caption) caption(host, opts.caption);
   }
 
@@ -242,7 +302,7 @@
       it.values.forEach(function (v, si) {
         if (!v) return;
         var w = (v / total) * pw;
-        var seg = el("path", { d: barPath(m.l + acc, yy + 6, Math.max(w - 2, 1), rowH - 14, false), fill: opts.series[si].color });
+        var seg = el("path", { d: barPath(m.l + acc, yy + 6, Math.max(w - 2, 1), rowH - 14, false), fill: opts.series[si].color, class: "chart-bar" });
         bindTip(seg, it.label, opts.series.map(function (s, k) {
           return { label: s.label, value: it.values[k] + " (" + pct(it.values[k], total) + "%)", color: s.color };
         }));
@@ -253,6 +313,7 @@
       vl.textContent = fmt(total); svg.appendChild(vl);
     });
     host.appendChild(svg);
+    animateBars(svg, "x");
     if (opts.caption) caption(host, opts.caption);
   }
 
@@ -275,7 +336,7 @@
       r.values.forEach(function (v, j) {
         var idx = v <= 0 ? -1 : Math.min(HEAT.length - 1, Math.floor(Math.sqrt(v / max) * (HEAT.length - 1)));
         var fill = idx < 0 ? "rgba(255,255,255,.035)" : HEAT[idx];
-        var cell = el("rect", { x: m.l + j * cellW + 1, y: m.t + i * cellH + 1, width: cellW - 3, height: cellH - 3, rx: 4, fill: fill });
+        var cell = el("rect", { x: m.l + j * cellW + 1, y: m.t + i * cellH + 1, width: cellW - 3, height: cellH - 3, rx: 4, fill: fill, class: "heat-cell" });
         bindTip(cell, r.label + " · " + cols[j], (r.detail && r.detail[j]) || [{ label: "Questions", value: v }]);
         svg.appendChild(cell);
         if (v > 0) {
@@ -289,6 +350,7 @@
       });
     });
     host.appendChild(svg);
+    animateHeat(svg);
     var sc = document.createElement("div");
     sc.className = "legend";
     sc.innerHTML = '<span class="item">Fewer</span>' + HEAT.map(function (c) {
@@ -405,6 +467,84 @@
     }).join("");
   }
   function add(a, b) { return a + b; }
+
+  /**
+   * Hidden operational signal: a bank can have thousands of questions and
+   * still be a single point of failure if one author owns a subject, or if the
+   * pool is hard to review and rebalance. This turns those latent weaknesses
+   * into one resilience score and a ranked intervention list.
+   */
+  function renderResilience() {
+    var c = DATA.cols, dims = DATA.dims, agg = {};
+    rows.forEach(function (i) {
+      var subject = dims.subjects[c.su[i]];
+      if (!subject || subject === "(no subject)") return;
+      if (!agg[subject]) agg[subject] = { n: 0, authors: {}, noExpl: 0, noDiff: 0, mcq: 0, coding: 0 };
+      var a = agg[subject], author = dims.authors[c.au[i]];
+      a.n++; a.authors[author] = (a.authors[author] || 0) + 1;
+      if (!c.ex[i]) a.noExpl++;
+      if (c.df[i] === 3) a.noDiff++;
+      if (c.ty[i] === 1) a.coding++; else if (c.ty[i] === 0) a.mcq++;
+    });
+
+    var scored = Object.keys(agg).filter(function (s) { return agg[s].n >= 25; }).map(function (subject) {
+      var a = agg[subject], counts = Object.keys(a.authors).map(function (k) { return a.authors[k]; });
+      var top = Math.max.apply(null, counts), topShare = top / a.n;
+      var hhi = counts.reduce(function (sum, n) { var share = n / a.n; return sum + share * share; }, 0);
+      var effective = hhi ? 1 / hhi : 0;
+      var qualityGap = ((a.noExpl / a.n) + (a.noDiff / a.n)) / 2;
+      var inventoryGap = Math.max(0, (120 - a.n) / 120);
+      var formatGap = (!a.mcq || !a.coding) ? 1 : 0;
+      var risk = Math.round(100 * (.55 * topShare + .25 * qualityGap + .12 * inventoryGap + .08 * formatGap));
+      return { subject: subject, n: a.n, risk: risk, topShare: topShare, effective: effective, noExpl: a.noExpl, noDiff: a.noDiff, formatGap: formatGap };
+    }).sort(function (a, b) { return b.risk - a.risk || b.n - a.n; });
+
+    var host = $("c-resilience");
+    if (!scored.length) {
+      host.innerHTML = '<p class="muted">Select a wider period to calculate resilience; a subject needs at least 25 questions in view.</p>';
+      return;
+    }
+    var weight = scored.reduce(function (sum, x) { return sum + x.n; }, 0) || 1;
+    var weightedRisk = scored.reduce(function (sum, x) { return sum + x.risk * x.n; }, 0) / weight;
+    var score = Math.max(0, Math.round(100 - weightedRisk));
+    var concentrated = scored.filter(function (x) { return x.topShare >= .7; });
+    var exposed = concentrated.reduce(function (sum, x) { return sum + x.n; }, 0);
+    var effectiveAvg = scored.reduce(function (sum, x) { return sum + x.effective * x.n; }, 0) / weight;
+    var state = score >= 65 ? "Resilient" : score >= 45 ? "Needs attention" : "Fragile";
+    var color = score >= 65 ? css("--green") : score >= 45 ? css("--amber") : css("--red");
+    var previous = resilienceScoreHistory; resilienceScoreHistory = score;
+
+    host.innerHTML = '<div class="insight-grid"><div class="score-wrap">' +
+      '<div class="score-ring" style="--score:' + previous + ';--ring-color:' + color + '"><div class="score-value">' + score + '<small>Resilience / 100</small></div></div>' +
+      '<div class="score-state">' + state + '</div></div><div class="insight-side">' +
+      '<div class="tiles"><div class="tile"><div class="k">Concentrated subjects</div><div class="v">' + concentrated.length + '</div><div class="d down">One author supplied at least 70%</div></div>' +
+      '<div class="tile"><div class="k">Questions exposed</div><div class="v">' + pct(exposed, weight) + '%</div><div class="d">' + fmt(exposed) + ' questions in concentrated pools</div></div>' +
+      '<div class="tile"><div class="k">Effective contributors</div><div class="v">' + effectiveAvg.toFixed(1) + '</div><div class="d">Average independent author strength</div></div></div>' +
+      '<div id="c-resilience-bars"></div>' +
+      '<p class="metric-note"><b>How it works:</b> risk blends dominant-author concentration (55%), missing explanations and difficulty (25%), thin inventory (12%), and missing MCQ/coding variety (8%). Subjects below 25 questions are excluded to avoid noisy small-sample alarms.</p>' +
+      '</div></div>';
+    requestAnimationFrame(function () {
+      var ring = host.querySelector(".score-ring"); if (ring) ring.style.setProperty("--score", score);
+    });
+    hbars($("c-resilience-bars"), {
+      labelWidth: 182, valueLabel: "Risk score", suffix: "%",
+      items: scored.slice(0, 10).map(function (x) {
+        return {
+          label: x.subject, value: x.risk,
+          color: x.risk >= 65 ? css("--series-8") : x.risk >= 50 ? css("--series-4") : css("--series-7"),
+          detail: [
+            { label: "Dominant author", value: Math.round(x.topShare * 100) + "%" },
+            { label: "Effective contributors", value: x.effective.toFixed(1) },
+            { label: "Questions", value: x.n },
+            { label: "Missing explanation", value: x.noExpl },
+            { label: "Missing difficulty", value: x.noDiff }
+          ]
+        };
+      }),
+      aria: "Subjects with the highest knowledge concentration risk",
+      caption: "Highest-risk subject pools in the current filter selection. Lower is safer."
+    });
+  }
 
   function renderMonthly() {
     var t = byMonthType();
@@ -714,9 +854,10 @@
   function renderAll() {
     months = activeMonths();
     rows = computeRows();
-    renderTiles(); renderMonthly(); renderCurated(); renderChurn();
+    renderTiles(); renderResilience(); renderMonthly(); renderCurated(); renderChurn();
     renderSubject(); renderLead(); renderTrack(); renderCompany();
     renderMatrix(); renderStandard(); renderQuality(); renderRoster();
+    animateMetrics($("app"));
   }
 
   /* --------------------------------------------------------- multi-select filter */
