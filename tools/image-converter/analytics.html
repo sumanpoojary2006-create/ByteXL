@@ -157,11 +157,15 @@
     #tooltip .sw { width: 9px; height: 9px; border-radius: 2px; flex: none; }
 
     .toggle { display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: 11.5px; font-weight: 700; cursor: pointer; user-select: none; }
-    .roster { display: grid; grid-template-columns: repeat(auto-fit,minmax(250px,1fr)); gap: 8px; }
-    .rrow { display: flex; align-items: center; gap: 9px; padding: 7px 11px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel2); }
-    .rrow .nm { flex: 1; font-size: 12.5px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; }
+    /* Roster rows use flex growth so the final row always consumes the full
+       width. Dashboard collections must not leave empty visual slots. */
+    .roster { display: flex; flex-wrap: wrap; gap: 8px; }
+    .rrow { flex: 1 1 285px; min-width: 260px; display: grid; grid-template-columns: 22px minmax(0,1fr) auto; grid-template-areas:"role name count" "role select select"; align-items: center; gap: 6px 9px; padding: 10px 11px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel2); }
+    .rrow .pill { grid-area:role; align-self:start; }
+    .rrow .nm { grid-area:name; min-width:0; font-size:12.5px; font-weight:700; line-height:1.35; overflow-wrap:anywhere; }
     .rrow .ct { color: var(--faint); font-size: 11px; font-variant-numeric: tabular-nums; }
-    .rrow select { height: 28px; padding: 0 6px; font-size: 11.5px; background: rgba(8,11,22,.8); color: var(--ink); border: 1px solid var(--line-hi); border-radius: 6px; }
+    .rrow .ct { grid-area:count; }
+    .rrow select { grid-area:select; width:100%; height: 30px; padding: 0 7px; font-size: 11.5px; background: rgba(8,11,22,.8); color: var(--ink); border: 1px solid var(--line-hi); border-radius: 6px; }
 
     .loader { display: grid; place-items: center; gap: 14px; padding: 90px 20px; text-align: center; }
     .spin { width: 42px; height: 42px; border: 3px solid rgba(139,92,246,.2); border-top-color: var(--violet); border-radius: 50%; animation: sp 1s linear infinite; }
@@ -498,6 +502,66 @@
     .matrix-option span:first-child { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .matrix-option .count { color:#687184; font-size:10.5px; font-variant-numeric:tabular-nums; }
     .matrix-no-results { padding:12px 10px; color:#777f91; font-size:11.5px; }
+    .theme-switch { width:fit-content; display:flex; gap:3px; margin-top:11px; padding:3px; border:1px solid rgba(255,255,255,.09); border-radius:9px; background:rgba(255,255,255,.035); }
+    .theme-option { min-height:27px; padding:0 9px; border:0; border-radius:6px; color:#737c8f; background:transparent; font-size:9.5px; font-weight:800; cursor:pointer; }
+    .theme-option:hover { color:#dfe3ed; }
+    .theme-option.active { color:#fff; background:linear-gradient(135deg,#6557e8,#925be8); box-shadow:0 4px 14px rgba(116,92,255,.2); }
+
+    /* Light is a first-class palette, not a filter over the dark theme. Every
+       dashboard surface and visualization token changes together. */
+    body[data-theme="light"] {
+      --bg:#f4f6fa; --panel:#fff; --panel2:#f8fafc;
+      --line:#e5e9f0; --line-hi:#cfd6e2; --ink:#152034; --ink2:#344054;
+      --muted:#667085; --faint:#8a94a6; --violet:#5b5bd6; --green:#16866a;
+      --amber:#c77b14; --red:#d1435b; --cyan:#0f8f95; --shadow:0 12px 32px rgba(31,42,68,.07);
+      --surface-1:#fff; --series-1:#4f6ef7; --series-2:#ec7c4a; --series-3:#2ca77c;
+      --series-4:#d49a25; --series-5:#cc6287; --series-6:#238a70; --series-7:#866dd6;
+      --series-8:#d75d70; --ord-1:#a9cef7; --ord-2:#568fe4; --ord-3:#315caa;
+      --ord-0:#aab2c0; --grid:#e9edf3;
+      background:radial-gradient(circle at 86% -8%,rgba(79,97,216,.1),transparent 32rem),#f4f6fa;
+    }
+    body[data-theme="light"]::before { opacity:.22; background-image:linear-gradient(rgba(31,42,68,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(31,42,68,.035) 1px,transparent 1px); }
+    body[data-theme="light"] .sidebar { color:var(--ink); background:rgba(255,255,255,.95); border-color:var(--line); }
+    body[data-theme="light"] .side-brand { color:var(--ink); }
+    body[data-theme="light"] .brand-copy span,body[data-theme="light"] .side-label { color:#8a94a6; }
+    body[data-theme="light"] .dash-nav-btn { color:#596579; }
+    body[data-theme="light"] .dash-nav-btn:hover { color:var(--ink); background:#f3f5fa; }
+    body[data-theme="light"] .dash-nav-btn.active { color:#4255c4; background:#eef0ff; box-shadow:inset 2px 0 #6675df; }
+    body[data-theme="light"] .nav-ico { border-color:#e2e6ee; background:#fff; }
+    body[data-theme="light"] .dash-nav-btn.active .nav-ico { border-color:#cfd4ff; background:#fff; box-shadow:none; }
+    body[data-theme="light"] .side-status { border-color:#d9ece8; background:#f3fbf9; }
+    body[data-theme="light"] .status-line { color:#345d55; }
+    body[data-theme="light"] .workspace-topbar { background:linear-gradient(to bottom,rgba(244,246,250,.97) 72%,rgba(244,246,250,.8)); }
+    body[data-theme="light"] .page-title,body[data-theme="light"] .section-intro h2,body[data-theme="light"] .card-title { color:var(--ink); }
+    body[data-theme="light"] .page-kicker { color:#4f61d8; }
+    body[data-theme="light"] .finder-box { border-color:#dce1eb; color:var(--ink); background:#fff; box-shadow:0 8px 22px rgba(31,42,68,.06); }
+    body[data-theme="light"] #analytics-search { color:var(--ink); }
+    body[data-theme="light"] #analytics-search::placeholder { color:#9ba4b5; }
+    body[data-theme="light"] .finder-results,body[data-theme="light"] .msel-panel,body[data-theme="light"] .matrix-results { border-color:#dce1e9; background:#fff; box-shadow:0 18px 42px rgba(31,42,68,.14); }
+    body[data-theme="light"] .finder-result,body[data-theme="light"] .matrix-option { color:var(--ink2); }
+    body[data-theme="light"] .finder-result:hover,body[data-theme="light"] .finder-result.focused,body[data-theme="light"] .matrix-option:hover,body[data-theme="light"] .matrix-option.focused { color:#3548bc; background:#f1f3ff; }
+    body[data-theme="light"] .quick-prompt { color:#657087; border-color:#e2e6ef; background:#fff; }
+    body[data-theme="light"] .filters,body[data-theme="light"] .card,body[data-theme="light"] .tile { border-color:var(--line); background:#fff; box-shadow:var(--shadow); }
+    body[data-theme="light"] .card::before { display:none; }
+    body[data-theme="light"] .fgroup select,body[data-theme="light"] .fgroup input,body[data-theme="light"] .msel-btn,body[data-theme="light"] .rrow select { color:var(--ink); background:#fff; border-color:#dce1e9; }
+    body[data-theme="light"] .seg { border-color:#dce1e9; background:#f8fafc; }
+    body[data-theme="light"] .btn { color:var(--ink2); background:#fff; border-color:#d8dee8; }
+    body[data-theme="light"] .btn.primary,body[data-theme="light"] .seg button.on { color:#fff; background:#5362cf; box-shadow:0 7px 18px rgba(83,98,207,.2); }
+    body[data-theme="light"] .tile::before { background:#6675df; box-shadow:none; }
+    body[data-theme="light"] .tile .k { color:#7c879a; }
+    body[data-theme="light"] .tile .v { color:var(--ink); }
+    body[data-theme="light"] .insight-card,body[data-theme="light"] .executive-hero { border-color:#d8e8e5; background:radial-gradient(circle at 92% 8%,rgba(79,97,216,.08),transparent 18rem),linear-gradient(120deg,#fff 30%,#f3fbf9 100%); }
+    body[data-theme="light"] .executive-hero::before { opacity:.2; background-image:linear-gradient(rgba(31,42,68,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(31,42,68,.04) 1px,transparent 1px); }
+    body[data-theme="light"] .executive-headline,body[data-theme="light"] .operating-value,body[data-theme="light"] .priority-metric { color:var(--ink); }
+    body[data-theme="light"] .hero-fact,body[data-theme="light"] .priority-card,body[data-theme="light"] .role-share,body[data-theme="light"] .rrow { color:var(--ink2); border-color:var(--line); background:#f8fafc; }
+    body[data-theme="light"] .hero-fact b,body[data-theme="light"] .priority-title { color:var(--ink); }
+    body[data-theme="light"] .score-orbit::before { background:#fff; }
+    body[data-theme="light"] .operating-score { border-color:var(--line); }
+    body[data-theme="light"] th { color:#748094; background:#f8fafc; }
+    body[data-theme="light"] .theme-switch { border-color:#dce1e9; background:#fff; }
+    body[data-theme="light"] .theme-option { color:#697489; }
+    body[data-theme="light"] .theme-option:hover { color:#3548bc; }
+    body[data-theme="light"] .theme-option.active { color:#fff; background:#5362cf; }
     @media (max-width:640px) { .matrix-controls { width:100%; } .matrix-controls .fgroup { flex:1; } }
   </style>
 </head>
@@ -518,7 +582,7 @@
 
     <main class="workspace-main">
       <header class="workspace-topbar">
-        <div><div class="page-kicker">Question Bank · Live overview</div><h1 class="page-title" id="view-title">What needs attention</h1><p class="page-description" id="view-description">A plain-language summary of what changed and what to do next.</p></div>
+        <div><div class="page-kicker">Question Bank · Live overview</div><h1 class="page-title" id="view-title">What needs attention</h1><p class="page-description" id="view-description">A plain-language summary of what changed and what to do next.</p><div class="theme-switch" role="group" aria-label="Dashboard theme"><button class="theme-option" type="button" data-theme-choice="light">☀ Light</button><button class="theme-option" type="button" data-theme-choice="dark">◐ Dark</button></div></div>
         <div class="analytics-finder">
           <div class="finder-box"><span class="finder-icon">⌕</span><input id="analytics-search" type="search" autocomplete="off" placeholder="Ask for an insight — e.g. who authored the most?" aria-label="Find an analytic"><span class="finder-key">⌘ K</span></div>
           <div id="finder-results" class="finder-results" role="listbox"></div>

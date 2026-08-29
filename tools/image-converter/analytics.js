@@ -29,6 +29,7 @@
   var TYPE_LABEL = ["MCQ", "Coding", "Descriptive"];
   var DIFF_LABEL = ["Easy", "Medium", "Hard", "Unspecified"];
   var ROSTER_KEY = "bytexl.analytics.roster.v1";
+  var THEME_KEY = "bytexl.analytics.theme.v1";
 
   var DATA = null;      // raw snapshot
   var ROLES = {};       // author name -> lead | support | manager | system
@@ -82,6 +83,20 @@
   function $(id) { return document.getElementById(id); }
   function fmt(n) { return (n === null || n === undefined) ? "–" : n.toLocaleString("en-IN"); }
   function pct(a, b) { return b ? Math.round((a / b) * 1000) / 10 : 0; }
+
+  function applyTheme(theme, save) {
+    theme = theme === "light" ? "light" : "dark";
+    document.body.dataset.theme = theme;
+    Array.prototype.forEach.call(document.querySelectorAll("[data-theme-choice]"), function (button) {
+      var active = button.dataset.themeChoice === theme;
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+    if (save) {
+      try { localStorage.setItem(THEME_KEY, theme); } catch (e) { /* Theme still works for this session. */ }
+    }
+    if (DATA) renderAll();
+  }
   function monthLabel(key) {
     if (!key) return "";
     var p = key.split("-");
@@ -1335,6 +1350,9 @@
 
   function bindControls() {
     bindWorkspaceNavigation();
+    Array.prototype.forEach.call(document.querySelectorAll("[data-theme-choice]"), function (button) {
+      button.addEventListener("click", function () { applyTheme(button.dataset.themeChoice, true); });
+    });
     $("f-matrix").addEventListener("focus", function () { matrixSearchIndex = -1; renderMatrixResults(); });
     $("f-matrix").addEventListener("click", function (e) { e.stopPropagation(); renderMatrixResults(); });
     $("f-matrix").addEventListener("input", function () {
@@ -1488,5 +1506,8 @@
       });
   }
 
+  var savedTheme = null;
+  try { savedTheme = localStorage.getItem(THEME_KEY); } catch (e) { savedTheme = null; }
+  applyTheme(savedTheme || "dark", false);
   load(false, false);
 })();
