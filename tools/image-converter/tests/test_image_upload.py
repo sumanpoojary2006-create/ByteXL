@@ -133,7 +133,45 @@ class ImageUploadTests(unittest.TestCase):
             "Could not create a ByteXL id after 3 attempts: ByteXL returned HTTP 503",
         )
         self.assertEqual(get.call_count, 3)
-        self.assertEqual(sleep.call_args_list, [call(0.25), call(0.5)])
+
+    @patch.object(server.time, "sleep")
+    @patch.object(server.requests, "get")
+    @patch.object(server, "get_content_token", return_value="content-token")
+    def test_bulk_read_retries_a_transient_502_before_streaming(self, _token, get, sleep):
+        # ByteXL's edge has returned a bare 502 on /api/questions-vault in
+        # production; this must recover rather than aborting the whole build.
+        failed = Mock(status_code=502)
+        failed.raise_for_status.side_effect = requests.HTTPError(
+            "502 Server Error: Bad Gateway", response=Mock(status_code=502)
+        )
+        succeeded = Mock()
+        succeeded.raise_for_status.return_value = None
+        succeeded.raw = io.BytesIO(b'[{"_id":"q1"}]')
+        get.side_effect = [failed, succeeded]
+
+        items = list(server.bytexl_stream_large("/api/questions-vault"))
+
+        self.assertEqual(items, [{"_id": "q1"}])
+        self.assertEqual(get.call_count, 2)
+        sleep.assert_called_once_with(2)
+
+    @patch.object(server.time, "sleep")
+    @patch.object(server.requests, "get")
+    @patch.object(server, "get_content_token", return_value="content-token")
+    def test_bulk_read_reports_final_status_after_exhausting_retries(self, _token, get, sleep):
+        response = Mock(status_code=502)
+        failed = Mock(status_code=502)
+        failed.raise_for_status.side_effect = requests.HTTPError("Bad Gateway", response=response)
+        get.return_value = failed
+
+        with self.assertRaises(HTTPException) as raised:
+            list(server.bytexl_stream_large("/api/questions-vault"))
+
+        self.assertEqual(raised.exception.status_code, 502)
+        self.assertIn("after 3 attempts", raised.exception.detail)
+        self.assertIn("HTTP 502", raised.exception.detail)
+        self.assertEqual(get.call_count, 3)
+        self.assertEqual(sleep.call_args_list, [call(2), call(4)])
 
 
 if __name__ == "__main__":

@@ -1550,18 +1550,44 @@ def bytexl_stream_large(path: str):
     Deployments point that at the Vercel proxy, which buffers whole responses
     and aborts at 45s — fine for the small reads it was built for, fatal for a
     245 MB one that takes about a minute.
+
+    ByteXL's own edge occasionally answers these large reads with a bare 502
+    (seen in production on ``/api/questions-vault``), same as the 5xx blips
+    :func:`get_bytexl_id` retries around. Retry the connection itself before
+    starting the stream — a status-code failure surfaces on ``raise_for_status``
+    well within the connect timeout, so a retry costs a couple of seconds against
+    a build that already takes about a minute, not the risk of losing a
+    partially-read 245 MB stream.
     """
     url = f"{BYTEXL_BULK_BASE}{path}"
-    try:
-        with requests.get(url, headers=auth_headers(), timeout=(30, 420), stream=True) as resp:
+    last_error = ""
+    resp = None
+    for attempt in range(3):
+        try:
+            resp = requests.get(url, headers=auth_headers(), timeout=(30, 420), stream=True)
             resp.raise_for_status()
-            resp.raw.decode_content = True
-            for item in ijson.items(resp.raw, "item"):
-                yield item
+            break
+        except requests.RequestException as exc:
+            if resp is not None:
+                resp.close()
+            resp = None
+            upstream_response = getattr(exc, "response", None)
+            last_error = f"ByteXL returned HTTP {upstream_response.status_code}" if upstream_response is not None else str(exc)
+            if attempt < 2:
+                time.sleep(2 * (attempt + 1))
+    if resp is None:
+        raise HTTPException(502, f"ByteXL bulk read of {path} failed after 3 attempts: {last_error}")
+
+    try:
+        resp.raw.decode_content = True
+        for item in ijson.items(resp.raw, "item"):
+            yield item
     except requests.RequestException as exc:
         raise HTTPException(502, f"ByteXL bulk read failed: {exc}") from exc
     except ijson.JSONError as exc:
         raise HTTPException(502, f"ByteXL returned an invalid bulk response: {exc}") from exc
+    finally:
+        resp.close()
 
 
 @app.get("/save-token", response_class=HTMLResponse)

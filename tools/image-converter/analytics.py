@@ -347,13 +347,33 @@ def load_snapshot(fetch_items, force: bool = False) -> dict[str, Any]:
                 pass  # Unreadable cache is a rebuild, not an error.
 
     started = time.time()
-    # Consumed lazily and in order inside build_fact_table, so at most one bulk
-    # response is open at a time. Do not wrap these in list().
-    snapshot = build_fact_table(
-        fetch_items("/api/questions"),
-        fetch_items("/api/questions-vault"),
-        fetch_items("/api/tests?builderListView=true"),
-    )
+    try:
+        # Consumed lazily and in order inside build_fact_table, so at most one
+        # bulk response is open at a time. Do not wrap these in list().
+        snapshot = build_fact_table(
+            fetch_items("/api/questions"),
+            fetch_items("/api/questions-vault"),
+            fetch_items("/api/tests?builderListView=true"),
+        )
+    except Exception:
+        # ByteXL itself can be down or flaking (a bare 502 from its edge has hit
+        # this build in production). A visitor with a working dashboard a moment
+        # ago should not lose it because of a transient outage on ByteXL's side
+        # — serve whatever is still on disk, however stale, over a hard error.
+        # Only a cold start with nothing cached yet has no fallback and must
+        # raise.
+        if SNAPSHOT_PATH.exists():
+            try:
+                snapshot = json.loads(SNAPSHOT_PATH.read_text(encoding="utf-8"))
+                if snapshot.get("schemaVersion") == SNAPSHOT_SCHEMA_VERSION:
+                    snapshot["cached"] = True
+                    snapshot["ageSeconds"] = int(time.time() - SNAPSHOT_PATH.stat().st_mtime)
+                    snapshot["refreshFailed"] = True
+                    return snapshot
+            except (ValueError, OSError):
+                pass
+        raise
+
     snapshot["generatedAt"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     snapshot["buildSeconds"] = round(time.time() - started, 1)
     snapshot["cached"] = False

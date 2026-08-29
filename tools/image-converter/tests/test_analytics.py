@@ -196,6 +196,33 @@ class SnapshotSourceTests(unittest.TestCase):
         analytics.load_snapshot(fetch, force=True)
         self.assertEqual(open_paths, [])
 
+    def test_a_failed_rebuild_falls_back_to_the_stale_disk_cache(self):
+        # ByteXL's own edge has returned a bare 502 on /api/questions-vault in
+        # production. A visitor with a working dashboard a moment ago should
+        # not lose it to a transient outage on ByteXL's side.
+        def fetch_ok(path):
+            return iter([question()])
+
+        good = analytics.load_snapshot(fetch_ok, force=True)
+        self.assertNotIn("refreshFailed", good)
+
+        def fetch_502(path):
+            raise RuntimeError("502 Server Error: Bad Gateway")
+
+        served = analytics.load_snapshot(fetch_502, force=True)
+        self.assertTrue(served["refreshFailed"])
+        self.assertTrue(served["cached"])
+        self.assertEqual(served["counts"], good["counts"])
+
+    def test_a_failed_rebuild_with_no_cache_at_all_still_raises(self):
+        # A brand new deploy has nothing on disk yet — there is no stale
+        # snapshot to fall back to, so the failure must surface, not vanish.
+        def fetch_502(path):
+            raise RuntimeError("502 Server Error: Bad Gateway")
+
+        with self.assertRaises(RuntimeError):
+            analytics.load_snapshot(fetch_502, force=True)
+
     def setUp(self):
         # Keep the real cache file out of the way of these forced rebuilds.
         self._real_path = analytics.SNAPSHOT_PATH
