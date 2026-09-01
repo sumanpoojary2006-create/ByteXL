@@ -266,9 +266,9 @@ class AssessmentValidationTests(unittest.TestCase):
             {"_id": "q5", "title": "Not a structured title", "tags": "Set 2"},
         ]
 
-        result = server.set_two_assessment_candidates(questions, [])
+        result = server.set_assessment_candidates(questions, [], 2)
 
-        self.assertEqual(result["setTwoQuestionCount"], 4)
+        self.assertEqual(result["setQuestionCount"], 4)
         self.assertEqual(result["structuredQuestionCount"], 3)
         self.assertEqual(result["unstructuredQuestionCount"], 1)
         self.assertEqual(len(result["candidates"]), 1)
@@ -281,6 +281,70 @@ class AssessmentValidationTests(unittest.TestCase):
         self.assertIsNone(candidate["existingTest"])
         self.assertEqual(candidate["duration"], 60)
 
+    def test_set_one_and_set_two_produce_distinct_groups_for_same_unit(self):
+        questions = [
+            {"_id": "q1", "title": "AI - MCQ 3.1.1", "tags": "Set 1"},
+            {"_id": "q2", "title": "AI - MCQ 3.2.1", "tags": "Set 2"},
+        ]
+
+        set1 = server.set_assessment_candidates(questions, [], 1)
+        set2 = server.set_assessment_candidates(questions, [], 2)
+
+        self.assertEqual(len(set1["candidates"]), 1)
+        self.assertEqual(len(set2["candidates"]), 1)
+        self.assertEqual(set1["candidates"][0]["questionIds"], ["q1"])
+        self.assertEqual(set2["candidates"][0]["questionIds"], ["q2"])
+        # Set 2 titles are unchanged from before this generalized; Set 1 gets a suffix.
+        self.assertEqual(set2["candidates"][0]["title"], "AI - Assessment 3")
+        self.assertEqual(set1["candidates"][0]["title"], "AI - Assessment 3 (Set 1)")
+        self.assertNotEqual(set1["candidates"][0]["groupKey"], set2["candidates"][0]["groupKey"])
+
+    def test_set_one_matches_real_world_inconsistent_tag_formats(self):
+        # ByteXL's actual Set 1 tags vary per course: "python - set 1",
+        # "ai - Set 1", "Security and Reliability - Set 1", "cloud security - set 1".
+        # None of these are a fixed "<course> - set 1" string, so matching has to
+        # be a loose substring search rather than an exact tag comparison.
+        questions = [
+            {"_id": "q1", "title": "Python - MCQ - 6.1.10", "tags": ["python - set 1"]},
+            {"_id": "q2", "title": "System Design - MCQ 8.1.7", "tags": ["Security and Reliability - Set 1"]},
+            {"_id": "q3", "title": "Cloud Security - MCQ 11.1.5", "tags": ["cloud security - set 1"]},
+        ]
+
+        result = server.set_assessment_candidates(questions, [], 1)
+
+        courses = {c["course"]: c for c in result["candidates"]}
+        self.assertEqual(set(courses), {"Python", "System Design", "Cloud Security"})
+        self.assertEqual(courses["System Design"]["unit"], 8)
+        self.assertEqual(courses["Cloud Security"]["unit"], 11)
+
+    def test_set_two_question_is_not_matched_when_requesting_set_one(self):
+        questions = [{"_id": "q1", "title": "AI - MCQ 3.2.1", "tags": "Set 2"}]
+
+        result = server.set_assessment_candidates(questions, [], 1)
+
+        self.assertEqual(result["setQuestionCount"], 0)
+        self.assertEqual(result["candidates"], [])
+
+    def test_candidates_endpoint_defaults_to_set_two_and_accepts_set_one(self):
+        with patch.object(server, "published_test_items", return_value=[]), \
+             patch.object(server, "published_question_items", return_value=[
+                 {"_id": "q1", "title": "AI - MCQ 1.2.1", "tags": "Set 2"},
+                 {"_id": "q2", "title": "AI - MCQ 1.1.1", "tags": "Set 1"},
+             ]):
+            default_result = asyncio.run(server.test_assessment_candidates())
+            set_one_result = asyncio.run(server.test_assessment_candidates(set="1"))
+
+        self.assertEqual(default_result["set"], 2)
+        self.assertEqual(default_result["candidates"][0]["questionIds"], ["q1"])
+        self.assertEqual(set_one_result["set"], 1)
+        self.assertEqual(set_one_result["candidates"][0]["questionIds"], ["q2"])
+
+    def test_candidates_endpoint_rejects_invalid_set(self):
+        with self.assertRaises(HTTPException) as raised:
+            asyncio.run(server.test_assessment_candidates(set="3"))
+
+        self.assertEqual(raised.exception.status_code, 400)
+
     def test_candidates_flag_duplicate_order_and_existing_test(self):
         questions = [
             {"_id": "q1", "title": "AI - MCQ 2.2.1", "tags": "Set 2"},
@@ -288,7 +352,7 @@ class AssessmentValidationTests(unittest.TestCase):
         ]
         tests = [{"_id": "test-9", "title": "AI - Assessment 2"}]
 
-        result = server.set_two_assessment_candidates(questions, tests)
+        result = server.set_assessment_candidates(questions, tests, 2)
 
         candidate = result["candidates"][0]
         self.assertFalse(candidate["ready"])
@@ -301,7 +365,7 @@ class AssessmentValidationTests(unittest.TestCase):
         questions = [{"_id": "q1", "title": "System Design - MCQ 1.2.1", "tags": "Set 2"}]
         tests = [{"_id": "test-1", "title": "System Design (v1) – Assessment 1"}]
 
-        result = server.set_two_assessment_candidates(questions, tests)
+        result = server.set_assessment_candidates(questions, tests, 2)
 
         candidate = result["candidates"][0]
         self.assertEqual(candidate["existingTest"]["_id"], "test-1")
@@ -321,7 +385,7 @@ class AssessmentValidationTests(unittest.TestCase):
         ]
         bytexl_get.return_value = {"data": {"questions": [{"_id": "q1"}]}}
 
-        result = server.set_two_assessment_candidates(questions, tests)
+        result = server.set_assessment_candidates(questions, tests, 2)
 
         candidate = result["candidates"][0]
         self.assertEqual(candidate["existingTest"]["_id"], "test-77")
@@ -333,7 +397,7 @@ class AssessmentValidationTests(unittest.TestCase):
         tests = [{"_id": "test-1", "title": "Unrelated Test", "testIntent": "standardizedAssessment", "questionsCount": 1}]
         bytexl_get.return_value = {"data": {"questions": [{"_id": "different-question"}]}}
 
-        result = server.set_two_assessment_candidates(questions, tests)
+        result = server.set_assessment_candidates(questions, tests, 2)
 
         candidate = result["candidates"][0]
         self.assertIsNone(candidate["existingTest"])
@@ -347,7 +411,7 @@ class AssessmentValidationTests(unittest.TestCase):
             {"_id": "test-2", "title": "Other2", "testIntent": "standardizedAssessment", "questionsCount": 5},
         ]
 
-        result = server.set_two_assessment_candidates(questions, tests)
+        result = server.set_assessment_candidates(questions, tests, 2)
 
         bytexl_get.assert_not_called()
         self.assertIsNone(result["candidates"][0]["existingTest"])
@@ -373,7 +437,7 @@ class AssessmentValidationTests(unittest.TestCase):
             {"_id": "q2", "title": "AI - MCQ 1.2.1", "tags": "Set 2"},
         ]
         bytexl_post.return_value = {"_id": "test-1", "title": "AI - Assessment 1"}
-        group_key = server.set_two_group_key("AI", 1)
+        group_key = server.assessment_group_key("AI", 1, 2)
 
         result = asyncio.run(server.test_assessment_create({"confirm": True, "groupKeys": [group_key]}))
 
@@ -395,7 +459,7 @@ class AssessmentValidationTests(unittest.TestCase):
     ):
         published_questions.return_value = [{"_id": "q1", "title": "AI - MCQ 1.2.1", "tags": "Set 2"}]
         bytexl_post.return_value = {"_id": "test-1", "title": "Custom Title"}
-        group_key = server.set_two_group_key("AI", 1)
+        group_key = server.assessment_group_key("AI", 1, 2)
 
         result = asyncio.run(
             server.test_assessment_create(
@@ -416,7 +480,7 @@ class AssessmentValidationTests(unittest.TestCase):
     @patch.object(server, "published_question_items")
     def test_create_rejects_blank_title_override(self, published_questions, _published_tests):
         published_questions.return_value = [{"_id": "q1", "title": "AI - MCQ 1.2.1", "tags": "Set 2"}]
-        group_key = server.set_two_group_key("AI", 1)
+        group_key = server.assessment_group_key("AI", 1, 2)
 
         with self.assertRaises(HTTPException) as raised:
             asyncio.run(
@@ -431,7 +495,7 @@ class AssessmentValidationTests(unittest.TestCase):
     @patch.object(server, "published_question_items")
     def test_create_rejects_out_of_range_duration_override(self, published_questions, _published_tests):
         published_questions.return_value = [{"_id": "q1", "title": "AI - MCQ 1.2.1", "tags": "Set 2"}]
-        group_key = server.set_two_group_key("AI", 1)
+        group_key = server.assessment_group_key("AI", 1, 2)
 
         with self.assertRaises(HTTPException) as raised:
             asyncio.run(
@@ -446,7 +510,7 @@ class AssessmentValidationTests(unittest.TestCase):
     @patch.object(server, "published_question_items")
     def test_create_rejects_group_that_already_has_a_test(self, published_questions, _published_tests):
         published_questions.return_value = [{"_id": "q1", "title": "AI - MCQ 1.2.1", "tags": "Set 2"}]
-        group_key = server.set_two_group_key("AI", 1)
+        group_key = server.assessment_group_key("AI", 1, 2)
 
         with self.assertRaises(HTTPException) as raised:
             asyncio.run(server.test_assessment_create({"confirm": True, "groupKeys": [group_key]}))
@@ -571,9 +635,28 @@ class AssessmentValidationTests(unittest.TestCase):
         )
 
         self.assertEqual(result["status"], "success")
+        self.assertEqual(result["set"], 2)
         self.assertEqual(result["poolSize"], 2)
         self.assertEqual(result["readyCount"], 1)
         self.assertEqual(sorted(result["rows"][0]["questionIds"]), ["q1", "q2"])
+
+    @patch.object(server, "published_test_items", return_value=[])
+    @patch.object(server, "published_question_items")
+    def test_blueprint_preview_endpoint_respects_set_one(self, published_questions, _published_tests):
+        published_questions.return_value = [
+            {"_id": "q1", "type": "multipleChoice", "subjects": ["python"], "tags": ["python - set 1"], "topics": ["strings"]},
+            {"_id": "q2", "type": "multipleChoice", "subjects": ["python"], "tags": ["python - set 2"], "topics": ["strings"]},
+        ]
+
+        result = asyncio.run(
+            server.test_assessment_blueprint_preview(
+                {"subject": "python", "set": 1, "rows": [{"title": "Strings", "topics": ["strings"], "mcqCount": 1, "codingCount": 0, "duration": 60}]}
+            )
+        )
+
+        self.assertEqual(result["set"], 1)
+        self.assertEqual(result["poolSize"], 1)
+        self.assertEqual(result["rows"][0]["questionIds"], ["q1"])
 
     @patch.object(server, "bytexl_post")
     @patch.object(server, "published_test_items", return_value=[])

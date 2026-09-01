@@ -57,6 +57,12 @@
     .field textarea:focus { border-color: var(--violet); box-shadow: 0 0 0 3px rgba(139,92,246,.12); }
     .notice code { padding: 1px 6px; border-radius: 5px; background: rgba(255,255,255,.08); font-family: "SFMono-Regular",Consolas,monospace; font-size: 12px; }
     .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .set-toggle { display: inline-flex; border: 1px solid var(--line-hi); border-radius: 9px; overflow: hidden; }
+    .set-toggle button { min-height: 44px; padding: 0 16px; border: none; background: rgba(255,255,255,.05); color: var(--ink2); font-weight: 800; cursor: pointer; }
+    .set-toggle button + button { border-left: 1px solid var(--line-hi); }
+    .set-toggle button.active { color: white; background: var(--grad); }
+    .field select { width: 100%; height: 44px; padding: 0 14px; color: var(--ink); background: rgba(8,11,22,.66); border: 1px solid var(--line-hi); border-radius: 9px; outline: none; }
+    .field select:focus { border-color: var(--violet); box-shadow: 0 0 0 3px rgba(139,92,246,.12); }
     .btn { min-height: 44px; padding: 0 18px; border: 1px solid var(--line-hi); border-radius: 9px; color: var(--ink2); background: rgba(255,255,255,.05); font-weight: 800; cursor: pointer; }
     .btn.primary { color: white; border-color: transparent; background: var(--grad); }
     .btn.success { color: #03251a; border-color: transparent; background: var(--success); }
@@ -108,28 +114,32 @@
 <div class="page">
   <nav class="topnav">
     <a class="nav-brand" href="/"><span class="logo">b</span><span class="brand">byte<span>XL</span> Uploader</span></a>
-    <div class="nav-links"><a class="nav-link" href="/">Content</a><a class="nav-link" href="/assessment">Question Upload</a><a class="nav-link" href="/question-bank-analytics">Analytics</a></div>
+    <div class="nav-links"><a class="nav-link" href="/">Content</a><a class="nav-link" href="/assessment">Question Upload</a><a class="nav-link" href="/course-builder">Course Builder</a><a class="nav-link" href="/question-bank-analytics">Analytics</a></div>
   </nav>
   <main>
     <div class="shell">
       <section class="hero">
         <h1>Test Builder Automation</h1>
-        <p>Set 2 questions already published in ByteXL are auto-grouped by course and unit. Pick the groups you want and create standardized assessments in ByteXL with one click &mdash; no manual General/Questions form-filling.</p>
+        <p>Set <span class="set-label">2</span> questions already published in ByteXL are auto-grouped by course and unit. Pick the groups you want and create standardized assessments in ByteXL with one click &mdash; no manual General/Questions form-filling.</p>
       </section>
       <section class="card">
         <div class="card-head">
-          <div><div class="card-title">Detected Set 2 assessment groups</div><div id="headSub" class="card-sub">Loading candidates from ByteXL&hellip;</div></div>
+          <div><div class="card-title">Detected Set <span class="set-label">2</span> assessment groups</div><div id="headSub" class="card-sub">Loading candidates from ByteXL&hellip;</div></div>
           <div class="actions">
+            <div class="set-toggle" role="group" aria-label="Question set">
+              <button id="setTwoBtn" class="active" type="button" data-set="2">Set 2</button>
+              <button id="setOneBtn" type="button" data-set="1">Set 1</button>
+            </div>
             <button id="refreshBtn" class="btn" type="button">Refresh</button>
             <button id="selectAllBtn" class="btn" type="button">Select all ready</button>
             <button id="clearBtn" class="btn" type="button">Clear selection</button>
           </div>
         </div>
         <div class="body">
-          <div class="notice">A group is created from questions titled like <strong>&ldquo;Course &ndash; MCQ 3.2.5&rdquo;</strong> or <strong>&ldquo;Course &ndash; Coding Question 3.2.5&rdquo;</strong>, tagged Set 2. All matching questions for that course + unit become one test. Edit the assessment title or duration inline for any ready row before creating.</div>
+          <div class="notice">A group is created from questions titled like <strong>&ldquo;Course &ndash; MCQ 3.<span class="set-label">2</span>.5&rdquo;</strong> or <strong>&ldquo;Course &ndash; Coding Question 3.<span class="set-label">2</span>.5&rdquo;</strong>, tagged Set <span class="set-label">2</span>. All matching questions for that course + unit become one test. Edit the assessment title or duration inline for any ready row before creating.</div>
           <div id="message" class="message" hidden></div>
           <div class="stats">
-            <div class="stat"><strong id="setTwoCount">0</strong><span>Set 2 questions</span></div>
+            <div class="stat"><strong id="setTwoCount">0</strong><span>Set <span class="set-label">2</span> questions</span></div>
             <div class="stat"><strong id="structuredCount">0</strong><span>Structured</span></div>
             <div class="stat"><strong id="unstructuredCount">0</strong><span>Needs fixing</span></div>
             <div class="stat"><strong id="readyCount">0</strong><span>Ready to create</span></div>
@@ -178,10 +188,17 @@
           <div><div class="card-title">Custom topic blueprint</div><div class="card-sub">For courses where assessment topics don&rsquo;t map 1:1 to curriculum units &mdash; set exact MCQ / coding counts per topic instead of auto-discovering by unit.</div></div>
         </div>
         <div class="body">
-          <div class="notice">Each row is <code>{"title","topics","mcqCount","codingCount","duration","difficulty"}</code>. <code>topics</code> must match the <code>topics</code> tag on Set&nbsp;2 questions in ByteXL (e.g. <code>strings</code>, <code>lists-and-tuples</code>) &mdash; list several to merge them into one test. <code>difficulty</code> is optional (<code>"easy"</code>, <code>"medium"</code>, <code>"hard"</code>, or an array to allow several) and filters both MCQ and coding pools; omit it to draw from any difficulty. Questions are spread evenly across merged topics and picked in a fixed order, so re-running with the same inputs is deterministic.</div>
+          <div class="notice">Each row is <code>{"title","topics","mcqCount","codingCount","duration","difficulty"}</code>. <code>topics</code> must match the <code>topics</code> tag on questions in the set chosen below (e.g. <code>strings</code>, <code>lists-and-tuples</code>) &mdash; list several to merge them into one test. <code>difficulty</code> is optional (<code>"easy"</code>, <code>"medium"</code>, <code>"hard"</code>, or an array to allow several) and filters both MCQ and coding pools; omit it to draw from any difficulty. Questions are spread evenly across merged topics and picked in a fixed order, so re-running with the same inputs is deterministic.</div>
           <div class="field">
             <label for="blueprintSubject">Subject</label>
             <input id="blueprintSubject" type="text" placeholder="e.g. python">
+          </div>
+          <div class="field">
+            <label for="blueprintSet">Set</label>
+            <select id="blueprintSet">
+              <option value="2" selected>Set 2</option>
+              <option value="1">Set 1</option>
+            </select>
           </div>
           <div class="field">
             <label for="blueprintRows">Blueprint rows (JSON array)</label>

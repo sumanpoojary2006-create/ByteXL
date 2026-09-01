@@ -21,6 +21,10 @@
     {
       "source": "/question-bank-analytics",
       "destination": "/analytics.html"
+    },
+    {
+      "source": "/course-builder",
+      "destination": "/course-builder.html"
     }
   ],
   "headers": [

@@ -9,8 +9,14 @@ function apiBase() {
 }
 
 const API_BASE = apiBase();
-const state = { loading: false, creating: false, discovery: null, selected: new Set(), overrides: new Map(), search: "" };
+const state = { loading: false, creating: false, discovery: null, selected: new Set(), overrides: new Map(), search: "", set: 2 };
 const $ = (id) => document.getElementById(id);
+
+function updateSetLabels() {
+  document.querySelectorAll(".set-label").forEach((el) => { el.textContent = state.set; });
+  $("setTwoBtn").classList.toggle("active", state.set === 2);
+  $("setOneBtn").classList.toggle("active", state.set === 1);
+}
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -65,7 +71,7 @@ function candidateStatus(candidate) {
 
 function renderStats() {
   const discovery = state.discovery;
-  $("setTwoCount").textContent = discovery?.setTwoQuestionCount ?? 0;
+  $("setTwoCount").textContent = discovery?.setQuestionCount ?? 0;
   $("structuredCount").textContent = discovery?.structuredQuestionCount ?? 0;
   $("unstructuredCount").textContent = discovery?.unstructuredQuestionCount ?? 0;
   $("readyCount").textContent = discovery?.readyCount ?? 0;
@@ -216,13 +222,14 @@ function renderControls() {
 }
 
 function render() {
+  updateSetLabels();
   renderStats();
   renderTables();
   const discovery = state.discovery;
   if (state.loading) {
-    $("headSub").textContent = "Scanning ByteXL for Set 2 questions…";
+    $("headSub").textContent = `Scanning ByteXL for Set ${state.set} questions…`;
   } else if (discovery) {
-    $("headSub").textContent = `${discovery.candidateCount} group(s) detected from ${discovery.setTwoQuestionCount} Set 2 question(s).`;
+    $("headSub").textContent = `${discovery.candidateCount} group(s) detected from ${discovery.setQuestionCount} Set ${state.set} question(s).`;
   }
   renderControls();
 }
@@ -234,16 +241,22 @@ async function loadCandidates() {
   state.overrides.clear();
   render();
   try {
-    const result = await request("/test-assessment/candidates");
+    const result = await request(`/test-assessment/candidates?set=${state.set}`);
     state.discovery = result;
     showMessage("");
   } catch (error) {
     state.discovery = null;
-    showMessage(error.message || "Could not load Set 2 assessment candidates.", "error");
+    showMessage(error.message || `Could not load Set ${state.set} assessment candidates.`, "error");
   } finally {
     state.loading = false;
     render();
   }
+}
+
+function setActiveSet(setNumber) {
+  if (state.set === setNumber || state.loading || state.creating) return;
+  state.set = setNumber;
+  loadCandidates();
 }
 
 function selectAllReady() {
@@ -300,7 +313,7 @@ async function createSelected() {
   try {
     const result = await request("/test-assessment/create", {
       method: "POST",
-      body: JSON.stringify({ confirm: true, groupKeys: Array.from(state.selected), overrides: buildOverridesPayload() })
+      body: JSON.stringify({ confirm: true, set: state.set, groupKeys: Array.from(state.selected), overrides: buildOverridesPayload() })
     });
     showMessage(`${result.createdCount} assessment(s) created, ${result.failedCount} failed.`, result.failedCount ? "error" : "success");
     renderResults(result);
@@ -396,7 +409,7 @@ function renderBlueprintRows() {
     </tr>`;
   }).join("");
 
-  $("blueprintSub").textContent = `${preview.readyCount} of ${preview.rows.length} row(s) ready · ${preview.poolSize} Set 2 questions found for "${preview.subject}".`;
+  $("blueprintSub").textContent = `${preview.readyCount} of ${preview.rows.length} row(s) ready · ${preview.poolSize} Set ${preview.set} questions found for "${preview.subject}".`;
   $("blueprintPill").textContent = preview.readyCount === preview.rows.length ? "All ready" : "Needs attention";
   $("blueprintCreateBtn").disabled = blueprintState.previewing || blueprintState.creating || preview.readyCount !== preview.rows.length;
   $("blueprintCreateBtn").textContent = blueprintState.creating
@@ -435,10 +448,11 @@ async function previewBlueprint() {
   $("blueprintResultsPanel").hidden = true;
   showBlueprintMessage("");
   renderBlueprintRows();
+  const set = Number($("blueprintSet").value) || 2;
   try {
     const result = await request("/test-assessment/blueprint/preview", {
       method: "POST",
-      body: JSON.stringify({ subject, rows })
+      body: JSON.stringify({ subject, set, rows })
     });
     blueprintState.preview = { ...result, subject };
     showBlueprintMessage(
@@ -486,7 +500,7 @@ async function createBlueprint() {
     const rows = parseBlueprintRows();
     const result = await request("/test-assessment/blueprint/create", {
       method: "POST",
-      body: JSON.stringify({ confirm: true, subject: preview.subject, rows })
+      body: JSON.stringify({ confirm: true, subject: preview.subject, set: preview.set, rows })
     });
     showBlueprintMessage(`${result.createdCount} assessment(s) created, ${result.failedCount} failed.`, result.failedCount ? "error" : "success");
     renderBlueprintResults(result);
@@ -509,6 +523,8 @@ function clearBlueprint() {
 }
 
 function init() {
+  $("setTwoBtn").addEventListener("click", () => setActiveSet(2));
+  $("setOneBtn").addEventListener("click", () => setActiveSet(1));
   $("refreshBtn").addEventListener("click", loadCandidates);
   $("selectAllBtn").addEventListener("click", selectAllReady);
   $("clearBtn").addEventListener("click", clearSelection);

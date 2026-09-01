@@ -276,18 +276,40 @@
       text-transform: uppercase; letter-spacing: 0.6px;
     }
 
-    .select-wrap { display: flex; gap: 9px; align-items: center; }
+    .select-wrap { display: flex; gap: 9px; align-items: flex-start; }
 
-    .field-select {
-      flex: 1; height: 42px; padding: 0 12px;
+    .product-picker { position: relative; flex: 1; min-width: 0; }
+    .product-search {
+      width: 100%; height: 42px; padding: 0 38px 0 38px;
       border: 1px solid var(--glass-brd-hi);
       border-radius: var(--radius-xs);
       background: rgba(10,12,22,0.7);
       color: var(--ink); font: inherit; font-size: 13px;
       transition: border-color .18s, box-shadow .18s;
     }
-    .field-select:focus { outline: none; border-color: var(--violet); box-shadow: 0 0 0 3px rgba(139,92,246,0.2); }
-    .field-select option { background: #0c0f1d; color: var(--ink); }
+    .product-search:focus { outline: none; border-color: var(--violet); box-shadow: 0 0 0 3px rgba(139,92,246,0.2); }
+    .product-search::-webkit-search-cancel-button { filter: invert(1); opacity: .55; cursor: pointer; }
+    .product-search-icon {
+      position: absolute; left: 13px; top: 12px; width: 17px; height: 17px;
+      color: var(--muted); pointer-events: none;
+    }
+    .product-picker.has-selection .product-search { border-color: rgba(139,92,246,0.5); }
+    .product-results {
+      position: absolute; z-index: 30; top: calc(100% + 7px); left: 0; right: 0;
+      max-height: 290px; overflow-y: auto; padding: 6px;
+      border: 1px solid var(--glass-brd-hi); border-radius: var(--radius-xs);
+      background: #0c0f1d; box-shadow: 0 18px 44px rgba(0,0,0,.45);
+    }
+    .product-results[hidden] { display: none; }
+    .product-result {
+      width: 100%; padding: 10px 11px; border: 0; border-radius: 7px;
+      background: transparent; color: var(--ink); text-align: left; cursor: pointer;
+      font: inherit; display: flex; flex-direction: column; gap: 3px;
+    }
+    .product-result:hover, .product-result.active { background: rgba(139,92,246,.16); }
+    .product-result-name { font-size: 13px; font-weight: 650; line-height: 1.3; }
+    .product-result-meta { color: var(--muted); font-size: 11px; }
+    .product-empty { padding: 16px 12px; color: var(--muted); font-size: 12px; text-align: center; }
 
     .icon-btn {
       width: 42px; height: 42px;
@@ -561,6 +583,7 @@
     <div class="nav-actions">
       <a class="nav-badge" href="/assessment">Question Upload</a>
       <a class="nav-badge" href="/assessment-builder">Assessment Builder</a>
+      <a class="nav-badge" href="/course-builder">Course Builder</a>
       <a class="nav-badge" href="/question-bank-analytics">Analytics</a>
     </div>
   </nav>
@@ -615,9 +638,14 @@
             <div>
               <span class="field-label">Product</span>
               <div class="select-wrap">
-                <select id="readingSelect" class="field-select">
-                  <option value="">Loading products…</option>
-                </select>
+                <div class="product-picker" id="productPicker">
+                  <svg class="product-search-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                  <input id="readingSearch" class="product-search" type="search" role="combobox"
+                    aria-label="Search products" aria-autocomplete="list" aria-controls="readingResults"
+                    aria-expanded="false" autocomplete="off" placeholder="Loading products…" disabled>
+                  <input id="readingSelect" type="hidden" value="">
+                  <div id="readingResults" class="product-results" role="listbox" hidden></div>
+                </div>
                 <button class="icon-btn" id="refreshReadingsBtn" type="button" title="Refresh">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
                 </button>
@@ -984,6 +1012,7 @@
 
   let zipBlob = null, sourceName = "", preparedZipBlob = null, preparedZipName = "";
   let preparedUploadPayload = null, lastPreviewPlan = null, readingsLoaded = false;
+  let readingMaterials = [], activeReadingIndex = -1;
   let previewFiles = [], contentPreviewMode = "rendered", currentContentPreviewPath = "";
 
   const CONFIG_STORAGE_KEY = "bytexlUploaderConfig";
@@ -1026,7 +1055,12 @@
     $("resetBtn").addEventListener("click", resetForm);
     $("imageChoice").addEventListener("change", () => { updateControls(); saveConfig(); });
     $("codeChoice").addEventListener("change", () => { updateControls(); saveConfig(); });
-    $("readingSelect").addEventListener("change", () => { updateControls(); saveConfig(); });
+    $("readingSearch").addEventListener("focus", () => renderReadingResults(""));
+    $("readingSearch").addEventListener("input", handleReadingSearch);
+    $("readingSearch").addEventListener("keydown", handleReadingSearchKeydown);
+    $("readingResults").addEventListener("mousedown", e => e.preventDefault());
+    $("readingResults").addEventListener("click", handleReadingResultClick);
+    document.addEventListener("click", e => { if (!$("productPicker").contains(e.target)) closeReadingResults(); });
     $("createMissingChoice").addEventListener("change", saveConfig);
     $("replaceAllChoice").addEventListener("change", saveConfig);
     $("uploadChoice").addEventListener("change", () => { updateControls(); saveConfig(); if ($("uploadChoice").checked) loadReadingMaterials(); });
@@ -1313,10 +1347,110 @@
     await Promise.all(Array.from({length: workerCount}, () => worker()));
   }
 
+  function readingLabel(item) {
+    return `${item.title} (${item.chapterCount||0} units, ${item.topicCount||0} topics)`;
+  }
+
+  function closeReadingResults() {
+    $("readingResults").hidden = true;
+    $("readingSearch").setAttribute("aria-expanded", "false");
+    $("readingSearch").removeAttribute("aria-activedescendant");
+    activeReadingIndex = -1;
+  }
+
+  function setActiveReadingResult(index) {
+    const results = Array.from($("readingResults").querySelectorAll(".product-result"));
+    if (!results.length) { activeReadingIndex = -1; return; }
+    activeReadingIndex = Math.max(0, Math.min(index, results.length - 1));
+    results.forEach((el, i) => el.classList.toggle("active", i === activeReadingIndex));
+    const active = results[activeReadingIndex];
+    $("readingSearch").setAttribute("aria-activedescendant", active.id);
+    active.scrollIntoView({block:"nearest"});
+  }
+
+  function renderReadingResults(query) {
+    if (!readingMaterials.length || $("readingSearch").disabled) return;
+    const results = $("readingResults");
+    const needle = String(query||"").trim().toLocaleLowerCase();
+    const matches = readingMaterials.filter(item =>
+      !needle || String(item.title||"").toLocaleLowerCase().includes(needle)
+    );
+    results.innerHTML = "";
+    if (!matches.length) {
+      const empty = document.createElement("div");
+      empty.className = "product-empty";
+      empty.textContent = `No products match “${query}”`;
+      results.appendChild(empty);
+    } else {
+      matches.forEach((item, index) => {
+        const option = document.createElement("button");
+        option.type = "button";
+        option.className = "product-result";
+        option.id = `reading-option-${index}`;
+        option.setAttribute("role", "option");
+        option.dataset.readingId = item._id;
+        const name = document.createElement("span");
+        name.className = "product-result-name";
+        name.textContent = item.title;
+        const meta = document.createElement("span");
+        meta.className = "product-result-meta";
+        meta.textContent = `${item.chapterCount||0} units · ${item.topicCount||0} topics`;
+        option.append(name, meta);
+        results.appendChild(option);
+      });
+    }
+    results.hidden = false;
+    $("readingSearch").setAttribute("aria-expanded", "true");
+    activeReadingIndex = -1;
+  }
+
+  function selectReading(readingId, persist = true) {
+    const item = readingMaterials.find(candidate => candidate._id === readingId);
+    if (!item) return;
+    $("readingSelect").value = item._id;
+    $("readingSearch").value = readingLabel(item);
+    $("productPicker").classList.add("has-selection");
+    closeReadingResults();
+    updateControls();
+    if (persist) saveConfig();
+  }
+
+  function handleReadingSearch(event) {
+    $("readingSelect").value = "";
+    $("productPicker").classList.remove("has-selection");
+    updateControls();
+    renderReadingResults(event.target.value);
+  }
+
+  function handleReadingResultClick(event) {
+    const option = event.target.closest(".product-result");
+    if (option) selectReading(option.dataset.readingId);
+  }
+
+  function handleReadingSearchKeydown(event) {
+    const results = Array.from($("readingResults").querySelectorAll(".product-result"));
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      event.preventDefault();
+      if ($("readingResults").hidden) renderReadingResults($("readingSearch").value);
+      const direction = event.key === "ArrowDown" ? 1 : -1;
+      setActiveReadingResult(activeReadingIndex < 0 ? (direction > 0 ? 0 : results.length - 1) : activeReadingIndex + direction);
+    } else if (event.key === "Enter" && activeReadingIndex >= 0) {
+      event.preventDefault();
+      const active = $("readingResults").querySelectorAll(".product-result")[activeReadingIndex];
+      if (active) selectReading(active.dataset.readingId);
+    } else if (event.key === "Escape") {
+      closeReadingResults();
+    }
+  }
+
   async function loadReadingMaterials() {
-    const sel = $("readingSelect"), btn = $("refreshReadingsBtn");
-    const prev = sel.value || (savedConfig && savedConfig.reading) || "";
-    sel.innerHTML = `<option value="">Loading products…</option>`;
+    const selected = $("readingSelect"), search = $("readingSearch"), btn = $("refreshReadingsBtn");
+    const prev = selected.value || (savedConfig && savedConfig.reading) || "";
+    selected.value = "";
+    search.value = "";
+    search.placeholder = "Loading products…";
+    search.disabled = true;
+    closeReadingResults();
     if (btn) btn.disabled = true;
     try {
       const r = await fetch(readingMaterialsUrl);
@@ -1329,20 +1463,18 @@
         throw new Error(detail);
       }
       const data = await r.json();
-      const items = (data.items||[]).sort((a,b)=>(a.title||"").localeCompare(b.title||""));
-      sel.innerHTML = "";
-      for (const it of items) {
-        const o = document.createElement("option");
-        o.value = it._id;
-        o.textContent = `${it.title} (${it.chapterCount||0} units, ${it.topicCount||0} topics)`;
-        sel.appendChild(o);
-      }
-      if (prev && sel.querySelector(`option[value="${prev}"]`)) sel.value = prev;
-      else { const def = sel.querySelector(`option[value="${data.defaultReadingId}"]`); if (def) def.selected = true; }
+      readingMaterials = (data.items||[]).sort((a,b)=>(a.title||"").localeCompare(b.title||""));
+      search.disabled = false;
+      search.placeholder = `Search ${readingMaterials.length} products…`;
+      const initialId = [prev, data.defaultReadingId, readingMaterials[0]?._id]
+        .find(id => readingMaterials.some(item => item._id === id));
+      if (initialId) selectReading(initialId, false);
       readingsLoaded = true;
     } catch (error) {
       const message = error && error.message ? error.message : "Product list unavailable";
-      sel.innerHTML = `<option value="">${escapeHtml(message)} — click refresh</option>`;
+      readingMaterials = [];
+      search.placeholder = `${message} — click refresh`;
+      $("productPicker").classList.remove("has-selection");
     }
     if (btn) btn.disabled = false;
     updateControls();

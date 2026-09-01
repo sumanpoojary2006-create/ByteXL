@@ -20,6 +20,7 @@ from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 
 import analytics
+import coursebuilder
 
 app = FastAPI()
 # The analytics fact table is ~6 MB of JSON and compresses to a fraction of that.
@@ -753,15 +754,32 @@ def upsert_assessment_questions(questions: list[dict[str, Any]]) -> list[Any]:
     return upserted
 
 
-SET_TWO_TAG_RE = re.compile(r"(?:^|[^a-z0-9])set\s*[-_]?\s*2(?:$|[^a-z0-9])", re.IGNORECASE)
+SET_TAG_PATTERNS: dict[int, re.Pattern[str]] = {
+    number: re.compile(rf"(?:^|[^a-z0-9])set\s*[-_]?\s*{number}(?:$|[^a-z0-9])", re.IGNORECASE)
+    for number in (1, 2)
+}
 
 
-def is_set_two_question(question: Any) -> bool:
+def is_set_question(question: Any, set_number: int) -> bool:
+    """Match a question's tags against "set N" regardless of exact wording.
+
+    Tag text is inconsistent across courses ("python - set 2", "ai - Set 1",
+    "Security and Reliability - Set 1", "cloud security - set 1"), but every
+    variant contains the literal "set N" substring somewhere, so a loose
+    regex search is more robust than trying to match a canonical tag format.
+    """
     if not isinstance(question, dict):
+        return False
+    pattern = SET_TAG_PATTERNS.get(set_number)
+    if pattern is None:
         return False
     tags = question.get("tags")
     values = tags if isinstance(tags, list) else [tags]
-    return any(SET_TWO_TAG_RE.search(str(value or "")) for value in values)
+    return any(pattern.search(str(value or "")) for value in values)
+
+
+def is_set_two_question(question: Any) -> bool:
+    return is_set_question(question, 2)
 
 
 def normalize_assessment_question_title(value: Any) -> str:
@@ -794,19 +812,19 @@ def published_test_items() -> list[dict[str, Any]]:
     return [item for item in items if isinstance(item, dict)]
 
 
-SET_TWO_STRUCTURED_TITLE_RE = re.compile(
+STRUCTURED_TITLE_RE = re.compile(
     r"^(?P<course>.+?)\s+-\s+(?P<kind>MCQ|Coding(?:\s+Question)?s?)\s*(?:-\s*)?"
-    r"(?P<unit>\d+)\.2\.(?P<order>\d+)\s*$",
+    r"(?P<unit>\d+)\.(?P<set>\d+)\.(?P<order>\d+)\s*$",
     re.IGNORECASE,
 )
 
 
-def parse_set_two_question_title(question: dict[str, Any]) -> Optional[dict[str, Any]]:
-    if not is_set_two_question(question):
+def parse_structured_question_title(question: dict[str, Any], set_number: int) -> Optional[dict[str, Any]]:
+    if not is_set_question(question, set_number):
         return None
     title = " ".join(str(question.get("title") or "").split())
-    match = SET_TWO_STRUCTURED_TITLE_RE.fullmatch(title)
-    if not match:
+    match = STRUCTURED_TITLE_RE.fullmatch(title)
+    if not match or int(match.group("set")) != set_number:
         return None
     return {
         "course": match.group("course").strip(),
@@ -816,14 +834,21 @@ def parse_set_two_question_title(question: dict[str, Any]) -> Optional[dict[str,
     }
 
 
-def assessment_title_for_set_two_group(course: str, unit: int) -> str:
+def parse_set_two_question_title(question: dict[str, Any]) -> Optional[dict[str, Any]]:
+    return parse_structured_question_title(question, 2)
+
+
+def assessment_title_for_group(course: str, unit: int, set_number: int) -> str:
     display_course = re.sub(
         r"^Introduction to Artificial Intelligence$",
         "Intro to Artificial Intelligence",
         course,
         flags=re.IGNORECASE,
     )
-    return f"{display_course} - Assessment {unit}"
+    # Set 2 titles are unchanged from before this was generalized, since
+    # production already has tests and dedup logic keyed on that exact form.
+    suffix = "" if set_number == 2 else f" (Set {set_number})"
+    return f"{display_course} - Assessment {unit}{suffix}"
 
 
 def normalize_assessment_test_title(value: Any) -> str:
@@ -833,8 +858,8 @@ def normalize_assessment_test_title(value: Any) -> str:
     return re.sub(r"[^a-z0-9]+", " ", title).strip()
 
 
-def set_two_group_key(course: str, unit: int) -> str:
-    canonical = f"{course.casefold()}|{unit}"
+def assessment_group_key(course: str, unit: int, set_number: int) -> str:
+    canonical = f"{course.casefold()}|{unit}|set{set_number}"
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()[:16]
 
 
@@ -882,23 +907,24 @@ def find_existing_test_by_question_ids(
     return None
 
 
-def set_two_assessment_candidates(
+def set_assessment_candidates(
     questions: list[dict[str, Any]],
     tests: list[dict[str, Any]],
+    set_number: int,
 ) -> dict[str, Any]:
     groups: dict[tuple[str, int], list[dict[str, Any]]] = {}
     structured_count = 0
-    set_two_count = 0
+    set_count = 0
     for question in questions:
-        if not is_set_two_question(question):
+        if not is_set_question(question, set_number):
             continue
-        set_two_count += 1
-        parsed = parse_set_two_question_title(question)
+        set_count += 1
+        parsed = parse_structured_question_title(question, set_number)
         if not parsed or not question.get("_id"):
             continue
         structured_count += 1
         key = (parsed["course"], parsed["unit"])
-        groups.setdefault(key, []).append({**question, "_setTwo": parsed})
+        groups.setdefault(key, []).append({**question, "_setInfo": parsed})
 
     existing_by_title: dict[str, dict[str, Any]] = {}
     for test in tests:
@@ -909,21 +935,22 @@ def set_two_assessment_candidates(
     detail_cache: dict[str, frozenset[str]] = {}
     candidates: list[dict[str, Any]] = []
     for (course, unit), items in groups.items():
-        items.sort(key=lambda question: (question["_setTwo"]["order"], str(question.get("_id"))))
-        orders = [question["_setTwo"]["order"] for question in items]
+        items.sort(key=lambda question: (question["_setInfo"]["order"], str(question.get("_id"))))
+        orders = [question["_setInfo"]["order"] for question in items]
         duplicate_orders = sorted({order for order in orders if orders.count(order) > 1})
-        title = assessment_title_for_set_two_group(course, unit)
+        title = assessment_title_for_group(course, unit, set_number)
         question_ids = [str(question["_id"]) for question in items]
         existing = existing_by_title.get(normalize_assessment_test_title(title))
         if not existing:
             existing = find_existing_test_by_question_ids(question_ids, tests, detail_cache)
-        kinds = sorted({question["_setTwo"]["kind"] for question in items})
+        kinds = sorted({question["_setInfo"]["kind"] for question in items})
         duration = 60 if "coding" in kinds else 30
         candidates.append(
             {
-                "groupKey": set_two_group_key(course, unit),
+                "groupKey": assessment_group_key(course, unit, set_number),
                 "course": course,
                 "unit": unit,
+                "set": set_number,
                 "title": title,
                 "duration": duration,
                 "questionCount": len(items),
@@ -949,9 +976,10 @@ def set_two_assessment_candidates(
     candidates.sort(key=lambda candidate: (candidate["course"].casefold(), candidate["unit"]))
     return {
         "candidates": candidates,
-        "setTwoQuestionCount": set_two_count,
+        "set": set_number,
+        "setQuestionCount": set_count,
         "structuredQuestionCount": structured_count,
-        "unstructuredQuestionCount": set_two_count - structured_count,
+        "unstructuredQuestionCount": set_count - structured_count,
         "candidateCount": len(candidates),
         "readyCount": sum(candidate["ready"] and not candidate["existingTest"] for candidate in candidates),
         "existingCount": sum(bool(candidate["existingTest"]) for candidate in candidates),
@@ -963,20 +991,20 @@ def assessment_url_slug(title: str) -> str:
     return slug or "assessment"
 
 
-def subject_set_two_pool(subject: str, questions: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def subject_set_pool(subject: str, set_number: int, questions: list[dict[str, Any]]) -> list[dict[str, Any]]:
     subject_key = subject.strip().casefold()
     return [
         question
         for question in questions
-        if is_set_two_question(question)
+        if is_set_question(question, set_number)
         and subject_key in [str(item).casefold() for item in (question.get("subjects") or [])]
     ]
 
 
 def blueprint_order_key(question: dict[str, Any]) -> tuple[int, str]:
     title = str(question.get("title") or "")
-    match = re.search(r"(\d+)\.2\.(\d+)", title)
-    return (int(match.group(2)) if match else 10**6, title)
+    match = re.search(r"\.\d+\.(\d+)", title)
+    return (int(match.group(1)) if match else 10**6, title)
 
 
 def normalize_blueprint_difficulties(value: Any) -> set[str]:
@@ -1536,6 +1564,14 @@ def read_analytics_js() -> str:
     return (Path(__file__).parent / "analytics.js").read_text(encoding="utf-8")
 
 
+def read_course_builder() -> str:
+    return (Path(__file__).parent / "course-builder.html").read_text(encoding="utf-8")
+
+
+def read_course_builder_js() -> str:
+    return (Path(__file__).parent / "course-builder.js").read_text(encoding="utf-8")
+
+
 def bytexl_stream_large(path: str):
     """Yield the items of a bulk ByteXL collection one at a time.
 
@@ -1657,6 +1693,427 @@ async def analytics_snapshot(refresh: bool = False):
     return analytics.load_snapshot(bytexl_stream_large, force=refresh)
 
 
+@app.get("/course-builder", response_class=HTMLResponse)
+async def course_builder_page():
+    return read_course_builder()
+
+
+@app.get("/course-builder.js")
+async def course_builder_js():
+    return Response(read_course_builder_js(), media_type="application/javascript; charset=utf-8")
+
+
+@app.get("/course-builder/blueprints")
+async def course_builder_blueprints():
+    return {"status": "success", "items": coursebuilder.list_blueprints()}
+
+
+def build_course_plan(slug: str, refresh: bool = False) -> dict[str, Any]:
+    """Resolve a blueprint against the live donor products."""
+    try:
+        blueprint = coursebuilder.load_blueprint(slug)
+    except FileNotFoundError as exc:
+        raise HTTPException(404, str(exc)) from exc
+
+    product_ids = {
+        str(source.get("productId"))
+        for source in blueprint.get("sources") or []
+        if source.get("productId")
+    }
+    trees = {product_id: fetch_content(product_id) for product_id in sorted(product_ids)}
+
+    pinned_page_ids = [
+        (topic.get("source") or {}).get("pageId")
+        for unit in blueprint.get("units") or []
+        for chapter in unit.get("chapters") or []
+        for topic in chapter.get("topics") or []
+    ]
+    stats = coursebuilder.collect_page_stats(
+        [page_id for page_id in pinned_page_ids if page_id],
+        fetch_content_page,
+        refresh=refresh,
+    )
+    return coursebuilder.build_plan(blueprint, trees, stats)
+
+
+@app.get("/course-builder/plan")
+async def course_builder_plan(slug: str, refresh: bool = False):
+    plan = build_course_plan(slug, refresh)
+    existing = bytexl_get("/api/content/v2/list?pageSize=10000")
+    wanted = coursebuilder.normalize_title(plan.get("title") or "")
+    plan["existingProduct"] = next(
+        (
+            {"_id": item.get("_id"), "title": item.get("title"),
+             "topicCount": item.get("topicCount")}
+            for item in (existing.get("items") or [])
+            if coursebuilder.normalize_title(item.get("title") or "") == wanted
+        ),
+        None,
+    )
+    return {"status": "success", "plan": plan}
+
+
+@app.post("/course-builder/create")
+async def course_builder_create(payload: dict[str, Any] = Body(...)):
+    """Create the tactical product on ByteXL from a reviewed plan.
+
+    Topics are cloned bodies, not references: ByteXL has no way to share one page
+    between products, so each donor body is copied into a new page. The clone is
+    read back from the donor at this moment rather than from the plan, so a page
+    edited since the preview ships in its current state.
+    """
+    if payload.get("confirm") is not True:
+        raise HTTPException(400, "Preview the plan first, then confirm the creation")
+
+    slug = str(payload.get("slug") or "").strip()
+    plan = build_course_plan(slug)
+    if not plan["canCreate"]:
+        raise HTTPException(400, "Creation blocked: one or more topics could not be resolved")
+
+    title = str(payload.get("title") or plan.get("title") or "").strip()
+    if not title:
+        raise HTTPException(400, "A course title is required")
+
+    existing = bytexl_get("/api/content/v2/list?pageSize=10000")
+    wanted = coursebuilder.normalize_title(title)
+    clash = next(
+        (item for item in (existing.get("items") or [])
+         if coursebuilder.normalize_title(item.get("title") or "") == wanted),
+        None,
+    )
+    if clash and not payload.get("allowDuplicateTitle"):
+        raise HTTPException(
+            409,
+            f"A product titled '{clash.get('title')}' already exists ({clash.get('_id')}). "
+            "Rename the course or set allowDuplicateTitle.",
+        )
+
+    # Register the empty product before writing any topic. Creating ~90 pages and
+    # only then discovering the product itself would not save leaves that many
+    # orphan content-pages behind, invisible in every listing and impossible to
+    # reach. An empty shell costs one call and makes that failure free.
+    product_id = get_bytexl_id()
+    save_content({
+        "_id": product_id,
+        "title": title,
+        "description": str(payload.get("description") or plan.get("description") or ""),
+        "reportSkip": bool(payload.get("reportSkip", True)),
+        "contentSections": [],
+    })
+    try:
+        shell = fetch_content(product_id)
+    except HTTPException as exc:
+        raise HTTPException(
+            502, f"ByteXL accepted the new product but it did not register ({product_id}); "
+                 "nothing else was created."
+        ) from exc
+
+    # A topic with no donor can either ship as a visible placeholder or be left
+    # out entirely for the author to add later. Leaving it out must not leave an
+    # empty section behind, so chapters that lose every topic are dropped too.
+    skip_author_new = bool(payload.get("skipAuthorNew"))
+
+    sections: list[dict[str, Any]] = []
+    cloned = 0
+    authored = 0
+    skipped: list[str] = []
+
+    for unit in plan["units"]:
+        for chapter in unit["chapters"]:
+            pages = []
+            for topic in chapter["topics"]:
+                source = topic.get("source")
+                if source:
+                    donor = fetch_content_page(source["pageId"])
+                    markdown = donor.get("markdown") or ""
+                    if not markdown.strip():
+                        raise HTTPException(
+                            502,
+                            f"Donor page {source['pageId']} for '{topic['title']}' read back "
+                            "empty; nothing was created.",
+                        )
+                    cloned += 1
+                elif skip_author_new:
+                    skipped.append(f"{chapter['sectionTitle']} · {topic['title']}")
+                    continue
+                else:
+                    markdown = coursebuilder.placeholder_markdown(
+                        topic["title"], plan, topic.get("note") or ""
+                    )
+                    authored += 1
+                saved = save_content_page(
+                    {"title": topic["title"], "markdown": markdown, "publishStatus": "published"}
+                )
+                pages.append(content_page_ref(saved, topic["title"]))
+            if not pages:
+                continue
+            sections.append({
+                "_id": get_bytexl_id(),
+                "title": chapter["sectionTitle"],
+                "contentPages": pages,
+            })
+
+    if not sections:
+        raise HTTPException(400, "Nothing to create: every topic was skipped")
+
+    shell["contentSections"] = sections
+    save_content(shell)
+
+    # Read the product back rather than trusting the write. A section list that
+    # saved short is the difference between a delivered course and a broken one.
+    written = fetch_content(product_id)
+    written_topics = sum(
+        len(section.get("contentPages") or [])
+        for section in written.get("contentSections") or []
+    )
+    expected_topics = sum(len(section["contentPages"]) for section in sections)
+    if len(written.get("contentSections") or []) != len(sections) or written_topics != expected_topics:
+        raise HTTPException(
+            502,
+            f"Product {product_id} saved with {len(written.get('contentSections') or [])} sections "
+            f"and {written_topics} topics, expected {len(sections)} and {expected_topics}.",
+        )
+
+    return {
+        "status": "success",
+        "readingId": product_id,
+        "title": title,
+        "createdSections": len(sections),
+        "clonedTopics": cloned,
+        "placeholderTopics": authored,
+        "skippedTopics": skipped,
+        "verifiedTopics": written_topics,
+    }
+
+
+def bytexl_courses_get(course_id: str) -> dict[str, Any]:
+    result = bytexl_get(f"/api/courses/{course_id}")
+    if not isinstance(result, dict) or not result.get("_id"):
+        raise HTTPException(404, f"Course {course_id} not found")
+    return result
+
+
+def bytexl_courses_save(course: dict[str, Any]) -> dict[str, Any]:
+    result = bytexl_post("/api/courses", course)
+    if not isinstance(result, dict) or not result.get("_id"):
+        raise HTTPException(502, "ByteXL course save failed")
+    return result
+
+
+def load_blueprint_by_slug_or_title(slug: str, title: str) -> dict[str, Any]:
+    """Resolve a blueprint from an explicit slug, else by matching its title."""
+    if slug:
+        try:
+            return coursebuilder.load_blueprint(slug)
+        except FileNotFoundError as exc:
+            raise HTTPException(404, str(exc)) from exc
+    wanted = coursebuilder.normalize_title(title)
+    for path in sorted((Path(__file__).parent / "blueprints").glob("*.json")):
+        candidate = json.loads(path.read_text(encoding="utf-8"))
+        if coursebuilder.normalize_title(candidate.get("title") or "") == wanted:
+            return candidate
+    raise HTTPException(404, f"No blueprint matching '{title}'")
+
+
+def build_donor_course(blueprint: dict[str, Any], make_id):
+    """Resolve a blueprint into a course tree linked to the live donor products."""
+    product_ids = sorted({
+        str(source.get("productId"))
+        for source in blueprint.get("sources") or []
+        if source.get("productId")
+    })
+    trees = {product_id: fetch_content(product_id) for product_id in product_ids}
+    return coursebuilder.build_course_from_donors(blueprint, trees, make_id)
+
+
+@app.get("/course-builder/course-plan")
+async def course_builder_course_plan(slug: str):
+    """Preview the course tree, linked straight into the donor reading material.
+
+    Distinct from ``/course-builder/plan``, which plans a *cloned*
+    reading-material product. This one creates no content: it maps each
+    syllabus topic onto the lesson that already exists in a strategic course.
+    """
+    blueprint = load_blueprint_by_slug_or_title(slug, "")
+    structure = build_donor_course(blueprint, lambda: "preview")
+
+    existing = bytexl_get("/api/courses")
+    wanted = coursebuilder.normalize_title(blueprint.get("title") or "")
+    existing_course = next(
+        (
+            {"_id": c.get("_id"), "title": c.get("title")}
+            for c in existing
+            if coursebuilder.normalize_title(c.get("title") or "") == wanted
+        ),
+        None,
+    )
+
+    return {
+        "status": "success",
+        "slug": blueprint.get("slug"),
+        "title": blueprint.get("title"),
+        "courseDescription": blueprint.get("courseDescription") or "",
+        "syllabus": blueprint.get("syllabus") or {},
+        "existingCourse": existing_course,
+        "modules": structure["modules"],
+        "sources": structure["sources"],
+        "included": structure["included"],
+        "excluded": structure["excluded"],
+        "blocked": structure["blocked"],
+        "totals": structure["totals"],
+        "canCreate": structure["canCreate"],
+    }
+
+
+@app.post("/course-builder/create-course")
+async def course_builder_create_course(payload: dict[str, Any] = Body(...)):
+    """Create or rebuild the platform course that shows in ByteXL's Course Builder.
+
+    Writes no lesson content: every chapter links into reading material that
+    already exists in the donor products, so nothing is duplicated. A syllabus
+    topic with no donor is simply absent, which is what makes the two unwritten
+    NHCE topics disappear from the course until someone authors them.
+    """
+    if payload.get("confirm") is not True:
+        raise HTTPException(400, "Preview the course plan first, then confirm creation")
+
+    blueprint = load_blueprint_by_slug_or_title(
+        str(payload.get("slug") or "").strip(), str(payload.get("title") or "").strip()
+    )
+    structure = build_donor_course(blueprint, get_bytexl_id)
+    if structure["blocked"]:
+        raise HTTPException(
+            400,
+            "Creation blocked: "
+            + "; ".join(f"{b['title']} ({b['detail']})" for b in structure["blocked"][:5]),
+        )
+    if not structure["modules"]:
+        raise HTTPException(400, "Nothing to create: no chapter resolved to a donor lesson")
+
+    title = str(payload.get("title") or blueprint.get("title") or "").strip()
+    if not title:
+        raise HTTPException(400, "A course title is required")
+
+    existing = bytexl_get("/api/courses")
+    wanted = coursebuilder.normalize_title(title)
+    clash = next(
+        (c for c in existing if coursebuilder.normalize_title(c.get("title") or "") == wanted), None
+    )
+    # POST /api/courses upserts on _id, so a rebuild targets the existing course
+    # instead of leaving a duplicate behind. Without an explicit update the
+    # clash is still refused, so a rebuild can never be accidental.
+    update_id = str(payload.get("courseId") or "").strip()
+    if clash and not update_id and not payload.get("allowDuplicateTitle"):
+        raise HTTPException(
+            409,
+            f"A course titled '{clash.get('title')}' already exists ({clash.get('_id')}). "
+            "Pass courseId to rebuild it in place, or set allowDuplicateTitle.",
+        )
+    # Rebuilding replaces the module tree, but everything an admin may have set
+    # on the course since it was created -- batch and branch assignments,
+    # grading, FAQs, sort order -- has to survive. Start from the stored record
+    # and overwrite only what this builder owns.
+    current: dict[str, Any] = {}
+    if update_id:
+        # Fail loudly if the id does not exist rather than silently creating one.
+        current = bytexl_courses_get(update_id)
+
+    # A course page is client-facing, so it carries the blueprint's prospectus
+    # blurb rather than the terse internal note the reading material uses.
+    description = str(payload.get("description") or blueprint.get("courseDescription") or "")
+
+    defaults = {
+        "courseCombo": [],
+        "tracks": [],
+        "faqs": [],
+        "isCourseGraded": False,
+        "grades": [],
+        "gradeTotal": "0.00",
+        "metadataStructure": {"selectedSubjects": [], "selectedTopics": [], "selectedSubtopics": []},
+        "units": [],
+        "disableChapters": False,
+        "permission": {
+            "organizations": [], "branches": [], "batches": [], "userGroups": [],
+            "schedules": [], "_scheduleMinStartsAt": None, "_scheduleMaxEndsAt": None,
+        },
+    }
+    course = {key: current.get(key, value) for key, value in defaults.items()}
+    course.update({
+        "title": title,
+        "description": description,
+        "courseType": str(payload.get("courseType") or current.get("courseType") or "pbl"),
+        "viewStyle": "v2",
+        "status": str(payload.get("status") or current.get("status") or "published"),
+        "programLevel": str(
+            payload.get("programLevel") or current.get("programLevel") or "undergraduate"
+        ),
+        "department": str(payload.get("department") or current.get("department") or "computing"),
+        "modules": structure["modules"],
+    })
+    # Anything added by hand in the ByteXL UI -- labs, quizzes, projects -- is not
+    # in the blueprint and would be wiped by replacing the module tree. Re-attach
+    # it before writing, and refuse the write outright if a chapter rename would
+    # strand some of it.
+    carry = coursebuilder.carry_over_manual_items(
+        structure["modules"], current.get("modules") or []
+    )
+    if carry["orphaned"] and not payload.get("dropOrphanedItems"):
+        listed = "; ".join(
+            f"{o['title']} (was in '{o['chapter']}')" for o in carry["orphaned"][:8]
+        )
+        raise HTTPException(
+            409,
+            f"{len(carry['orphaned'])} hand-added item(s) sit in chapters this rebuild "
+            f"does not produce, so they would be lost: {listed}. Re-point them first, "
+            "or set dropOrphanedItems to proceed without them.",
+        )
+
+    if update_id:
+        course["_id"] = update_id
+    saved = bytexl_courses_save(course)
+    course_id = saved.get("_id")
+    if not course_id:
+        raise HTTPException(502, "ByteXL did not return a course id")
+    if update_id and course_id != update_id:
+        raise HTTPException(
+            502, f"Asked to rebuild course {update_id} but ByteXL wrote {course_id}."
+        )
+
+    # Read the course back rather than trusting the write.
+    written = bytexl_courses_get(course_id)
+    written_subtopics = sum(
+        len(topic.get("subTopics") or [])
+        for module in written.get("modules") or []
+        for topic in module.get("topics") or []
+    )
+    expected_items = (
+        structure["totals"]["lessons"]
+        + structure["totals"]["extras"]
+        + len(carry["carried"])
+    )
+    if written_subtopics != expected_items:
+        raise HTTPException(
+            502,
+            f"Course {course_id} saved with {written_subtopics} items, expected "
+            f"{expected_items}.",
+        )
+
+    return {
+        "status": "success",
+        "courseId": course_id,
+        "title": title,
+        "action": "updated" if update_id else "created",
+        "modules": structure["totals"]["modules"],
+        "chapters": structure["totals"]["chapters"],
+        "lessons": structure["totals"]["lessons"],
+        "labs": structure["totals"]["extras"],
+        "carriedOver": carry["carried"],
+        "totalItems": written_subtopics,
+        "sources": structure["sources"],
+        "excluded": structure["excluded"],
+    }
+
+
 @app.get("/xlsx.full.min.js")
 async def xlsx_vendor():
     return FileResponse(Path(__file__).parent / "xlsx.full.min.js", media_type="application/javascript")
@@ -1671,6 +2128,7 @@ async def embed_page():
 @app.head("/convert")
 @app.head("/assessment")
 @app.head("/assessment-builder")
+@app.head("/course-builder")
 @app.head("/embed.html")
 async def page_head():
     return Response(status_code=200)
@@ -2069,35 +2527,49 @@ async def assessment_upload_one(payload: dict[str, Any] = Body(...)):
     return {"status": "success", "result": result}
 
 
+def parse_set_number(value: Any) -> int:
+    if value is None or value == "":
+        return 2
+    try:
+        set_number = int(value)
+    except (TypeError, ValueError):
+        raise HTTPException(400, "set must be 1 or 2")
+    if set_number not in (1, 2):
+        raise HTTPException(400, "set must be 1 or 2")
+    return set_number
+
+
 @app.get("/test-assessment/candidates")
-async def test_assessment_candidates():
-    result = set_two_assessment_candidates(published_question_items(), published_test_items())
+async def test_assessment_candidates(set: str = "2"):
+    set_number = parse_set_number(set)
+    result = set_assessment_candidates(published_question_items(), published_test_items(), set_number)
     return {"status": "success", **result}
 
 
 @app.post("/test-assessment/create")
 async def test_assessment_create(payload: dict[str, Any] = Body(...)):
     if payload.get("confirm") is not True:
-        raise HTTPException(400, "Review the detected Set 2 groups, then confirm assessment creation")
+        raise HTTPException(400, "Review the detected groups, then confirm assessment creation")
 
+    set_number = parse_set_number(payload.get("set"))
     requested_keys = payload.get("groupKeys") or []
     if not isinstance(requested_keys, list) or not requested_keys:
-        raise HTTPException(400, "Choose at least one detected Set 2 group")
+        raise HTTPException(400, "Choose at least one detected group")
     requested_keys = [str(key or "").strip() for key in requested_keys]
     if len(requested_keys) > 100:
         raise HTTPException(400, "A maximum of 100 assessments can be created at once")
     if len(set(requested_keys)) != len(requested_keys):
-        raise HTTPException(400, "The same Set 2 group was selected more than once")
+        raise HTTPException(400, "The same group was selected more than once")
 
     overrides_payload = payload.get("overrides") or {}
     if not isinstance(overrides_payload, dict):
         raise HTTPException(400, "overrides must be an object keyed by group key")
 
-    discovery = set_two_assessment_candidates(published_question_items(), published_test_items())
+    discovery = set_assessment_candidates(published_question_items(), published_test_items(), set_number)
     by_key = {candidate["groupKey"]: candidate for candidate in discovery["candidates"]}
     missing_keys = [key for key in requested_keys if key not in by_key]
     if missing_keys:
-        raise HTTPException(409, "Set 2 groups changed after discovery. Refresh the list and try again.")
+        raise HTTPException(409, "Groups changed after discovery. Refresh the list and try again.")
 
     selected = [by_key[key] for key in requested_keys]
     blocked = [candidate for candidate in selected if not candidate["ready"] or candidate["existingTest"]]
@@ -2182,12 +2654,14 @@ def parse_blueprint_rows(payload: dict[str, Any]) -> tuple[str, list[dict[str, A
 @app.post("/test-assessment/blueprint/preview")
 async def test_assessment_blueprint_preview(payload: dict[str, Any] = Body(...)):
     subject, rows = parse_blueprint_rows(payload)
-    pool = subject_set_two_pool(subject, published_question_items())
+    set_number = parse_set_number(payload.get("set"))
+    pool = subject_set_pool(subject, set_number, published_question_items())
     tests = published_test_items()
     resolved = [resolve_blueprint_row(pool, row, tests) for row in rows]
     return {
         "status": "success",
         "subject": subject,
+        "set": set_number,
         "poolSize": len(pool),
         "rows": resolved,
         "readyCount": sum(row["ready"] for row in resolved),
@@ -2199,8 +2673,9 @@ async def test_assessment_blueprint_create(payload: dict[str, Any] = Body(...)):
     if payload.get("confirm") is not True:
         raise HTTPException(400, "Preview the blueprint, then confirm assessment creation")
     subject, rows = parse_blueprint_rows(payload)
+    set_number = parse_set_number(payload.get("set"))
 
-    pool = subject_set_two_pool(subject, published_question_items())
+    pool = subject_set_pool(subject, set_number, published_question_items())
     tests = published_test_items()
     resolved = [resolve_blueprint_row(pool, row, tests) for row in rows]
     blocked = [row for row in resolved if not row["ready"]]

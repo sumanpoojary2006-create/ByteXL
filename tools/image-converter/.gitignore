@@ -7,3 +7,4 @@ build/
 .vercel
 .seed-hashes.json
 .analytics-snapshot.json
+.course-builder-cache.json

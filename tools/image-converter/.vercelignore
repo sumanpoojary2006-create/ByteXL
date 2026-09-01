@@ -13,5 +13,8 @@ run.py
 server.py
 analytics.py
 .analytics-snapshot.json
+coursebuilder.py
+blueprints/
+.course-builder-cache.json
 tests/
 .python-version
