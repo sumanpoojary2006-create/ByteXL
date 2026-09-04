@@ -34,14 +34,6 @@ frontend_origins = [
     ).split(",")
     if origin.strip()
 ]
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=frontend_origins,
-    allow_methods=["*"],
-    allow_headers=["*"],
-    expose_headers=["Content-Disposition", "X-Stats"],
-)
-
 MAX_DECOMPRESSED_JSON_BYTES = 25 * 1024 * 1024
 
 
@@ -108,6 +100,16 @@ class GZipRequestMiddleware:
 
 
 app.add_middleware(GZipRequestMiddleware)
+# Registered last so CORS wraps the gzip decoder: a rejected compressed body
+# has to come back with the CORS headers, or the browser reports the readable
+# 400 as an opaque "Failed to fetch".
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=frontend_origins,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["Content-Disposition", "X-Stats"],
+)
 
 def canonical_bytexl_url(url: str) -> str:
     """Move legacy bytexl.app URLs to the current API host.

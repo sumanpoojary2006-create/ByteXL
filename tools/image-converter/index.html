@@ -1702,17 +1702,30 @@
 
   async function postJson(url, payload) {
     const json = JSON.stringify(payload);
-    const headers = {"Content-Type":"application/json"};
-    let body = json;
-    if (new Blob([json]).size >= JSON_GZIP_THRESHOLD) {
-      if (typeof CompressionStream === "undefined") {
-        throw new Error("This upload is too large for this browser. Update Chrome and try again.");
-      }
-      const compressed = new Blob([json]).stream().pipeThrough(new CompressionStream("gzip"));
-      body = await new Response(compressed).arrayBuffer();
-      headers["Content-Encoding"] = "gzip";
+    const plain = () => fetch(url, {method:"POST", headers:{"Content-Type":"application/json"}, body:json});
+    if (new Blob([json]).size < JSON_GZIP_THRESHOLD || typeof CompressionStream === "undefined") return plain();
+
+    const compressed = new Blob([json]).stream().pipeThrough(new CompressionStream("gzip"));
+    const body = await new Response(compressed).arrayBuffer();
+    let r;
+    try {
+      r = await fetch(url, {
+        method:"POST",
+        headers:{"Content-Type":"application/json","Content-Encoding":"gzip"},
+        body
+      });
+    } catch (err) {
+      // An API build that predates gzip request support reads the compressed
+      // bytes as JSON and can close the connection while the body is still
+      // uploading, which surfaces here as a bare "Failed to fetch". Send it
+      // again uncompressed rather than blaming the user's file.
+      return plain();
     }
-    return fetch(url, {method:"POST", headers, body});
+    if (r.status === 400) {
+      const detail = await r.clone().json().then(p => p.detail || "").catch(() => "");
+      if (/parsing the body|compressed request body/i.test(detail)) return plain();
+    }
+    return r;
   }
 
   async function previewProductUpload(result) {

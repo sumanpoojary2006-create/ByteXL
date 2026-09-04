@@ -71,6 +71,26 @@ class GzipRequestTests(unittest.TestCase):
         self.assertEqual(status, 400)
         self.assertEqual(response, {"detail": "Invalid compressed request body"})
 
+    def test_rejected_gzip_body_still_carries_cors_headers(self):
+        """Without CORS wrapping the decoder the browser sees "Failed to fetch"."""
+        from fastapi.testclient import TestClient
+
+        origin = "https://image-converter-pi-rouge.vercel.app"
+        with TestClient(server.app) as client:
+            response = client.post(
+                "/preview-product-upload",
+                content=b"not gzip",
+                headers={
+                    "Content-Type": "application/json",
+                    "Content-Encoding": "gzip",
+                    "Origin": origin,
+                },
+            )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json(), {"detail": "Invalid compressed request body"})
+        self.assertEqual(response.headers.get("access-control-allow-origin"), origin)
+
     def test_middleware_delivers_gzipped_json_to_the_application(self):
         payload = {
             "readingId": "reading-1",
