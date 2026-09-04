@@ -1277,7 +1277,7 @@
       fd.append("subtype", "images");
       fd.append("file", payload.blob, uploadFilename);
       try {
-        const r = await fetch(uploadImageUrl,{method:"POST",body:fd});
+        const r = await fetchOrExplain(uploadImageUrl,{method:"POST",body:fd}, `${baseName(imgPath)}`);
         if (r.status===413) throw new Error(`${baseName(imgPath)} is too large.`);
         if (r.ok) {
           const url = (await r.json()).url||null;
@@ -1700,9 +1700,22 @@
     return out;
   }
 
+  // A dropped or blocked request reaches JS as a bare "Failed to fetch" with no
+  // hint about which call died, which makes a stalled run impossible to read
+  // from the error banner alone. Name the endpoint that failed.
+  async function fetchOrExplain(url, options, what) {
+    try {
+      return await fetch(url, options);
+    } catch (err) {
+      let where = url;
+      try { const u = new URL(url, location.href); where = u.host + u.pathname; } catch (_) {}
+      throw new Error(`${what} could not reach the API at ${where} (${err.message}).`);
+    }
+  }
+
   async function postJson(url, payload) {
     const json = JSON.stringify(payload);
-    const plain = () => fetch(url, {method:"POST", headers:{"Content-Type":"application/json"}, body:json});
+    const plain = () => fetchOrExplain(url, {method:"POST", headers:{"Content-Type":"application/json"}, body:json}, "This step");
     if (new Blob([json]).size < JSON_GZIP_THRESHOLD || typeof CompressionStream === "undefined") return plain();
 
     const compressed = new Blob([json]).stream().pipeThrough(new CompressionStream("gzip"));
@@ -1988,11 +2001,11 @@
 
   function iframeHtml(src,h) { return `<iframe\n frameBorder="0"\n height="${escapeAttr(h)}"  \n src="${escapeAttr(src)}" \n width="100%"\n></iframe>\n`; }
   async function createOneCompilerWorkspace(snippet) {
-    const r = await fetch(oneCompilerWorkspaceUrl,{
+    const r = await fetchOrExplain(oneCompilerWorkspaceUrl,{
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify(snippet)
-    });
+    }, `The editor for ${snippet.title}`);
     const payload = await r.json().catch(()=>({}));
     if (!r.ok) throw new Error(payload.detail||`Could not create OneCompiler editor for ${snippet.title}.`);
     if (!payload.embedUrl) throw new Error(`OneCompiler did not return an embed URL for ${snippet.title}.`);
