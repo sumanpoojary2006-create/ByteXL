@@ -1,4 +1,5 @@
 import io
+import zlib
 import hashlib
 import json
 import os
@@ -17,7 +18,7 @@ import requests
 from fastapi import Body, FastAPI, File, Form, HTTPException, Request, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, StreamingResponse
 
 import analytics
 import coursebuilder
@@ -40,6 +41,73 @@ app.add_middleware(
     allow_headers=["*"],
     expose_headers=["Content-Disposition", "X-Stats"],
 )
+
+MAX_DECOMPRESSED_JSON_BYTES = 25 * 1024 * 1024
+
+
+def decompress_gzip_json_body(body: bytes) -> bytes:
+    """Inflate a gzip request while enforcing a hard output-size limit."""
+    inflater = zlib.decompressobj(16 + zlib.MAX_WBITS)
+    inflated = inflater.decompress(body, MAX_DECOMPRESSED_JSON_BYTES + 1)
+    if len(inflated) > MAX_DECOMPRESSED_JSON_BYTES or inflater.unconsumed_tail:
+        raise ValueError("Compressed request expands beyond the 25 MB limit")
+    inflated += inflater.flush(MAX_DECOMPRESSED_JSON_BYTES + 1 - len(inflated))
+    if len(inflated) > MAX_DECOMPRESSED_JSON_BYTES or not inflater.eof:
+        raise ValueError("Invalid or oversized gzip request")
+    return inflated
+
+
+class GZipRequestMiddleware:
+    """Let large browser JSON requests cross the hosting edge as gzip."""
+
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope.get("type") != "http":
+            await self.app(scope, receive, send)
+            return
+
+        headers = dict(scope.get("headers", []))
+        if headers.get(b"content-encoding", b"").strip().lower() != b"gzip":
+            await self.app(scope, receive, send)
+            return
+
+        chunks = []
+        while True:
+            message = await receive()
+            if message.get("type") == "http.disconnect":
+                return
+            chunks.append(message.get("body", b""))
+            if not message.get("more_body", False):
+                break
+
+        try:
+            body = decompress_gzip_json_body(b"".join(chunks))
+        except (ValueError, zlib.error):
+            response = JSONResponse(status_code=400, content={"detail": "Invalid compressed request body"})
+            await response(scope, receive, send)
+            return
+
+        decoded_scope = dict(scope)
+        decoded_scope["headers"] = [
+            (name, value)
+            for name, value in scope.get("headers", [])
+            if name.lower() not in (b"content-encoding", b"content-length")
+        ] + [(b"content-length", str(len(body)).encode("ascii"))]
+        delivered = False
+
+        async def decoded_receive():
+            nonlocal delivered
+            if delivered:
+                return {"type": "http.request", "body": b"", "more_body": False}
+            delivered = True
+            return {"type": "http.request", "body": body, "more_body": False}
+
+        await self.app(decoded_scope, decoded_receive, send)
+
+
+app.add_middleware(GZipRequestMiddleware)
 
 def canonical_bytexl_url(url: str) -> str:
     """Move legacy bytexl.app URLs to the current API host.

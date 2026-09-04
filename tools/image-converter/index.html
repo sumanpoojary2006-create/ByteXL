@@ -1009,6 +1009,7 @@
     : "/api/reading-materials";
   const previewProductUploadUrl = apiBase + "/preview-product-upload";
   const uploadToProductUrl = apiBase + "/upload-to-product";
+  const JSON_GZIP_THRESHOLD = 256 * 1024;
 
   let zipBlob = null, sourceName = "", preparedZipBlob = null, preparedZipName = "";
   let preparedUploadPayload = null, lastPreviewPlan = null, readingsLoaded = false;
@@ -1699,6 +1700,21 @@
     return out;
   }
 
+  async function postJson(url, payload) {
+    const json = JSON.stringify(payload);
+    const headers = {"Content-Type":"application/json"};
+    let body = json;
+    if (new Blob([json]).size >= JSON_GZIP_THRESHOLD) {
+      if (typeof CompressionStream === "undefined") {
+        throw new Error("This upload is too large for this browser. Update Chrome and try again.");
+      }
+      const compressed = new Blob([json]).stream().pipeThrough(new CompressionStream("gzip"));
+      body = await new Response(compressed).arrayBuffer();
+      headers["Content-Encoding"] = "gzip";
+    }
+    return fetch(url, {method:"POST", headers, body});
+  }
+
   async function previewProductUpload(result) {
     if (!$("readingSelect").value) throw new Error("Choose a ByteXL product first.");
     preparedZipBlob = result.zipBlob;
@@ -1707,10 +1723,10 @@
       readingId: $("readingSelect").value,
       createMissing: $("createMissingChoice").checked,
       replaceAll: $("replaceAllChoice").checked,
-      files: result.uploadFiles
+      files: result.uploadFiles.map(({path, markdown}) => ({path, markdown}))
     };
     setProgress("Matching topics in ByteXL…");
-    const r = await fetch(previewProductUploadUrl,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(preparedUploadPayload)});
+    const r = await postJson(previewProductUploadUrl, preparedUploadPayload);
     const payload = await r.json().catch(()=>({}));
     if (!r.ok) throw new Error(payload.detail||"Could not preview the upload.");
     lastPreviewPlan = payload.plan;
@@ -1729,7 +1745,7 @@
     setProgress("Uploading topics to ByteXL…");
     setStep(4);
     try {
-      const r = await fetch(uploadToProductUrl,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...preparedUploadPayload,confirm:true})});
+      const r = await postJson(uploadToProductUrl, {...preparedUploadPayload,confirm:true});
       const payload = await r.json().catch(()=>({}));
       if (!r.ok) throw new Error(payload.detail||"Upload failed.");
       $("progress").style.display = "none";
