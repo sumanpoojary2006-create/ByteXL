@@ -1,0 +1,1217 @@
+{
+  "slug": "nhce-python",
+  "title": "NHCE - Problem Solving Using Python",
+  "description": "Tactical Course for New Horizon College of Engineering (25CSE144)",
+  "courseDescription": "Python is one of the most popular programming languages, powering AI, automation, web applications, data science, and more. This course takes you from your very first line of Python code to writing clean, efficient, and reusable programs. Learn core programming concepts, functions, data structures, object-oriented programming, file handling, and exception handling through practical examples, relatable analogies, and hands-on exercises. By the end of the course, you'll have the confidence to build real-world applications and think like a Python programmer.",
+  "courseFaqs": [
+    {
+      "question": "Do I need any prior programming experience to start this course?",
+      "answer": "No. This course begins from the absolute basics, covering what programming is and how to set up Python on your computer. If you've never written code before, you'll feel right at home."
+    },
+    {
+      "question": "How is this course different from just reading Python documentation?",
+      "answer": "Documentation explains the syntax. This course explains the concepts. Every topic is introduced using real-world analogies, practical examples, and hands-on exercises so you understand why things work, not just how to write them."
+    },
+    {
+      "question": "Will this course help me crack campus placement interviews?",
+      "answer": "Yes. The course is designed with placement preparation in mind, covering variables, functions, data structures, object-oriented programming, file handling, exception handling, and problem-solving patterns commonly asked in coding rounds and technical interviews."
+    },
+    {
+      "question": "How long will it take to complete the course?",
+      "answer": "It depends on your learning pace, but studying two to three hours a day is enough to comfortably complete the course in four to six weeks. Each unit builds on the previous one, making steady progress more valuable than rushing."
+    },
+    {
+      "question": "I already know basic Python. Should I still start from Unit 1?",
+      "answer": "If you're already comfortable with Python fundamentals, you can move ahead to the advanced units. However, the early chapters include practical insights, clean coding practices, and problem-solving techniques that even experienced learners often overlook. A quick review is highly recommended."
+    }
+  ],
+  "syllabus": {
+    "institution": "New Horizon College of Engineering",
+    "courseCode": "25CSE144",
+    "courseTitle": "Problem Solving Using Python",
+    "credits": 3,
+    "ltps": "3:0:0:0",
+    "hoursPerWeek": 4,
+    "cieMarks": 50,
+    "seeMarks": 50,
+    "textbook": "Allen B. Downey, Think Python, 3rd Edition, O'Reilly, 2024",
+    "outcomes": {
+      "CO1": "Understand the fundamental concepts of Python and apply the basic programming skills of Python Language in problem-solving.",
+      "CO2": "Implement Python programs using different datatypes, control statements, loops and user-defined functions.",
+      "CO3": "Analyze different string manipulation functions available in Python.",
+      "CO4": "Analyze exception handling functions available in Python.",
+      "CO5": "Apply list, set, dictionary and tuple concepts to design a Python program."
+    }
+  },
+  "sources": [
+    {
+      "productId": "44sqshkgw",
+      "title": "Modern Python Programming",
+      "priority": 1
+    },
+    {
+      "productId": "443wypsy9",
+      "title": "Parul - Python Full Stack Development",
+      "priority": 2
+    }
+  ],
+  "courseExtras": {
+    "1|Introduction to Python": [
+      {
+        "title": "Quiz - Introduction to Python",
+        "topicType": "challenge",
+        "data": "44x5af7x9"
+      }
+    ],
+    "1|Operators and Expressions": [
+      {
+        "title": "Quiz - Operators",
+        "topicType": "challenge",
+        "data": "44x5aj9zz"
+      },
+      {
+        "title": "Lab - Operators",
+        "topicType": "challenge",
+        "data": "44zuk3n9m"
+      }
+    ],
+    "2|Control Statements": [
+      {
+        "title": "Quiz - Conditional Statements",
+        "topicType": "challenge",
+        "data": "44x5amxrf"
+      },
+      {
+        "title": "Lab - Conditional Statements",
+        "topicType": "challenge",
+        "data": "44zuk525b"
+      }
+    ],
+    "2|Loops": [
+      {
+        "title": "Quiz - Loops",
+        "topicType": "challenge",
+        "data": "44x5aqq4y"
+      },
+      {
+        "title": "Lab - Loops",
+        "topicType": "challenge",
+        "data": "44zwvkyjj"
+      }
+    ],
+    "2|Functions": [
+      {
+        "title": "Quiz - Functions",
+        "topicType": "challenge",
+        "data": "44x5b2ugw"
+      }
+    ],
+    "3|Strings": [
+      {
+        "title": "Quiz - Strings",
+        "topicType": "challenge",
+        "data": "44x5aswnz"
+      }
+    ],
+    "3|Assertion and Exception Handling": [
+      {
+        "title": "Quiz - Exception Handling",
+        "topicType": "challenge",
+        "data": "44x5bd2kw"
+      }
+    ],
+    "4|Lists and Tuples": [
+      {
+        "title": "Quiz - Lists and Tuples",
+        "topicType": "challenge",
+        "data": "44x5avd42"
+      }
+    ],
+    "4|Sets and Dictionaries": [
+      {
+        "title": "Quiz - Sets and Dictionaries",
+        "topicType": "challenge",
+        "data": "44x5ayqrw"
+      }
+    ],
+    "5|File Handling": [
+      {
+        "title": "Quiz - File Handling",
+        "topicType": "challenge",
+        "data": "44x5bb3vg"
+      },
+      {
+        "title": "Quiz - Modules and Packages",
+        "topicType": "challenge",
+        "data": "44x5c263v"
+      }
+    ],
+    "5|Object-Oriented Programming": [
+      {
+        "title": "Quiz - Object-Oriented Programming",
+        "topicType": "challenge",
+        "data": "44x5cknfd"
+      }
+    ]
+  },
+  "units": [
+    {
+      "number": 1,
+      "title": "Basics of Python",
+      "courseOutcome": "CO1",
+      "hours": 8,
+      "syllabus": "Algorithm and Flowchart, Elements of Python: Keywords, Identifiers, Variables, Data Types, Features. Operators and Expression: Assignment Statements, Numeric Expressions, Order of Evaluation, Operator Precedence, Type Conversions, Input Output Statement, Comments in Python.",
+      "chapters": [
+        {
+          "number": "1.1",
+          "title": "Algorithms and Flowcharts",
+          "courseChapter": "Introduction to Python",
+          "topics": [
+            {
+              "title": "Problem-Solving Approach: From Problem Statement to Plan",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Introduction to Programming",
+                "pageId": "44y4ke74c",
+                "pageTitle": "Problem-Solving Approach: From Problem Statement to Plan"
+              }
+            },
+            {
+              "title": "Algorithms: Designing Step-by-Step Logic",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Introduction to Programming",
+                "pageId": "44y4ke7hc",
+                "pageTitle": "Algorithms: Designing Step-by-Step Logic"
+              }
+            },
+            {
+              "title": "Pseudocode: Writing Logic Before Code",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Introduction to Programming",
+                "pageId": "44y4ke7u6",
+                "pageTitle": "Pseudocode: Writing Logic Before Code"
+              }
+            },
+            {
+              "title": "Flowcharts: Visualizing Program Flow and Decisions",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Introduction to Programming",
+                "pageId": "44y4ke88x",
+                "pageTitle": "Flowcharts: Visualizing Program Flow and Decisions"
+              }
+            }
+          ]
+        },
+        {
+          "number": "1.2",
+          "title": "Elements of Python",
+          "courseChapter": "Introduction to Python",
+          "topics": [
+            {
+              "title": "Why Python? Features, Readability and Real-World Uses",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Introduction to Programming",
+                "pageId": "44y4ke8jx",
+                "pageTitle": "Why Python? Readability, Ecosystem, and Real-World Uses"
+              }
+            },
+            {
+              "title": "Your First Program",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Introduction to Programming",
+                "pageId": "44y4ke8yb",
+                "pageTitle": "Your First Program"
+              }
+            },
+            {
+              "title": "Keywords, Identifiers, Variables and Naming Conventions",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Data Types and Operators",
+                "pageId": "44y4ke9sx",
+                "pageTitle": "Variables, Assignment, and Naming Conventions"
+              }
+            },
+            {
+              "title": "Numbers: int, float and complex",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Data Types and Operators",
+                "pageId": "44y4kea7j",
+                "pageTitle": "Numbers: int, float, and complex"
+              }
+            },
+            {
+              "title": "Strings and Booleans",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Data Types and Operators",
+                "pageId": "44y4keamq",
+                "pageTitle": "Strings and Booleans"
+              }
+            }
+          ]
+        },
+        {
+          "number": "1.3",
+          "title": "Operators and Expressions",
+          "courseChapter": "Operators and Expressions",
+          "topics": [
+            {
+              "title": "Assignment and Augmented Operators",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Data Types and Operators",
+                "pageId": "44y4kecm5",
+                "pageTitle": "Assignment and Augmented Operators"
+              }
+            },
+            {
+              "title": "Arithmetic Operators and Numeric Expressions",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Data Types and Operators",
+                "pageId": "44y4kebcv",
+                "pageTitle": "Arithmetic Operators"
+              }
+            },
+            {
+              "title": "Comparison (Relational) Operators",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Data Types and Operators",
+                "pageId": "44y4kebss",
+                "pageTitle": "Comparison (Relational) Operators"
+              }
+            },
+            {
+              "title": "Logical Operators: and, or, not",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Data Types and Operators",
+                "pageId": "44y4kec7j",
+                "pageTitle": "Logical Operators: and, or, not"
+              }
+            },
+            {
+              "title": "Operator Precedence and Order of Evaluation",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Data Types and Operators",
+                "pageId": "44y4keczw",
+                "pageTitle": "Operator Precedence and Associativity"
+              }
+            },
+            {
+              "title": "Type Conversion (Casting) and type()",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Data Types and Operators",
+                "pageId": "44y4keb33",
+                "pageTitle": "Type Conversion (Casting) and type()"
+              }
+            }
+          ]
+        },
+        {
+          "number": "1.4",
+          "title": "Input, Output and Comments",
+          "courseChapter": "Operators and Expressions",
+          "topics": [
+            {
+              "title": "Input and Output: input(), print() and f-strings",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Data Types and Operators",
+                "pageId": "44y4kedc8",
+                "pageTitle": "Input and Output: input(), print(), and f-strings"
+              }
+            },
+            {
+              "title": "Comments and Documentation",
+              "source": {
+                "productId": "443wypsy9",
+                "productTitle": "Parul - Python Full Stack Development",
+                "sectionTitle": "Python Fundamentals",
+                "pageId": "444c6fqrb",
+                "pageTitle": "Comments and Documentation"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "title": "Loops, Control Statements and Functions",
+      "courseOutcome": "CO2",
+      "hours": 8,
+      "syllabus": "Loops and Control Statements: If, elif, Nested if, for, nested for, while, continue, Break, Pass. Functions: Advantage of Functions in Python, creating a Function, Function Calling, return statement, Arguments in function, Pass by Object Reference, Built-in Function, Lambda Functions, Map, Filter, Reduce functions, Recursive functions.",
+      "chapters": [
+        {
+          "number": "2.1",
+          "title": "Control Statements",
+          "courseChapter": "Control Statements",
+          "topics": [
+            {
+              "title": "Decision-Making: Why Branching Matters",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Control Flow",
+                "pageId": "44y4kee6g",
+                "pageTitle": "Decision-Making: Why Branching Matters"
+              }
+            },
+            {
+              "title": "The if Statement",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Control Flow",
+                "pageId": "44y4keegh",
+                "pageTitle": "The if Statement"
+              }
+            },
+            {
+              "title": "if-else: Two-Way Decisions",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Control Flow",
+                "pageId": "44y4keezc",
+                "pageTitle": "if-else: Two-Way Decisions"
+              }
+            },
+            {
+              "title": "elif: Multi-Way Branching",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Control Flow",
+                "pageId": "44y4kefeq",
+                "pageTitle": "elif: Multi-Way Branching"
+              }
+            },
+            {
+              "title": "Nested if and Guard Clauses",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Control Flow",
+                "pageId": "44y4kefrd",
+                "pageTitle": "Nested Conditions and Guard Clauses"
+              }
+            }
+          ]
+        },
+        {
+          "number": "2.2",
+          "title": "Loops",
+          "courseChapter": "Loops",
+          "topics": [
+            {
+              "title": "Why Loops: Repetition and Automation",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Looping",
+                "pageId": "44y4kej5d",
+                "pageTitle": "Why Loops: Repetition and Automation"
+              }
+            },
+            {
+              "title": "while Loops: Counters and Sentinels",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Looping",
+                "pageId": "44y4kejhm",
+                "pageTitle": "While Loops: Counters and Sentinels"
+              }
+            },
+            {
+              "title": "for Loops and range()",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Looping",
+                "pageId": "44y4kejxz",
+                "pageTitle": "for Loops and range()"
+              }
+            },
+            {
+              "title": "Nested for Loops: Grids and Patterns",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Looping",
+                "pageId": "44y4kem7n",
+                "pageTitle": "Nested Loops: Grids and Patterns"
+              }
+            },
+            {
+              "title": "break, continue and pass Statements",
+              "source": {
+                "productId": "443wypsy9",
+                "productTitle": "Parul - Python Full Stack Development",
+                "sectionTitle": "Control Flow",
+                "pageId": "444c8pbpr",
+                "pageTitle": "break, continue, and pass Statements"
+              }
+            },
+            {
+              "title": "Common Loop Patterns: Count, Sum, Min/Max, Search",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Looping",
+                "pageId": "44y4kemqr",
+                "pageTitle": "Common Loop Patterns: Count, Sum, Min/Max, Search"
+              }
+            }
+          ]
+        },
+        {
+          "number": "2.3",
+          "title": "Functions",
+          "courseChapter": "Functions",
+          "topics": [
+            {
+              "title": "Advantages of Functions: Reuse and Decomposition",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Functions",
+                "pageId": "44y4nub7d",
+                "pageTitle": "Why functions reuse and decomposition"
+              }
+            },
+            {
+              "title": "Creating a Function and Calling It",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Functions",
+                "pageId": "44y4nucf7",
+                "pageTitle": "Defining and calling functions"
+              }
+            },
+            {
+              "title": "Arguments, Parameters and the return Statement",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Functions",
+                "pageId": "44y4nudaf",
+                "pageTitle": "Parameters arguments and return values"
+              }
+            },
+            {
+              "title": "Default, Keyword and Positional Arguments",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Functions",
+                "pageId": "44y4nue5a",
+                "pageTitle": "Default keyword and positional arguments"
+              }
+            },
+            {
+              "title": "Pass by Object Reference",
+              "authorNew": true,
+              "note": "No page anywhere in the ByteXL Python catalogue teaches Python's argument-passing model. Nearest coverage is Modern Python's 'Parameters arguments and return values', which does not name or explain object references, mutability at the call site, or the mutable-default trap."
+            },
+            {
+              "title": "Built-in Functions",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Functions",
+                "pageId": "44y4nuhnm",
+                "pageTitle": "Useful builtin functions all any len sum sorted mi"
+              }
+            },
+            {
+              "title": "Variable Scope and the LEGB Rule",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Functions",
+                "pageId": "44y4nukay",
+                "pageTitle": "Variable scope and the legb rule"
+              }
+            }
+          ]
+        },
+        {
+          "number": "2.4",
+          "title": "Lambda, Higher-Order and Recursive Functions",
+          "courseChapter": "Functions",
+          "topics": [
+            {
+              "title": "Lambda Functions",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Functions",
+                "pageId": "44y4nufyg",
+                "pageTitle": "Lambda"
+              }
+            },
+            {
+              "title": "Map, Filter and Reduce Functions",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Functions",
+                "pageId": "44y4nugqz",
+                "pageTitle": "Map filter and reduce"
+              }
+            },
+            {
+              "title": "Recursive Functions: Base Case and Recursive Step",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Functions",
+                "pageId": "44y4nuknd",
+                "pageTitle": "Recursion base case and recursive step"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "title": "Strings and Exception Handling",
+      "courseOutcome": "CO3",
+      "hours": 8,
+      "syllabus": "Strings: Creating String in Python, Strings indexing and splitting, Reassigning Strings, Deleting the String, String Operators, Python String functions, slice operations. Assertion and Exception Handling: Assertion usage in Python, Exception handling, try, except, raise, finally.",
+      "chapters": [
+        {
+          "number": "3.1",
+          "title": "Working with Strings",
+          "courseChapter": "Strings",
+          "topics": [
+            {
+              "title": "Creating Strings in Python",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Strings",
+                "pageId": "44y4ntkew",
+                "pageTitle": "What is a string"
+              }
+            },
+            {
+              "title": "String Indexing and Slice Operations",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Strings",
+                "pageId": "44y4ntmvs",
+                "pageTitle": "Indexing and slicing"
+              }
+            },
+            {
+              "title": "Reassigning and Deleting Strings: Immutability",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Strings",
+                "pageId": "44y4ntnqc",
+                "pageTitle": "String immutability"
+              }
+            },
+            {
+              "title": "String Operators and Escape Sequences",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Strings",
+                "pageId": "44y4ntsyq",
+                "pageTitle": "Escape sequences and multiline strings"
+              }
+            },
+            {
+              "title": "Searching within Strings",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Strings",
+                "pageId": "44y4ntr4t",
+                "pageTitle": "Searching within strings"
+              }
+            }
+          ]
+        },
+        {
+          "number": "3.2",
+          "title": "String Functions and Formatting",
+          "courseChapter": "Strings",
+          "topics": [
+            {
+              "title": "Python String Functions",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Strings",
+                "pageId": "44y4ntpf5",
+                "pageTitle": "Common string methods"
+              }
+            },
+            {
+              "title": "Splitting and Joining Strings",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Strings",
+                "pageId": "44y4ntq9r",
+                "pageTitle": "Splitting and joining"
+              }
+            },
+            {
+              "title": "String Formatting: Format Operator and f-strings",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Strings",
+                "pageId": "44y4nts5c",
+                "pageTitle": "String formatting and fstrings"
+              }
+            },
+            {
+              "title": "Practical Text Processing",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Strings",
+                "pageId": "44y4ntttk",
+                "pageTitle": "Practical text processing"
+              }
+            }
+          ]
+        },
+        {
+          "number": "3.3",
+          "title": "Assertion and Exception Handling",
+          "courseChapter": "Assertion and Exception Handling",
+          "topics": [
+            {
+              "title": "Errors: Syntax vs Runtime vs Logic",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Exception Handling",
+                "pageId": "44y4nvcyn",
+                "pageTitle": "What are errors syntax vs runtime vs logic"
+              }
+            },
+            {
+              "title": "Reading a Traceback Bottom-Up",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Exception Handling",
+                "pageId": "44y4nve2j",
+                "pageTitle": "Reading a traceback bottomup"
+              }
+            },
+            {
+              "title": "Assertion Usage in Python",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Debugging",
+                "pageId": "44y4nvpft",
+                "pageTitle": "Using assert for sanity checks"
+              }
+            },
+            {
+              "title": "Exception Handling: try and except",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Exception Handling",
+                "pageId": "44y4nvevb",
+                "pageTitle": "Try and except"
+              }
+            },
+            {
+              "title": "Handling Multiple and Specific Exceptions",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Exception Handling",
+                "pageId": "44y4nvfkz",
+                "pageTitle": "Handling multiple and specific exceptions"
+              }
+            },
+            {
+              "title": "else and finally",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Exception Handling",
+                "pageId": "44y4nvghm",
+                "pageTitle": "Else and finally"
+              }
+            },
+            {
+              "title": "Raising Exceptions with raise",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Exception Handling",
+                "pageId": "44y4nvhfh",
+                "pageTitle": "Raising exceptions with raise"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "title": "List, Set, Dictionary and Tuple",
+      "courseOutcome": "CO5",
+      "hours": 8,
+      "syllabus": "List: Creating a List, List indexing and splitting, Python List Operations, List Built-in functions. Tuple: Creating a tuple, Indexing, Deleting Tuple, Tuple operations, Tuple inbuilt functions. Set: Creating a set, Python Set Operations, Python Built-in set methods. Dictionary: Creating the dictionary, Properties of Keys and Values, Accessing the dictionary values, and adding dictionary values, Iterating Dictionary, Built in Dictionary functions.",
+      "chapters": [
+        {
+          "number": "4.1",
+          "title": "Lists",
+          "courseChapter": "Lists and Tuples",
+          "topics": [
+            {
+              "title": "Creating a List: Indexing and Splitting",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Lists and Tuples",
+                "pageId": "44y4ntuhm",
+                "pageTitle": "Lists creation indexing and slicing"
+              }
+            },
+            {
+              "title": "Python List Operations: Mutating Lists",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Lists and Tuples",
+                "pageId": "44y4ntvsy",
+                "pageTitle": "Mutating lists"
+              }
+            },
+            {
+              "title": "List Built-in Functions and Sorting",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Lists and Tuples",
+                "pageId": "44y4ntwmr",
+                "pageTitle": "List methods and sorting"
+              }
+            },
+            {
+              "title": "Nested Lists",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Lists and Tuples",
+                "pageId": "44y4nu2cp",
+                "pageTitle": "Nested lists"
+              }
+            },
+            {
+              "title": "List Comprehensions",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Lists and Tuples",
+                "pageId": "44y4ntxeq",
+                "pageTitle": "List comprehensions"
+              }
+            }
+          ]
+        },
+        {
+          "number": "4.2",
+          "title": "Tuples",
+          "courseChapter": "Lists and Tuples",
+          "topics": [
+            {
+              "title": "Creating a Tuple: Immutability, Packing and Unpacking",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Lists and Tuples",
+                "pageId": "44y4ntyam",
+                "pageTitle": "Tuples immutability and packingunpacking"
+              }
+            },
+            {
+              "title": "Tuple Operations and Iteration",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Lists and Tuples",
+                "pageId": "44y4nu2sq",
+                "pageTitle": "Iterating over lists and tuples"
+              }
+            },
+            {
+              "title": "When to Use a Tuple vs a List",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Lists and Tuples",
+                "pageId": "44y4ntzcv",
+                "pageTitle": "When to use a tuple vs a list"
+              }
+            }
+          ]
+        },
+        {
+          "number": "4.3",
+          "title": "Sets",
+          "courseChapter": "Sets and Dictionaries",
+          "topics": [
+            {
+              "title": "Creating a Set: Uniqueness and Creation",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Sets and Dictionaries",
+                "pageId": "44y4nu3mm",
+                "pageTitle": "Sets uniqueness and creation"
+              }
+            },
+            {
+              "title": "Python Set Operations and Built-in Methods",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Sets and Dictionaries",
+                "pageId": "44y4nu4xy",
+                "pageTitle": "Set operations"
+              }
+            }
+          ]
+        },
+        {
+          "number": "4.4",
+          "title": "Dictionaries",
+          "courseChapter": "Sets and Dictionaries",
+          "topics": [
+            {
+              "title": "Creating the Dictionary: Properties of Keys and Values",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Sets and Dictionaries",
+                "pageId": "44y4nu5pp",
+                "pageTitle": "Dictionaries keyvalue pairs"
+              }
+            },
+            {
+              "title": "Accessing, Adding, Updating and Removing Values",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Sets and Dictionaries",
+                "pageId": "44y4nu6he",
+                "pageTitle": "Accessing adding updating and removing items"
+              }
+            },
+            {
+              "title": "Iterating a Dictionary",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Sets and Dictionaries",
+                "pageId": "44y4nu7fw",
+                "pageTitle": "Iterating dictionaries"
+              }
+            },
+            {
+              "title": "Built-in Dictionary Functions and Comprehensions",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Sets and Dictionaries",
+                "pageId": "44y4nu8dq",
+                "pageTitle": "Dictionary comprehensions"
+              }
+            },
+            {
+              "title": "Nested Dictionaries",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Sets and Dictionaries",
+                "pageId": "44y4nu95k",
+                "pageTitle": "Nested dictionaries"
+              }
+            },
+            {
+              "title": "Choosing the Right Data Structure",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Sets and Dictionaries",
+                "pageId": "44y4nu9ym",
+                "pageTitle": "Choosing the right data structure"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "title": "Files and Object-Oriented Programming",
+      "courseOutcome": "CO5",
+      "hours": 8,
+      "syllabus": "Files: Text files, reading and writing files, format operator; command line arguments, modules, packages. Object Oriented Programming: creating python classes, Initializing objects, Objects and classes, Abstraction, overview of inheritance and its type, polymorphism.",
+      "chapters": [
+        {
+          "number": "5.1",
+          "title": "File Handling",
+          "courseChapter": "File Handling",
+          "topics": [
+            {
+              "title": "Why Files: Persisting Data Beyond Runtime",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "File Handling",
+                "pageId": "44y4nv5tg",
+                "pageTitle": "Why files persisting data beyond runtime"
+              }
+            },
+            {
+              "title": "Reading Text Files",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "File Handling",
+                "pageId": "44y4nv6xk",
+                "pageTitle": "Reading text files"
+              }
+            },
+            {
+              "title": "Writing and Appending to Files",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "File Handling",
+                "pageId": "44y4nv7pz",
+                "pageTitle": "Writing and appending to files"
+              }
+            },
+            {
+              "title": "The with Statement",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "File Handling",
+                "pageId": "44y4nv8hc",
+                "pageTitle": "The with statement"
+              }
+            },
+            {
+              "title": "Reading and Writing CSV Files",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "File Handling",
+                "pageId": "44y4nvawc",
+                "pageTitle": "Reading and writing csv files"
+              }
+            },
+            {
+              "title": "Common File Pitfalls: Encoding and Missing Files",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "File Handling",
+                "pageId": "44y4nvc5q",
+                "pageTitle": "Common file pitfalls encoding and missing files"
+              }
+            }
+          ]
+        },
+        {
+          "number": "5.2",
+          "title": "Command Line Arguments, Modules and Packages",
+          "courseChapter": "File Handling",
+          "topics": [
+            {
+              "title": "Command Line Arguments with sys.argv",
+              "authorNew": true,
+              "note": "No page in any ByteXL Python product covers sys.argv or argparse. The syllabus names command line arguments explicitly and the lab course assumes console input, so this has to be authored."
+            },
+            {
+              "title": "Why Modules: Organizing and Reusing Code",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Modules and Packages",
+                "pageId": "44y4nuw3x",
+                "pageTitle": "Why modules organizing and reusing code"
+              }
+            },
+            {
+              "title": "import, from-import and Aliases",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Modules and Packages",
+                "pageId": "44y4nux8r",
+                "pageTitle": "Import fromimport and aliases"
+              }
+            },
+            {
+              "title": "Creating Your Own Module",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Modules and Packages",
+                "pageId": "44y4nuyts",
+                "pageTitle": "Creating your own module"
+              }
+            },
+            {
+              "title": "Packages and __init__.py",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Modules and Packages",
+                "pageId": "44y4nuzqz",
+                "pageTitle": "Packages and initpy"
+              }
+            }
+          ]
+        },
+        {
+          "number": "5.3",
+          "title": "Classes and Objects",
+          "courseChapter": "Object-Oriented Programming",
+          "topics": [
+            {
+              "title": "Why OOP: Modeling Real-World Things",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Basic Object-Oriented Programming",
+                "pageId": "44y4nun7p",
+                "pageTitle": "Why oop modeling realworld things"
+              }
+            },
+            {
+              "title": "Objects and Classes: What is a Class, What is an Object",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Basic Object-Oriented Programming",
+                "pageId": "44y4nupnt",
+                "pageTitle": "What is a class what is an object"
+              }
+            },
+            {
+              "title": "Creating Python Classes and Instantiating Objects",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Basic Object-Oriented Programming",
+                "pageId": "44y4nuqgw",
+                "pageTitle": "Creating a class and instantiating objects"
+              }
+            },
+            {
+              "title": "Attributes, Methods and the self Parameter",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Basic Object-Oriented Programming",
+                "pageId": "44y4nusf7",
+                "pageTitle": "Methods and the self parameter"
+              }
+            },
+            {
+              "title": "Initializing Objects: the __init__ Constructor",
+              "source": {
+                "productId": "44sqshkgw",
+                "productTitle": "Modern Python Programming",
+                "sectionTitle": "Basic Object-Oriented Programming",
+                "pageId": "44y4nut7x",
+                "pageTitle": "The init constructor"
+              }
+            }
+          ]
+        },
+        {
+          "number": "5.4",
+          "title": "Abstraction, Inheritance and Polymorphism",
+          "courseChapter": "Object-Oriented Programming",
+          "topics": [
+            {
+              "title": "Abstraction",
+              "source": {
+                "productId": "443wypsy9",
+                "productTitle": "Parul - Python Full Stack Development",
+                "sectionTitle": "Object-Oriented Programming (OOP) Concepts",
+                "pageId": "443xfmhza",
+                "pageTitle": "Abstraction"
+              }
+            },
+            {
+              "title": "Overview of Inheritance and its Types",
+              "source": {
+                "productId": "443wypsy9",
+                "productTitle": "Parul - Python Full Stack Development",
+                "sectionTitle": "Object-Oriented Programming (OOP) Concepts",
+                "pageId": "443xfm6r4",
+                "pageTitle": "Inheritance"
+              }
+            },
+            {
+              "title": "Polymorphism, Method Overriding and Operator Overloading",
+              "source": {
+                "productId": "443wypsy9",
+                "productTitle": "Parul - Python Full Stack Development",
+                "sectionTitle": "Object-Oriented Programming (OOP) Concepts",
+                "pageId": "443xfmeg8",
+                "pageTitle": "Polymorphism"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

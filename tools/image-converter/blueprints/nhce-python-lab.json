@@ -1,0 +1,128 @@
+{
+  "slug": "nhce-python-lab",
+  "title": "NHCE - Problem Solving Using Python Lab",
+  "description": "Tactical Course for New Horizon College of Engineering (25CSL144)",
+  "syllabus": {
+    "institution": "New Horizon College of Engineering",
+    "courseCode": "25CSL144",
+    "courseTitle": "Problem Solving Using Python Lab",
+    "credits": 1,
+    "ltps": "0:0:1:0",
+    "hoursPerWeek": 2,
+    "cieMarks": 50,
+    "seeMarks": 50,
+    "textbook": "Allen B. Downey, Think Python, 3rd Edition, O'Reilly, 2024",
+    "outcomes": {
+      "CO1": "Apply Python fundamentals to solve computational and mathematical problems.",
+      "CO2": "Demonstrate the use of iterative control structures, conditional statements, and string manipulation for problem-solving.",
+      "CO3": "Implement operations on Python data structures and perform basic file-handling techniques for data management.",
+      "CO4": "Apply user-defined functions, classes, and exception handling to design structured and efficient Python programs for real-world problem solving."
+    }
+  },
+  "sources": [],
+  "units": [
+    {
+      "number": 1,
+      "title": "Problem Solving Using Python Lab",
+      "courseOutcome": "CO1-CO4",
+      "hours": 26,
+      "syllabus": "Prerequisite programs, Part A conventional programs (1-6), Part B open-ended programs (7-12), Part C beyond-syllabus virtual lab content.",
+      "chapters": [
+        {
+          "number": "1.1",
+          "title": "Prerequisite",
+          "topics": [
+            {
+              "title": "Basics of Programming",
+              "authorNew": true,
+              "note": "Backed by Unit 1.1 and 1.2 of 25CSE144 (algorithms, flowcharts, first program). Needs a lab-shaped walkthrough of the editor, running a script and reading an error."
+            }
+          ]
+        },
+        {
+          "number": "1.2",
+          "title": "Part A - Conventional Programs",
+          "topics": [
+            {
+              "title": "Program 1: Area of a Circle and a Triangle",
+              "authorNew": true,
+              "note": "Backed by Unit 1.3 (arithmetic operators, type conversion) and 1.4 (input/output)."
+            },
+            {
+              "title": "Program 2: Compute n + nn + nnn, and Product-or-Sum of Two Integers",
+              "authorNew": true,
+              "note": "Backed by Unit 1.3 (numeric expressions, type conversion) and Unit 2.1 (if-else)."
+            },
+            {
+              "title": "Program 3: Multiplication Table and Counting Even and Odd Numbers",
+              "authorNew": true,
+              "note": "Backed by Unit 2.2 (for loops, range, common loop patterns)."
+            },
+            {
+              "title": "Program 4: Sort a Hyphen-Separated Sequence of Words",
+              "authorNew": true,
+              "note": "Backed by Unit 3.2 (splitting and joining) and Unit 4.1 (list built-in functions and sorting)."
+            },
+            {
+              "title": "Program 5: Count Uppercase, Lowercase and Spaces, and Toggle Case",
+              "authorNew": true,
+              "note": "Backed by Unit 3.1 (indexing, slicing) and Unit 3.2 (Python string functions)."
+            },
+            {
+              "title": "Program 6: Add a Key to a Dictionary",
+              "authorNew": true,
+              "note": "Backed by Unit 4.4 (accessing, adding, updating and removing values)."
+            }
+          ]
+        },
+        {
+          "number": "1.3",
+          "title": "Part B - Open-Ended Programs",
+          "topics": [
+            {
+              "title": "Program 7: Remove an Item from a Set and Find Repeated Items in a Tuple",
+              "authorNew": true,
+              "note": "Backed by Unit 4.2 (tuple operations) and Unit 4.3 (set operations and built-in methods)."
+            },
+            {
+              "title": "Program 8: Count Lines in a Text File, Append Text and Display It",
+              "authorNew": true,
+              "note": "Backed by Unit 5.1 (reading text files, writing and appending, the with statement)."
+            },
+            {
+              "title": "Program 9: Generate 26 Text Files Named A.txt to Z.txt",
+              "authorNew": true,
+              "note": "Backed by Unit 5.1 (writing files) and Unit 2.2 (for loops). Needs the chr/ord idiom, which no catalogue page teaches."
+            },
+            {
+              "title": "Program 10: DivExp with an Assertion and a Divide-by-Zero Exception",
+              "authorNew": true,
+              "note": "Backed by Unit 3.3 (assertion usage, try/except, raising exceptions) and Unit 2.3 (functions)."
+            },
+            {
+              "title": "Program 11: A Complex Class that Adds N Complex Numbers",
+              "authorNew": true,
+              "note": "Backed by Unit 5.3 (creating classes, the __init__ constructor) and Unit 5.4 (operator overloading via __add__)."
+            },
+            {
+              "title": "Program 12: Student Grade Tracker",
+              "authorNew": true,
+              "note": "Backed by Unit 4.1, 4.2 and 4.4 (lists of tuples and dictionaries) and Unit 2.3 (functions)."
+            }
+          ]
+        },
+        {
+          "number": "1.4",
+          "title": "Part C - Beyond Syllabus Virtual Lab",
+          "topics": [
+            {
+              "title": "Virtual Lab Walkthrough: IIIT-H Python Labs and LabEx",
+              "authorNew": true,
+              "note": "Not assessed in CIE or SEE. Needs a short orientation page pointing at python-iiith.vlabs.ac.in and labex.io/free-labs/python."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

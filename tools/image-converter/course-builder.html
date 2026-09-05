@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ByteXL Course Builder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="/config.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #070912; --panel: rgba(22,26,44,.64); --panel2: rgba(12,15,29,.72);
+      --line: rgba(255,255,255,.09); --line-hi: rgba(255,255,255,.17);
+      --ink: #f1f4ff; --ink2: #c3cae0; --muted: #8790ad; --faint: #5c6480;
+      --violet: #8b5cf6; --green: #34d399; --amber: #fbbf24; --red: #f87171; --cyan: #22d3ee;
+      --grad: linear-gradient(135deg,#6366f1 0%,#8b5cf6 52%,#d946ef 100%);
+      --success: linear-gradient(135deg,#10b981,#06b6d4);
+    }
+    body {
+      min-height: 100vh; color: var(--ink); font: 14px/1.5 Inter,-apple-system,BlinkMacSystemFont,sans-serif;
+      background: radial-gradient(circle at 0 0,rgba(99,102,241,.34),transparent 34rem),
+        radial-gradient(circle at 96% 18%,rgba(217,70,239,.22),transparent 32rem),
+        radial-gradient(circle at 55% 90%,rgba(6,182,212,.16),transparent 30rem),var(--bg);
+    }
+    button, input, select, textarea { font: inherit; }
+    .page { min-height: 100vh; }
+    .topnav {
+      position: sticky; top: 0; z-index: 20; height: 66px; padding: 0 32px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(9,11,20,.68); backdrop-filter: blur(20px) saturate(160%);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 12px; color: inherit; text-decoration: none; }
+    .logo { width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; background: var(--grad); font: 800 18px "Space Grotesk"; box-shadow: 0 4px 20px rgba(139,92,246,.45); }
+    .brand { font: 700 17px "Space Grotesk"; }
+    .brand span, h1 { background: linear-gradient(135deg,#fff 20%,#a5b4fc 60%,#e879f9); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+    .nav-link { min-height: 32px; padding: 6px 12px; border: 1px solid rgba(139,92,246,.3); border-radius: 99px; color: #c4b5fd; background: rgba(139,92,246,.12); text-decoration: none; font-size: 11px; font-weight: 800; letter-spacing: .35px; text-transform: uppercase; }
+    main { padding: 46px 28px 64px; }
+    .shell { width: min(1220px,100%); margin: auto; display: grid; gap: 22px; }
+    .hero { text-align: center; }
+    h1 { font: 700 clamp(32px,5vw,46px)/1.08 "Space Grotesk"; letter-spacing: -1.2px; }
+    .hero p { max-width: 800px; margin: 12px auto 0; color: var(--muted); font-size: 14.5px; }
+    .card { overflow: hidden; border: 1px solid var(--line); border-radius: 20px; background: var(--panel); box-shadow: 0 20px 60px rgba(0,0,0,.4); backdrop-filter: blur(28px); }
+    /* The unit tree runs to several thousand pixels for a full syllabus, which is
+       past the size Chromium will composite a backdrop-filter layer at -- the card
+       then paints as an empty rectangle. Opaque panel, no blur. */
+    .card.tall { backdrop-filter: none; background: #0c101d; }
+    .card-head { padding: 24px 28px 0; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .card-title { font: 700 17px "Space Grotesk"; }
+    .card-sub { margin-top: 4px; color: var(--muted); font-size: 13px; max-width: 720px; }
+    .body { padding: 20px 28px 28px; display: grid; gap: 18px; }
+    .field { display: grid; gap: 7px; }
+    .field label { color: var(--ink2); font-size: 11px; font-weight: 900; letter-spacing: .55px; text-transform: uppercase; }
+    .field input, .field select, .field textarea { width: 100%; padding: 11px 14px; color: var(--ink); background: rgba(8,11,22,.66); border: 1px solid var(--line-hi); border-radius: 9px; outline: none; }
+    .field select option { background: #101426; }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--violet); box-shadow: 0 0 0 3px rgba(139,92,246,.12); }
+    .row2 { display: grid; grid-template-columns: 2fr 1fr; gap: 14px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .btn { min-height: 44px; padding: 0 18px; border: 1px solid var(--line-hi); border-radius: 9px; color: var(--ink2); background: rgba(255,255,255,.05); font-weight: 800; cursor: pointer; }
+    .btn.primary { color: white; border-color: transparent; background: var(--grad); }
+    .btn.success { color: #03251a; border-color: transparent; background: var(--success); }
+    .btn:disabled { opacity: .4; cursor: not-allowed; }
+    .message { padding: 14px 16px; border: 1px solid rgba(139,92,246,.3); border-left: 5px solid var(--violet); border-radius: 10px; background: rgba(139,92,246,.1); color: #ddd6fe; font-weight: 750; }
+    .message.error { border-color: rgba(248,113,113,.35); border-left-color: var(--red); background: rgba(248,113,113,.1); color: #fecaca; }
+    .message.success { border-color: rgba(52,211,153,.35); border-left-color: var(--green); background: rgba(16,185,129,.1); color: #a7f3d0; }
+    .message.warn { border-color: rgba(251,191,36,.35); border-left-color: var(--amber); background: rgba(251,191,36,.1); color: #fde68a; }
+    .stats { display: grid; grid-template-columns: repeat(6,1fr); gap: 1px; overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: var(--line); }
+    .stat { padding: 16px; text-align: center; background: var(--panel2); }
+    .stat strong { display: block; font: 700 26px "Space Grotesk"; color: #c4b5fd; }
+    .stat.good strong { color: var(--green); }
+    .stat.warn strong { color: var(--amber); }
+    .stat.bad strong { color: var(--red); }
+    .stat span { color: var(--muted); font-size: 10px; font-weight: 900; letter-spacing: .55px; text-transform: uppercase; }
+    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border: 1px solid rgba(139,92,246,.3); border-radius: 99px; color: #c4b5fd; background: rgba(139,92,246,.13); font-size: 11px; font-weight: 900; }
+    .pills { display: flex; gap: 8px; flex-wrap: wrap; }
+    .co-grid { display: grid; gap: 8px; }
+    .co { display: grid; grid-template-columns: 52px 1fr; gap: 10px; align-items: start; padding: 10px 12px; border: 1px solid var(--line); border-radius: 9px; background: rgba(255,255,255,.02); font-size: 12.5px; color: var(--ink2); }
+    .co b { color: #a5b4fc; font: 800 11px/1.5 "Space Grotesk"; }
+    .unit { overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.02); }
+    .unit-head { padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--line); background: var(--panel2); flex-wrap: wrap; cursor: pointer; }
+    .unit-head h3 { font: 700 14.5px "Space Grotesk"; }
+    .unit-head .meta { color: var(--muted); font-size: 11.5px; font-weight: 700; }
+    .unit-syllabus { padding: 12px 18px; border-bottom: 1px solid var(--line); color: var(--faint); font-size: 12px; font-style: italic; }
+    .chapter { border-bottom: 1px solid var(--line); }
+    .chapter:last-child { border-bottom: 0; }
+    .chapter-head { padding: 11px 18px; display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,.025); }
+    .chapter-head strong { font: 700 12.5px "Space Grotesk"; color: #e0e7ff; }
+    .chapter-head code { padding: 2px 7px; border-radius: 6px; background: rgba(34,211,238,.12); color: #67e8f9; font: 700 11px "SFMono-Regular",Consolas,monospace; }
+    .topic { padding: 11px 18px 11px 30px; display: grid; grid-template-columns: 1fr minmax(0,1.15fr) auto; gap: 14px; align-items: center; border-top: 1px dashed rgba(255,255,255,.055); }
+    .topic-title { color: var(--ink); font-weight: 700; font-size: 13px; }
+    .topic-note { margin-top: 3px; color: var(--amber); font-size: 11.5px; font-weight: 600; line-height: 1.45; }
+    .topic-detail { margin-top: 3px; color: #fca5a5; font-size: 11.5px; font-weight: 600; line-height: 1.45; }
+    .src { color: var(--muted); font-size: 11.5px; line-height: 1.5; }
+    .src b { color: var(--ink2); font-weight: 700; }
+    .src .prod { color: #67e8f9; font-weight: 800; }
+    .metrics { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+    .metric { padding: 3px 8px; border: 1px solid var(--line); border-radius: 7px; color: var(--muted); font-size: 10.5px; font-weight: 800; white-space: nowrap; }
+    .status { display: inline-flex; padding: 4px 9px; border-radius: 99px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: .4px; }
+    .status.reuse { color: var(--green); background: rgba(16,185,129,.12); }
+    .status.moved { color: var(--cyan); background: rgba(34,211,238,.12); }
+    .status.thin { color: var(--amber); background: rgba(251,191,36,.12); }
+    .status.author { color: var(--amber); background: rgba(251,191,36,.12); }
+    .status.missing { color: var(--red); background: rgba(248,113,113,.12); }
+    .gap-list { display: grid; gap: 8px; }
+    .gap { padding: 12px 14px; border: 1px solid rgba(251,191,36,.28); border-left: 4px solid var(--amber); border-radius: 9px; background: rgba(251,191,36,.07); }
+    .gap strong { display: block; color: #fde68a; font-size: 12.5px; }
+    .gap span { display: block; margin-top: 4px; color: var(--muted); font-size: 11.5px; line-height: 1.5; }
+    .empty { padding: 38px; text-align: center; color: var(--muted); }
+    .toggle { display: flex; align-items: flex-start; gap: 10px; color: var(--ink2); font-size: 12.5px; line-height: 1.5; cursor: pointer; }
+    .toggle input { width: 17px; height: 17px; margin-top: 1px; accent-color: var(--violet); flex: none; }
+    .collapsed .chapter, .collapsed .unit-syllabus { display: none; }
+    @media (max-width: 1000px) { .stats { grid-template-columns: repeat(3,1fr); } .topic { grid-template-columns: 1fr; } .metrics { justify-content: flex-start; } .row2 { grid-template-columns: 1fr; } }
+    @media (max-width: 520px) { .topnav { padding: 0 18px; height: auto; padding-block: 12px; flex-wrap: wrap; gap: 10px; } main { padding: 32px 16px 48px; } .card-head,.body { padding-left: 18px; padding-right: 18px; } }
+  </style>
+</head>
+<body>
+<div class="page">
+  <nav class="topnav">
+    <a class="nav-brand" href="/"><span class="logo">b</span><span class="brand">byte<span>XL</span> Uploader</span></a>
+    <div class="nav-links">
+      <a class="nav-link" href="/">Content</a>
+      <a class="nav-link" href="/assessment">Question Upload</a>
+      <a class="nav-link" href="/assessment-builder">Test Builder</a>
+      <a class="nav-link" href="/question-bank-analytics">Analytics</a>
+    </div>
+  </nav>
+  <main>
+    <div class="shell">
+      <section class="hero">
+        <h1>Course Builder</h1>
+        <p>A tactical course is a college syllabus, not a new curriculum. Pick the blueprint, see exactly which published ByteXL lesson fills each syllabus topic and which topics nothing in the catalogue covers, then create the product with its units, chapters and topics already in the right positions.</p>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-title">1 &middot; Choose a blueprint</div>
+            <div class="card-sub">Blueprints live in <code>blueprints/</code> and pin every syllabus topic to a donor page id. Loading a plan re-reads those pages from ByteXL, so a renamed or gutted donor shows up here rather than in the college's course.</div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="row2">
+            <div class="field">
+              <label for="blueprint">Blueprint</label>
+              <select id="blueprint"><option value="">Loading&hellip;</option></select>
+            </div>
+            <div class="field">
+              <label for="spacer">&nbsp;</label>
+              <div class="actions">
+                <button class="btn primary" id="load" type="button">Load plan</button>
+                <button class="btn" id="refresh" type="button" title="Re-read every donor page body instead of using the cache">Refresh donors</button>
+              </div>
+            </div>
+          </div>
+          <div id="message" hidden></div>
+        </div>
+      </section>
+
+      <section class="card" id="syllabus-card" hidden>
+        <div class="card-head">
+          <div>
+            <div class="card-title" id="syllabus-title">Syllabus</div>
+            <div class="card-sub" id="syllabus-sub"></div>
+          </div>
+          <div class="pills" id="syllabus-pills"></div>
+        </div>
+        <div class="body">
+          <div class="co-grid" id="outcomes"></div>
+        </div>
+      </section>
+
+      <section class="card" id="plan-card" hidden>
+        <div class="card-head">
+          <div>
+            <div class="card-title">2 &middot; Coverage</div>
+            <div class="card-sub" id="coverage-sub"></div>
+          </div>
+          <div class="pills" id="source-pills"></div>
+        </div>
+        <div class="body">
+          <div class="stats" id="stats"></div>
+          <div id="blockers"></div>
+          <div id="gaps"></div>
+        </div>
+      </section>
+
+      <section class="card tall" id="tree-card" hidden>
+        <div class="card-head">
+          <div>
+            <div class="card-title">3 &middot; Units, chapters and topics</div>
+            <div class="card-sub">ByteXL holds two levels, so each chapter becomes one section titled <code>unit.chapter - Chapter name</code> and every topic becomes a page inside it. Click a unit to fold it.</div>
+          </div>
+        </div>
+        <div class="body"><div id="tree"></div></div>
+      </section>
+
+      <section class="card" id="create-card" hidden>
+        <div class="card-head">
+          <div>
+            <div class="card-title">4 &middot; Create the reading material</div>
+            <div class="card-sub">This writes the lesson content only &mdash; a product under Reading Material, not a course. Donor bodies are copied, not linked, since ByteXL cannot share a page between products. Step 5 below turns this content into an actual course.</div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="row2">
+            <div class="field">
+              <label for="course-title">Reading material title</label>
+              <input id="course-title" type="text" autocomplete="off">
+            </div>
+            <div class="field">
+              <label for="course-description">Description</label>
+              <input id="course-description" type="text" autocomplete="off">
+            </div>
+          </div>
+          <div id="create-warning"></div>
+          <label class="toggle" for="skip-author"><input id="skip-author" type="checkbox" checked>
+            Leave unwritten topics out entirely, rather than creating a marked placeholder page for each.</label>
+          <div class="actions">
+            <button class="btn success" id="create" type="button">Create reading material on ByteXL</button>
+            <span class="pill" id="create-summary"></span>
+          </div>
+          <div id="create-result"></div>
+        </div>
+      </section>
+
+      <section class="card tall" id="publish-card">
+        <div class="card-head">
+          <div>
+            <div class="card-title">5 &middot; Publish the course</div>
+            <div class="card-sub">This is the object that shows on ByteXL's own Course Builder screen: a Module &rarr; Chapter &rarr; Lesson tree. It <strong>creates no content</strong> &mdash; every lesson links straight into the donor course the material already lives in, so there is only ever one copy to maintain. Chapters that share a <code>courseChapter</code> in the blueprint merge here, while the reading material keeps the syllabus split. A topic with no donor is simply absent.</div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="actions">
+            <button class="btn" id="publish-load" type="button">Preview course links</button>
+            <span class="pill" id="publish-sources"></span>
+          </div>
+          <div id="publish-message"></div>
+          <div class="stats" id="publish-stats" hidden></div>
+          <div id="publish-excluded"></div>
+          <div id="publish-tree"></div>
+          <div class="row2">
+            <div class="field">
+              <label for="publish-title">Course title</label>
+              <input id="publish-title" type="text" autocomplete="off">
+            </div>
+            <div class="field">
+              <label for="publish-description">Course description (client-facing)</label>
+              <input id="publish-description" type="text" autocomplete="off">
+            </div>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label for="publish-course-type">Course type</label>
+              <select id="publish-course-type">
+                <option value="pbl">pbl</option>
+                <option value="lbl">lbl</option>
+                <option value="">(none)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="publish-program-level">Program level</label>
+              <input id="publish-program-level" type="text" value="undergraduate" autocomplete="off">
+            </div>
+          </div>
+          <div id="publish-warning"></div>
+          <div class="actions">
+            <button class="btn success" id="publish-create" type="button" disabled>Publish course on ByteXL</button>
+          </div>
+          <div id="publish-result"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+<script src="/course-builder.js"></script>
+</body>
+</html>
