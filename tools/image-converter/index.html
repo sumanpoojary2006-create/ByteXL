@@ -968,9 +968,11 @@
 
   const supportedExts = new Set([".png",".jpg",".jpeg",".gif",".webp",".svg"]);
   const mimeTypes = {".png":"image/png",".jpg":"image/jpeg",".jpeg":"image/jpeg",".gif":"image/gif",".webp":"image/webp",".svg":"image/svg+xml"};
-  // Keep pressure modest. Do not automatically resend a complete image.
+  // Keep pressure modest. Upload names are content-addressed, so retrying the
+  // same image is idempotent and safe when Render or ByteXL drops a request.
   const IMAGE_UPLOAD_CONCURRENCY = 2;
-  const IMAGE_UPLOAD_ATTEMPTS = 1;
+  const IMAGE_UPLOAD_ATTEMPTS = 4;
+  const IMAGE_UPLOAD_RETRY_BASE_MS = 1000;
   // v4 invalidates URLs created before the browser assigned collision-proof
   // names. ByteXL accepts the `images` subtype, so uniqueness belongs in the
   // filename rather than in a custom subtype.
@@ -1276,30 +1278,53 @@
       const uploadFilename = uniqueImageUploadFilename(imgPath, payload.filename, digest);
       fd.append("subtype", "images");
       fd.append("file", payload.blob, uploadFilename);
+      let r = null;
       try {
-        const r = await fetchOrExplain(uploadImageUrl,{method:"POST",body:fd}, `${baseName(imgPath)}`);
-        if (r.status===413) throw new Error(`${baseName(imgPath)} is too large.`);
-        if (r.ok) {
-          const url = (await r.json()).url||null;
-          if (url && digest) cacheUploadedImage(digest, url);
-          return url;
-        }
-
-        const d = await r.json().catch(()=>({}));
-        const message = d.detail||`Upload failed with HTTP ${r.status}.`;
-        lastError = new Error(`${baseName(imgPath)}: ${message}`);
-        if (r.status!==429 && r.status<500) throw lastError;
+        r = await fetchOrExplain(uploadImageUrl,{method:"POST",body:fd}, `${baseName(imgPath)}`);
       } catch (err) {
         lastError = err instanceof Error ? err : new Error(String(err));
-        if (/too large/i.test(lastError.message)) throw lastError;
+      }
+
+      if (r) {
+        if (r.status===413) throw new Error(`${baseName(imgPath)} is too large.`);
+        if (r.ok) {
+          const d = await r.json().catch(()=>({}));
+          const url = d.url||null;
+          if (url && digest) cacheUploadedImage(digest, url);
+          if (url) return url;
+          lastError = new Error(`${baseName(imgPath)}: The image API returned no URL.`);
+        } else {
+          const d = await r.json().catch(()=>({}));
+          const message = d.detail||`Upload failed with HTTP ${r.status}.`;
+          lastError = new Error(`${baseName(imgPath)}: ${message}`);
+          if (r.status!==429 && r.status<500) throw lastError;
+        }
       }
 
       if (attempt < IMAGE_UPLOAD_ATTEMPTS) {
         setProgress(`Retrying ${baseName(imgPath)} (${attempt + 1}/${IMAGE_UPLOAD_ATTEMPTS})…`);
-        await new Promise(resolve => setTimeout(resolve, 750 * (2 ** (attempt - 1))));
+        await new Promise(resolve => setTimeout(resolve, IMAGE_UPLOAD_RETRY_BASE_MS * (2 ** (attempt - 1))));
       }
     }
     throw lastError||new Error(`Upload failed for ${baseName(imgPath)}.`);
+  }
+
+  async function wakeImageUploadApi() {
+    let lastError = null;
+    for (let attempt = 1; attempt <= IMAGE_UPLOAD_ATTEMPTS; attempt++) {
+      try {
+        const r = await fetchOrExplain(`${apiBase}/healthz`, {cache:"no-store"}, "Image upload service");
+        if (r.ok) return;
+        lastError = new Error(`Image upload service returned HTTP ${r.status}.`);
+      } catch (err) {
+        lastError = err instanceof Error ? err : new Error(String(err));
+      }
+      if (attempt < IMAGE_UPLOAD_ATTEMPTS) {
+        setProgress(`Waking image upload service (${attempt + 1}/${IMAGE_UPLOAD_ATTEMPTS})…`);
+        await new Promise(resolve => setTimeout(resolve, IMAGE_UPLOAD_RETRY_BASE_MS * (2 ** (attempt - 1))));
+      }
+    }
+    throw lastError||new Error("Image upload service is unavailable.");
   }
 
   function shortPathHash(text) {
@@ -1331,6 +1356,9 @@
     const total = imgFiles.length;
     const workerCount = Math.min(IMAGE_UPLOAD_CONCURRENCY, total);
     if (!total) return;
+
+    setProgress("Waking image upload service…");
+    await wakeImageUploadApi();
 
     async function worker() {
       while (nextIndex < total) {
