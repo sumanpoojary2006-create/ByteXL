@@ -14,6 +14,28 @@ SPEC.loader.exec_module(server)
 
 
 class TopicTitleTests(unittest.TestCase):
+    def test_non_lesson_markdown_is_excluded_from_upload_records(self):
+        files = [
+            {"path": "Operating Systems/README.md", "markdown": "course index"},
+            {"path": "Operating Systems/STYLE.md", "markdown": "writing guide"},
+            {"path": "Operating Systems/TOC.md", "markdown": "table of contents"},
+            {
+                "path": "Operating Systems/1 - Foundations/images/visual-prompts.md",
+                "markdown": "image editing notes",
+            },
+            {
+                "path": "Operating Systems/1 - Foundations/01_intro.md",
+                "markdown": "lesson body",
+            },
+        ]
+
+        records = server.markdown_records(files)
+
+        self.assertEqual(
+            [record["path"] for record in records],
+            ["Operating Systems/1 - Foundations/01_intro.md"],
+        )
+
     def test_readme_title_preserves_punctuation_symbols_and_long_text(self):
         files = [
             {

@@ -142,6 +142,8 @@ DEFAULT_READING_ID = os.getenv("BYTEXL_READING_ID", "44sqshkgw")
 ONECOMPILER_WEB_BASE = os.getenv("ONECOMPILER_WEB_BASE", "https://onecompiler.com").rstrip("/")
 SUPPORTED = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg"}
 SKIP_ZIP_PARTS = {"__macosx", ".git", ".onecompiler_build", "node_modules", "sem2-image"}
+NON_LESSON_MARKDOWN_PARTS = {"images"}
+NON_LESSON_MARKDOWN_NAMES = {"readme.md", "style.md", "toc.md"}
 
 MIME = {
     ".png": "image/png",
@@ -1403,12 +1405,13 @@ def markdown_records(files: list[dict[str, str]]) -> list[dict[str, Any]]:
     records = []
     for index, item in enumerate(files):
         path = normalize_zip_path(item.get("path", ""))
-        if any(part.lower() in SKIP_ZIP_PARTS for part in path.split("/")):
+        path_parts = {part.lower() for part in path.split("/")}
+        if path_parts & (SKIP_ZIP_PARTS | NON_LESSON_MARKDOWN_PARTS):
             continue
         name = PurePosixPath(path).name.lower()
         if not path.lower().endswith((".md", ".markdown")):
             continue
-        if name == "readme.md" or name.startswith("onecompiler-"):
+        if name in NON_LESSON_MARKDOWN_NAMES or name.startswith("onecompiler-"):
             continue
         unit = extract_unit(path)
         records.append(
