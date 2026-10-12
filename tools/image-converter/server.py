@@ -6,6 +6,7 @@ import os
 import posixpath
 import re
 import sys
+import threading
 import time
 import zipfile
 from difflib import SequenceMatcher
@@ -1699,6 +1700,57 @@ def bytexl_stream_large(path: str):
         resp.close()
 
 
+_analytics_refresh_state_lock = threading.Lock()
+_analytics_refresh_thread: Optional[threading.Thread] = None
+_analytics_refresh_error: Optional[str] = None
+_analytics_refresh_failed_at = 0.0
+ANALYTICS_REFRESH_RETRY_SECONDS = 30
+
+
+def _analytics_refresh_worker() -> None:
+    global _analytics_refresh_thread, _analytics_refresh_error, _analytics_refresh_failed_at
+    try:
+        analytics.load_snapshot(bytexl_stream_large, force=True)
+        error = None
+        failed_at = 0.0
+    except Exception as exc:
+        error = str(exc)[:500]
+        failed_at = time.monotonic()
+    finally:
+        with _analytics_refresh_state_lock:
+            _analytics_refresh_error = error
+            _analytics_refresh_failed_at = failed_at
+            _analytics_refresh_thread = None
+
+
+def start_analytics_refresh(force_retry: bool = False) -> bool:
+    """Start one snapshot rebuild without blocking FastAPI's request loop."""
+    global _analytics_refresh_thread, _analytics_refresh_error
+    with _analytics_refresh_state_lock:
+        if _analytics_refresh_thread and _analytics_refresh_thread.is_alive():
+            return False
+        retry_blocked = (
+            _analytics_refresh_error
+            and time.monotonic() - _analytics_refresh_failed_at < ANALYTICS_REFRESH_RETRY_SECONDS
+        )
+        if retry_blocked and not force_retry:
+            return False
+        _analytics_refresh_error = None
+        _analytics_refresh_thread = threading.Thread(
+            target=_analytics_refresh_worker,
+            name="analytics-snapshot-refresh",
+            daemon=True,
+        )
+        _analytics_refresh_thread.start()
+        return True
+
+
+def analytics_refresh_status() -> tuple[bool, Optional[str]]:
+    with _analytics_refresh_state_lock:
+        refreshing = bool(_analytics_refresh_thread and _analytics_refresh_thread.is_alive())
+        return refreshing, _analytics_refresh_error
+
+
 @app.get("/save-token", response_class=HTMLResponse)
 async def save_token_page(t: str = ""):
     if t:
@@ -1762,8 +1814,33 @@ async def analytics_js():
 
 @app.get("/analytics/snapshot")
 async def analytics_snapshot(refresh: bool = False):
-    """The question-bank fact table the dashboard pivots client-side."""
-    return analytics.load_snapshot(bytexl_stream_large, force=refresh)
+    """Serve the latest fact table while expensive upstream reads refresh it."""
+    snapshot = analytics.read_snapshot()
+    if snapshot:
+        stale = snapshot["ageSeconds"] >= analytics.SNAPSHOT_TTL_SECONDS
+        if refresh or stale:
+            start_analytics_refresh(force_retry=refresh)
+        refreshing, refresh_error = analytics_refresh_status()
+        snapshot["refreshing"] = refreshing
+        if refresh_error:
+            snapshot["refreshFailed"] = True
+        return snapshot
+
+    start_analytics_refresh(force_retry=refresh)
+    refreshing, refresh_error = analytics_refresh_status()
+    if refresh_error and not refreshing:
+        return JSONResponse(
+            {"detail": f"Analytics snapshot build failed: {refresh_error}"},
+            status_code=502,
+        )
+    return JSONResponse(
+        {
+            "status": "building",
+            "refreshing": True,
+            "message": "The first question-bank snapshot is being built.",
+        },
+        status_code=202,
+    )
 
 
 @app.get("/course-builder", response_class=HTMLResponse)

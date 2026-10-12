@@ -326,6 +326,22 @@ def subject_from_test_title(title: str) -> str:
     return head or "(untitled)"
 
 
+def read_snapshot() -> Optional[dict[str, Any]]:
+    """Read any valid snapshot from disk, including an expired one."""
+    if not SNAPSHOT_PATH.exists():
+        return None
+    try:
+        age = time.time() - SNAPSHOT_PATH.stat().st_mtime
+        snapshot = json.loads(SNAPSHOT_PATH.read_text(encoding="utf-8"))
+        if snapshot.get("schemaVersion") != SNAPSHOT_SCHEMA_VERSION:
+            return None
+        snapshot["cached"] = True
+        snapshot["ageSeconds"] = max(0, int(age))
+        return snapshot
+    except (ValueError, OSError):
+        return None
+
+
 def load_snapshot(fetch_items, force: bool = False) -> dict[str, Any]:
     """Return the cached fact table, rebuilding it when stale or forced.
 
@@ -334,17 +350,10 @@ def load_snapshot(fetch_items, force: bool = False) -> dict[str, Any]:
     server's auth and HTTP concerns, and lets the server stream a 245 MB
     response instead of materializing it.
     """
-    if not force and SNAPSHOT_PATH.exists():
-        age = time.time() - SNAPSHOT_PATH.stat().st_mtime
-        if age < SNAPSHOT_TTL_SECONDS:
-            try:
-                snapshot = json.loads(SNAPSHOT_PATH.read_text(encoding="utf-8"))
-                if snapshot.get("schemaVersion") == SNAPSHOT_SCHEMA_VERSION:
-                    snapshot["cached"] = True
-                    snapshot["ageSeconds"] = int(age)
-                    return snapshot
-            except (ValueError, OSError):
-                pass  # Unreadable cache is a rebuild, not an error.
+    if not force:
+        snapshot = read_snapshot()
+        if snapshot and snapshot["ageSeconds"] < SNAPSHOT_TTL_SECONDS:
+            return snapshot
 
     started = time.time()
     try:
@@ -362,16 +371,10 @@ def load_snapshot(fetch_items, force: bool = False) -> dict[str, Any]:
         # — serve whatever is still on disk, however stale, over a hard error.
         # Only a cold start with nothing cached yet has no fallback and must
         # raise.
-        if SNAPSHOT_PATH.exists():
-            try:
-                snapshot = json.loads(SNAPSHOT_PATH.read_text(encoding="utf-8"))
-                if snapshot.get("schemaVersion") == SNAPSHOT_SCHEMA_VERSION:
-                    snapshot["cached"] = True
-                    snapshot["ageSeconds"] = int(time.time() - SNAPSHOT_PATH.stat().st_mtime)
-                    snapshot["refreshFailed"] = True
-                    return snapshot
-            except (ValueError, OSError):
-                pass
+        snapshot = read_snapshot()
+        if snapshot:
+            snapshot["refreshFailed"] = True
+            return snapshot
         raise
 
     snapshot["generatedAt"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())

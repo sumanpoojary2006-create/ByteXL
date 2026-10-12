@@ -1422,6 +1422,12 @@
         return r.json();
       })
       .then(function (d) {
+        if (d.status === "building") {
+          var detail = $("loader-detail");
+          if (detail) detail.textContent = "The first snapshot is syncing in the background. This page will load automatically when it is ready.";
+          window.setTimeout(function () { load(false, false); }, 5000);
+          return;
+        }
         var changed = !DATA || DATA.generatedAt !== d.generatedAt;
         DATA = d;
         if (initialMonthScope) {
