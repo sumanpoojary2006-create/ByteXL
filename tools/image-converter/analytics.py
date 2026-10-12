@@ -357,13 +357,24 @@ def load_snapshot(fetch_items, force: bool = False) -> dict[str, Any]:
 
     started = time.time()
     try:
+        source_warnings = []
+
+        def optional_items(path: str):
+            try:
+                yield from fetch_items(path)
+            except Exception as exc:
+                source_warnings.append({"path": path, "error": str(exc)[:240]})
+
         # Consumed lazily and in order inside build_fact_table, so at most one
         # bulk response is open at a time. Do not wrap these in list().
         snapshot = build_fact_table(
             fetch_items("/api/questions"),
-            fetch_items("/api/questions-vault"),
-            fetch_items("/api/tests?builderListView=true"),
+            optional_items("/api/questions-vault"),
+            optional_items("/api/tests?builderListView=true"),
         )
+        if source_warnings:
+            snapshot["refreshFailed"] = True
+            snapshot["sourceWarnings"] = source_warnings
     except Exception:
         # ByteXL itself can be down or flaking (a bare 502 from its edge has hit
         # this build in production). A visitor with a working dashboard a moment

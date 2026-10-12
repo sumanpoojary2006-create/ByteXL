@@ -223,6 +223,24 @@ class SnapshotSourceTests(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             analytics.load_snapshot(fetch_502, force=True)
 
+    def test_optional_archive_failure_still_builds_live_dashboard(self):
+        def fetch(path):
+            if path == "/api/questions":
+                return iter([question(_id="live")])
+            if path == "/api/questions-vault":
+                def failed_archive():
+                    raise RuntimeError("502 Server Error: Bad Gateway")
+                    yield
+                return failed_archive()
+            return iter([{"title": "Python - Assessment 1"}])
+
+        snapshot = analytics.load_snapshot(fetch, force=True)
+
+        self.assertEqual(snapshot["counts"], {"live": 1, "archived": 0})
+        self.assertEqual(len(snapshot["tests"]["rows"]), 1)
+        self.assertTrue(snapshot["refreshFailed"])
+        self.assertEqual(snapshot["sourceWarnings"][0]["path"], "/api/questions-vault")
+
     def setUp(self):
         # Keep the real cache file out of the way of these forced rebuilds.
         self._real_path = analytics.SNAPSHOT_PATH
