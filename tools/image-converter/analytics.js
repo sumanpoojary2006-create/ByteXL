@@ -62,7 +62,6 @@
     { title: "Overview", view: "overview", target: "tiles", tags: "summary total questions mcq coding growth increase decrease" },
     { title: "Monthly production", view: "overview", target: "metric-monthly", tags: "monthly trend volume added questions growth output over time" },
     { title: "Subjects that depend on one person", view: "coverage", target: "metric-resilience", tags: "subjects one author ownership unavailable maintain difficult" },
-    { title: "Who added the questions?", view: "production", target: "metric-curated", tags: "content leads support engineers role written uploaded" },
     { title: "Questions added and archived", view: "production", target: "metric-churn", tags: "archived deleted additions overall increase decrease" },
     { title: "Weekly movement", view: "production", target: "metric-weekly", tags: "week over week weekly added archived net movement trend" },
     { title: "Questions by Content Lead", view: "production", target: "metric-lead", tags: "who authored most author contributor people monthly mcq coding" },
@@ -705,35 +704,6 @@
       }));
   }
 
-  function renderCurated() {
-    var c = DATA.cols, idx = {};
-    months.forEach(function (m, i) { idx[DATA.dims.months.indexOf(m)] = i; });
-    var lead = months.map(function () { return 0; }), sup = months.map(function () { return 0; }), other = months.map(function () { return 0; });
-    rows.forEach(function (i) {
-      var k = idx[c.cm[i]]; if (k === undefined) return;
-      var r = roleOf(c.au[i]);
-      if (r === "lead") lead[k]++; else if (r === "support") sup[k]++; else other[k]++;
-    });
-    var host = $("c-curated");
-    host.innerHTML = '<div class="role-share-grid">' + months.map(function (m, i) {
-      var total = lead[i] + sup[i] + other[i], leadPct = pct(lead[i], total), supPct = pct(sup[i], total);
-      return '<div class="role-share"><div class="role-share-month">' + esc(monthLabel(m)) + '</div>' +
-        '<div class="role-share-values"><b>' + leadPct + '% <small>Lead</small></b><b>' + supPct + '% <small>Support</small></b></div>' +
-        '<div class="share-bar"><i style="width:' + leadPct + '%"></i><i style="width:' + supPct + '%"></i></div>' +
-        '<div class="role-share-counts">' + fmt(lead[i]) + ' by Leads · ' + fmt(sup[i]) + ' by Support · ' + pct(other[i], total) + '% other</div></div>';
-    }).join("") + '</div><div id="c-curated-chart"></div>';
-    columns($("c-curated-chart"), {
-      categories: months.map(monthLabel), stacked: true, height: 290,
-      series: [
-        { label: "Content Leads", color: css("--series-1"), values: lead },
-        { label: "Platform Support", color: css("--series-2"), values: sup },
-        { label: "Manager / system", color: css("--series-7"), values: other }
-      ],
-      aria: "Questions by author role per month",
-      caption: "Counts behind the monthly proportions shown above. Manager and system activity stays visible rather than being reassigned."
-    });
-  }
-
   function renderWeekly() {
     var c = DATA.cols, dims = DATA.dims, host = $("c-weekly"), tableHost = $("tb-weekly");
     if (!hasCompleteCreationDates()) {
@@ -1103,7 +1073,7 @@
   function renderAll() {
     months = activeMonths();
     rows = computeRows();
-    renderTiles(); renderResilience(); renderMonthly(); renderCurated(); renderChurn(); renderWeekly();
+    renderTiles(); renderResilience(); renderMonthly(); renderChurn(); renderWeekly();
     renderSubject(); renderLead(); renderTrack(); renderCompany(); renderAkilaCompany();
     renderMatrix(); renderStandard(); renderQuality(); renderRoster();
     animateMetrics($("app"));
