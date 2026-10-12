@@ -89,6 +89,16 @@ class TrackTests(unittest.TestCase):
 
 
 class FactTableTests(unittest.TestCase):
+    def test_mongodb_object_id_recovers_the_exact_utc_creation_time(self):
+        self.assertEqual(
+            analytics.created_from_object_id("6695f3200000000000000000"),
+            "2024-07-16T04:12:16Z",
+        )
+
+    def test_non_object_ids_are_never_treated_as_creation_dates(self):
+        for value in (None, "q1", "6695f320", "z" * 24):
+            self.assertEqual(analytics.created_from_object_id(value), "")
+
     def test_creation_and_archive_events_are_encoded_by_iso_week(self):
         table = analytics.build_fact_table(
             [], [question(_archived_at="2026-08-09T18:00:00Z")], []
@@ -180,6 +190,23 @@ class FactTableTests(unittest.TestCase):
         self.assertEqual(table["coverage"]["liveCreationDatesKnown"], 0)
         self.assertTrue(table["refreshFailed"])
         self.assertEqual(table["sourceWarnings"][0]["path"], "/api/questions")
+
+    def test_compact_feed_recovers_creation_date_from_mongodb_object_id(self):
+        row = question(
+            _id="6695f3200000000000000000",
+            created=None,
+            explanation=None,
+            companies=[],
+        )
+        row["_analytics_summary_only"] = True
+
+        table = analytics.build_fact_table([row], [], [])
+
+        self.assertEqual(table["dims"]["months"][table["cols"]["cm"][0]], "2024-07")
+        self.assertEqual(table["dims"]["weeks"][table["cols"]["cw"][0]], "2024-07-15")
+        self.assertEqual(table["dims"]["days"][table["cols"]["cd"][0]], "2024-07-16")
+        self.assertEqual(table["coverage"]["liveCreationDatesKnown"], 1)
+        self.assertEqual(table["coverage"]["liveCreationDatesRecovered"], 1)
 
     def test_full_rows_mark_detail_fields_as_known(self):
         table = analytics.build_fact_table([question()], [], [])

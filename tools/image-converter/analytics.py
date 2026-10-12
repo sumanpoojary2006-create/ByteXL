@@ -16,7 +16,7 @@ import json
 import os
 import re
 import time
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Iterable, Optional
 
@@ -26,7 +26,7 @@ SNAPSHOT_PATH = Path(
 # A short cache keeps normal page loads fast while making upstream changes appear
 # on an open dashboard within a few minutes. The Refresh data button bypasses it.
 SNAPSHOT_TTL_SECONDS = int(os.getenv("ANALYTICS_SNAPSHOT_TTL", str(5 * 60)))
-SNAPSHOT_SCHEMA_VERSION = 5
+SNAPSHOT_SCHEMA_VERSION = 6
 
 QUESTION_TYPES = ["multipleChoice", "coding", "descriptive"]
 DIFFICULTIES = ["easy", "medium", "hard", "unspecified"]
@@ -193,6 +193,28 @@ def week_key(raw: Any) -> str:
     return (day - timedelta(days=day.weekday())).isoformat()
 
 
+def created_from_object_id(raw: Any) -> str:
+    """Recover a MongoDB document's UTC creation time from its identifier.
+
+    ByteXL's compact question feed deliberately omits ``created`` to keep the
+    122k-row response small, but its MongoDB ObjectIds retain the exact document
+    creation timestamp in their first four bytes.  Only canonical 24-character
+    hexadecimal IDs are accepted, and implausible dates are rejected, so a
+    custom ID can never be mistaken for a timestamp.
+    """
+    value = str(raw or "").strip()
+    if not re.fullmatch(r"[0-9a-fA-F]{24}", value):
+        return ""
+    try:
+        created = datetime.fromtimestamp(int(value[:8], 16), timezone.utc)
+    except (OverflowError, OSError, ValueError):
+        return ""
+    now = datetime.now(timezone.utc)
+    if created.year < 2015 or created > now + timedelta(days=1):
+        return ""
+    return created.isoformat(timespec="seconds").replace("+00:00", "Z")
+
+
 class Interner:
     """Assigns each distinct string a stable index for columnar encoding."""
 
@@ -228,16 +250,22 @@ def build_fact_table(
     summary_only_count = 0
     live_rows_count = 0
     live_creation_dates_known = 0
+    live_creation_dates_recovered = 0
     live_companies_known = 0
     live_explanations_known = 0
 
     def ingest(question: dict[str, Any], archived: bool) -> None:
         nonlocal summary_only_count, live_rows_count, live_creation_dates_known
+        nonlocal live_creation_dates_recovered
         nonlocal live_companies_known, live_explanations_known
         summary_only = bool(question.get("_analytics_summary_only"))
         if summary_only:
             summary_only_count += 1
         created_raw = question.get("created")
+        if not created_raw and summary_only:
+            created_raw = created_from_object_id(question.get("_id"))
+            if created_raw:
+                live_creation_dates_recovered += 1
         created = str(created_raw or "")[:7]
         created_week = week_key(created_raw)
         if not created or not created_week:
@@ -305,6 +333,7 @@ def build_fact_table(
         "coverage": {
             "liveRows": live_rows_count,
             "liveCreationDatesKnown": live_creation_dates_known,
+            "liveCreationDatesRecovered": live_creation_dates_recovered,
             "liveCompaniesKnown": live_companies_known,
             "liveExplanationsKnown": live_explanations_known,
         },
@@ -313,7 +342,7 @@ def build_fact_table(
         result["refreshFailed"] = True
         result["sourceWarnings"] = [{
             "path": "/api/questions",
-            "error": "All current question rows are loaded. ByteXL's compact feed omits creation date, company and explanation fields, so reports that require those fields are marked as unavailable instead of showing incomplete numbers.",
+            "error": "All current question rows are loaded. Creation dates missing from ByteXL's compact feed are recovered from MongoDB ObjectId timestamps; company and explanation coverage remains unavailable.",
         }]
     return result
 
