@@ -26,7 +26,7 @@ SNAPSHOT_PATH = Path(
 # A short cache keeps normal page loads fast while making upstream changes appear
 # on an open dashboard within a few minutes. The Refresh data button bypasses it.
 SNAPSHOT_TTL_SECONDS = int(os.getenv("ANALYTICS_SNAPSHOT_TTL", str(5 * 60)))
-SNAPSHOT_SCHEMA_VERSION = 2
+SNAPSHOT_SCHEMA_VERSION = 3
 
 QUESTION_TYPES = ["multipleChoice", "coding", "descriptive"]
 DIFFICULTIES = ["easy", "medium", "hard", "unspecified"]
@@ -220,7 +220,10 @@ def build_fact_table(
     months = Interner()
     weeks = Interner()
 
-    cols: dict[str, list[int]] = {k: [] for k in ("cm", "am", "cw", "aw", "ty", "df", "au", "su", "tp", "co", "mk", "ex", "st")}
+    cols: dict[str, list[int]] = {k: [] for k in (
+        "cm", "am", "cw", "aw", "ty", "df", "au", "su", "tp", "co",
+        "mk", "ex", "ek", "ck", "dk", "st",
+    )}
     summary_only_count = 0
 
     def ingest(question: dict[str, Any], archived: bool) -> None:
@@ -256,10 +259,13 @@ def build_fact_table(
         cols["tp"].append(topics.add(_first(question.get("topics"), "(no topic)")))
         cols["co"].append(companies.add(company_values[0]) if company_values else -1)
         cols["mk"].append(1 if is_mock else 0)
-        # Summary-feed rows do not include explanation/company/date details.
-        # Treat explanation as unknown rather than falsely counting every row
-        # as incomplete; the source warning below discloses the limitation.
-        cols["ex"].append(1 if summary_only or str(question.get("explanation") or "").strip() else 0)
+        # The compact live feed omits these fields. Keep an explicit knowledge
+        # bit for each one so the UI never turns "unknown" into a misleading
+        # zero or silently excludes the row from all-time totals.
+        cols["ex"].append(1 if str(question.get("explanation") or "").strip() else 0)
+        cols["ek"].append(0 if summary_only else 1)
+        cols["ck"].append(0 if summary_only else 1)
+        cols["dk"].append(1 if created_raw else 0)
         cols["st"].append(1 if archived else 0)
 
     for question in live:
@@ -284,12 +290,18 @@ def build_fact_table(
         "roles": DEFAULT_ROLES,
         "tests": summarize_tests(tests),
         "counts": {"live": sum(1 for v in cols["st"] if v == 0), "archived": sum(cols["st"])},
+        "coverage": {
+            "liveRows": sum(1 for v in cols["st"] if v == 0),
+            "liveCreationDatesKnown": sum(1 for i, v in enumerate(cols["st"]) if v == 0 and cols["dk"][i]),
+            "liveCompaniesKnown": sum(1 for i, v in enumerate(cols["st"]) if v == 0 and cols["ck"][i]),
+            "liveExplanationsKnown": sum(1 for i, v in enumerate(cols["st"]) if v == 0 and cols["ek"][i]),
+        },
     }
     if summary_only_count:
         result["refreshFailed"] = True
         result["sourceWarnings"] = [{
             "path": "/api/questions",
-            "error": "Loaded ByteXL's compact question feed because the full bulk response timed out; date, company and explanation details are unavailable for this sync.",
+            "error": "All current question rows are loaded. ByteXL's compact feed omits creation date, company and explanation fields, so reports that require those fields are marked as unavailable instead of showing incomplete numbers.",
         }]
     return result
 

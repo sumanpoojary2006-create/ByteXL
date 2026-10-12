@@ -82,6 +82,13 @@
   function $(id) { return document.getElementById(id); }
   function fmt(n) { return (n === null || n === undefined) ? "–" : n.toLocaleString("en-IN"); }
   function pct(a, b) { return b ? Math.round((a / b) * 1000) / 10 : 0; }
+  function liveDetailCoverage(field) {
+    var coverage = (DATA && DATA.coverage) || {};
+    var total = coverage.liveRows == null ? ((DATA && DATA.counts && DATA.counts.live) || 0) : coverage.liveRows;
+    var known = coverage[field] == null ? total : coverage[field];
+    return { known: known, total: total, complete: known === total };
+  }
+  function hasCompleteCreationDates() { return liveDetailCoverage("liveCreationDatesKnown").complete; }
 
   function applyTheme(theme, save) {
     theme = theme === "light" ? "light" : "dark";
@@ -98,6 +105,7 @@
   }
   function monthLabel(key) {
     if (!key) return "";
+    if (key === "(date unavailable)") return "Date unavailable";
     var p = key.split("-");
     return ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][+p[1] - 1] + " " + p[0].slice(2);
   }
@@ -498,7 +506,7 @@
       if (c.cm[i] === latestIndex) latest++;
       if (c.cm[i] === previousIndex) previous++;
       var subject = dims.subjects[c.su[i]], topic = dims.topics[c.tp[i]];
-      if (!c.ex[i] || c.df[i] === 3 || subject === "(no subject)" || topic === "(no topic)") qualityDebt++;
+      if ((c.ek[i] && !c.ex[i]) || c.df[i] === 3 || subject === "(no subject)" || topic === "(no topic)") qualityDebt++;
       if (!subject || subject === "(no subject)") return;
       if (!subjects[subject]) subjects[subject] = { n: 0, authors: {} };
       subjects[subject].n++;
@@ -534,7 +542,26 @@
     var delta = prevN ? Math.round(((lastN - prevN) / prevN) * 100) : 0;
     var s = bankSignals();
 
-    var tiles = [
+    var tiles;
+    if (!hasCompleteCreationDates()) {
+      var live = rows.filter(function (i) { return !DATA.cols.st[i]; });
+      var archivedAll = rows.filter(function (i) { return DATA.cols.st[i]; });
+      var liveMcq = live.filter(function (i) { return DATA.cols.ty[i] === 0; }).length;
+      var liveCoding = live.filter(function (i) { return DATA.cols.ty[i] === 1; }).length;
+      var subjectSet = {};
+      live.forEach(function (i) {
+        var subject = DATA.dims.subjects[DATA.cols.su[i]];
+        if (subject && subject !== "(no subject)") subjectSet[subject] = 1;
+      });
+      tiles = [
+        { k: "Current questions", v: fmt(live.length), d: "All active ByteXL questions" },
+        { k: "Archived questions", v: fmt(archivedAll.length), d: "Available archive records" },
+        { k: "Assessment papers", v: fmt(DATA.tests.rows.length), d: "Tests loaded from ByteXL" },
+        { k: "MCQs", v: fmt(liveMcq), d: pct(liveMcq, live.length) + "% of current questions" },
+        { k: "Coding questions", v: fmt(liveCoding), d: pct(liveCoding, live.length) + "% of current questions" },
+        { k: "Subjects", v: fmt(Object.keys(subjectSet).length), d: "Named subjects in the current bank" }
+      ];
+    } else tiles = [
       { k: "Questions added", v: fmt(total), d: months.length + " month" + (months.length > 1 ? "s" : "") + " in view" },
       { k: "MCQs", v: fmt(mcq), d: pct(mcq, total) + "% of additions" },
       { k: "Coding questions", v: fmt(cod), d: pct(cod, total) + "% of additions" },
@@ -573,7 +600,7 @@
       if (!agg[subject]) agg[subject] = { n: 0, authors: {}, noExpl: 0, noDiff: 0 };
       var a = agg[subject], author = dims.authors[c.au[i]];
       a.n++; a.authors[author] = (a.authors[author] || 0) + 1;
-      if (!c.ex[i]) a.noExpl++;
+      if (c.ek[i] && !c.ex[i]) a.noExpl++;
       if (c.df[i] === 3) a.noDiff++;
     });
 
@@ -614,7 +641,7 @@
             { label: "Top author", value: x.topAuthor },
             { label: "Authors who contributed", value: x.authors },
             { label: "Questions", value: x.n },
-            { label: "Missing explanation", value: x.noExpl },
+            { label: "Missing explanation (known records)", value: x.noExpl },
             { label: "Missing difficulty", value: x.noDiff }
           ]
         };
@@ -625,6 +652,11 @@
   }
 
   function renderMonthly() {
+    if (!hasCompleteCreationDates()) {
+      $("c-monthly").innerHTML = '<div class="warn">Monthly production is temporarily unavailable because ByteXL did not include creation dates in the current-question feed. The totals above still include every current question.</div>';
+      $("tb-monthly").innerHTML = "";
+      return;
+    }
     var t = byMonthType();
     var cats = months.map(monthLabel);
     columns($("c-monthly"), {
@@ -674,6 +706,10 @@
 
   function renderWeekly() {
     var c = DATA.cols, dims = DATA.dims, host = $("c-weekly"), tableHost = $("tb-weekly");
+    if (!hasCompleteCreationDates()) {
+      host.innerHTML = '<div class="warn">Weekly production is temporarily unavailable because creation dates are missing from ByteXL\'s current-question feed.</div>';
+      tableHost.innerHTML = ""; return;
+    }
     if (!c.cw || !c.aw || !dims.weeks) {
       host.innerHTML = '<div class="warn">Weekly data isn\'t ready yet. Click "Refresh data" above in a minute and it will appear.</div>';
       tableHost.innerHTML = ""; return;
@@ -835,6 +871,11 @@
     var monthSet = {}; months.forEach(function (m) { monthSet[m] = 1; });
     var mockTests = DATA.tests.rows.filter(function (t) { return t.mock && monthSet[t.month]; });
     var host = $("c-company");
+    if (!liveDetailCoverage("liveCompaniesKnown").complete) {
+      host.innerHTML = '<div class="warn">Named-company question counts are temporarily unavailable because ByteXL did not include company fields in the current-question feed. No missing values are being shown as zero.</div>' +
+        '<div class="tiles" style="margin-top:14px"><div class="tile"><div class="k">Mock tests built</div><div class="v">' + fmt(mockTests.length) + '</div><div class="d">Available from the assessment feed</div></div></div>';
+      return;
+    }
     host.innerHTML = '<div class="tiles" style="margin-bottom:14px">' +
       '<div class="tile"><div class="k">Company-linked questions</div><div class="v">' + fmt(mockTotal) + '</div><div class="d">' + pct(mockTotal, rows.length) + "% of additions</div></div>" +
       '<div class="tile"><div class="k">Mock tests built</div><div class="v">' + fmt(mockTests.length) + '</div><div class="d">In the selected period</div></div>' +
@@ -854,6 +895,10 @@
   }
 
   function renderAkilaCompany() {
+    if (!liveDetailCoverage("liveCompaniesKnown").complete) {
+      $("c-akila-company").innerHTML = '<div class="warn">This company-specific report is temporarily unavailable because ByteXL did not include company fields in the current-question feed.</div>';
+      return;
+    }
     var c = DATA.cols, dims = DATA.dims, monthIndex = {}, mcq = months.map(function () { return 0; }), coding = months.map(function () { return 0; }), companies = {};
     months.forEach(function (m, i) { monthIndex[dims.months.indexOf(m)] = i; });
     for (var i = 0; i < c.cm.length; i++) {
@@ -945,11 +990,11 @@
 
   function renderQuality() {
     var c = DATA.cols, dims = DATA.dims;
-    var noSubject = 0, noDiff = 0, noExpl = 0, noTopic = 0;
+    var noSubject = 0, noDiff = 0, noExpl = 0, explanationKnown = 0, noTopic = 0;
     rows.forEach(function (i) {
       if (dims.subjects[c.su[i]] === "(no subject)") noSubject++;
       if (c.df[i] === 3) noDiff++;
-      if (!c.ex[i]) noExpl++;
+      if (c.ek[i]) { explanationKnown++; if (!c.ex[i]) noExpl++; }
       if (dims.topics[c.tp[i]] === "(no topic)") noTopic++;
     });
     var n = rows.length || 1;
@@ -957,13 +1002,14 @@
       { label: "No subject assigned", v: noSubject, why: "Invisible to subject filters and the Test Builder." },
       { label: "No topic assigned", v: noTopic, why: "Cannot be grouped by topic when building a test." },
       { label: "No difficulty set", v: noDiff, why: "Breaks difficulty-balanced paper generation." },
-      { label: "No explanation", v: noExpl, why: "Weak review value for students after an attempt." }
+      { label: "No explanation", v: noExpl, denominator: explanationKnown, why: explanationKnown < rows.length ? "Based on records where ByteXL supplied explanation data." : "Weak review value for students after an attempt." }
     ];
     var host = $("c-quality");
     host.innerHTML = '<div class="tiles" style="margin-bottom:6px">' + items.map(function (x) {
-      var p = pct(x.v, n);
+      var denominator = x.denominator == null ? n : x.denominator;
+      var p = pct(x.v, denominator);
       return '<div class="tile"><div class="k">' + esc(x.label) + '</div><div class="v">' + p + '%</div><div class="d ' +
-        (p > 25 ? "down" : "") + '">' + fmt(x.v) + " of " + fmt(n) + " · " + esc(x.why) + "</div></div>";
+        (p > 25 ? "down" : "") + '">' + fmt(x.v) + " of " + fmt(denominator) + " · " + esc(x.why) + "</div></div>";
     }).join("") + "</div>";
     if (noSubject / n > 0.2) {
       var w = document.createElement("div");
@@ -1354,7 +1400,8 @@
         });
       });
     $("btn-reset").addEventListener("click", function () {
-      VIEW.months.clear(); monthOptions().slice(-3).forEach(function (o) { VIEW.months.add(o.value); });
+      VIEW.months.clear();
+      if (hasCompleteCreationDates()) monthOptions().slice(-3).forEach(function (o) { VIEW.months.add(o.value); });
       VIEW.tracks.clear(); VIEW.subjects.clear(); VIEW.authors.clear(); VIEW.type = "";
       Array.prototype.forEach.call($("f-type").children, function (o, i) { o.classList.toggle("on", i === 0); });
       refreshFilters();
@@ -1431,7 +1478,8 @@
         var changed = !DATA || DATA.generatedAt !== d.generatedAt;
         DATA = d;
         if (initialMonthScope) {
-          VIEW.months.clear(); monthOptions().slice(-3).forEach(function (o) { VIEW.months.add(o.value); });
+          VIEW.months.clear();
+          if (hasCompleteCreationDates()) monthOptions().slice(-3).forEach(function (o) { VIEW.months.add(o.value); });
           initialMonthScope = false;
         }
         var saved = null;

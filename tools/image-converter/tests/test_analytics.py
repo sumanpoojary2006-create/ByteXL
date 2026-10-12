@@ -171,9 +171,24 @@ class FactTableTests(unittest.TestCase):
 
         self.assertEqual(table["counts"]["live"], 1)
         self.assertEqual(table["dims"]["months"], ["(date unavailable)"])
-        self.assertEqual(table["cols"]["ex"], [1])
+        self.assertEqual(table["cols"]["ex"], [0])
+        self.assertEqual(table["cols"]["ek"], [0])
+        self.assertEqual(table["cols"]["ck"], [0])
+        self.assertEqual(table["cols"]["dk"], [0])
+        self.assertEqual(table["coverage"]["liveRows"], 1)
+        self.assertEqual(table["coverage"]["liveCreationDatesKnown"], 0)
         self.assertTrue(table["refreshFailed"])
         self.assertEqual(table["sourceWarnings"][0]["path"], "/api/questions")
+
+    def test_full_rows_mark_detail_fields_as_known(self):
+        table = analytics.build_fact_table([question()], [], [])
+
+        self.assertEqual(table["cols"]["ek"], [1])
+        self.assertEqual(table["cols"]["ck"], [1])
+        self.assertEqual(table["cols"]["dk"], [1])
+        self.assertEqual(table["coverage"]["liveCreationDatesKnown"], 1)
+        self.assertEqual(table["coverage"]["liveCompaniesKnown"], 1)
+        self.assertEqual(table["coverage"]["liveExplanationsKnown"], 1)
 
 
 class SnapshotSourceTests(unittest.TestCase):
