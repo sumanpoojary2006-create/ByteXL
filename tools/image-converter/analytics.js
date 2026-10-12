@@ -53,7 +53,7 @@
   var activeDashboard = "overview";
   var DASHBOARDS = {
     overview: { title: "Overview", description: "The most important numbers at a glance. Click a card to see the full picture." },
-    production: { title: "Questions created over time", description: "How many questions were added, who created them, and what was archived." },
+    production: { title: "Question production", description: "Current contribution totals, plus time trends when ByteXL supplies creation dates." },
     coverage: { title: "What content is available", description: "Available questions and assessments by subject, track, and company." },
     quality: { title: "Question quality", description: "Difficulty balance and missing question details." },
     team: { title: "Team roles", description: "Choose each author's role for people-based reports." }
@@ -212,8 +212,12 @@
   /** Root <svg> that scales down to fit but never blows a small chart up. */
   function svgRoot(W, H, aria) {
     var s = el("svg", { viewBox: "0 0 " + W + " " + H, width: W, height: H, role: "img", "aria-label": aria || "" });
+    // Keep compact charts at their intended size instead of stretching every
+    // row to fill a wide card. Larger charts still scale down responsively.
+    s.style.width = "min(100%, " + W + "px)";
     s.style.maxWidth = "100%";
     s.style.height = "auto";
+    s.style.marginInline = "auto";
     return s;
   }
   /** Bar with 4px rounded data-end, square where it meets the baseline. */
@@ -736,6 +740,10 @@
   }
 
   function renderChurn() {
+    if (!hasCompleteCreationDates()) {
+      $("c-churn").innerHTML = '<div class="warn">The added-versus-archived timeline is temporarily unavailable because current questions do not include creation dates. The complete current and archived totals remain available in Overview.</div>';
+      return;
+    }
     var c = DATA.cols, idx = {};
     months.forEach(function (m, i) { idx[DATA.dims.months.indexOf(m)] = i; });
     var added = months.map(function () { return 0; }), arch = months.map(function () { return 0; });
@@ -757,6 +765,39 @@
 
   function renderSubject() {
     var c = DATA.cols, dims = DATA.dims, idx = {};
+    if (!hasCompleteCreationDates()) {
+      var current = {};
+      rows.forEach(function (i) {
+        if (c.st[i]) return;
+        var subject = dims.subjects[c.su[i]];
+        if (!current[subject]) current[subject] = { total: 0, mcq: 0, coding: 0, descriptive: 0 };
+        current[subject].total++;
+        if (c.ty[i] === 1) current[subject].coding++;
+        else if (c.ty[i] === 2) current[subject].descriptive++;
+        else current[subject].mcq++;
+      });
+      var currentSubjects = Object.keys(current).sort(function (a, b) { return current[b].total - current[a].total; });
+      hbars($("c-subject"), {
+        labelWidth: 224,
+        items: currentSubjects.slice(0, 12).map(function (subject) {
+          return {
+            label: subject, value: current[subject].total, color: css("--series-1"),
+            detail: [
+              { label: "MCQ", value: current[subject].mcq, color: css("--series-1") },
+              { label: "Coding", value: current[subject].coding, color: css("--series-2") },
+              { label: "Descriptive", value: current[subject].descriptive }
+            ]
+          };
+        }),
+        aria: "Current active questions by subject",
+        caption: "Top 12 subjects by current question volume. Monthly history is hidden until ByteXL supplies creation dates."
+      });
+      table($("tb-subject"), ["Subject", "Track", "MCQ", "Coding", "Descriptive", "Current total"],
+        currentSubjects.map(function (subject) {
+          return [subject, DATA.tracks[subject] || "–", fmt(current[subject].mcq), fmt(current[subject].coding), fmt(current[subject].descriptive), fmt(current[subject].total)];
+        }), "All " + currentSubjects.length + " subjects in the current bank.");
+      return;
+    }
     months.forEach(function (m, i) { idx[dims.months.indexOf(m)] = i; });
     var agg = {};
     rows.forEach(function (i) {
@@ -855,6 +896,41 @@
 
   function renderTrack() {
     var c = DATA.cols, dims = DATA.dims, monthIndex = {}, agg = {};
+    if (!hasCompleteCreationDates()) {
+      rows.forEach(function (i) {
+        if (c.st[i]) return;
+        var track = DATA.tracks[dims.subjects[c.su[i]]] || "Other / Unclassified";
+        if (!agg[track]) agg[track] = { n: 0, m: 0, c: 0, d: 0, leads: {} };
+        var item = agg[track], author = dims.authors[c.au[i]];
+        item.n++;
+        if (c.ty[i] === 1) item.c++; else if (c.ty[i] === 2) item.d++; else item.m++;
+        if (roleOf(c.au[i]) === "lead") item.leads[author] = (item.leads[author] || 0) + 1;
+      });
+      var currentTracks = Object.keys(agg).sort(function (a, b) { return agg[b].n - agg[a].n; });
+      hbars($("c-track"), {
+        labelWidth: 210,
+        items: currentTracks.slice(0, 12).map(function (track) {
+          return {
+            label: track, value: agg[track].n, color: css("--series-6"),
+            detail: [
+              { label: "MCQ", value: agg[track].m, color: css("--series-1") },
+              { label: "Coding", value: agg[track].c, color: css("--series-2") },
+              { label: "Descriptive", value: agg[track].d }
+            ]
+          };
+        }),
+        aria: "Current active questions by track",
+        caption: "Current totals by track. Monthly history is hidden until ByteXL supplies creation dates."
+      });
+      var currentTrackRows = currentTracks.map(function (track) {
+        var mix = Object.keys(agg[track].leads).sort(function (a, b) { return agg[track].leads[b] - agg[track].leads[a]; })
+          .slice(0, 4).map(function (lead) { return lead.split(" ")[0] + " " + fmt(agg[track].leads[lead]); }).join(" · ") || "–";
+        return [track, fmt(agg[track].n), fmt(agg[track].m), fmt(agg[track].c), fmt(agg[track].d), mix];
+      });
+      var currentTrackTable = $("tb-track");
+      if (currentTrackTable) table(currentTrackTable, ["Track", "Current total", "MCQ", "Coding", "Descriptive", "Top Content Leads"], currentTrackRows);
+      return;
+    }
     months.forEach(function (m, i) { monthIndex[dims.months.indexOf(m)] = i; });
     rows.forEach(function (i) {
       var t = DATA.tracks[dims.subjects[c.su[i]]] || "Other / Unclassified";
@@ -925,6 +1001,10 @@
       $("c-akila-company").innerHTML = '<div class="warn">This company-specific report is temporarily unavailable because ByteXL did not include company fields in the current-question feed.</div>';
       return;
     }
+    if (!hasCompleteCreationDates()) {
+      $("c-akila-company").innerHTML = '<div class="warn">This month-by-month report is temporarily unavailable because current questions do not include creation dates.</div>';
+      return;
+    }
     var c = DATA.cols, dims = DATA.dims, monthIndex = {}, mcq = months.map(function () { return 0; }), coding = months.map(function () { return 0; }), companies = {};
     months.forEach(function (m, i) { monthIndex[dims.months.indexOf(m)] = i; });
     for (var i = 0; i < c.cm.length; i++) {
@@ -965,7 +1045,7 @@
     }
     var keys = Object.keys(agg).sort(function (a, b) {
       return agg[b].reduce(add, 0) - agg[a].reduce(add, 0);
-    }).slice(0, 22);
+    }).slice(0, 14);
     pctBars($("c-matrix"), {
       series: DIFF_LABEL.map(function (l, i) { return { label: l, color: css(ORD[i]) }; }),
       items: keys.map(function (k) { return { label: k, values: agg[k] }; }),
@@ -996,7 +1076,7 @@
       '</div><div class="d">Shells that cannot be assigned</div></div></div><div id="c-standard-bars"></div><div id="tb-standard" style="margin-top:14px"></div>';
     hbars($("c-standard-bars"), {
       labelWidth: 224, valueLabel: "Papers", labelWidthNote: 1,
-      items: keys.map(function (k) {
+      items: keys.slice(0, 12).map(function (k) {
         return {
           label: k, value: bySubject[k].n, color: css("--series-3"),
           detail: [{ label: "Total questions", value: bySubject[k].q },
@@ -1004,7 +1084,7 @@
         };
       }),
       aria: "Standardized assessment papers per subject",
-      caption: "Counts every test flagged as a standardized assessment, whether by test intent or tag."
+      caption: "Top 12 subjects by assessment-paper count. The full list remains available in the table below."
     });
     table($("tb-standard"), ["Subject", "Papers", "Questions", "Empty papers", "First built", "Latest"],
       keys.map(function (k) {
