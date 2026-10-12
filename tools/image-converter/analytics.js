@@ -33,9 +33,9 @@
 
   var DATA = null;      // raw snapshot
   var ROLES = {};       // author name -> lead | support | manager | system
-  // Date range is inclusive. Blank dates mean all available records; the other
-  // dimensions use an empty Set to mean "no filter".
-  var VIEW = { fromDate: "", toDate: "", tracks: new Set(), subjects: new Set(), authors: new Set(), type: "" };
+  // Quarter is an automatic calendar-quarter scope (for example 2026-Q3).
+  // Blank means all time; the other dimensions use an empty Set for no filter.
+  var VIEW = { quarter: "", tracks: new Set(), subjects: new Set(), authors: new Set(), type: "" };
   var matrixType = 1;
   var matrixSubject = "";
   var matrixSubjects = [];
@@ -87,6 +87,20 @@
     return { known: known, total: total, complete: known === total };
   }
   function hasCompleteCreationDates() { return liveDetailCoverage("liveCreationDatesKnown").complete; }
+  function quarterBounds(value) {
+    var match = /^(\d{4})-Q([1-4])$/.exec(value || "");
+    if (!match) return null;
+    var year = +match[1], quarter = +match[2], startMonth = (quarter - 1) * 3 + 1, endMonth = startMonth + 2;
+    return {
+      from: year + "-" + String(startMonth).padStart(2, "0") + "-01",
+      to: year + "-" + String(endMonth).padStart(2, "0") + "-31"
+    };
+  }
+  function quarterForDay(day) {
+    var parts = String(day || "").split("-");
+    if (parts.length < 2) return "";
+    return parts[0] + "-Q" + (Math.floor((+parts[1] - 1) / 3) + 1);
+  }
 
   function applyTheme(theme, save) {
     theme = theme === "light" ? "light" : "dark";
@@ -434,11 +448,12 @@
 
   function activeMonths() {
     var all = DATA.dims.months.slice().filter(Boolean).sort();
-    if (!VIEW.fromDate && !VIEW.toDate) return all;
+    var range = quarterBounds(VIEW.quarter);
+    if (!range) return all;
     return all.filter(function (m) {
       if (m === "(date unavailable)") return false;
       var first = m + "-01", last = m + "-31";
-      return (!VIEW.fromDate || last >= VIEW.fromDate) && (!VIEW.toDate || first <= VIEW.toDate);
+      return last >= range.from && first <= range.to;
     });
   }
 
@@ -449,10 +464,11 @@
     months.forEach(function (m) { monthSet[dims.months.indexOf(m)] = 1; });
     var trackOf = DATA.tracks;
     var out = [];
+    var range = quarterBounds(VIEW.quarter);
     for (var i = 0; i < c.cm.length; i++) {
-      if (VIEW.fromDate || VIEW.toDate) {
+      if (range) {
         var createdDay = c.cd[i] >= 0 ? dims.days[c.cd[i]] : "";
-        if (!createdDay || (VIEW.fromDate && createdDay < VIEW.fromDate) || (VIEW.toDate && createdDay > VIEW.toDate)) continue;
+        if (!createdDay || createdDay < range.from || createdDay > range.to) continue;
       }
       if (!monthSet[c.cm[i]]) continue;
       if (VIEW.type !== "" && c.ty[i] !== +VIEW.type) continue;
@@ -471,10 +487,11 @@
     var monthSet = {};
     months.forEach(function (m) { monthSet[dims.months.indexOf(m)] = 1; });
     var out = [];
+    var range = quarterBounds(VIEW.quarter);
     for (var i = 0; i < c.am.length; i++) {
-      if (VIEW.fromDate || VIEW.toDate) {
+      if (range) {
         var archivedDay = c.ad[i] >= 0 ? dims.days[c.ad[i]] : "";
-        if (!archivedDay || (VIEW.fromDate && archivedDay < VIEW.fromDate) || (VIEW.toDate && archivedDay > VIEW.toDate)) continue;
+        if (!archivedDay || archivedDay < range.from || archivedDay > range.to) continue;
       }
       if (c.am[i] < 0 || !monthSet[c.am[i]]) continue;
       if (VIEW.type !== "" && c.ty[i] !== +VIEW.type) continue;
@@ -1311,28 +1328,24 @@
     tracksMsel = mountMultiSelect("f-track", { key: "tracks", allLabel: "All tracks", getOptions: trackOptions });
     subjectsMsel = mountMultiSelect("f-subject", { key: "subjects", allLabel: "All subjects", searchable: true, getOptions: subjectOptions });
     authorsMsel = mountMultiSelect("f-author", { key: "authors", allLabel: "All authors", searchable: true, getOptions: authorOptions });
-    var from = $("f-date-from"), to = $("f-date-to"), note = $("date-coverage-note");
+    var quarter = $("f-quarter"), note = $("date-coverage-note");
     var complete = hasCompleteCreationDates();
-    from.disabled = !complete; to.disabled = !complete;
+    var quarters = {};
+    (DATA.dims.days || []).forEach(function (day) { var key = quarterForDay(day); if (key) quarters[key] = 1; });
+    var quarterKeys = Object.keys(quarters).sort().reverse();
+    quarter.innerHTML = '<option value="">All time</option>' + quarterKeys.map(function (key) {
+      var parts = key.split("-Q"); return '<option value="' + key + '">Q' + parts[1] + " " + parts[0] + "</option>";
+    }).join("");
+    quarter.disabled = !complete;
     if (!complete) {
       note.classList.remove("hidden");
-      note.textContent = "Day filtering is waiting for creation dates from ByteXL. Current totals below remain complete.";
-    } else {
-      var availableDays = (DATA.dims.days || []).filter(Boolean).sort();
-      if (availableDays.length) {
-        from.min = availableDays[0]; from.max = availableDays[availableDays.length - 1];
-        to.min = availableDays[0]; to.max = availableDays[availableDays.length - 1];
-      }
+      note.textContent = "Quarter reporting is waiting for creation dates from ByteXL. Current totals below remain complete.";
+    } else if (quarterKeys.length) {
+      VIEW.quarter = quarterKeys[0]; quarter.value = VIEW.quarter;
     }
-    [from, to].forEach(function (input) {
-      input.addEventListener("change", function () {
-        VIEW.fromDate = from.value; VIEW.toDate = to.value;
-        if (VIEW.fromDate && VIEW.toDate && VIEW.fromDate > VIEW.toDate) {
-          if (input === from) { to.value = from.value; VIEW.toDate = from.value; }
-          else { from.value = to.value; VIEW.fromDate = to.value; }
-        }
-        renderAll();
-      });
+    quarter.addEventListener("change", function () {
+      VIEW.quarter = quarter.value;
+      renderAll();
     });
   }
   function refreshFilters() {
@@ -1445,7 +1458,7 @@
         });
       });
     $("btn-reset").addEventListener("click", function () {
-      VIEW.fromDate = ""; VIEW.toDate = ""; $("f-date-from").value = ""; $("f-date-to").value = "";
+      VIEW.quarter = ""; $("f-quarter").value = "";
       VIEW.tracks.clear(); VIEW.subjects.clear(); VIEW.authors.clear(); VIEW.type = "";
       Array.prototype.forEach.call($("f-type").children, function (o, i) { o.classList.toggle("on", i === 0); });
       refreshFilters();
