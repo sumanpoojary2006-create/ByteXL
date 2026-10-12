@@ -87,6 +87,9 @@
     return { known: known, total: total, complete: known === total };
   }
   function hasCompleteCreationDates() { return liveDetailCoverage("liveCreationDatesKnown").complete; }
+  function explanationKnownAt(i) {
+    return !!DATA.cols.st[i] || liveDetailCoverage("liveExplanationsKnown").complete;
+  }
   function quarterBounds(value) {
     var match = /^(\d{4})-Q([1-4])$/.exec(value || "");
     if (!match) return null;
@@ -533,7 +536,7 @@
       if (c.cm[i] === latestIndex) latest++;
       if (c.cm[i] === previousIndex) previous++;
       var subject = dims.subjects[c.su[i]], topic = dims.topics[c.tp[i]];
-      if ((c.ek[i] && !c.ex[i]) || c.df[i] === 3 || subject === "(no subject)" || topic === "(no topic)") qualityDebt++;
+      if ((explanationKnownAt(i) && !c.ex[i]) || c.df[i] === 3 || subject === "(no subject)" || topic === "(no topic)") qualityDebt++;
       if (!subject || subject === "(no subject)") return;
       if (!subjects[subject]) subjects[subject] = { n: 0, authors: {} };
       subjects[subject].n++;
@@ -627,7 +630,7 @@
       if (!agg[subject]) agg[subject] = { n: 0, authors: {}, noExpl: 0, noDiff: 0 };
       var a = agg[subject], author = dims.authors[c.au[i]];
       a.n++; a.authors[author] = (a.authors[author] || 0) + 1;
-      if (c.ek[i] && !c.ex[i]) a.noExpl++;
+      if (explanationKnownAt(i) && !c.ex[i]) a.noExpl++;
       if (c.df[i] === 3) a.noDiff++;
     });
 
@@ -1047,7 +1050,7 @@
     rows.forEach(function (i) {
       if (dims.subjects[c.su[i]] === "(no subject)") noSubject++;
       if (c.df[i] === 3) noDiff++;
-      if (c.ek[i]) { explanationKnown++; if (!c.ex[i]) noExpl++; }
+      if (explanationKnownAt(i)) { explanationKnown++; if (!c.ex[i]) noExpl++; }
       if (dims.topics[c.tp[i]] === "(no topic)") noTopic++;
     });
     var n = rows.length || 1;

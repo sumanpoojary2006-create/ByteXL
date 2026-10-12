@@ -26,7 +26,7 @@ SNAPSHOT_PATH = Path(
 # A short cache keeps normal page loads fast while making upstream changes appear
 # on an open dashboard within a few minutes. The Refresh data button bypasses it.
 SNAPSHOT_TTL_SECONDS = int(os.getenv("ANALYTICS_SNAPSHOT_TTL", str(5 * 60)))
-SNAPSHOT_SCHEMA_VERSION = 4
+SNAPSHOT_SCHEMA_VERSION = 5
 
 QUESTION_TYPES = ["multipleChoice", "coding", "descriptive"]
 DIFFICULTIES = ["easy", "medium", "hard", "unspecified"]
@@ -223,12 +223,17 @@ def build_fact_table(
 
     cols: dict[str, list[int]] = {k: [] for k in (
         "cm", "am", "cw", "aw", "cd", "ad", "ty", "df", "au", "su", "tp", "co",
-        "mk", "ex", "ek", "ck", "dk", "st",
+        "mk", "ex", "st",
     )}
     summary_only_count = 0
+    live_rows_count = 0
+    live_creation_dates_known = 0
+    live_companies_known = 0
+    live_explanations_known = 0
 
     def ingest(question: dict[str, Any], archived: bool) -> None:
-        nonlocal summary_only_count
+        nonlocal summary_only_count, live_rows_count, live_creation_dates_known
+        nonlocal live_companies_known, live_explanations_known
         summary_only = bool(question.get("_analytics_summary_only"))
         if summary_only:
             summary_only_count += 1
@@ -262,14 +267,17 @@ def build_fact_table(
         cols["tp"].append(topics.add(_first(question.get("topics"), "(no topic)")))
         cols["co"].append(companies.add(company_values[0]) if company_values else -1)
         cols["mk"].append(1 if is_mock else 0)
-        # The compact live feed omits these fields. Keep an explicit knowledge
-        # bit for each one so the UI never turns "unknown" into a misleading
-        # zero or silently excludes the row from all-time totals.
+        # The compact live feed omits these fields. Coverage is recorded once
+        # in the snapshot metadata instead of repeating three knowledge flags
+        # for every question; that keeps the production snapshot comfortably
+        # within the service's memory limit.
         cols["ex"].append(1 if str(question.get("explanation") or "").strip() else 0)
-        cols["ek"].append(0 if summary_only else 1)
-        cols["ck"].append(0 if summary_only else 1)
-        cols["dk"].append(1 if created_raw else 0)
         cols["st"].append(1 if archived else 0)
+        if not archived:
+            live_rows_count += 1
+            live_creation_dates_known += 1 if created_raw else 0
+            live_companies_known += 0 if summary_only else 1
+            live_explanations_known += 0 if summary_only else 1
 
     for question in live:
         ingest(question, archived=False)
@@ -293,12 +301,12 @@ def build_fact_table(
         "tracks": {s: track_for_subject(s) for s in subjects.values},
         "roles": DEFAULT_ROLES,
         "tests": summarize_tests(tests),
-        "counts": {"live": sum(1 for v in cols["st"] if v == 0), "archived": sum(cols["st"])},
+        "counts": {"live": live_rows_count, "archived": sum(cols["st"])},
         "coverage": {
-            "liveRows": sum(1 for v in cols["st"] if v == 0),
-            "liveCreationDatesKnown": sum(1 for i, v in enumerate(cols["st"]) if v == 0 and cols["dk"][i]),
-            "liveCompaniesKnown": sum(1 for i, v in enumerate(cols["st"]) if v == 0 and cols["ck"][i]),
-            "liveExplanationsKnown": sum(1 for i, v in enumerate(cols["st"]) if v == 0 and cols["ek"][i]),
+            "liveRows": live_rows_count,
+            "liveCreationDatesKnown": live_creation_dates_known,
+            "liveCompaniesKnown": live_companies_known,
+            "liveExplanationsKnown": live_explanations_known,
         },
     }
     if summary_only_count:
