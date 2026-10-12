@@ -1073,7 +1073,7 @@
       '<div class="tile"><div class="k">Subjects with a standardized assessment</div><div class="v">' + fmt(keys.length) + '</div><div class="d">Across all months</div></div>' +
       '<div class="tile"><div class="k">Assessment papers</div><div class="v">' + fmt(all.length) + '</div><div class="d">' + fmt(inWindow) + " created in the selected period</div></div>" +
       '<div class="tile"><div class="k">Papers with no questions</div><div class="v">' + fmt(all.filter(function (t) { return !t.questions; }).length) +
-      '</div><div class="d">Shells that cannot be assigned</div></div></div><div id="c-standard-bars"></div><div id="tb-standard" style="margin-top:14px"></div>';
+      '</div><div class="d">Shells that cannot be assigned</div></div></div><div id="c-standard-bars"></div>';
     hbars($("c-standard-bars"), {
       labelWidth: 224, valueLabel: "Papers", labelWidthNote: 1,
       items: keys.slice(0, 12).map(function (k) {
@@ -1503,7 +1503,7 @@
         b.classList.add("on"); VIEW.type = b.dataset.v; renderAll();
       });
     });
-    [["t-monthly", "c-monthly", "tb-monthly"], ["t-weekly", "c-weekly", "tb-weekly"], ["t-subject", "c-subject", "tb-subject"], ["t-lead", "c-lead", "tb-lead"]]
+    [["t-monthly", "c-monthly", "tb-monthly"], ["t-weekly", "c-weekly", "tb-weekly"], ["t-subject", "c-subject", "tb-subject"], ["t-lead", "c-lead", "tb-lead"], ["t-track", "c-track", "tb-track"], ["t-standard", "c-standard", "tb-standard"]]
       .forEach(function (p) {
         $(p[0]).addEventListener("change", function () {
           $(p[1]).classList.toggle("hidden", $(p[0]).checked);
