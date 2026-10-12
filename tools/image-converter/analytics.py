@@ -26,7 +26,7 @@ SNAPSHOT_PATH = Path(
 # A short cache keeps normal page loads fast while making upstream changes appear
 # on an open dashboard within a few minutes. The Refresh data button bypasses it.
 SNAPSHOT_TTL_SECONDS = int(os.getenv("ANALYTICS_SNAPSHOT_TTL", str(5 * 60)))
-SNAPSHOT_SCHEMA_VERSION = 3
+SNAPSHOT_SCHEMA_VERSION = 4
 
 QUESTION_TYPES = ["multipleChoice", "coding", "descriptive"]
 DIFFICULTIES = ["easy", "medium", "hard", "unspecified"]
@@ -219,9 +219,10 @@ def build_fact_table(
     companies = Interner()
     months = Interner()
     weeks = Interner()
+    days = Interner()
 
     cols: dict[str, list[int]] = {k: [] for k in (
-        "cm", "am", "cw", "aw", "ty", "df", "au", "su", "tp", "co",
+        "cm", "am", "cw", "aw", "cd", "ad", "ty", "df", "au", "su", "tp", "co",
         "mk", "ex", "ek", "ck", "dk", "st",
     )}
     summary_only_count = 0
@@ -251,6 +252,8 @@ def build_fact_table(
         cols["am"].append(months.add(archived_month) if archived_month else -1)
         cols["cw"].append(weeks.add(created_week))
         cols["aw"].append(weeks.add(archived_week) if archived_week else -1)
+        cols["cd"].append(days.add(str(created_raw)[:10]) if created_raw else -1)
+        cols["ad"].append(days.add(str(archived_raw)[:10]) if archived_raw else -1)
         qtype = question.get("type")
         cols["ty"].append(QUESTION_TYPES.index(qtype) if qtype in QUESTION_TYPES else 0)
         cols["df"].append(DIFFICULTIES.index(norm_difficulty(question.get("difficulty"))))
@@ -282,6 +285,7 @@ def build_fact_table(
             "companies": companies.values,
             "months": months.values,
             "weeks": weeks.values,
+            "days": days.values,
             "types": QUESTION_TYPES,
             "difficulties": DIFFICULTIES,
         },

@@ -68,6 +68,7 @@
 
     /* Filter bar: one row above the charts, per interaction spec. */
     .filters { position: sticky; top: 66px; z-index: 20; display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; padding: 14px 18px; border: 1px solid rgba(139,92,246,.17); border-radius: 14px; background: linear-gradient(135deg,rgba(12,15,29,.96),rgba(19,18,42,.94)); box-shadow: 0 16px 45px rgba(0,0,0,.38); backdrop-filter: blur(20px) saturate(145%); }
+    .date-note { align-self:center; max-width:230px; color:var(--amber); font-size:10px; line-height:1.35; }
     .fgroup { display: grid; gap: 5px; min-width: 160px; }
     .fgroup label { color: var(--faint); font-size: 10px; font-weight: 900; letter-spacing: .6px; text-transform: uppercase; }
     .fgroup select, .fgroup input { height: 36px; padding: 0 10px; color: var(--ink); background: rgba(8,11,22,.8); border: 1px solid var(--line-hi); border-radius: 8px; outline: none; min-width: 150px; }
@@ -562,9 +563,14 @@
         <div class="filters">
           <div class="filter-mark"><span>Analysis</span><b>Scope</b></div>
           <div class="fgroup">
-            <label id="l-months">Months</label>
-            <div id="f-months" aria-labelledby="l-months"></div>
+            <label for="f-date-from">From</label>
+            <input id="f-date-from" type="date" aria-label="Start date">
           </div>
+          <div class="fgroup">
+            <label for="f-date-to">To</label>
+            <input id="f-date-to" type="date" aria-label="End date">
+          </div>
+          <div id="date-coverage-note" class="date-note hidden"></div>
           <div class="fgroup">
             <label id="l-track">Track</label>
             <div id="f-track" aria-labelledby="l-track"></div>

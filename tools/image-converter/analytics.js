@@ -33,11 +33,9 @@
 
   var DATA = null;      // raw snapshot
   var ROLES = {};       // author name -> lead | support | manager | system
-  // months/tracks/subjects/authors are checkbox multi-selects: an empty Set means
-  // "no filter" (show everything), same convention across all four. type stays a
-  // single-select segmented control.
-  var VIEW = { months: new Set(), tracks: new Set(), subjects: new Set(), authors: new Set(), type: "" };
-  var initialMonthScope = true;
+  // Date range is inclusive. Blank dates mean all available records; the other
+  // dimensions use an empty Set to mean "no filter".
+  var VIEW = { fromDate: "", toDate: "", tracks: new Set(), subjects: new Set(), authors: new Set(), type: "" };
   var matrixType = 1;
   var matrixSubject = "";
   var matrixSubjects = [];
@@ -436,8 +434,12 @@
 
   function activeMonths() {
     var all = DATA.dims.months.slice().filter(Boolean).sort();
-    if (!VIEW.months.size) return all; // empty selection = no filter, same as every other dimension
-    return all.filter(function (m) { return VIEW.months.has(m); });
+    if (!VIEW.fromDate && !VIEW.toDate) return all;
+    return all.filter(function (m) {
+      if (m === "(date unavailable)") return false;
+      var first = m + "-01", last = m + "-31";
+      return (!VIEW.fromDate || last >= VIEW.fromDate) && (!VIEW.toDate || first <= VIEW.toDate);
+    });
   }
 
   /** Row indices matching the current filters, by creation month. */
@@ -448,6 +450,10 @@
     var trackOf = DATA.tracks;
     var out = [];
     for (var i = 0; i < c.cm.length; i++) {
+      if (VIEW.fromDate || VIEW.toDate) {
+        var createdDay = c.cd[i] >= 0 ? dims.days[c.cd[i]] : "";
+        if (!createdDay || (VIEW.fromDate && createdDay < VIEW.fromDate) || (VIEW.toDate && createdDay > VIEW.toDate)) continue;
+      }
       if (!monthSet[c.cm[i]]) continue;
       if (VIEW.type !== "" && c.ty[i] !== +VIEW.type) continue;
       if (VIEW.authors.size && !VIEW.authors.has(dims.authors[c.au[i]])) continue;
@@ -466,6 +472,10 @@
     months.forEach(function (m) { monthSet[dims.months.indexOf(m)] = 1; });
     var out = [];
     for (var i = 0; i < c.am.length; i++) {
+      if (VIEW.fromDate || VIEW.toDate) {
+        var archivedDay = c.ad[i] >= 0 ? dims.days[c.ad[i]] : "";
+        if (!archivedDay || (VIEW.fromDate && archivedDay < VIEW.fromDate) || (VIEW.toDate && archivedDay > VIEW.toDate)) continue;
+      }
       if (c.am[i] < 0 || !monthSet[c.am[i]]) continue;
       if (VIEW.type !== "" && c.ty[i] !== +VIEW.type) continue;
       if (VIEW.authors.size && !VIEW.authors.has(dims.authors[c.au[i]])) continue;
@@ -793,6 +803,32 @@
 
   function renderLead() {
     var c = DATA.cols, dims = DATA.dims, idx = {};
+    if (!hasCompleteCreationDates()) {
+      var current = {};
+      rows.forEach(function (i) {
+        if (c.st[i] || roleOf(c.au[i]) !== "lead") return;
+        var author = dims.authors[c.au[i]];
+        if (!current[author]) current[author] = { total: 0, mcq: 0, coding: 0, descriptive: 0 };
+        current[author].total++;
+        if (c.ty[i] === 1) current[author].coding++;
+        else if (c.ty[i] === 2) current[author].descriptive++;
+        else current[author].mcq++;
+      });
+      var currentNames = Object.keys(current).sort(function (a, b) { return current[b].total - current[a].total; });
+      columns($("c-lead"), {
+        categories: currentNames.map(function (name) { return name.split(" ")[0]; }), height: 330, stacked: true,
+        series: [
+          { label: "MCQ", color: css("--series-1"), values: currentNames.map(function (name) { return current[name].mcq; }) },
+          { label: "Coding", color: css("--series-2"), values: currentNames.map(function (name) { return current[name].coding; }) }
+        ],
+        aria: "Current active questions by Content Lead",
+        caption: "Current active totals are shown because ByteXL did not supply creation dates. Date-based totals are hidden rather than understated."
+      });
+      table($("tb-lead"), ["Content Lead", "MCQ", "Coding", "Descriptive", "Current total"], currentNames.map(function (name) {
+        return [name, fmt(current[name].mcq), fmt(current[name].coding), fmt(current[name].descriptive), fmt(current[name].total)];
+      }));
+      return;
+    }
     months.forEach(function (m, i) { idx[dims.months.indexOf(m)] = i; });
     var agg = {};
     rows.forEach(function (i) {
@@ -1254,11 +1290,6 @@
     return handle;
   }
 
-  function monthOptions() {
-    var counts = {};
-    for (var i = 0; i < DATA.cols.cm.length; i++) { var m = DATA.dims.months[DATA.cols.cm[i]]; if (m) counts[m] = (counts[m] || 0) + 1; }
-    return Object.keys(counts).sort().map(function (m) { return { value: m, label: monthLabel(m), count: counts[m] }; });
-  }
   function trackOptions() {
     var counts = {};
     for (var i = 0; i < DATA.cols.su.length; i++) { var t = DATA.tracks[DATA.dims.subjects[DATA.cols.su[i]]]; counts[t] = (counts[t] || 0) + 1; }
@@ -1275,23 +1306,37 @@
     return Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a]; }).map(function (a) { return { value: a, label: a, count: counts[a] }; });
   }
 
-  var monthsMsel, tracksMsel, subjectsMsel, authorsMsel;
+  var tracksMsel, subjectsMsel, authorsMsel;
   function mountFilters() {
-    monthsMsel = mountMultiSelect("f-months", {
-      key: "months", allLabel: "All time", getOptions: monthOptions,
-      presets: [
-        { label: "Latest 3", apply: function (set, opts) { set.clear(); opts.slice(-3).forEach(function (o) { set.add(o.value); }); } },
-        { label: "Last 6", apply: function (set, opts) { set.clear(); opts.slice(-6).forEach(function (o) { set.add(o.value); }); } },
-        { label: "Last 12", apply: function (set, opts) { set.clear(); opts.slice(-12).forEach(function (o) { set.add(o.value); }); } },
-        { label: "All time", apply: function (set) { set.clear(); } }
-      ]
-    });
     tracksMsel = mountMultiSelect("f-track", { key: "tracks", allLabel: "All tracks", getOptions: trackOptions });
     subjectsMsel = mountMultiSelect("f-subject", { key: "subjects", allLabel: "All subjects", searchable: true, getOptions: subjectOptions });
     authorsMsel = mountMultiSelect("f-author", { key: "authors", allLabel: "All authors", searchable: true, getOptions: authorOptions });
+    var from = $("f-date-from"), to = $("f-date-to"), note = $("date-coverage-note");
+    var complete = hasCompleteCreationDates();
+    from.disabled = !complete; to.disabled = !complete;
+    if (!complete) {
+      note.classList.remove("hidden");
+      note.textContent = "Day filtering is waiting for creation dates from ByteXL. Current totals below remain complete.";
+    } else {
+      var availableDays = (DATA.dims.days || []).filter(Boolean).sort();
+      if (availableDays.length) {
+        from.min = availableDays[0]; from.max = availableDays[availableDays.length - 1];
+        to.min = availableDays[0]; to.max = availableDays[availableDays.length - 1];
+      }
+    }
+    [from, to].forEach(function (input) {
+      input.addEventListener("change", function () {
+        VIEW.fromDate = from.value; VIEW.toDate = to.value;
+        if (VIEW.fromDate && VIEW.toDate && VIEW.fromDate > VIEW.toDate) {
+          if (input === from) { to.value = from.value; VIEW.toDate = from.value; }
+          else { from.value = to.value; VIEW.fromDate = to.value; }
+        }
+        renderAll();
+      });
+    });
   }
   function refreshFilters() {
-    [monthsMsel, tracksMsel, subjectsMsel, authorsMsel].forEach(function (m) { m.refresh(); });
+    [tracksMsel, subjectsMsel, authorsMsel].forEach(function (m) { m.refresh(); });
   }
 
   function closeMatrixResults() {
@@ -1400,8 +1445,7 @@
         });
       });
     $("btn-reset").addEventListener("click", function () {
-      VIEW.months.clear();
-      if (hasCompleteCreationDates()) monthOptions().slice(-3).forEach(function (o) { VIEW.months.add(o.value); });
+      VIEW.fromDate = ""; VIEW.toDate = ""; $("f-date-from").value = ""; $("f-date-to").value = "";
       VIEW.tracks.clear(); VIEW.subjects.clear(); VIEW.authors.clear(); VIEW.type = "";
       Array.prototype.forEach.call($("f-type").children, function (o, i) { o.classList.toggle("on", i === 0); });
       refreshFilters();
@@ -1477,11 +1521,6 @@
         }
         var changed = !DATA || DATA.generatedAt !== d.generatedAt;
         DATA = d;
-        if (initialMonthScope) {
-          VIEW.months.clear();
-          if (hasCompleteCreationDates()) monthOptions().slice(-3).forEach(function (o) { VIEW.months.add(o.value); });
-          initialMonthScope = false;
-        }
         var saved = null;
         try { saved = JSON.parse(localStorage.getItem(ROSTER_KEY) || "null"); } catch (e) { saved = null; }
         ROLES = Object.assign({}, d.roles, saved || {});
