@@ -221,13 +221,21 @@ def build_fact_table(
     weeks = Interner()
 
     cols: dict[str, list[int]] = {k: [] for k in ("cm", "am", "cw", "aw", "ty", "df", "au", "su", "tp", "co", "mk", "ex", "st")}
+    summary_only_count = 0
 
     def ingest(question: dict[str, Any], archived: bool) -> None:
+        nonlocal summary_only_count
+        summary_only = bool(question.get("_analytics_summary_only"))
+        if summary_only:
+            summary_only_count += 1
         created_raw = question.get("created")
         created = str(created_raw or "")[:7]
         created_week = week_key(created_raw)
         if not created or not created_week:
-            return
+            if not summary_only:
+                return
+            created = "(date unavailable)"
+            created_week = "(date unavailable)"
         subject = _first(question.get("subjects"), "(no subject)")
         company_values = [c for c in (norm_company(c) for c in (question.get("companies") or [])) if c]
         tags = [str(t) for t in (question.get("tags") or [])]
@@ -248,7 +256,10 @@ def build_fact_table(
         cols["tp"].append(topics.add(_first(question.get("topics"), "(no topic)")))
         cols["co"].append(companies.add(company_values[0]) if company_values else -1)
         cols["mk"].append(1 if is_mock else 0)
-        cols["ex"].append(1 if str(question.get("explanation") or "").strip() else 0)
+        # Summary-feed rows do not include explanation/company/date details.
+        # Treat explanation as unknown rather than falsely counting every row
+        # as incomplete; the source warning below discloses the limitation.
+        cols["ex"].append(1 if summary_only or str(question.get("explanation") or "").strip() else 0)
         cols["st"].append(1 if archived else 0)
 
     for question in live:
@@ -256,7 +267,7 @@ def build_fact_table(
     for question in vault:
         ingest(question, archived=True)
 
-    return {
+    result = {
         "schemaVersion": SNAPSHOT_SCHEMA_VERSION,
         "dims": {
             "authors": authors.values,
@@ -274,6 +285,13 @@ def build_fact_table(
         "tests": summarize_tests(tests),
         "counts": {"live": sum(1 for v in cols["st"] if v == 0), "archived": sum(cols["st"])},
     }
+    if summary_only_count:
+        result["refreshFailed"] = True
+        result["sourceWarnings"] = [{
+            "path": "/api/questions",
+            "error": "Loaded ByteXL's compact question feed because the full bulk response timed out; date, company and explanation details are unavailable for this sync.",
+        }]
+    return result
 
 
 def summarize_tests(tests: Iterable[dict[str, Any]]) -> dict[str, Any]:
@@ -374,7 +392,7 @@ def load_snapshot(fetch_items, force: bool = False) -> dict[str, Any]:
         )
         if source_warnings:
             snapshot["refreshFailed"] = True
-            snapshot["sourceWarnings"] = source_warnings
+            snapshot.setdefault("sourceWarnings", []).extend(source_warnings)
     except Exception:
         # ByteXL itself can be down or flaking (a bare 502 from its edge has hit
         # this build in production). A visitor with a working dashboard a moment

@@ -173,6 +173,21 @@ class ImageUploadTests(unittest.TestCase):
         self.assertEqual(get.call_count, 3)
         self.assertEqual(sleep.call_args_list, [call(2), call(4)])
 
+    @patch.object(server.time, "sleep")
+    @patch.object(server.requests, "get")
+    @patch.object(server, "get_content_token", return_value="content-token")
+    def test_question_bulk_read_uses_compact_feed(self, _token, get, sleep):
+        summary = Mock()
+        summary.raise_for_status.return_value = None
+        summary.raw = io.BytesIO(b'[{"_id":"q1"}]')
+        get.return_value = summary
+
+        items = list(server.bytexl_stream_large("/api/questions"))
+
+        self.assertEqual(items, [{"_id": "q1", "_analytics_summary_only": True}])
+        self.assertIn("summaryScreen=true", get.call_args.args[0])
+        sleep.assert_not_called()
+
 
 if __name__ == "__main__":
     unittest.main()

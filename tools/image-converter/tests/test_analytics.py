@@ -163,6 +163,18 @@ class FactTableTests(unittest.TestCase):
         table = analytics.build_fact_table([question(createdBy=None)], [], [])
         self.assertEqual(table["dims"]["authors"], ["(unattributed)"])
 
+    def test_compact_feed_rows_are_kept_and_disclosed(self):
+        row = question(created=None, explanation=None, companies=[])
+        row["_analytics_summary_only"] = True
+
+        table = analytics.build_fact_table([row], [], [])
+
+        self.assertEqual(table["counts"]["live"], 1)
+        self.assertEqual(table["dims"]["months"], ["(date unavailable)"])
+        self.assertEqual(table["cols"]["ex"], [1])
+        self.assertTrue(table["refreshFailed"])
+        self.assertEqual(table["sourceWarnings"][0]["path"], "/api/questions")
+
 
 class SnapshotSourceTests(unittest.TestCase):
     def test_lazy_generators_are_consumed_not_discarded(self):

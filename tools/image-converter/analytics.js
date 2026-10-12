@@ -1444,7 +1444,8 @@
           restEl.textContent = " · " + fmt(d.counts.live) + " live and " + fmt(d.counts.archived) + " archived questions · " +
             fmt(d.tests.rows.length) + " tests · checks every " + Math.round(POLL_MS / 60000) + " min and syncs ByteXL every " + Math.round(FORCE_REFRESH_MS / 60000) + " min" +
             (d.refreshing ? " · a background refresh is in progress" : "") +
-            (d.refreshFailed ? " · showing the last successful sync — ByteXL didn't respond on the latest attempt" : "");
+            ((d.sourceWarnings || []).length ? " · loaded with reduced source coverage because part of ByteXL is unavailable" :
+              (d.refreshFailed ? " · showing the last successful sync — ByteXL didn't respond on the latest attempt" : ""));
         }
         if (!bound) {
           mountFilters(); refreshMatrixSearch(); bindControls(); bound = true;

@@ -1669,28 +1669,52 @@ def bytexl_stream_large(path: str):
     a build that already takes about a minute, not the risk of losing a
     partially-read 245 MB stream.
     """
-    url = f"{BYTEXL_BULK_BASE}{path}"
-    last_error = ""
-    resp = None
-    for attempt in range(3):
-        try:
-            resp = requests.get(url, headers=auth_headers(), timeout=(30, 420), stream=True)
-            resp.raise_for_status()
-            break
-        except requests.RequestException as exc:
-            if resp is not None:
-                resp.close()
-            resp = None
-            upstream_response = getattr(exc, "response", None)
-            last_error = f"ByteXL returned HTTP {upstream_response.status_code}" if upstream_response is not None else str(exc)
-            if attempt < 2:
-                time.sleep(2 * (attempt + 1))
+    def open_with_retries(api_path: str):
+        url = f"{BYTEXL_BULK_BASE}{api_path}"
+        last_error = ""
+        response = None
+        for attempt in range(3):
+            try:
+                response = requests.get(
+                    url, headers=auth_headers(), timeout=(30, 420), stream=True
+                )
+                response.raise_for_status()
+                return response, ""
+            except requests.RequestException as exc:
+                if response is not None:
+                    response.close()
+                response = None
+                upstream_response = getattr(exc, "response", None)
+                last_error = (
+                    f"ByteXL returned HTTP {upstream_response.status_code}"
+                    if upstream_response is not None
+                    else str(exc)
+                )
+                if attempt < 2:
+                    time.sleep(2 * (attempt + 1))
+        return None, last_error
+
+    # The full question collection is roughly 245 MB. ByteXL's edge spends
+    # several minutes assembling it and then terminates the request with
+    # 503/524. Its own question-bank UI uses this compact endpoint, which
+    # returns the same 122k rows in about 15 seconds. It omits a few detail-only
+    # fields, so mark the rows and let analytics disclose the reduced coverage
+    # instead of leaving every cold deployment unusable.
+    summary_only = path == "/api/questions"
+    request_path = (
+        "/api/questions?status=published&summaryScreen=true"
+        if summary_only
+        else path
+    )
+    resp, last_error = open_with_retries(request_path)
     if resp is None:
         raise HTTPException(502, f"ByteXL bulk read of {path} failed after 3 attempts: {last_error}")
 
     try:
         resp.raw.decode_content = True
         for item in ijson.items(resp.raw, "item"):
+            if summary_only and isinstance(item, dict):
+                item["_analytics_summary_only"] = True
             yield item
     except requests.RequestException as exc:
         raise HTTPException(502, f"ByteXL bulk read failed: {exc}") from exc
