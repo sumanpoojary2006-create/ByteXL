@@ -1867,6 +1867,40 @@ async def analytics_snapshot(refresh: bool = False):
     )
 
 
+@app.get("/analytics/source-shape")
+async def analytics_source_shape():
+    """Expose non-content metadata needed to diagnose ByteXL feed coverage."""
+    stream = bytexl_stream_large("/api/questions")
+    try:
+        first = next(stream, None)
+    finally:
+        stream.close()
+    if not isinstance(first, dict):
+        raise HTTPException(502, "ByteXL returned no current question rows")
+
+    question_id = str(first.get("_id") or "")
+    detail = bytexl_get(f"/api/questions/_edit/{question_id}") if question_id else {}
+    if isinstance(detail, dict) and isinstance(detail.get("data"), dict):
+        detail = detail["data"]
+    detail = detail if isinstance(detail, dict) else {}
+
+    def field_shape(row: dict[str, Any]) -> dict[str, str]:
+        return {
+            key: type(value).__name__
+            for key, value in row.items()
+            if re.search(r"date|time|creat|update", key, re.IGNORECASE)
+        }
+
+    return {
+        "summaryKeys": sorted(key for key in first if not key.startswith("_analytics_")),
+        "summaryDateFields": field_shape(first),
+        "idLength": len(question_id),
+        "idPattern": "hex" if re.fullmatch(r"[0-9a-fA-F]+", question_id) else "alphanumeric" if re.fullmatch(r"[a-zA-Z0-9_-]+", question_id) else "other",
+        "detailKeys": sorted(detail),
+        "detailDateFields": field_shape(detail),
+    }
+
+
 @app.get("/course-builder", response_class=HTMLResponse)
 async def course_builder_page():
     return read_course_builder()
