@@ -1891,6 +1891,43 @@ async def analytics_source_shape():
             if re.search(r"date|time|creat|update", key, re.IGNORECASE)
         }
 
+    def collection_shape(path: str) -> dict[str, Any]:
+        response = requests.get(
+            f"{BYTEXL_BULK_BASE}{path}",
+            headers=auth_headers(),
+            timeout=(20, 75),
+            stream=True,
+        )
+        try:
+            response.raise_for_status()
+            response.raw.decode_content = True
+            iterator = ijson.items(response.raw, "item")
+            items = []
+            for item in iterator:
+                if isinstance(item, dict):
+                    items.append(item)
+                if len(items) == 3:
+                    break
+            return {
+                "status": response.status_code,
+                "itemsRead": len(items),
+                "pageSizeRespected": len(items) <= 2,
+                "firstDateFields": field_shape(items[0]) if items else {},
+            }
+        except (requests.RequestException, ijson.JSONError) as exc:
+            return {"error": str(exc)[:200]}
+        finally:
+            response.close()
+
+    summary_page = collection_shape(
+        "/api/questions?status=published&summaryScreen=true&page=1&pageSize=2"
+    )
+    detailed_page = (
+        collection_shape("/api/questions?status=published&page=1&pageSize=2")
+        if summary_page.get("pageSizeRespected")
+        else {"skipped": "The question endpoint ignored page and pageSize."}
+    )
+
     return {
         "summaryKeys": sorted(key for key in first if not key.startswith("_analytics_")),
         "summaryDateFields": field_shape(first),
@@ -1898,6 +1935,8 @@ async def analytics_source_shape():
         "idPattern": "hex" if re.fullmatch(r"[0-9a-fA-F]+", question_id) else "alphanumeric" if re.fullmatch(r"[a-zA-Z0-9_-]+", question_id) else "other",
         "detailKeys": sorted(detail),
         "detailDateFields": field_shape(detail),
+        "summaryPageProbe": summary_page,
+        "detailedPageProbe": detailed_page,
     }
 
 
