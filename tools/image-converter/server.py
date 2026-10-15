@@ -1845,7 +1845,7 @@ def analytics_items(path: str):
             if not question_id:
                 raise RuntimeError("ByteXL returned a current question without an id")
             question_ids.append(question_id)
-            spool.write(json.dumps(row, separators=(",", ":")) + "\n")
+            spool.write(json.dumps(row, separators=(",", ":"), default=str) + "\n")
 
     cache = load_analytics_date_cache()
     days = resolve_sorted_creation_days(
