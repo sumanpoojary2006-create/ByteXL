@@ -26,7 +26,7 @@ SNAPSHOT_PATH = Path(
 # A short cache keeps normal page loads fast while making upstream changes appear
 # on an open dashboard within a few minutes. The Refresh data button bypasses it.
 SNAPSHOT_TTL_SECONDS = int(os.getenv("ANALYTICS_SNAPSHOT_TTL", str(5 * 60)))
-SNAPSHOT_SCHEMA_VERSION = 6
+SNAPSHOT_SCHEMA_VERSION = 7
 
 QUESTION_TYPES = ["multipleChoice", "coding", "descriptive"]
 DIFFICULTIES = ["easy", "medium", "hard", "unspecified"]
@@ -262,6 +262,8 @@ def build_fact_table(
         if summary_only:
             summary_only_count += 1
         created_raw = question.get("created")
+        if created_raw and question.get("_analytics_created_recovered"):
+            live_creation_dates_recovered += 1
         if not created_raw and summary_only:
             created_raw = created_from_object_id(question.get("_id"))
             if created_raw:
@@ -342,7 +344,7 @@ def build_fact_table(
         result["refreshFailed"] = True
         result["sourceWarnings"] = [{
             "path": "/api/questions",
-            "error": "All current question rows are loaded. Creation dates missing from ByteXL's compact feed are recovered from MongoDB ObjectId timestamps; company and explanation coverage remains unavailable.",
+            "error": "All current question rows are loaded. Creation dates missing from ByteXL's compact feed are recovered from exact detail timestamps using a validated chronological index; company and explanation coverage remains unavailable.",
         }]
     return result
 

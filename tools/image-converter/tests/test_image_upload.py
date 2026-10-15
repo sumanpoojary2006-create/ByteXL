@@ -18,6 +18,29 @@ SPEC.loader.exec_module(server)
 
 
 class ImageUploadTests(unittest.TestCase):
+    def test_sorted_creation_days_fill_only_equal_date_ranges(self):
+        question_ids = [f"q{i}" for i in range(12)]
+        source_days = {
+            **{f"q{i}": "2026-10-15" for i in range(4)},
+            **{f"q{i}": "2026-10-14" for i in range(4, 9)},
+            **{f"q{i}": "2026-10-12" for i in range(9, 12)},
+        }
+
+        days = server.resolve_sorted_creation_days(
+            question_ids,
+            lambda ids: {question_id: source_days[question_id] for question_id in ids},
+        )
+
+        self.assertEqual(days, [source_days[question_id] for question_id in question_ids])
+
+    def test_sorted_creation_days_reject_out_of_order_feed(self):
+        source_days = {"new": "2026-10-15", "old": "2026-10-12", "wrong": "2026-10-16"}
+        with self.assertRaisesRegex(RuntimeError, "not ordered newest first"):
+            server.resolve_sorted_creation_days(
+                ["new", "old", "wrong"],
+                lambda ids: {question_id: source_days[question_id] for question_id in ids},
+            )
+
     def test_content_addressed_names_prevent_same_basename_collision(self):
         first = server.content_addressed_image_name("01_intro.png", b"cloud evolution")
         second = server.content_addressed_image_name("01_intro.png", b"identity workflow")

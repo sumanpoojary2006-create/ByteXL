@@ -9,6 +9,7 @@ import sys
 import threading
 import time
 import zipfile
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from difflib import SequenceMatcher
 from pathlib import Path, PurePosixPath
 from typing import Any, Optional
@@ -1729,12 +1730,151 @@ _analytics_refresh_thread: Optional[threading.Thread] = None
 _analytics_refresh_error: Optional[str] = None
 _analytics_refresh_failed_at = 0.0
 ANALYTICS_REFRESH_RETRY_SECONDS = 30
+ANALYTICS_DATE_CACHE_PATH = Path(
+    os.getenv("ANALYTICS_DATE_CACHE_PATH", Path(__file__).parent / ".analytics-date-cache.json")
+)
+ANALYTICS_QUESTION_SPOOL_PATH = Path(
+    os.getenv("ANALYTICS_QUESTION_SPOOL_PATH", Path(__file__).parent / ".analytics-live-questions.ndjson")
+)
+
+
+def resolve_sorted_creation_days(
+    question_ids: list[str],
+    lookup_many,
+) -> list[str]:
+    """Resolve every row's day from a newest-first list using exact checkpoints.
+
+    A range is filled only when its two real detail timestamps land on the same
+    UTC day. Ranges spanning different days are bisected until every boundary
+    is known. Any ordering violation aborts the build instead of publishing a
+    plausible-looking but incorrect timeline.
+    """
+    if not question_ids:
+        return []
+    known: dict[int, str] = {}
+    days = [""] * len(question_ids)
+    ranges = [(0, len(question_ids) - 1)]
+
+    while ranges:
+        needed = sorted({index for pair in ranges for index in pair if index not in known})
+        if needed:
+            found = lookup_many([question_ids[index] for index in needed])
+            for index in needed:
+                day = str(found.get(question_ids[index]) or "")[:10]
+                if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", day):
+                    raise RuntimeError(f"ByteXL question {question_ids[index]} has no usable creation date")
+                known[index] = day
+
+        next_ranges: list[tuple[int, int]] = []
+        mids: set[int] = set()
+        for left, right in ranges:
+            left_day, right_day = known[left], known[right]
+            if left_day < right_day:
+                raise RuntimeError("ByteXL's compact question feed is not ordered newest first")
+            if left_day == right_day:
+                days[left:right + 1] = [left_day] * (right - left + 1)
+                continue
+            if right - left == 1:
+                days[left], days[right] = left_day, right_day
+                continue
+            middle = (left + right) // 2
+            mids.add(middle)
+            next_ranges.extend(((left, middle), (middle, right)))
+
+        if mids:
+            found = lookup_many([question_ids[index] for index in sorted(mids) if index not in known])
+            for index in mids:
+                if index in known:
+                    continue
+                day = str(found.get(question_ids[index]) or "")[:10]
+                if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", day):
+                    raise RuntimeError(f"ByteXL question {question_ids[index]} has no usable creation date")
+                known[index] = day
+        ranges = next_ranges
+
+    if not all(days):
+        raise RuntimeError("ByteXL creation-date indexing left unresolved questions")
+    return days
+
+
+def load_analytics_date_cache() -> dict[str, str]:
+    try:
+        value = json.loads(ANALYTICS_DATE_CACHE_PATH.read_text(encoding="utf-8"))
+        return value if isinstance(value, dict) else {}
+    except (OSError, ValueError):
+        return {}
+
+
+def creation_day_lookup(cache: dict[str, str], question_ids: list[str]) -> dict[str, str]:
+    missing = [question_id for question_id in question_ids if question_id not in cache]
+    if not missing:
+        return {question_id: cache[question_id] for question_id in question_ids}
+
+    def fetch_day(question_id: str) -> tuple[str, str]:
+        response = requests.get(
+            f"{BYTEXL_BULK_BASE}/api/questions/_edit/{question_id}",
+            headers=auth_headers(),
+            timeout=(15, 45),
+        )
+        response.raise_for_status()
+        payload = response.json()
+        row = payload.get("data") if isinstance(payload, dict) and isinstance(payload.get("data"), dict) else payload
+        day = str((row or {}).get("created") or "")[:10] if isinstance(row, dict) else ""
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", day):
+            raise RuntimeError(f"ByteXL question {question_id} has no usable creation date")
+        return question_id, day
+
+    with ThreadPoolExecutor(max_workers=8, thread_name_prefix="analytics-date") as pool:
+        futures = [pool.submit(fetch_day, question_id) for question_id in missing]
+        for future in as_completed(futures):
+            question_id, day = future.result()
+            cache[question_id] = day
+    return {question_id: cache[question_id] for question_id in question_ids}
+
+
+def analytics_items(path: str):
+    """Stream analytics sources, enriching compact live rows with exact dates."""
+    if path != "/api/questions":
+        yield from bytexl_stream_large(path)
+        return
+
+    question_ids: list[str] = []
+    with ANALYTICS_QUESTION_SPOOL_PATH.open("w", encoding="utf-8") as spool:
+        for row in bytexl_stream_large(path):
+            question_id = str(row.get("_id") or "") if isinstance(row, dict) else ""
+            if not question_id:
+                raise RuntimeError("ByteXL returned a current question without an id")
+            question_ids.append(question_id)
+            spool.write(json.dumps(row, separators=(",", ":")) + "\n")
+
+    cache = load_analytics_date_cache()
+    days = resolve_sorted_creation_days(
+        question_ids,
+        lambda ids: creation_day_lookup(cache, ids),
+    )
+    try:
+        ANALYTICS_DATE_CACHE_PATH.write_text(
+            json.dumps(cache, separators=(",", ":")), encoding="utf-8"
+        )
+    except OSError:
+        pass
+
+    try:
+        with ANALYTICS_QUESTION_SPOOL_PATH.open(encoding="utf-8") as spool:
+            for index, line in enumerate(spool):
+                row = json.loads(line)
+                if not row.get("created"):
+                    row["created"] = days[index] + "T00:00:00Z"
+                    row["_analytics_created_recovered"] = True
+                yield row
+    finally:
+        ANALYTICS_QUESTION_SPOOL_PATH.unlink(missing_ok=True)
 
 
 def _analytics_refresh_worker() -> None:
     global _analytics_refresh_thread, _analytics_refresh_error, _analytics_refresh_failed_at
     try:
-        analytics.load_snapshot(bytexl_stream_large, force=True)
+        analytics.load_snapshot(analytics_items, force=True)
         error = None
         failed_at = 0.0
     except Exception as exc:
@@ -1865,79 +2005,6 @@ async def analytics_snapshot(refresh: bool = False):
         },
         status_code=202,
     )
-
-
-@app.get("/analytics/source-shape")
-async def analytics_source_shape():
-    """Expose non-content metadata needed to diagnose ByteXL feed coverage."""
-    stream = bytexl_stream_large("/api/questions")
-    try:
-        first = next(stream, None)
-    finally:
-        stream.close()
-    if not isinstance(first, dict):
-        raise HTTPException(502, "ByteXL returned no current question rows")
-
-    question_id = str(first.get("_id") or "")
-    detail = bytexl_get(f"/api/questions/_edit/{question_id}") if question_id else {}
-    if isinstance(detail, dict) and isinstance(detail.get("data"), dict):
-        detail = detail["data"]
-    detail = detail if isinstance(detail, dict) else {}
-
-    def field_shape(row: dict[str, Any]) -> dict[str, str]:
-        return {
-            key: type(value).__name__
-            for key, value in row.items()
-            if re.search(r"date|time|creat|update", key, re.IGNORECASE)
-        }
-
-    def collection_shape(path: str) -> dict[str, Any]:
-        response = requests.get(
-            f"{BYTEXL_BULK_BASE}{path}",
-            headers=auth_headers(),
-            timeout=(20, 75),
-            stream=True,
-        )
-        try:
-            response.raise_for_status()
-            response.raw.decode_content = True
-            iterator = ijson.items(response.raw, "item")
-            items = []
-            for item in iterator:
-                if isinstance(item, dict):
-                    items.append(item)
-                if len(items) == 3:
-                    break
-            return {
-                "status": response.status_code,
-                "itemsRead": len(items),
-                "pageSizeRespected": len(items) <= 2,
-                "firstDateFields": field_shape(items[0]) if items else {},
-            }
-        except (requests.RequestException, ijson.JSONError) as exc:
-            return {"error": str(exc)[:200]}
-        finally:
-            response.close()
-
-    summary_page = collection_shape(
-        "/api/questions?status=published&summaryScreen=true&page=1&pageSize=2"
-    )
-    detailed_page = (
-        collection_shape("/api/questions?status=published&page=1&pageSize=2")
-        if summary_page.get("pageSizeRespected")
-        else {"skipped": "The question endpoint ignored page and pageSize."}
-    )
-
-    return {
-        "summaryKeys": sorted(key for key in first if not key.startswith("_analytics_")),
-        "summaryDateFields": field_shape(first),
-        "idLength": len(question_id),
-        "idPattern": "hex" if re.fullmatch(r"[0-9a-fA-F]+", question_id) else "alphanumeric" if re.fullmatch(r"[a-zA-Z0-9_-]+", question_id) else "other",
-        "detailKeys": sorted(detail),
-        "detailDateFields": field_shape(detail),
-        "summaryPageProbe": summary_page,
-        "detailedPageProbe": detailed_page,
-    }
 
 
 @app.get("/course-builder", response_class=HTMLResponse)
