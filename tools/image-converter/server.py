@@ -2501,7 +2501,7 @@ async def content_tree(reading_id: str = DEFAULT_READING_ID):
 
 
 @app.post("/onecompiler/workspace")
-async def create_onecompiler_workspace(payload: dict[str, Any] = Body(...)):
+def create_onecompiler_workspace(payload: dict[str, Any] = Body(...)):
     language = str(payload.get("language") or "").strip().lower()
     title = str(payload.get("title") or "ByteXL code editor").strip()[:120]
     filename = normalize_zip_path(str(payload.get("filename") or "main.py")).lstrip("/")

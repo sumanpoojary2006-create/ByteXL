@@ -1,5 +1,6 @@
 import asyncio
 import importlib.util
+import inspect
 import io
 import sys
 import unittest
@@ -18,6 +19,27 @@ SPEC.loader.exec_module(server)
 
 
 class ImageUploadTests(unittest.TestCase):
+    def test_onecompiler_workspace_runs_in_fastapi_thread_pool(self):
+        self.assertFalse(inspect.iscoroutinefunction(server.create_onecompiler_workspace))
+
+    @patch.object(server.sys, "stdlib_module_names", set(), create=True)
+    @patch.object(server, "onecompiler_save", return_value={"_id": "editor123"})
+    def test_onecompiler_workspace_returns_reusable_editor_links(self, save):
+        result = server.create_onecompiler_workspace(
+            {
+                "language": "python",
+                "title": "Fast editor",
+                "filename": "main.py",
+                "code": "print('ready')",
+                "sourceFile": "unit/topic.md",
+                "snippetId": "unit-topic-001",
+            }
+        )
+
+        self.assertEqual(result["codeId"], "editor123")
+        self.assertEqual(result["embedUrl"], "https://onecompiler.com/embed/python/editor123")
+        self.assertEqual(save.call_count, 1)
+
     def test_sorted_creation_days_fill_only_equal_date_ranges(self):
         question_ids = [f"q{i}" for i in range(12)]
         source_days = {

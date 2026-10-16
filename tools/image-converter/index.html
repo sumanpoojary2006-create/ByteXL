@@ -970,7 +970,7 @@
   const mimeTypes = {".png":"image/png",".jpg":"image/jpeg",".jpeg":"image/jpeg",".gif":"image/gif",".webp":"image/webp",".svg":"image/svg+xml"};
   // Keep pressure modest. Upload names are content-addressed, so retrying the
   // same image is idempotent and safe when Render or ByteXL drops a request.
-  const IMAGE_UPLOAD_CONCURRENCY = 2;
+  const IMAGE_UPLOAD_CONCURRENCY = 6;
   const IMAGE_UPLOAD_ATTEMPTS = 4;
   const IMAGE_UPLOAD_RETRY_BASE_MS = 1000;
   // v4 invalidates URLs created before the browser assigned collision-proof
@@ -978,6 +978,10 @@
   // filename rather than in a custom subtype.
   const IMAGE_UPLOAD_CACHE_KEY = "bytexl-image-uploads-v4";
   const IMAGE_UPLOAD_CACHE_LIMIT = 2500;
+  const ONECOMPILER_CONCURRENCY = 6;
+  const ONECOMPILER_CACHE_KEY = "bytexl-onecompiler-workspaces-v1";
+  const ONECOMPILER_CACHE_LIMIT = 1500;
+  const oneCompilerInflight = new Map();
   const IMAGE_OPTIMIZE_MIN_BYTES = 256 * 1024;
   const IMAGE_OPTIMIZE_MAX_DIMENSION = 1920;
   const IMAGE_OPTIMIZE_QUALITY = 0.86;
@@ -1165,26 +1169,48 @@
     }
 
     const filenameMap = makeFilenameMap(urlMap);
-    const uploadFiles = [];
+    const markdownSources = await Promise.all(mdFiles.map(async path => ({
+      path,
+      original: await zip.files[path].async("string")
+    })));
+    const editorProgress = {
+      total: shouldConvertCode
+        ? markdownSources.reduce((total, item) => total + countConvertibleCodeBlocks(item.original, compilerSettings), 0)
+        : 0,
+      started: 0,
+      completed: 0,
+      reused: 0
+    };
+    const uploadFiles = new Array(markdownSources.length);
+    let nextMarkdownIndex = 0, completedMarkdown = 0;
 
-    for (let i = 0; i < mdFiles.length; i++) {
-      const mp = mdFiles[i];
-      setProgress(`Processing ${i+1} of ${mdFiles.length}: ${baseName(mp)}`);
-      const original = await zip.files[mp].async("string");
-      let md = original;
-      if (shouldConvertCode) {
-        const r = await convertMarkdownCode(md, mp, compilerSettings);
-        md = r.markdown;
-        if (r.convertedBlocks > 0) { changedFiles.push({path:mp,editors:r.convertedBlocks}); stats.changed++; }
-        stats.editors += r.convertedBlocks; stats.skipped += r.skippedBlocks.length;
-        for (const it of r.skippedBlocks) skippedBlocks.push(it);
-        for (const it of r.onecompilerLinks) onecompilerLinks.push(it);
-        for (const [lang,cnt] of Object.entries(r.languageCounts)) languageCounts[lang] = (languageCounts[lang]||0)+cnt;
+    async function markdownWorker() {
+      while (nextMarkdownIndex < markdownSources.length) {
+        const index = nextMarkdownIndex++;
+        const {path:mp, original} = markdownSources[index];
+        setProgress(`Processing ${completedMarkdown + 1} of ${mdFiles.length}: ${baseName(mp)}`);
+        let md = original;
+        if (shouldConvertCode) {
+          const r = await convertMarkdownCode(md, mp, compilerSettings, editorProgress);
+          md = r.markdown;
+          if (r.convertedBlocks > 0) { changedFiles.push({path:mp,editors:r.convertedBlocks}); stats.changed++; }
+          stats.editors += r.convertedBlocks; stats.skipped += r.skippedBlocks.length;
+          for (const it of r.skippedBlocks) skippedBlocks.push(it);
+          for (const it of r.onecompilerLinks) onecompilerLinks.push(it);
+          for (const [lang,cnt] of Object.entries(r.languageCounts)) languageCounts[lang] = (languageCounts[lang]||0)+cnt;
+        }
+        if (shouldConvertImages) md = rewriteMarkdownImages(md, mp, urlMap, filenameMap, stats);
+        zip.file(mp, md);
+        uploadFiles[index] = {path:mp, markdown:md, original};
+        completedMarkdown++;
       }
-      if (shouldConvertImages) md = rewriteMarkdownImages(md, mp, urlMap, filenameMap, stats);
-      zip.file(mp, md);
-      uploadFiles.push({path:mp, markdown:md, original});
     }
+
+    const markdownWorkers = shouldConvertCode ? ONECOMPILER_CONCURRENCY : 1;
+    await Promise.all(Array.from(
+      {length:Math.min(markdownWorkers, markdownSources.length)},
+      () => markdownWorker()
+    ));
 
     if (shouldConvertCode) {
       const summary = {filesLoaded:stats.filesLoaded,markdownFiles:stats.markdownFiles,filesChanged:stats.changed,editorsGenerated:stats.editors,skippedBlocks:stats.skipped,linkStrategy:compilerSettings.linkStrategy,languages:languageCounts};
@@ -1844,7 +1870,24 @@
       .join(" ");
   }
 
-  async function convertMarkdownCode(markdown, filePath, settings) {
+  function countConvertibleCodeBlocks(markdown, settings) {
+    const blocks = iterFencedBlocks(markdown);
+    const fileRegistry = new Map();
+    for (const block of blocks) {
+      const { attrs } = parseBlockInfo(block.info);
+      if (attrs.file) fileRegistry.set(attrs.file, block.code.replace(/\n+$/,""));
+    }
+    const localModules = localModuleNames(fileRegistry.keys());
+    let total = 0;
+    for (const block of blocks) {
+      const {language, attrs} = parseBlockInfo(block.info);
+      if (attrs.file || language === "nimbus") continue;
+      if (shouldConvert(language, block.code, settings, attrs, localModules).convert) total++;
+    }
+    return total;
+  }
+
+  async function convertMarkdownCode(markdown, filePath, settings, editorProgress) {
     const blocks = iterFencedBlocks(markdown);
     const replacements = [], skippedBlocks = [], onecompilerLinks = [], languageCounts = {}, fileWarnings = [];
     let convertedBlocks = 0, fileBlockIndex = 0;
@@ -1922,8 +1965,14 @@
         sourceFile:filePath,
         extraFiles
       };
-      setProgress(`Creating OneCompiler editor ${fileBlockIndex} in ${baseName(filePath)}...`);
+      const overallEditorIndex = editorProgress ? ++editorProgress.started : fileBlockIndex;
+      const overallEditorTotal = editorProgress?.total || "?";
+      setProgress(`Creating editor ${overallEditorIndex} of ${overallEditorTotal}: ${baseName(filePath)}...`);
       const workspace = await createOneCompilerWorkspace(snippet);
+      if (editorProgress) {
+        editorProgress.completed++;
+        if (workspace.cacheHit) editorProgress.reused++;
+      }
       replacements.push([block.start,block.end,iframeHtml(workspace.embedUrl,settings.height)]);
       onecompilerLinks.push({
         file:filePath,
@@ -2028,7 +2077,46 @@
   }
 
   function iframeHtml(src,h) { return `<iframe\n frameBorder="0"\n height="${escapeAttr(h)}"  \n src="${escapeAttr(src)}" \n width="100%"\n></iframe>\n`; }
-  async function createOneCompilerWorkspace(snippet) {
+  function readOneCompilerCache() {
+    try {
+      const value = JSON.parse(localStorage.getItem(ONECOMPILER_CACHE_KEY)||"{}");
+      return value && typeof value === "object" ? value : {};
+    } catch (_) {
+      return {};
+    }
+  }
+
+  function cacheOneCompilerWorkspace(key, workspace) {
+    try {
+      const cache = readOneCompilerCache();
+      delete cache[key];
+      cache[key] = workspace;
+      const entries = Object.entries(cache);
+      localStorage.setItem(ONECOMPILER_CACHE_KEY, JSON.stringify(Object.fromEntries(entries.slice(-ONECOMPILER_CACHE_LIMIT))));
+    } catch (_) {
+      // A successful editor must not depend on browser storage being available.
+    }
+  }
+
+  async function oneCompilerCacheKey(snippet) {
+    const canonical = JSON.stringify({
+      language:snippet.language,
+      filename:snippet.filename,
+      code:snippet.code,
+      extraFiles:snippet.extraFiles || []
+    });
+    if (crypto.subtle) {
+      try {
+        const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(canonical));
+        return Array.from(new Uint8Array(digest), b => b.toString(16).padStart(2,"0")).join("");
+      } catch (_) {
+        // Fall through to the stable non-cryptographic key.
+      }
+    }
+    return `${shortPathHash(canonical)}-${canonical.length}`;
+  }
+
+  async function requestOneCompilerWorkspace(snippet) {
     const r = await fetchOrExplain(oneCompilerWorkspaceUrl,{
       method:"POST",
       headers:{"Content-Type":"application/json"},
@@ -2038,6 +2126,25 @@
     if (!r.ok) throw new Error(payload.detail||`Could not create OneCompiler editor for ${snippet.title}.`);
     if (!payload.embedUrl) throw new Error(`OneCompiler did not return an embed URL for ${snippet.title}.`);
     return payload;
+  }
+
+  async function createOneCompilerWorkspace(snippet) {
+    const cacheKey = await oneCompilerCacheKey(snippet);
+    const cached = readOneCompilerCache()[cacheKey];
+    if (cached?.embedUrl && cached?.codeId) return {...cached, cacheHit:true};
+
+    const existing = oneCompilerInflight.get(cacheKey);
+    if (existing) return {...await existing, cacheHit:true};
+
+    const request = requestOneCompilerWorkspace(snippet);
+    oneCompilerInflight.set(cacheKey, request);
+    try {
+      const workspace = await request;
+      cacheOneCompilerWorkspace(cacheKey, workspace);
+      return {...workspace, cacheHit:false};
+    } finally {
+      oneCompilerInflight.delete(cacheKey);
+    }
   }
   function snippetIdFor(path,index){return `${slugify(path.replace(/\.[^.]+$/,""))}-${String(index).padStart(3,"0")}`;}
   function filenameFor(lang,i) { if(lang==="postgresql")return "commands.sql"; if(SQL_LANGUAGES.has(lang))return "main_001.sql"; if(lang==="java")return "Main.java"; return `main_${String(i).padStart(3,"0")}.${FILE_EXTENSIONS[lang]||lang}`; }
