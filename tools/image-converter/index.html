@@ -1945,6 +1945,18 @@
     return blocks;
   }
 
+  // OneCompiler refuses to keep an anonymous snippet that contains a dotted IPv4 address or an
+  // http(s) URL with a dotted host. The save call still answers 200 with a fresh id and puts
+  // "URLs found in the code! You must login to run this program." in `stderr`, but nothing is
+  // stored, so the embed later shows "Not Found". Such a snippet can never run for a learner,
+  // so it must stay a static code block.
+  function oneCompilerRejectedLiterals(code) {
+    const found = [];
+    if (/\b\d{1,3}(?:\.\d{1,3}){3}\b/.test(code)) found.push("ip-address");
+    if (/https?:\/\/[^\s"'`)]*\.[^\s"'`)]*/i.test(code)) found.push("url");
+    return found;
+  }
+
   function shouldConvert(language,code,settings,attrs,localModules) {
     const blockAttrs = attrs || {};
     if (!code.trim()) return {convert:false,language,reason:"empty"};
@@ -1957,6 +1969,8 @@
     // the lesson deliberately presents as broken. `run` overrides the sandbox
     // check for an author who knows better than the package list.
     if ("norun" in blockAttrs) return {convert:false,language:lang,reason:"author-marked-norun"};
+    const rejected = oneCompilerRejectedLiterals(code);
+    if (rejected.length) return {convert:false,language:lang,reason:`unrunnable-literal:${rejected.join(",")}`};
     if (!("run" in blockAttrs)) {
       const missing = missingSandboxPackages(lang,code,localModules);
       if (missing.length) return {convert:false,language:lang,reason:`missing-package:${missing.join(",")}`};
@@ -2051,12 +2065,12 @@
         "| File | Lines | Undefined |","|----|---:|---|");
       for(const it of incomplete.slice(0,500))lines.push(`| \`${it.file}\` | ${it.lines} | \`${it.reason.slice("incomplete-snippet:".length)}\` |`);
     }
-    const unrunnable=skippedBlocks.filter(it=>/^missing-(package|command):/.test(String(it.reason||"")));
+    const unrunnable=skippedBlocks.filter(it=>/^(missing-(package|command)|unrunnable-literal):/.test(String(it.reason||"")));
     if(unrunnable.length){
       lines.push("","## Left Static: Not Available In The Sandbox","",
         "These blocks stayed plain code because the OneCompiler sandbox cannot run them. It has no network access, pip is blocked by PEP 668, and tools such as uv, git and docker are not installed, so an editor here would fail on the first line. FastAPI and Pydantic are the exception: a stand-in is shipped with the snippet, so those blocks do become editors. Rewrite the snippet against what the sandbox has, or leave it static and keep the expected output in the lesson.","",
         "| File | Lines | Language | Not available |","|----|---:|---|---|");
-      for(const it of unrunnable.slice(0,500))lines.push(`| \`${it.file}\` | ${it.lines} | \`${it.language}\` | \`${it.reason.replace(/^missing-(package|command):/,"")}\` |`);
+      for(const it of unrunnable.slice(0,500))lines.push(`| \`${it.file}\` | ${it.lines} | \`${it.language}\` | \`${it.reason.replace(/^(missing-(package|command)|unrunnable-literal):/,"")}\` |`);
       if(unrunnable.length>500)lines.push(`| ... | ... | ... | ${unrunnable.length-500} more |`);
     }
     lines.push("","## Skipped Blocks","");

@@ -453,6 +453,35 @@ def onecompiler_editor_language_for(language: str) -> str:
     return editor_language
 
 
+ONECOMPILER_IPV4_LITERAL = re.compile(r"\b\d{1,3}(?:\.\d{1,3}){3}\b")
+ONECOMPILER_URL_LITERAL = re.compile(r"""https?://[^\s"'`)]*\.[^\s"'`)]*""", re.IGNORECASE)
+
+
+def onecompiler_rejected_literals(*texts: str) -> list[str]:
+    """What OneCompiler refuses to keep in an anonymous snippet.
+
+    A dotted IPv4 address or an http(s) URL with a dotted host makes the save call answer 200
+    with a fresh id and ``stderr: "URLs found in the code! You must login to run this program."``
+    while storing nothing. The embed then shows "Not Found". Such code can never run for a
+    learner, so it has to stay a static code block.
+    """
+    joined = "\n".join(texts)
+    found = []
+    if ONECOMPILER_IPV4_LITERAL.search(joined):
+        found.append("ip-address")
+    if ONECOMPILER_URL_LITERAL.search(joined):
+        found.append("url")
+    return found
+
+
+def onecompiler_post_exists(code_id: str) -> bool:
+    try:
+        resp = requests.get(f"{ONECOMPILER_WEB_BASE}/api/posts/{code_id}", timeout=30)
+    except requests.RequestException:
+        return False
+    return resp.status_code == 200
+
+
 def onecompiler_save(payload: dict[str, Any]) -> Any:
     try:
         resp = requests.post(
@@ -2308,6 +2337,17 @@ async def create_onecompiler_workspace(payload: dict[str, Any] = Body(...)):
             "block must stay a static code block.",
         )
 
+    rejected = onecompiler_rejected_literals(
+        code, *[str(extra.get("content") or "") for extra in (extra_files if isinstance(extra_files, list) else []) if isinstance(extra, dict)]
+    )
+    if rejected:
+        raise HTTPException(
+            400,
+            f"OneCompiler does not keep snippets that contain {' or '.join(rejected)} literals "
+            "(it answers \"URLs found in the code\" and stores nothing), so this block must stay "
+            "a static code block.",
+        )
+
     tags = ["bytexl", "reading-material"]
     if snippet_id:
         tags.append(snippet_id[:40])
@@ -2375,6 +2415,17 @@ async def create_onecompiler_workspace(payload: dict[str, Any] = Body(...)):
     code_id = saved.get("_id") or saved.get("codeId") or saved.get("id")
     if not code_id:
         raise HTTPException(502, "OneCompiler did not return a code id")
+
+    # The save call can answer 200 with an id and an error in `stderr` and keep nothing. Read it
+    # back so a lesson is never published with an embed that shows "Not Found".
+    save_error = str(saved.get("stderr") or "").strip()
+    if save_error or not onecompiler_post_exists(str(code_id)):
+        raise HTTPException(
+            502,
+            "OneCompiler did not keep this snippet"
+            + (f": {save_error}" if save_error else " (the saved id does not resolve)")
+            + ". The block must stay a static code block.",
+        )
 
     code_url = f"{ONECOMPILER_WEB_BASE}/{editor_language}/{code_id}"
     embed_url = f"{ONECOMPILER_WEB_BASE}/embed/{editor_language}/{code_id}"
