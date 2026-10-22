@@ -1,0 +1,12 @@
+# Software Engineering
+
+A beginner-friendly software engineering course in the style of the DBMS reading materials: narrative introduction, a one-line definition, short sections with tables and code, a "Your Turn" exercise with worked answers, and a conclusion that leads into the next topic. Source of truth: `Course_Blueprint_for_Software_Engineering.xlsx`, sheet `Syllabus` (14 units).
+
+Image prompts are embedded as HTML comments (`IMAGE PROMPT -> generate as images/<name>.png`) at the place each image belongs. Images have not been generated yet.
+
+## Written so far
+
+| # | Unit | Status |
+|---|------|--------|
+| 1 | [Foundations of Software Engineering](1%20-%20Foundations%20of%20Software%20Engineering/) | Draft for review (12 topics) |
+| 2 to 14 | Remaining units | Not started |
