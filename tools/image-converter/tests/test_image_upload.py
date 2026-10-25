@@ -19,6 +19,15 @@ SPEC.loader.exec_module(server)
 
 
 class ImageUploadTests(unittest.TestCase):
+    def test_frontend_wakes_backend_and_retries_editor_requests(self):
+        html = SERVER_PATH.with_name("index.html").read_text(encoding="utf-8")
+
+        self.assertIn("const API_WAKE_ATTEMPTS = 5", html)
+        self.assertIn('await wakeBackendApi("editor service")', html)
+        self.assertIn("attempt <= ONECOMPILER_REQUEST_ATTEMPTS", html)
+        self.assertIn("r.status !== 429 && r.status < 500", html)
+        self.assertIn("if (apiWakePromise) return apiWakePromise", html)
+
     def test_onecompiler_workspace_runs_in_fastapi_thread_pool(self):
         self.assertFalse(inspect.iscoroutinefunction(server.create_onecompiler_workspace))
 
