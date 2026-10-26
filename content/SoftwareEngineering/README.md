@@ -9,4 +9,5 @@ Content is conceptual and theory-focused (no code examples, no story-style openi
 | # | Unit | Status |
 |---|------|--------|
 | 1 | [Foundations of Software Engineering](1%20-%20Foundations%20of%20Software%20Engineering/) | Draft for review (12 topics) |
-| 2 to 14 | Remaining units | Not started |
+| 2 | [Software Process Models & Agile Methods](2%20-%20Software%20Process%20Models%20&%20Agile%20Methods/) | Draft for review (21 topics) |
+| 3 to 14 | Remaining units | Not started |
