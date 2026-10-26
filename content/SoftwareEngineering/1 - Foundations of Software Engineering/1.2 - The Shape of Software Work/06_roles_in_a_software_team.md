@@ -1,28 +1,28 @@
 ## Introduction
 
-Ananya's first stand-up meeting at CampusConnect lasted fifteen minutes, and she understood perhaps half of it. Someone said the "PO" had reprioritised the backlog. Someone else mentioned that "QA" had found a regression, that "DevOps" was fixing the pipeline, and that the "tech lead" wanted to discuss the data model after lunch.
+A newcomer to a software company often expects a team of programmers. In reality, only part of a typical product team mainly writes code. The rest decide what to build, design how it should feel, check its quality, and keep it running.
 
-She had assumed a software team consisted of programmers. In reality, only three of the eight people on the call mainly wrote code. After the meeting she asked Vikram to explain who everyone was and, more importantly, why a startup of only twelve people needed all of them.
+This topic describes the common roles in a software team, the stakeholders outside the team, and why communication, more than typing speed, usually limits how fast a team can move.
 
 **Definition:** A software team is a group of people with complementary responsibilities, such as deciding what to build, designing it, writing and checking it, and running it, who must coordinate closely because no single person holds all the knowledge the product requires.
 
 <!--
 IMAGE PROMPT  ->  generate as images/06_intro_roles_in_a_software_team.png   (16:9 cinematic hero image, place here, right after the Introduction)
 
-CHARACTER & THEME: Software Engineering course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and engineering problem from the Introduction.
+CHARACTER & THEME: Software Engineering course introduction image based directly on the opening scene of this lesson. Show the core idea of the lesson visually, with no named characters.
 
 STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue software forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
 
-SCENE: A round table with eight colourful avatars each holding a symbol: a compass, a pencil, a laptop, a magnifier, a gear, a map, a megaphone, and a clipboard, while Ananya listens at the edge with a notebook.
+SCENE: A round table with eight avatars, each holding a symbol: a compass, a pencil, a laptop, a magnifier, a gear, a map, a megaphone, and a clipboard.
 
-ON-IMAGE TEXT: show a short bold title "Roles in a Software Team" plus only these few labels, large and legible: Team, Roles, Stand-up. Keep text minimal, no sentences.
+ON-IMAGE TEXT: show a short bold title "Roles in a Software Team" plus only these few labels, large and legible: Team, Roles, Ownership. Keep text minimal, no sentences.
 
 GOAL: make the opening idea instantly clear and engaging while matching the existing reading-material image standards.
 -->
 
 ## The Common Roles
 
-Titles vary between companies, but the responsibilities below appear almost everywhere.
+Titles vary between companies, but these responsibilities appear almost everywhere.
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
   <thead>
@@ -50,18 +50,18 @@ Titles vary between companies, but the responsibilities below appear almost ever
     </tr>
     <tr style="background-color: #f7fbff;">
       <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Software engineer</td>
-      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Designs and builds features, writes tests</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Designs and builds features, and writes tests</td>
       <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">How should this be built so it is correct and easy to change?</td>
     </tr>
     <tr style="background-color: #ffffff;">
       <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Tech lead / architect</td>
       <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Guides technical direction and key decisions</td>
-      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Will this design still work when we have ten times the users?</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Will this design still work with ten times the users?</td>
     </tr>
     <tr style="background-color: #f7fbff;">
       <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">QA / test engineer</td>
       <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Plans and runs checks to find problems before users do</td>
-      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">How could this break, and how do we prove it does not?</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">How could this break, and how do we show it does not?</td>
     </tr>
     <tr style="background-color: #ffffff;">
       <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">DevOps / site reliability engineer</td>
@@ -76,38 +76,26 @@ Titles vary between companies, but the responsibilities below appear almost ever
   </tbody>
 </table>
 
-<!--
-IMAGE PROMPT  ->  generate as images/02_team_roles_idea_to_running.png   (16:9 explanatory diagram, place here)
-
-A left-to-right flow with five stages: Decide (product owner), Design (UX designer, tech lead), Build (software engineers), Check (QA engineer), Run (DevOps engineer). A feedback arrow runs back from Run to Decide.
-
-STYLE: clean flat-3D infographic, blue primary forms, green for correct or healthy, orange for caution, red for failure, large legible labels, minimal text.
--->
-
 ## Stakeholders: People Who Care About the Outcome
 
-Not everyone affected by a product sits on the team. A **stakeholder** is anyone with an interest in the system or its outcome. For CampusConnect they include:
+A **stakeholder** is anyone with an interest in the system or its outcome, whether or not they sit on the team. Typical groups are:
 
-- **Users:** students who order and rate meals
-- **Customers:** college administrations that pay for the product
-- **Operators:** mess managers who enter menus and read reports
-- **Regulators and partners:** the payment provider and data-protection rules
+- **Users:** the people who use the product directly
+- **Customers:** the organisations or individuals who pay for it
+- **Operators:** staff who configure it and read its reports
+- **Regulators and partners:** bodies and suppliers whose rules or services the product must respect
 
-Good engineers learn early that these groups want different, sometimes conflicting, things. Students want free meals ordered instantly, colleges want low cost, and the payment partner wants strict security.
+These groups want different, sometimes conflicting, things. Users want convenience, customers want low cost, and partners want strict security. Recognising whose needs a decision serves is a core engineering skill.
 
 ## Small Teams Wear Many Hats
 
-At a twelve-person startup, one person may be both the product owner and the business analyst, and every engineer may handle some testing and deployment. Large companies split roles finely. Either way, **the responsibilities still need an owner**. A frequent cause of failure is an important responsibility, such as testing or security review, that everybody assumed someone else was handling.
+In a small startup one person may act as both product owner and business analyst, and every engineer may handle some testing and deployment. Large companies split roles finely. Either way, **each responsibility still needs an owner**. A frequent cause of failure is an important responsibility, such as security review, that everyone assumed someone else was handling.
 
-Engineers are encouraged to be **T-shaped**: deep in one specialty, with enough breadth to understand and talk to the neighbouring roles.
+Engineers are encouraged to be **T-shaped**: deep in one specialty, with enough breadth to understand and talk to neighbouring roles.
 
 ## Why Communication Becomes the Bottleneck
 
-As a team grows, the number of pairs of people who might need to talk grows much faster than the number of people. For a team of *n* people, the number of possible one-to-one communication paths is:
-
-```text
-paths = n * (n - 1) / 2
-```
+As a team grows, the number of pairs of people who might need to talk grows much faster than the number of people. For a team of n people, the number of possible one-to-one communication paths is n times (n minus 1), divided by 2.
 
 <table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
   <thead>
@@ -140,21 +128,21 @@ paths = n * (n - 1) / 2
   </tbody>
 </table>
 
-This is the arithmetic behind Brooks's Law from the history lesson: adding people to a late project adds communication overhead before it adds output. It is also why teams use clear roles, written decisions, and short regular meetings instead of relying on everyone talking to everyone.
+This is the arithmetic behind Brooks's Law from the history topic: adding people to a late project adds communication overhead before it adds output. It is also why teams rely on clear roles, written decisions, and short regular meetings instead of expecting everyone to talk to everyone.
 
 ## Your Turn: Who Owns It?
 
 Name the role most responsible for each task.
 
-1. Deciding whether the next quarter should be spent on a rating feature or a faster ordering flow.
+1. Deciding whether the next quarter should go to a rating feature or a faster ordering flow.
 2. Noticing that the checkout button is hard to find on a small phone screen.
-3. Setting up an automatic test run every time code is pushed.
-4. Checking how the app behaves when a student submits an empty rating.
+3. Arranging for tests to run automatically whenever code is changed.
+4. Checking how the system behaves when a user submits an empty rating.
 
-Task 1 belongs to the product owner or product manager. Task 2 belongs to the UX designer. Task 3 belongs to the DevOps engineer, although developers will use it every day. Task 4 belongs to QA, with developers also writing automated tests for the same case.
+Task 1 belongs to the product owner or product manager. Task 2 belongs to the UX designer. Task 3 belongs to the DevOps engineer, although developers benefit every day. Task 4 belongs to QA, with developers also writing automated checks for the same case.
 
 ## Conclusion
 
-A software team is a group of people with complementary responsibilities, such as deciding what to build, designing it, writing and checking it, and running it, who must coordinate closely because no single person holds all the knowledge the product requires. Clear ownership and light but regular communication are what keep a growing team effective.
+A software team is a group of people with complementary responsibilities, such as deciding what to build, designing it, writing and checking it, and running it, who must coordinate closely because no single person holds all the knowledge the product requires. Clear ownership and light but regular communication keep a growing team effective.
 
-Everyone in that stand-up shares one goal: software that is actually good. The next lesson makes that goal precise by naming the qualities that separate good software from merely working software.
+All these roles share a goal: software that is genuinely good. The next topic makes that goal precise by naming the qualities that separate good software from merely working software.

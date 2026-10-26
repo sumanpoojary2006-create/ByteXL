@@ -1,23 +1,21 @@
 ## Introduction
 
-On Ananya's first morning at CampusConnect, her laptop arrived with nothing on it. By noon she had installed a code editor, a language runtime, the Git version control system, and a handful of other programs. By mid-afternoon she had still not run the project, because it failed with an error about a missing library.
+Professional software is built with a connected set of tools, not a single program. An editor to write code, a system to record every change, a mechanism to run checks automatically, and a pipeline to deliver the result all work together. The choice of individual tools matters less than whether they are arranged so that anyone on the team gets the same result.
 
-Her desk neighbour, Rahul, glanced at the screen and laughed kindly. "It works on my machine," he said, "which is exactly the sentence we are trying to retire." He showed her the project's `README` file, which listed the exact versions of everything the project needed, and a short script that set it all up in one step. Within ten minutes the app was running on her laptop, identical to Rahul's.
-
-That experience introduced her to an idea professional teams take seriously: your tools are part of your product, and a good **toolchain** makes work repeatable.
+This topic describes the main categories of tools in a software engineer's toolchain, shows how one change travels through them, and introduces the idea of a reproducible environment.
 
 **Definition:** A toolchain is the set of connected tools a developer uses to write, build, test, version, and deliver software, arranged so that the same steps give the same result on every machine.
 
 <!--
 IMAGE PROMPT  ->  generate as images/10_intro_the_developers_toolchain.png   (16:9 cinematic hero image, place here, right after the Introduction)
 
-CHARACTER & THEME: Software Engineering course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and engineering problem from the Introduction.
+CHARACTER & THEME: Software Engineering course introduction image based directly on the opening scene of this lesson. Show the core idea of the lesson visually, with no named characters.
 
 STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue software forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
 
-SCENE: Ananya at a laptop on her first day, with a conveyor of glowing tool icons (editor, Git, terminal, test runner, pipeline) feeding into a single running app, while Rahul smiles beside her.
+SCENE: A conveyor of glowing tool icons, an editor, version control, a terminal, a test runner, and a pipeline, feeding into a single running application.
 
-ON-IMAGE TEXT: show a short bold title "The Developers Toolchain" plus only these few labels, large and legible: Editor, Git, Tests. Keep text minimal, no sentences.
+ON-IMAGE TEXT: show a short bold title "The Developers Toolchain" plus only these few labels, large and legible: Editor, Version, Pipeline. Keep text minimal, no sentences.
 
 GOAL: make the opening idea instantly clear and engaging while matching the existing reading-material image standards.
 -->
@@ -45,12 +43,12 @@ GOAL: make the opening idea instantly clear and engaging while matching the exis
     </tr>
     <tr style="background-color: #ffffff;">
       <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Package manager</td>
-      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Download and track libraries the project depends on</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Download and track the libraries a project depends on</td>
       <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">pip, npm, Maven</td>
     </tr>
     <tr style="background-color: #f7fbff;">
       <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Version control</td>
-      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Record every change, allow collaboration and rollback</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Record every change, support collaboration and rollback</td>
       <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Git with GitHub or GitLab</td>
     </tr>
     <tr style="background-color: #ffffff;">
@@ -60,23 +58,23 @@ GOAL: make the opening idea instantly clear and engaging while matching the exis
     </tr>
     <tr style="background-color: #f7fbff;">
       <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Test runner</td>
-      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Run automated checks on the code</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Run automated checks on the software</td>
       <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">pytest, JUnit, Jest</td>
     </tr>
     <tr style="background-color: #ffffff;">
       <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Linter and formatter</td>
       <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Catch likely mistakes and keep style consistent</td>
-      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Ruff, Flake8, Black, ESLint, Prettier</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Ruff, ESLint, Prettier</td>
     </tr>
     <tr style="background-color: #f7fbff;">
       <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Debugger</td>
       <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Pause a running program and inspect its state</td>
-      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">The debugger built into VS Code or PyCharm</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Debuggers built into editors</td>
     </tr>
     <tr style="background-color: #ffffff;">
       <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Issue tracker</td>
       <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Record bugs, tasks, and who is doing what</td>
-      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">GitHub Issues, Jira</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">GitHub Issues, Jira, ClickUp</td>
     </tr>
     <tr style="background-color: #f7fbff;">
       <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">CI/CD pipeline</td>
@@ -88,55 +86,41 @@ GOAL: make the opening idea instantly clear and engaging while matching the exis
 
 ## Following One Change Through the Tools
 
-Here is how a single small change moves through a typical toolchain.
-
-1. A developer picks an issue from the **issue tracker**.
-2. They create a new branch in **Git** so the work is separate from the main code.
-3. They edit code in the **editor**, and the **linter** flags a mistake as they type.
-4. They run the **tests** with the test runner and use the **debugger** when one fails.
-5. They commit the change and push it to the shared repository.
-6. The **CI pipeline** runs the build and all tests automatically on a clean machine.
-7. A teammate reviews the change, and it is merged.
-8. The pipeline deploys the new version.
-
-<!--
-IMAGE PROMPT  ->  generate as images/02_change_through_toolchain.png   (16:9 explanatory diagram, place here)
-
-A left-to-right pipeline with eight small stations: Issue, Branch, Edit and Lint, Test, Commit and Push, CI Build, Review and Merge, Deploy. Each station has a small tool icon, and a green tick sits above CI Build and Deploy.
-
-STYLE: clean flat-3D infographic, blue primary forms, green for correct or healthy, orange for caution, red for failure, large legible labels, minimal text.
--->
+1. A team member picks a task from the **issue tracker**.
+2. They create a separate line of work in **version control**, so the main code stays untouched.
+3. They edit in the **editor**, and the **linter** flags likely mistakes as they work.
+4. They run the **tests**, using the **debugger** to investigate any failure.
+5. They record the change and share it through version control.
+6. The **CI pipeline** builds the software and runs all the tests automatically on a clean machine.
+7. A teammate **reviews** the change, and once approved it is merged.
+8. The pipeline **deploys** the new version.
 
 ## Reproducible Environments
 
-The "works on my machine" problem usually arises because machines differ: one has a newer library, another a different Python version. The solution is to **declare** what a project needs and install it from that declaration. In Python, a **virtual environment** keeps a project's libraries separate from everything else on the computer, and a `requirements.txt` file lists them.
+"It works on my machine" is the classic symptom of a missing toolchain discipline. Machines differ: one has a newer library, another a different language version. The remedy is to **declare** what a project needs and install it from that declaration. Two ideas do the work:
 
-```bash
-python -m venv .venv                  # create an isolated environment
-source .venv/bin/activate             # activate it (on Windows: .venv\Scripts\activate)
-pip install -r requirements.txt       # install exactly the listed libraries
-pytest                                # run the project's tests
-```
+- **Declared dependencies:** a file lists every library and version the project needs, so nobody relies on memory.
+- **Isolated environments:** each project gets its own separate set of libraries, so projects on the same computer do not interfere with one another.
 
-Anyone who runs these four lines on a fresh machine should reach the same state. If they do not, the project's setup instructions are broken, and fixing them is real engineering work, not a distraction from it.
+Anyone who follows the project's setup instructions on a fresh machine should reach the same working state. If they do not, the instructions are broken, and repairing them is real engineering work.
 
-## Choosing Tools Wisely
+## Tool Choices: What to Standardise
 
-A common beginner mistake is to treat the choice of tool as the main decision. Which editor you use matters little. What matters is that the team **agrees** on the shared parts, because those must be identical for everyone: the language version, the formatter settings, the test command, and the build steps. Personal choices, such as editor theme or shell, can vary freely.
+A common beginner mistake is to treat the choice of tool as the main decision. What matters is that the team **agrees** on the shared parts, because those must be identical for everyone: the language version, the formatter settings, the test procedure, and the build steps. Personal choices such as editor theme or shell can vary freely.
 
 ## Your Turn: Which Tool?
 
-Which category of tool solves each problem?
+Which category of tool addresses each problem?
 
 1. Two developers keep overwriting each other's changes to the same file.
-2. A project works for one developer but fails on another's laptop because of different library versions.
-3. Code style arguments waste time in every review.
-4. Nobody remembers to run the tests before merging, and a broken change reached production last week.
+2. A project works for one developer but fails for another because of different library versions.
+3. Arguments about code style consume time in every review.
+4. Nobody remembers to run the tests before merging, and a broken change reached users last week.
 
-Problem 1 needs version control. Problem 2 needs declared dependencies and a virtual environment, using a package manager. Problem 3 needs a formatter and a linter, with agreed settings checked automatically. Problem 4 needs a CI pipeline that runs the tests on every change so that nobody has to remember.
+Problem 1 needs version control. Problem 2 needs declared dependencies and isolated environments, handled by a package manager. Problem 3 needs a formatter and linter with agreed settings, checked automatically. Problem 4 needs a CI pipeline that runs the tests on every change so that nobody has to remember.
 
 ## Conclusion
 
 A toolchain is the set of connected tools a developer uses to write, build, test, version, and deliver software, arranged so that the same steps give the same result on every machine. Tools are not a distraction from the real work, they are how teams make good work repeatable.
 
-One tool underlies many of the others and appears on nearly every server a developer will ever meet: the terminal. The next lesson teaches the commands a beginner needs to use it with confidence.
+One tool underlies many of the others and is the main way into servers: the terminal. The next topic explains the ideas behind the command line.

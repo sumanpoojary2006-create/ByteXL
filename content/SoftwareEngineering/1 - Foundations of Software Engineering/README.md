@@ -2,7 +2,7 @@
 
 Understand what software engineering is, where its practices came from, why projects fail, what kinds of systems exist, how the work is organised, what makes software good, and the habits and tools of a working engineer. No prior software engineering knowledge is assumed. Source of truth: `Course_Blueprint_for_Software_Engineering.xlsx`, sheet `Syllabus`, Unit 1.
 
-3 chapters, 12 topics. Running characters: Ananya, a new junior developer, and her mentor Vikram, at a startup called CampusConnect.
+3 chapters, 12 topics. 
 
 ## Topics
 

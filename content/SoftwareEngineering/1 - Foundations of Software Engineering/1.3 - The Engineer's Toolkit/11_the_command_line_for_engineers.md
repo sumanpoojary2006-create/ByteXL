@@ -1,23 +1,21 @@
 ## Introduction
 
-Three weeks into the job, Ananya's phone buzzed during lunch. Students were reporting failed payments. Vikram sent her a short message: "Log into the staging server and tell me how many payment failures happened today."
+Graphical interfaces suit tasks a person does once. Engineering work is full of tasks that are repeated, automated, run on remote machines with no screen, or combined in new ways. For these, professionals use a text-based interface to the operating system, the command line.
 
-She connected to the server and found a black screen with a blinking cursor. There were no windows, no icons, and no mouse pointer. She did know one thing, which was that the answer was in a log file, a plain text file in which the application records everything it does. She just did not know how to look inside it, let alone count the failures in a file with thousands of lines.
-
-That afternoon Vikram taught her the commands below. By evening she could answer the question in a single line. The command line stops looking intimidating once you realise it is a small vocabulary of commands that can be combined.
+This topic explains the ideas behind the command line instead of listing commands: why engineers rely on it, how small tools are combined into larger workflows, and how to use it safely.
 
 **Definition:** The command line is a text interface to the operating system in which you type commands, each doing one small job, and combine them with pipes and redirection to automate tasks and work on machines that have no graphical interface.
 
 <!--
 IMAGE PROMPT  ->  generate as images/11_intro_the_command_line_for_engineers.png   (16:9 cinematic hero image, place here, right after the Introduction)
 
-CHARACTER & THEME: Software Engineering course introduction image based directly on the opening scene of this lesson. Use the named person, setting, and engineering problem from the Introduction.
+CHARACTER & THEME: Software Engineering course introduction image based directly on the opening scene of this lesson. Show the core idea of the lesson visually, with no named characters.
 
 STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue software forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
 
-SCENE: Ananya faces a dark terminal window with a blinking cursor while a stream of glowing log lines flows past, and Vikram points to a short pipeline of three connected command blocks.
+SCENE: A terminal window with a blinking cursor, and three connected pipe segments carrying a stream of text from a file icon through a filter funnel to a counter.
 
-ON-IMAGE TEXT: show a short bold title "The Command Line for Engineers" plus only these few labels, large and legible: Terminal, Logs, Pipes. Keep text minimal, no sentences.
+ON-IMAGE TEXT: show a short bold title "The Command Line for Engineers" plus only these few labels, large and legible: Terminal, Pipes, Automate. Keep text minimal, no sentences.
 
 GOAL: make the opening idea instantly clear and engaging while matching the existing reading-material image standards.
 -->
@@ -26,112 +24,81 @@ GOAL: make the opening idea instantly clear and engaging while matching the exis
 
 - **Servers usually have no graphical interface**, so the terminal is the only way in.
 - **It is fast and repeatable.** A command typed once can be saved in a script and run a thousand times.
-- **Tools are built for it.** Git, package managers, test runners, and containers are all driven from the command line.
+- **Tools are built for it.** Version control, package managers, test runners, and container tools are all driven from the command line.
 - **Commands combine.** The output of one command can feed another, so small tools become powerful together.
 
-## Moving Around and Managing Files
+## Core Ideas
 
-```bash
-pwd                      # print the current directory
-ls                       # list files here
-ls -l                    # list with sizes and dates
-cd projects              # move into the directory called projects
-cd ..                    # move up one directory
-mkdir notes              # make a new directory
-touch todo.txt           # create an empty file
-cp todo.txt backup.txt   # copy a file
-mv backup.txt old.txt    # move or rename a file
-rm old.txt               # delete a file (there is no recycle bin)
-```
+**The shell and the file system.** The shell is the program that reads your commands. You always work "in" a location in the directory tree and use commands to move, list, create, copy, and remove files and directories.
 
-Be careful with `rm`: it deletes immediately and permanently. Always check the file name before pressing Enter.
+**Small tools that do one job.** Each command does one thing well: show a file, search text, count lines, sort. Learning the command line is mostly learning what categories of small tools exist and how to find the right one.
 
-## Looking Inside Files
+**Pipes.** A pipe sends the output of one command directly into the next, so a chain of simple steps can answer a complex question. For example, to find how many failed operations appear in a log file, one step selects the matching lines and the next counts them. No program had to be written for that question.
 
-```bash
-cat app.log              # print the whole file
-head -n 3 app.log        # first 3 lines
-tail -n 3 app.log        # last 3 lines
-tail -f app.log          # keep showing new lines as they arrive (Ctrl+C to stop)
-less app.log             # scroll through a long file (press q to quit)
-```
+**Redirection.** Output normally appears on screen, but it can be redirected into a file to save results, or appended to an existing file to keep a record.
 
-## Searching and Counting
+**Scripts.** Commands saved in a file become a script, a repeatable procedure that anyone can run. Many build, test, and deployment steps are scripts, which is how they stay consistent.
 
-Suppose `app.log` contains these six lines:
+**Remote access.** The same interface works over a network connection, so engineers administer and inspect distant machines exactly as they would a local one.
 
-```text
-2026-03-02 12:01:10 INFO order placed id=101
-2026-03-02 12:01:14 ERROR payment failed id=101
-2026-03-02 12:02:03 INFO order placed id=102
-2026-03-02 12:02:09 INFO payment ok id=102
-2026-03-02 12:03:40 ERROR payment failed id=103
-2026-03-02 12:04:55 ERROR menu timeout
-```
+**Help is built in.** Commands carry their own documentation. Experienced engineers consult it constantly, so knowing how to look something up matters far more than memorising options.
 
-```bash
-grep "payment failed" app.log        # show only matching lines
-grep -c ERROR app.log                # count matching lines (prints 3)
-wc -l app.log                        # count lines in the file (prints 6 app.log)
-```
+<table style="border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem;">
+  <thead>
+    <tr>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Everyday need</th>
+      <th style="border: 1px solid #c8d7ea; padding: 10px 12px; text-align: left; background-color: #dceeff; color: #102a43; font-weight: 700;">Idea used</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Find where a problem is mentioned in thousands of log lines</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Search text with a small tool, then narrow with a pipe</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Count how often something happened</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Pipe the matching lines into a counter</td>
+    </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Save the results for a colleague</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Redirect output into a file</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Do the same setup on every new machine</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Save the commands as a script</td>
+    </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Inspect a server in another city</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Remote shell access</td>
+    </tr>
+    <tr style="background-color: #f7fbff;">
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Understand an unfamiliar command</td>
+      <td style="border: 1px solid #d8e2ef; padding: 9px 12px; vertical-align: top;">Read its built-in help</td>
+    </tr>
+  </tbody>
+</table>
 
-## Pipes: Connecting Commands
+## Working Safely
 
-The pipe symbol `|` sends the output of one command into the next. This is the single most useful idea on the command line, because it lets you build answers from small steps.
+Power and risk come together. Some commands act immediately and permanently: deleting files has no recycle bin, and overwriting a file replaces its contents. Habits that protect you:
 
-```bash
-grep "payment failed" app.log | wc -l
-```
+- Read a command twice before pressing Enter, especially one that deletes or overwrites.
+- Work with the least privilege that will do the job, avoiding administrator rights unless required.
+- Try a new command on a copy or a test location first.
+- On shared or production machines, prefer commands that only read information until you know exactly what you are changing.
+- Keep important scripts in version control so changes can be reviewed and undone.
 
-`grep` selects the matching lines, and `wc -l` counts them. The result is `2`, which is exactly the answer Ananya needed. A longer example counts how many log lines there are at each severity level:
+## Your Turn: Which Idea Applies?
 
-```bash
-cut -d' ' -f3 app.log | sort | uniq -c
-```
+1. An engineer wants to know how many lines in a long log mention a particular error.
+2. A team wants every developer to set up a new project in exactly the same way.
+3. An engineer needs to keep the output of a diagnostic check to attach to a report.
+4. Someone is about to run a command that deletes a directory on a production server.
 
-`cut` takes the third space-separated column (the level), `sort` groups identical values, and `uniq -c` counts each group. The output is:
-
-```text
-      3 ERROR
-      3 INFO
-```
-
-<!--
-IMAGE PROMPT  ->  generate as images/02_pipe_pipeline.png   (16:9 explanatory diagram, place here)
-
-A horizontal pipeline of three glowing pipe segments: app.log (file icon) flowing into grep payment failed (filter funnel), then into wc -l (counter), ending in a large number 2.
-
-STYLE: clean flat-3D infographic, blue primary forms, green for correct or healthy, orange for caution, red for failure, large legible labels, minimal text.
--->
-
-## Redirection: Saving Output
-
-```bash
-grep ERROR app.log > errors.txt       # write matches to a file (overwrites)
-echo "checked at noon" >> notes.txt   # append to the end of a file
-```
-
-## Getting Help
-
-```bash
-grep --help        # a short summary of options
-man grep           # the full manual page (press q to quit)
-```
-
-Experienced engineers look things up constantly. Knowing that a command exists and how to read its manual matters far more than memorising every option.
-
-## Your Turn: Write the Command
-
-Using the six-line `app.log` above, write a command for each task and predict its output.
-
-1. Show only the lines containing the word `ERROR`.
-2. Count how many lines contain `order placed`.
-3. Save the lines containing `id=101` into a file named `order101.txt`.
-
-For task 1, `grep ERROR app.log` prints the three error lines. For task 2, `grep "order placed" app.log | wc -l` prints `2`. For task 3, `grep "id=101" app.log > order101.txt` creates the file with two lines, and prints nothing on screen because the output was redirected.
+Item 1 uses a search step connected by a pipe to a counting step. Item 2 uses a saved script. Item 3 uses redirection of output into a file. Item 4 calls for the safety habits: check the exact target, confirm the machine, use minimal privileges, and prefer to test on a copy first.
 
 ## Conclusion
 
-The command line is a text interface to the operating system in which you type commands, each doing one small job, and combine them with pipes and redirection to automate tasks and work on machines that have no graphical interface. A small vocabulary goes a long way.
+The command line is a text interface to the operating system in which you type commands, each doing one small job, and combine them with pipes and redirection to automate tasks and work on machines that have no graphical interface. Fluency comes from understanding these ideas and practising them, not from memorising lists.
 
-Ananya could now find the answer to Vikram's question, but finding that payments failed leads straight to the next challenge: working out why. For that she will have to read code she did not write, which is the subject of the final lesson of this unit.
+Tools help you work with software, but the software you meet at work will often be code written by others. The final topic of this unit explains how to read and understand existing code.
