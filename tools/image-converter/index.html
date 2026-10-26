@@ -2172,16 +2172,46 @@
     return `${shortPathHash(canonical)}-${canonical.length}`;
   }
 
+  function jsonUnicodeString(value) {
+    let encoded = '"';
+    for (const character of String(value)) {
+      const codePoint = character.codePointAt(0);
+      if (codePoint <= 0xffff) {
+        encoded += `\\u${codePoint.toString(16).padStart(4,"0")}`;
+        continue;
+      }
+
+      const supplementary = codePoint - 0x10000;
+      const highSurrogate = 0xd800 + (supplementary >> 10);
+      const lowSurrogate = 0xdc00 + (supplementary & 0x3ff);
+      encoded += `\\u${highSurrogate.toString(16).padStart(4,"0")}\\u${lowSurrogate.toString(16).padStart(4,"0")}`;
+    }
+    return `${encoded}"`;
+  }
+
+  function firewallSafeJson(value) {
+    if (value === null) return "null";
+    if (typeof value === "string") return jsonUnicodeString(value);
+    if (typeof value === "number" || typeof value === "boolean") return JSON.stringify(value);
+    if (Array.isArray(value)) {
+      return `[${value.map(item => firewallSafeJson(item === undefined ? null : item)).join(",")}]`;
+    }
+    if (typeof value === "object") {
+      const fields = Object.entries(value)
+        .filter(([, item]) => item !== undefined)
+        .map(([key, item]) => `${jsonUnicodeString(key)}:${firewallSafeJson(item)}`);
+      return `{${fields.join(",")}}`;
+    }
+    throw new TypeError(`Unsupported JSON value: ${typeof value}`);
+  }
+
   function oneCompilerTransportBody(snippet) {
-    // Security lessons intentionally contain strings such as ../../etc/passwd.
-    // Some hosting firewalls reject those strings in a browser JSON request
-    // before FastAPI can return CORS headers, which surfaces only as "Failed to
-    // fetch". JSON Unicode escapes preserve the exact lesson code after the API
-    // parses the request while keeping those signatures out of the wire body.
-    return JSON.stringify(snippet)
-      .replace(/</g,"\\u003c")
-      .replace(/>/g,"\\u003e")
-      .replace(/\//g,"\\u002f");
+    // Security lessons intentionally contain examples such as path traversal,
+    // script tags, and SQL injection. Hosting firewalls can reject those exact
+    // strings before FastAPI returns CORS headers, surfacing only as "Failed to
+    // fetch". Escaping every JSON string keeps all lesson signatures off the
+    // wire while JSON parsing restores the original editor payload exactly.
+    return firewallSafeJson(snippet);
   }
 
   async function requestOneCompilerWorkspace(snippet) {

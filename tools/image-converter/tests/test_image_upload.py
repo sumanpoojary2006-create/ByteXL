@@ -28,7 +28,9 @@ class ImageUploadTests(unittest.TestCase):
         self.assertIn("r.status !== 429 && r.status < 500", html)
         self.assertIn("if (apiWakePromise) return apiWakePromise", html)
         self.assertIn("oneCompilerTransportBody(snippet)", html)
-        self.assertIn('.replace(/\\//g,"\\\\u002f")', html)
+        self.assertIn("function jsonUnicodeString(value)", html)
+        self.assertIn("function firewallSafeJson(value)", html)
+        self.assertIn("return firewallSafeJson(snippet)", html)
 
     def test_onecompiler_workspace_runs_in_fastapi_thread_pool(self):
         self.assertFalse(inspect.iscoroutinefunction(server.create_onecompiler_workspace))
