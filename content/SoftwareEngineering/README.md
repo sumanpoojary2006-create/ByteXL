@@ -13,4 +13,5 @@ Content is conceptual and theory-focused (no code examples, no story-style openi
 | 3 | [Requirements Engineering](3%20-%20Requirements%20Engineering/) | Draft for review (12 topics) |
 | 4 | [Modeling Software with UML](4%20-%20Modeling%20Software%20with%20UML/) | Draft for review (11 topics) |
 | 5 | [Software Design Principles](5%20-%20Software%20Design%20Principles/) | Draft for review (12 topics) |
-| 6 to 14 | Remaining units | Not started |
+| 6 | [Software Architecture](6%20-%20Software%20Architecture/) | Draft for review (12 topics) |
+| 7 to 14 | Remaining units | Not started |
