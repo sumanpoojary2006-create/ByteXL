@@ -16,4 +16,5 @@ Content is conceptual and theory-focused (no code examples, no story-style openi
 | 6 | [Software Architecture](6%20-%20Software%20Architecture/) | Draft for review (12 topics) |
 | 7 | [Object-Oriented Design & Design Patterns](7%20-%20Object-Oriented%20Design%20&%20Design%20Patterns/) | Draft for review (12 topics) |
 | 8 | [Clean Code, Refactoring & Software Evolution](8%20-%20Clean%20Code,%20Refactoring%20&%20Software%20Evolution/) | Draft for review (20 topics) |
-| 9 to 14 | Remaining units | Not started |
+| 9 | [Version Control, Build & DevOps](9%20-%20Version%20Control,%20Build%20&%20DevOps/) | Draft for review (23 topics) |
+| 10 to 14 | Remaining units | Not started |
