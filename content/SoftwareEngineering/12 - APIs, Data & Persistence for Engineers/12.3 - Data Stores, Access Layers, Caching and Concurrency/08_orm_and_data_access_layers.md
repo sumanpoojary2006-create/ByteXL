@@ -9,7 +9,7 @@ This topic explains the mismatch, the main patterns for data access, what mapper
 <!--
 IMAGE PROMPT  ->  generate as images/08_intro_orm_and_data_access_layers.png   (16:9 cinematic hero image, place here, right after the Introduction)
 
-CHARACTER & THEME: Software Engineering course introduction image based directly on the opening scene of this lesson. Show the core idea of the lesson visually, with no named characters.
+CHARACTER & THEME: Software Engineering course introduction image based on the central concept of this lesson. Show the core idea of the lesson visually, with no named characters.
 
 STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue software forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
 

@@ -7,7 +7,7 @@ Managers want to know whether a project is on track, engineers want to know whet
 <!--
 IMAGE PROMPT  ->  generate as images/05_intro_software_metrics.png   (16:9 cinematic hero image, place here, right after the Introduction)
 
-CHARACTER & THEME: Software Engineering course introduction image based directly on the opening scene of this lesson. Show the core idea of the lesson visually, with no named characters.
+CHARACTER & THEME: Software Engineering course introduction image based on the central concept of this lesson. Show the core idea of the lesson visually, with no named characters.
 
 STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue software forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
 

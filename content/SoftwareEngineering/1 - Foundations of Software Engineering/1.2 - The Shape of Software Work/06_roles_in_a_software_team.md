@@ -1,6 +1,6 @@
 ## Introduction
 
-A newcomer to a software company often expects a team of programmers. In reality, only part of a typical product team mainly writes code. The rest decide what to build, design how it should feel, check its quality, and keep it running.
+Building software requires more than writing code. In a typical product team, only part of the people mainly write code; others decide what to build, design how it should feel, check its quality, and keep it running. Each role carries distinct responsibilities, and the way these roles communicate often limits the pace of a team more than individual technical skill.
 
 This topic describes the common roles in a software team, the stakeholders outside the team, and why communication, more than typing speed, usually limits how fast a team can move.
 
@@ -9,7 +9,7 @@ This topic describes the common roles in a software team, the stakeholders outsi
 <!--
 IMAGE PROMPT  ->  generate as images/06_intro_roles_in_a_software_team.png   (16:9 cinematic hero image, place here, right after the Introduction)
 
-CHARACTER & THEME: Software Engineering course introduction image based directly on the opening scene of this lesson. Show the core idea of the lesson visually, with no named characters.
+CHARACTER & THEME: Software Engineering course introduction image based on the central concept of this lesson. Show the core idea of the lesson visually, with no named characters.
 
 STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue software forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
 

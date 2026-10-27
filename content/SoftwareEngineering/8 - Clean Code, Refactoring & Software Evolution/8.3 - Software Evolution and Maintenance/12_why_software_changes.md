@@ -1,13 +1,13 @@
 ## Introduction
 
-Building a bridge ends, in principle, when the bridge is opened. Software is different. The first release is closer to a beginning than an end: users ask for improvements, defects appear, the world around the software moves on, and the software must move with it. Software that stops changing is usually software that has stopped being used. Understanding why software changes, and what kinds of change occur, is the foundation for planning and costing the long phase of its life that follows delivery.
+Software is rarely finished. The first release marks the beginning of a long phase in which users ask for improvements, defects appear, and the surrounding world, including laws, platforms, and other systems, keeps moving. Software that stops changing is usually software that has stopped being used. Understanding why software changes, and what kinds of change occur, is the foundation for planning and costing the phase of its life that follows delivery.
 
 **Definition:** Software evolution is the continuing process of changing software after its first release to correct faults, adapt it to new environments, improve it, and extend it, and software maintenance is the set of activities that carry out those changes and keep the software useful.
 
 <!--
 IMAGE PROMPT  ->  generate as images/12_intro_why_software_changes.png   (16:9 cinematic hero image, place here, right after the Introduction)
 
-CHARACTER & THEME: Software Engineering course introduction image based directly on the opening scene of this lesson. Show the core idea of the lesson visually, with no named characters.
+CHARACTER & THEME: Software Engineering course introduction image based on the central concept of this lesson. Show the core idea of the lesson visually, with no named characters.
 
 STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue software forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
 

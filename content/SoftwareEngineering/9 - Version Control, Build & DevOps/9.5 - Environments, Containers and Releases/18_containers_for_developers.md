@@ -1,13 +1,13 @@
 ## Introduction
 
-"It works on my machine" has been a joke and a source of frustration for as long as software has been shared. Programs depend on a particular operating system, language runtime, libraries, and settings, and any difference can break them. Containers solve this by packaging an application with everything it needs to run, so that it behaves the same on a developer's laptop, on a test server, and in the cloud. Since the release of Docker in 2013, containers have become a standard way to build, ship, and run software.
+Programs depend on their surroundings: a particular operating system, language runtime, libraries, and settings, and any difference between environments can change their behaviour. A container packages an application together with everything it needs to run, in an isolated unit that behaves the same wherever it is started, whether on a developer laptop, a test server, or in the cloud. Containers have become a standard way to build, ship, and run software.
 
 **Definition:** A container is a lightweight, isolated, portable unit that packages an application together with its dependencies and runs on a shared operating system kernel, created from an image that describes its contents, so that the software runs consistently wherever it is deployed.
 
 <!--
 IMAGE PROMPT  ->  generate as images/18_intro_containers_for_developers.png   (16:9 cinematic hero image, place here, right after the Introduction)
 
-CHARACTER & THEME: Software Engineering course introduction image based directly on the opening scene of this lesson. Show the core idea of the lesson visually, with no named characters.
+CHARACTER & THEME: Software Engineering course introduction image based on the central concept of this lesson. Show the core idea of the lesson visually, with no named characters.
 
 STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue software forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
 

@@ -1,6 +1,6 @@
 ## Introduction
 
-By the late 1990s many practitioners were frustrated. Heavy, document-driven processes seemed to consume more effort than the software itself, and projects regularly delivered what had been specified long ago rather than what was needed now. Several lighter methods had appeared independently, and in 2001 their advocates agreed on a shared statement of values.
+The Agile Manifesto is a short statement of values and principles for developing software, written in 2001 by a group of practitioners who had each used lighter alternatives to heavy, document-driven processes. It states what the signatories valued more and what they valued less, and it is supported by twelve principles.
 
 This topic presents that statement, the Agile Manifesto, and the principles behind it, and corrects the most common misunderstandings.
 
@@ -9,7 +9,7 @@ This topic presents that statement, the Agile Manifesto, and the principles behi
 <!--
 IMAGE PROMPT  ->  generate as images/11_intro_the_agile_manifesto_and_its_principles.png   (16:9 cinematic hero image, place here, right after the Introduction)
 
-CHARACTER & THEME: Software Engineering course introduction image based directly on the opening scene of this lesson. Show the core idea of the lesson visually, with no named characters.
+CHARACTER & THEME: Software Engineering course introduction image based on the central concept of this lesson. Show the core idea of the lesson visually, with no named characters.
 
 STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue software forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
 

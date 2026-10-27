@@ -1,13 +1,13 @@
 ## Introduction
 
-Anyone who has saved a document as "final", then "final_v2", then "final_really_final" has invented a primitive version control system. It works for one person and one file, and it collapses as soon as several people edit many files at once, or when someone asks which version was sent to the customer in March and what changed since. Version control solves this problem for software. It is among the most universal tools in the profession: almost no professional team works without it, and it underlies almost every other practice in this unit.
+Version control is the practice of recording every change made to a set of files, who made it, when, and why, so that any earlier state can be recovered, compared, and understood. For software, whose source is a large and constantly changing set of files edited by many people at once, this record is essential: it allows work to proceed in parallel, changes to be reviewed and reversed, and a team to know exactly which version of the system is in use at any time. It underlies almost every other practice in this unit.
 
 **Definition:** Version control is a system that records every change made to a set of files over time, who made it and why, so that any earlier state can be recovered, different lines of work can be developed in parallel and combined, and a team can collaborate on the same material without overwriting one another.
 
 <!--
 IMAGE PROMPT  ->  generate as images/01_intro_why_version_control.png   (16:9 cinematic hero image, place here, right after the Introduction)
 
-CHARACTER & THEME: Software Engineering course introduction image based directly on the opening scene of this lesson. Show the core idea of the lesson visually, with no named characters.
+CHARACTER & THEME: Software Engineering course introduction image based on the central concept of this lesson. Show the core idea of the lesson visually, with no named characters.
 
 STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue software forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
 

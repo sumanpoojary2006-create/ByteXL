@@ -1,6 +1,6 @@
 ## Introduction
 
-Education tends to emphasise writing new programs from a blank file. Professional work looks different: most engineers spend far more time reading code that already exists, written by people who may have left, than writing code from scratch. The ability to understand unfamiliar software quickly and accurately is one of the most valuable practical skills.
+Most of the code an engineer works with was written by someone else, often long ago. Reading existing code therefore takes more of a professional engineer's time than writing new code from nothing, and the ability to understand unfamiliar software quickly and accurately is among the most valuable practical skills.
 
 This topic presents a disciplined method for building an accurate mental model of existing software before changing it, and explains why that discipline prevents new defects.
 
@@ -9,7 +9,7 @@ This topic presents a disciplined method for building an accurate mental model o
 <!--
 IMAGE PROMPT  ->  generate as images/12_intro_reading_and_understanding_existing_code.png   (16:9 cinematic hero image, place here, right after the Introduction)
 
-CHARACTER & THEME: Software Engineering course introduction image based directly on the opening scene of this lesson. Show the core idea of the lesson visually, with no named characters.
+CHARACTER & THEME: Software Engineering course introduction image based on the central concept of this lesson. Show the core idea of the lesson visually, with no named characters.
 
 STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue software forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
 

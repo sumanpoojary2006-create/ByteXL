@@ -1,13 +1,13 @@
 ## Introduction
 
-Teams used to work separately for weeks and then try to combine everyone's work in a final "integration phase." It was usually painful: pieces that worked alone failed together, defects were hard to trace to their cause, and release dates slipped while people untangled the mess. Continuous integration reverses the approach by combining work constantly, so that problems are discovered within minutes, while the change that caused them is still fresh and small. It is the foundation on which continuous delivery and DevOps are built.
+Continuous integration is the practice of combining the work of all developers into a shared line of development frequently, and verifying every combination automatically. Integration is the point at which separately written pieces must work together, and the longer it is delayed, the more differences accumulate and the harder failures are to trace to a cause. Integrating constantly keeps each change small, so that problems are discovered within minutes, while the change that caused them is still fresh. It is the foundation on which continuous delivery and DevOps are built.
 
 **Definition:** Continuous integration is the practice of frequently merging every developer's work into a shared main line and automatically building and testing each change, so that integration problems are detected immediately and the main line is kept in a working state.
 
 <!--
 IMAGE PROMPT  ->  generate as images/15_intro_continuous_integration.png   (16:9 cinematic hero image, place here, right after the Introduction)
 
-CHARACTER & THEME: Software Engineering course introduction image based directly on the opening scene of this lesson. Show the core idea of the lesson visually, with no named characters.
+CHARACTER & THEME: Software Engineering course introduction image based on the central concept of this lesson. Show the core idea of the lesson visually, with no named characters.
 
 STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue software forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
 

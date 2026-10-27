@@ -1,13 +1,13 @@
 ## Introduction
 
-For many years, servers were set up by hand: an administrator installed software, edited configuration files, and opened network ports by following a document, or from memory. Each server became subtly unique, with a history nobody could reproduce. When one failed, rebuilding it was slow and uncertain. Cloud platforms made creating infrastructure as easy as calling a programming interface, which made a better approach possible: describe the infrastructure in files, keep them in version control, and let tools create and change it from the description.
+Infrastructure, meaning the servers, networks, storage, and services on which software runs, can be created by hand or by description. Manual setup leaves each environment slightly different and impossible to reproduce exactly. Infrastructure as code takes the second route: the desired infrastructure is described in files, kept in version control, and created and changed by tools that read the description, so that environments can be reviewed, repeated, and rebuilt like any other software.
 
 **Definition:** Infrastructure as code is the practice of defining and managing servers, networks, storage, and platform services through machine-readable definition files, kept in version control and applied by automated tools, so that infrastructure can be created, changed, reviewed, and reproduced like software.
 
 <!--
 IMAGE PROMPT  ->  generate as images/19_intro_infrastructure_as_code.png   (16:9 cinematic hero image, place here, right after the Introduction)
 
-CHARACTER & THEME: Software Engineering course introduction image based directly on the opening scene of this lesson. Show the core idea of the lesson visually, with no named characters.
+CHARACTER & THEME: Software Engineering course introduction image based on the central concept of this lesson. Show the core idea of the lesson visually, with no named characters.
 
 STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue software forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
 

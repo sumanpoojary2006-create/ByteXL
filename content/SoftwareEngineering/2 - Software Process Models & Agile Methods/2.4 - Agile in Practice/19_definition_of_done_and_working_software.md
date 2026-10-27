@@ -1,13 +1,13 @@
 ## Introduction
 
-Almost every team has experienced the following: a story is reported as finished, then bugs, missing tests, or an unreleased build turn up and the work returns. "Done" meant different things to different people. Agile addresses this with an explicit, shared Definition of Done, and with a firm rule that progress is measured by software that actually works.
+Work is only useful when it is finished, and teams need a precise shared meaning of "finished." Without one, an item may be reported as complete while testing, integration, or release steps remain, so the work returns later as defects and delay. Agile addresses this with an explicit, shared Definition of Done, and with a firm rule that progress is measured by software that actually works.
 
 **Definition:** The Definition of Done is a shared, written checklist of quality criteria that every item must satisfy before it counts as complete, ensuring that each increment of the product is genuinely usable and potentially releasable.
 
 <!--
 IMAGE PROMPT  ->  generate as images/19_intro_definition_of_done_and_working_software.png   (16:9 cinematic hero image, place here, right after the Introduction)
 
-CHARACTER & THEME: Software Engineering course introduction image based directly on the opening scene of this lesson. Show the core idea of the lesson visually, with no named characters.
+CHARACTER & THEME: Software Engineering course introduction image based on the central concept of this lesson. Show the core idea of the lesson visually, with no named characters.
 
 STYLE: world-class high-end 3D render, cinematic and vibrant, glossy soft 3D forms, blue software forms, green positive accents, orange secondary accents, red warnings, soft studio-gradient backdrop, minimal large labels.
 
