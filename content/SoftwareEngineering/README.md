@@ -18,4 +18,5 @@ Content is conceptual and theory-focused (no code examples, no story-style openi
 | 8 | [Clean Code, Refactoring & Software Evolution](8%20-%20Clean%20Code,%20Refactoring%20&%20Software%20Evolution/) | Draft for review (20 topics) |
 | 9 | [Version Control, Build & DevOps](9%20-%20Version%20Control,%20Build%20&%20DevOps/) | Draft for review (23 topics) |
 | 10 | [Software Testing Fundamentals](10%20-%20Software%20Testing%20Fundamentals/) | Draft for review (15 topics) |
-| 11 to 14 | Remaining units | Not started |
+| 11 | [Quality Assurance & Verification](11%20-%20Quality%20Assurance%20&%20Verification/) | Draft for review (10 topics) |
+| 12 to 14 | Remaining units | Not started |
