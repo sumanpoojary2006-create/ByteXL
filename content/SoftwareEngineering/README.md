@@ -1,6 +1,6 @@
 # Software Engineering
 
-A beginner-friendly software engineering course in the style of the DBMS reading materials: narrative introduction, a one-line definition, short sections with tables and code, a "Your Turn" exercise with worked answers, and a conclusion that leads into the next topic. Source of truth: `Course_Blueprint_for_Software_Engineering.xlsx`, sheet `Syllabus` (14 units).
+A beginner-friendly software engineering course in the style of the DBMS reading materials: narrative introduction, a one-line definition, short sections with tables and diagrams, no code examples, a "Your Turn" exercise with worked answers, and a conclusion that leads into the next topic. Source of truth: `Course_Blueprint_for_Software_Engineering.xlsx`, sheet `Syllabus` (14 units).
 
 Content is conceptual and theory-focused (no code examples, no story-style openings), per review feedback. Image prompts are embedded as HTML comments (`IMAGE PROMPT -> generate as images/<name>.png`) at the place each image belongs. Images have not been generated yet.
 
@@ -21,4 +21,4 @@ Content is conceptual and theory-focused (no code examples, no story-style openi
 | 11 | [Quality Assurance & Verification](11%20-%20Quality%20Assurance%20&%20Verification/) | Draft for review (10 topics) |
 | 12 | [APIs, Data & Persistence for Engineers](12%20-%20APIs,%20Data%20&%20Persistence%20for%20Engineers/) | Draft for review (10 topics) |
 | 13 | [Project Management, Estimation & Risk](13%20-%20Project%20Management,%20Estimation%20&%20Risk/) | Draft for review (10 topics) |
-| 14 | Remaining unit | Not started |
+| 14 | [Security, Ethics & Professional Practice](14%20-%20Security,%20Ethics%20&%20Professional%20Practice/) | Draft for review (20 topics) |
