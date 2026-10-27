@@ -1,6 +1,6 @@
 # Software Engineering
 
-A beginner-friendly software engineering course in the style of the DBMS reading materials: narrative introduction, a one-line definition, short sections with tables and diagrams, no code examples, a "Your Turn" exercise with worked answers, and a conclusion that leads into the next topic. Source of truth: `Course_Blueprint_for_Software_Engineering.xlsx`, sheet `Syllabus` (14 units).
+A beginner-friendly software engineering course in the style of the DBMS reading materials: concept-first introduction, a one-line definition, short sections with tables and diagrams, no code examples, a "Your Turn" exercise with worked answers, and a conclusion that leads into the next topic. Source of truth: `Course_Blueprint_for_Software_Engineering.xlsx`, sheet `Syllabus` (14 units).
 
 Content is conceptual and theory-focused (no code examples, no story-style openings), per review feedback. Image prompts are embedded as HTML comments (`IMAGE PROMPT -> generate as images/<name>.png`) at the place each image belongs. Images have not been generated yet.
 
