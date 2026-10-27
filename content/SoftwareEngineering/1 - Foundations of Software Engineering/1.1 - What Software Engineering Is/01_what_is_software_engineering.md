@@ -1,8 +1,8 @@
 ## Introduction
 
-Anyone who can write a short program can make a computer do something useful. Software engineering begins at the point where that is no longer enough: when the software must be used by many people, changed by many developers, and kept running for years.
+Software engineering is the discipline of producing software that many people use, many developers change, and that must keep working for years. It differs from programming, which is the act of producing code that works, in that it also asks whether the software can be understood, changed safely, trusted, and afforded over its whole life.
 
-This topic draws the line between **programming**, the act of producing code that works, and **software engineering**, the discipline of producing software that stays correct, understandable, and affordable to change. Every other topic in the course builds on this distinction.
+This topic defines both terms and the difference between them. Every other topic in the course builds on this distinction.
 
 **Definition:** Software engineering is the disciplined practice of building software that many people can understand, change, trust, and rely on over a long time, while working within real limits of cost, time, and people.
 

@@ -1,8 +1,8 @@
 ## Introduction
 
-Practices such as code review, version control, and iterative delivery can look like arbitrary rules to someone who has never worked without them. They are better understood as accumulated lessons: each was introduced because a recurring kind of failure became too costly to accept.
+The practices of modern software engineering, such as code review, version control, and iterative delivery, developed in stages, each in response to a recurring kind of failure.
 
-This topic outlines the main stages in the development of software engineering, so that later topics on process, design, testing, and operations can be read as responses to specific problems instead of as a list of rituals.
+This topic outlines those stages, so that later topics on process, design, testing, and operations can be read as responses to specific problems.
 
 **Definition:** The history of software engineering is the record of how practitioners repeatedly hit the limits of how they built software, and introduced new practices, such as structured design, process models, version control, and agile methods, to push those limits back.
 

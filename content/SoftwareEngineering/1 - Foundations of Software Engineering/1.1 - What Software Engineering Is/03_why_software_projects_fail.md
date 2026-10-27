@@ -1,8 +1,8 @@
 ## Introduction
 
-Software projects fail more often than most people expect, and rarely for the reason that headlines suggest. A failed launch is usually attributed to a bug, but a bug is the last link in a longer chain of decisions about requirements, design, testing, communication, and risk.
+A software project fails when it is late, over budget, abandoned, or delivered but unused or unreliable. Failure rarely has a single technical cause; it usually comes from decisions about requirements, design, testing, communication, and risk.
 
-This topic examines what "failure" means for a software project, studies four well-documented cases, and identifies the recurring root causes that professional teams try to design out of their process.
+This topic defines what failure means for a software project, examines four documented cases, and identifies the recurring root causes that professional teams design out of their process.
 
 **Definition:** A software project fails when it is delivered late, over budget, with serious faults, or not at all, and the root cause is almost never a single bug but a chain of weak decisions about requirements, design, testing, communication, and risk.
 

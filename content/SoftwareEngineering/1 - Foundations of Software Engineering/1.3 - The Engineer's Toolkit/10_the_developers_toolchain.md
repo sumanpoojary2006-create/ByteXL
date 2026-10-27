@@ -1,8 +1,8 @@
 ## Introduction
 
-Professional software is built with a connected set of tools, not a single program. An editor to write code, a system to record every change, a mechanism to run checks automatically, and a pipeline to deliver the result all work together. The choice of individual tools matters less than whether they are arranged so that anyone on the team gets the same result.
+Professional software is built with a connected set of tools: an editor to write code, a system to record every change, a mechanism to run checks automatically, and a pipeline to deliver the result. The arrangement of these tools matters more than the choice of any one of them, because it should give every team member the same result.
 
-This topic describes the main categories of tools in a software engineer's toolchain, shows how one change travels through them, and introduces the idea of a reproducible environment.
+This topic describes the main categories of tools, shows how one change travels through them, and introduces the idea of a reproducible environment.
 
 **Definition:** A toolchain is the set of connected tools a developer uses to write, build, test, version, and deliver software, arranged so that the same steps give the same result on every machine.
 

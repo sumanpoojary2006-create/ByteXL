@@ -1,6 +1,6 @@
 ## Introduction
 
-Graphical interfaces suit tasks a person does once. Engineering work is full of tasks that are repeated, automated, run on remote machines with no screen, or combined in new ways. For these, professionals use a text-based interface to the operating system, the command line.
+The command line is a text-based interface to the operating system. It suits tasks that are repeated, automated, run on machines with no screen, or combined in new ways.
 
 This topic explains the ideas behind the command line instead of listing commands: why engineers rely on it, how small tools are combined into larger workflows, and how to use it safely.
 

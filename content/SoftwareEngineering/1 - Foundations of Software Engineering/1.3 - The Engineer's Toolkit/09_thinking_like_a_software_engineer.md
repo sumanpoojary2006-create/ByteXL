@@ -1,8 +1,8 @@
 ## Introduction
 
-Most beginner questions in software are of the form "how do I make this work?" Professional questions are different: "should we build this at all, what could go wrong, and what will it cost us later?" The shift is less about knowing more syntax and more about thinking in a particular way.
+Experienced engineers apply a consistent set of habits of mind to almost every decision: asking whether something should be built at all, what could go wrong, and what it will cost later. These habits matter more than any single language or framework, because they apply to every system.
 
-This topic describes the habits of mind that experienced engineers apply to almost every decision, from choosing a technology to planning a release. They matter more than any single language or framework because they apply to every system.
+This topic describes those habits.
 
 **Definition:** Thinking like a software engineer means applying a small set of habits, breaking problems down, abstracting away detail, weighing trade-offs, stating assumptions, and planning for failure, to make sound decisions under uncertainty.
 

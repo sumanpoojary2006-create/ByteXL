@@ -1,6 +1,6 @@
 ## Introduction
 
-Most of the code an engineer works with was written by someone else, often long ago. Reading existing code therefore takes more of a professional engineer's time than writing new code from nothing, and the ability to understand unfamiliar software quickly and accurately is among the most valuable practical skills.
+Most of the code an engineer works with was written by someone else, so reading existing code is a core professional skill.
 
 This topic presents a disciplined method for building an accurate mental model of existing software before changing it, and explains why that discipline prevents new defects.
 

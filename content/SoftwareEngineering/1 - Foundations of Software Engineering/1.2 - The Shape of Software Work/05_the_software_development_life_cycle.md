@@ -1,6 +1,6 @@
 ## Introduction
 
-Software is not built in a single act. Whatever the team, tools, or product, the work passes through recognisable activities: understanding what is needed, deciding how to build it, building it, checking it, releasing it, and keeping it useful afterwards.
+Software development passes through recognisable activities: understanding what is needed, deciding how to build it, building it, checking it, releasing it, and keeping it useful afterwards. Together these form the software development life cycle.
 
 This topic names those activities, shows what each one produces, and explains why the order is a loop and not a straight line. Later units on process models and agile methods are variations on how this life cycle is organised.
 

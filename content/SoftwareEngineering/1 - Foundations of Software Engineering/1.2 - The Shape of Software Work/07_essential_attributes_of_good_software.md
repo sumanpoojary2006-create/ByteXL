@@ -1,8 +1,8 @@
 ## Introduction
 
-Software can do exactly what was asked and still be bad. A feature may be present and correct, yet too slow to use at busy times, too fragile to trust, too tangled to change, or too confusing to enjoy. Correctness is the entry ticket, not the whole game.
+Good software has qualities beyond basic correctness: performance, reliability, security, maintainability, usability, and others. These qualities compete with each other, so choosing between them is a core engineering decision.
 
-This topic names the qualities, beyond basic correctness, that determine whether software is good, and explains why they compete with each other so that choosing between them is a core engineering decision.
+This topic names these qualities and explains how they trade against each other.
 
 **Definition:** The essential attributes of good software are the qualities beyond basic correctness, chiefly maintainability, dependability and security, efficiency, and acceptability, that determine whether people can actually rely on it, afford to change it, and enjoy using it.
 

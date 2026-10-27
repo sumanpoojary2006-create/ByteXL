@@ -1,8 +1,8 @@
 ## Introduction
 
-A requirement such as "the system should be fast" sounds reasonable and is almost useless. Fast compared to what, on which screen, for how many users? Without answers, nobody can say when the requirement has been met, so people disagree about it only after the software is built.
+Requirements describe either what a system does (functional properties) or how well it does it (non-functional properties). Non-functional requirements are only useful when they are specific enough to be verified.
 
-This topic distinguishes **what a system does** from **how well it does it**, and shows how to turn vague quality wishes into requirements that can be verified.
+This topic distinguishes the two kinds and shows how to turn vague quality wishes into verifiable requirements.
 
 **Definition:** A functional property describes what a system does, its features and behaviours, while a non-functional property describes how well it does them, such as how fast, how secure, how available, or how easy to use, and good requirements state both in a form that can be verified.
 

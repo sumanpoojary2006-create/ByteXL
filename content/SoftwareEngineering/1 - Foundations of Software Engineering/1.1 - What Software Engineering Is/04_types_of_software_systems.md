@@ -1,8 +1,8 @@
 ## Introduction
 
-The word "software" covers everything from a small phone game to the control system of a power station. These systems share a discipline but not a level of risk, so applying the same process to all of them would be wasteful for some and dangerous for others.
+Software systems fall into families, such as consumer applications, business systems, embedded systems, and safety-critical systems, which share a discipline but differ in risk and in how fast they must change.
 
-This topic surveys the main families of software systems and introduces three questions that help an engineer decide how much rigour a system deserves: **who uses it, what does a failure cost, and how fast does it have to change?**
+This topic surveys the main families and introduces three questions that help an engineer decide how much rigour a system needs: **who uses it, what does a failure cost, and how fast does it have to change?**
 
 **Definition:** A software system is a collection of programs, data, and configuration that work together to provide some service, and its type is determined by the environment it runs in, the people who depend on it, and the consequences of its failure.
 
