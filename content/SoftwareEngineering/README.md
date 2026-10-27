@@ -20,4 +20,5 @@ Content is conceptual and theory-focused (no code examples, no story-style openi
 | 10 | [Software Testing Fundamentals](10%20-%20Software%20Testing%20Fundamentals/) | Draft for review (15 topics) |
 | 11 | [Quality Assurance & Verification](11%20-%20Quality%20Assurance%20&%20Verification/) | Draft for review (10 topics) |
 | 12 | [APIs, Data & Persistence for Engineers](12%20-%20APIs,%20Data%20&%20Persistence%20for%20Engineers/) | Draft for review (10 topics) |
-| 13 to 14 | Remaining units | Not started |
+| 13 | [Project Management, Estimation & Risk](13%20-%20Project%20Management,%20Estimation%20&%20Risk/) | Draft for review (10 topics) |
+| 14 | Remaining unit | Not started |
