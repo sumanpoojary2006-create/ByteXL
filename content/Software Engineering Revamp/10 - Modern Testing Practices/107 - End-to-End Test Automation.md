@@ -121,15 +121,3 @@ A suite with hundreds of tests that each describe how to find the Pay button wil
 | Mistakes in finding elements repeat | Mistakes are fixed once |
 
 The tests then describe behaviour in the user's terms, and the details of the page live in a single, maintainable file. This is the same principle of hiding what is likely to change that applies to ordinary code.
-
-## Five Misreadings of E2E Test Automation
-
-**"E2E tests are the most reliable tests because they are the most realistic."** They are the most realistic and also the most fragile. Reliability comes from the lower levels.
-
-**"Automate every manual test case through the browser."** Choose the critical journeys. Check the rest lower down.
-
-**"Flaky E2E tests are a fact of life."** Most flakiness comes from timing and shared data, and can be reduced by waiting on conditions and by isolating data.
-
-**"The locator does not matter."** It is the main source of fragility. Stable identifiers prevent most breakages.
-
-**"Record-and-replay tools produce a good suite."** They are a quick start, and the recorded scripts tend to use brittle locators and long, tangled steps.

@@ -118,15 +118,3 @@ Performance should also be treated as a requirement from the start, with a measu
 <!-- Visual: a flame graph or a bar chart of time per function for one request, with one tall bar labelled "database query: 70 per cent" and many tiny bars for everything else, showing why the biggest bar is the one to fix. Save as images/86_profile_bar_chart.png. -->
 
 ![A profiler shows the database query consuming seventy percent of request time](images/86_profile_bar_chart.png)
-
-## Five Misreadings of Performance Engineering
-
-**"Premature optimisation is evil, so never optimise."** The warning is against optimising without measuring. Optimising the measured bottleneck is the job.
-
-**"Faster code is better code."** Faster than needed is waste, if it costs clarity.
-
-**"I know where the slow part is."** Experienced engineers are often wrong. Profile first.
-
-**"Tuning loops makes programs fast."** Changing the algorithm or reducing calls to slow resources does far more.
-
-**"Performance is an end-of-project task."** The structure of a system sets its limits. Check early, and keep a test that watches it.

@@ -112,15 +112,3 @@ The network also helps when things go wrong. If a supplier is late, the schedule
 ## Using the Tools Sensibly
 
 Network scheduling pays off on projects with many dependencies and a hard date. For a small agile team working in short iterations, a full network is more effort than it is worth, and a board with limits does the job. Even then the idea survives: know which tasks block others, and give them to your most reliable people first.
-
-## Five Misreadings of Scheduling
-
-**"The critical path is the most important work."** It is the work that determines the date. Other work may matter a lot, but delay in it does not move the end.
-
-**"Put people on every task to go faster."** Only critical tasks shorten the schedule. Extra people on a task with slack cost money and gain nothing.
-
-**"A Gantt chart is a network diagram."** A Gantt shows time. A network shows dependency. Good tools show both, and both can mislead if they are not kept up to date.
-
-**"The critical path never changes."** When tasks slip or are crashed, another path can become critical. Recalculate often.
-
-**"Pad every estimate to be safe."** Padding is absorbed by the task. A shared buffer is more efficient and more visible.

@@ -19,7 +19,17 @@ Two kinds of correctness are distinguished. **Partial correctness** means that *
 
 ## A Real Case: Binary Search and Its Overflow
 
-When the author Jon Bentley tried this in classes of professional programmers in the 1980s, with plenty of time and any language, about ninety per cent of them produced programs with bugs. And a version printed in textbooks for decades turned out to have a flaw too: in 2006 the engineer Joshua Bloch reported that on very large lists the arithmetic overflowed.
+Binary search is one of the simplest ideas in programming: to find a value in a sorted list, look at the middle, discard the half that cannot hold it, and repeat. In the 1980s the author Jon Bentley gave the problem to groups of professional programmers, with plenty of time and the language of their choice, and reported that about ninety per cent of them produced programs with bugs. Some failed on an empty list, some on a value at the end, some looped forever. The first published description of the method appeared in 1946, and it took until 1962 for a version without bugs to be published.
+
+It did not end there. Bentley himself had proved a version correct, and it was copied into textbooks and standard libraries. In 2006 the engineer Joshua Bloch reported that a line in such a version had a flaw. To find the middle, it added the lowest and highest positions and divided by two. If the list is very large, the sum of the two positions can exceed the largest whole number the computer can hold, and the result becomes negative. The flaw had lain unnoticed in widely used code for about twenty years because lists that large had been rare. A small change, which finds the middle by adding half of the difference to the lowest position, avoids it.
+
+| What went wrong | What it shows about correctness |
+| --- | --- |
+| Most programmers got a simple algorithm wrong | Intuition about correctness is unreliable |
+| A proof was published, and a flaw was still found | A proof covers the assumptions it states, such as numbers that never overflow |
+| The bug waited for large inputs to appear | A program can be correct on every test and still wrong |
+
+Program correctness is the study of what it means to say that a program does its job and how to show it. The topic that follows describes preconditions, postconditions and loop invariants, which are the tools that turn the idea into something that can be reasoned about.
 
 ## Hoare Triples
 
@@ -119,15 +129,3 @@ Few programmers write full proofs. But the ideas are useful at many levels.
 <!-- Visual: testing and proof compared: testing shows the presence of bugs, proof can show their absence for a stated property. -->
 
 ![Testing and proof compared: testing shows the presence of bugs, proof can show their absence for a stated property](images/08-testing-proof.png)
-
-## Five Misreadings of Program Correctness
-
-**"A correct algorithm gives a correct program."** The program must also respect the machine: overflow, rounding and limits.
-
-**"Proofs make testing unnecessary."** A proof is only as good as its specification and assumptions. Tests check the real thing running.
-
-**"Formal proof is only an academic exercise."** It secures kernels, compilers and aircraft software.
-
-**"A loop invariant is a comment."** It is the logical heart of the loop. Stating it prevents most boundary bugs.
-
-**"Binary search is trivial."** Experiments with professional programmers suggest otherwise, and the library bug survived nearly a decade of use.

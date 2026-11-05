@@ -127,15 +127,3 @@ Some useful questions before drawing: Who will read this, and what will they do 
 <!-- Visual: a decision flow asking who will read the model, what question it answers and how long it stays true, ending in "draw it carefully", "sketch it and photograph it" or "do not draw it". Save as images/43_is_a_model_worth_drawing.png. -->
 
 ![Reader question and lifespan determine whether a model deserves a blueprint a quick sketch or no drawing](images/43_is_a_model_worth_drawing.png)
-
-## Five Misreadings of Modelling
-
-**"A good model shows everything."** A model that shows everything is the system itself. Its value comes from what it leaves out.
-
-**"A model is wrong if it differs from reality."** Every model differs from reality. It is wrong if it fails to answer the question it was built for.
-
-**"Modelling is a phase before coding."** Models are used whenever thinking is needed: at the start, during a tricky design, and when explaining a system to a newcomer.
-
-**"One big diagram is better than several small ones."** Different readers need different views. A single crowded diagram serves nobody.
-
-**"A diagram must follow the notation perfectly."** Clarity matters more than correctness of symbols. A diagram that the reader understands, with a short key, has done its job.

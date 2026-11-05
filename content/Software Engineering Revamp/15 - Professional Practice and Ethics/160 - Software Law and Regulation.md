@@ -21,7 +21,17 @@ Several areas of law apply to what engineers build and how they build it.
 
 ## A Real Case: The Airline's Chatbot
 
-In 2024 a Canadian tribunal decided a case, Moffatt v. Air Canada, in which a customer asked the airline's website chatbot about bereavement fares and was told, wrongly, that he could claim a refund after travel. The airline argued that the chatbot was a separate entity responsible for its own actions; the tribunal rejected the argument and ordered the airline to pay. The sum was small, but the principle was not.
+In 2024 a Canadian tribunal decided a case, Moffatt v. Air Canada, that was small in money and large in principle. A man whose grandmother had died asked the airline's website chatbot about bereavement fares. The chatbot told him he could buy a ticket at the full price and apply for a partial refund within ninety days after the journey. That was wrong. The airline's own policy, written elsewhere on its website, did not allow refunds for bereavement fares after travel. When the airline refused to pay, he took it to the tribunal.
+
+The airline made an unusual argument: that the chatbot was a separate legal entity, responsible for its own statements. The tribunal rejected it, saying that the chatbot was part of the airline's website and that the airline was responsible for all the information on it, whether it came from a static page or a chatbot. It also said that the customer had no reason to check one part of the site against another. The airline was ordered to pay a little over 800 Canadian dollars in damages and fees.
+
+| Question | The tribunal's answer |
+| --- | --- |
+| Is a chatbot a separate party? | No; it is part of the company's own service |
+| Is the company responsible for what it says? | Yes, whatever produced the words |
+| Must a customer check the answer against another page? | Not unreasonably |
+
+The amount is trivial, and what matters is the approach. Courts and regulators are deciding that organisations that deploy software are answerable for what it does, including software whose answers they cannot fully predict. Software law and regulation covers contracts, liability, consumer protection, data protection and rules for particular sectors. The topic that follows describes the main areas and what a developer should know to raise the right questions early. It is an introduction, and real decisions need legal advice.
 
 ## India: The IT Act and Related Laws
 
@@ -120,15 +130,3 @@ Legal rules are not engineering requirements until someone translates them.
 <!-- Visual: four stacked tiers of a pyramid labelled unacceptable, high, limited and minimal risk, with the duties growing from the base to the top and an example use beside each tier. Save as images/160_ai_risk_pyramid.png. -->
 
 ![AI regulation imposes stronger duties as the potential risk increases](images/160_ai_risk_pyramid.png)
-
-## Five Misreadings of Software Law
-
-**"Law is for lawyers, not engineers."** Engineers build the behaviours the law governs, and need to understand the basics.
-
-**"Terms of service protect the company from everything."** Courts do not enforce every exclusion, and regulators impose duties that no contract can waive.
-
-**"The chatbot is responsible for its answers."** The organisation is. The Air Canada tribunal said so plainly.
-
-**"Compliance is a checklist done at the end."** Many obligations shape design, such as data deletion and human oversight.
-
-**"The law is the same everywhere."** It differs by country and sector, and a product used in several markets must satisfy each.

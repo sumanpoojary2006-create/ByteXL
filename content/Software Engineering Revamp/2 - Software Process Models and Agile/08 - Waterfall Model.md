@@ -131,15 +131,3 @@ A fair way to judge the model is to ask two questions of a project. How likely i
 <!-- Visual: A plan-driven sequence compared with short adaptive delivery cycles. -->
 
 ![A plan-driven sequence compared with short adaptive delivery cycles](images/08-plan-agile.png)
-
-## Five Misreadings of the Waterfall Model
-
-**"The waterfall was designed as the ideal process."** The staircase diagram was first drawn in a 1970 paper by Winston Royce as an example of a risky approach, and he then argued for changes to it. The industry kept the picture and forgot the warnings.
-
-**"Waterfall means no iteration at all."** Even strict waterfall projects loop back when a defect is found. The difference is that loops are expensive, exceptional and controlled, where agile loops are cheap and constant.
-
-**"Waterfall is always worse than agile."** When requirements are stable, risk is high and regulation demands evidence, it can be the better fit. The model fails when its assumption of stable requirements does not hold.
-
-**"Documents are the point."** Documents are a means of passing understanding along. A project that produces perfect documents and the wrong product has followed the process and failed.
-
-**"You can finish all the thinking up front."** For some problems you can, for many you cannot, because people often discover what they want only when they see something working. The model works when this discovery has already happened.

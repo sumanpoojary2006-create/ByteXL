@@ -17,9 +17,20 @@ A use case diagram has four ingredients.
 
 The diagram is a table in disguise. It lists who can do what. Its strength is that a customer can read it in a minute and say "you have forgotten that the registrar also needs to cancel", which is a requirement found at almost no cost.
 
-<!-- Visual: a use case diagram of a library with Member and Librarian actors on either side of a system boundary containing search, borrow, renew, add book and collect fine. -->
+<!-- Visual: a use case diagram of a library: Member on the left, Librarian and Payment gateway on the right, a boundary rectangle named Library System, seven ovals, an include arrow from Borrow book to Check member account, and an extend arrow from Charge fine to Return book. -->
 
-![Actors and use cases are separated by the system boundary](images/02-system-boundary.png)
+![A UML use case diagram of a library system: stick-figure actors outside a boundary box, ovals inside, with include and extend arrows](images/uml_45_library_use_case.png)
+
+## Reading the Library Diagram
+
+Read the diagram in the order a new colleague would, starting at the outside and working in.
+
+1. **Find the boundary.** The large rectangle labelled *Library System* is what the team will build. Everything inside it is a goal the system must support. Everything outside it is somebody else's responsibility.
+2. **Find the actors.** Three stick figures stand outside. Member and Librarian are people. Payment gateway is drawn the same way and marked as a system actor, because it is another piece of software the library calls.
+3. **Follow the lines from each actor.** Member is joined to four ovals: Search catalogue, Borrow book, Renew book and Return book. Librarian is joined to Search catalogue and Add new book. Payment gateway is joined to Charge fine alone.
+4. **Notice the shared oval.** Search catalogue has two lines, one from Member and one from Librarian. The same behaviour serves both, so it is drawn once.
+5. **Read the dashed arrows.** The arrow from Borrow book to Check member account is labelled `«include»`: every borrowing performs that check. The arrow from Charge fine to Return book is labelled `«extend»`, with the condition `[book is late]`: a fine is charged only when the condition holds, and Return book is complete without it.
+6. **Ask what is missing.** Nobody can pay a fine themselves, reserve a book or remove one from the catalogue. Each absence is either a deliberate decision or a requirement not yet written, and the diagram has made the question visible.
 
 ## Primary and Supporting Actors
 
@@ -36,8 +47,6 @@ Not all actors play the same part. A **primary actor** starts a use case because
 Supporting actors matter because each is a dependency. The system cannot collect a fine if the gateway is down, so the design must say what happens then. A list of supporting actors is therefore a first list of things that can go wrong from outside.
 
 ## Finding the Actors and Use Cases
-
-![External actors connect to goals inside the system boundary](images/45_actor_boundary_discovery.png)
 
 Beginners often stare at a blank page. A few questions find most actors and goals quickly.
 
@@ -58,14 +67,15 @@ A use case diagram is a drawing of a relationship between two sets: actors and g
 | Search catalogue | Member, Librarian |
 | Borrow book | Member |
 | Renew book | Member |
+| Return book | Member |
 | Add new book | Librarian |
-| Collect fine | Librarian, Payment gateway |
+| Charge fine | Payment gateway |
 
-Three things can be read from it. Two use cases are shared: searching the catalogue serves both members and librarians, and collecting a fine involves the librarian and the payment gateway, which is a system actor. The shared ones are where the same behaviour must serve different people. Counting the goals per actor gives Member 3, Librarian 3 and Payment gateway 1, which shows that the gateway is a thin interface: all the system needs from it is to take a payment. And a check is possible: an actor with no use case should not be on the diagram, and a use case with no actor is a feature nobody asked for.
+Three things can be read from it. One use case is shared: searching the catalogue serves both members and librarians, so the same behaviour must work for different people. Counting the goals per actor gives Member 4, Librarian 2 and Payment gateway 1, which shows that the gateway is a thin interface: all the system needs from it is to take a payment. And a check is possible: an actor with no use case should not be on the diagram, and a use case with no actor is a feature nobody asked for.
 
 ## Include and Extend
 
-Two relationships connect use cases to each other, and they are often confused.
+Two relationships connect use cases to each other, and they are often confused. Both appear in the library diagram above, drawn as dashed arrows between ovals.
 
 **Include** means that one use case always uses another as a step. "Borrow book" includes "Check member account", since every borrowing begins with it. The included use case is shared, and drawing it once avoids repeating it in each place that needs it. The arrow points from the base to the included case, labelled `«include»`.
 
@@ -82,10 +92,6 @@ A quick test: if removing the second use case would leave the first one incomple
 | Example | Borrow book includes Check member account | Return book is extended by Charge fine |
 
 A third relationship, **generalisation** between actors, lets one actor inherit another's goals. A "Senior librarian" can be drawn as a kind of "Librarian" who can do everything a librarian can and also approve write-offs. It avoids drawing the same lines twice.
-
-<!-- Visual: include and extend use-case relationships. -->
-
-![Include and extend use-case relationships](images/02-include-vs-extend.png)
 
 ## From Oval to Written Use Case
 
@@ -108,11 +114,7 @@ Writing the alternatives is where the value lies. The main flow is what everyone
 
 Most mistakes in use case diagrams are about the boundary. If the boundary is drawn too wide, the diagram promises features the team does not intend to build. If it is too narrow, important actors and goals fall outside and are missed. A good test is to ask of every element: does the team build and own this? If so, it is inside. If another team, a vendor or a person controls it, it is an actor, and the line to it is an interface that needs a clear agreement about what is sent, in what form and what happens if it fails.
 
-Naming also matters. A use case should describe a goal that has value to the actor ("Pay fee") and not a feature of the system ("Show payment screen"). Goal names stay valid when the interface changes.
-
-<!-- Visual: a boundary rectangle with use cases inside and actors outside, and the lines that cross the boundary highlighted as the interfaces to agree on. Save as images/45_boundary_interfaces.png. -->
-
-![A library system boundary turns every outside connection into an interface agreement](images/45_boundary_interfaces.png)
+In the library diagram, the lines that cross the boundary are the ones to agree on: the one to the Payment gateway is an interface to another system, and it needs an agreement about what is sent, what comes back and what happens when the gateway does not answer. Naming also matters. A use case should describe a goal that has value to the actor ("Pay fee") and not a feature of the system ("Show payment screen"). Goal names stay valid when the interface changes.
 
 ## Where Use Case Diagrams Help, and Where They Do Not
 
@@ -129,15 +131,3 @@ It is weak at showing order, detail or data. It says nothing about what happens 
 | **Missing actors** | Nobody for the nightly job or the external service | Ask what starts things and what is called |
 | **Diagram as flowchart** | Arrows between use cases showing order | Use an activity diagram for order |
 | **Boundary left implied** | No rectangle, so scope is unclear | Always draw it |
-
-## Five Misreadings of Use Case Diagrams
-
-**"The diagram is the use case."** The oval is a title. The substance is the written flow, with its main steps and alternatives.
-
-**"Actors are the people in the company."** Actors are roles, and external systems count. A payment gateway that the system calls is an actor.
-
-**"Include and extend are interchangeable."** Include is always, shared and required. Extend is sometimes, conditional and optional.
-
-**"More use cases means a better analysis."** Too many small ones bury the picture. Name goals at a level the actor would recognise.
-
-**"The boundary is a formality."** It is the most important line on the diagram. It decides what the team owns and what it depends on.

@@ -144,15 +144,3 @@ A pattern pays for itself when the problem it solves is *actually present*. The 
 | Three payment methods, a fourth likely | Chain of conditions in several places | Strategy plus factory | Pattern |
 | A report with one fixed layout | One function | Template Method with hooks | Plain code |
 | Five report layouts sharing steps | Copied functions | Template Method | Pattern |
-
-## Five Misreadings of Design Patterns
-
-**"Patterns are code you can copy."** They are descriptions of a solution's shape. The code in each case is yours.
-
-**"More patterns means better design."** Patterns solve specific problems. Using them where the problem is absent adds weight with no gain.
-
-**"Patterns are only for Java and C++."** The problems are general. Other languages solve them in their own ways, often with less ceremony.
-
-**"Knowing the names is the skill."** The skill is recognising the problem, and knowing what the solution costs. The names make discussion quicker.
-
-**"Patterns are old and no longer relevant."** The specific list is from 1994, but the habit of naming solutions and weighing their consequences is how designers still talk.

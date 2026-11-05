@@ -55,10 +55,6 @@ The word *container* here means a separately running or deployable thing, such a
 
 The map analogy is exact. A map of a country shows motorways, a map of a city shows streets, and a map of a street shows houses. Nobody tries to show houses on the country map. In the same way, a context diagram does not show internal services, and a component diagram does not show other systems' internals.
 
-<!-- Visual: four nested zoom levels of C4 for an online shop: system context with users and external systems, containers (web app, API, database), components inside the API, and code. -->
-
-![Four C4 zoom levels from system context to code](images/11-c4-zoom-levels.png)
-
 ## What Each C4 Level Looks Like for One System
 
 Take a college results portal.
@@ -70,15 +66,29 @@ Take a college results portal.
 | Components (inside the API server) | Sign-in handler, results lookup, publishing, notifications | 4 |
 | Code | Left to the code itself | None drawn |
 
+Here are the first three levels drawn for the portal. The context diagram comes first: the portal is one box, with the three people who use it and the two outside systems it depends on.
+
+<!-- Visual: a C4 system context diagram of a college results portal with Student, Examiner and Registrar people and Identity Provider and SMS Service external systems. -->
+
+![C4 level 1: the College Results Portal as one box with its three users and two external systems](images/uml_52_results_portal_context.png)
+
+Zooming in one level opens the portal box and shows the separately running parts inside it. Each box names its technology, so a developer can see what is a browser app, what is a service and what is a database.
+
+<!-- Visual: a C4 container diagram of the results portal with Web App, API Server, Results Database and Report Job inside a boundary, and the Identity Provider and SMS Service outside it. -->
+
+![C4 level 2: the four containers inside the portal and the outside systems they use](images/uml_52_results_portal_containers.png)
+
+Zooming in once more opens a single container, the API server, and shows its main building blocks.
+
+<!-- Visual: a C4 component diagram of the API server with Sign-in Handler, Results Lookup, Publishing and Notifications, and the Database container. -->
+
+![C4 level 3: the four components inside the API server](images/uml_52_results_portal_components.png)
+
 A new joiner can understand the first diagram in a minute, the second in five, and the third when they start work on the API. They never need to wade through detail meant for someone else.
 
 ## Diagrams as Text
 
 The idea of keeping a diagram as text has a simple form. The relationships are data: a list of what connects to what, with a label. A few lines of text turn the list into a picture, using a tool such as Mermaid or PlantUML. Take four connections.
-
-<!-- Visual: an online shop shown at context, container and component levels. -->
-
-![An online shop shown at context, container and component levels](images/11-shop-three-levels.png)
 
 | From | Label | To |
 | --- | --- | --- |
@@ -86,6 +96,12 @@ The idea of keeping a diagram as text has a simple form. The relationships are d
 | Web app | calls | API server |
 | API server | reads and writes | Database |
 | API server | charges via | Payment gateway |
+
+Drawn by a tool from those four rows, the picture looks like this.
+
+<!-- Visual: a diagram generated from four connections: Student uses Web app, Web app calls API server, API server reads and writes Database, and API server charges via Payment gateway. -->
+
+![A diagram generated from the four connections in the table](images/uml_52_diagram_from_four_lines.png)
 
 Each row becomes one line of text in the tool's notation: a name, a labelled arrow and another name. Pasted into a page that supports the tool, the four lines display as a picture of the student using the web app, which calls the API server, which reads and writes the database and charges through the payment gateway. A change to the system is a change to a line of text. In a review, the reviewer sees a new line such as "API server sends email through Mail service" as a plain addition, and can comment on it. That is what makes the diagram easy to keep honest.
 
@@ -102,10 +118,6 @@ The cost is control over layout. The tool places boxes automatically, and for a 
 ## Choosing the Weight
 
 Whiteboards, C4 diagrams and diagrams-as-code are three points on a scale of effort, and each suits a different purpose.
-
-<!-- Visual: C4 diagrams zoom from system context to containers and components. -->
-
-![C4 diagrams zoom from system context to containers and components](images/11-c4-zoom.png)
 
 | Style | Lifespan | Best for |
 | --- | --- | --- |
@@ -139,15 +151,3 @@ Even light diagrams rot. A few habits prevent it.
 - **Update in the same change.** If a pull request alters the structure, the diagram changes with it, and the reviewer checks both.
 - **Delete without guilt.** A diagram nobody has opened in a year is a candidate for removal. A missing diagram misleads nobody; a wrong one misleads everyone.
 - **Prefer fewer diagrams.** Each one is a promise to keep it true.
-
-## Five Misreadings of Lightweight Modelling
-
-**"Agile teams do not model."** They model constantly, briefly, and without ceremony. What they avoid is heavy modelling that outlives its usefulness.
-
-**"A diagram not in the repository is worthless."** A whiteboard photo attached to a ticket is fine for a decision. For long-lived views, keeping them with the code helps them stay correct.
-
-**"C4 needs four diagrams for every system."** Most systems need the context and container levels. The component level is for parts that are hard to understand, and the code level is usually the code.
-
-**"Diagrams-as-code are only for programmers."** The text is simple enough for anyone to edit, and the benefit is shared: anyone can propose a change and see it reviewed.
-
-**"A pretty diagram is a good one."** A diagram is good if it answers a question for its reader. A plain, correct one beats a beautiful one that is out of date.

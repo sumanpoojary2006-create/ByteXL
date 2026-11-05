@@ -29,7 +29,18 @@ The list is not a rule book. It is a prompt for awareness and a way of structuri
 
 ## A Real Case: A Fix That Was Never Applied
 
-In the 2017 breach of the credit-reporting company Equifax, which exposed the records of about 147 million people, the entry point was a known flaw in a widely used web framework. A fix had been published two months earlier and had not been applied to one forgotten system.
+In 2017 the credit-reporting company Equifax was breached, and information about 147 million people was taken, including names, dates of birth and national identification numbers. The way in was a flaw in Apache Struts, a widely used framework for building web applications. The flaw had been publicly announced in March 2017, and a fix was available at the same time. Equifax's security team circulated a notice, and the systems were meant to be updated within days. One of them, an online portal where consumers could dispute information on their credit files, was not. A scan that should have found the missing update did not find it, and the system stayed exposed. In May, attackers used the known flaw to get in and spent about two months inside before they were noticed.
+
+The attackers did not need a new technique or a flaw unknown to anyone. The flaw was catalogued, the weakness was well understood, and the remedy was free. What failed was the ordinary work of knowing what software was running where and making sure the fixes reached it.
+
+| Failure at Equifax | General category of vulnerability |
+| --- | --- |
+| A known flaw in a component was not patched | Using components with known vulnerabilities |
+| The scan did not detect the missing patch | Weak inventory and verification |
+| The attackers could reach sensitive data once inside | Missing limits on what a compromised system can reach |
+| The intrusion lasted months | Weak detection and monitoring |
+
+Lists such as the OWASP Top Ten and the Common Weakness Enumeration exist because the same kinds of flaws appear over and over: injection, broken access control, outdated components and misconfiguration. This topic introduces the most common ones and, more usefully, the thinking that stops them recurring.
 
 ## Injection: Data Treated as Commands
 
@@ -113,15 +124,3 @@ A different family afflicts programs written in languages such as C and C++, whi
 <!-- Visual: an outdated component opening an attack path into an application. -->
 
 ![An outdated component opening an attack path into an application](images/04-component-risk.png)
-
-## Five Misreadings of Vulnerabilities
-
-**"Attackers use sophisticated new techniques."** Most successful attacks use old, well-known flaws like injection and missing access checks.
-
-**"A firewall protects the application."** A firewall does not understand your application's logic. Many of the flaws above pass straight through it.
-
-**"If the interface hides it, it is protected."** Users can send any request. Check access on the server.
-
-**"We use a framework, so we are safe."** Frameworks remove some risks by default. Misusing them, or disabling their protections, brings the risks back.
-
-**"Memory-safety bugs are only for C programmers."** They are, in the sense that they arise in memory-unsafe languages. Those languages run operating systems, browsers and devices that everyone uses.

@@ -134,15 +134,3 @@ As you learn, write down what you discover: a sketch of the main parts, a list o
 <!-- Visual: notes and tests left behind as a trail for the next reader. -->
 
 ![Notes and tests left behind as a trail for the next reader](images/12_leave_a_trail.png)
-
-## Five Misreadings of Working with Existing Code
-
-**"I must understand everything before I change anything."** You need to understand the part you are changing and what depends on it. The rest can wait.
-
-**"Reading code is a waste of time compared with writing it."** It is most of the job. Skill at it is a large part of what makes engineers productive.
-
-**"Messy code means the authors were bad."** It usually means the code was shaped by deadlines and changing needs. Be curious about why before you criticise.
-
-**"I should fix everything I see."** Keep the first change small and focused. Report or note the rest for separate changes.
-
-**"Asking questions shows weakness."** Specific questions asked after some effort save everyone time. Teams generally prefer a good question to a long silence.

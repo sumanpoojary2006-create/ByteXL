@@ -137,15 +137,3 @@ An interface that works for people with different abilities works better for eve
 <!-- Visual: an interface supporting keyboard, audio, contrast and touch access. -->
 
 ![An interface supporting keyboard, audio, contrast and touch access](images/12-accessible-interface.png)
-
-## Five Misreadings of Human-Centred Design
-
-**"Users are always right about what they want."** They are right about their problems. Designing the solution is the designer's work, and it must be tested with them.
-
-**"Good design is how it looks."** Appearance is a part. Design is whether people can do what they came to do, without error.
-
-**"A user who makes an error is careless."** Repeated errors point to a design that invites them. Fix the design.
-
-**"Usability testing needs a lab and many participants."** Five users and a simple prototype find most of the big problems, and can be done in an afternoon.
-
-**"We will make it usable after it works."** The structure of an interface follows from the tasks, so late changes are expensive. Test early with sketches.

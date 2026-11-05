@@ -115,15 +115,3 @@ Agile practice has also drawn fair criticism, and a student should know it.
 - **Scaling.** Practices designed for a team of seven are hard to extend across a hundred developers and many teams.
 
 None of these shows that the values are wrong. They show that the values need supporting practices and honest adaptation, which is why agile teams add technical practices, scaling approaches and process tailoring to the values.
-
-## Five Misreadings of the Agile Manifesto
-
-**"Agile means no documentation."** The manifesto prefers working software over *comprehensive* documentation. Useful documentation, kept short and current, is welcome. What is discouraged is paperwork that exists to satisfy a process.
-
-**"Agile means no planning."** Agile teams plan constantly, in smaller pieces and more often. What they avoid is treating a plan made at the start as a promise that cannot change.
-
-**"Agile means developers can do whatever they like."** The values are demanding: close cooperation with the customer, quality, a sustainable pace and regular reflection. Agile removes a lot of ceremony and adds a lot of accountability.
-
-**"Doing Scrum or Kanban makes a team agile."** The methods are ways to practise the values. A team can follow the rituals and ignore the values, and the result is called "agile in name only".
-
-**"Agile is a speed-up trick."** The aim is to deliver the right thing and to learn sooner, not to type faster. Teams that adopt it only to cut time often find it exposes how much of their schedule was waiting and rework.

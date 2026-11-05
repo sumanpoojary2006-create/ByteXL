@@ -131,15 +131,3 @@ What links the practices is **feedback at many speeds**. A unit test answers in 
 ## Where XP Fits
 
 XP suits small teams, working on software whose requirements change, with a customer who can be reached and an organisation willing to let the team work its way. It is harder to apply when the team is large and dispersed, when the customer is distant, when a contract fixes scope in advance, or when regulation demands heavy documentation. Even then, individual practices travel well. Almost every modern engineering organisation uses automated tests and continuous integration, and many use pair or mob programming for difficult work. XP's lasting contribution is less the full package than the proof that these practices, taken seriously, reduce the cost of change enough to make constant adjustment affordable.
-
-## Five Misreadings of Extreme Programming
-
-**"Pair programming halves productivity."** Output per hour of typing falls, but errors, rework and handover costs fall too. The evidence says it pays on difficult work and less so on routine work.
-
-**"TDD means writing all the tests before the code."** It means one small test at a time, in a loop of minutes. Writing a hundred tests up front is not TDD.
-
-**"Having tests means no design is needed."** TDD gives feedback on design, but it does not do the designing. Tests that are written without thought can lock in a poor structure.
-
-**"Collective ownership means anyone can break anything."** It is safe only with tests, continuous integration and review. Without them, free access to the code simply spreads mistakes faster.
-
-**"XP is only for small teams of programmers."** Many of its practices, such as automated tests and continuous integration, are standard in large organisations. The full set is best suited to small, co-located teams, but the ideas have travelled far.

@@ -110,15 +110,3 @@ Acceptance testing also complements the testing that precedes it. Its value is t
 <!-- Visual: acceptance, exploratory and usability testing revealing different truths. -->
 
 ![Acceptance, exploratory and usability testing revealing different truths](images/12-three-testing-views.png)
-
-## Five Misreadings of Acceptance Testing
-
-**"Passing system tests means the customer will accept the product."** System tests check the specification. The customer checks the need, and the two can differ.
-
-**"Acceptance testing is the testers' job."** The customer or users do it, or at least decide on it. The testers support.
-
-**"Beta means unfinished."** It means released to a limited audience to learn from real use. Some betas are polished.
-
-**"Acceptance criteria can be written at the end."** They are written with the requirement, so that everyone knows beforehand what done means.
-
-**"A failed acceptance test is a disaster."** It is the cheapest time to learn the product misses the need that remains, compared with learning after a full release.

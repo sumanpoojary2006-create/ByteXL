@@ -16,3 +16,5 @@ Learning outcome: model system structure and behaviour using common UML diagrams
 | 52 | Agile and Lightweight Modelling | C4 model, whiteboard sketching, diagrams-as-code with Mermaid or PlantUML |
 
 This unit is conceptual: it has no code snippets. Worked examples are given as tables and prose. Each image is introduced by a `Visual:` comment that records its brief.
+
+The diagrams in topics 45 to 52 are drawn in standard UML, ER and C4 notation (stick-figure actors, class boxes with compartments, lifelines and activation bars, swimlanes, crow's-foot lines, sockets and balls) and replace the earlier illustrated infographics, which are kept in `images/_replaced_infographics/`. The generators are in `tools/se-uml/`, so any diagram can be adjusted and re-rendered.

@@ -110,15 +110,3 @@ The six habits sometimes disagree, and judgement decides.
 | YAGNI vs "design for change" | Make the code easy to change, not full of options. Add the option when the need appears |
 | Demeter vs short code | Writing a thin method that forwards the call adds a little code but protects callers. Accept it where the structure is likely to change |
 | Composition vs convenience | Inheritance is quicker today. Choose it only when the "is a kind of" is true throughout |
-
-## Five Misreadings of the Design Principles
-
-**"DRY means never repeat any text."** It is about repeated *knowledge*. Two similar-looking fragments with different reasons to change are not duplication.
-
-**"KISS means write the shortest code."** Short is not simple. Simple is easy to understand, which sometimes means more lines with clear names.
-
-**"YAGNI means no planning ahead."** It means not building features for hypothetical needs. Designing so that change is easy is still wise.
-
-**"Never use inheritance."** Use it where the subclass is truly a kind of its parent. Prefer composition where you only want the parent's behaviour.
-
-**"Demeter forbids all chaining."** It is aimed at reaching through objects to their internals. A chain of calls on the same object, such as building up a string, is a different matter.

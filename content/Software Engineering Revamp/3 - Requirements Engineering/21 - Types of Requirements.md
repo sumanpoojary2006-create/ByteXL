@@ -113,15 +113,3 @@ The non-functional kind is a family, not a single item. Performance, capacity, a
 <!-- Visual: eight common families of software quality attributes. -->
 
 ![Eight common families of software quality attributes](images/07_quality_families.png)
-
-## Five Misreadings of Requirement Types
-
-**"Functional requirements are the real ones."** The system that does everything and is too slow, insecure or confusing is a failed system. Non-functional requirements decide whether the features can be used.
-
-**"A constraint is a requirement the team can negotiate away."** Some can, such as a preference. Others cannot, such as a law. The first job is to find out which is which.
-
-**"Business rules belong in the code."** They are policies that change. Written down as separate rules and traced to the code that implements them, a policy change is one edit.
-
-**"If the experts did not mention it, it is not required."** Experts leave out what seems obvious to them. Asking "what must never happen?" brings domain rules out.
-
-**"The categories are a formality."** They are a checklist for questions. A team that has asked about every kind has covered more ground than one that asked only about features.

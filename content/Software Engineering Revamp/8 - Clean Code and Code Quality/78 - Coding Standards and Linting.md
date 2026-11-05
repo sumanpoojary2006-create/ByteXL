@@ -115,15 +115,3 @@ The best standards are short, agreed by the people who use them, and explain the
 <!-- Visual: Formatting differences hiding the real change in a diff. -->
 
 ![Formatting differences hiding the real change in a diff](images/05-diff-noise.png)
-
-## Five Misreadings of Coding Standards
-
-**"A standard restricts creativity."** It removes decisions that do not matter, so that attention goes to the ones that do.
-
-**"Which style we choose is important."** Having one is important. Which one is mostly a matter of habit.
-
-**"A linter finds bugs."** It finds some kinds, such as unused variables and suspicious comparisons. It cannot tell you that your logic is wrong.
-
-**"Zero warnings is unrealistic."** For a tool you have tuned, it is realistic, and it is the only level at which a new warning stands out.
-
-**"Enforcement is a matter of trust."** Automatic checks are impartial. They check every change in the same way and no one is made to feel criticised by a colleague.

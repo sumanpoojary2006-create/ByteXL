@@ -25,7 +25,18 @@ They fall on a spectrum from the most permissive to the most demanding.
 
 ## A Real Case: A Licence Change and a Fork
 
-In 2021 the company behind Elasticsearch, a widely used search engine, moved future versions from the permissive Apache 2.0 licence to a stricter licence meant to stop cloud providers offering it as a hosted service. Amazon responded by forking the last permissive version into a project called OpenSearch, and the two have developed separately since.
+Elasticsearch is a widely used search and analytics engine. For years it was released under the Apache 2.0 licence, a permissive licence that allows anyone to use, change and sell the software, including as part of a commercial service. In January 2021 its maker, Elastic, announced that future versions would be released under stricter terms, chosen to stop cloud companies from offering the software as a paid hosted service without contributing. Elastic's argument was that those companies were making money from its work. The other side's argument was that the licence had always allowed it.
+
+The change was legal, since the company owned the code and could license new versions as it wished. But the earlier versions remained under the Apache licence, and Amazon, one of the companies the change was aimed at, used that right. It took the last permissive version and forked it, starting a new project called OpenSearch, which it developed with others. The community was split between the two, and the projects have gone separate ways ever since. In 2024 Elastic added an open-source licence as an option again.
+
+| Event | What it shows about licences |
+| --- | --- |
+| A company changed the licence for new versions | The owner can relicense what it owns |
+| Old versions stayed under the old licence | A licence already granted cannot be taken back |
+| A competitor forked the last permissive version | Permissive licences allow use by rivals |
+| Users had to choose between two projects | Licence terms shape communities and costs |
+
+A software licence is the document that says what a user may do. Permissive licences ask for little, while copyleft licences require that changes be shared on the same terms, and each has consequences for the products built on them. This topic explains the main families and how to check what you are allowed to do before you rely on a component.
 
 ## Open Source, Free Software and Source-Available
 
@@ -118,15 +129,3 @@ Choose deliberately, and put the licence text in a `LICENSE` file at the top of 
 <!-- Visual: a dependency tree for a product with each package tagged by licence colour, permissive green, weak copyleft yellow, strong copyleft orange and unlicensed red, with a summary list of items to review. Save as images/159_licence_tagged_dependency_tree.png. -->
 
 ![A licence-tagged dependency tree reveals the obligations and packages that need review](images/159_licence_tagged_dependency_tree.png)
-
-## Five Misreadings of Open-Source Licences
-
-**"Open source means no conditions."** Every licence has conditions, at least keeping the notice.
-
-**"Open source is public domain."** The authors keep their copyright and grant permission on terms.
-
-**"The GPL forbids commercial use."** It allows it, and asks that you share the source of what you distribute.
-
-**"No licence file means it is free to use."** It means all rights are reserved. Ask the author, or avoid it.
-
-**"Licences cannot change."** The owner can relicense future versions, as Elastic did. Existing versions stay under the licence they were released with.

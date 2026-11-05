@@ -23,7 +23,20 @@ A **stakeholder** is anyone with an interest in or influence over the project: t
 
 ## A Real Case: The Night Before the Challenger Launch
 
-On the night before the launch of the space shuttle Challenger in January 1986, engineers at the contractor Morton Thiokol argued that the rubber seals (O-rings) in the booster rockets might fail in the cold forecast for the morning. They presented their evidence in a set of charts that listed the problems, and not in the one picture that mattered: that every earlier flight with signs of seal damage was a cold one. A single chart of damage against temperature would have made the case unmistakable. The launch went ahead, and the shuttle broke apart 73 seconds after lift-off, killing all seven crew. The people with the knowledge had not succeeded in making the people with the authority understand and act.
+On the evening of 27 January 1986, the night before the planned launch of the space shuttle Challenger, engineers at Morton Thiokol, the company that made the shuttle's solid rocket boosters, held a telephone conference with NASA. The forecast for the next morning was unusually cold, around freezing, far colder than any previous launch. Some of the engineers, notably Roger Boisjoly, feared that the rubber O-ring seals between sections of the boosters would stiffen in the cold and fail to seal, letting hot gas escape. They had seen signs of seal damage on earlier flights.
+
+They argued their case with a set of charts that listed the damage on a number of flights, one flight per line, with the temperature mentioned alongside among many other details. NASA's managers were not convinced by the evidence, which did not look like a clear pattern, and asked Thiokol to reconsider. During a break in the call, a company manager told an engineer, in effect, to take off his engineering hat and put on his management hat. The company changed its recommendation and the launch went ahead. Seventy-three seconds after lift-off, the shuttle broke apart and all seven crew members were killed. The investigation found that a seal had failed, as the engineers had feared.
+
+The data that would have settled the question was there. Plotted on one chart, with the temperature of each launch on one axis and the amount of seal damage on the other, it would have shown that every flight with serious damage had been cold, and that the forecast temperature was far outside anything that had been tried. The statistician and designer Edward Tufte later analysed the charts at length and made this point forcefully.
+
+| What the engineers did | What would have communicated the risk |
+| --- | --- |
+| Listed problems flight by flight | One chart of damage against temperature |
+| Mixed the key fact among many details | One message stated at the top |
+| Argued about uncertainty | Said plainly what was known, what was not, and what they recommended |
+| Spoke to people who needed to decide | Framed the recommendation in terms of the decision-makers' risk |
+
+Stakeholder communication is the work of making sure the people who need to understand something actually do, and can act on it. This topic covers how to adapt a message to its audience, how to present evidence so that the conclusion is visible, and how to raise a concern so that it is heard.
 
 ## Speak Their Language
 
@@ -139,15 +152,3 @@ Some stakeholder conversations are harder than others, and a plan helps.
 | **Conflicting stakeholders** | Bring them to a shared meeting; make the conflict and trade-off visible; ask the sponsor to decide |
 | **A stakeholder who disappears** | Send short written summaries with a deadline for objections; escalate if needed |
 | **A mistake of your own** | Own it, explain the cause and the fix, and say what will change |
-
-## Five Misreadings of Stakeholder Communication
-
-**"If I'm right, they'll see it."** Being right is not enough. The case has to be made in a form the listener can understand and act on.
-
-**"Stakeholders don't want details."** They want the details that bear on their decision, in their terms.
-
-**"Saying no damages the relationship."** A clear no with alternatives builds trust. A hidden no damages it.
-
-**"Good news travels better, so wait."** Early bad news is cheaper for everyone, and protects your credibility.
-
-**"Communication is the project manager's job."** Every engineer who speaks to a colleague, a client or a manager takes part in it.

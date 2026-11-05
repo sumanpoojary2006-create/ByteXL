@@ -145,15 +145,3 @@ They are not rivals. A real function often needs two or three together: partitio
 <!-- Visual: a flow chart helping a tester choose a technique: input is a range -> partitions and boundaries; several conditions combine -> decision table; depends on history -> state transitions. Save as images/91_choose_a_technique.png. -->
 
 ![The shape of a behaviour guides the choice of black-box test-design technique](images/91_choose_a_technique.png)
-
-## Five Misreadings of Black-Box Testing
-
-**"Black-box means random testing."** It is the most deliberate kind: cases chosen by method from the specification.
-
-**"Testing one value per partition is enough."** It is enough for the middle of the partition. The edges are where faults cluster, so they need their own tests.
-
-**"We can skip the table; the code is simple."** Simple code can still miss a combination. Writing the table finds gaps in the specification, not just the code.
-
-**"Black-box tests make code coverage unnecessary."** They test behaviour from outside, and coverage shows what code was never run. The two views complement each other.
-
-**"A bug that fails only one day in four years is too rare to be found."** One test finds it: the last day of a leap year. Boundaries are where to look.

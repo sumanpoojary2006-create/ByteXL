@@ -133,15 +133,3 @@ The two ideas can be seen inside one small design. A `Student` class that stores
 | Split: `Student`, `FeeCalculator`, `ReportFormatter`, `Mailer` | 1 each | 1 each | Each connects only to what it needs |
 
 After the split there are more classes, but each is easy to describe, test and change. The number of connections between parts rises slightly, yet each is narrow, and no change to the report layout can disturb the fee rule.
-
-## Five Misreadings of Coupling and Cohesion
-
-**"Zero coupling is the goal."** A system must connect its parts. The goal is few, narrow, explicit connections.
-
-**"Cohesion means small."** A large module can be cohesive if everything in it serves one purpose.
-
-**"Coupling is only about code."** Teams, data formats and deployment can also be coupled. Two services that must always be released together are tightly coupled, however separate their code looks.
-
-**"A high fan-in is bad."** A stable foundation used by many modules is expected. It is a sign that it must be kept stable and carefully tested.
-
-**"Metrics replace judgement."** Numbers point at suspicious places. Deciding whether the structure is right still needs a person who understands the problem.

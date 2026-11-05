@@ -34,9 +34,11 @@ The standard notation is the **entity-relationship (ER) diagram**, proposed by P
 
 The cardinality of a relationship is a statement about the business, and it is worth confirming with the people who know. "Can a student belong to two departments?" is a question that changes the table design completely.
 
-<!-- Visual: an ER diagram in crow's-foot notation for an online shop with Customer, Order, Product and the lines between them. -->
+<!-- Visual: an ER diagram: CUSTOMER, ORDER, ORDER_ITEM, PRODUCT and CATEGORY as tables with primary and foreign keys, joined by crow's-foot lines, with a key to the line ends. -->
 
-![Online-shop entity-relationship model in crow's-foot notation](images/09-shop-er-model.png)
+![An entity-relationship diagram in crow's-foot notation for an online shop with Customer, Order, Order item, Product and Category](images/uml_51_shop_er_diagram.png)
+
+Read each line as two sentences, one from each end. Between CUSTOMER and ORDER, the bars at the customer end say that every order has exactly one customer, and the circle and fork at the order end say that a customer can have zero or many orders. ORDER and ORDER_ITEM are joined with a bar and a fork, so an order has one or many items. ORDER_ITEM is the table that sits between ORDER and PRODUCT: many items can refer to one product, and each item refers to exactly one. CATEGORY groups products, and the foreign key `category_id` inside PRODUCT is how the one-to-many line is stored. The keys marked PK identify rows, and the keys marked FK are the columns that hold another table's key.
 
 ## Choosing Keys
 
@@ -54,9 +56,9 @@ A good key is **unique** (no two records share it), **stable** (it does not chan
 
 An ER diagram translates almost mechanically into a relational database.
 
-<!-- Visual: one-to-one, one-to-many and many-to-many cardinality patterns. -->
+<!-- Visual: three small ER diagrams side by side for one to one (Student and ID card), one to many (Department and Student) and many to many (Student and Course), with a key to the line ends. -->
 
-![One-to-one, one-to-many and many-to-many cardinality patterns](images/09-cardinality-patterns.png)
+![Three ER diagrams showing one-to-one, one-to-many and many-to-many relationships in crow's-foot notation](images/uml_51_cardinality_patterns.png)
 
 1. Each entity becomes a table, each attribute a column, and the key becomes the primary key.
 2. A **one-to-many** relationship is stored by putting the key of the "one" side as a **foreign key** column in the "many" side. Each student row carries the id of their department.
@@ -64,9 +66,9 @@ An ER diagram translates almost mechanically into a relational database.
 
 The junction table is often a hidden entity with its own facts. An enrolment has a date, a grade and a status, and these belong to the pair, not to the student or the course alone. Spotting that is a sign of a good model.
 
-<!-- Visual: resolving a many-to-many relationship with an Enrollment entity. -->
+<!-- Visual: a before and after diagram: Student and Course joined by a many-to-many line on the left, and on the right the same pair joined through an Enrolment table that carries the date and grade. -->
 
-![Resolving a many-to-many relationship with an Enrollment entity](images/09-resolve-many-to-many.png)
+![A many-to-many relationship between Student and Course resolved into an Enrolment entity with two one-to-many relationships](images/uml_51_resolve_many_to_many.png)
 
 ## Mapping to Tables in Practice
 
@@ -134,15 +136,3 @@ A few questions reveal most of the problems before any tables exist.
 | Which facts are calculated? | Stored copies drift from the source | The order total derived from its items |
 
 Normalisation follows from asking these questions. A model that repeats a fact in several places will, sooner or later, contain two versions of it that disagree.
-
-## Five Misreadings of Data Modelling
-
-**"Data modelling is a database task."** It is a description of the business: what it remembers and how things relate. A database is one way to hold it.
-
-**"We can fix the schema later."** Changing a table that holds millions of rows and has many programs reading it is slow and risky. The first design should be thought through.
-
-**"One name column is enough."** People have one name, several names, names in several scripts, names that change. Allow for the variety of real data.
-
-**"Many-to-many just needs a list."** Relational tables cannot hold lists in a cell. A junction table is the right structure, and it usually has facts of its own.
-
-**"More tables are always cleaner."** A model split into too many tables is hard to query and understand. Normalise to remove real duplication, and stop there.

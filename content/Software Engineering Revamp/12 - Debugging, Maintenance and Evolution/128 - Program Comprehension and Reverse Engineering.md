@@ -27,7 +27,20 @@ Experts use clues, called *beacons*: a function called `sort`, a variable named 
 
 ## A Real Case: A Compatible Computer
 
-In 1982 the company Compaq wanted to make a personal computer compatible with the IBM PC, whose built-in software (the BIOS) was protected by copyright. One team of engineers studied the original and wrote a precise specification of what it does, with none of its code, and a second team, who had never seen the original, built new software from the specification alone. This clean-room method produced a compatible machine without copying.
+In 1982 the company Compaq set out to build a portable computer that could run every program written for the IBM PC. This was harder than it sounds. The key was the computer's built-in software, the BIOS, which every program relied on and which IBM owned and protected by copyright. Copying it was illegal, and engineers who had read it could be accused of reproducing it from memory.
+
+Compaq's answer is known as a clean-room approach. One team of engineers studied the original software, observed exactly what it did and wrote a precise specification of its behaviour, deliberately leaving out any of the original code. A second team, who had never seen the original and were kept apart from the first, built new software from the specification alone. If a dispute arose, the company could show that the second team had no access to IBM's work, so what they produced was independent. The result worked like the original, and it opened the way to a whole industry of compatible computers.
+
+The case is a model of reverse engineering done properly, and it shows what the discipline really involves.
+
+| Stage | What it involves in practice |
+| --- | --- |
+| Observe the system as a black box | Run it with chosen inputs and record the outputs |
+| Infer the rules from the behaviour | Build a model of what it must be doing |
+| Write the understanding down as a specification | Make knowledge independent of the original code |
+| Rebuild or change from the specification | Work from what you understand, not from a copy |
+
+Programmers meet a smaller version of this problem every time they inherit an unfamiliar system. This topic is about the habits that make that work reliable: reading code in a planned order, testing guesses against behaviour and keeping a written record of what you have learned. It also touches on the legal limits of reverse engineering, which Compaq's careful separation was designed to respect.
 
 ## Techniques for Reading Code
 
@@ -128,15 +141,3 @@ In a legacy system, the most valuable thing to recover is often the set of busin
 | Rounds down to the nearest 10 | Fees are rounded down to Rs 10 | Nobody remembers why | Ask; may be a circular from years ago |
 
 The third row is a warning. A rule that nobody can explain still has to be preserved until someone decides otherwise, because some customer may depend on it.
-
-## Five Misreadings of Comprehension and Reverse Engineering
-
-**"Good programmers understand code at a glance."** They have better strategies and a better mental library, and they still need time and tools.
-
-**"Reverse engineering means hacking."** It is an ordinary maintenance activity, and the basis of interoperability. Legal limits apply.
-
-**"The code tells you everything."** It tells you what the program does. The reasons live elsewhere.
-
-**"Drawing diagrams is a waste when you can read the code."** A call graph shows the shape that line-by-line reading hides.
-
-**"Comprehension is a one-off job."** The understanding fades. Notes, tests and clearer names keep what you have learned.

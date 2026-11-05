@@ -140,15 +140,3 @@ This is why engineers talk about quality attributes of the *whole* system, and w
 A last point ties the topic to everything else in the course. Quality attributes are decided at specific moments. Which attributes matter is decided during requirements. How well each can be met is largely decided during design, because structure sets the limits of speed, security and changeability. Whether the code meets the design is checked during implementation and testing. Whether the whole still satisfies users is found out in operation. A quality problem discovered in the last stage often traces back to a decision in the first two, and fixing it means going back to them.
 
 That is why the sensible time to ask "how fast, how safe, how easy to change?" is at the start, when the answers can still shape the design, and why a team that treats quality as a final inspection is always disappointed by what the inspection finds.
-
-## Five Misreadings of Quality
-
-**"Quality means no bugs."** A system with no known bugs can still be slow, insecure, confusing or impossible to change. Bugs are one part of one characteristic.
-
-**"Quality is the testers' job."** Testers measure it. Quality is built in by the requirements, the design and the code, and a tester cannot add speed or security to a design that lacks it.
-
-**"We should maximise every attribute."** The attributes compete for time, money and design choices. The skill is deciding which ones this system must excel at.
-
-**"An average tells you how fast it is."** Averages hide the worst experiences. Percentiles and worst cases say how bad the bad days are.
-
-**"Quality attributes can be added at the end."** Speed, security and the ability to change are shaped by the structure of the system. Adding them late usually means redesigning, which is the expensive way to get them.

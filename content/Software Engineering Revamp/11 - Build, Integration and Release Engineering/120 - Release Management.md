@@ -24,7 +24,18 @@ The standard mechanisms are tools of version control and builds. A **tag** marks
 
 ## A Real Case: Seven Servers Out of Eight
 
-In 2012 the trading firm Knight Capital installed new software on seven of its eight servers and missed the eighth, which still held old code that a repurposed setting woke up. Within forty-five minutes the firm had sent millions of unintended orders and lost about 440 million dollars, more than it was worth. Alerts were ignored, and there was no clear procedure for turning off the faulty machine.
+On the morning of 1 August 2012, the American trading firm Knight Capital switched on new software for a retail trading programme. The release was done by hand: a technician copied the new code to the firm's eight servers, and one of them was missed. That server still ran an old trading routine, long retired, which responded to a setting that the new software had given a new meaning. When the market opened, the missed server began sending orders that nobody had intended, at high speed, buying and selling the same shares again and again.
+
+It took about forty-five minutes to stop. In that time the firm had sent millions of unintended orders and lost about 440 million dollars, more than the company was worth. It survived only because outside investors rescued it within days. Automated warnings had gone out before the market opened, but they were not treated as urgent, and the team had no rehearsed way to turn the faulty server off. Engineers reached for fixes in the middle of the crisis and, by some accounts, made things worse by removing the new code from the servers that were working correctly.
+
+| What failed | The release practice that addresses it |
+| --- | --- |
+| One server out of eight was missed | A scripted, repeatable deployment, checked after it finishes |
+| Old, unused code stayed in the system | Removing dead code before it can be woken |
+| Warnings were ignored | Alerts that have an owner and a clear response |
+| No way to stop the harm quickly | A tested rollback and a kill switch |
+
+Release management is the discipline of making the last step of the work as safe as the earlier ones. The topic that follows covers the plans, checks and rollbacks that stand between a change and a company's balance sheet.
 
 ## Release Notes and Changelogs
 
@@ -143,15 +154,3 @@ A release is not over when the deployment ends. Teams look back to learn.
 | What would we change in the checklist? | Keep it alive |
 
 A blameless review, which asks how the system allowed a mistake and not who made it, produces more honest answers and better fixes.
-
-## Five Misreadings of Release Management
-
-**"Releasing is the last step, so it deserves the least care."** It is the moment when untested conditions meet real users. It deserves as much care as the code.
-
-**"Manual deployment is fine if you're careful."** Careful people still miss a server. Automate and verify.
-
-**"We will figure out the rollback if we need it."** In a crisis there is no time. Write and rehearse the plan beforehand.
-
-**"A hotfix can skip the process."** It should follow the shortest safe version of the process, since emergencies are when mistakes happen.
-
-**"Release notes are for marketing."** They tell users what changed and what they need to do. The most important line is the one about breaking changes.

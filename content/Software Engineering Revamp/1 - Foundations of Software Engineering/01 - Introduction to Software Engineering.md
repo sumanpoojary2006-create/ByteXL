@@ -179,15 +179,3 @@ What distinguishes an engineer from an enthusiast is mostly what happens around 
 Software now decides who is shown a job advertisement, whether a payment goes through, how a medical device behaves and what a driver sees on a screen. People affected by these decisions rarely see the software and cannot inspect it. They rely on the people who built it. That reliance is the reason engineering is a profession and not only a trade: practitioners are expected to put the safety and interests of the people affected ahead of convenience, to be honest about the limits of what they have built and to raise concerns when something is wrong.
 
 This is not a separate topic added at the end. It runs through the earlier ones: honest estimates are a form of professional honesty, tests are a form of care for the user, and writing down a decision is a form of accountability. It begins with the first line of code that someone else will depend on.
-
-## Five Misreadings of Software Engineering
-
-**"Software engineering means writing code faster."** Typing is the cheapest part of the work. The expensive parts are understanding the need, agreeing on the design, and changing the system later without breaking it.
-
-**"If the programmers are good enough, they do not need a process."** A brilliant team still meets the five pressures. Process is how a team keeps its brilliance from being wasted in misunderstandings, and it matters more as the team grows.
-
-**"A better tool will make the hard part go away."** Tools remove accidental difficulty. The essential difficulty, understanding what is wanted and managing the rules, remains whichever tool is chosen.
-
-**"More people means faster delivery."** Work can only be divided as far as the problem divides cleanly, and every extra person adds communication.
-
-**"Engineering is bureaucracy that slows creative people down."** The aim is the opposite. Good practice takes away the avoidable disasters, such as a broken release or a forgotten requirement, so that people's energy goes into the interesting problems.

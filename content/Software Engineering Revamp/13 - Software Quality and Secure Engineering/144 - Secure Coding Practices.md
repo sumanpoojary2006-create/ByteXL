@@ -22,7 +22,18 @@ The deny-list in each row can be bypassed by an input the author did not think o
 
 ## A Real Case: A Flaw Hidden for Twenty-Five Years
 
-In 2014 a flaw named Shellshock was found in Bash, the command interpreter used on most Linux and Mac computers. It had been present for about twenty-five years. The program trusted data from an environment setting and treated part of it as a command to execute.
+In September 2014 a researcher named Stéphane Chazelas reported a flaw in Bash, the command interpreter that runs on the great majority of Linux servers and Mac computers. It was named Shellshock. The flaw had been in the program since 1989, about twenty-five years, through countless reviews and updates and uses by experts who never noticed it.
+
+Bash allows a program to pass settings to it through the environment, and it lets such a setting contain the definition of a small function. The mistake was that when Bash read such a definition, it did not stop at the end of the function. If anything followed, Bash treated it as a command and ran it. The data was trusted when it should have been treated as untrusted. Where could an attacker supply such a setting? Web servers that ran small scripts passed parts of a web request, such as the browser's name, into the environment, so a crafted request could cause a command to run on the server. Some network services behaved the same way. Within hours of the announcement, attackers were probing servers around the world.
+
+| The coding mistake | The practice that prevents it |
+| --- | --- |
+| Treating outside data as safe | Validate and sanitise all input at the boundary |
+| Mixing data and instructions | Keep data separate from commands |
+| Giving a small tool wide powers | Run programs with the least privilege they need |
+| Assuming that old code is proven | Review old code with the same suspicion as new |
+
+Secure coding practices are habits that make flaws of this kind less likely, such as checking inputs, handling errors, limiting privileges and using vetted libraries. The topic that follows describes the main habits, and why a flaw that survives twenty-five years of use shows that working correctly is not the same as being secure.
 
 ## Rule Two: Encode Output
 
@@ -136,15 +147,3 @@ A reviewer reading a change can use these questions.
 | What does an error show the user? | A plain message only |
 | Does this code have more access than it needs? | No |
 | Are new libraries trusted, maintained and current? | Yes |
-
-## Five Misreadings of Secure Coding
-
-**"Validating on the client is enough."** Anyone can send a request without your page. Validate on the server.
-
-**"Encrypting passwords is the right way to store them."** Passwords should be hashed, not encrypted. Encryption can be reversed with the key.
-
-**"A deny-list of bad characters is safe."** Attackers find the one you missed. Use an allow-list.
-
-**"Old, widely used code must be secure."** A flaw in a widely used command interpreter lived there for twenty-five years. Age is not a review.
-
-**"Security is a feature to add later."** It is a property of how the code is written, every day.

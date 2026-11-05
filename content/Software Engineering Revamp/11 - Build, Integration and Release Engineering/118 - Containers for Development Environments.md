@@ -137,15 +137,3 @@ When an application runs as dozens of containers across many machines, something
 | Configuration and secrets | Supplies settings to containers at start-up |
 
 Kubernetes is the most widely used orchestrator. It is powerful and complex, so a small team with a few services is often better served by a simpler hosting option.
-
-## Five Misreadings of Containers
-
-**"A container is a lightweight virtual machine."** It is an isolated process sharing the host kernel. The difference affects start-up time, size and isolation.
-
-**"Containers make applications secure."** They add some isolation, and a poorly configured container is a risk. Security still needs work.
-
-**"Containers fix works-on-my-machine."** They fix a large part: the environment. Differences in data, configuration and load remain.
-
-**"Everything must be containerised."** Many programs run well without them. Use them where the reproducibility pays.
-
-**"The order of lines in a Dockerfile is a matter of style."** It decides how much is cached, and so how long every build takes.

@@ -28,7 +28,20 @@ Testing is a QC activity. The decision to require peer review of every change, a
 
 ## A Real Case: The Alarms During a Moon Landing
 
-During the descent of Apollo 11 to the Moon in 1969, the guidance computer was overloaded by unexpected data and raised alarms. Because its software gave priority to the vital tasks and, when overloaded, restarted and re-ran only those, the landing continued.
+In July 1969, as the lunar module of Apollo 11 descended towards the Moon, the guidance computer started to display alarms. The astronauts and the controllers in Houston had never seen them in training, and they came at the most delicate moment of the flight. The computer was being overloaded: a radar that was not needed for the landing was sending a flood of data, and the machine had far less capacity than a modern calculator.
+
+It did not crash. Its software, written by a team at MIT under Margaret Hamilton, had been designed on the assumption that overload might happen. Each task had a priority, and when the machine ran short of capacity it dropped the work of lowest priority, restarted and ran the vital tasks again, among them the landing guidance. A young controller in Houston, who had been told by his support team that such alarms were safe as long as they did not recur continuously, advised that the landing could go on. It did.
+
+The software had been written and tested with failure in mind. That is the difference between hoping a system will not fail and assuring that it behaves acceptably when it does.
+
+| Quality assurance idea | How it appeared in the Apollo software |
+| --- | --- |
+| Design for the foreseeable failure | Overload was expected, and the response was written in advance |
+| Prioritise what must never fail | Landing guidance ranked above everything else |
+| Test the abnormal case, not only the normal one | The restart behaviour was exercised before flight |
+| Make failure visible and understandable | The alarms gave controllers information to act on |
+
+Software quality assurance covers the activities across the whole process that make this kind of result likely. The topic that follows describes them, including how they differ from testing alone.
 
 ## The Cost of Prevention
 
@@ -124,15 +137,3 @@ SQA is organised around a **quality plan** for the project: which standards appl
 <!-- Visual: A review gate that a work product must pass before moving on. -->
 
 ![A review gate that a work product must pass before moving on](images/03-review-gate.png)
-
-## Five Misreadings of Quality Assurance
-
-**"QA is the testing team."** Testing is quality control. Assurance is about making sure the whole process works.
-
-**"Quality can be inspected in at the end."** By then defects are built in. Assurance acts throughout.
-
-**"More reviews always find more defects."** Rushed ones do not. Pace and preparation matter.
-
-**"An audit judges the product."** It judges whether the agreed process was followed.
-
-**"Assurance slows teams down."** Done well it reduces rework, which costs far more time.

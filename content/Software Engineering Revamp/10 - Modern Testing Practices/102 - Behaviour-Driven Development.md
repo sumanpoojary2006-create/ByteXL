@@ -147,15 +147,3 @@ A good rule is that a scenario should be understandable by a business person and
 ![BDD conversations become concrete examples, automated checks and current living documentation](images/102_living_specs_loop.png)
 
 Because scenarios are run on every build, they cannot silently go out of date: if the behaviour changes, a scenario fails until someone updates it. A readable report of the passing scenarios is therefore documentation that is known to be true. New joiners can read it to learn what the system does, and business people can check it against their expectations.
-
-## Five Misreadings of BDD
-
-**"BDD is Cucumber."** The tool is optional. The core is the conversation and the examples. Teams get value from the practice with no tool at all.
-
-**"BDD is a way for testers to write tests."** It is a way for the whole team to agree on behaviour. The tests follow from the agreement.
-
-**"Scenarios replace unit tests."** They cover important business behaviour. Unit tests still cover the logic in detail, and are far faster.
-
-**"More scenarios means a better specification."** A few well-chosen examples per rule are better than many near-duplicates.
-
-**"BDD is the same as TDD."** TDD is a developer technique focused on design. BDD widens it to the team and puts it in the language of the business.

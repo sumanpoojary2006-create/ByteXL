@@ -18,7 +18,18 @@ Every change has a *planned* effect and a set of *consequences*. A new fee rule 
 
 ## A Real Case: Where Do We Use It?
 
-In December 2021 a serious flaw, nicknamed Log4Shell, was announced in Log4j, a logging library used inside an enormous number of Java programs. Organisations had to answer "where do we use it?", and the library was rarely a direct choice. Those with an inventory of their components answered in minutes; the rest searched for weeks.
+In December 2021 a serious flaw was announced in Log4j, a logging library used inside a vast number of Java programs. It was nicknamed Log4Shell. The flaw allowed an attacker to send a specially written piece of text to an ordinary system and have it be written to a log. The library, in trying to be helpful, would interpret the text as an instruction, fetch code from an address of the attacker's choosing and run it. A short message in a web form or a username could be enough to take over a server. The flaw was given the highest severity score possible, and within hours attackers were scanning the internet for vulnerable systems.
+
+For defenders, the first and hardest question was not "how do we fix it?" but "where do we use it?" Few organisations had chosen Log4j deliberately. It arrived as part of other libraries, which were part of other products, sometimes several layers down, and some of it came from suppliers whose software the organisation could not open. Those that kept an inventory of the components inside each system could list the affected ones in minutes. Others spent days and weeks searching, while the flaw was being exploited.
+
+| What the team needed to know | Source of the answer |
+| --- | --- |
+| Which of our systems contain the library? | An inventory of components, such as a bill of materials |
+| Which of them are reachable by an attacker? | Architecture and dependency records |
+| Which can be fixed first, and what else will change? | Impact analysis of the upgrade |
+| Which systems are not ours to fix? | A list of suppliers and their commitments |
+
+Change impact analysis is the practice of answering these questions before a change, rather than during an emergency. This topic shows how to trace what depends on what, and why the records that make that possible are worth keeping long before anyone needs them.
 
 ## Following the Dependencies
 
@@ -118,15 +129,3 @@ Impact analysis is never complete. Dynamic behaviour, such as reflection or plug
 <!-- Visual: a software bill of materials as a tree with an application at the top and nested libraries below, with a searchable list on the side, and the library Log4j highlighted in three places at different depths. Save as images/130_sbom_tree.png. -->
 
 ![A searchable software bill of materials finds a nested library in three dependency paths](images/130_sbom_tree.png)
-
-## Five Misreadings of Change Impact Analysis
-
-**"A tool will find everything affected."** Tools find direct, static links. Dynamic and human dependencies need judgement.
-
-**"Small changes have small impacts."** A one-line change to a shared foundation can reach everything. Size and reach are different.
-
-**"Impact analysis is only for big projects."** Asking "what else uses this?" before every change is the same habit at small scale.
-
-**"If the tests pass, nothing else was affected."** Only if the tests cover what was affected. Weak tests hide impact.
-
-**"We know our dependencies."** Log4Shell showed how many organisations did not. Keep an inventory.

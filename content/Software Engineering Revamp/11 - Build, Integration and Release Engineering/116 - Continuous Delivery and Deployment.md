@@ -122,15 +122,3 @@ The hardest part to deliver continuously is the database. Code can be swapped in
 <!-- Visual: A safe database change made in small compatible steps. -->
 
 ![A safe database change made in small compatible steps](images/16-safe-database-change.png)
-
-## Five Misreadings of Continuous Delivery
-
-**"Continuous delivery means deploying to production every time."** That is continuous deployment. Delivery means being ready to deploy at any time.
-
-**"Releasing often is reckless."** Small, frequent, automated releases are safer than rare big ones.
-
-**"It only works for web start-ups."** It is used in banks, in games and in regulated industries, with approvals where the law requires them.
-
-**"We can deliver continuously without good tests."** Tests are what make it safe. Without them, speed is a gamble.
-
-**"The database cannot be part of it."** It can, with backward-compatible changes made in small steps.

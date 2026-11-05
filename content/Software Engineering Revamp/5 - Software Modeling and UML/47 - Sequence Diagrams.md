@@ -24,13 +24,17 @@ Only vertical position matters for time. The horizontal distance between lifelin
 
 A food-order diagram shows the idea. A customer places an order with the app. The app asks the restaurant whether it is open, and the restaurant replies. The app asks the payment service to charge, and the payment service replies. The app confirms to the customer. The order of the arrows carries the logic: the charge happens only after the restaurant has confirmed.
 
-<!-- Visual: a sequence diagram with Customer, App, Restaurant and Payment lifelines and numbered arrows showing the order of the messages. -->
+<!-- Visual: a food-order sequence diagram with four lifelines, activation bars, solid arrows for requests, dashed arrows for replies and numbers 1 to 6 on the messages. -->
 
-![Food-order sequence diagram across customer, app, restaurant and payment](images/05-order-sequence.png)
+![A UML sequence diagram of a food order with Customer, App, Restaurant and PaymentService lifelines and six numbered messages](images/uml_47_order_sequence.png)
+
+Read it like a script. Message 1 is the customer placing the order. The App then asks the Restaurant whether it is open (2) and receives a reply (3). Only then does it ask the PaymentService to charge (4), receive confirmation (5), and tell the customer the order is confirmed (6). The narrow bars on each lifeline are activations, the periods when that participant is busy. The solid arrows are requests and the dashed arrows are replies. Notice that the App's bar stays open from message 1 to message 6: it is waiting on other parties the whole time, which is why its lifeline is the busiest.
 
 ## Synchronous and Asynchronous Messages
 
-![Synchronous calls wait for a response while asynchronous messages allow work to continue](images/47_sync_async_messages.png)
+<!-- Visual: a small two-participant sequence diagram with callouts for the activation bar, the synchronous call, the return and the asynchronous message. -->
+
+![The parts of a sequence diagram: lifeline, activation bar, synchronous call, return and asynchronous message](images/uml_47_sequence_anatomy.png)
 
 The difference between waiting and not waiting is one of the most important things a sequence diagram can show, and it changes how a system behaves under stress.
 
@@ -67,9 +71,11 @@ Real interactions have conditions and loops. UML handles them with **combined fr
 
 These give a diagram the power to show a full scenario with its branches, though a diagram with several nested fragments soon becomes hard to read. A better habit is to draw the main scenario on one diagram and the important alternatives on others.
 
-<!-- Visual: an alt fragment shows success and error message sequences. -->
+<!-- Visual: a sequence diagram with Customer, App and PaymentService, an alt frame divided by a dashed line into the guards payment accepted and payment refused, and a loop frame for each item in the order. -->
 
-![An alt fragment shows success and error message sequences](images/05-sequence-alt.png)
+![A UML sequence diagram with an alt fragment for payment accepted or refused and a loop fragment over items](images/uml_47_alt_and_loop.png)
+
+The upper frame is an **alt**. The label in its corner says what kind of fragment it is, the dashed line splits it into two sections, and each section starts with a guard in square brackets. If the payment is accepted, the App asks for the charge, hears that it is approved, and confirms the order. If it is refused, the App asks for the charge, hears that it was refused, and shows an error. Exactly one section runs. The lower frame is a **loop**: the messages inside it repeat once for each item in the order, here reporting each item's status to the customer and receiving an acknowledgement.
 
 ## Walking Through a Scenario Step by Step
 
@@ -88,10 +94,6 @@ The sixth step is where the diagram pays for itself. Missing steps are the commo
 
 A sequence diagram earns its place when an interaction involves three or more participants and the order matters: a login that passes through a browser, an application server and an identity provider, a payment that crosses several services, a handshake between a phone and a device. It is good for finding missing steps, for explaining a flow to a new teammate, and for debugging a puzzling interaction, such as three tasks fighting over a shared lock.
 
-<!-- Visual: alternative and loop fragments in sequence diagrams. -->
-
-![Alternative and loop fragments in sequence diagrams](images/05-sequence-fragments.png)
-
 It is a poor tool for showing complex logic inside one component, for which an activity diagram or code is better, or for showing a whole system, for which a structural diagram is better. Keep each diagram to one scenario and a handful of participants.
 
 ## The Fault That Only a Sequence Shows
@@ -107,9 +109,9 @@ Return to the opening claim. A famous kind of timing fault is **priority inversi
 
 Every task and every lock, examined alone, is correct. Only the sequence across the three lifelines shows the fault, and a table of attributes would never reveal it. That is the real reason to learn this diagram: to be able to see failures that are not located in any single place.
 
-<!-- Visual: three tasks of low, medium and high priority with the sequence of lock, wait, interrupt and watchdog reset drawn along their lifelines, as in a priority-inversion fault. Save as images/47_priority_inversion_sequence.png. -->
+<!-- Visual: a sequence diagram with High task, Medium task, Low task and Lock lifelines: the low task takes the lock, is preempted, the high task asks for the lock and is blocked, the medium task runs for a long time, and a red box marks the deadline missed and the watchdog reset. -->
 
-![A medium-priority task prevents the low task from releasing a lock and forces the high task into watchdog reset](images/47_priority_inversion_sequence.png)
+![A sequence diagram of priority inversion: the low task holds the lock, the high task is blocked, the medium task runs, and the watchdog resets the system](images/uml_47_priority_inversion.png)
 
 ## Common Faults in Sequence Diagrams
 
@@ -120,15 +122,3 @@ Every task and every lock, examined alone, is correct. Only the sequence across 
 | **Missing returns** | Requests with no replies, so the reader cannot tell what comes back | Show returns where the answer matters |
 | **Mixing levels** | A user click beside a database query | Choose one level per diagram |
 | **No alternatives** | Only the happy path | Add at least the main failure |
-
-## Five Misreadings of Sequence Diagrams
-
-**"A sequence diagram shows how the code is structured."** It shows one scenario of interaction over time. The structure is shown by class and component diagrams.
-
-**"One diagram can show every scenario."** It would become unreadable. Draw the main scenario, and add separate diagrams for important alternatives.
-
-**"The arrows are function calls."** They can be calls, but also network messages, events or human actions. The diagram is about who tells whom what, at whatever level you choose.
-
-**"Order is obvious from the code."** In systems with several parts running together, order is the hardest thing to see. The diagram makes it visible.
-
-**"More detail is better."** A diagram with every internal call is a trace, not a design aid. Include the messages that carry meaning.

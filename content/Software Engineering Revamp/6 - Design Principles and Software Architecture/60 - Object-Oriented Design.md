@@ -120,15 +120,3 @@ DDD matters most where the business rules are complex. For a simple form-over-da
 | **Feature envy** | A method that mostly uses another class's data | The method is in the wrong class |
 | **Shotgun surgery** | One change needs small edits in many classes | A single responsibility scattered |
 | **Primitive obsession** | Money held as a bare number, dates as text | Missing small value classes |
-
-## Five Misreadings of Object-Oriented Design
-
-**"OO design means using lots of inheritance."** Responsibilities and collaboration are the core. Inheritance is one tool and often not the best.
-
-**"Classes are nouns, so find all the nouns."** Nouns are a start. Many nouns are only attributes, and the real design work is in the responsibilities.
-
-**"A domain model is a database diagram."** It models behaviour and concepts, not just stored data. The database is one way of persisting it.
-
-**"One model of the customer is enough for the whole company."** Words mean different things in different contexts. Forcing one model produces a class that serves nobody well.
-
-**"CRC cards are childish."** They are quick and cheap and they get everyone to talk. The best designers use them whenever a design is hard to see.

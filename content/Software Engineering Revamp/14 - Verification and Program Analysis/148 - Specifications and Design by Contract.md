@@ -19,7 +19,20 @@ Natural language specifications are easy to write and easy to misread. "Returns 
 
 ## A Real Case: The Rocket That Reused Its Guidance Code
 
-In 1996 the first launch of Europe's Ariane 5 rocket ended in an explosion about 37 seconds after lift-off. The cause was guidance software reused from the older Ariane 4. It converted the rocket's horizontal velocity into a small 16-bit whole number. On Ariane 4 the value always fitted. On the faster Ariane 5 it did not, the conversion failed, and the failure shut the guidance system down.
+On 4 June 1996 the first Ariane 5 rocket of the European Space Agency lifted off from French Guiana. About 37 seconds later it veered off course and destroyed itself, along with satellites worth hundreds of millions of dollars. The investigation found a cause that was almost embarrassingly small.
+
+The guidance software had been reused from Ariane 4, a slower rocket. One part of it measured the rocket's sideways velocity as a decimal number and converted it into a 16-bit whole number, which can hold values only up to about 32,000. On Ariane 4 the value never came near the limit. Ariane 5 was faster, the value was larger, the conversion failed, and nothing was written to handle the failure. The error shut down the main guidance computer, and its identical backup, which ran the same code, failed in the same way a moment earlier. The shutdown message was then read by the flight controller as if it were navigation data, and the rocket turned sharply and broke up. The calculation that failed was not even needed after lift-off. It had been left running for reasons that belonged to Ariane 4.
+
+What was missing was a statement of the assumption. Nobody had written down, in a form that could be checked, that the code was correct only while the velocity stayed below a limit.
+
+| Idea from the topic | How it applies to Ariane |
+| --- | --- |
+| Precondition: what must be true before the code runs | The velocity must fit in 16 bits |
+| Postcondition: what the code promises afterwards | The converted value is a valid number |
+| Contract between caller and component | The component was reused in a setting that broke its contract |
+| Checking the specification before reuse | The assumption would have been found when Ariane 4's limits were compared with Ariane 5's |
+
+Specifications and design by contract turn hidden assumptions into written promises that can be reviewed and tested. The topic that follows shows how.
 
 ## Three Parts of a Contract
 
@@ -102,15 +115,3 @@ A test checks a few chosen cases. A contract states a rule for *all* cases. They
 <!-- Visual: the idea of a contract as a promise between caller and function. -->
 
 ![The idea of a contract as a promise between caller and function](images/09-contract.png)
-
-## Five Misreadings of Design by Contract
-
-**"A contract is the same as input validation."** Validation handles bad data from outside. A precondition is an agreement between parts of the program, and its violation signals a bug in the caller.
-
-**"If the precondition fails, the function should cope."** Under the contract the function owes nothing. Some systems check and fail loudly, which is the safe choice.
-
-**"Contracts are just comments."** Comments can be wrong silently. Contracts that are checked cannot.
-
-**"Contracts slow the program."** They have a cost, which is why they can be turned off in production. In testing they are worth it.
-
-**"Only Eiffel can do this."** The idea is a way of thinking. Assertions, types and libraries give it to any language. (Eiffel is the language, designed by Bertrand Meyer, in which contracts were built in from the start.)

@@ -123,15 +123,3 @@ Each extra nine of availability costs more than the last. Going from 99 to 99.9 
 <!-- Visual: availability targets and the downtime each one allows in a year. -->
 
 ![Availability targets and the downtime each one allows in a year](images/07-availability.png)
-
-## Five Misreadings of Reliability and Availability
-
-**"Reliable and available mean the same."** Reliability concerns time between failures. Availability also counts how fast you recover.
-
-**"Software doesn't wear out, so it is always reliable."** It has no wear, but it has faults, and each change can add some.
-
-**"Two servers give twice the availability."** They give far more, if the failures are independent. Shared causes remove the benefit.
-
-**"Only failures matter."** Degraded service, such as very slow responses, can be as bad as an outage for users.
-
-**"The more nines, the better."** Each nine costs more. Choose by need.

@@ -158,15 +158,3 @@ The fifth answer is about process, and fixing it (reviewing the test plan for ri
 <!-- Visual: a chart over twelve weeks of defects opened and defects closed, with the cumulative open count rising then flattening before a release, and a marker for the release date. Save as images/100_defects_open_and_closed.png. -->
 
 ![Opened and closed defects explain why the backlog rises and then stabilises before release](images/100_defects_open_and_closed.png)
-
-## Five Misreadings of Defect Management
-
-**"Severity and priority are the same thing."** Severity is technical impact. Priority is business urgency. They often differ, and the ordering needs both.
-
-**"A bug report is a complaint."** It is the start of a collaboration. A clear one saves the developer time and gets the defect fixed sooner.
-
-**"If it can't be reproduced, it isn't real."** Intermittent defects are real and often serious. Gather evidence and look for the pattern.
-
-**"Closed means fixed."** It should mean fixed and verified. A defect closed without verification returns.
-
-**"Counting bugs measures quality."** Counts reveal trends. Without severity and context, a high count may mean good testing, and a low one poor testing.

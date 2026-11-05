@@ -112,15 +112,3 @@ They are done by different thinking and often by different people. A tester disc
 <!-- Visual: a loop with testing finding a failure, debugging locating and removing the fault, and retesting confirming the fix and checking nothing else broke. Save as images/88_test_debug_retest_loop.png. -->
 
 ![Testing exposes a failure debugging locates the fault and retesting confirms the repair](images/88_test_debug_retest_loop.png)
-
-## Five Misreadings of Errors, Faults and Failures
-
-**"If the tests pass, there are no bugs."** They show only that the cases tried work. Rare faults hide in the cases not tried.
-
-**"A bug and a failure are the same."** A bug (fault) is in the code. A failure is what the user sees when the bug is triggered. Many bugs never cause one.
-
-**"Testers fix the bugs."** Testers find and report them. Developers debug and fix. Testers then check the fix.
-
-**"More tests always mean better quality."** More varied, better chosen tests do. A thousand copies of the same check add nothing.
-
-**"A rare bug is not worth fixing."** A processor flaw that struck about once in billions of divisions still cost its maker half a billion dollars. Rarity matters less than the consequence and the damage to trust.

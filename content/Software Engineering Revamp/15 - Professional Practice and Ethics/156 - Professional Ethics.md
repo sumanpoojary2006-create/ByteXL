@@ -29,7 +29,19 @@ The order is deliberate. The **public interest comes first**. The 2018 ACM code 
 
 ## A Real Case: Software That Detected the Test
 
-In 2015 the world learned that Volkswagen had installed software in about 11 million diesel cars that detected when the car was being tested for emissions and made the engine behave differently during the test. An engineer who helped write it, James Liang, later pleaded guilty in a United States court and was sentenced to prison.
+In September 2015 the United States Environmental Protection Agency announced that Volkswagen had installed software in its diesel cars that detected when the car was being tested for emissions. During a test, which has a known pattern of speeds on a fixed rig, the engine ran in a mode that met the limits on harmful gases. On the road, the software switched to a mode that gave better performance and fuel economy and emitted many times more. The software was found in about eleven million cars worldwide. The fraud was uncovered when researchers at a university in West Virginia, who were testing cars on the road, found large gaps between road and laboratory results.
+
+The consequences were severe. The company paid tens of billions of dollars in fines and settlements, senior managers faced charges, and trust in the brand fell. An engineer who had worked on the software, James Liang, pleaded guilty in a United States court in 2016 and was sentenced to forty months in prison in 2017. His defence that he had been following instructions did not protect him.
+
+The case matters for a software engineer because the code was not accidentally wrong. Somebody was asked to write it, and many people had to know what it did.
+
+| Question in the case | What the professional codes say |
+| --- | --- |
+| Was it acceptable to write the code because a manager requested it? | Professional duty to the public comes before the employer's instructions |
+| What could an engineer have done on seeing the request? | Ask questions, refuse, escalate or report outside the company |
+| Who is responsible? | Everyone who knowingly took part, in proportion to their role |
+
+Professional codes, such as the one adopted by ACM and the IEEE Computer Society, put the public interest first for this reason. The topic that follows explains what the codes say, how they are used, and what an engineer can do when they are asked to do something wrong.
 
 ## What Ethical Questions Look Like in Practice
 
@@ -114,15 +126,3 @@ Three duties come up constantly.
 <!-- Visual: A structured path for making and escalating ethical decisions. -->
 
 ![A structured path for making and escalating ethical decisions](images/10-ethical-decision-path.png)
-
-## Five Misreadings of Professional Ethics
-
-**"I only wrote what I was told."** Following instructions does not remove responsibility. The Volkswagen engineer was convicted for work he did on instruction.
-
-**"Ethics is a matter of personal opinion."** Professional codes set shared standards, including putting the public first.
-
-**"If it is legal, it is ethical."** Law sets a minimum. Many harmful acts are legal, and some ethical acts are unwelcome to employers.
-
-**"Ethical problems are dramatic."** Most are small, practical and easy to slide past. Notice them early.
-
-**"Speaking up always ends careers."** Sometimes it carries a cost. Often a calm, evidence-based concern is welcomed. Know your options and your protections.

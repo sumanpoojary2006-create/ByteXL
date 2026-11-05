@@ -111,15 +111,3 @@ The two approaches find different faults. Black-box tests, designed from the spe
 <!-- Visual: two circles overlapping: black-box tests (from the specification) and white-box analysis (from the code), with the overlap labelled "tests that agree" and the uncovered code labelled "ask: does this need a test?". Save as images/92_black_and_white_box.png. -->
 
 ![Specification-based tests and code-based analysis reveal complementary evidence and uncovered code](images/92_black_and_white_box.png)
-
-## Five Misreadings of Coverage
-
-**"One hundred per cent coverage means no bugs."** It means every line ran. Tests may check nothing, and missing code cannot be covered.
-
-**"Low coverage is always a problem."** It marks code that is untested. Whether that matters depends on how risky the code is.
-
-**"Coverage targets raise quality."** They raise the number. Without attention to the strength of tests, they encourage weak tests that run code without checking it.
-
-**"Path coverage is the gold standard."** It is the strongest in theory and impossible in practice. Branch coverage with good test design is the working standard.
-
-**"White-box testing replaces black-box."** They find different faults. Use both.

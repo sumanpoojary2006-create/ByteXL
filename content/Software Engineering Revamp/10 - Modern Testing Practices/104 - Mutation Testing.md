@@ -126,15 +126,3 @@ Each measure of test quality answers a different question, and a team gets the c
 | Tests run little and check little | Low | Low | Weak suite |
 
 The second row is the dangerous one. A team that reports only coverage believes it is safe; the mutation score reveals that the tests would not notice most faults. Many teams adopt a simple rule: coverage finds what is never run, and mutation testing is applied to the code that matters most.
-
-## Five Misreadings of Mutation Testing
-
-**"A high mutation score means the code is correct."** It means the tests are sensitive to the changes tried. The code can still be wrong in ways no mutant imitates.
-
-**"Mutation testing replaces coverage."** Coverage finds code never run. Mutation testing finds code run but not checked. They complement each other.
-
-**"Every surviving mutant must be killed."** Some are equivalent and cannot be. Use judgement.
-
-**"It is only for researchers."** Tools exist and companies use them in review. Applied to critical code, it is a practical check.
-
-**"It tests the code."** It tests the *tests*. The mutants are the instrument, and the suite is the object of the measurement.

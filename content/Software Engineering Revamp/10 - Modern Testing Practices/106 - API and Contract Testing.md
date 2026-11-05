@@ -129,15 +129,3 @@ Contracts also make it safe to evolve an API. Because the provider knows which f
 | Change "fee due" from whole rupees to paise | Every consumer relies on rupees | Breaking: introduce a new field instead |
 
 Without contracts, the provider would have to guess which of these are safe, or ask every team. With them, the answer is part of the build, and the conversation with consumers is limited to the changes that truly affect them.
-
-## Five Misreadings of API and Contract Testing
-
-**"If the API tests pass, the consumers are safe."** The provider's tests check what the provider thinks it promised. Consumers depend on what they actually use. Contracts connect the two.
-
-**"A schema is a contract."** A schema describes the provider's whole interface. A contract records what a consumer needs. Both are useful, for different reasons.
-
-**"Contract testing replaces integration tests."** It replaces many of them. A few real end-to-end checks of the critical paths still earn their keep.
-
-**"Only the provider needs to care about compatibility."** Consumers write the contract and decide what to rely on. Both sides share the work.
-
-**"More detail in the contract is better."** Over-specified contracts make harmless changes fail. State only what is needed.

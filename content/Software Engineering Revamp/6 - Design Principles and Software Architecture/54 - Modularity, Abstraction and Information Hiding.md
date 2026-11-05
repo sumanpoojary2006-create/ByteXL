@@ -125,15 +125,3 @@ Real abstractions are imperfect. A network drive looks like a local folder until
 <!-- Visual: a smooth surface labelled "the interface" with a few cracks through which hidden details leak: network delays, slow queries, and memory limits. Save as images/54_leaky_abstraction.png. -->
 
 ![A clean interface can still reveal hidden network database and memory limitations](images/54_leaky_abstraction.png)
-
-## Five Misreadings of Modularity and Hiding
-
-**"Modules should follow the steps of the process."** Dividing by the order of the work spreads each decision across every module. Divide by decisions that may change instead.
-
-**"Hiding information means hiding it from people."** It means hiding it from other *code*. The design should be documented and available to developers.
-
-**"Private is just a keyword."** The keyword supports a principle: no outside code should depend on the inside. Honouring it matters more than the syntax.
-
-**"More modules is always better."** Too many tiny modules scatter the logic and add connections. Each module should have a clear reason to exist.
-
-**"A good abstraction never leaks."** All of them leak sometimes. A good one leaks rarely, and says where.

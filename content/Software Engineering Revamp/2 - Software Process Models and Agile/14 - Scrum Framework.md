@@ -153,15 +153,3 @@ Several failure patterns appear often enough to have names.
 - **Velocity worship.** Managers use story points to compare or pressure teams, and estimates inflate.
 
 Each of these returns to the same cause: keeping the form of Scrum while losing the transparency, inspection and adaptation that give it its point.
-
-## Five Misreadings of Scrum
-
-**"Scrum is a list of meetings."** The events are a means of inspection. A team that runs every meeting but never changes its plan or its process is practising a ritual, not Scrum.
-
-**"The Scrum Master is the team's manager."** The Scrum Master serves the team by coaching and removing obstacles. They do not assign tasks or approve work.
-
-**"A sprint can be extended if we are not finished."** The time-box is fixed. If the work does not fit, the scope is renegotiated with the product owner. Moving the date turns the sprint into a deadline-free stretch and loses the rhythm.
-
-**"The product owner can add work to the sprint at any time."** The sprint goal is protected so that the team can focus. New ideas go onto the product backlog and are chosen at the next planning event. Only the product owner can cancel a sprint, and that is rare.
-
-**"Velocity measures how good a team is."** Velocity is how much a particular team tends to finish in a sprint, used for its own planning. Comparing velocities across teams, or setting targets for them, makes people inflate the estimates and tells nobody anything.

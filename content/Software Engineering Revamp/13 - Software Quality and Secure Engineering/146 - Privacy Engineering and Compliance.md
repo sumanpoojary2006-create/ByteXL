@@ -127,15 +127,3 @@ A team that has built a data map and a single place for deleting a person's data
 <!-- Visual: collecting all available data compared with collecting only what is needed. -->
 
 ![Collecting all available data compared with collecting only what is needed](images/09-data-minimization.png)
-
-## Five Misreadings of Privacy Engineering
-
-**"If users clicked accept, we are fine."** Consent must be specific, informed and freely given, and use must stay within the purpose. A long unread notice does not make anything permissible.
-
-**"Pseudonymised data is anonymous."** It can be linked back to a person, so the law treats it as personal data.
-
-**"Privacy is the legal team's job."** The decisions are made in design and code, by engineers.
-
-**"More data is always better, we might need it."** Unused data is a liability. It can leak, and the law requires a purpose.
-
-**"Deleting a row deletes the data."** Copies in backups, logs and analytics must be found and handled too.

@@ -107,15 +107,3 @@ They run at different speeds. Linters run in the editor in milliseconds. Deep an
 <!-- Visual: a code listing with three findings marked in the margin, one true positive circled green, one false positive crossed with a suppression comment, and one real bug the tool missed shown as a dashed false negative. Save as images/151_positives_and_negatives.png. -->
 
 ![Static analysis findings include true positives false positives and false negatives](images/151_positives_and_negatives.png)
-
-## Five Misreadings of Static Analysis
-
-**"If the tool says no problems, the code is correct."** Tools miss bugs and check only what they know about.
-
-**"Every warning must be fixed."** Some are false alarms. Judge each, and record why you suppress.
-
-**"It replaces testing."** It finds different faults. It cannot check that the program does what users want.
-
-**"It is only for beginners' style problems."** The deep tools find serious bugs in mature code, including in large operating-system code.
-
-**"Run it once before release."** Run it on every change, so problems are small.

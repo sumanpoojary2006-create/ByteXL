@@ -125,15 +125,3 @@ Judge the strategy by outcomes, not by the count of tests. Useful measures are t
 <!-- Visual: a table of test types (unit, integration, API, end-to-end, exploratory) against speed, stability and cost, with a suggested share of automation effort for each. Save as images/109_effort_by_test_type.png. -->
 
 ![Test types differ in speed stability maintenance cost and suitable automation effort](images/109_effort_by_test_type.png)
-
-## Five Misreadings of Test Automation Strategy
-
-**"Automate everything."** Automate what runs often, is stable and is clear. The rest is cheaper by hand.
-
-**"Automation replaces manual testing."** It replaces repetition. Exploration, judgement and the first look at a new feature are still done by people.
-
-**"More tests means better quality."** A fast, trusted, well-chosen suite beats a large slow one.
-
-**"Test code is second-class."** It lives as long as the product and needs the same care.
-
-**"Automation is free once written."** Maintenance is often the larger part of the cost.

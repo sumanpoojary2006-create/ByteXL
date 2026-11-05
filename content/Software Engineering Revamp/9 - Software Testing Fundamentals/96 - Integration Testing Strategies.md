@@ -111,15 +111,3 @@ When parts are separate services owned by different teams, the interface is an A
 <!-- Visual: sandwich integration drawn as three layers of modules, with the top layer integrated downwards using stubs, the bottom layer integrated upwards using drivers, and both meeting in the middle. Save as images/96_sandwich_integration.png. -->
 
 ![Top-down and bottom-up integration fronts use stubs and drivers before meeting in the middle](images/96_sandwich_integration.png)
-
-## Five Misreadings of Integration Testing
-
-**"If all the unit tests pass, integration will be fine."** Interface faults live between the units, which unit tests never exercise.
-
-**"Big bang is quicker."** It saves planning and costs far more in finding faults.
-
-**"Stubs and drivers are wasted effort."** They are scaffolding that lets testing begin early. They are usually small, and the early feedback repays them.
-
-**"Continuous integration makes strategy irrelevant."** It makes integration frequent. When a new subsystem joins, the order and the scaffolding still matter.
-
-**"Integration tests should use everything real."** Real is best for the things being integrated. Unrelated, slow or costly systems can still be replaced by doubles.

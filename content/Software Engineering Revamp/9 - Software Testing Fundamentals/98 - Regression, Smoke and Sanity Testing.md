@@ -135,15 +135,3 @@ A regression suite is useful only while people trust it. The greatest threat is 
 <!-- Visual: flaky tests changing outcome because of time, network or shared state. -->
 
 ![Flaky tests changing outcome because of time, network or shared state](images/11-flaky-tests.png)
-
-## Five Misreadings of Regression Testing
-
-**"Regression testing is repeating old tests for no reason."** It is the only protection against the damage that new changes do to old features.
-
-**"Smoke and sanity are the same."** Smoke is a broad shallow gate on a build. Sanity is a narrow check on a change.
-
-**"Run only the tests for what you changed."** The effects of a change can reach far. Selection saves time but needs a backstop of full runs.
-
-**"Failed regression means the new feature is bad."** It means something that worked has broken. The new feature may be fine.
-
-**"Flaky tests are a minor nuisance."** They destroy trust in the suite, and must be fixed or removed.

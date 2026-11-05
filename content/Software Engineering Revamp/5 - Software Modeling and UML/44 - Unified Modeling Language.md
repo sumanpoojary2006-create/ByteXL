@@ -75,17 +75,27 @@ Although each diagram has its own symbols, a few conventions run through all of 
 
 The notation is a language, so it gives a way for two people to talk about a design without misunderstanding. It also has a grammar, and a diagram with a missing arrow or the wrong end symbol says something different from what its author meant.
 
-<!-- Visual: student UML class with attributes, operations and visibility. -->
+<!-- Visual: a Student class drawn as a UML box, with the three compartments and the plus, minus and hash visibility signs labelled. -->
 
-![Student UML class with attributes, operations and visibility](images/03-class-box-anatomy.png)
+![A UML class box with name, attribute and operation compartments and the visibility signs](images/uml_46_class_anatomy.png)
 
 ## One System, Three Different Diagrams
 
 To see how the two families fit together, take a library system. A **use case** diagram, which is behavioural, shows the member, the librarian and the goals each pursues: search, borrow, renew, collect fines. A **class** diagram, which is structural, shows the classes `Member`, `Book` and `Loan` and how they connect. A **sequence** diagram shows what messages flow when a member borrows a book. Each diagram looks at the same system from another side, and together they say more than any alone.
 
-<!-- Visual: library system use cases and actors. -->
+The **use case** diagram comes first. It shows the people and systems outside the library, the goals they pursue, and the boundary of what will be built.
 
-![Library system use cases and actors](images/02-library-use-cases.png)
+<!-- Visual: a UML use case diagram of a library system with Member, Librarian and Payment gateway actors, a system boundary, and include and extend relationships. -->
+
+![A UML use case diagram of the library system](images/uml_45_library_use_case.png)
+
+The **class** diagram looks at the same library from the structural side. It shows the kinds of thing the system must remember and how many of each can be linked to how many of another.
+
+<!-- Visual: a UML class diagram of the library with Person, Member, Librarian, Loan, Fine, BookCopy, Book and Library, with multiplicities and the five relationship kinds. -->
+
+![A UML class diagram of the library system](images/uml_46_library_class_diagram.png)
+
+Each diagram answers a different question and neither can replace the other. The next topics teach how to draw and read each of them, one by one.
 
 ## Diagrams and Code
 
@@ -108,9 +118,9 @@ Because of this correspondence, tools can draw diagrams from code and generate c
 
 Martin Fowler, who has written widely on the subject, describes three ways UML is used. As a **sketch**, people draw rough diagrams to think and discuss, then throw them away. This is by far the most common use. As a **blueprint**, a detailed design is drawn for others to build from, and it is maintained. As a **programming language**, a tool generates code from the models. The last has been tried widely and has had mixed results outside specialist areas.
 
-<!-- Visual: food-order sequence diagram across customer, app, restaurant and payment. -->
+<!-- Visual: a sequence diagram with Customer, App, Restaurant and PaymentService lifelines and the numbered messages of one food order. -->
 
-![Food-order sequence diagram across customer, app, restaurant and payment](images/05-order-sequence.png)
+![A UML sequence diagram of a food order across Customer, App, Restaurant and PaymentService](images/uml_47_order_sequence.png)
 
 Modern teams mostly sketch. They use UML's shapes because they are widely known, not because they follow every rule, and they draw only what they need. Many keep diagrams as text in their repositories and generate the pictures, so that they stay in step with the code.
 
@@ -127,15 +137,3 @@ Several mistakes recur, and a reviewer should look for them.
 | **Diagram as decoration** | Drawn because it was required, never read | Draw only on a real question |
 | **Out of date** | Shows a design that was changed | Date it, own it, or delete it |
 | **No title or key** | The reader cannot tell what the diagram claims to show | Always say what it is and for whom |
-
-## Five Misreadings of UML
-
-**"UML is a development method."** It is a notation. It does not tell you how to run a project or in what order to draw diagrams.
-
-**"A project needs all the diagrams."** Choose the diagrams that answer the questions you have. Most projects use a handful.
-
-**"Drawing UML means big upfront design."** Sketching a diagram on a whiteboard for ten minutes before coding is design too, and a useful one.
-
-**"Diagrams must be generated from code or they will be wrong."** Generation helps for detailed structure. For explaining intent, a hand-drawn view that leaves things out is often clearer.
-
-**"If you cannot draw it correctly, you do not understand it."** The aim is shared understanding. A diagram with a small notation mistake that communicates well beats a perfect one that nobody can read.

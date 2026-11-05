@@ -20,9 +20,11 @@ The sign before a member shows its **visibility**. A plus means public, usable b
 
 A class diagram does not show every attribute and operation. A box with just the name is fine when the detail is not needed. The diagram shows what the audience needs to see.
 
-<!-- Visual: student UML class with attributes, operations and visibility. -->
+<!-- Visual: a Student class as a UML box, with callouts for the name, attribute and operation compartments and a key to the visibility signs. -->
 
-![Student UML class with attributes, operations and visibility](images/03-class-box-anatomy.png)
+![A Student class box with name, attribute and operation compartments and callouts for visibility](images/uml_46_class_anatomy.png)
+
+Read the box from the top. The name compartment holds `Student`. The attribute compartment lists three pieces of data, each written as visibility, name, colon and type: the roll number and name are private, and the joining date is protected. The operation compartment lists three actions, written as visibility, name, the parameters in brackets, and the result: paying a fee and enrolling are public, while checking the balance is private because only the student's own code should call it.
 
 ## Finding the Classes
 
@@ -56,15 +58,11 @@ An association can carry a **multiplicity**, numbers at each end that say how ma
 
 **Generalisation** is the relationship of inheritance. The subclass inherits the attributes and operations of the superclass and adds its own. A good test is the phrase "is a": a Student is a Person, but a Course is not a Student. If the sentence sounds wrong, the relationship is probably not generalisation.
 
-<!-- Visual: five UML relationship types with their line symbols. -->
+<!-- Visual: five panels, one per relationship, using Student and Course, Team and Player, House and Room, Person and Student, and Report and Printer, with a short key to the line ends. -->
 
-![Five UML relationship types with their line symbols](images/04-relationship-types.png)
+![The five UML relationship types drawn with the examples from the text: association, aggregation, composition, generalisation and dependency](images/uml_46_five_relationships.png)
 
 **Aggregation and composition** both mean "has parts", and differ in ownership. In composition, the parts belong to the whole alone and cannot exist without it: rooms do not outlive their house. In aggregation, the parts exist independently: players still exist when a team folds. If the distinction is unclear, many teams use a plain association and put the detail in a note.
-
-<!-- Visual: aggregation and composition compared through part lifecycles. -->
-
-![Aggregation and composition compared through part lifecycles](images/04-aggregation-vs-composition.png)
 
 ## Reading Multiplicity as Business Rules
 
@@ -78,6 +76,25 @@ Each multiplicity is a rule in disguise. Consider a library.
 | Loan 1 to 0..1 Fine | A loan has at most one fine | What if it is late twice, after a renewal? |
 
 Each row turns a symbol into a question, and each question is a requirement that was not yet written. This is the practical power of a class diagram: it makes a team ask the questions that would otherwise be answered by accident in code.
+
+## A Fuller Example: The Library
+
+Put the pieces together in one diagram. This is the library from the multiplicity table, drawn at the conceptual level.
+
+<!-- Visual: a UML class diagram of the library with Person, Member, Librarian, Loan, Fine, BookCopy, Book and Library, with multiplicities and the five relationship kinds. -->
+
+![A class diagram of the library with generalisation, association, composition and aggregation](images/uml_46_library_class_diagram.png)
+
+Read it from the top down, as a sentence each time.
+
+1. **Person is a general class**, written in italics because nobody is only a Person. Member and Librarian are kinds of Person, shown by the hollow triangle pointing up to it. Both inherit the name and email, so those are written once.
+2. **A Member borrows Loans.** The line between them says one member can have zero or many loans, and each loan belongs to exactly one member.
+3. **A Loan is of one BookCopy**, while a copy can appear in many loans over time. The `0..*` and `1` on that line say so.
+4. **A Loan may incur a Fine.** The `0..1` says at most one fine per loan, which is the rule the earlier table asked the client to confirm.
+5. **A Book is made of BookCopies**, drawn with a filled diamond. Copies exist only as copies of a title, and every title has at least one, shown by `1..*`.
+6. **A Library holds Books**, drawn with a hollow diamond. A book can exist without this library, for instance when the library closes, so it is aggregation and not composition.
+
+Count what the diagram settled without writing a line of software: members and librarians share personal details, a loan always has a member and a copy, a fine cannot exist without a loan, and a title with no copies cannot be catalogued. Each of those is a decision that would otherwise have been made by accident in code.
 
 ## Composition Over Inheritance
 
@@ -116,17 +133,13 @@ Everything in the table could be read from the diagram. That is the benefit of d
 
 Notice the word "quietly" in the second row. The diagram did not say what should happen to Ravi, only that the seat limit exists. A diagram records structure and rules about numbers; it does not record what to tell the user. That belongs to behaviour diagrams and to written requirements.
 
-<!-- Visual: mapping a class diagram to fields and methods in code. -->
-
-![Mapping a class diagram to fields and methods in code](images/03-class-to-code.png)
-
 ## Object Diagrams: A Snapshot
 
 A class diagram shows kinds of thing and how they relate in general. An **object diagram** shows one moment, with real instances: the student Asha, the course Python, and the link between them. It is useful for checking that a design allows what you expect. The enrolment example above is such a snapshot: the Python course holds Asha and no one else. Object diagrams are rarely drawn in full, but sketching one is a quick test of a class diagram's multiplicities.
 
-<!-- Visual: a class diagram of Person, Student and Course with multiplicities, beside an object diagram of the objects asha:Student and python:Course with a single link between them. Save as images/46_class_and_object_diagram.png. -->
+<!-- Visual: a class diagram of Person, Student and Course on the left and an object diagram of asha : Student and python : Course on the right. -->
 
-![A class model becomes one concrete object snapshot with Asha linked to the single-seat Python course](images/46_class_and_object_diagram.png)
+![A class diagram of Person, Student and Course beside an object diagram of asha as a Student linked to python as a Course](images/uml_46_class_and_object_diagram.png)
 
 ## Three Levels of Class Diagram
 
@@ -143,15 +156,3 @@ Start at the conceptual level, since it is the one the client can check. Move do
 ## Keeping the Diagram Useful
 
 A class diagram can easily become a wall of boxes. A few habits keep it useful. Draw only the classes that matter to the question. Show attributes and operations only when they carry meaning. Group related classes. Name classes with the words of the problem, such as `Loan` and `Fine`, not `DataManager`. And draw at the level of the problem first, the things in the real world, before drawing the classes needed for the program, like helpers and screens.
-
-## Five Misreadings of Class Diagrams
-
-**"A class diagram is a picture of the code."** It can be, but a better use is a picture of the design before the code, or of the problem domain. A diagram that mirrors every line of code adds nothing.
-
-**"Inheritance is the most important relationship."** Associations are far more common, and deep inheritance trees are often a design smell. Composition is usually the safer way to reuse.
-
-**"Aggregation and composition are the same."** The difference is the life of the parts. If the parts die with the whole, it is composition.
-
-**"Every attribute must appear."** Show what the reader needs. Unfilled boxes are fine.
-
-**"Multiplicity is a detail."** It states rules of the business: how many, and whether optional. A wrong multiplicity is a wrong requirement.

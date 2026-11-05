@@ -117,15 +117,3 @@ These patterns interact. A retry inside a retry inside a retry multiplies traffi
 <!-- Visual: a chain of three services where the last is slow; on the left the delay spreads back through all three until the site stops, and on the right a timeout, a breaker and a fallback contain the problem to one box. Save as images/147_cascade_vs_contained.png. -->
 
 ![Timeouts circuit breakers and fallbacks contain a slow downstream dependency](images/147_cascade_vs_contained.png)
-
-## Five Misreadings of Resilience Patterns
-
-**"Retry until it works."** Unlimited, immediate retries can turn a small fault into an outage. Limit, back off and add jitter.
-
-**"Retries are always safe."** Only for idempotent operations. Payments need keys.
-
-**"A timeout is an error to be avoided."** It is a protection. The error is having no timeout.
-
-**"A circuit breaker hides failures."** It limits their spread, and the breaker's state should be monitored and alerted on.
-
-**"Resilience is an infrastructure job."** The decisions about fallbacks and what to degrade are made in the application.

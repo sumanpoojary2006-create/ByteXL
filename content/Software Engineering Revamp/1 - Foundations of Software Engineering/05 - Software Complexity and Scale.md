@@ -118,15 +118,3 @@ Size, connections and time rarely come alone. A growing system usually brings mo
 A team that understands this does not wait for the crisis. It puts structure in early, because the cost of structure is small when the system is small and enormous when it is large. It keeps habits that compound in its favour: automated checks, small reviewed changes, clear names, written contracts.
 
 There is a sensible balance to find. Putting a heavy structure into a three-day experiment is waste. Leaving a system that will live for years without any structure is borrowing against a future that will arrive. The skill lies in judging, from the pressures that are present now and those that are coming, how much structure to put in today. A reasonable rule is to add structure when the next change would otherwise be risky, and to add it in the part of the system that is changing most.
-
-## Five Misreadings of Complexity
-
-**"Twice the code is twice the difficulty."** The relationships between parts grow faster than the parts. Doubling the size can much more than double the effort to understand and change it.
-
-**"If it is not documented, nobody depends on it."** Hyrum's law says the opposite. With enough users, observable behaviour is relied on whether or not anyone promised it.
-
-**"A bad habit is harmless if the shortcut is small."** A shortcut repeated daily is a growth rate, and growth rates compound. Small is measured per change, but the cost is paid on every later change.
-
-**"Complexity is the sign of a clever design."** Complexity is a cost. Clever designs usually look simple in use, and the mark of a good one is that the complexity the problem really needs is all that remains.
-
-**"We can clean it up later when we have time."** Later, the system is bigger, more things depend on the mess, and the cleaning costs more. Teams that postpone it rarely find the time.

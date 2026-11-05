@@ -109,15 +109,3 @@ Lehman's data came from large, proprietary systems of the time. Later researcher
 <!-- Visual: a line of system complexity over twelve releases rising steadily without restructuring and sawtoothing downward with periodic restructuring releases, with the cost of a change shown alongside. Save as images/127_complexity_with_and_without_restructuring.png. -->
 
 ![Periodic restructuring reduces accumulated complexity and later change cost](images/127_complexity_with_and_without_restructuring.png)
-
-## Five Misreadings of the Laws of Evolution
-
-**"They are laws like gravity."** They are patterns observed in data, with exceptions. Treat them as strong expectations, not certainties.
-
-**"A finished system is a stable one."** A system in use is never finished. If it stops changing, it is dying.
-
-**"Complexity grows because developers are careless."** It grows because change adds structure. Good developers slow it, and restructuring reverses part of it.
-
-**"Adding people will speed up evolution."** The law of stable work rates suggests otherwise, and Brooks's law agrees.
-
-**"These apply only to old mainframes."** The studies were of such systems, but the patterns have been seen in modern open-source and web systems too.

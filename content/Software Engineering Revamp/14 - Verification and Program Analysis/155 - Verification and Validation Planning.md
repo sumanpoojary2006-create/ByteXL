@@ -27,7 +27,17 @@ Together, V&V is the whole set of activities that give confidence that software 
 
 ## A Real Case: An Independent Facility
 
-NASA runs an independent verification and validation facility in West Virginia, set up after the 1986 Challenger accident, whose engineers examine the software of the agency's most critical missions separately from the teams that wrote it.
+After the loss of the space shuttle Challenger in January 1986, investigators paid close attention to how the agency made decisions about risk, and over the following years NASA came to the view that the most critical software should be checked by people who were separate from those who wrote it. In the early 1990s it set up an independent verification and validation facility, which has been based in West Virginia since then. Its engineers examine the software of the agency's most critical missions, from the requirements to the code and the tests, and they report on what they find to the agency, not to the project that built the system.
+
+The independence is deliberate and has three parts. The facility is technically independent, using its own methods and tools. It is managerially independent, so that a project manager cannot overrule or delay a finding. And it is financially independent, so that its budget does not depend on the project it reviews. The aim is to avoid the situation in which people who built a thing are the only ones who say that it works.
+
+| Independence | What it prevents |
+| --- | --- |
+| Separate methods and tools | The same blind spot being shared by builders and checkers |
+| Separate reporting line | Pressure to soften a finding to protect a schedule |
+| Separate budget | Reduced effort when the project is short of money |
+
+Few teams can have a facility of this kind, but the questions it answers apply to every project: who will check the work, with what and how independently, and how much checking does this system deserve given what could go wrong? A verification and validation plan answers them in advance, matching the effort to the risk. The topic that follows describes how to write one, and why a plan made early is worth more than a long test phase at the end.
 
 ## Activities Through the Life Cycle
 
@@ -131,15 +141,3 @@ The techniques of program verification are the tools from which a plan is built.
 <!-- Visual: a V&V plan as a table with the stages of the life cycle as rows, the activities as columns, a coloured band for each criticality level showing which cells are required, and a column marking who does each activity and how independent they are. Save as images/155_vv_plan_matrix.png. -->
 
 ![A verification and validation plan maps lifecycle activities ownership and independence](images/155_vv_plan_matrix.png)
-
-## Five Misreadings of V&V Planning
-
-**"V&V is testing at the end."** It runs through every stage, and most of its value comes early.
-
-**"The same checks suit every project."** The level of assurance should match what failure would cost.
-
-**"Developers can verify their own work."** They can find many faults. Independence finds the ones they cannot see.
-
-**"More activities always mean more safety."** Activities must be done well and suit the risk. Paperwork without substance proves nothing.
-
-**"The plan is done once."** It changes as the project does, and as the evidence comes in.

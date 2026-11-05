@@ -108,15 +108,3 @@ CMMI has responded with versions that fit agile work and with a focus on perform
 <!-- Visual: an improvement cycle that measures, analyses, changes and verifies a process. -->
 
 ![An improvement cycle that measures, analyses, changes and verifies a process](images/10_improvement_cycle.png)
-
-## Five Misreadings of Standards and Maturity
-
-**"A high maturity level means the software is good."** It means the process is defined and controlled. Quality of the product still depends on how well the practices are applied.
-
-**"Certification is only a badge."** It can be, if pursued for show. It can also drive real discipline. The difference is in the intent.
-
-**"Maturity frameworks are incompatible with agile."** Many organisations combine them. The frameworks name outcomes, and agile is one way to achieve them.
-
-**"Level 5 is the goal for everyone."** A small team on a short project may be well served at a lower level. The cost of each level must be weighed against its benefit.
-
-**"Standards are the same as documents."** They require evidence of practice. Documents that nobody uses fail an honest appraisal.

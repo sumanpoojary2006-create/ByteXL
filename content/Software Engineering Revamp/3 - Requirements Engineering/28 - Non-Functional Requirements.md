@@ -113,15 +113,3 @@ The cost of verification matters when choosing a target. A requirement of 99.999
 Quality requirements often pull against each other and against cost. Higher security can mean more steps for the user. Faster response can mean more servers. When two targets cannot both be met, someone has to choose, and it is far better to choose in a requirements meeting than during a crisis. A short note on which quality wins in a conflict, such as "availability on results day outranks new features that week", settles many later arguments.
 
 One way to organise the choices is a **utility tree**: write "quality" at the top, split it into the families that matter, and under each write the specific scenarios, marked by how important each is and how hard it will be. Scenarios that are both important and hard are the ones that will shape the architecture, and the team can concentrate its design effort on them.
-
-## Five Misreadings of Non-Functional Requirements
-
-**"They can be added at the end."** Capacity, security and the ability to change are shaped by the structure. Adding them late usually means reworking the design.
-
-**"Users will tell us if the system is slow."** They will, after it has failed on the day it mattered. Writing the target beforehand lets the team test for it.
-
-**"A target of 100 per cent is the safe choice."** Perfect availability or zero errors are not achievable, and chasing them costs more than the value. Pick the number the use deserves.
-
-**"An average is enough."** Averages hide the worst experiences. Percentiles and peak loads describe what real users meet.
-
-**"Non-functional means optional."** The name says only that they are not features. A system that misses its quality targets is as unusable as one that misses its features.

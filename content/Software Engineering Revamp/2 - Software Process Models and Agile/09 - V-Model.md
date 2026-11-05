@@ -100,15 +100,3 @@ For that reason, many organisations use V-model thinking inside iterative work. 
 <!-- Visual: each development stage on the left linked by a horizontal arrow to the test stage that checks it on the right. -->
 
 ![Each development stage in the V-model is paired with a testing stage](images/03-vmodel-links.png)
-
-## Five Misreadings of the V-Model
-
-**"The V-model is testing at the end."** The reverse is true. Tests are planned at the start, as each specification is written. What happens at the end is running them.
-
-**"Verification and validation are two words for testing."** They are different questions. Verification checks the product against its specification, and validation checks the specification against the user's real need.
-
-**"Passing every test means the system is right."** It means the system matches the tests. If a requirement is missing or the tests are wrong, a green result proves little. This is why traceability asks to see the requirement behind each test.
-
-**"The V-model is obsolete."** It is alive in every industry where an authority needs evidence. Even agile teams borrow its pairing of requirement and test.
-
-**"The V-model forbids iteration."** The classical form is sequential, but nothing stops a team from running short Vs. What it forbids is skipping the pairing of specification with check.

@@ -117,15 +117,3 @@ The combinations problem is easy to count. With n independent flags there are 2 
 <!-- Visual: a flag's life cycle from created with an owner, to development behind the flag, to staged rollout, to fully on, to removed from the code, with a warning on the flags left stuck at the fully-on stage. Save as images/117_flag_lifecycle.png. -->
 
 ![A feature flag needs an owner rollout plan and removal step](images/117_flag_lifecycle.png)
-
-## Five Misreadings of Branching and Flags
-
-**"Git Flow is the standard way to use Git."** It is one workflow, designed for versioned releases. Its own author suggests simpler ones for continuous delivery.
-
-**"Trunk-based means no branches."** It means short-lived ones. A branch of a day is still a branch.
-
-**"Feature flags are for A/B tests."** They are also for safe merging, gradual rollout and kill switches.
-
-**"A flag is free."** Each one adds paths to test and code to read. Remove flags once a feature is permanent.
-
-**"A branch is the same as a release."** A branch is a line of work. A release is a decision to expose a version to users. Flags let the two move separately.

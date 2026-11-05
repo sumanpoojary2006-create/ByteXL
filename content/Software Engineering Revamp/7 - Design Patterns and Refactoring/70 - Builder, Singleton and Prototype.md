@@ -112,15 +112,3 @@ Adding "functions" to the shallow copy also changed the template, because they s
 <!-- Visual: builder and prototype compared as ways to avoid repeated construction work. -->
 
 ![Builder and prototype compared as ways to avoid repeated construction work](images/05-builder-prototype.png)
-
-## Five Misreadings of These Patterns
-
-**"A builder is only for big objects."** It is for readability. Even five optional parts can make a constructor call confusing.
-
-**"Singleton is how you make a global."** It is better understood as a way to make *one*. If code reaches for it from everywhere, it has become a global variable with extra steps.
-
-**"Only one instance means only one global access point."** You can have exactly one object without making it reachable from anywhere. Pass it where it is needed.
-
-**"A copy is independent of its original."** Only a deep copy is. A shallow copy shares its inner parts.
-
-**"These patterns are always worth the extra class."** If an object has three parameters, a constructor is fine. Add structure when the pain appears.

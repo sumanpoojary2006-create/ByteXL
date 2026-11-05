@@ -111,15 +111,3 @@ A useful distinction from the quality field is that the same product is judged f
 | **Static view** | Models describe a product at a moment; quality changes as the product evolves |
 | **Weights are contested** | Different stakeholders weigh factors differently |
 | **Partial coverage** | No model lists everything: accessibility, ethics, fairness and sustainability are modern additions |
-
-## Five Misreadings of Quality Models
-
-**"A quality model gives you a quality score."** It gives a structure for assessment. The weights and ratings are judgements.
-
-**"A single number summarises quality."** It hides the weak factors. Keep the profile.
-
-**"The model with the most factors is the best."** A short list that a team uses is better than a long one it ignores.
-
-**"The same weights fit every product."** They must be set for the purpose, and written down.
-
-**"Quality models are only academic."** Contracts, audits and tools such as code analysers are built on them.

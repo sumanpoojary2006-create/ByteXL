@@ -128,15 +128,3 @@ Pairing is review happening as the code is written. A change produced by a pair 
 | Time cost | Reviewer time, plus waiting | Both people throughout |
 | Knowledge sharing | Reviewer learns the result | Both learn the reasoning |
 | Best for | Most routine changes | Hard or risky work |
-
-## Five Misreadings of Pair Programming
-
-**"Pairing halves the output."** It does cost more hours. But the code has fewer defects, needs less rework and the knowledge is shared, so the net effect is often small or positive.
-
-**"It is only for beginners."** Experts gain from it as well, on hard problems. But beginners gain the most from pairing with someone who knows more.
-
-**"The navigator just watches."** The navigator is thinking ahead, checking the design and spotting errors. A navigator who switches off makes the pair a single person with an audience.
-
-**"Pairing means all the time."** Most teams pair on selected tasks and work alone on the rest.
-
-**"If it does not work for us, pairing is bad."** It depends on the pair, the task and the habits. Try a different partner, task or format before deciding.

@@ -105,15 +105,3 @@ Testing in production is a discipline and not a licence for recklessness. It nee
 <!-- Visual: a staged rollout timeline from 1 per cent to 5, 25 and 100 per cent of users, with a health check between each stage and an arrow to instant rollback if the check fails. Save as images/112_staged_rollout.png. -->
 
 ![A staged rollout expands exposure only after health checks and rolls back immediately on failure](images/112_staged_rollout.png)
-
-## Five Misreadings of Testing in Production
-
-**"Testing in production means not testing before."** Pre-release testing still comes first. Production adds what no lab can show.
-
-**"It is reckless."** Done with canaries, flags, monitoring and quick rollback, it limits the risk to a small share of users, and is less risky than a rare big release.
-
-**"A staging environment shows everything production will."** It has less traffic, different data and different timing. Differences are where surprises live.
-
-**"Monitoring is operations' job, not testing's."** In production, monitoring is the test. The team that builds the feature should define what healthy looks like.
-
-**"Chaos engineering is about breaking things."** It is about learning how the system behaves under failure, in a controlled way, so that it can be made stronger.

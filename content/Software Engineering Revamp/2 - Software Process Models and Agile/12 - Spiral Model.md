@@ -117,15 +117,3 @@ It is best seen not as a rival to the other models but as a lens over them. Any 
 <!-- Visual: one spiral turn with its four activities, objectives, risk reduction, build and review, ending in a go or stop decision. -->
 
 ![Each spiral turn defines objectives reduces risk builds and reviews](images/06-spiral-risk.png)
-
-## Five Misreadings of the Spiral Model
-
-**"The spiral is just iteration with a nicer picture."** Iteration says to repeat. The spiral says what to do on each repeat: choose and attack the biggest risk, and decide each time whether to go on.
-
-**"Risk analysis means a long document."** In practice it can be a short list reviewed at the start of every turn. A page that is read is worth more than a binder that is not.
-
-**"Every turn must produce working software."** A turn may produce only knowledge: a result from a test, a decision to change course, a finding that the idea does not work. That counts as success if it avoided a bigger loss.
-
-**"The spiral is only for huge projects."** The method is scaled to the risk, not the size. A small project with one big unknown can use one cheap turn to test it.
-
-**"If the risks are known, the project is safe."** Naming a risk does not remove it. The value comes from acting on the biggest ones early, and from returning to the list as new risks appear.

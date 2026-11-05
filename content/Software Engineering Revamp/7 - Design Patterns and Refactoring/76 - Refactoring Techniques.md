@@ -135,15 +135,3 @@ Refactoring is not suitable when the code is so broken that it should be rewritt
 | Mixing with feature work | A failure cannot be traced | Separate commits for structure and behaviour |
 | Merge conflicts | Others are editing the same files | Refactor in short bursts and merge often |
 | Refactoring code nobody changes | Effort with no return | Focus on code that changes often |
-
-## Five Misreadings of Refactoring
-
-**"Refactoring means rewriting."** A rewrite replaces the code. Refactoring improves it in small steps while it keeps working.
-
-**"We can refactor without tests."** Without tests you can restructure, but you cannot know that behaviour was preserved. Write characterisation tests first.
-
-**"Refactoring is cleaning up after the real work."** It is part of the real work. Putting it off until "later" means it is never done and every change gets harder.
-
-**"A refactoring should also fix bugs and add features."** Mixing them makes it impossible to tell which change caused a failure. Do one at a time, and commit separately.
-
-**"It is wasted effort because users see no difference."** Users see the difference in how quickly features arrive and how few bugs return. The saving is in the future work.

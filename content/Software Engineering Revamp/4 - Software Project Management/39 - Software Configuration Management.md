@@ -128,15 +128,3 @@ Software runs in several environments, such as a developer's machine, a test ser
 ## The SCM Plan
 
 In larger projects the arrangements are written in a short **SCM plan**. It names the items under control and how they are named, the tools and repository layout, the rules for branches and for approving changes, who sits on the change board, how builds and releases are made and tagged, and how audits are done. The plan need not be long. Its value is that new members can read the rules in one place and the team can notice when practice drifts from them.
-
-## Five Misreadings of Configuration Management
-
-**"SCM is just version control."** Version control is the tool. SCM is also about naming, change approval, status and audit, and it covers more than source code.
-
-**"Change control is only for big, regulated projects."** The scale varies. Even a student team benefits from a rule that nothing reaches the main branch without a second pair of eyes.
-
-**"A tag is a baseline."** A tag marks a point. A baseline is a point that has been reviewed and agreed. The label matters less than the agreement behind it.
-
-**"Locking down changes slows delivery."** Uncontrolled changes slow delivery far more, through broken builds and debugging. Light, automated controls cost little.
-
-**"We only need to track our own code."** Dependencies, build tools, configuration and data schemas change behaviour too. If it can break the build, it belongs in the configuration.

@@ -108,15 +108,3 @@ Agile teams use their own history to forecast. If a team finished 21, 18, 24 and
 Because estimates are uncertain, plans need room. A **buffer** is time held in reserve for the unexpected. Padding every task by a fixed amount is a poor way to do it: people use up whatever time they are given, and the padding disappears. A better way is to estimate tasks realistically and add a single visible buffer at the end of a group of tasks or the whole project, sized from the uncertainty, and to watch how fast it is consumed. If half the buffer is gone with a third of the work done, the project is in trouble and the sponsor should hear now.
 
 Estimates should also be revisited. At each milestone the team compares what it predicted with what happened, and re-estimates the remaining work with the new knowledge. Keeping a simple record of estimate against actual for every task is among the most valuable habits a team can adopt, because over a year it shows what kind of work the team underestimates, and by how much, and the next estimate can be corrected.
-
-## Five Misreadings of Estimation
-
-**"An estimate is a commitment."** An estimate is a forecast with a range. A commitment is a decision made with the range in view, often with a buffer.
-
-**"A more detailed estimate is more accurate."** Detail gives an illusion of precision. Accuracy comes from using real data from similar work.
-
-**"Estimates are wrong, so estimating is pointless."** They are always uncertain, but the exercise reveals assumptions, gaps and risks. A rough range is far more useful than none.
-
-**"Story points are hours in disguise."** They measure relative size, and are meant to stay consistent within a team. Converting them to hours defeats the purpose.
-
-**"Pressure from management improves the estimate."** It only changes the number the team states. The work stays the same size.

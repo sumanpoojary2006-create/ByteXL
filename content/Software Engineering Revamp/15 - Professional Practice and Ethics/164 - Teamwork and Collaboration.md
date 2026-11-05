@@ -32,7 +32,19 @@ The number is less important than the conversation that follows. A team that dis
 
 ## A Real Case: What Google Found
 
-In 2012 Google began a study of its own teams, called Project Aristotle, hoping to find the recipe for a good team. The ideas listed above did not explain the differences; psychological safety, a term from the Harvard researcher Amy Edmondson, did.
+In 2012 Google began a research project, called Project Aristotle, to find out what made some of its teams more effective than others. The company had a great deal of data, and its managers expected that the answer would be a recipe: put the right mix of skills, the most experienced leaders or the most talented individuals together and the team would perform. Researchers studied more than a hundred and eighty teams, looking at their make-up, how they worked, how often they met and how they were led.
+
+The obvious ideas did not explain the differences. Teams of friends did no better than teams of colleagues, and the seniority and qualifications of members did not predict success. What did, more than anything else, was how members felt about speaking up. On the best teams, people believed they could ask a question, admit a mistake or disagree without being embarrassed or punished. This is called psychological safety, a term that came from the Harvard researcher Amy Edmondson, who had found a similar pattern years earlier in hospital teams: the best teams reported more mistakes, not fewer, because they felt it was safe to do so. The project found four other factors that mattered: team members could depend on one another, goals and roles were clear, the work meant something to them, and they believed that it made a difference.
+
+| Factor | What it looks like in a software team |
+| --- | --- |
+| Psychological safety | A junior developer can say "I do not understand this design" in a review |
+| Dependability | Work promised for Friday arrives on Friday, or the team hears early |
+| Structure and clarity | Everyone knows who owns what, and what done means |
+| Meaning | The team knows who will use what it builds |
+| Impact | Work is seen to matter to the organisation |
+
+This is why this topic treats collaboration as a set of practices, such as blameless reviews, clear agreements and respectful disagreement. They build the safety that Google's data showed to matter most. A team can have good tools and bright people and still fail if the people cannot afford to tell each other the truth.
 
 ## How Leaders and Members Build Safety
 
@@ -142,15 +154,3 @@ Teams go through stages, as Bruce Tuckman described in 1965: **forming** (polite
 <!-- Visual: T-shaped skills combining broad engineering knowledge with deep expertise. -->
 
 ![T-shaped skills combining broad engineering knowledge with deep expertise](images/19-t-shaped-skills.png)
-
-## Five Misreadings of Teamwork
-
-**"The best team is a group of the best individuals."** Google's study found that safety to speak mattered more than individual brilliance.
-
-**"Psychological safety means everyone is nice."** It means people can disagree and take risks without fear. High standards are compatible with it.
-
-**"Conflict is a sign of a bad team."** Unspoken disagreement is the worse sign. Healthy teams disagree openly and respectfully.
-
-**"Feedback is criticism."** Good feedback is information to help someone improve, given with respect.
-
-**"Collaboration means constant meetings."** It means shared understanding, and often works better with clear writing and focused time.

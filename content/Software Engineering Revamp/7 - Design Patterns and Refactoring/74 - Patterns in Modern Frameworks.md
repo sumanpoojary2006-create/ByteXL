@@ -127,15 +127,3 @@ This does not make the patterns obsolete. The ideas remain: separate what varies
 <!-- Visual: an inversion of control container wiring objects together. -->
 
 ![An inversion of control container wiring objects together](images/11-ioc-container.png)
-
-## Five Misreadings of Patterns in Frameworks
-
-**"Using a framework means I am using the patterns correctly."** Frameworks supply the machinery. It is still up to you to decide what to inject, how to split the repository, and what to put in the chain.
-
-**"Dependency injection needs a container."** The idea is just to pass dependencies in. A container saves effort for large systems and is not needed for small ones.
-
-**"A repository is just a data access layer."** It is an interface in the language of the domain. A layer that returns raw table rows to business code is not hiding anything.
-
-**"Middleware order does not matter."** It matters a great deal. Logging before authentication logs unauthenticated requests; authentication before logging does not.
-
-**"Functional code has no patterns."** It has the same problems and solves them with fewer ceremonies. The names differ and the ideas are the same.

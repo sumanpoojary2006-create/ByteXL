@@ -113,15 +113,3 @@ Debt is easier to discuss when it is visible. A written register, a label on tic
 <!-- Visual: a line chart of how long an average change takes over twelve months for three teams: one ignoring debt (rising), one tidying as it goes (flat), one that ignores it and then does a big clean-up (rising then dropping). Save as images/82_change_time_over_year.png. -->
 
 ![Ignoring debt raises change time while continuous tidying keeps delivery stable](images/82_change_time_over_year.png)
-
-## Five Misreadings of Technical Debt
-
-**"Debt is always the result of laziness."** Much of it is deliberate and sensible, or arises from learning. The problem is debt nobody has recorded.
-
-**"We should have zero debt."** Every working system has some. The aim is to know it, to keep it where it costs little, and to repay where it costs a lot.
-
-**"Debt is a problem for developers only."** Its cost, slower delivery and more incidents, falls on the whole organisation, so it is a business matter.
-
-**"We will fix it after the release."** Without a plan, "after" does not arrive. Record the debt and schedule its repayment.
-
-**"A rewrite clears the debt."** A rewrite creates new debt and takes a long time. Repaying in small steps is usually safer.

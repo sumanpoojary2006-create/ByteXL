@@ -110,15 +110,3 @@ Common failures are skipping a level, doing it badly, or doing the wrong level f
 <!-- Visual: a timeline of a new building's opening week showing the levels of testing that were thin: few realistic staff trials, no full-load baggage test, no complete rehearsal. Save as images/90_each_level_has_a_gap.png. -->
 
 ![Gaps at integration system and acceptance levels accumulate into opening-day disruption](images/90_each_level_has_a_gap.png)
-
-## Five Misreadings of Levels of Testing
-
-**"Passing unit tests means the system works."** Units can each be right while the connections between them are wrong.
-
-**"System testing makes the lower levels unnecessary."** A failure at system level is hard to trace. Lower levels find faults early and cheaply.
-
-**"Acceptance testing is the testers' job."** It belongs to the customers and users, since only they can say whether the product meets their need.
-
-**"The levels run in strict order, once."** In modern teams they run continuously, many times a day, and bugs at any level feed back immediately.
-
-**"A trial in a test setting is as good as the real thing."** Tests that differ from reality in people, load or environment leave gaps where real failures hide.

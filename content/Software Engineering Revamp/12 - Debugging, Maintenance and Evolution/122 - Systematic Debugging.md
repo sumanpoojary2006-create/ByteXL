@@ -118,15 +118,3 @@ Every debugger reaches a point where nothing makes sense. A short list of moves 
 <!-- Visual: a timeline of 1,000 commits with the middle one tested, the half without the bug discarded, and the process repeated, narrowing to a single commit in ten steps. Save as images/122_bisect_halving.png. -->
 
 ![Binary search repeatedly halves a thousand commits to isolate one faulty change](images/122_bisect_halving.png)
-
-## Five Misreadings of Debugging
-
-**"Debugging is trial and error."** Done well it is deduction: each experiment is chosen to rule something out.
-
-**"If I can see the bug, I understand it."** Seeing the symptom is not the same as knowing the cause. A fix without a cause is a guess.
-
-**"The bug must be in the newest code."** Often it is. But it may be an old fault exposed by the new code, so check the assumptions of the old.
-
-**"Print statements are unprofessional."** They are a quick and effective probe. Debuggers and logs are better for some jobs, and printing is fine for many.
-
-**"Fixing the symptom is enough."** A hidden cause returns. Find it, fix it and add a test.

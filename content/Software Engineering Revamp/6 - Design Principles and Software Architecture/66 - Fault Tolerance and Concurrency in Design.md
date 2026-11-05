@@ -128,15 +128,3 @@ Spare copies protect a system only if they fail independently. Two servers in on
 | Servers in two data centres | A whole site failing | A software bug present in both |
 | Two different implementations of the same function | A bug in one | Mistaken requirements shared by both |
 | Backups kept on the same disk as the data | Accidental deletion | Disk failure |
-
-## Five Misreadings of Fault Tolerance and Concurrency
-
-**"Our tests pass, so there are no races."** Races depend on timing that tests rarely reproduce. A passing test is no evidence of their absence.
-
-**"Catching every exception makes the system robust."** Swallowing errors hides them. Handle what you can sensibly handle, and let the rest fail loudly where someone will see.
-
-**"Locks fix concurrency."** They fix some problems and cause others. Sharing less is safer than locking more.
-
-**"Redundancy guarantees availability."** Two copies of the same software with the same bug fail together. Redundancy needs independence.
-
-**"Failure is a rare event to plan for last."** In a large system failure is constant. It belongs in the design from the beginning.

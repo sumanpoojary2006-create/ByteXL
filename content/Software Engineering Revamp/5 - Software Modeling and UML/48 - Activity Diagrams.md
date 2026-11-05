@@ -23,9 +23,9 @@ A **decision** has one arrow in and several out, each labelled with a guard, and
 
 Guards on a decision should cover every case and not overlap. If a diamond offers `[in stock]` and `[out of stock]`, every order goes one way or the other. If it offers only `[in stock]`, the diagram is silent about what happens otherwise, and that silence is a gap in the design.
 
-<!-- Visual: an exam-script flow with a decision diamond for "script complete?" and a fork into two parallel checks that join before the final step. -->
+<!-- Visual: an activity diagram: an initial node, Upload file, a decision diamond on the file type with a yes path and a no path through Show error back to Upload file, a fork into Check for copied text and Record submission time, a join, Send receipt to student and a final node. -->
 
-![Exam-script activity flow with parallel work and a decision](images/06-exam-activity.png)
+![A UML activity diagram of an assignment submission with a decision, a loop back, and a fork and join](images/uml_48_assignment_submission.png)
 
 ## Reading a Diagram Step by Step
 
@@ -65,9 +65,9 @@ A saving of ten minutes comes from the structure of the process alone. The short
 
 The longest path through the diagram, from start to end, is its **critical path**. Speeding up a step off that path changes nothing; speeding up a step on it shortens the whole process. In the pizza example, cutting the driver search from 6 minutes to 3 saves no time at all, while cutting baking from 10 minutes to 8 saves two.
 
-<!-- Visual: fork and join nodes coordinate parallel activities. -->
+<!-- Visual: an activity diagram of a pizza order: Take order, a fork into a kitchen branch (make pizza, bake) and a delivery branch (find driver, wait at shop), a join, Deliver, and the totals of 39 and 49 minutes. -->
 
-![Fork and join nodes coordinate parallel activities](images/06-fork-join.png)
+![A pizza-order activity diagram with a fork into kitchen and delivery branches and a join before delivery](images/uml_48_pizza_fork_join.png)
 
 ## Swimlanes: Who Does What
 
@@ -85,9 +85,11 @@ A small count makes this concrete. Suppose an exam registration has eight steps 
 
 Each handover is a place where work waits in someone's queue. Reducing five handovers to three might do more for the total time than speeding up any single step.
 
-<!-- Visual: activity flow divided into student, portal and registrar swimlanes. -->
+<!-- Visual: an activity diagram with three swimlanes, Student, Portal and Registrar, and eight numbered steps joined by arrows that cross lanes five times. -->
 
-![Activity flow divided into student, portal and registrar swimlanes](images/06-swimlanes.png)
+![An exam-registration activity diagram divided into Student, Portal and Registrar swimlanes with eight steps and five lane crossings](images/uml_48_exam_registration_swimlanes.png)
+
+Trace it with a finger. The student chooses an exam (1), the arrow crosses into the Portal lane for the eligibility check (2), crosses back so the student can pay (3), and crosses again for the Portal to confirm payment (4). Step 5 stays in the Portal lane, so no arrow crosses. The arrow then crosses to the Registrar lane for approval (6), the only step that lane contains, and crosses back so the Portal can issue the hall ticket (7) and notify the student (8). Counting the arrows that cross a lane boundary gives five, the number in the table below.
 
 ## Objects, Signals and Other Extras
 
@@ -116,10 +118,6 @@ People often ask when to use an activity diagram rather than a sequence diagram.
 
 An activity diagram is also a good way to describe the flow inside one use case, fleshing out the main and alternate flows into a picture. And it can describe an algorithm in a form that a non-programmer can follow.
 
-<!-- Visual: a table-like comparison with two small drawings: an activity diagram following steps, decisions and a fork, and a sequence diagram following messages between three objects. Save as images/48_activity_vs_sequence.png. -->
-
-![An activity view follows work and decisions while a sequence view follows messages between participants](images/48_activity_vs_sequence.png)
-
 ## Common Faults
 
 | Fault | What it looks like | Remedy |
@@ -129,15 +127,3 @@ An activity diagram is also a good way to describe the flow inside one use case,
 | **Dead end** | An action with no outgoing arrow and no final node | Every path must reach an end |
 | **Too much detail** | Sixty actions on one page | Break into sub-diagrams |
 | **Swimlanes with no meaning** | Lanes drawn but not used to show responsibility | Use them for roles or drop them |
-
-## Five Misreadings of Activity Diagrams
-
-**"An activity diagram is just a flowchart."** It looks like one, but fork, join and swimlanes let it describe parallel work and responsibility, which a flowchart cannot.
-
-**"A decision and a fork are the same."** A decision takes one branch. A fork takes all of them at once.
-
-**"Everything in parallel is faster."** Only if the branches do not compete for the same people or machines, and the join waits for the slowest branch anyway.
-
-**"Draw every tiny step."** A diagram with sixty actions hides the shape of the process. Show the steps that matter and put detail in subdiagrams.
-
-**"Swimlanes are decoration."** They show responsibility. They are often the quickest way to see where a process hands work over, and where it gets stuck.

@@ -142,15 +142,3 @@ Pull-request review is one of several. **Pair programming** is review in real ti
 <!-- Visual: the spectrum of review from informal comments to formal inspection. -->
 
 ![The spectrum of review from informal comments to formal inspection](images/03-review-spectrum.png)
-
-## Five Misreadings of Code Review
-
-**"The point of review is to catch bugs."** It does that, but the wider value is knowledge sharing, consistency and better design.
-
-**"A big change is fine if it is well written."** Nobody can review it well. Split it.
-
-**"Review slows us down."** Done in small pieces and quickly, it speeds the team up, by preventing rework and spreading understanding.
-
-**"A reviewer's job is to be critical."** It is to help the change get better. Questions and clear explanations help more than harshness.
-
-**"Automated tools replace reviewers."** Tools check style and common mistakes. Humans judge design, intent and whether the change is right for the system.

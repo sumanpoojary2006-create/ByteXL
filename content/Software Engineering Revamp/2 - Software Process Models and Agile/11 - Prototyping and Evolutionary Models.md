@@ -112,15 +112,3 @@ Prototyping is rarely a complete process on its own. It is usually a step inside
 <!-- Visual: a prototype feeding two choices, discard it and keep the lessons, or strengthen it into the product. -->
 
 ![Throwaway prototypes produce learning while evolutionary prototypes become the product](images/05-prototype-choice.png)
-
-## Five Misreadings of Prototyping
-
-**"A prototype is a smaller version of the product."** It is a tool for answering a question. A prototype can be a drawing, a video or a page with no working code, if that answers the question.
-
-**"A good prototype is one that looks finished."** A prototype that looks finished invites feedback on colours and fonts, and leads people to assume the work is nearly done. Rough prototypes get better feedback about the idea itself.
-
-**"We will clean up the prototype later."** Later rarely arrives. If the prototype must survive, build it to survive. If it need not, plan to discard it.
-
-**"Prototyping replaces requirements."** It supports them. The prototype shows people something concrete to react to, and what they say still has to be turned into requirements.
-
-**"Every project needs a prototype."** If the problem is well understood and the risk is low, a prototype is a delay. The skill is in recognising when the uncertainty justifies the cost.

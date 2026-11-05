@@ -128,15 +128,3 @@ Good documentation is clear before it is complete. A few habits matter.
 | Show, then explain | The example first, the rule after |
 | Say what happens next | "You will receive an email within a minute" |
 | Date and version it | "Applies to version 3.2" |
-
-## Five Misreadings of Documentation
-
-**"Good code needs no documentation."** Code shows what it does. It does not show how to start it, why a design was chosen, or what its users should know.
-
-**"More documentation is better."** Only if it is accurate and findable. A small body of true documents is worth more than a library nobody trusts.
-
-**"Documentation is written at the end."** At the end, it is rushed or skipped. Writing a README first, and docstrings along with the code, costs far less.
-
-**"Comments are documentation."** They are one kind, aimed at maintainers. Users need guides, references and examples.
-
-**"Documentation is the technical writer's job."** Writers help with structure and clarity. The people who know the facts must supply them and keep them current.

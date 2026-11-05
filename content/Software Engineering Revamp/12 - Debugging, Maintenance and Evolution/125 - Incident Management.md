@@ -19,7 +19,18 @@ Not every problem is an incident. The word is used when something affects, or th
 
 ## A Real Case: Deleting the Wrong Database
 
-In 2017 an engineer at the code-hosting company GitLab, working late to fix a database problem, ran a deletion command on the wrong server and removed about 300 gigabytes of live data; of five backup methods, none turned out to be usable. The recovery was slow, and the company's open account of it is still studied.
+On the evening of 31 January 2017 an engineer at the code-hosting company GitLab was working late to fix a problem with the database that stored the site's data. A copy of the database had fallen behind, and after hours of attempts the engineer decided to clear the copy and start it afresh. The deletion command was typed on the wrong server. It ran on the live database, and by the time it was stopped about 300 gigabytes had shrunk to a few gigabytes. Around six hours of user changes were gone.
+
+The company then discovered that its safety nets had holes. It had five different backup or replication methods, and none was usable as it stood: one failed silently, one had not been set up properly, one produced empty files, and the others were too old or in the wrong place. GitLab recovered from a copy that an engineer had happened to take for a different reason six hours earlier. What the company did next became part of the case. It streamed its recovery live, and published an honest, detailed account of what had happened and what it would change. That openness is still taught.
+
+| Phase of the incident | What it shows |
+| --- | --- |
+| A tired engineer under pressure typed a destructive command | Systems should make destructive mistakes hard, not rely on care |
+| Backups existed on paper but had never been tested by a restore | An untested backup is a hope |
+| Recovery was slow because no one had practised it | Incident response needs rehearsal |
+| The company communicated openly and wrote it up | Trust is rebuilt by honesty, not silence |
+
+Incident management is the practice of preparing for exactly this evening: roles, procedures, communication and learning. The topic that follows describes how a team handles the hours of an incident, so that a single mistaken command does not become a crisis.
 
 ## The Stages of an Incident
 
@@ -148,15 +159,3 @@ A **root-cause analysis** is the later work of finding why the incident was poss
 | **Aim** | Stop the harm quickly | Understand why it could happen |
 | **Scope** | The smallest change that works | The whole chain of contributing factors |
 | **Output** | A patched system | A list of lasting improvements |
-
-## Five Misreadings of Incident Management
-
-**"The goal is to find the root cause first."** The first goal is to stop the harm. Diagnose after service is back, unless diagnosis is the quickest route to restoring it.
-
-**"The most senior person should fix it."** Roles matter more than rank. A commander coordinates, and the people closest to the system fix.
-
-**"Backups exist, so we are safe."** A backup you have not restored is a hope. Test restoring regularly.
-
-**"Silence while we work is professional."** Regular honest updates keep trust. Silence breeds rumour.
-
-**"An incident means somebody failed."** In a complex system, incidents are inevitable. What matters is how quickly the team detects, recovers and learns.

@@ -162,15 +162,3 @@ A project is easy to count as a success if it hit the date, the budget and the s
 ## Closing Properly
 
 Closing is the stage most often skipped, because the team is tired and the next project is waiting. Yet it holds some of the best value. A proper close hands the result to the people who will run it, with documentation and training, confirms with the customer that the goals were met, releases the team and equipment, and records the lessons. A short **lessons-learned** session asks what went well, what did not and what to do differently, and writes the answers where the next project will find them. Without it the organisation pays again for the same mistakes.
-
-## Five Misreadings of Project Management
-
-**"The project manager is the person who does the schedule."** The schedule is one output. The manager's real work is clarifying goals, removing obstacles, managing risk and keeping people informed and aligned.
-
-**"If the plan is good, execution follows."** Plans meet reality. The value of a plan is that it makes differences visible so they can be handled while they are small.
-
-**"Scope, time and cost can all be fixed."** They are linked. If all three are fixed, the pressure shows up in quality, in the people, or in a failure at the end.
-
-**"Project management is overhead for developers."** A project without it still has the work. It just has no one watching dependencies, no list of risks, and no routine for noticing trouble.
-
-**"Success is delivering what was specified."** What was specified may not be what was needed. The outcome for the users matters as much as the delivery.

@@ -130,15 +130,3 @@ Teams sometimes ask which to use. Both aim to describe what users need, and they
 | **Weakness** | Easy to lose the overall picture | Easy to become heavy and out of date |
 
 They combine well: a story can name a feature, and a use case can describe the complicated flow behind it. Many teams use stories for the backlog and a short use case where a feature has many branches.
-
-## Five Misreadings of Use Cases
-
-**"A use case is a diagram."** The diagram is an index. The use case is the text: goal, flows and conditions.
-
-**"Only the main flow needs writing."** The alternate flows hold most of the questions and most of the bugs. A use case with only a happy path is unfinished.
-
-**"Use cases describe the screens."** They describe what the actor wants to achieve and how the system responds, without fixing the interface. The same use case can be met by different screens.
-
-**"Use cases are old-fashioned and agile does not use them."** Teams that use stories often write a short use case for a complicated feature, because a flow with many branches is clearer as steps than as a one-line story.
-
-**"A scenario and a use case are the same."** A use case is the family of all paths towards one goal. A scenario is one path with real names and values.

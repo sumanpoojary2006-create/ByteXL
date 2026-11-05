@@ -126,15 +126,3 @@ A practical approach is to choose a few measures that match real concerns, to se
 <!-- Visual: a table of ten functions ranked by complexity, with the top three circled and a note beside each saying "a parser, fine", "a fee rule, split it" and "generated code, ignore". Save as images/83_ranked_functions_with_context.png. -->
 
 ![Function complexity rankings require context and change history before action](images/83_ranked_functions_with_context.png)
-
-## Five Misreadings of Code Metrics
-
-**"A low number means good code."** It means the measured property is low. Code can be simple and wrong, or simple and badly named.
-
-**"Complexity above ten is always a bug."** It is a warning to look. Some code is complex because the problem is.
-
-**"Hundred per cent coverage means well tested."** It means every line ran. It does not mean anything was checked.
-
-**"We should reward good scores."** Rewards invite gaming. Use metrics to start conversations.
-
-**"One tool's score is the truth."** Tools differ in their rules and thresholds. Use a score for comparison within one tool and over time.

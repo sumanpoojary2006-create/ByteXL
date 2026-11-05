@@ -130,15 +130,3 @@ Some risks will happen despite everything, and the project should have resources
 ## Risk in Agile and Iterative Projects
 
 Short cycles reduce risk by their nature, since a wrong direction costs a few weeks. Agile teams still manage risk, but with lighter tools: a short list of top risks reviewed in planning or retrospective, the riskiest stories done early, and spikes (short experiments) to settle technical unknowns before committing. A **risk burn-down** chart shows total exposure falling over time as risks are retired; a project whose exposure is not falling is not learning.
-
-## Five Misreadings of Risk Management
-
-**"Risk management is pessimism."** It is a way of making sure that optimism is backed by a plan. A team that has thought about what could go wrong is calmer when something does.
-
-**"A risk list is made once at the start."** New risks appear as the project proceeds, and old ones disappear. The register is reviewed throughout.
-
-**"The biggest risk is always technical."** People, suppliers, requirements and organisational support are often larger. Many large projects fail from these causes, not from the technology.
-
-**"If a risk is accepted, nothing more is needed."** Accepting means choosing not to act yet. The risk is still watched, with a trigger and a reserve.
-
-**"Precise numbers are needed."** Rough values are enough to rank. A debate about whether a probability is 0.3 or 0.4 misses the point; the debate that matters is whether it is nearer 0.1 or 0.6.

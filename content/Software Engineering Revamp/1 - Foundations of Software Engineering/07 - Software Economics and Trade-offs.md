@@ -135,15 +135,3 @@ Almost every number in an economic analysis is an estimate, and some are guesses
 Every item above is a trade-off between two good things, and the best habit is to write the trade-off down: what we chose, what we gave up, and why. Months later, when someone asks why the team built its own payment screen or why it shipped with a known defect, the record answers. Without it, the decision turns into folklore and is either defended out of habit or reversed without understanding.
 
 A good record is short. It states the situation that forced the decision, the options considered, the choice, the main reasons, and what would make the team revisit it. Some teams keep these as a numbered series of one-page notes beside the code. The cost of writing one is minutes. The benefit is that the next engineer, who was not in the room, can see the reasoning and tell whether the conditions that justified it still hold.
-
-## Five Misreadings of Software Economics
-
-**"Cheapest to build is cheapest overall."** Most of the cost comes after release. A cheap build that is expensive to change is not a bargain for software that will live for years.
-
-**"Bugs cost the same whenever you find them."** The cost depends on how many other things were built on top of the mistake and how many users have met it. The exact multiplier is debated, but the direction is not.
-
-**"Buying always beats building, or the other way round."** Neither wins in general. The answer depends on how long the capability is needed, how special it is to the product, and the risk of depending on someone else.
-
-**"Speed to market justifies any shortcut."** Speed is worth buying only up to the point where the defects it brings cost more than the time it saves. That point is different for a game and a hospital system.
-
-**"These numbers are what decide the matter."** The numbers are estimates. Their use is to make the assumptions visible and arguable. A decision that comes from an honest table is better than one that comes from the loudest voice, even if the table is rough.

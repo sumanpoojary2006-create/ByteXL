@@ -24,7 +24,20 @@ The **blameless postmortem**, popularised in software by companies such as Etsy 
 
 ## A Real Case: Aviation's Reporting Scheme
 
-Aviation learned this the hard way. The United States set up a confidential reporting scheme for pilots in 1976, in which reports made in good faith are collected and anonymised so that the whole industry can learn from them.
+In December 1974 a passenger aircraft on a flight into Washington crashed into a mountain while descending in cloud. The crew had misread an instruction on the approach chart, which was ambiguous. What made the accident bitter was that, about six weeks earlier, another airline's crew had made almost the same mistake on the same approach and had escaped. The airline had circulated a warning among its own pilots, but the information never reached other airlines, and there was no mechanism to share it.
+
+In response, the American aviation authorities and NASA set up a confidential reporting scheme in 1976. Pilots, controllers and others report mistakes and close calls. Reports made in good faith are protected from punishment, are stripped of names and are collected in a database that anyone in the industry can learn from. The scheme is still running, and tens of thousands of reports arrive each year. It is a main reason why flying has become so safe.
+
+The point of the scheme is its design. People report their own errors only if doing so is safe, and the whole industry benefits only if the lessons are shared and not locked inside one company.
+
+| Principle in the aviation scheme | The same principle in a software post-incident review |
+| --- | --- |
+| Reports are protected from blame | The review asks what let the mistake happen, not who made it |
+| Names are removed | Findings describe roles and systems |
+| Lessons are collected and shared | The write-up is open to other teams |
+| The scheme tracks patterns, not single events | The team looks for causes that recur |
+
+Post-incident analysis in software borrows these ideas. The topic that follows shows how to build a timeline, find the causes beneath the trigger and write actions that make the same mistake harder to repeat.
 
 ## What a Good Review Contains
 
@@ -120,15 +133,3 @@ Only 2 of 5 actions are complete after a month, and two are overdue. That is the
 <!-- Visual: A learning loop from incident to review to action and back to a safer system. -->
 
 ![A learning loop from incident to review to action and back to a safer system](images/10-learning-loop.png)
-
-## Five Misreadings of Post-Incident Analysis
-
-**"The aim is to find who did it."** The aim is to find why the system allowed it. Blame ends learning.
-
-**"There is one root cause."** Complex failures have several contributing factors. Look at every slice of the defences.
-
-**"If nobody was hurt, there's nothing to review."** Near misses are the cheapest lessons there are.
-
-**"Writing the report is the end."** The report is the start. Value comes from actions done.
-
-**"Blameless means no accountability."** People remain accountable for the follow-ups. What is removed is punishment for honest mistakes.

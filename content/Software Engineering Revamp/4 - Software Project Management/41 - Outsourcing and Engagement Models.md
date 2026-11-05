@@ -139,15 +139,3 @@ Neither is better; they train different strengths. A services engineer sees many
 <!-- Visual: a services company serving several clients with different projects, beside a product company serving many customers with one product. Save as images/41_services_vs_product.png. -->
 
 ![A services company delivers different projects for clients while a product company develops one product for many customers](images/41_services_vs_product.png)
-
-## Five Misreadings of Outsourcing
-
-**"Outsourcing is always cheaper."** The visible rate is lower, but coordination, rework and the loss of knowledge add cost. Compare the total, not the hourly figure.
-
-**"Fixed price removes the risk."** It moves it to the vendor, who prices it in and then defends the scope. Requirements that change turn it into a source of dispute.
-
-**"Time and materials means no control."** It gives flexibility. The control comes from visibility of the work, frequent delivery and a client who prioritises.
-
-**"A good contract is enough."** Contracts handle what is foreseen. Trust, communication and shared incentives handle the rest.
-
-**"Services and product companies are the same work."** The incentives, the pace and the kind of problem differ, and they suit different people at different times.

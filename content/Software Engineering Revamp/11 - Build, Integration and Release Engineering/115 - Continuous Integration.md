@@ -129,15 +129,3 @@ The practice depends on a few conditions.
 | Branches live for weeks | Integration is deferred | Break work into small slices; use feature flags |
 | Tests added only to hit coverage | Gate being gamed | Review test quality |
 | Only one person can change the pipeline | Knowledge risk | Document it; share ownership |
-
-## Five Misreadings of Continuous Integration
-
-**"CI is a tool you install."** The tool runs the build. CI is the habit of integrating often, which no tool can do for you.
-
-**"If the build is green, the software is good."** Only as good as the tests behind it. Green means the checks passed.
-
-**"CI means running the tests nightly."** A nightly build is better than none, but the feedback is a day late. CI runs on every change.
-
-**"Long-lived feature branches are fine with CI."** They defer the integration that CI exists to make frequent.
-
-**"A failing build can wait until tomorrow."** Every change merged on top of a broken main line makes the cause harder to find. Fix it first.

@@ -128,15 +128,3 @@ Practical habits make maintenance sustainable.
 <!-- Visual: a bar split into four coloured sections for corrective, adaptive, perfective and preventive maintenance, drawn for a typical project, with a note that the fault-fixing section is the smallest. Save as images/126_maintenance_share.png. -->
 
 ![Corrective maintenance is only one and often the smallest share of maintenance work](images/126_maintenance_share.png)
-
-## Five Misreadings of Software Maintenance
-
-**"Maintenance is bug fixing."** Fixing faults is the smallest part. Most is adapting to change and adding improvements.
-
-**"Maintenance starts after development ends."** It starts with the first release, and for successful systems goes on for decades.
-
-**"Old software should just be replaced."** Rewriting is costly and risky. Many old systems are better maintained, and COBOL still runs payments and benefits.
-
-**"Maintenance is less skilled work."** It needs more understanding of unfamiliar code than new development does.
-
-**"We can skip preventive work."** It pays for itself in cheaper future changes. Skipping it is borrowing.

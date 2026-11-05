@@ -132,15 +132,3 @@ The test documents are a means to an end. For a regulated medical device, detail
 <!-- Visual: a scale from "a risk list and automated tests" through "a one-page test plan and a spreadsheet of cases" to "a full plan, cases and traceability matrix", labelled with the kind of project each suits. Save as images/93_paperwork_scale.png. -->
 
 ![Test documentation grows with product risk and regulatory need](images/93_paperwork_scale.png)
-
-## Five Misreadings of Test Planning
-
-**"A test plan is a document to be filed."** It is a set of decisions made in advance, and its value is in having thought about scope and risk.
-
-**"All features get equal testing."** Equal effort over-tests the trivial and under-tests the critical. Allocate by risk.
-
-**"A test case without expected results is fine."** It cannot fail, so it cannot find anything. Every test states what should happen.
-
-**"More test cases mean better testing."** Variety and relevance matter. Hundreds of near-duplicate cases are a burden.
-
-**"Documentation proves the testing was good."** It proves the testing was recorded. Quality shows in what was found and how well the tests fit the risks.

@@ -140,15 +140,3 @@ The choice depends on cost and risk. The cost of vagueness is low for a student 
 <!-- Visual: a scale from a one-page brief through a story backlog with acceptance criteria to a full numbered SRS, labelled with rising cost of mistakes. Save as images/27_spec_weight_scale.png. -->
 
 ![Specification detail increases from a one-page brief to a traceable SRS as the cost of mistakes rises](images/27_spec_weight_scale.png)
-
-## Five Misreadings of the SRS
-
-**"An SRS is a thick document nobody reads."** A bad one is. A good one is short for its situation, organised for its readers, and used as the reference when a question arises.
-
-**"Agile means no specification."** Agile teams still specify, in smaller pieces and often as examples and acceptance criteria. What they avoid is writing everything before building.
-
-**"More detail is always better."** Detail that is not needed becomes out of date and hides what matters. Detail should go where mistakes would be costly.
-
-**"The SRS is for the developers."** Customers read it to confirm it says what they meant, testers use it to design tests, and maintainers use it to learn why the system behaves as it does.
-
-**"Once signed off, it is fixed."** It changes through a controlled process. A specification that is never updated slowly stops describing the real system.

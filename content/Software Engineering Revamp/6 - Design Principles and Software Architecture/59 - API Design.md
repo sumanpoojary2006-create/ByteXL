@@ -124,9 +124,9 @@ The last is the most dangerous because no error alerts anyone.
 
 When a breaking change cannot be avoided, the provider releases a new **version** and keeps the old one running for a while. Versions can be indicated in the address (`/v2/students`), in a header or, as Stripe does, by date. Good practice is to announce the change early, run old and new together for an overlap period long enough for callers to move, monitor who still uses the old one and contact them, and then retire it with plenty of notice. Retiring is part of the contract, and what a provider promises about it should be written down.
 
-<!-- Visual: old and new API versions overlapping during a migration period. -->
+<!-- Visual: URL path versioning routes GET /v1/students/42 and GET /v2/students/42 to separate endpoints while both versions remain active during migration. -->
 
-![Overlapping API versions give consumers time to migrate before sunset](images/03-version-overlap.png)
+![URL path versioning routes v1 and v2 student requests to separate API versions during an overlap period before v1 is sunset](images/03-version-overlap.png)
 
 Testing helps too. **Contract tests** check that the provider still returns what its documented contract promises, and that the consumer still uses only what the contract allows. When both run automatically, a breaking change is caught before it ships.
 
@@ -137,15 +137,3 @@ Testing helps too. **Contract tests** check that the provider still returns what
 ## Documentation and Limits
 
 An API without documentation is a guess. Good documentation covers each operation's purpose, inputs and outputs, an example request with its response, the list of errors, and the limits. Limits matter more than beginners expect: how many calls per minute, how large a request can be, how long a result is kept. A **rate limit** protects the provider from overload and from one careless caller affecting everyone; a caller who has been told the limit can design for it, and one who has not will find it by failing.
-
-## Five Misreadings of API Design
-
-**"An API is just the functions we expose."** It is the full promise: inputs, outputs, errors, limits and the meaning of each field. The behaviour counts as much as the signature.
-
-**"Adding a field can never break anyone."** It cannot break a well-written client, but a client that rejects unknown fields will break. Tell consumers to ignore what they do not know.
-
-**"We can fix the API later."** Once it has users, every change has a cost. A name chosen carelessly may be kept for years.
-
-**"Errors are an afterthought."** A caller spends as much time on failures as on successes. A clear error contract saves hours of guessing.
-
-**"Version numbers solve compatibility."** They only label it. The work is in keeping old versions running and giving users time and notice to move.

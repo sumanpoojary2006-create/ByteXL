@@ -127,15 +127,3 @@ They can look alike, since both involve a central point. The difference is in th
 | **Mediator** | Many objects coordinating with each other | Objects need not know each other | A web of objects that all reference one another |
 
 They also combine. A button (the sender) creates a command and hands it to a queue. A subject notifies observers, and one of them is a mediator that coordinates the reaction.
-
-## Five Misreadings of These Patterns
-
-**"Observer means the subject controls what happens."** The subject only announces. What observers do is their business, and the subject usually cannot know.
-
-**"Observers are free."** Each adds work to every change, and a slow or failing observer can hold up the subject. Order of notification and failures need thought.
-
-**"Command is only for undo."** Undo is one use. Queues, logging, retry and remote execution all come from the same idea.
-
-**"A mediator removes complexity."** It moves it into one place. That is a gain only if the place is kept tidy.
-
-**"These need an object-oriented framework."** Callbacks, event emitters and message queues are the same ideas in simpler forms.

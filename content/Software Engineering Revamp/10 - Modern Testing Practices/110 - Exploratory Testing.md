@@ -123,15 +123,3 @@ The choice is a practical one, guided by the stage of the feature and the risk.
 | Before a major release | A bug bash plus scripts | Many perspectives, plus repeatable checks |
 
 The two work as a cycle. Exploration finds new problems and ideas, and the valuable ones are turned into scripts, so that the next session can move on to unexplored ground.
-
-## Five Misreadings of Exploratory Testing
-
-**"Exploratory testing is unplanned."** It is planned by charter, time box and heuristics. What is not planned is each step.
-
-**"It finds only trivial bugs."** It often finds the most serious ones, those no script anticipated.
-
-**"It is a replacement for automation."** It complements it. Scripts repeat, and exploration discovers.
-
-**"Only testers can do it."** Developers, designers and support staff are all good at it, from their own points of view.
-
-**"It cannot be measured."** Sessions can be counted, coverage can be recorded and the bugs found can be tracked. It is accountable without being scripted.

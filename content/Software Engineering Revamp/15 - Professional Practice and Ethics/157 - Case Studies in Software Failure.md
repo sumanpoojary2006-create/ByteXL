@@ -108,15 +108,3 @@ In each case, responsibility was spread across several parties, which is one rea
 | **Users and operators** | Use, response | Pilots or staff without proper training or information |
 
 A single person rarely causes a catastrophe. A chain of decisions, each reasonable in isolation, does. That is why the remedies are structural: independent checks, written assumptions, staged rollouts and cultures where concerns are heard.
-
-## Five Misreadings of Failure Case Studies
-
-**"It was one bug."** In each case, many factors lined up: the bug was one slice of cheese among several holes.
-
-**"Those were careless teams."** They included experienced engineers at respected organisations. The same pressures act on any team.
-
-**"It could not happen now."** The CrowdStrike failure is recent, and it repeats old patterns.
-
-**"The software failed."** The system failed: software, hardware, process, people and oversight together.
-
-**"We learn by being blamed."** We learn by understanding causes. The best case studies are written without blame.

@@ -27,7 +27,18 @@ It is not only about machine learning. Rule-based software encodes the assumptio
 
 ## A Real Case: Two Claims About One Score
 
-In 2016 the news organisation ProPublica analysed COMPAS, a risk score used in United States courts to predict whether a defendant would reoffend, and compared it with what actually happened. They found that among people who did *not* go on to reoffend, Black defendants were almost twice as likely as white defendants to have been labelled high risk. The company that made the score replied that it was equally accurate for both groups in a different sense: a given score meant about the same chance of reoffending whatever the person's group.
+In 2016 the news organisation ProPublica published an analysis of COMPAS, a score used in courts in parts of the United States to estimate how likely a defendant was to commit another crime. Judges used scores like it when deciding about bail and sentences. ProPublica collected the scores given to thousands of defendants in one county in Florida and compared them with what happened in the next two years.
+
+They found a pattern in the errors. Among defendants who did not go on to reoffend, about 45 per cent of Black defendants had been labelled high risk, compared with about 23 per cent of white defendants. Among those who did reoffend, white defendants were more often labelled low risk. The errors, in other words, fell differently on the two groups. The company that made the score, then called Northpointe, replied that the analysis had used the wrong test. By its measure, a given score meant about the same chance of reoffending whatever the person's group, so the score was fair.
+
+Both claims were correct about the numbers, and researchers afterwards showed why. When the two groups have different rates of the outcome in the data, as they did here, it is mathematically impossible to satisfy both kinds of fairness at once, except in special cases.
+
+| Fairness claim | What it requires | Who it favours in this case |
+| --- | --- | --- |
+| Equal error rates | The same share of wrongly flagged people in each group | Defendants who did not reoffend |
+| Equal meaning of a score | The same chance of the outcome for the same score | Those relying on the score to predict |
+
+The case teaches that fairness is not a single property that a system either has or lacks. Someone has to choose which definition applies to which decision, and that is a human and public choice, not a technical default. Fairness and societal impact is about asking who is affected by software and how, measuring the differences, and being open about the trade-offs made. The topic that follows describes the questions to ask and the practices that help.
 
 ## Measuring Unfairness
 
@@ -114,15 +125,3 @@ The positive side of the same concern is **inclusive design**: designing for the
 <!-- Visual: one-handed interaction supporting permanent, temporary and situational needs. -->
 
 ![One-handed interaction supporting permanent, temporary and situational needs](images/13-inclusive-touch.png)
-
-## Five Misreadings of Fairness and Societal Impact
-
-**"An algorithm is objective."** It reflects the data, the labels and the choices of those who built it.
-
-**"Remove the sensitive column and the bias is gone."** Other fields, such as postcode, can stand in for the removed one.
-
-**"One fairness metric settles it."** Different definitions conflict. The choice is a matter of values, and should be explicit.
-
-**"Fairness is the data scientist's job."** Requirements, design, testing, deployment and monitoring all shape the outcome.
-
-**"If it is accurate on average, it is fine."** Averages hide who bears the errors.

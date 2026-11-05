@@ -125,15 +125,3 @@ A factory earns its place when there is, or soon will be, more than one thing to
 | **Misspelt keys** | A typo in a string gives a run-time failure | Use constants or an enumeration; fail loudly with the list of valid kinds |
 | **Hidden dependencies** | The factory reaches for global settings | Pass what it needs as arguments |
 | **A factory for one class** | Ceremony with no benefit | Use the constructor |
-
-## Five Misreadings of Factory Patterns
-
-**"A factory is just a wrapper around `new`."** It is a place where a decision is made. The wrapper is the means; the decoupling is the purpose.
-
-**"Every class needs a factory."** Only where creation involves a choice or complexity. A plain constructor is fine otherwise.
-
-**"Abstract Factory and Factory Method are the same."** One creates a single product by kind. The other creates a family of matching products.
-
-**"Factories make code flexible for free."** They move complexity to the factory. A factory that grows to hundreds of lines of branches needs its own care.
-
-**"A string key is a good way to pick a class."** It is simple, and a typo becomes a run-time error. An enumeration or a lookup table is safer for larger sets.

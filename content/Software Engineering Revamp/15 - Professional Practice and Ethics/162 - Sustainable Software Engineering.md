@@ -122,15 +122,3 @@ Sustainability competes with other goals. Carbon-aware scheduling delays work. H
 <!-- Visual: a daily curve of grid carbon intensity with two dips at night and early afternoon, and a flexible batch job bar sliding from the evening peak into the afternoon dip, with the emission figure falling beside it. Save as images/162_job_slides_into_clean_window.png. -->
 
 ![Moving a flexible batch job from a carbon-intensive peak to a cleaner window lowers emissions](images/162_job_slides_into_clean_window.png)
-
-## Five Misreadings of Sustainable Software
-
-**"Software has no physical footprint."** It runs on hardware that is manufactured, powered and cooled.
-
-**"Only data centres matter."** Networks and users' devices account for a large share, and embodied carbon in devices is often the biggest part.
-
-**"Efficiency and sustainability are the same."** Efficiency is one lever. Hardware use and carbon awareness are others.
-
-**"Green means slow or worse."** Many savings come from removing waste and improve the experience, such as lighter pages.
-
-**"One engineer cannot make a difference."** Choices multiplied across millions of users and runs add up, and design decisions are made by engineers.

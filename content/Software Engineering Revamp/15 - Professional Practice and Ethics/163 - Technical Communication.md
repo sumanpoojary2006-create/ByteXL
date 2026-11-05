@@ -131,15 +131,3 @@ Spoken communication matters as much. In a meeting, state the purpose and the de
 <!-- Visual: confirming a shared understanding by restating a request and recording the decision. -->
 
 ![Confirming a shared understanding by restating a request and recording the decision](images/21_confirmation_loop.png)
-
-## Five Misreadings of Technical Communication
-
-**"Good engineers don't need to write well."** Their ideas reach others only through words. Clear writing multiplies an engineer's impact.
-
-**"More detail is more professional."** Relevant detail in the right order is. Extra material buries the point.
-
-**"Jargon shows expertise."** Plain language shows it better, and lets more people join the discussion.
-
-**"Documentation can wait."** It is cheapest when the facts are fresh, and a design doc written before building is also a thinking tool.
-
-**"Writing is a talent."** It is a skill that improves with a reader in mind, a draft, a review and a revision.

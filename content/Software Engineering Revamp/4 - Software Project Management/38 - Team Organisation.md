@@ -101,15 +101,3 @@ Onboarding is also when documentation proves its value. A guide that a new perso
 ## Keeping Knowledge in the Team
 
 People leave, and what they know leaves with them unless the team has taken care to share it. Practices that spread knowledge include pair programming and rotation of tasks so that no part of the system has a single owner, code review as a way to learn what colleagues are doing, short written records of decisions and their reasons, and shared documentation maintained as part of normal work. A simple health check is to ask, for each important part of the system, whether two people could fix it tomorrow if the usual owner were away. Where the answer is no, a quiet risk is waiting.
-
-## Five Misreadings of Team Organisation
-
-**"More people finish sooner."** Only if the work divides cleanly and the team is not already stretched by coordination. For a late project, adding people usually delays it first.
-
-**"Conway's law is a joke."** It began as an observation and has been confirmed many times. Ignore it and the org chart shapes the design anyway.
-
-**"Specialist teams are more efficient."** They can be, within their specialty. But features that cross several specialist teams wait in queues. Cross-functional teams often deliver faster.
-
-**"A big team can be managed like a small one."** Past a certain size, communication needs structure, such as splitting into teams with clear interfaces. Treating twenty people as one team is a recipe for silence.
-
-**"Onboarding is the new person's problem."** It is a team process. A hard-to-join team is paying a hidden cost on every hire.

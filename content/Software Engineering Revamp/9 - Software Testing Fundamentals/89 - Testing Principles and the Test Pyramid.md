@@ -112,15 +112,3 @@ Pushing a check down to the lowest level that can answer it keeps the suite fast
 ## Putting the Principles to Work
 
 A test strategy for a real project might read: start with reviews of requirements and designs. Write unit tests with the code, and many of them. Add integration tests at the points where components meet. Keep a small set of end-to-end tests for the critical paths. Watch the defect log, and when a module keeps appearing, give it more tests and a closer review. Refresh the test suite regularly. Always ask whether the tests reflect what users need.
-
-## Five Misreadings of Testing Principles
-
-**"Testing is the last step before release."** Testing begins with the requirements. The earlier a defect is found, the cheaper it is to fix.
-
-**"All modules deserve equal testing."** Defects cluster. Effort should follow risk and past trouble.
-
-**"A suite that always passes is a good suite."** It may have stopped finding anything. Review it, and add tests that probe new risks.
-
-**"The pyramid is a rule."** It is a heuristic about speed and precision. Some products need more integration tests than a pyramid suggests.
-
-**"More end-to-end tests give more confidence."** They give realism but also fragility and slowness. Confidence comes from the right mix.

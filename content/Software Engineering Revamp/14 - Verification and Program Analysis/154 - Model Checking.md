@@ -32,7 +32,17 @@ If a property is violated, the checker does not merely say so. It produces a **c
 
 ## A Real Case: A Thirty-Five-Step Bug
 
-Engineers at Amazon Web Services reported in 2014 that they had used a model checker on the designs of core services such as storage and found subtle bugs that needed a sequence of around thirty-five steps to appear, a path that no test or review had found.
+In 2014 engineers at Amazon Web Services described, in an account later published in a leading computing journal, how they had started to use formal specification and model checking on the designs of some of their most important services, such as storage and data stores. They had been building systems for years that were large, distributed and critical, and they knew from experience that the hardest faults were not in the code but in the design, in rare orders of events that no one had thought of.
+
+They wrote their designs in a precise specification language, TLA+, and used a model checker to explore every possible sequence of events in a simplified version of the system. In one design the tool reported a failure that needed a sequence of about thirty-five steps to occur: a particular set of failures and restarts in a precise order. Design reviews had missed it, and so had testing, which can only try the cases that someone thought to write. A human would probably never have thought of that sequence, and in a live service it might have caused data to be lost once in a very long while, in a way no one could reproduce.
+
+| Approach | What it covers | What it misses |
+| --- | --- | --- |
+| Code review | The cases a reviewer thinks of | Rare sequences of events |
+| Testing | The cases someone wrote down | Everything else |
+| Model checking | Every sequence in the model, up to its size | Faults in parts the model leaves out |
+
+Model checking is a way to get a machine to search all of the behaviours of a design and report a counter-example, the exact sequence that breaks a property. This topic explains how a system is described as states and transitions, what properties can be checked and why the state explosion is the main limit.
 
 ## A Model Checker in Twenty Lines
 
@@ -124,15 +134,3 @@ For an ordinary CRUD application with simple logic, it is usually not worth the 
 <!-- Visual: a state graph with an initial state at the left, many branching states, one red state marked "violates the rule", and a highlighted path from the start to it labelled counterexample. Save as images/154_state_graph_counterexample.png. -->
 
 ![A model checker returns a counterexample path to the state that violates the rule](images/154_state_graph_counterexample.png)
-
-## Five Misreadings of Model Checking
-
-**"Model checking proves the program correct."** It checks a model of the design, within bounds. The code can still differ from the model.
-
-**"It is only for academics."** Amazon, Microsoft and chip makers use it on real systems, and found bugs that reviews and tests missed.
-
-**"If the checker finishes, there are no bugs."** There are none of the kinds you asked about, in the model you wrote. A missing property is not checked.
-
-**"Counterexamples are just error messages."** They are a replayable story of the failure, and often the best test case.
-
-**"It replaces testing."** It checks the design. Testing checks the implementation and the environment.

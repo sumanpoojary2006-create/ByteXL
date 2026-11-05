@@ -119,15 +119,3 @@ Before blaming the test, consider that a race in the *product* will make a test 
 <!-- Visual: a test results dashboard with a flakiness rate per test, one test highlighted that fails 3 times in 100 runs, an owner and deadline attached, and a count of quarantined tests over time. Save as images/108_flaky_test_dashboard.png. -->
 
 ![A flakiness dashboard assigns ownership and tracks quarantine reduction over time](images/108_flaky_test_dashboard.png)
-
-## Five Misreadings of Flaky Tests
-
-**"A flaky test is a test problem, not a product problem."** Sometimes the product has a race or an ordering bug that the test is correctly revealing.
-
-**"Re-run it and it will pass."** That teaches the team to ignore red. Every unexplained failure should be recorded.
-
-**"Flakiness is rare."** At scale, it is constant. A study at Google found that about one in six of its tests showed some flakiness.
-
-**"Add a longer wait."** Fixed waits are slow and still fail on a bad day. Wait for the condition you need.
-
-**"Delete flaky tests."** Only after deciding they are not valuable. A flaky test of an important behaviour should be fixed, not removed.

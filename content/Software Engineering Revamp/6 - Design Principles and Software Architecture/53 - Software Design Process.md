@@ -123,15 +123,3 @@ Design can go on forever. Two guides help to stop. First, design until the riski
 | Interface between two teams' modules | Days of coordination | A written agreement and review |
 | Database choice | Weeks, with data migration | A comparison and a prototype |
 | Splitting into separately deployed services | Months | A full design document and review |
-
-## Five Misreadings of Software Design
-
-**"Design is drawing diagrams."** Diagrams record a design. The design is the set of decisions behind them.
-
-**"If we do not design, we avoid design."** Not designing means the design is made by default, line by line.
-
-**"A design is finished before the coding starts."** It is refined as the team learns. Design and coding feed each other.
-
-**"Good design means the most flexible design."** It means one that fits the forces actually present. Flexibility that nobody needs is cost.
-
-**"The architect decides and others follow."** Design works best as a conversation, with those who must build and run the system helping to find the problems.

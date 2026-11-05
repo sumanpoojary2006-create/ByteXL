@@ -17,7 +17,18 @@ The two words overlap, and the difference is useful. **Monitoring** watches for 
 
 ## A Real Case: The Monitor That Went Quiet
 
-In 2017 the credit-reporting company Equifax suffered one of the largest data breaches in history. Among the failures was a security tool that inspected network traffic for signs of data theft: its digital certificate had expired months earlier, so it silently stopped working, and nobody noticed. Attackers moved data out for about two months before the certificate was renewed.
+In 2017 the credit-reporting company Equifax suffered one of the largest data breaches on record, in which information about 147 million people was taken. Among its many failures was a small and revealing one. The company ran a tool that watched network traffic for signs of data being taken out, which was exactly the tool that could have seen the attack. To read encrypted traffic, the tool relied on a digital certificate, and the certificate had expired about nineteen months earlier. When it expired, the tool did not complain. It simply stopped inspecting, and since it still looked as if it was running, nobody noticed. The attackers moved data out for roughly seventy-six days, until the certificate was finally renewed in July 2017 and the tool began to show what had been happening.
+
+A monitor that has failed in silence is worse than no monitor, because everyone assumes that no news means no problem. Observability work has to include the question that Equifax never asked: how would we know if the thing that tells us about problems had itself stopped working?
+
+| Question | Why it matters |
+| --- | --- |
+| Is the monitor itself being monitored? | A silent failure looks identical to a quiet system |
+| Do expiry dates raise an alert well before they arrive? | Certificates and keys expire on a known schedule |
+| Does a lack of data raise an alarm? | An absence of events can be the signal |
+| Who owns each alert? | A warning with no owner is read by no one |
+
+This topic explains logs, metrics and traces as the three ways a running system reports on itself. The Equifax case adds a fourth requirement: those reports must themselves be trusted, tested and kept alive.
 
 ## Three Kinds of Signal
 
@@ -124,15 +135,3 @@ Monitoring tools themselves need watching. Monitoring is a system, and it can fa
 <!-- Visual: a request passing through four services with a trace bar showing the time spent in each, a metric graph above showing an error spike, and log lines below tied to the same request identifier. Save as images/124_three_signals_one_request.png. -->
 
 ![Metrics traces and logs connect the same request to a payment timeout](images/124_three_signals_one_request.png)
-
-## Five Misreadings of Logging and Observability
-
-**"More logs mean more visibility."** Too many bury the signal. Log what will be needed to answer questions.
-
-**"Logs are enough."** They show detail but not the overall picture or the path across services. Use metrics and traces too.
-
-**"Monitoring tells us when we are healthy."** It tells you about what is measured. Silence can mean health or a broken monitor.
-
-**"Logging is a developer convenience."** It is a production feature, and needs design, privacy care and retention rules.
-
-**"An alert should fire for every error."** That causes fatigue. Alert on what needs a human to act.

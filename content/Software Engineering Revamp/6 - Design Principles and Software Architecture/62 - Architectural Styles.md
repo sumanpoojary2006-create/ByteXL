@@ -114,15 +114,3 @@ Each style fails in a recognisable way when its rules are broken, and spotting t
 | Plug-in | Plug-ins reach into the core's internals | The core cannot change without breaking every plug-in |
 
 In every case the underlying fault is the same: the rule that gave the style its benefit has been quietly broken, so the costs remain and the benefits do not.
-
-## Five Misreadings of Architectural Styles
-
-**"A style is a design."** It is a pattern for designs. The same style yields very different systems.
-
-**"Each system has one style."** Most mix several, at different levels. The skill is to know which applies where.
-
-**"A fashionable style is the right choice."** Choose by the qualities the system needs. A style that suits a streaming service may not suit a school's attendance form.
-
-**"Event-driven is always more flexible."** It decouples in some ways and adds difficulty in others. Debugging an event flow is harder than following a call.
-
-**"Layers mean the code is well structured."** Layers can still be tangled if dependencies skip or reverse. The rule is about the direction of dependencies, not just the number of layers.

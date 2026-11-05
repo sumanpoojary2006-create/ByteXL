@@ -28,7 +28,18 @@ Any of these can be attacked. The aim of **software supply chain security** is t
 
 ## A Real Case: A Half-Second Delay
 
-In March 2024 a Microsoft engineer, Andres Freund, noticed that logins to a test machine were taking about half a second longer than they should. Tracing the delay, he found a hidden backdoor in xz, a compression library that sits underneath the remote-login software on most Linux servers. It had been placed by someone who spent roughly two years earning the trust of the library's sole maintainer, and it was found because of that half-second delay.
+In March 2024 Andres Freund, an engineer at Microsoft who works on the PostgreSQL database, was running routine performance tests on a development machine. He noticed that logging in over the remote-access tool SSH was taking about half a second longer than it should, and that it was using more processor time than expected. Most people would have ignored it. He investigated, and traced the delay to xz, a compression library that sits beneath the remote-login software on many Linux systems.
+
+What he found was a deliberate backdoor. A person using the name Jia Tan had been working on the xz project for about two years. They had made helpful contributions, gained the confidence of the library's only maintainer, an unpaid volunteer who was under pressure from other users to hand over responsibility, and finally been given the right to publish releases. The malicious code was hidden in test files and added at build time, so that it did not appear in the source that reviewers normally read. Had it reached the stable releases of the main Linux distributions, it could have given its author a way to run commands on a vast number of servers. It was caught weeks before that happened, by accident, because of half a second.
+
+| Weak point | What it shows |
+| --- | --- |
+| A critical component maintained by one volunteer | Dependency on people, not just on code |
+| Trust built slowly through helpful work | Attacks can be patient |
+| Malicious code hidden in build files and test data | Reviewing source alone is not enough |
+| Detection by one curious engineer | Defences cannot depend on luck |
+
+Software supply chain security is concerned with everything that goes into a product other than the code the team wrote: libraries, build tools, packages and the people behind them. This topic covers how to know what you depend on, verify where it came from and limit the damage if one part is compromised.
 
 ## Ways the Chain Breaks
 
@@ -131,15 +142,3 @@ No single defence covers everything. The practice is layered, in the same way as
 <!-- Visual: a chain with links labelled source code, libraries, build system, registry, installer and running application, a red cross marking a compromised link and arrows from it to many downstream applications. Save as images/145_chain_with_broken_link.png. -->
 
 ![One compromised library can propagate through a supply chain into many applications](images/145_chain_with_broken_link.png)
-
-## Five Misreadings of Supply Chain Security
-
-**"We only need to secure our own code."** Most of the code you ship is someone else's. Their flaws are yours.
-
-**"Popular means safe."** Popular packages are targets, and are often maintained by one person.
-
-**"A hash check proves a package is safe."** It proves it is the same as what was published. It does not prove the publisher is trustworthy.
-
-**"Open source is less secure."** Closed source has supply chains too. Open source lets everyone look, as in the xz case.
-
-**"This is a problem for big companies."** Any project that installs packages is in the chain.

@@ -120,15 +120,3 @@ Avoid assertions with **side effects**, such as one that checks the result of a 
 <!-- Visual: a function drawn as a box with an assertion gate at the entrance for the precondition, one inside the loop for the invariant, and one at the exit for the postcondition. Save as images/149_assertions_in_a_function.png. -->
 
 ![Preconditions invariants and postconditions guard different points in a function](images/149_assertions_in_a_function.png)
-
-## Five Misreadings of Assertions
-
-**"Assertions are for validating user input."** They are for catching bugs. Input needs proper validation that cannot be disabled.
-
-**"A failing assertion should be caught and ignored."** It signals a bug. Catch it to log and fail safely, not to carry on as if nothing happened.
-
-**"Assertions have no cost."** They take time, and some are costly. Choose which stay on.
-
-**"Put side effects in assertions to save lines."** If assertions are switched off, the side effects vanish and the program changes behaviour.
-
-**"More assertions are always better."** Pointless ones add clutter. Use them for the facts that matter.

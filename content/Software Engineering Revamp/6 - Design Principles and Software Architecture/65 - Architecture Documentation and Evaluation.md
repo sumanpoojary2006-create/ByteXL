@@ -129,15 +129,3 @@ Even a well-designed architecture decays if nobody guards it. Each shortcut, a l
 ## Keeping Documentation Alive
 
 Architectural documentation fails when it is written once and forgotten. A few habits help. Keep it small, so it can be kept up to date. Put it in the repository, so that a change to the structure shows up in the same change as the documentation. Prefer diagrams made from text, so they can be reviewed. Date every decision. And treat out-of-date documentation as a defect, not as an accepted state.
-
-## Five Misreadings of Architecture Documentation
-
-**"One big diagram is the architecture document."** One picture cannot show structure, behaviour, deployment and reasons. Use several views, each for a reader.
-
-**"ADRs are bureaucracy."** A half-page written on the day of a decision saves hours of puzzling later. The cost is small and the benefit is long.
-
-**"We can reconstruct the reasons from the code."** The code shows what was done. It does not show the alternatives that were rejected or the forces that decided it.
-
-**"Evaluation is done once, before building."** The goals and the system change. Evaluate at major changes and keep automatic checks running.
-
-**"A fitness function must be sophisticated."** A ten-line script that fails the build on a forbidden import is a fitness function, and it is often the most effective one.

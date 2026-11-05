@@ -113,15 +113,3 @@ Discovery and requirements engineering are neighbours. Discovery decides *which*
 <!-- Visual: need, requirement and solution shown as three connected layers. -->
 
 ![Need, requirement and solution shown as three connected layers](images/01_need_requirement_solution.png)
-
-## Five Misreadings of User Research
-
-**"Users know what they want."** They know what they have difficulty with. Finding a solution is the designer's job, and people can only ask for improvements to what they already know.
-
-**"A persona is a made-up character."** A good persona summarises patterns found in real research. One built from imagination only tells a team what it already believes.
-
-**"Discovery is a phase that ends before building."** New questions arise throughout. Teams that stop learning once the build starts find out too late.
-
-**"Asking more people is always better."** A handful of well-run interviews usually shows the main patterns. Beyond that, the extra effort is better spent observing or testing a prototype.
-
-**"If people say they would use it, they will."** Stated interest costs nothing. Evidence of behaviour, such as sign-ups or changed habits, is more reliable.

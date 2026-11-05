@@ -128,15 +128,3 @@ The output of system testing is information for a decision. A useful report stat
 | **Performance** | Measured response times and capacity against targets |
 | **Risks** | What remains uncertain, and why |
 | **Recommendation** | Release, release with conditions, or hold |
-
-## Five Misreadings of System Testing
-
-**"System testing is just running all the functional tests again."** It adds what only the whole system shows: load, compatibility, security, recovery and real use.
-
-**"If it works on my laptop, it works."** Real users have other devices, slower networks and more data. Test on those.
-
-**"Load testing is for big companies."** Any system with a deadline that sends many users to it at once, such as results or registration, needs it.
-
-**"Performance degrades smoothly."** It tends to be flat and then falls off a cliff. Find the cliff before launch.
-
-**"Testers should only confirm the requirements."** They should also explore what could go wrong in ways the requirements never mentioned.

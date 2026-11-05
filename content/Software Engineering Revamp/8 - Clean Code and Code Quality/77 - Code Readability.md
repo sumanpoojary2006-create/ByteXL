@@ -132,15 +132,3 @@ A practical check is to ask a colleague to read a function cold and then say wha
 | Wrong guess about a name's meaning | A misleading or vague name |
 | "I would need to run it" | Too many interacting parts; consider splitting |
 | "Why is this here?" | A missing comment about the reason |
-
-## Five Misreadings of Readability
-
-**"Readable means verbose."** It means clear. A short name that is well understood in its scope is fine, and a long name that adds nothing is noise.
-
-**"Comments make code readable."** Mostly they compensate for code that is not. Clear names and structure do more, and comments should explain why.
-
-**"Readability is subjective."** Some of it is taste, but a great deal is measurable: how long a new reader takes to find the rule for the pass mark, how often a name caused a wrong guess.
-
-**"Clever code shows skill."** Skill is shown by solving the problem simply enough that others can maintain the solution.
-
-**"We can tidy it later."** The cost of poor readability is paid on every reading. Later usually never comes, and the confusion becomes part of the system.

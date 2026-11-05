@@ -113,15 +113,3 @@ Many teams begin with a monolith and extract services over time. A cautious rout
 | 6. Review | Did it deliver the benefit that justified it? | Continuing on faith |
 
 The reverse path also exists. Teams that over-split sometimes merge services back together after finding that two services always change as one. Treating the architecture as something that can move in both directions is healthier than treating microservices as a destination.
-
-## Five Misreadings of Monoliths and Microservices
-
-**"Microservices are the modern way and monoliths are legacy."** Both are valid. Many successful systems are monoliths, and some teams have moved back.
-
-**"Small services make the system simple."** Each service is simple. The system, with its network, data and deployment complexity, is not.
-
-**"A monolith cannot scale."** It can scale by running more copies. It cannot scale parts independently, which matters only if the parts have very different loads.
-
-**"Splitting the code splits the system."** Services that share a database or must be released together are still coupled. Real independence needs separate data and separate release cycles.
-
-**"We can start with microservices to avoid migrating later."** Early boundaries are guesses. Starting with a well-structured monolith leaves room to learn where the real boundaries are.

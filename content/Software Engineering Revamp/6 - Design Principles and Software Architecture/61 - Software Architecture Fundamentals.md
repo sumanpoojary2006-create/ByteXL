@@ -121,15 +121,3 @@ Suppose the streaming team weighs two ways to serve the match. Design 1 serves e
 | Simplicity | Simple | More parts to operate |
 
 The table does not say Design 2 is simply better. It says that, for these scenarios, Design 1 fails the most important one. For a small college lecture stream with fifty viewers, the same table would favour Design 1. The architecture follows the scenarios, not fashion.
-
-## Five Misreadings of Architecture
-
-**"Architecture is the boxes-and-arrows diagram."** The diagram records it. The architecture is the set of decisions behind it.
-
-**"Architecture is done up front by an architect."** The big decisions come early, but they are tested and revised as the system is built. Teams share the work.
-
-**"Architecture is about technology choices."** It is about structure and qualities. A technology is chosen to serve them.
-
-**"A good architecture handles every future need."** It handles the needs that are likely, and leaves the rest cheap to add. Over-architecture is a cost too.
-
-**"Functional requirements shape the architecture."** Quality requirements usually shape it much more. The features can generally be built many ways. The scale, security and availability limit which ways are possible.

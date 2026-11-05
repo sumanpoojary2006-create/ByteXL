@@ -131,15 +131,3 @@ If a function is hard to test, the difficulty is information about the design. A
 <!-- Visual: a hard-to-test function reaching out to the clock, a database and a payment service on the left, and the same function receiving them as parameters on the right, with test stand-ins plugged in. Save as images/94_hard_to_test_vs_injected.png. -->
 
 ![Injected dependencies replace rigid external connections with controllable test stand-ins](images/94_hard_to_test_vs_injected.png)
-
-## Five Misreadings of Unit Testing
-
-**"A unit test must test a whole class."** It tests one behaviour. A class usually has many tests.
-
-**"Tests that touch a database are unit tests."** They are integration tests: slower and less isolated. Unit tests avoid real external systems.
-
-**"One test with many assertions is efficient."** When it fails, you learn only about the first assertion. Separate tests tell you everything that is wrong.
-
-**"Testing private methods is essential."** Test behaviour through the public interface. If a private method is complex enough to need its own tests, it may want to be its own unit.
-
-**"Unit tests slow development."** Writing them takes time. Having them makes every later change faster and safer.

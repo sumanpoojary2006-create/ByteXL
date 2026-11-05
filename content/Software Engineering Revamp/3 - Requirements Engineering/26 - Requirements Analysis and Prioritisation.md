@@ -106,15 +106,3 @@ An MVP only teaches something if the team decides beforehand what success looks 
 A ranked list becomes a plan when it is divided into releases or cycles. A simple way to do this is to take the Musts and the highest-scoring items for the first release, fit them to the team's capacity, and place the rest in later releases. The plan is a forecast, not a contract, and the product owner revisits it as the team learns. Items change position because evidence arrives: a feature turns out harder than estimated, users react unexpectedly, or a rule changes. A roadmap that cannot move is a sign that nobody is learning.
 
 It also helps to keep a visible list of what has been deliberately left out, with the reason. When someone asks months later why a feature is missing, the answer is a record and not a memory, and the item can be revived if circumstances change.
-
-## Five Misreadings of Prioritisation
-
-**"Everything is a Must."** When every item is a Must, nothing has been prioritised. The test is to ask what the release loses without it.
-
-**"The score decides."** A scoring model organises a conversation. If its result seems wrong, find the estimate behind it and discuss that.
-
-**"The loudest stakeholder's idea comes first."** Ordering by volume ignores value and cost. Scoring and shared criteria give quieter users a fair chance.
-
-**"An MVP is a low-quality product."** It is a small product that is good at the one thing it sets out to test.
-
-**"Won't have means never."** It means not in this release. Recording the item keeps the idea and lets the team be honest about scope.

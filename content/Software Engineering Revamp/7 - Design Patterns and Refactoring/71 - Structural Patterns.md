@@ -135,15 +135,3 @@ Every wrapper is a new thing to understand and a new place for a call to pass th
 | **Too many layers** | Four wrappers deep, no one knows which does what |
 
 Use a wrapper when it earns its place: when the underlying object cannot be changed, when many callers would otherwise repeat the same coordination, or when behaviour must be added at run time.
-
-## Five Misreadings of Structural Patterns
-
-**"Adapter, Facade, Decorator and Proxy are all just wrappers."** They share the wrapping form, and they differ in intent: translate, simplify, extend, control.
-
-**"A facade hides the subsystem completely."** It offers an easy way in. Advanced users can still reach the parts.
-
-**"Decorators are the same as inheritance."** Inheritance fixes the combination in advance, while decorators combine behaviours at run time.
-
-**"Wrapping is free."** Each layer adds a call and a place to look when debugging. Deep stacks of wrappers can be hard to follow.
-
-**"An adapter fixes a bad interface."** It lets you use one without changing it. If you own the code, changing the interface is often better.

@@ -146,15 +146,3 @@ A process that fits produces few complaints and steady output. These are warning
 | Defects found by customers, not by the team | Verification is too thin for the risk |
 
 Treat these as questions and not as blame. In most cases the process was a reasonable fit when it was chosen and the project has since changed.
-
-## Five Misreadings of Process Choice
-
-**"There is one best process."** The best process depends on the project's requirements, risks, people and rules. A method that suits a start-up can be wrong for a hospital.
-
-**"Agile is modern, so everything should be agile."** Agile suits uncertain, changeable work with available customers. For stable, regulated or safety-critical work, plan-driven elements may be required.
-
-**"Choose a process once at the start."** Projects change. A prototype becomes a product, a small team grows, a regulation arrives. The choice should be revisited.
-
-**"Hybrid means confusion."** A hybrid that is chosen deliberately, with each part matched to its risk, is a deliberate design. Confusion comes from mixing without reasons.
-
-**"The scoring sheet decides."** The numbers organise a discussion. If the sheet suggests something that everyone who knows the project finds absurd, trust the discussion and find out what the sheet is missing.

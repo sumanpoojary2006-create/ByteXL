@@ -146,15 +146,3 @@ A single piece of software has an answer in each of the three sortings, and the 
 | A college fee portal built by a contractor | Web application | Mostly inconvenience, some money | Project for one customer | A clear contract, agreed acceptance tests, a handover plan |
 
 Doing this analysis in the first week of a project is cheap and prevents the commonest early mistake, which is to treat the new project like the last one.
-
-## Five Misreadings of Software Types
-
-**"Embedded means small and simple."** The software is small in memory, but the problems are hard: deadlines measured in milliseconds, hardware that misbehaves, and no chance to patch a unit once it has shipped.
-
-**"Web and mobile are the same job on different screens."** They share ideas but not constraints. A mobile app must work with a bad connection and a small battery, and a web service must survive many users at once.
-
-**"AI-enabled software is just software with a clever component."** The behaviour comes partly from data and is only ever right some of the time. The team has to measure how often it is wrong, who it is wrong for, and what happens then.
-
-**"The same practices suit every kind of software."** A flight controller and a student club's website do not deserve the same amount of review, testing or paperwork. Choosing the right amount is itself an engineering skill.
-
-**"Product, project and service are the same thing with different names."** They differ in who owns the software, who pays and when, and what the team worries about. A method that fits a contract-driven project may fit a hosted service badly.

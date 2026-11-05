@@ -26,7 +26,19 @@ Typical ways to supply configuration are environment variables, configuration fi
 
 ## A Real Case: Keys in a Private Repository
 
-In 2016 attackers reached the private code repository of the ride-hailing company Uber, found cloud access keys stored in it, and used them to download the records of about 57 million riders and drivers. The keys had been placed where they seemed safe, and they were enough on their own to open the data.
+In 2016 attackers broke into the private code repository of the ride-hailing company Uber. The repository was hosted on a public service and protected only by the login details of engineers, which the attackers had obtained. They were not after the code. Inside it they found access keys for the company's cloud storage, left there so that programs could reach the data. With those keys they downloaded records belonging to about 57 million riders and drivers. The company paid the attackers 100,000 dollars to delete the data and kept quiet for about a year, a decision that later led to legal action and the conviction of its former head of security.
+
+Nobody had to defeat the cloud provider's security, and nobody had to find a flaw in Uber's software. The keys worked because they were valid, and anyone who held them was, as far as the system could tell, entitled to the data. The repository was private, which felt safe, but a private repository is read by every developer, every tool connected to it and every attacker who gets one set of credentials.
+
+Three habits would have limited the harm, and each is a theme of this topic:
+
+| Habit | How it would have helped |
+| --- | --- |
+| Keep secrets out of source code and history | The repository would have contained nothing worth stealing |
+| Store secrets in a managed vault and issue them when needed | Access can be logged, limited and withdrawn in one place |
+| Give each key the least access it needs, and rotate it | A leaked key opens a small door for a short time |
+
+The lesson is that where a secret is stored matters as much as how strong it is. A strong key in the wrong place is an unlocked door with a good lock on it.
 
 ## What Counts as a Secret
 
@@ -127,15 +139,3 @@ Developers need to run the application on their laptops without handling product
 | Local services (database, queue) in containers with throwaway passwords | No real data or credentials on laptops |
 | Separate low-privilege accounts for development | A leaked key opens little |
 | Test keys for third-party services | Payment sandbox keys, not live ones |
-
-## Five Misreadings of Configuration and Secrets
-
-**"A private repository is safe for secrets."** Many people can read it, and history keeps everything. Use a secrets manager.
-
-**"Deleting the commit removes the secret."** Copies, clones and caches may remain. Treat it as exposed and rotate it.
-
-**"Encoding it makes it a secret."** Base64 is not encryption. Anyone can reverse it.
-
-**"One set of keys everywhere is simpler."** It is simpler until a leak in testing opens production. Separate them.
-
-**"Configuration is a deployment detail."** A wrong setting is a common cause of outages. It deserves review and validation.

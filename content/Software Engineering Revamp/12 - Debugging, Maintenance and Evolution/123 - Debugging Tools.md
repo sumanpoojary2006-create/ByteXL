@@ -31,7 +31,18 @@ A debugger answers the question "what is the state right now?". It is slower tha
 
 ## A Real Case: Repairing a Spacecraft from Billions of Kilometres
 
-In 2024 engineers repaired the computer on Voyager 1, a spacecraft more than twenty billion kilometres away, where a message takes about a day to arrive and another to return. They asked the probe to report its memory, compared the readout with what they expected, found the corrupted region, and sent a patch that moved the affected code elsewhere. The method was the one used on any laptop, applied with patience.
+In November 2023 the Voyager 1 spacecraft, launched in 1977 and more than twenty billion kilometres from Earth, began sending its controllers a stream of meaningless data in place of its normal readings. It was still receiving commands and still working, but it could no longer report on itself. A signal takes about a day to reach it, and another day for the reply to come back, so every question costs two days, and there is no way to examine the machine in person.
+
+The engineers did what any programmer does with a program that will not behave. They first reproduced the symptom and narrowed down where it came from. They asked the spacecraft to send back the contents of its memory, a request that is the equivalent of a memory dump, and compared the readout with what they expected to find. The comparison showed that one small region of memory, about three per cent of it, had been corrupted, probably by a failed chip. Rather than repair hardware that nobody could touch, they split the affected program into pieces and wrote a patch that stored them in different places. They tested the idea on a copy of the system on Earth. In April 2024 they sent the change, waited the two days, and the spacecraft resumed sending usable readings.
+
+| Step in the Voyager repair | The same step on any program |
+| --- | --- |
+| Observe the failing symptom | Reproduce the bug |
+| Request a memory readout | Use a debugger or dump to inspect state |
+| Compare with the expected contents | Find where actual and expected values diverge |
+| Test the patch on a replica | Test a fix before it reaches users |
+
+The tools in this topic, from breakpoints to memory inspection, are ways of seeing inside a running program. On Voyager they had to be used with extreme patience, but the method is the one used for an ordinary bug.
 
 ## A Debugging Session, Step by Step
 
@@ -122,15 +133,3 @@ The simplest tool is to make the program tell you what it is doing. A `print` st
 <!-- Visual: A trace of a request through several services, showing where time is spent. -->
 
 ![A trace of a request through several services, showing where time is spent](images/21-trace-request.png)
-
-## Five Misreadings of Debugging Tools
-
-**"A debugger finds the bug for you."** It shows you the state. You still form the hypotheses.
-
-**"Stack traces are noise."** They are the best map of where a failure happened. Read them before changing anything.
-
-**"Print debugging is for beginners."** It is used by experts everywhere, as the quickest probe in many situations.
-
-**"Profile the whole thing and fix what looks slow."** Profile with realistic data, fix the biggest cost, and measure again.
-
-**"Tools replace thinking."** A tool gives evidence. Choosing what to look for is the skill.

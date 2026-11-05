@@ -119,15 +119,3 @@ A typical gap is the quality attributes. "The system must handle 5,000 payments 
 <!-- Visual: acceptance criteria turn one user story into checkable outcomes. -->
 
 ![Acceptance criteria turn one user story into checkable outcomes](images/05-story-criteria.png)
-
-## Five Misreadings of User Stories
-
-**"A user story is a small requirements document."** It is a reminder to talk. The detail comes from conversation and is captured in acceptance criteria, not in the sentence.
-
-**"The 'so that' part is optional."** It is the most useful part. Knowing the reason lets a team propose a better way to meet the need.
-
-**"Every story needs to follow the template."** The template helps, but a story that says the same thing in plain language is fine. Technical tasks that give no user benefit are better written as tasks than as awkward stories.
-
-**"Acceptance criteria are written after the work is done."** They are written before, so everyone agrees what done means. Written afterwards they only describe what was built.
-
-**"Passing acceptance criteria means the story is good."** It means the story meets its criteria. If the criteria miss something that matters, the story can pass and still disappoint, which is why the conversation with the customer continues after the check.

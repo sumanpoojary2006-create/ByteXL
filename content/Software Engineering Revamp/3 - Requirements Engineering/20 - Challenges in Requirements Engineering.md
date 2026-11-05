@@ -139,15 +139,3 @@ Change has several sources: the business shifts its priorities, the law changes,
 <!-- Visual: cumulative requests stacking up beyond the original deadline. -->
 
 ![Cumulative scope additions growing beyond the project deadline](images/12_scope_creep.png)
-
-## Five Misreadings of Requirements Engineering
-
-**"Requirements are what the customer asks for."** Requests are a starting point. Needs are found by asking why, watching real work and testing ideas.
-
-**"Requirements are written once, at the start."** They are discovered and refined for the whole life of the project. The aim is to notice change, not to forbid it.
-
-**"If the customer signed it, it is right."** A signature shows agreement with the words. It does not show that the words were understood in the same way.
-
-**"Ambiguity is a writing problem."** It is a shared-understanding problem. Better wording helps, but examples, tables and conversation settle it for good.
-
-**"Requirements engineering is paperwork before the real work."** It is the part of the work that decides whether the rest is worth doing. A system built perfectly to the wrong requirement is a perfectly built failure.

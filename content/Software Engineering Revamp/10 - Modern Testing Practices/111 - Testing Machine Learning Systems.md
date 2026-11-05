@@ -28,7 +28,17 @@ None of this makes testing impossible. It changes what a test looks like.
 
 ## A Real Case: The Chatbot That Learned from Strangers
 
-In 2016 Microsoft released a chatbot called Tay on social media, designed to learn from the conversations it had. Within hours, users had taught it to post abusive messages and it was withdrawn. The code did what it was written to do; the behaviour came from the data it was fed, and no test among friendly users had exposed it.
+In March 2016 Microsoft released Tay, a chatbot on Twitter that was meant to sound like a friendly American teenager and to get better at conversation by learning from the people who talked to it. It had been tested inside the company, and the tests went well. Within sixteen hours of the public launch it was taken offline. A coordinated group of users had discovered that Tay would repeat and absorb what it was told, and they fed it abusive and offensive messages until it began producing its own. Microsoft apologised and withdrew it.
+
+The interesting question for an engineer is which test would have caught this. Nothing in the code was broken. Every function did what it was written to do, and a conventional test suite would have passed. The fault lived in the relationship between the model and its data: the system learned from whoever turned up, and the people who turned up on launch day were not the people who had tested it.
+
+| What the team tested | What actually happened |
+| --- | --- |
+| Conversations with colleagues and friendly testers | Conversations with strangers who set out to cause harm |
+| Whether the bot replied sensibly | Whether the bot could be steered into replying harmfully |
+| The program's correctness | The behaviour that the training data produced |
+
+This is the central point of testing machine learning systems. The behaviour is learned, so the tests must examine behaviour: how the system responds to hostile, unusual and badly distributed inputs, and what limits stop it learning from them. A system that updates itself in public also needs monitoring and a way to switch it off quickly, which is exactly what Microsoft had to do. Later in this topic, the sections on data quality, behavioural tests and monitoring are all answers to the question Tay posed.
 
 ## Where Defects Come From in ML Systems
 
@@ -133,15 +143,3 @@ Adversarial testing, sometimes called red-teaming, deliberately tries to make th
 <!-- Visual: a model test pyramid: evaluation-set scores and slice checks at the base, metamorphic and behaviour regression tests in the middle, and adversarial and production monitoring at the top. Save as images/111_ml_test_layers.png. -->
 
 ![Machine-learning testing layers combine evaluation data behaviour checks adversarial tests and monitoring](images/111_ml_test_layers.png)
-
-## Five Misreadings of Testing ML Systems
-
-**"A high accuracy means the model is good."** It is an average over one set. It hides weak groups, rare cases and systematic mistakes.
-
-**"A model cannot be tested without exact expected outputs."** Evaluation sets, metamorphic relations and regression comparisons all work without a single exact answer.
-
-**"Test once, before release."** Models drift and are retrained. Testing and monitoring continue for as long as the system runs.
-
-**"The data is not part of the test."** Data defects cause model defects. The data needs checks as well.
-
-**"Bias is a separate ethical matter, not a testing one."** Unequal performance across groups is measurable and a defect. It belongs in the acceptance criteria.

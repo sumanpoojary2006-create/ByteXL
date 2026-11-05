@@ -132,15 +132,3 @@ The defence is not saying no. It is making each request visible with its cost, a
 ## Measuring How Stable the Requirements Are
 
 Because change is normal, the useful question is how fast it is happening. A simple measure is **requirements volatility**: the number of requirements added, changed or deleted in a period, as a share of the total. A project with 120 requirements that sees 6 changes in a month has volatility of 5 per cent a month, which is calm. One that sees 30 changes in a month is at 25 per cent and is either in the middle of discovery or losing control. Plotting the figure over time is informative: a healthy project's volatility falls as understanding grows, and a project whose volatility rises towards the end is probably about to miss its date.
-
-## Five Misreadings of Requirements Management
-
-**"Good management means no changes."** It means no *unnoticed* changes. A project that never changes may be a project that never listened.
-
-**"Change control is bureaucracy."** It can be, if it is heavy. A light version, such as a request, a quick impact note and a rule, is a few minutes and prevents months of drift.
-
-**"Traceability is only for regulated industries."** Regulated work requires it. Any project benefits from knowing what a change affects, and why each feature exists.
-
-**"The matrix is the goal."** A beautiful matrix nobody updates is worse than none. Its value comes from being used when something changes.
-
-**"Scope creep is the customer's fault."** It is a shared problem. Teams that accept requests without stating the cost cause it as much as customers who ask.

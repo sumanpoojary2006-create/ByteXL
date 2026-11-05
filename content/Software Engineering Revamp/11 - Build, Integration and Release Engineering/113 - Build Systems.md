@@ -142,15 +142,3 @@ A build is a product with its own quality measures.
 | **Failure rate not caused by code** | Near zero | Frequent random failures |
 | **Works on a fresh machine** | One documented command | A page of manual steps |
 | **Warnings** | None, or tracked | Hundreds ignored |
-
-## Five Misreadings of Build Systems
-
-**"A build is just compiling."** It also fetches dependencies, runs checks and packages the result.
-
-**"Rebuilding everything is safer."** It is slower, and a correct incremental build gives the same result. Trust comes from a correct dependency graph.
-
-**"If it builds on my machine, it builds."** Hidden inputs differ between machines. Build in a controlled environment.
-
-**"Build scripts are not real code."** They live as long as the product and break in just as costly ways. Keep them in version control and review them.
-
-**"We can rebuild for production later."** A new build may differ from the one that was tested. Promote the tested artefact.

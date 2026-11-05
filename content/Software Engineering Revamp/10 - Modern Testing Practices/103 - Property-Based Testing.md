@@ -122,15 +122,3 @@ The hardest part is thinking up good properties, since it requires understanding
 | **Flaky failures** | Random inputs differ between runs | Record the seed; replay a saved failure |
 | **Weak generators** | Inputs never reach interesting regions | Add domain-specific generators |
 | **Too-narrow assumptions** | Filtering out most generated inputs | Build valid inputs directly instead of discarding |
-
-## Five Misreadings of Property-Based Testing
-
-**"It is just random testing."** Randomness generates the inputs, but the properties give the tests their power, and shrinking turns noise into a clear example.
-
-**"Properties replace examples."** Examples are clearer for documentation and for known cases. Use both.
-
-**"A property must describe the exact output."** It usually describes a relationship. If you could state the exact output you would have written the function twice.
-
-**"It finds only trivial bugs."** It has found faults in car software, databases and distributed systems that conventional testing missed.
-
-**"A failure it finds might not be real."** The input is saved and replayable. If the property is right, the failure is real. If it is wrong, that is useful to learn too.

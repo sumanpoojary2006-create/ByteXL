@@ -17,7 +17,18 @@ The cost of such a system is the cost of everything it holds up: slow delivery o
 
 ## A Real Case: A Migration Over One Weekend
 
-In 2018 the British bank TSB moved the accounts of about five million customers to a new platform over one weekend. Afterwards, many customers could not log in, some saw other people's accounts, and the bank's problems went on for months.
+In April 2018 the British bank TSB moved the accounts of about five million customers from its old banking platform, which it had inherited from a former parent, to a new one. The bank had planned the migration for years and carried it out over a single weekend. When customers came back on the Monday, the new platform could not cope. Many could not log in to their online or mobile accounts at all. Others could see other customers' accounts or find their own balances wrong. Branch queues grew, the call centre was overwhelmed, and problems continued for weeks and, for some customers, for months. The chief executive left in the autumn, and the bank was later fined tens of millions of pounds by its regulators, who found that it had not managed the risks of the change properly.
+
+The old system was not good, which is why it was being replaced. But its age was only part of the story. The migration was a single, large, one-way step, with a launch date fixed in advance. Testing had not shown how the new platform would behave under real load, the plan for going back was weak once customers' data had moved, and the cost of failure fell on the people least able to bear it.
+
+| Choice TSB made | A common alternative |
+| --- | --- |
+| Move all customers in one weekend | Move small groups in stages and watch each |
+| Replace the whole platform at once | Replace one function at a time, with the old system still running |
+| Rely on pre-launch testing | Run the old and new systems side by side and compare their results |
+| Fix the date and then manage the risk | Let the readiness of the system decide the date |
+
+Legacy systems are a problem because they matter. Re-engineering them is a real engineering decision, with options between leaving them alone, wrapping them, moving them gradually and replacing them. The topic that follows sets out those options and the conditions under which each is sensible.
 
 ## Assessing a Legacy System
 
@@ -121,15 +132,3 @@ Easy and low-risk slices come first to build confidence and learn, and the riski
 <!-- Visual: migrating a system in stages with checks between them. -->
 
 ![Migrating a system in stages with checks between them](images/16-migration-stages.png)
-
-## Five Misreadings of Legacy Systems and Re-engineering
-
-**"Legacy means bad."** It means old, valuable and hard to change. Many legacy systems are the best-tested code in the company.
-
-**"A rewrite will be faster than fixing."** Usually slower, riskier and more costly than expected. It also discards hard-won knowledge.
-
-**"We can freeze the old system while we rebuild."** The business does not stop. The target keeps moving.
-
-**"Migrate everything in one go to save time."** The big bang puts all the risk on one day. Staged migration spreads it and allows a retreat.
-
-**"Wrapping is a cop-out."** A wrapper can give a legacy system a modern interface at a fraction of the cost, and is often the right first step.

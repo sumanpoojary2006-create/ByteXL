@@ -110,15 +110,3 @@ A common difficulty is deciding what is business logic and what is plumbing. A f
 | The decision to send a receipt after payment | Core | A business step, though the sending is an edge |
 
 A reliable test: could the rule be explained to the registrar without mentioning any technology? If yes, it belongs in the core. If explaining it needs words like table, endpoint or JSON, it belongs at the edge.
-
-## Five Misreadings of Hexagonal and Clean Architecture
-
-**"It is a particular folder structure."** It is a rule about the direction of dependencies. The folder names are incidental.
-
-**"The database is the foundation of the system."** In this view it is a detail at the edge. The business rules are the foundation.
-
-**"Every class needs an interface."** Ports are for the places where the core meets the outside world. Inside the core, plain classes are fine.
-
-**"It means more code, so it is worse."** There is more structure, which costs a little and saves a lot where change is frequent. For a throw-away script, skip it.
-
-**"It is only for big systems."** Even small programs benefit from keeping rules separate from input and output. The rigour can scale to the size of the risk.

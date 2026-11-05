@@ -112,15 +112,3 @@ When is a review finished? A sensible exit rule is that every defect found has b
 <!-- Visual: a review meeting laid out as a simple flow: prepare alone with a checklist, meet and log defects without debating fixes, author reworks, a second look confirms the fixes. Save as images/29_review_flow.png. -->
 
 ![A disciplined requirements review separates preparation defect logging rework and confirmation](images/29_review_flow.png)
-
-## Five Misreadings of Validation
-
-**"If the customer approved the document, it is validated."** Approval means the customer read it, or trusted it. Real validation puts something concrete in front of users and checks what they do.
-
-**"Validation is the same as testing."** Testing runs software. Validation checks the requirements before any software exists, which is why it is cheaper.
-
-**"Reviews are for finding who made a mistake."** They are for finding mistakes. A review that points fingers teaches people to hide problems.
-
-**"A long review finds more defects."** Attention drops after an hour or two. Short, repeated reviews find more.
-
-**"Once validated, the requirements stay valid."** The world moves. Requirements that were right in March can be wrong by September, so validation is repeated when they change.

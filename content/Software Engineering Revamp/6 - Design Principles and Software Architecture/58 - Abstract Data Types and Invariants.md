@@ -121,15 +121,3 @@ When a program misbehaves because a value is invalid, the question is where it b
 | Two "equal" values behave differently | The definition of equality, or a leaking mutable field |
 
 Without encapsulation, the same bug could have come from any line of code in the program that touches the value, and finding it would mean searching them all.
-
-## Five Misreadings of ADTs and Invariants
-
-**"An ADT is a class."** A class is one way to build one. The idea is the contract between the type and its users, whatever language it is written in.
-
-**"Immutable means slow."** Most of the cost is small, and it removes a whole class of bugs. Measure before giving up the safety.
-
-**"Private fields are enough to protect the invariant."** Not if a method hands out a reference to a mutable field. The internal state must not leak.
-
-**"Checking the invariant everywhere is safer."** It is safer to check it where the data can change and rely on it elsewhere. Checking everywhere clutters the code and hides where the guarantee comes from.
-
-**"The representation is the type."** The representation is a hidden choice. Two different representations can stand for the same abstract value, and callers should not be able to tell.

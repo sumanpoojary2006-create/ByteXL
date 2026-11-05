@@ -120,15 +120,3 @@ Several strategies reduce the exposure.
 <!-- Visual: a tree of dependencies with the project at the top, direct libraries below it and many smaller transitive libraries below those, with one small library at the bottom circled as "one maintainer, last updated 6 years ago". Save as images/85_dependency_tree_risk.png. -->
 
 ![A small neglected transitive dependency creates risk along the project's critical path](images/85_dependency_tree_risk.png)
-
-## Five Misreadings of Dependency Management
-
-**"More downloads means safer."** Popularity helps. But popular packages with one tired maintainer have been abandoned or hijacked.
-
-**"Always take the latest version."** Automatic updates can bring breaking changes or worse. Update deliberately, with tests.
-
-**"Never update, if it works."** The problems accumulate. Security fixes miss you and the eventual jump becomes a project.
-
-**"A small library is lower risk."** Every dependency has fixed costs, and tiny ones often have the least review.
-
-**"The lockfile is clutter."** It is what makes your build repeatable. Commit it.

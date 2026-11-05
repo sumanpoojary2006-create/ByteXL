@@ -142,15 +142,3 @@ Analysts have their own habits that can distort what they find.
 ## Recording What Was Learned
 
 Elicitation produces a mass of notes, and its value depends on turning it into something others can use. Typical outputs include a list of stakeholders and their concerns, a glossary of the terms the domain uses, scenarios or stories describing real tasks, process maps of how work is done today, and an initial list of candidate requirements with a note of their source. Each requirement should say where it came from, so that when it is questioned later it can be traced back to a person and a conversation. A requirement with no source is a requirement nobody can defend.
-
-## Five Misreadings of Elicitation
-
-**"Just ask the users what they want."** Users can describe what they do and what annoys them. They often cannot say what they need, because they have never seen the alternative.
-
-**"A survey replaces interviews."** A survey counts the answers to questions you already thought of. Interviews find the questions you did not.
-
-**"Elicitation happens at the start."** New questions arise whenever people see something working. Elicitation continues, in smaller doses, throughout the project.
-
-**"Observation is spying."** Done openly, with permission and explanation, it is a respectful way to learn how work is really done. People are usually pleased that someone cares.
-
-**"More stakeholders in the room is better."** A large group produces noise and a few loud voices. Use small sessions with the right people, and a larger workshop only when you need to settle conflicts.

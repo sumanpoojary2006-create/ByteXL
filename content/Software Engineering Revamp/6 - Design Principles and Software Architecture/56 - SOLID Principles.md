@@ -137,15 +137,3 @@ They can also be taken too far. A program with an interface and a factory for ev
 | A script run once for a migration | Keep it simple; none of this applies |
 | A subclass overrides a method to refuse it | Rethink the inheritance (L) |
 | Only one implementation exists and none is expected | Do not add an interface yet |
-
-## Five Misreadings of SOLID
-
-**"SOLID is a rulebook."** It is a set of heuristics. They describe symptoms of rigid designs and common ways to avoid them.
-
-**"One responsibility means one method."** It means one reason to change. A class may have many methods that all serve one purpose.
-
-**"A subclass is any class that reuses code."** Reuse can be done by composition. Subclassing is for cases where the subclass truly can stand in for the parent.
-
-**"Everything needs an interface."** Introduce an abstraction where variation or testing needs it. An interface with one implementation and no prospect of another is clutter.
-
-**"Following SOLID guarantees good design."** It reduces certain kinds of rigidity. Good design also needs a clear view of the problem and honest attention to simplicity.

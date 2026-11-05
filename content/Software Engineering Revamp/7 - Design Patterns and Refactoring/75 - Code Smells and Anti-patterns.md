@@ -120,15 +120,3 @@ Not every smell needs treatment. A few are deliberate trade-offs. The cost is in
 <!-- Visual: where code smells come from and how they are investigated. -->
 
 ![Where code smells come from and how they are investigated](images/07-smell-investigation.png)
-
-## Five Misreadings of Code Smells
-
-**"A smell is a bug."** The program works. A smell warns that future change will be hard.
-
-**"Remove every smell."** Smells are heuristics. Some code is better left as it is, particularly stable code nobody touches.
-
-**"If a tool shows no smells, the code is good."** Tools find the measurable ones. Design problems like a missing concept need a human reader.
-
-**"Smells are a matter of taste."** Some are. Many, such as duplication and god classes, have clear costs that can be shown by looking at how often the code changes and breaks.
-
-**"Anti-patterns are mistakes only beginners make."** Experienced teams fall into them too, often under deadline pressure, and sometimes by reapplying a solution that once worked.

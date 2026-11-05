@@ -141,15 +141,3 @@ Artefacts serve three readers. The *next phase* needs them as input. The *review
 <!-- Visual: a chain in which each lifecycle phase hands a reviewable artefact to the next phase. -->
 
 ![Each lifecycle phase hands a reviewable artifact to the next phase](images/05_artifact_chain.png)
-
-## Five Misreadings of the Life Cycle
-
-**"The SDLC is the waterfall model."** Waterfall is one way to arrange the activities. The activities themselves, from understanding the need to maintaining the result, are common to every approach.
-
-**"Testing is a phase after coding."** Checking happens in every phase: reviewing requirements, reviewing designs, reading code and running tests. The testing phase is where the main execution-based checking happens, but it is far from the first time anyone checks.
-
-**"The project ends at release."** Release is the middle of the story. Most of a successful system's life, and most of its cost, comes after it goes live.
-
-**"Reusing proven work means no new risk."** Work is proven under the conditions it was used in. When the conditions change, the old assumptions need to be checked again.
-
-**"Skipping a phase saves time."** It moves the work to a later phase, where the same work costs more. How thorough each phase should be is a good question. Whether to do it at all is not.

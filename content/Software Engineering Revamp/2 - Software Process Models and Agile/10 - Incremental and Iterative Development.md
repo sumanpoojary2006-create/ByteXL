@@ -131,15 +131,3 @@ Incremental and iterative development are not free. Each increment has to be int
 There is also a risk specific to the approach. When a team adds piece after piece without ever stepping back, the structure can erode: each increment makes a small shortcut to fit, and after twenty cycles the design is a patchwork. The remedy is to treat tidying as part of every cycle, so that the structure is kept fit for the next slice. Iteration should apply to the design as well as to the features.
 
 The trade is worthwhile because the alternative's costs are hidden until late. Both approaches turn a risk that surfaces at the end into a smaller risk that surfaces every few weeks.
-
-## Five Misreadings of Incremental and Iterative Development
-
-**"Incremental and iterative mean the same thing."** Incremental is about delivering in pieces. Iterative is about revisiting and improving. They combine well but they are different decisions.
-
-**"An increment is a half-finished feature."** An increment is a finished, usable piece, however small. Half-finished work is simply an unfinished feature.
-
-**"Iteration means rewriting everything."** Iteration refines what exists, guided by feedback. Rewriting everything each time is a sign that the design cannot absorb change.
-
-**"We can skip planning because we will iterate."** The team still needs a direction, an ordering of what comes first, and a sense of the whole. Iteration corrects the course, but it does not replace having one.
-
-**"More iterations are always better."** The gains shrink with each round, as the table showed. At some point the next improvement is not worth its cost, and the team should move on to something else.

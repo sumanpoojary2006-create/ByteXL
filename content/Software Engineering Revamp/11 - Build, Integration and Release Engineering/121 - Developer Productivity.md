@@ -118,15 +118,3 @@ The rule is to use measures to find and fix bottlenecks, never to rank people.
 <!-- Visual: DORA delivery measures describing speed and stability of a delivery system. -->
 
 ![DORA delivery measures describing speed and stability of a delivery system](images/23-dora-metrics.png)
-
-## Five Misreadings of Developer Productivity
-
-**"Productivity is how much code someone writes."** Code is a cost as well as a product. Value delivered, with the least waste, is the measure.
-
-**"Slow tools are a minor annoyance."** Spread across a team and a year, a slow pipeline costs lakhs and shapes how people work.
-
-**"Measure each engineer to find the weak ones."** Individual counts distort behaviour. Measure the system.
-
-**"More meetings mean better coordination."** Beyond a point they take the focus that engineering needs.
-
-**"Productivity work is a distraction from real features."** It makes every later feature faster. Teams that neglect it slow down gradually, and no one notices until it hurts.

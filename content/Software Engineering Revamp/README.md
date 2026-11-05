@@ -22,14 +22,20 @@ Reading material rebuilt from `Course Blueprint for Software Engineering.xlsx`, 
 
 Every topic carries at least three visuals, each introduced by a `Visual:` comment that records its brief, and no two images sit back to back. Image files live in each unit's `images/` folder.
 
-The course is conceptual: there are no code snippets in any topic. Worked examples are tables and short prose, and lessons open with the idea itself, not a standard historical story. Each lesson ends with "Five Misreadings of ..." and has no summary section.
+The course is conceptual: there are no code snippets in any topic. Worked examples are tables and short prose, and lessons open with the idea itself, not a standard historical story. Lessons have no closing "misreadings" or summary section; each ends after its last concept section.
 
 ## Depth pass (October 2026)
 
-Every lesson was expanded for conceptual depth: 165 topics, averaging about 1,700 to 2,400 words each (Unit 1 runs longer). Expansions add mechanisms, worked scenarios in tables, contrasts, failure modes and checklists; they do not add code. Structure checks pass for every file: no `###` headings, no code fences, no em dashes, exactly five misreadings per lesson.
+Every lesson was expanded for conceptual depth: 165 topics, averaging about 1,700 to 2,400 words each (Unit 1 runs longer). Expansions add mechanisms, worked scenarios in tables, contrasts, failure modes and checklists; they do not add code. Structure checks pass for every file: no `###` headings, no code fences, no em dashes.
 
 ## Before publishing
 
 1. Verify the real-world facts against primary sources: see `FACTS_TO_VERIFY.md`.
 2. Legal content (topics 158 to 160, 146) is an engineer's overview, not legal advice, and the DPDP Act rules were still evolving; have it reviewed.
 3. A few images were reused from earlier courses and a few older files are no longer referenced (listed at the end of `FACTS_TO_VERIFY.md`).
+
+## Mini Projects
+
+The [Mini Projects](Mini%20Projects/README.md) chapter holds 11 artefact-based project briefs, each recommended after a specific unit.
+
+The [Capstone Projects](Capstone%20Projects/README.md) chapter holds one extended eleven-stage brief (CareDesk) that ties all 15 units together.

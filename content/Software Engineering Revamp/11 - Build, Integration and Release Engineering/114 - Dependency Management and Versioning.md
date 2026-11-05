@@ -134,15 +134,3 @@ Several habits make dependency management smoother:
 <!-- Visual: a project with two direct libraries each pointing to a different required version of a third library, with a red cross at the conflict and three exits labelled upgrade one, downgrade the other, install both side by side. Save as images/114_version_conflict_exits.png. -->
 
 ![A dependency version conflict has three explicit resolution paths](images/114_version_conflict_exits.png)
-
-## Five Misreadings of Versioning
-
-**"A version number is just a label."** In SemVer it is a promise about compatibility, and tools rely on it.
-
-**"Minor and patch updates are always safe."** They are meant to be. Authors sometimes break the promise, so the tests are the real guard.
-
-**"Pinning everything exactly is the safest."** It prevents surprises and also blocks security fixes. Use ranges with a lockfile, and update on purpose.
-
-**"A lockfile is clutter."** It makes builds repeatable. Commit it.
-
-**"A conflict means someone made a mistake."** It is a natural result of independent authors. The resolver, or you, picks a way out.

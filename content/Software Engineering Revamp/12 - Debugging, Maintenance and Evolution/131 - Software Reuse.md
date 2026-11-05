@@ -122,15 +122,3 @@ Wrapping a reused component behind a small interface of your own limits the dama
 <!-- Visual: A reuse decision weighing fit, cost and risk. -->
 
 ![A reuse decision weighing fit, cost and risk](images/17-reuse-decision.png)
-
-## Five Misreadings of Software Reuse
-
-**"Reuse is always cheaper."** It saves effort when the fit is good and costs more when the adaptation, learning and dependency outweigh the gain.
-
-**"If we write it well, others will reuse it."** Reusable code needs deliberate design, documentation and support, which cost more.
-
-**"Copy and paste is reuse."** It is duplication. Fixes do not flow to the copies.
-
-**"Open source is free."** The price is zero. The costs are learning, maintaining, updating and complying with the licence.
-
-**"Reuse means fewer bugs."** Widely used code has fewer. But a bug in a shared component affects everyone who uses it: in 2021 a flaw in a widely used logging library, Log4j, put a vast number of applications at risk at once.

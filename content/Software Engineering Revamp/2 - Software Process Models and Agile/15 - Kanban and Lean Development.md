@@ -164,15 +164,3 @@ The two are often compared, and a short table shows how they differ.
 Many teams combine the two, sometimes called Scrumban: sprints for planning, plus a board with WIP limits for flow. The point is not which label to use, but to see where work waits and to reduce it.
 
 A reasonable way to start is to draw the board of what the team already does, without changing any rule. Then add limits gradually, tighten them as the team gets used to finishing before starting, and review the board's measures regularly. Kanban is designed to be adopted by evolution rather than revolution, which is one reason it spreads easily into teams with an existing way of working.
-
-## Five Misreadings of Kanban and Lean
-
-**"Kanban is a task board."** A board without work-in-progress limits only shows work. The limits turn it into a system that pushes the team to finish before starting.
-
-**"Keeping everyone busy makes the team efficient."** Full utilisation creates queues. A system with a little spare capacity moves work through faster than one in which everyone is at full stretch.
-
-**"Limiting WIP slows delivery."** It usually speeds it up, because each item spends less time waiting. Little's law gives the arithmetic.
-
-**"Lean means cutting people and costs."** In the original sense it means removing waste in the flow of work, and that waste is usually waiting and rework, not people.
-
-**"Kanban is only for support teams."** It suits any work that arrives as a stream. Product teams often use boards with limits, even when they also work in sprints.

@@ -94,15 +94,3 @@ The language Rust takes the idea further. Its type system includes **ownership**
 Types are not a complete verification. Most type systems say nothing about whether a sort function really sorts, or whether a discount is calculated correctly. They check structure and consistency, not meaning. Stronger systems exist, such as dependent types, in which a type can say "a list of length n", but they are harder to use. The practical conclusion is that types remove a large class of errors cheaply and tests, contracts and reviews cover the rest.
 
 ![Properties proved by a payment type system separated from business properties that still need other verification](images/150_types_proof_boundary.png)
-
-## Five Misreadings of Type Systems
-
-**"Types are just for the compiler's benefit."** They are documentation that is checked, and they catch a category of faults before any test runs.
-
-**"Dynamic typing means no type errors."** It means type errors appear at run time.
-
-**"Static typing means more bugs are caught, so tests are not needed."** Types do not check meaning. Tests and contracts still do.
-
-**"Null is harmless."** Its inventor's estimate was a billion dollars. Prefer types that make absence explicit.
-
-**"Rust's rules are bureaucracy."** They are a proof, run on every build, that a whole family of memory bugs cannot occur.

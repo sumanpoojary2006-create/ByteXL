@@ -128,15 +128,3 @@ Threat modelling has a reputation for being heavy, and it does not need to be.
 <!-- Visual: a whiteboard sketch of a data-flow diagram of a fee portal with a dashed trust boundary, six coloured stickers marked S T R I D E placed on the elements where they apply, and a column of follow-up tasks on the side. Save as images/143_whiteboard_threat_model.png. -->
 
 ![A STRIDE review maps six threat categories onto a fee portal data-flow diagram](images/143_whiteboard_threat_model.png)
-
-## Five Misreadings of Threat Modelling
-
-**"It is a job for security experts."** The best models are made by the team that knows the design, with security guidance.
-
-**"We need to find every threat."** The aim is to find the important ones early. A model is never complete, and that is acceptable.
-
-**"It is a document to be filed."** Its value is in the discussion and in the changes it triggers.
-
-**"STRIDE tells you what to do."** It tells you what to ask. The decisions are yours.
-
-**"Threats are only technical."** People, processes and insiders are part of the picture.

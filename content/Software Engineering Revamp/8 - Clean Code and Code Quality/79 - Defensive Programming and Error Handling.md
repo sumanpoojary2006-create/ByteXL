@@ -100,15 +100,3 @@ The balance is important. Defensive code can be overdone: a check at every line 
 <!-- Visual: a program drawn as a castle with a wall of validation at the boundary, trusted code inside, and arrows showing bad input stopped at the gate with a clear message. Save as images/79_boundary_castle.png. -->
 
 ![Boundary validation admits trusted values and rejects malformed input before it reaches business logic](images/79_boundary_castle.png)
-
-## Five Misreadings of Defensive Programming
-
-**"Defensive means catching every error."** Catching what you cannot handle just hides it. Catch errors where you can do something sensible.
-
-**"A default value is a safe fallback."** A default can quietly produce wrong results. Sometimes stopping is safer.
-
-**"Validation is the user interface's job."** The interface helps users. The server must validate anyway, since anyone can send a request without using the interface.
-
-**"Assertions are for checking input."** They catch bugs in the program. Input errors are expected and need proper handling.
-
-**"If it passed the tests, the inputs are fine."** Tests cover the cases you thought of. Defensive code covers the ones you did not.

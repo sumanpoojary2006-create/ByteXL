@@ -105,15 +105,3 @@ Accessibility, like security, is cheapest when it is part of the design from the
 ## The Law and the Case for Doing It
 
 Accessibility is increasingly a legal duty. Many countries have laws, such as the Americans with Disabilities Act in the United States (applied by courts to websites), the European Accessibility Act, and India's Rights of Persons with Disabilities Act, which require public services and, in many cases, commercial ones to be accessible. Most refer to WCAG at level AA. Beyond legal risk, accessible products reach more customers, work better on small screens and with voice control, rank better in search engines (because structure helps machines too), and are simply better built.
-
-## Five Misreadings of Accessibility
-
-**"It affects very few users."** Hundreds of millions of people have disabilities, and many more have temporary or situational needs.
-
-**"Automated tools can certify a site as accessible."** They find a share of problems. Manual and assistive technology testing find the rest.
-
-**"Accessibility makes designs ugly."** Good contrast, clear structure and readable text improve design for everybody.
-
-**"We can add it at the end."** It depends on structure and is cheaper built in than bolted on.
-
-**"It is a legal checkbox."** Law sets a minimum. The purpose is that people can use what you build.

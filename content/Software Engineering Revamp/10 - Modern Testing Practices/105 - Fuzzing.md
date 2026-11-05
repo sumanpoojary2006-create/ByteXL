@@ -110,15 +110,3 @@ A fuzzer's output is a crash and the input that caused it, which is more useful 
 | **Reduced input** | After minimisation, a 9-byte file that still triggers it |
 
 A developer can run the saved file against the code and see the crash within seconds. Tools can also shrink a crashing input automatically, in the same spirit as the shrinking step in property-based testing, which removes irrelevant bytes and leaves the smallest input that still fails.
-
-## Five Misreadings of Fuzzing
-
-**"Fuzzing is just throwing garbage at a program."** Modern fuzzers are guided by coverage and structure. Random garbage is where it started.
-
-**"A fuzzer tells you the output is wrong."** It sees only crashes, hangs and sanitizer reports. It cannot judge correctness.
-
-**"No crash means the code is safe."** It means the inputs tried did not crash it. Like all testing, fuzzing cannot prove the absence of bugs.
-
-**"Fuzzing is for security experts only."** A fuzz target for a parser can be written in a few lines, and tools handle the rest.
-
-**"Fuzzing replaces unit tests."** They answer different questions. Unit tests check that the program does the right thing. Fuzzing checks that it survives the wrong ones.

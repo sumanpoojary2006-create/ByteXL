@@ -158,15 +158,3 @@ Equally, debt should not be repaid for its own sake. Perfecting code that is sta
 ## Preventing Unwanted Debt
 
 Repayment is half the answer; the other half is to take on less debt that nobody chose. Practices that help include a clear definition of done that includes tests and review, so that "finished" does not mean "finished with a shortcut"; code review, where a second pair of eyes questions the shortcut; automated checks that fail the build for new serious problems; design discussions before large changes; regular upgrades so that dependencies never fall far behind; and recording every deliberate shortcut, with the reason and a date by which to revisit it. A shortcut that is written down is a loan; one that is not is a leak.
-
-## Five Misreadings of Technical Debt
-
-**"Technical debt means bad code."** It includes bad code, but also outdated designs, missing tests, old libraries and missing documentation. The common feature is that it makes future change costlier.
-
-**"All debt should be repaid."** Debt in stable code costs almost nothing. Repay where the interest is high.
-
-**"Taking on debt is always a failure."** Deliberate debt, recorded and planned, can be the right business choice. Hidden and unplanned debt is the problem.
-
-**"Managers will never allow time for it."** Managers respond to costs and risks that are shown with numbers. A register and a few facts about interest go a long way.
-
-**"A big rewrite is the way to clear debt."** Rewrites carry their own risk and often recreate the old problems. Paying down in small steps is usually safer.

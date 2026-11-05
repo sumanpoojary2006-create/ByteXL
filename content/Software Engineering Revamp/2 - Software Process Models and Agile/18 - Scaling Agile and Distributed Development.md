@@ -121,15 +121,3 @@ Time is only the first difficulty. Distance brings others, and each needs a deli
 | **Handover quality** | Work passed at the end of a day arrives incomplete | Use a short, standard handover note listing state, blockers and next steps |
 
 Common arrangements for distributed work include *onshore* teams in the same country as the customer, *nearshore* teams in a neighbouring time zone, and *offshore* teams far away, often chosen for cost or talent. Each has a different balance of cost, overlap and cultural distance. Whichever is chosen, the cost of coordination is real and should be counted in the plan, not discovered later.
-
-## Five Misreadings of Scaling Agile
-
-**"A scaling framework makes teams agile."** A framework gives structure. Agility comes from short feedback loops and the freedom to respond, and a big framework can slow both.
-
-**"If it worked at one famous company, it will work here."** The structure was a snapshot of one company at one time. Borrow the problem it solved, and not just the names.
-
-**"More teams means more output."** Output grows more slowly than headcount, because of dependencies and coordination. Adding teams can even slow delivery.
-
-**"Remote teams cannot be agile."** They can, with more writing, deliberate use of overlap and attention to trust. The cost shows up in speed of conversation, not in whether the principles apply.
-
-**"Scaling means standardising everything."** Common goals and interfaces help. Forcing every team into the same detailed process usually removes the local judgement that made small teams work.

@@ -137,15 +137,3 @@ Teams also differ in how strictly they apply it. Some do TDD for every line. Man
 | Testing implementation details | Tests break on refactoring | Test behaviour through the public interface |
 | Never running the full suite | Surprises later | Run all tests regularly |
 | Treating tests as second-class code | Suite becomes unreadable | Apply the same standards as production code |
-
-## Five Misreadings of TDD
-
-**"TDD means writing all the tests first."** It means one small test at a time, in a loop of minutes.
-
-**"TDD is only about testing."** It is equally about design. The tests are a by-product and the better interfaces are a main gain.
-
-**"The tests prove the code is correct."** They prove it does what the tests say. A wrong test gives wrong confidence, so tests too need review.
-
-**"TDD is too slow."** It adds time at the start and removes time in debugging and rework. The studies found longer initial development and far fewer defects.
-
-**"You must follow TDD for everything or not at all."** Apply it where it pays, and make up your mind from experience.

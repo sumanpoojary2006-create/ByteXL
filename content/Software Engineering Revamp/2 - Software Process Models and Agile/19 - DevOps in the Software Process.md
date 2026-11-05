@@ -112,15 +112,3 @@ DevOps does not replace agile or Scrum. It extends the same values past the poin
 The practices that support DevOps, including continuous integration, deployment pipelines, containers and monitoring, each deserve study of their own. What matters first is a simpler question: do the people who write the software and the people who run it share a goal, and can they see the same picture of how the system is behaving?
 
 A sensible way to begin is with the slowest, most painful step between a finished change and a happy user. For one team it is a manual release that takes a weekend; for another it is a test environment that takes a week to get. Remove that obstacle, measure the effect, and then move to the next. Culture changes more by a series of visible improvements than by a declaration.
-
-## Five Misreadings of DevOps
-
-**"DevOps is a job title."** Companies advertise DevOps engineers, and the role is real, but DevOps is a way of working across a whole team. Hiring one person to "do DevOps" while the wall stays up changes nothing.
-
-**"DevOps means buying the right tools."** Tools make good habits easier. They do not create shared ownership or fast feedback, and a team can own every tool and still work in silos.
-
-**"Releasing often is reckless."** Small frequent releases are safer than rare big ones, because each change is easy to understand and to reverse, provided that automated tests and monitoring are in place.
-
-**"DevOps means developers do operations and operations disappears."** The skills of operations and reliability remain essential. What changes is that the two groups cooperate and share responsibility.
-
-**"Speed and stability are a trade-off."** The research behind the delivery measures found that the best teams were strong on both. Practices such as automation, small changes and fast recovery improve both together.

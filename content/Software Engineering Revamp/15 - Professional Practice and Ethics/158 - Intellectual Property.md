@@ -19,7 +19,19 @@ Notice what copyright does *not* protect: the underlying idea, method or functio
 
 ## A Real Case: Who Owns an Interface?
 
-Oracle sued Google in 2010 over the use of about 11,500 lines of declarations from Oracle's Java interface in Google's Android system. The dispute ran for more than a decade before the United States Supreme Court ruled in Google's favour in 2021.
+In 2010 the software company Oracle sued Google, claiming that Google's Android system had copied part of the Java programming platform that Oracle had acquired. Android did not copy the working code. Google wrote its own. The dispute concerned the interface: about 11,500 lines of declarations, which name the functions that Java programmers call and describe how they are used, across 37 groups of related functions. Google had reproduced these so that programmers who knew Java could write Android applications without learning new names.
+
+The case ran for more than a decade, through several trials and appeals. It raised two questions. Can an interface be protected by copyright at all? And if it can, is reusing it a fair use? The lower courts disagreed. In April 2021 the United States Supreme Court ruled in Google's favour, holding that its use was a fair use. The court did not decide the first question, so the status of interfaces in general was left open, and the decision is limited in its reach.
+
+| Layer of a software product | Usually protected by |
+| --- | --- |
+| The source code as written | Copyright |
+| An invention in how it works | Patent, if granted |
+| The name and logo | Trade mark |
+| Confidential methods and data | Trade secret and contract |
+| The interface, as in this case | Unsettled, and varies between countries |
+
+For a developer, the case is a reminder that who owns software is not obvious from who wrote it. Ownership depends on the contract, on the country and on what is being claimed. Intellectual property covers the rights over code, ideas, names and data, who has them and what others may do with them. The topic that follows explains each form, and the common situations, such as employment, freelance work and use of other people's code, in which they matter. It is a guide to the ideas, and a real dispute needs a lawyer.
 
 ## Choosing Between Them: An Example
 
@@ -109,15 +121,3 @@ When a question about code ownership or copying comes up, a short sequence of qu
 | Is any of it confidential to a client or former employer? | Do not use it | Fine |
 
 If an answer is unclear, ask before acting. A short written permission from an employer or a licence check costs minutes. A dispute over ownership can cost years.
-
-## Five Misreadings of Intellectual Property
-
-**"Copyright protects my idea."** It protects the expression, the actual code and text. Ideas and methods are free to reimplement, subject to patents.
-
-**"Code on the internet is free to use."** It is usually protected by copyright, and free to use only under a licence.
-
-**"What I write at home is always mine."** Not if your contract claims it. Read the assignment and moonlighting clauses.
-
-**"A trade secret is protected for ever once it exists."** Only while it remains secret and reasonable steps are taken to protect it.
-
-**"IP law is the lawyers' problem."** Engineers make the daily decisions about copying, licensing and confidentiality. Know the basics, and ask when unsure.

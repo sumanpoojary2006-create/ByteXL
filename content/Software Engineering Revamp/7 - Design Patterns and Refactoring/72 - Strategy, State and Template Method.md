@@ -117,15 +117,3 @@ Template Method uses inheritance and so fixes its variation at the time the clas
 | State classes that know too much about each other | State | Every state names every other | Keep transitions in a table or in one place |
 | Deep inheritance trees | Template Method | A subclass of a subclass overrides one step | Prefer passing the steps in as functions |
 | Forgetting the fixed order | Template Method | A subclass calls steps itself and breaks the sequence | Make the template method not overridable |
-
-## Five Misreadings of These Patterns
-
-**"Strategy and State are the same pattern."** The structure is the same. Strategy is selected from outside and rarely changes. State changes itself as the object's situation changes.
-
-**"Every `if` chain needs a strategy."** A short, stable condition is fine. Introduce the pattern when the chain keeps growing, or when the same chain appears in several places.
-
-**"Template Method is old-fashioned because of inheritance."** It is very much used, as in test frameworks that call `setUp`, the test and `tearDown` in a fixed order. When inheritance is a problem, pass in functions for the steps.
-
-**"Each state needs a class."** For two or three simple states a table or a few conditions are clearer. The pattern pays off as the states and their rules multiply.
-
-**"A strategy must be a class."** In many languages a function is enough. The pattern is the idea of passing in the variation, not the class syntax.

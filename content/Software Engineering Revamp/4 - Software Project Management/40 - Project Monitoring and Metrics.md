@@ -125,15 +125,3 @@ A measure matters only if it leads to a decision. When monitoring shows a gap, t
 | Team strained | Reduce work in progress; protect time; reset the pace |
 
 The choice should be made with the sponsor and the team, with the numbers visible. The worst response is silence: continuing as if nothing has changed and hoping the data are wrong.
-
-## Five Misreadings of Project Metrics
-
-**"Percent complete tells you where you are."** It is usually a guess. Count finished items against an agreed definition of done.
-
-**"Green status means the project is healthy."** Status is what someone chose to report. Trends in finished work and cycle time are harder to colour.
-
-**"More metrics means better control."** A few measures that the team understands and uses beat a dashboard nobody reads.
-
-**"Earned value is only for big government projects."** The core idea, comparing finished value with planned value and with spending, works at any scale and takes a few lines of arithmetic.
-
-**"Productivity metrics should rank people."** They describe a system. Ranking individuals by them rewards gaming and damages cooperation.

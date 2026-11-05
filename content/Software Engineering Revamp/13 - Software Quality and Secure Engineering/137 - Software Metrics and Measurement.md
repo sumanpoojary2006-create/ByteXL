@@ -27,7 +27,16 @@ A third group, **project metrics**, tracks the progress of a particular project:
 
 ## A Real Case: Accounts Nobody Asked For
 
-In 2016 it emerged that employees of the American bank Wells Fargo had opened millions of accounts that customers had never asked for. The bank had set demanding sales targets for the number of products sold to each customer, tracked the figure and tied it to pay and continued employment.
+In 2016 it emerged that employees of the American bank Wells Fargo had opened millions of bank and credit card accounts that customers had never asked for. The bank had set demanding sales targets, summed up in an internal slogan about selling eight products to every customer, and it measured each branch and each employee by how many accounts they opened. The figure was tracked every day. It was tied to pay and to continued employment. Employees who could not meet it faced pressure, and many met it by creating accounts in customers' names, moving money between them without permission, and in some cases creating fake email addresses. In 2016 the bank agreed to pay a settlement of 185 million dollars, and thousands of employees were dismissed. Total costs to the bank in later years were far higher.
+
+The measure itself was precise and easy to count. What it measured was not what the bank wanted. The bank wanted satisfied customers who used its services, and it counted accounts opened. Once the number became the target, people optimised the number.
+
+| The intended goal | The measure chosen | What the measure rewarded |
+| --- | --- | --- |
+| Customers who use more of the bank's services | Number of accounts opened per customer | Opening accounts by any means |
+| A healthy relationship with customers | Daily sales figures | Short-term pressure |
+
+This effect is often summarised as: when a measure becomes a target, it stops being a good measure. It applies equally to software teams. Lines of code, number of bugs closed, test counts and velocity all describe something real, and all can be gamed once they decide who is praised or blamed. This topic shows how to choose metrics that answer a real question, how to read them as signals and what to watch for when a number starts to drive behaviour.
 
 ## The Levels of Measurement
 
@@ -137,15 +146,3 @@ A few rules keep measurement honest.
 <!-- Visual: A decision about what to do after reading a metric, depending on context and trend. -->
 
 ![A decision about what to do after reading a metric, depending on context and trend](images/05-metric-decision.png)
-
-## Five Misreadings of Software Metrics
-
-**"What gets measured gets managed, so measure everything."** What gets measured gets gamed. Measure what answers a question you have.
-
-**"A metric is objective."** The choice of what to measure, and how, is a judgement, and so is the reading.
-
-**"Higher is better."** For some measures, yes. For others, such as complexity, lower is better, and for others a middle value is best.
-
-**"We can rank engineers by output."** Individual output metrics reward the wrong behaviour and damage teamwork.
-
-**"If the number improves, quality improved."** Only if the number measures quality. A sales figure can improve at the customers' expense, as it did when staff opened accounts nobody asked for.

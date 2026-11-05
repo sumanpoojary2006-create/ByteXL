@@ -101,15 +101,3 @@ The system also changes after release. The world drifts, new kinds of input appe
 ## Robustness, Safety and Explanation
 
 Learned systems can behave oddly on inputs unlike those they were trained on, and can be deliberately fooled. Requirements should therefore ask how the system behaves on unusual, noisy or hostile inputs: for example, that it declines to answer rather than guess when an image is too dark, or that small changes to an input do not flip its decision. They should also say what the user must be told. People affected by a decision often need to know that a machine took part, the main reasons for the outcome, and how to ask for a human review. These duties come from ethics and, increasingly, from regulation, and they are much easier to meet when they are in the requirements from the start.
-
-## Five Misreadings of AI Requirements
-
-**"We cannot specify AI, it just learns."** What it learns is not specified, but what it must achieve, how often, for whom and with what fallback, can all be written down and tested.
-
-**"One accuracy number is enough."** It hides which errors happen and to whom. Error costs and group-wise results belong in the requirement.
-
-**"More data fixes bias."** More of the same data can strengthen the same bias. The data needs to be examined for who and what it covers.
-
-**"A human in the loop makes it safe."** A human who rubber-stamps the model's output adds no safety. The role needs time, information and the authority to disagree.
-
-**"Once it passes testing, it is done."** The world changes after release. Monitoring and a trigger for retraining are part of the requirements.

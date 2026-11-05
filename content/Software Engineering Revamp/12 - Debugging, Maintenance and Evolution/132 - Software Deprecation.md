@@ -19,7 +19,19 @@ Keeping everything for ever sounds kind and is not sustainable.
 
 ## A Real Case: Python 2 to Python 3
 
-When the Python language moved from version 2 to version 3 in 2008, the designers deliberately broke compatibility to fix design mistakes. The old version was declared dead for good only on 1 January 2020, more than a decade later, and some organisations were still running it after that date.
+When the designers of the Python programming language released version 3 in December 2008, they chose to break compatibility on purpose. Some early choices in version 2 had been mistakes that could not be repaired without changing the meaning of existing programs, such as how text and numbers were represented, and they judged that a clean break would serve the language better in the long run than endless patches. The price was that programs written for the old version would not run on the new one without changes.
+
+The migration was slow. Large organisations had millions of lines of Python 2, and many of their dependencies had not yet moved. The old version was kept going with updates for years, and its planned end date was postponed from 2015 to 1 January 2020, when the maintainers finally declared it unsupported. Some organisations were still running it afterwards, with no security fixes from the people who had written it, and some paid companies to keep supporting it.
+
+| Stage | What happened | General lesson |
+| --- | --- | --- |
+| Announcement | A new version, deliberately not compatible with the old | Say clearly what will break and why |
+| Transition | Years of both versions side by side, with tools to help convert | Give users tools and time to move |
+| Extension | The end date was moved once, to match real progress | A date that nobody can meet loses credibility |
+| End of life | Declared on a fixed day | A stated date is what makes users act |
+| After | Some users stayed, without support | Staying behind has a cost, and it falls on the user |
+
+Deprecation is the planned retirement of a feature, an interface or a whole product. Done well, it respects the people who depend on the old thing. The topic that follows covers how to announce it, how long to wait, how to help users move and how to be honest about what it will cost them.
 
 ## Deprecation and Its Stages
 
@@ -130,15 +142,3 @@ A last aspect is the idea of **sustainable software**. Keeping every old interfa
 <!-- Visual: software kept sustainable by planning its retirement as well as its growth. -->
 
 ![Software kept sustainable by planning its retirement as well as its growth](images/20-sustainable-software.png)
-
-## Five Misreadings of Deprecation
-
-**"Deprecated means removed."** It means discouraged. The feature still works until the date, and users need that time.
-
-**"Announce it once and it is done."** Users miss announcements. Repeat the notice in release notes, warnings and direct messages.
-
-**"A warning that says 'deprecated' is enough."** It must say what to use instead and when the change happens.
-
-**"Breaking changes are fine if the new design is better."** Users pay for the migration. Weigh their cost against the benefit.
-
-**"Ending a product is just switching it off."** It means notice, data export, support and care for the people who rely on it.

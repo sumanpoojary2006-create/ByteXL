@@ -113,15 +113,3 @@ Guidelines that help:
 | Run against something realistic but cheap | Fake |
 | Check what the code sent out, afterwards | Spy |
 | Fail the test unless a specific call happens | Mock |
-
-## Five Misreadings of Test Doubles
-
-**"Mock and stub mean the same."** A stub supplies answers. A mock also holds expectations about how it will be called, and can fail the test.
-
-**"Every dependency should be mocked."** Mock the slow, unreliable or dangerous ones. Real fast objects make better tests.
-
-**"If the mocks are called correctly, the code works."** It may pass with mocks and fail with the real parts. Keep integration tests as well.
-
-**"Doubles are only for tests of classes."** The idea applies at every level, from functions to services, including fake third-party APIs.
-
-**"Needing many doubles is normal."** It often signals that a unit has too many dependencies and wants splitting.

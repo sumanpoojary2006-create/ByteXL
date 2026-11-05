@@ -138,15 +138,3 @@ A **safety case** is a structured argument, backed by evidence, that a system is
 <!-- Visual: controls in safety-critical systems: traceability, independent review, exhaustive testing and certification as four stacked layers. -->
 
 ![Controls in safety-critical systems: traceability, independent review, exhaustive testing, certification](images/04_safety_critical_controls.png)
-
-## Five Misreadings of Safety-Critical Software
-
-**"Safe software means bug-free software."** No software is bug-free. Safety means that hazards are controlled even when faults exist.
-
-**"Safety is a software property."** It is a property of the whole system, including hardware, people and procedure.
-
-**"More testing makes it safe."** Testing is needed and insufficient. Analysis, design and independent review are equally necessary.
-
-**"Redundancy always helps."** Only if the copies fail independently. Identical software fails identically.
-
-**"Standards guarantee safety."** They set a minimum of rigour. Safety comes from applying them with understanding.

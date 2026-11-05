@@ -111,15 +111,3 @@ A strong pipeline uses both. Static tools run on every change as the first scree
 <!-- Visual: A security toolbox surrounding an application with several kinds of analysis. -->
 
 ![A security toolbox surrounding an application with several kinds of analysis](images/08-security-toolbox.png)
-
-## Five Misreadings of Dynamic Analysis
-
-**"If no tool reports a problem, there isn't one."** Dynamic analysis sees only the runs performed. Bugs on untested paths stay hidden.
-
-**"Sanitizers are only for C programmers."** The bugs they find are mostly in memory-unsafe languages, and these power operating systems and browsers, so it matters to everyone.
-
-**"A profiler tells you how to fix slowness."** It tells you where the time goes. The fix is a design decision.
-
-**"Run the sanitizers in production."** They slow the program too much. Use them in testing and fuzzing.
-
-**"Dynamic and static analysis are alternatives."** They find different things and work best together.

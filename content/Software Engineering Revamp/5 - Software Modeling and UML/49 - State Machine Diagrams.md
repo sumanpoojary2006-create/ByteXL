@@ -21,9 +21,11 @@ Many things in software have a life with distinct stages: an order, a user accou
 
 On the diagram, states are rounded rectangles and transitions are arrows labelled `event [guard] / action`. The most important property is what is *missing*. If there is no arrow from "Shipped" labelled "cancel", then an order cannot be cancelled once it has shipped. The diagram makes impossible things visibly impossible.
 
-<!-- Visual: an order state machine with Placed, Paid, Shipped, Delivered and Cancelled, and labelled arrows for pay, ship, deliver and cancel. -->
+<!-- Visual: a state machine diagram: an initial node into Placed, then Paid, Shipped and Delivered, with Cancelled reachable from Placed and Paid, and transition labels such as pay / send receipt and ship [stock available] / print label. -->
 
-![Online-order state machine from placement to delivery or cancellation](images/07-order-state-machine.png)
+![A UML state machine of an online order from Placed through Paid and Shipped to Delivered, with a Cancelled state](images/uml_49_online_order_state_machine.png)
+
+Read the diagram by starting at the filled circle. A new order enters **Placed**. The arrow labelled `pay / send receipt` takes it to **Paid**, and the text after the slash says that a receipt is sent on the way. From Paid, the arrow `ship [stock available] / print label` leads to **Shipped**, but only if the guard in square brackets is true. From Shipped, `deliver` leads to **Delivered**, which has the ringed circle of a final state, so the life of the order ends there. Two arrows labelled `cancel` lead to **Cancelled**, one from Placed and one from Paid. There is no such arrow from Shipped or Delivered, and that absence is the rule: an order that has left the warehouse cannot be cancelled.
 
 ## What Counts as a State
 
@@ -76,10 +78,6 @@ An **action** is something the machine does as it moves, written after a slash: 
 | `ship [stock available]` | When asked to ship, move on only if stock exists |
 | `ship [stock available] / print label` | The same, and print a label on the way |
 
-<!-- Visual: a state machine makes invalid transitions visibly impossible. -->
-
-![A state machine makes invalid transitions visibly impossible](images/07-state-guard.png)
-
 ## Entry, Exit and Internal Actions
 
 Instead of repeating the same action on every arrow that enters a state, a diagram can attach it to the state itself. An **entry action** runs whenever the state is entered, no matter which arrow was used; an **exit action** runs whenever it is left; and a **do activity** runs for as long as the object is in the state.
@@ -106,10 +104,6 @@ The best use of a state machine diagram is as a checklist. For every state, ask 
 
 Four cells are marked undecided, all in the pay column. A customer who pays twice because the page was slow, or who pays for an order that was cancelled, is an ordinary event, and today nobody has said what the system should do. Each undecided cell is a requirement waiting to be written. It is far cheaper to find them in a table than in a complaint.
 
-<!-- Visual: a valid order path contrasted with a blocked transition. -->
-
-![A valid order path contrasted with a blocked transition](images/07-forbidden-transition.png)
-
 ## Where State Machines Appear
 
 State machines suit anything that has a life cycle: an order, a bug report moving from open to fixed to closed, a user session, a connection, a vending machine, a traffic light, a game character. They are also hiding inside many programs without being drawn, in the form of status flags and nested conditions. Pulling these into one explicit table or diagram is one of the most effective ways to make code clearer.
@@ -122,10 +116,6 @@ Their weakness is size. A thing with many independent aspects, for instance a do
 | Three small machines | 2 + 2 + 2 = 6, and far fewer arrows | Each aspect understood alone |
 | Nested states | A "Published" group containing its own sub-states | Shared transitions drawn once on the group |
 
-<!-- Visual: a table with states down the side and events across the top, each cell filled with a next state or marked "not allowed", with one empty cell circled as "nobody decided". Save as images/49_state_event_grid.png. -->
-
-![A state-event grid exposes the unresolved second-payment case](images/49_state_event_grid.png)
-
 ## Common Faults
 
 | Fault | What it looks like | Remedy |
@@ -135,15 +125,3 @@ Their weakness is size. A thing with many independent aspects, for instance a do
 | **Dead state** | A non-final state with no arrow out | Add the exit, or mark it final |
 | **Undecided cells** | Events with no stated outcome | Fill the grid and decide |
 | **One giant machine** | Forty states in a tangle | Split by aspect or use nesting |
-
-## Five Misreadings of State Machine Diagrams
-
-**"A state is a variable."** A state is a situation with its own rules about what can happen. A variable may help to record it, but the state is the behaviour.
-
-**"If an event is not drawn, it will be ignored."** Not unless that is the rule. An undrawn event is an undecided one, and the code will do something, perhaps wrong.
-
-**"State machines are only for embedded devices."** Orders, accounts, tickets and sessions are state machines too. Business software is full of them.
-
-**"More states is more accuracy."** Too many states make a diagram unreadable. If the count explodes, the object is probably doing too many jobs.
-
-**"The code will follow the diagram."** Only if the diagram is turned into a table or a clear structure in the code. Otherwise they drift apart.
