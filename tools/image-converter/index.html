@@ -1861,7 +1861,7 @@
         }
         continue;
       }
-      fileBlockIndex++;convertedBlocks++;
+      fileBlockIndex++;
       const lang = decision.language;
       let snippetCode = block.code.replace(/\n+$/,"");
       let extraFiles = [];
@@ -1895,7 +1895,28 @@
         extraFiles
       };
       setProgress(`Creating OneCompiler editor ${fileBlockIndex} in ${baseName(filePath)}...`);
-      const workspace = await createOneCompilerWorkspace(snippet);
+      let workspace;
+      try {
+        workspace = await createOneCompilerWorkspace(snippet);
+      } catch (error) {
+        // The browser performs the same sandbox checks as the API, but the API is
+        // deliberately the final authority. If it finds a block that cannot run,
+        // keep only that fence static and continue preparing the rest of the ZIP.
+        // Network failures and service errors remain fatal so they are not hidden.
+        if (!error?.oneCompilerStaticBlock) throw error;
+        skippedBlocks.push({
+          file:filePath,
+          lines:`${block.startLine}-${block.endLine}`,
+          language:lang,
+          reason:error.staticReason || "onecompiler-rejected-static"
+        });
+        const cleaned = publishedFenceInfo(block.info);
+        if (cleaned !== String(block.info||"").trim()) {
+          replacements.push([block.start, block.end, "```"+cleaned+"\n"+block.code.replace(/\n+$/,"")+"\n```\n"]);
+        }
+        continue;
+      }
+      convertedBlocks++;
       replacements.push([block.start,block.end,iframeHtml(workspace.embedUrl,settings.height)]);
       onecompilerLinks.push({
         file:filePath,
@@ -2014,6 +2035,20 @@
   }
 
   function iframeHtml(src,h) { return `<iframe\n frameBorder="0"\n height="${escapeAttr(h)}"  \n src="${escapeAttr(src)}" \n width="100%"\n></iframe>\n`; }
+
+  function oneCompilerStaticReason(detail) {
+    const text = String(detail || "");
+    let match = text.match(/cannot import\s+(.+?)\./i);
+    if (match) return `missing-package:${match[1].split(",").map(item => item.trim()).join(",")}`;
+    match = text.match(/uses\s+(.+?)\s+without defining it/i);
+    if (match) return `incomplete-snippet:${match[1].split(",").map(item => item.trim()).join(",")}`;
+    match = text.match(/cannot run\s+(.+?)\./i);
+    if (match) return `missing-command:${match[1].split(",").map(item => item.trim()).join(",")}`;
+    match = text.match(/contain\s+(.+?)\s+literals/i);
+    if (match) return `unrunnable-literal:${match[1].replace(/\s+or\s+/gi,",").replace(/\s+/g,"")}`;
+    return "onecompiler-rejected-static";
+  }
+
   async function createOneCompilerWorkspace(snippet) {
     const r = await fetchOrExplain(oneCompilerWorkspaceUrl,{
       method:"POST",
@@ -2021,7 +2056,15 @@
       body:JSON.stringify(snippet)
     }, `The editor for ${snippet.title}`);
     const payload = await r.json().catch(()=>({}));
-    if (!r.ok) throw new Error(payload.detail||`Could not create OneCompiler editor for ${snippet.title}.`);
+    if (!r.ok) {
+      const detail = typeof payload.detail === "string" ? payload.detail : "";
+      const error = new Error(detail || `Could not create OneCompiler editor for ${snippet.title}.`);
+      if (r.status === 400 && /must stay\s+(?:a\s+)?static code block/i.test(detail)) {
+        error.oneCompilerStaticBlock = true;
+        error.staticReason = oneCompilerStaticReason(detail);
+      }
+      throw error;
+    }
     if (!payload.embedUrl) throw new Error(`OneCompiler did not return an embed URL for ${snippet.title}.`);
     return payload;
   }
